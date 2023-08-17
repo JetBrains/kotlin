@@ -104,6 +104,7 @@ internal fun printFactory(generationPath: File, model: Model): GeneratedFile {
             parameter("isExpect")
             parameter("isFun")
             parameter("source")
+            defaultValue["hasEnumEntries"] = false
         }
 
         addDeprecatedFunction(replacement("createConstructor")) {
@@ -272,14 +273,11 @@ internal fun printFactory(generationPath: File, model: Model): GeneratedFile {
 }
 
 private class DeprecatedFunctionBuilder(private val replacement: FunSpec) {
-
     val deprecatedFunctionParameterSpecs = mutableListOf<ParameterSpec>()
-
     var oldName = replacement.name
-
     var returnType = replacement.returnType
-
     var deprecationMessage: String? = null
+    val defaultValue = mutableMapOf<String, Any?>()
 
     fun parameter(name: String, removeDefaultValue: Boolean = false) {
         val replacementParameter =
@@ -322,6 +320,13 @@ private fun TypeSpec.Builder.addDeprecatedFunction(
                                 indent()
                                 add("%N,\n", parameter)
                                 unindent()
+                            } else {
+                                val value = builder.defaultValue[parameter.name]
+                                if (value != null) {
+                                    indent()
+                                    add("$value,\n")
+                                    unindent()
+                                }
                             }
                         }
                     }

@@ -273,6 +273,15 @@ object IrTree : AbstractTreeBuilder() {
         +field("isFun", boolean) {
             useFieldInIrFactory(defaultValue = false)
         }
+        +field("hasEnumEntries", boolean) {
+            useFieldInIrFactory(defaultValue = false)
+            kdoc = """
+            Returns true iff this is a class loaded from dependencies which has the `HAS_ENUM_ENTRIES` metadata flag set.
+            This flag is useful for Kotlin/JVM to determine whether an enum class from dependency actually has the `entries` property
+            in its bytecode, as opposed to whether it has it in its member scope, which is true even for enum classes compiled by
+            old versions of Kotlin which did not support the EnumEntries language feature.
+            """.trimIndent()
+        }
         +field("source", type<SourceElement>(), mutable = false) {
             useFieldInIrFactory(defaultValue = code("%T.NO_SOURCE", SourceElement::class))
         }

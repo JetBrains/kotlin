@@ -37,6 +37,7 @@ class IrLazyClass(
     override var isValue: Boolean,
     override var isExpect: Boolean,
     override var isFun: Boolean,
+    override var hasEnumEntries: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator
 ) : IrClass(), IrLazyDeclarationBase, DeserializableClass {

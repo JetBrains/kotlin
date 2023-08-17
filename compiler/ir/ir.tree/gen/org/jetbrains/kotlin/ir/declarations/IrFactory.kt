@@ -60,6 +60,7 @@ interface IrFactory {
         isValue: Boolean = false,
         isExpect: Boolean = false,
         isFun: Boolean = false,
+        hasEnumEntries: Boolean = false,
         source: SourceElement = SourceElement.NO_SOURCE,
     ): IrClass
 
@@ -300,6 +301,7 @@ interface IrFactory {
         isValue,
         isExpect,
         isFun,
+        false,
         source,
     )
 

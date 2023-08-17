@@ -50,11 +50,12 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         isValue: Boolean,
         isExpect: Boolean,
         isFun: Boolean,
+        hasEnumEntries: Boolean,
         source: SourceElement,
     ): IrClass =
         IrClassImpl(
             startOffset, endOffset, origin, symbol, name, kind, visibility, modality,
-            isCompanion, isInner, isData, isExternal, isValue, isExpect, isFun, source,
+            isCompanion, isInner, isData, isExternal, isValue, isExpect, isFun, hasEnumEntries, source,
             factory = this
         )
 

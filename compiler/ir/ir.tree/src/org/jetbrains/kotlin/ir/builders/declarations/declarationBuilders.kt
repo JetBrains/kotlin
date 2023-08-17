@@ -42,6 +42,7 @@ internal fun IrFactory.buildClass(builder: IrClassBuilder): IrClass = with(build
         isValue = isValue,
         isExpect = isExpect,
         isFun = isFun,
+        hasEnumEntries = hasEnumEntries,
     )
 }
 

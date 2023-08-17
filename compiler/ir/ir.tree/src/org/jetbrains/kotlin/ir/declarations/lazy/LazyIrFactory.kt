@@ -36,6 +36,7 @@ class LazyIrFactory(
         isValue: Boolean,
         isExpect: Boolean,
         isFun: Boolean,
+        hasEnumEntries: Boolean,
         source: SourceElement
     ): IrClass = if (symbol.isBound)
         symbol.owner
@@ -56,6 +57,7 @@ class LazyIrFactory(
             isValue,
             isExpect,
             isFun,
+            hasEnumEntries,
             source,
         )
 

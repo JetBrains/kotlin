@@ -30,6 +30,7 @@ open class IrClassImpl(
     override var isValue: Boolean = false,
     override var isExpect: Boolean = false,
     override var isFun: Boolean = false,
+    override var hasEnumEntries: Boolean = false,
     override val source: SourceElement = SourceElement.NO_SOURCE,
     override val factory: IrFactory = IrFactoryImpl
 ) : IrClass() {

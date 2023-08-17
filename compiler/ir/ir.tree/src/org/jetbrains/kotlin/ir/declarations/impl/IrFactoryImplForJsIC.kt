@@ -62,6 +62,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         isValue: Boolean,
         isExpect: Boolean,
         isFun: Boolean,
+        hasEnumEntries: Boolean,
         source: SourceElement
     ): IrClass {
         return super.createClass(
@@ -80,6 +81,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
             isValue,
             isExpect,
             isFun,
+            hasEnumEntries,
             source,
         ).register()
     }

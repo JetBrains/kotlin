@@ -52,9 +52,11 @@ class DeserializedClassDescriptor(
         VersionRequirementTable.create(classProto.versionRequirementTable), metadataVersion
     )
 
+    val hasEnumEntriesMetadataFlag: Boolean = Flags.HAS_ENUM_ENTRIES.get(classProto.flags)
+
     private val staticScope =
         if (kind == ClassKind.ENUM_CLASS) {
-            val enumEntriesCanBeUsed = Flags.HAS_ENUM_ENTRIES.get(classProto.flags) ||
+            val enumEntriesCanBeUsed = hasEnumEntriesMetadataFlag ||
                     c.components.enumEntriesDeserializationSupport.canSynthesizeEnumEntries() == true
             StaticScopeForKotlinEnum(c.storageManager, this, enumEntriesCanBeUsed)
         } else {

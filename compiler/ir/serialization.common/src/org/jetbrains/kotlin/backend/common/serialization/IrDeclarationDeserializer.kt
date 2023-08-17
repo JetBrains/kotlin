@@ -374,6 +374,7 @@ class IrDeclarationDeserializer(
                     isValue = flags.isValue,
                     isExpect = flags.isExpect,
                     isFun = flags.isFun,
+                    hasEnumEntries = flags.hasEnumEntries,
                 )
             }.usingParent {
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, true)

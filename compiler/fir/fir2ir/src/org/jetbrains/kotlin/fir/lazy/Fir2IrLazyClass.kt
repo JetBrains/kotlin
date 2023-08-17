@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
+import org.jetbrains.kotlin.fir.hasEnumEntries
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -107,6 +108,10 @@ class Fir2IrLazyClass(
 
     override var isFun: Boolean
         get() = fir.isFun
+        set(_) = mutationNotSupported()
+
+    override var hasEnumEntries: Boolean
+        get() = fir.hasEnumEntries
         set(_) = mutationNotSupported()
 
     override var superTypes: List<IrType> by lazyVar(lock) {

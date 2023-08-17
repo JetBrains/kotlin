@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -157,6 +159,7 @@ open class DeepCopyIrTreeWithSymbols(
             isValue = declaration.isValue,
             isExpect = declaration.isExpect,
             isFun = declaration.isFun,
+            hasEnumEntries = declaration.hasEnumEntries,
         ).apply {
             transformAnnotations(declaration)
             copyTypeParametersFrom(declaration)
