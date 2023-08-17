@@ -3718,6 +3718,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("referenceToTypealiasConstructorInLet.kt")
+        public void testReferenceToTypealiasConstructorInLet() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/referenceToTypealiasConstructorInLet.kt");
+        }
+
+        @Test
         @TestMetadata("staticMethod.kt")
         public void testStaticMethod() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/staticMethod.kt");

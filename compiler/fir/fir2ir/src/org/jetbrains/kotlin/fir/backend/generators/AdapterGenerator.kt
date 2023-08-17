@@ -87,10 +87,12 @@ internal class AdapterGenerator(
     internal fun needToGenerateAdaptedCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
         type: IrSimpleType,
-        function: IrFunction
-    ): Boolean =
-        needSuspendConversion(type, function) || needCoercionToUnit(type, function) ||
+        function: FirFunction
+    ): Boolean {
+        return needSuspendConversion(type, function) ||
+                needCoercionToUnit(type, function) ||
                 hasVarargOrDefaultArguments(callableReferenceAccess)
+    }
 
     /**
      * For example,
@@ -100,8 +102,9 @@ internal class AdapterGenerator(
      *
      * At the use site, instead of referenced, we can put the suspend lambda as an adapter.
      */
-    private fun needSuspendConversion(type: IrSimpleType, function: IrFunction): Boolean =
-        type.isSuspendFunction() && !function.isSuspend
+    private fun needSuspendConversion(type: IrSimpleType, function: FirFunction): Boolean {
+        return type.isSuspendFunction() && !function.isSuspend
+    }
 
     /**
      * For example,
@@ -111,12 +114,12 @@ internal class AdapterGenerator(
      *
      * At the use site, instead of referenced, we can put the adapter: { ... -> referenced(...) }
      */
-    private fun needCoercionToUnit(type: IrSimpleType, function: IrFunction): Boolean {
+    private fun needCoercionToUnit(type: IrSimpleType, function: FirFunction): Boolean {
         val expectedReturnType = type.arguments.last().typeOrNull
-        val actualReturnType = function.returnType
+        val actualReturnType = function.returnTypeRef.coneType
         return expectedReturnType?.isUnit() == true &&
                 // In case of an external function whose return type is a type parameter, e.g., operator fun <T, R> invoke(T): R
-                !actualReturnType.isUnit() && !actualReturnType.isTypeParameter()
+                !actualReturnType.isUnit && actualReturnType.toSymbol(components.session) !is FirTypeParameterSymbol
     }
 
     /**

@@ -3256,6 +3256,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/callableReference/referenceToGenericSyntheticProperty.kt");
         }
 
+        @TestMetadata("referenceToTypealiasConstructorInLet.kt")
+        public void testReferenceToTypealiasConstructorInLet() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/referenceToTypealiasConstructorInLet.kt");
+        }
+
         @TestMetadata("staticMethod.kt")
         public void testStaticMethod() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/staticMethod.kt");

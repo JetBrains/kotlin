@@ -814,3 +814,38 @@ fun FirExpression.asCompileTimeIrInitializer(components: Fir2IrComponents): IrEx
         else -> null
     }
 }
+
+/**
+ * Note: for componentN call, we have to change the type here (to the original component type) to keep compatibility with PSI2IR
+ * Some backend optimizations related to withIndex() probably depend on this type: index should always be Int
+ * See e.g. forInStringWithIndexWithExplicitlyTypedIndexVariable.kt from codegen box tests
+ *
+ * [predefinedType] is needed for case, when this function is used to convert some variable access, and
+ *   default IR type, for it is already known
+ *   It's not correct to always use converted [this.returnTypeRef] in one particular case:
+ *
+ * val <T> T.some: T
+ *     get() = ...
+ *     set(value) {
+ *         field = value <----
+ *     }
+ *
+ *  Here `value` has type `T`. In FIR there is one type parameter `T` for the whole property
+ *  But in IR we have different type parameters for getter and setter. And by default `toIrType()` transforms
+ *    `T` as type parameter of getter, but here we are in context of the setter. And in CallAndReferenceGenerator.convertToIrCall
+ *    we already know that `value` should have type `T[set-some]`, so this type is provided as [predefinedType]
+ *
+ *  The alternative could be to determine outside that we are in scope of setter and pass type origin, but it's
+ *    much more complicated and messy
+ */
+context(Fir2IrComponents)
+internal fun FirVariable.irTypeForPotentiallyComponentCall(predefinedType: IrType? = null): IrType {
+    val typeRef = when (val initializer = initializer) {
+        is FirComponentCall -> initializer.resolvedType
+        else -> {
+            if (predefinedType != null) return predefinedType
+            this.returnTypeRef.coneType
+        }
+    }
+    return typeRef.toIrType(typeConverter)
+}

@@ -472,6 +472,20 @@ class IrBuiltInsOverFir(
         )
     }
 
+    fun getNonBuiltInFunctionsWithFirCounterpartByExtensionReceiver(
+        name: Name,
+        vararg packageNameSegments: String,
+    ): Map<IrClassifierSymbol, Pair<FirNamedFunctionSymbol, IrSimpleFunctionSymbol>> {
+        return getFunctionsByKey(
+            name,
+            *packageNameSegments,
+            mapKey = { symbol ->
+                with(components) { symbol.fir.receiverParameter?.typeRef?.toIrType(typeConverter)?.classifierOrNull }
+            },
+            mapValue = { firSymbol, irSymbol -> firSymbol to irSymbol }
+        )
+    }
+
     private val functionNMap = mutableMapOf<Int, IrClass>()
     private val kFunctionNMap = mutableMapOf<Int, IrClass>()
     private val suspendFunctionNMap = mutableMapOf<Int, IrClass>()
