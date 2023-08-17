@@ -3,10 +3,7 @@
 // IGNORE_BACKEND: JS, JVM
 // WITH_STDLIB
 
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-
 import kotlin.enums.*
-
 
 enum class EnumWithClash {
     values,

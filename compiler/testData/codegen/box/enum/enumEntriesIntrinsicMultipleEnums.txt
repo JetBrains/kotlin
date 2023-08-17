@@ -2,14 +2,12 @@ Module: lib
 @kotlin.Metadata
 public final enum class X {
     // source: 'X.kt'
-    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
     private synthetic final static field $VALUES: X[]
     public final enum static field X1: X
     public final enum static field X2: X
     private synthetic final static method $values(): X[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void
-    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
     public static method valueOf(p0: java.lang.String): X
     public static method values(): X[]
 }

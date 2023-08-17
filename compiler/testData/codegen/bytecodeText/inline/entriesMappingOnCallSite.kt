@@ -3,6 +3,7 @@
 // WITH_RUNTIME
 
 // MODULE: lib
+// !LANGUAGE: -EnumEntries
 // FILE: 1.kt
 
 enum class X {

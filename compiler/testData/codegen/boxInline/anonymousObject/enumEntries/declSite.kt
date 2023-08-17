@@ -2,6 +2,7 @@
 // WITH_STDLIB
 
 // MODULE: lib
+// !LANGUAGE: -EnumEntries
 // FILE: 1.kt
 
 package test
