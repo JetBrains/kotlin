@@ -211,8 +211,6 @@
                                         <pomExclude>test-enable-extensions/pom.xml</pomExclude>
                                         <pomExclude>test-kapt-allopen/pom.xml</pomExclude>
                                         <pomExclude>test-lombok-with-kapt/pom.xml</pomExclude>
-                                        <!-- exclude mpp -->
-                                        <pomExclude>test-multiplatform/pom.xml</pomExclude>
                                         <!-- exclude kts -->
                                         <pomExclude>test-helloworld-kts/pom.xml</pomExclude>
                                         <!-- exclude test, that depends on lv as they will be automatically fixed, when current lv goes to 2.0 -->
