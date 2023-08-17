@@ -525,6 +525,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
         }
 
         @Test
+        @TestMetadata("properLocalPackages.kt")
+        public void testProperLocalPackages() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/properLocalPackages.kt");
+        }
+
+        @Test
         @TestMetadata("propertyFromJavaPlusAssign.kt")
         public void testPropertyFromJavaPlusAssign() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/propertyFromJavaPlusAssign.kt");

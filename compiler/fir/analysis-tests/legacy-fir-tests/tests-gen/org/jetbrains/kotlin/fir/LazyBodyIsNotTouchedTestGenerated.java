@@ -444,6 +444,11 @@ public class LazyBodyIsNotTouchedTestGenerated extends AbstractLazyBodyIsNotTouc
         runTest("compiler/fir/analysis-tests/testData/resolve/problems2.kt");
     }
 
+    @TestMetadata("properLocalPackages.kt")
+    public void testProperLocalPackages() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/properLocalPackages.kt");
+    }
+
     @TestMetadata("propertyFromJavaPlusAssign.kt")
     public void testPropertyFromJavaPlusAssign() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/propertyFromJavaPlusAssign.kt");
