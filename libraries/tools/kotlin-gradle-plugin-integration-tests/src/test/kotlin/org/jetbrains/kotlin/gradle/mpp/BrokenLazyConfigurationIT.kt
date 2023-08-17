@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.io.path.readText
-import kotlin.test.assertEquals
 
 @DisplayName("Broken task configuration avoidance doesn't lead to build failures at least with simple setups")
 class BrokenLazyConfigurationIT : KGPBaseTest() {
@@ -78,7 +76,6 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
         }
     }
 
-    @Disabled
     @MppGradlePluginTests
     @GradleTest
     @DisplayName("Changing build directory after task configuration doesn't lead to failures")

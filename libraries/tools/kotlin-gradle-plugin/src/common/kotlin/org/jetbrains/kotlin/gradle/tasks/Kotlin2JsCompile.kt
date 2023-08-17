@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_JS
 import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_UNZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_ZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
@@ -54,7 +55,7 @@ import javax.inject.Inject
 abstract class Kotlin2JsCompile @Inject constructor(
     override val compilerOptions: KotlinJsCompilerOptions,
     objectFactory: ObjectFactory,
-    workerExecutor: WorkerExecutor
+    workerExecutor: WorkerExecutor,
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
     KotlinCompilationTask<KotlinJsCompilerOptions>,
     UsesLibraryFilterCachingService,
@@ -329,7 +330,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 ClasspathChanges.NotAvailableForJSCompiler,
                 taskBuildCacheableOutputDirectory.get().asFile,
                 rootProjectDir = rootProjectDir,
-                buildDir = buildDir,
+                buildDir = projectLayout.buildDirectory.getFile(),
                 multiModuleICSettings = multiModuleICSettings,
                 preciseCompilationResultsBackup = preciseCompilationResultsBackup.get(),
                 keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory.get(),
@@ -353,7 +354,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
     }
 
     private val rootProjectDir = project.rootDir
-    private val buildDir = project.buildDir
 
     private fun validateOutputDirectory() {
         val outputFile = outputFileProperty.get()

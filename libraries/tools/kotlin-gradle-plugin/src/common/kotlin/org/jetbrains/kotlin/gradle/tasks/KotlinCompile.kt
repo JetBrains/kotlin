@@ -57,7 +57,7 @@ import javax.inject.Inject
 abstract class KotlinCompile @Inject constructor(
     final override val compilerOptions: KotlinJvmCompilerOptions,
     workerExecutor: WorkerExecutor,
-    objectFactory: ObjectFactory
+    objectFactory: ObjectFactory,
 ) : AbstractKotlinCompile<K2JVMCompilerArguments>(objectFactory, workerExecutor),
     K2MultiplatformCompilationTask,
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") KotlinJvmCompileDsl {
@@ -301,7 +301,6 @@ abstract class KotlinCompile @Inject constructor(
     }
 
     private val projectRootDir = project.rootDir
-    private val buildDir = project.buildDir
 
     override fun callCompilerAsync(
         args: K2JVMCompilerArguments,
@@ -313,8 +312,8 @@ abstract class KotlinCompile @Inject constructor(
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val gradleMessageCollector =
             GradleErrorMessageCollector(
-            gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger)
-        )
+                gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger)
+            )
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
 
@@ -325,7 +324,7 @@ abstract class KotlinCompile @Inject constructor(
                 classpathChanges = getClasspathChanges(inputChanges),
                 workingDir = taskBuildCacheableOutputDirectory.get().asFile,
                 rootProjectDir = projectRootDir,
-                buildDir = buildDir,
+                buildDir = projectLayout.buildDirectory.getFile(),
                 usePreciseJavaTracking = usePreciseJavaTracking,
                 disableMultiModuleIC = disableMultiModuleIC,
                 multiModuleICSettings = multiModuleICSettings,
