@@ -311,6 +311,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceResolveTestGenerate
     }
 
     @Test
+    @TestMetadata("InOperator.kt")
+    public void testInOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/InOperator.kt");
+    }
+
+    @Test
     @TestMetadata("InVaragReferenceInFunctionBody.kt")
     public void testInVaragReferenceInFunctionBody() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/InVaragReferenceInFunctionBody.kt");
@@ -371,6 +377,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceResolveTestGenerate
     }
 
     @Test
+    @TestMetadata("LabelsReturn.kt")
+    public void testLabelsReturn() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/LabelsReturn.kt");
+    }
+
+    @Test
     @TestMetadata("MultiDeclarationExtension.kt")
     public void testMultiDeclarationExtension() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/MultiDeclarationExtension.kt");
@@ -392,6 +404,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceResolveTestGenerate
     @TestMetadata("NotEqualsOperator.kt")
     public void testNotEqualsOperator() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/NotEqualsOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("NotInOperator.kt")
+    public void testNotInOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/NotInOperator.kt");
     }
 
     @Test

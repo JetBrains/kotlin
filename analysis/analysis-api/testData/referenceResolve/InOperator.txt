@@ -1,0 +1,2 @@
+Resolved to:
+0: (in Foo) operator fun contains(v: kotlin.Int): kotlin.Boolean
