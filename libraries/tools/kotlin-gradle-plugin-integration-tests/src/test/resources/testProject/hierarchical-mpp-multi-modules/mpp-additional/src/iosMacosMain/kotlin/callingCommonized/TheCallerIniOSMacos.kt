@@ -8,6 +8,7 @@ import platform.CoreFoundation.CFTypeID
 import platform.CoreFoundation.__CFByteOrder
 import platform.darwin.NSObject
 
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 class TheCallerIniOSMacos(p: NativePtr) {
     val eVal: CBLAS_TRANSPOSE = AtlasConj
 
