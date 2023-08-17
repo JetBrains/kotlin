@@ -28,6 +28,24 @@ class IncrementalCompilationContext(
      */
     val keepIncrementalCompilationCachesInMemory: Boolean = false,
 ) {
+    @Deprecated("This constructor is scheduled to be removed. KSP is using it")
+    constructor(
+        pathConverter: FileToPathConverter,
+        storeFullFqNamesInLookupCache: Boolean = false,
+        transaction: CompilationTransaction = NonRecoverableCompilationTransaction(),
+        reporter: ICReporter = DoNothingICReporter,
+        trackChangesInLookupCache: Boolean = false,
+        keepIncrementalCompilationCachesInMemory: Boolean = false,
+    ) : this(
+        pathConverter,
+        pathConverter,
+        storeFullFqNamesInLookupCache,
+        transaction,
+        reporter,
+        trackChangesInLookupCache,
+        keepIncrementalCompilationCachesInMemory
+    )
+
     // FIXME: Remove `pathConverter` and require its users to decide whether to use `pathConverterForSourceFiles` or
     // `pathConverterForClassFiles`
     val pathConverter = pathConverterForSourceFiles
