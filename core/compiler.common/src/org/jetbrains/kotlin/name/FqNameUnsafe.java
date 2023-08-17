@@ -44,17 +44,15 @@ public final class FqNameUnsafe {
 
     // cache
     private transient FqNameUnsafe parent;
-    private transient Name shortName;
 
 
     public FqNameUnsafe(@NotNull String fqName) {
         this.fqName = fqName;
     }
 
-    private FqNameUnsafe(@NotNull String fqName, FqNameUnsafe parent, Name shortName) {
+    private FqNameUnsafe(@NotNull String fqName, FqNameUnsafe parent) {
         this.fqName = fqName;
         this.parent = parent;
-        this.shortName = shortName;
     }
 
     public static boolean isValid(@Nullable String qualifiedName) {
@@ -65,11 +63,9 @@ public final class FqNameUnsafe {
     private void compute() {
         int lastDot = fqName.lastIndexOf('.');
         if (lastDot >= 0) {
-            shortName = Name.guessByFirstCharacter(fqName.substring(lastDot + 1));
             parent = new FqNameUnsafe(fqName.substring(0, lastDot));
         }
         else {
-            shortName = Name.guessByFirstCharacter(fqName);
             parent = FqName.ROOT.toUnsafe();
         }
     }
@@ -116,22 +112,22 @@ public final class FqNameUnsafe {
         else {
             childFqName = fqName + "." + name.asString();
         }
-        return new FqNameUnsafe(childFqName, this, name);
+        return new FqNameUnsafe(childFqName, this);
     }
 
     @NotNull
     public Name shortName() {
-        if (shortName != null) {
-            return shortName;
-        }
-
         if (isRoot()) {
             throw new IllegalStateException("root");
         }
 
-        compute();
-
-        return shortName;
+        int lastDot = fqName.lastIndexOf('.');
+        if (lastDot >= 0) {
+            return Name.guessByFirstCharacter(fqName.substring(lastDot + 1));
+        }
+        else {
+            return Name.guessByFirstCharacter(fqName);
+        }
     }
 
     @NotNull
@@ -173,7 +169,7 @@ public final class FqNameUnsafe {
 
     @NotNull
     public static FqNameUnsafe topLevel(@NotNull Name shortName) {
-        return new FqNameUnsafe(shortName.asString(), FqName.ROOT.toUnsafe(), shortName);
+        return new FqNameUnsafe(shortName.asString(), FqName.ROOT.toUnsafe());
     }
 
     @Override
