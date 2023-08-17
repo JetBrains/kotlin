@@ -21,7 +21,7 @@ abstract class AbstractCodeFragmentInBlockModificationTest : AbstractLowLevelApi
 
         assertNull(targetElement.getNonLocalReanalyzableContainingDeclaration())
 
-        val (before, after) = testInBlockModification(ktCodeFragment, ktCodeFragment, testServices)
+        val (before, after) = testInBlockModification(ktCodeFragment, ktCodeFragment, testServices, dumpFirFile = false)
         val actualText = "BEFORE MODIFICATION:\n$before\nAFTER MODIFICATION:\n$after"
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actualText)

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleRe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeClassResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeFileResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyResolverRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.withOnAirDesignation
@@ -43,7 +42,14 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         toPhase: FirResolvePhase,
     ) {
         val fromPhase = target.resolvePhase
-        if (fromPhase >= toPhase) return
+
+        /**
+         * Currently [lazyResolve] on file means [LLFirWholeFileResolveTarget], but also [FirFile] itself
+         * has [resolvePhase] which does not match with the entire file resolution state.
+         * This additional [FirFile] condition can be dropped after KT-61296
+         */
+        if (target !is FirFile && fromPhase >= toPhase) return
+
         try {
             resolveContainingFileToImports(target)
             if (toPhase == FirResolvePhase.IMPORTS) return
