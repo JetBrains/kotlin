@@ -93,7 +93,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             fields from functionCall
         }
 
-        for (constructorType in listOf("FirPrimaryConstructor", "FirConstructorImpl", "FirErrorConstructor")) {
+        for (constructorType in listOf("FirPrimaryConstructor", "FirConstructorImpl")) {
             builder(constructor, constructorType) {
                 parents += abstractConstructorBuilder
                 defaultNull("delegatedConstructor")
@@ -101,6 +101,14 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
                 default("contractDescription", "FirEmptyContractDescription")
                 useTypes(emptyContractDescriptionType)
             }
+        }
+
+        builder(errorPrimaryConstructor) {
+            parents += abstractConstructorBuilder
+            defaultNull("delegatedConstructor")
+            defaultNull("body")
+            default("contractDescription", "FirEmptyContractDescription")
+            useTypes(emptyContractDescriptionType)
         }
 
         builder(constructor, "FirConstructorImpl") {

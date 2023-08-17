@@ -26,9 +26,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultTrue("isPrimary", withGetter = true)
         }
 
-        impl(constructor, "FirErrorConstructor") {
+        impl(errorPrimaryConstructor) {
             publicImplementation()
-            defaultFalse("isPrimary", withGetter = true)
+            defaultTrue("isPrimary", withGetter = true)
         }
 
         impl(outerClassTypeParameterRef) {

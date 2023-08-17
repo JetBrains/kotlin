@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirErrorPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
@@ -41,7 +43,8 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker() {
 
         val primaryConstructorSymbol = declaration.primaryConstructorIfAny(context.session)
 
-        if (primaryConstructorSymbol == null) {
+        @OptIn(SymbolInternals::class)
+        if (primaryConstructorSymbol == null || primaryConstructorSymbol.fir is FirErrorPrimaryConstructor) {
             checkSupertypeInitializedWithoutPrimaryConstructor(declaration, reporter, context)
         } else {
             checkSuperTypeNotInitialized(primaryConstructorSymbol, declaration, context, reporter)
