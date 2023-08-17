@@ -96,7 +96,7 @@ FILE fqName:<root> fileName:/1.kt
               $receiver: CLASS_REFERENCE 'CLASS CLASS name:MyClass1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.MyClass1>
             p0: CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.JavaAnn> origin=GET_PROPERTY
               <T>: <root>.JavaAnn
-              $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:FINAL visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
+              $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:OPEN visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -146,7 +146,7 @@ FILE fqName:<root> fileName:/1.kt
               $receiver: CLASS_REFERENCE 'CLASS CLASS name:MyClass2 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.MyClass2>
             p0: CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.JavaAnn> origin=GET_PROPERTY
               <T>: <root>.JavaAnn
-              $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:FINAL visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
+              $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:OPEN visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -196,7 +196,7 @@ FILE fqName:<root> fileName:/1.kt
               $receiver: CLASS_REFERENCE 'CLASS CLASS name:MyClass3 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.MyClass3>
             p0: CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.JavaAnn> origin=GET_PROPERTY
               <T>: <root>.JavaAnn
-              $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:FINAL visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
+              $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:OPEN visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -232,7 +232,7 @@ FILE fqName:<root> fileName:/1.kt
               $receiver: CLASS_REFERENCE 'CLASS CLASS name:MyClass4 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.MyClass4>
             p0: CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.JavaAnn> origin=GET_PROPERTY
               <T>: <root>.JavaAnn
-              $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:FINAL visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
+              $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:OPEN visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ

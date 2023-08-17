@@ -65,7 +65,7 @@ class Fir2IrLazyClass(
         set(_) = mutationNotSupported()
 
     override var modality: Modality
-        get() = fir.modality!!
+        get() = if (fir.classKind.isAnnotationClass) Modality.OPEN else fir.modality!!
         set(_) = mutationNotSupported()
 
     override var attributeOwnerId: IrAttributeContainer
