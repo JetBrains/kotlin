@@ -66,7 +66,6 @@ dependencies {
     commonCompileOnly(project(":kotlin-daemon-client"))
     commonCompileOnly(project(":kotlin-gradle-compiler-types"))
     commonCompileOnly(project(":kotlin-compiler-runner-unshaded"))
-    commonCompileOnly(project(":kotlin-scripting-compiler"))
     commonCompileOnly(project(":kotlin-gradle-statistics"))
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
     commonCompileOnly("com.android.tools.build:gradle:4.2.2") {
@@ -111,8 +110,6 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-build-common")
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")
     }
-    commonRuntimeOnly(project(":kotlin-scripting-compiler-embeddable"))
-    commonRuntimeOnly(project(":kotlin-scripting-compiler-impl-embeddable"))
     commonRuntimeOnly(project(":kotlin-util-klib"))
     commonRuntimeOnly(project(":prepare:kotlin-gradle-plugin-compiler-dependencies"))
 
