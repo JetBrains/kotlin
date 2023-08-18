@@ -85,12 +85,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
 
     // Generate delegated members for [subClass]. The synthetic field [irField] has the super interface type.
     fun generate(irField: IrField, firField: FirField, firSubClass: FirClass, subClass: IrClass) {
-        val subClassScope = firSubClass.unsubstitutedScope(
-            session,
-            scopeSession,
-            withForcedTypeCalculator = false,
-            memberRequiredPhase = null,
-        )
+        val subClassScope = firSubClass.unsubstitutedScope()
 
         val delegateToScope = firField.initializer!!.resolvedType
             .fullyExpandedType(session)

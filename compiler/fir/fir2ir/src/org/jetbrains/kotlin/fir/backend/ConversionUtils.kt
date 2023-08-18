@@ -39,8 +39,10 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -407,7 +409,7 @@ internal fun FirSimpleFunction.processOverriddenFunctionSymbols(
     containingClass: FirClass,
     processor: (FirNamedFunctionSymbol) -> Unit
 ) {
-    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
+    val scope = containingClass.unsubstitutedScope()
     scope.processFunctionsByName(name) {}
     scope.processOverriddenFunctionsFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
         if (!session.visibilityChecker.isVisibleForOverriding(
@@ -483,7 +485,7 @@ internal fun FirProperty.processOverriddenPropertySymbols(
     containingClass: FirClass,
     processor: (FirPropertySymbol) -> Unit
 ): List<IrPropertySymbol> {
-    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
+    val scope = containingClass.unsubstitutedScope()
     scope.processPropertiesByName(name) {}
     val overriddenSet = mutableSetOf<IrPropertySymbol>()
     scope.processOverriddenPropertiesFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
@@ -519,7 +521,7 @@ internal fun FirProperty.generateOverriddenPropertySymbols(containingClass: FirC
 context(Fir2IrComponents)
 @OptIn(IrSymbolInternals::class)
 internal fun FirProperty.generateOverriddenAccessorSymbols(containingClass: FirClass, isGetter: Boolean): List<IrSimpleFunctionSymbol> {
-    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
+    val scope = containingClass.unsubstitutedScope()
     scope.processPropertiesByName(name) {}
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
     val superClasses = containingClass.getSuperTypesAsIrClasses() ?: return emptyList()
@@ -855,3 +857,23 @@ internal val FirValueParameter.varargElementType: ConeKotlinType?
         if (!isVararg) return null
         return returnTypeRef.coneType.arrayElementType()
     }
+
+context(Fir2IrComponents)
+internal fun FirClassSymbol<*>.unsubstitutedScope(): FirTypeScope {
+    return this.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
+}
+
+context(Fir2IrComponents)
+internal fun FirClass.unsubstitutedScope(): FirTypeScope {
+    return symbol.unsubstitutedScope()
+}
+
+context(Fir2IrComponents)
+internal fun FirClassSymbol<*>.declaredScope(): FirContainingNamesAwareScope {
+    return this.declaredMemberScope(session, memberRequiredPhase = null)
+}
+
+context(Fir2IrComponents)
+internal fun FirClass.declaredScope(): FirContainingNamesAwareScope {
+    return symbol.declaredScope()
+}

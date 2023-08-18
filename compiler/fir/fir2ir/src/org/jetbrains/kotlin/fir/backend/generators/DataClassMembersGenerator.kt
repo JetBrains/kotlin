@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
+import org.jetbrains.kotlin.fir.backend.unsubstitutedScope
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getProperties
-import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.coneType
@@ -125,9 +123,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     // scope of kotlin.Nothing is empty, so we need to search for `hashCode` in scope of kotlin.Any
                     return getHashCodeFunction(session.builtinTypes.anyType.type.toRegularClassSymbol(session)!!.fir)
                 }
-                val scope = klass.symbol.unsubstitutedScope(
-                    session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null
-                )
+                val scope = klass.symbol.unsubstitutedScope()
                 return scope.getFunctions(HASHCODE_NAME).first { symbol ->
                     val function = symbol.fir
                     function.valueParameters.isEmpty() && function.receiverParameter == null && function.contextReceivers.isEmpty()
@@ -159,7 +155,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             }
 
             override fun getHashCodeFunctionInfo(property: IrProperty): HashCodeFunctionInfo {
-                val firProperty = klass.symbol.declaredMemberScope(session, memberRequiredPhase = null)
+                val firProperty = klass.symbol.declaredScope()
                     .getProperties(property.name)
                     .first { (it as FirPropertySymbol).fromPrimaryConstructor } as FirPropertySymbol
 
@@ -257,12 +253,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
         }
 
         private fun calculateSyntheticFirFunctions(): Map<Name, FirSimpleFunction> {
-            val scope = klass.unsubstitutedScope(
-                components.session,
-                components.scopeSession,
-                withForcedTypeCalculator = true,
-                memberRequiredPhase = null,
-            )
+            val scope = klass.unsubstitutedScope()
             val contributedSyntheticFunctions =
                 buildMap<Name, FirSimpleFunction> {
                     for (name in listOf(EQUALS, HASHCODE_NAME, TO_STRING)) {

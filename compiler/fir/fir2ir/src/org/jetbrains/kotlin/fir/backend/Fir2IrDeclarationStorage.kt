@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -225,7 +224,7 @@ class Fir2IrDeclarationStorage(
                 else -> {}
             }
         }
-        val scope = firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
+        val scope = firClass.unsubstitutedScope()
         scope.getCallableNames().forEach { callableName ->
             buildList {
                 fakeOverrideGenerator.generateFakeOverridesForName(

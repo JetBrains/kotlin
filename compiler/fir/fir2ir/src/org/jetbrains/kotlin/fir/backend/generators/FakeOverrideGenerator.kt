@@ -61,12 +61,7 @@ class FakeOverrideGenerator(
 
     private fun IrClass.getFakeOverrides(klass: FirClass, realDeclarations: Collection<FirDeclaration>): List<IrDeclaration> {
         val result = mutableListOf<IrDeclaration>()
-        val useSiteMemberScope = klass.unsubstitutedScope(
-            session,
-            scopeSession,
-            withForcedTypeCalculator = true,
-            memberRequiredPhase = null,
-        )
+        val useSiteMemberScope = klass.unsubstitutedScope()
 
         val superTypesCallableNames = useSiteMemberScope.getCallableNames()
         val realDeclarationSymbols = realDeclarations.mapTo(mutableSetOf(), FirDeclaration::symbol)
@@ -82,12 +77,7 @@ class FakeOverrideGenerator(
         name: Name,
         firClass: FirClass
     ): List<IrDeclaration> = buildList {
-        val useSiteMemberScope = firClass.unsubstitutedScope(
-            session,
-            scopeSession,
-            withForcedTypeCalculator = true,
-            memberRequiredPhase = null,
-        )
+        val useSiteMemberScope = firClass.unsubstitutedScope()
 
         generateFakeOverridesForName(
             irClass, useSiteMemberScope, name, firClass, this,
@@ -220,7 +210,7 @@ class FakeOverrideGenerator(
         fakeOverride: IrSimpleFunction,
         originalSymbol: FirNamedFunctionSymbol,
     ) {
-        val scope = klass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
+        val scope = klass.unsubstitutedScope()
         val classLookupTag = klass.symbol.toLookupTag()
         val baseFirSymbolsForFakeOverride =
             if (originalSymbol.shouldHaveComputedBaseSymbolsForClass(classLookupTag)) {

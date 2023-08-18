@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -38,7 +37,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -53,7 +52,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 class CallAndReferenceGenerator(
     private val components: Fir2IrComponents,
     private val visitor: Fir2IrVisitor,
-    private val conversionScope: Fir2IrConversionScope
+    private val conversionScope: Fir2IrConversionScope,
 ) : Fir2IrComponents by components {
 
     private val adapterGenerator = AdapterGenerator(components, conversionScope)
@@ -67,7 +66,7 @@ class CallAndReferenceGenerator(
     fun convertToIrCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
         explicitReceiverExpression: IrExpression?,
-        isDelegate: Boolean
+        isDelegate: Boolean,
     ): IrExpression {
         val type = approximateFunctionReferenceType(callableReferenceAccess.resolvedType).toIrType()
 
@@ -366,7 +365,7 @@ class CallAndReferenceGenerator(
         explicitReceiverExpression: IrExpression?,
         dynamicOperator: IrDynamicOperator? = null,
         variableAsFunctionMode: Boolean = false,
-        noArguments: Boolean = false
+        noArguments: Boolean = false,
     ): IrExpression {
         try {
             injectGetValueCall(qualifiedAccess, qualifiedAccess.calleeReference)?.let { return it }
@@ -721,12 +720,7 @@ class CallAndReferenceGenerator(
                     // Fallback for FirReferencePlaceholderForResolvedAnnotations from jar
                     val fir = coneType.lookupTag.toSymbol(session)?.fir as? FirClass
                     var constructorSymbol: FirConstructorSymbol? = null
-                    fir?.unsubstitutedScope(
-                        session,
-                        scopeSession,
-                        withForcedTypeCalculator = true,
-                        memberRequiredPhase = null,
-                    )?.processDeclaredConstructors {
+                    fir?.unsubstitutedScope()?.processDeclaredConstructors {
                         if (it.fir.isPrimary && constructorSymbol == null) {
                             constructorSymbol = it
                         }
@@ -765,9 +759,7 @@ class CallAndReferenceGenerator(
             annotationTypeRef = this@toAnnotationCall.annotationTypeRef
             val symbol = annotationTypeRef.coneType.fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol ?: return null
 
-            val constructorSymbol =
-                symbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
-                    .getDeclaredConstructors().firstOrNull() ?: return null
+            val constructorSymbol = symbol.unsubstitutedScope().getDeclaredConstructors().firstOrNull() ?: return null
 
             val argumentToParameterToMapping = constructorSymbol.valueParameterSymbols.mapNotNull {
                 val parameter = it.fir
@@ -788,7 +780,7 @@ class CallAndReferenceGenerator(
 
     internal fun convertToGetObject(
         qualifier: FirResolvedQualifier,
-        callableReferenceAccess: FirCallableReferenceAccess?
+        callableReferenceAccess: FirCallableReferenceAccess?,
     ): IrExpression? {
         val classSymbol = (qualifier.resolvedType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)
 
@@ -823,7 +815,7 @@ class CallAndReferenceGenerator(
     }
 
     private fun extractArgumentsMapping(
-        call: FirCall
+        call: FirCall,
     ): Triple<List<FirValueParameter>?, Map<FirExpression, FirValueParameter>?, ConeSubstitutor> {
         val calleeReference = when (call) {
             is FirFunctionCall -> call.calleeReference
@@ -987,7 +979,7 @@ class CallAndReferenceGenerator(
 
     private fun needArgumentReordering(
         parametersInActualOrder: Collection<FirValueParameter>,
-        valueParameters: List<FirValueParameter>
+        valueParameters: List<FirValueParameter>,
     ): Boolean {
         var lastValueParameterIndex = UNDEFINED_PARAMETER_INDEX
         for (parameter in parametersInActualOrder) {
@@ -1028,7 +1020,7 @@ class CallAndReferenceGenerator(
 
     private fun IrExpression.applyAssigningArrayElementsToVarargInNamedForm(
         argument: FirExpression,
-        parameter: FirValueParameter?
+        parameter: FirValueParameter?,
     ): IrExpression {
         if (this !is IrVarargImpl ||
             parameter?.isVararg != true ||
@@ -1051,7 +1043,7 @@ class CallAndReferenceGenerator(
 
     private fun IrExpression.applyImplicitIntegerCoercionIfNeeded(
         argument: FirExpression,
-        parameter: FirValueParameter?
+        parameter: FirValueParameter?,
     ): IrExpression {
         if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ImplicitSignedToUnsignedIntegerConversion)) return this
 
@@ -1291,7 +1283,7 @@ class CallAndReferenceGenerator(
         startOffset: Int,
         endOffset: Int,
         calleeReference: FirReference,
-        type: IrType? = null
+        type: IrType? = null,
     ): IrErrorCallExpression {
         return IrErrorCallExpressionImpl(
             startOffset, endOffset, type ?: createErrorType(),

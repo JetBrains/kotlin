@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.ir.declarations.*
@@ -87,12 +86,7 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
                     ?: return null
             }
             val classId = firClass.classId
-            val scope = firClass.unsubstitutedScope(
-                fir2IrComponents.session,
-                fir2IrComponents.scopeSession,
-                withForcedTypeCalculator = true,
-                memberRequiredPhase = null,
-            )
+            val scope = with(fir2IrComponents) { firClass.unsubstitutedScope() }
 
             when (kind) {
                 SymbolKind.CLASS_SYMBOL -> {

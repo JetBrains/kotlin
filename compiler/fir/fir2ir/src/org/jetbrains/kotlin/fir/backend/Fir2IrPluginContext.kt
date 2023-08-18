@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -133,14 +132,9 @@ class Fir2IrPluginContext(
                 ?.fullyExpandedClass(components.session)
                 ?: return emptyList()
 
-            expandedClass
-                .unsubstitutedScope(
-                    components.session,
-                    components.scopeSession,
-                    withForcedTypeCalculator = true,
-                    memberRequiredPhase = null,
-                )
-                .getCallablesFromScope()
+            with(components) {
+                expandedClass.unsubstitutedScope().getCallablesFromScope()
+            }
         } else {
             symbolProvider.getCallablesFromProvider()
         }
