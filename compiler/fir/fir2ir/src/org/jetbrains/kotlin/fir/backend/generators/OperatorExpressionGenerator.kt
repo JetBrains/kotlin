@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isNullable
@@ -17,9 +20,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.getSimpleFunction
+import org.jetbrains.kotlin.name.Name
 
 internal class OperatorExpressionGenerator(
     private val components: Fir2IrComponents,
@@ -236,7 +238,6 @@ internal class OperatorExpressionGenerator(
     private fun IrExpression.negate(origin: IrStatementOrigin) =
         primitiveOp1(startOffset, endOffset, irBuiltIns.booleanNotSymbol, irBuiltIns.booleanType, origin, this)
 
-    @OptIn(IrSymbolInternals::class)
     private fun FirExpression.convertToIrExpression(
         comparisonInfo: PrimitiveConeNumericComparisonInfo?,
         isLeftType: Boolean
@@ -285,14 +286,17 @@ internal class OperatorExpressionGenerator(
         val operandClassId = operandType.lookupTag.classId
         val targetClassId = targetType.lookupTag.classId
         if (operandClassId == targetClassId) return eraseImplicitCast()
-        val conversionFunction =
-            typeConverter.classIdToSymbolMap[operandClassId]?.getSimpleFunction("to${targetType.lookupTag.classId.shortClassName.asString()}")
-                ?: error("No conversion function for $operandType ~> $targetType")
+        val operandFirClass = session.symbolProvider.getRegularClassSymbolByClassId(operandClassId) ?: error("No symbol for $operandClassId")
+        val conversionFirFunction = operandFirClass.unsubstitutedScope()
+            .getFunctions(Name.identifier("to${targetType.lookupTag.classId.shortClassName.asString()}"))
+            .singleOrNull()
+            ?: error("No conversion function for $operandType ~> $targetType")
+        val conversionFunctionSymbol = declarationStorage.getIrFunctionSymbol(conversionFirFunction, operandFirClass.toLookupTag())
 
         val unsafeIrCall = IrCallImpl(
             irExpression.startOffset, irExpression.endOffset,
-            conversionFunction.owner.returnType,
-            conversionFunction,
+            conversionFirFunction.resolvedReturnType.toIrType(),
+            conversionFunctionSymbol as IrSimpleFunctionSymbol,
             valueArgumentsCount = 0,
             typeArgumentsCount = 0
         ).also {
