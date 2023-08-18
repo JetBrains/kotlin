@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-36188
 
 interface SomeRandomBase<K> {

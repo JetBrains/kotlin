@@ -13,5 +13,5 @@ open class Keker<P> {
 }
 
 class Implementation<P>() : Keker<P>(), SomeRandomOverride<P> {
-    override fun child(props: Int) {}
+    override fun child(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES!>props: Int<!>) {}
 }
