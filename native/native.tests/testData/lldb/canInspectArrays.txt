@@ -2,6 +2,6 @@
 > r
 > fr var
 (ObjHeader *) args = []
-(ObjHeader *) xs = [..., ..., ...]
-(ObjHeader *) ys = [..., ...]
+(ObjHeader *) xs = [: ..., : ..., : ...]
+(ObjHeader *) ys = [: ..., : ...]
 > q
