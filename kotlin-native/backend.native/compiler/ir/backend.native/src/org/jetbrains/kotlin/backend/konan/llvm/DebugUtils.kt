@@ -12,6 +12,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -170,6 +171,39 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
     fun subroutineType(llvmTargetData: LLVMTargetDataRef, types: List<IrType>): DISubroutineTypeRef = memScoped {
         DICreateSubroutineType(builder, allocArrayOf(types.map { it.diType(llvmTargetData) }), types.size)!!
     }
+
+    fun IrFile.diFileScope() = files.getOrPut(this.fileEntry.name) {
+        val path = this.fileEntry.name.toFileAndFolder(context.config)
+        DICreateFile(builder, path.file, path.folder)!!
+    }
+
+    fun IrFunction.diFunctionScope(
+            file: IrFile,
+            linkageName: String,
+            startLine: Int,
+            nodebug: Boolean,
+    ) = diFunctionScope(file, name.asString(), linkageName, startLine, subroutineType(llvmTargetData), nodebug)
+
+    fun diFunctionScope(
+            file: IrFile,
+            name: String,
+            linkageName: String,
+            startLine: Int,
+            subroutineType: DISubroutineTypeRef,
+            nodebug: Boolean,
+    ) = DICreateFunction(
+            builder = builder,
+            scope = compilationUnit,
+            name = (if (nodebug) "<NODEBUG>" else "") + name,
+            linkageName = linkageName,
+            file = file.diFileScope(),
+            lineNo = startLine,
+            type = subroutineType,
+            //TODO: need more investigations.
+            isLocal = 0,
+            isDefinition = 1,
+            scopeLine = 0
+    )!!
 
     private fun dwarfPointerType(type: DITypeOpaqueRef): DITypeOpaqueRef =
             DICreatePointerType(builder, type)!!.reinterpret()
