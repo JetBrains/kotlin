@@ -1849,6 +1849,26 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val valueParameter: KtSymbol
     }
 
+    interface MultipleDefaultsInheritedFromSupertypesDeprecationError : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = MultipleDefaultsInheritedFromSupertypesDeprecationError::class
+        val valueParameter: KtSymbol
+    }
+
+    interface MultipleDefaultsInheritedFromSupertypesDeprecationWarning : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = MultipleDefaultsInheritedFromSupertypesDeprecationWarning::class
+        val valueParameter: KtSymbol
+    }
+
+    interface MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideDeprecationError : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideDeprecationError::class
+        val valueParameter: KtSymbol
+    }
+
+    interface MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideDeprecationWarning : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideDeprecationWarning::class
+        val valueParameter: KtSymbol
+    }
+
     interface TypealiasExpandsToArrayOfNothings : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = TypealiasExpandsToArrayOfNothings::class
         val type: KtType

@@ -358,6 +358,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("falseNegativeDuplicateDefaultValues1_error.kt")
+        public void testFalseNegativeDuplicateDefaultValues1_error() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/falseNegativeDuplicateDefaultValues1_error.kt");
+        }
+
+        @Test
         @TestMetadata("falseNegativeDuplicateDefaultValues2.kt")
         public void testFalseNegativeDuplicateDefaultValues2() throws Exception {
             runTest("compiler/testData/diagnostics/tests/falseNegativeDuplicateDefaultValues2.kt");
@@ -754,9 +760,27 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("missingMultipleDefaultsOnTransitiveInheritance1.kt")
+        public void testMissingMultipleDefaultsOnTransitiveInheritance1() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/missingMultipleDefaultsOnTransitiveInheritance1.kt");
+        }
+
+        @Test
+        @TestMetadata("missingMultipleDefaultsOnTransitiveInheritance2.kt")
+        public void testMissingMultipleDefaultsOnTransitiveInheritance2() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/missingMultipleDefaultsOnTransitiveInheritance2.kt");
+        }
+
+        @Test
         @TestMetadata("missingWrongAnnotationTarget.kt")
         public void testMissingWrongAnnotationTarget() throws Exception {
             runTest("compiler/testData/diagnostics/tests/missingWrongAnnotationTarget.kt");
+        }
+
+        @Test
+        @TestMetadata("moreThanOneOverriddenMissingK2.kt")
+        public void testMoreThanOneOverriddenMissingK2() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/moreThanOneOverriddenMissingK2.kt");
         }
 
         @Test
@@ -769,6 +793,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         @TestMetadata("MultipleBounds.kt")
         public void testMultipleBounds() throws Exception {
             runTest("compiler/testData/diagnostics/tests/MultipleBounds.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleDefaultsIncorrectlyAllowed1.kt")
+        public void testMultipleDefaultsIncorrectlyAllowed1() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multipleDefaultsIncorrectlyAllowed1.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleDefaultsIncorrectlyAllowed2.kt")
+        public void testMultipleDefaultsIncorrectlyAllowed2() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multipleDefaultsIncorrectlyAllowed2.kt");
         }
 
         @Test

@@ -1,6 +1,4 @@
-// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6
-// IGNORE_BACKEND_K2: ANY
-// STATUS: This must be red code anyway, KT-36188
+// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6
 
 // The code in this test should be prohibited in the frontend, see KT-36188.
 
