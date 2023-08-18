@@ -23,6 +23,7 @@ import org.gradle.tooling.internal.consumer.ConnectorServices
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Paths
 import kotlin.test.assertTrue
@@ -159,6 +160,7 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
     @GradleWithJdkTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
     internal fun testCompilerRuntimeJdkToolchainIndependence(gradleVersion: GradleVersion, jdkVersion: JdkVersions.ProvidedJdk) {
+        assumeFalse(defaultBuildOptions.isK2ByDefault, "KT-58894")
         project(
             projectName = "kotlin-java-toolchain/onlyJdk11Compatible",
             gradleVersion = gradleVersion,
