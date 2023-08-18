@@ -182,6 +182,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
         if (processingClasspath.isEmpty()) {
             // Skip annotation processing if no annotation processors were provided
+            logger.info("No annotation processors provided. Skip KAPT processing.")
             return false
         }
 
