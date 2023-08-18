@@ -190,7 +190,7 @@ class Fir2IrImplicitCastInserter(
         (data as? IrContainerExpression)?.insertImplicitCasts() ?: data
 
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: IrElement): IrElement {
-        val irReturn = data as IrReturn
+        val irReturn = data as? IrReturn ?: return data
         val expectedType = returnExpression.target.labeledElement.returnTypeRef
         irReturn.value = irReturn.value.cast(returnExpression.result, returnExpression.result.typeRef, expectedType)
         return data

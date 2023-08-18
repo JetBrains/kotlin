@@ -498,9 +498,13 @@ class Fir2IrVisitor(
     // ==================================================================================
 
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: Any?): IrElement {
+        val result = returnExpression.result
+        if (result is FirThrowExpression) {
+            // Note: in FIR we must have 'return' as the last statement
+            return convertToIrExpression(result)
+        }
         val irTarget = conversionScope.returnTarget(returnExpression, declarationStorage)
         return returnExpression.convertWithOffsets { startOffset, endOffset ->
-            val result = returnExpression.result
             // For implicit returns, use the expression endOffset to generate the expected line number for debugging.
             val returnStartOffset = if (returnExpression.source?.kind is KtFakeSourceElementKind.ImplicitReturn) endOffset else startOffset
             IrReturnImpl(

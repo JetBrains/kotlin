@@ -1,5 +1,5 @@
 fun <T : Any?> magic(): T {
-  return throw Exception()
+  throw Exception()
 }
 
 fun <T : Any?> test(value: T, value2: T) {

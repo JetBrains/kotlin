@@ -124,9 +124,8 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                   public abstract fun next (): T of kotlin.collections.Iterator declared in kotlin.collections.Iterator
                 $this: VALUE_PARAMETER name:<this> type:<root>.EmptyArrayMap.iterator.<no name provided>
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='public open fun next (): kotlin.Nothing declared in <root>.EmptyArrayMap.iterator.<no name provided>'
-                    THROW type=kotlin.Nothing
-                      CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.NoSuchElementException' type=java.util.NoSuchElementException origin=null
+                  THROW type=kotlin.Nothing
+                    CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.NoSuchElementException' type=java.util.NoSuchElementException origin=null
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                 overridden:
                   public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.Iterator
