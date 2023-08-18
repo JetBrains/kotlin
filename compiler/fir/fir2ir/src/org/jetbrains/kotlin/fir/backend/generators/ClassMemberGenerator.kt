@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.ir.util.isSetter
@@ -99,7 +98,6 @@ internal class ClassMemberGenerator(
         declarationStorage.leaveScope(irClass)
     }
 
-    @OptIn(IrSymbolInternals::class)
     fun <T : IrFunction> convertFunctionContent(irFunction: T, firFunction: FirFunction?, containingClass: FirClass?): T {
         conversionScope.withParent(irFunction) {
             if (firFunction != null) {
@@ -173,8 +171,7 @@ internal class ClassMemberGenerator(
                 when {
                     // Create fake bodies for Enum.values/Enum.valueOf
                     irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> {
-                        val name = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.name ?: irFunction.name
-                        val kind = Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES.getValue(name)
+                        val kind = Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES.getValue(irFunction.name)
                         irFunction.body = IrSyntheticBodyImpl(startOffset, endOffset, kind)
                     }
                     irFunction.parent is IrClass && irFunction.parentAsClass.isData -> {
@@ -341,7 +338,6 @@ internal class ClassMemberGenerator(
         return this
     }
 
-    @OptIn(IrSymbolInternals::class)
     internal fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrExpression {
         val constructedIrType = constructedTypeRef.toIrType()
         val referencedSymbol = calleeReference.toResolvedConstructorSymbol()
@@ -389,7 +385,7 @@ internal class ClassMemberGenerator(
                     irBuiltIns.unitType,
                     irConstructorSymbol,
                     typeArgumentsCount = constructor.typeParameters.size,
-                    valueArgumentsCount = irConstructorSymbol.owner.valueParameters.size
+                    valueArgumentsCount = constructor.valueParameters.size + constructor.contextReceivers.size
                 )
             }.let {
                 if (constructor.typeParameters.isNotEmpty()) {
@@ -405,9 +401,9 @@ internal class ClassMemberGenerator(
                     it.dispatchReceiver = visitor.convertToIrExpression(firDispatchReceiver)
                 }
                 with(callGenerator) {
-                    declarationStorage.enterScope(irConstructorSymbol.owner)
+                    declarationStorage.enterScope(irConstructorSymbol)
                     val result = it.applyCallArguments(this@toIrDelegatingConstructorCall)
-                    declarationStorage.leaveScope(irConstructorSymbol.owner)
+                    declarationStorage.leaveScope(irConstructorSymbol)
                     result
                 }
             }

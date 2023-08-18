@@ -244,29 +244,37 @@ class Fir2IrDeclarationStorage(
     }
 
     fun enterScope(declaration: IrDeclaration) {
-        symbolTable.enterScope(declaration)
-        if (declaration is IrSimpleFunction ||
-            declaration is IrConstructor ||
-            declaration is IrAnonymousInitializer ||
-            declaration is IrProperty ||
-            declaration is IrEnumEntry ||
-            declaration is IrScript
+        enterScope(declaration.symbol)
+    }
+
+    fun leaveScope(declaration: IrDeclaration) {
+        leaveScope(declaration.symbol)
+    }
+
+    fun enterScope(symbol: IrSymbol) {
+        symbolTable.enterScope(symbol)
+        if (symbol is IrSimpleFunctionSymbol ||
+            symbol is IrConstructorSymbol ||
+            symbol is IrAnonymousInitializerSymbol ||
+            symbol is IrPropertySymbol ||
+            symbol is IrEnumEntrySymbol ||
+            symbol is IrScriptSymbol
         ) {
             localStorage.enterCallable()
         }
     }
 
-    fun leaveScope(declaration: IrDeclaration) {
-        if (declaration is IrSimpleFunction ||
-            declaration is IrConstructor ||
-            declaration is IrAnonymousInitializer ||
-            declaration is IrProperty ||
-            declaration is IrEnumEntry ||
-            declaration is IrScript
+    fun leaveScope(symbol: IrSymbol) {
+        if (symbol is IrSimpleFunctionSymbol ||
+            symbol is IrConstructorSymbol ||
+            symbol is IrAnonymousInitializerSymbol ||
+            symbol is IrPropertySymbol ||
+            symbol is IrEnumEntrySymbol ||
+            symbol is IrScriptSymbol
         ) {
             localStorage.leaveCallable()
         }
-        symbolTable.leaveScope(declaration)
+        symbolTable.leaveScope(symbol)
     }
 
     private fun FirTypeRef.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType =
@@ -2017,7 +2025,8 @@ class Fir2IrDeclarationStorage(
         internal val ENUM_SYNTHETIC_NAMES = mapOf(
             Name.identifier("values") to IrSyntheticBodyKind.ENUM_VALUES,
             Name.identifier("valueOf") to IrSyntheticBodyKind.ENUM_VALUEOF,
-            Name.identifier("entries") to IrSyntheticBodyKind.ENUM_ENTRIES
+            Name.identifier("entries") to IrSyntheticBodyKind.ENUM_ENTRIES,
+            Name.special("<get-entries>") to IrSyntheticBodyKind.ENUM_ENTRIES
         )
     }
 
