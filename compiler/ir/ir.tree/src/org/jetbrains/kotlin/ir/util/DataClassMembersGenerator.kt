@@ -234,11 +234,11 @@ abstract class DataClassMembersGenerator(
     protected open fun IrBuilderWithScope.shiftResultOfHashCode(irResultVar: IrVariable): IrExpression =
         irCallOp(context.irBuiltIns.intTimesSymbol, context.irBuiltIns.intType, irGet(irResultVar), irInt(31))
 
-    protected open fun getHashCodeOf(builder: IrBuilderWithScope, property: IrProperty, irValue: IrExpression) =
-        builder.getHashCodeOf(property.type, irValue)
+    protected open fun getHashCodeOf(builder: IrBuilderWithScope, property: IrProperty, irValue: IrExpression): IrExpression {
+        return builder.getHashCodeOf(getHashCodeFunctionInfo(property), irValue)
+    }
 
-    protected fun IrBuilderWithScope.getHashCodeOf(type: IrType, irValue: IrExpression): IrExpression {
-        val hashCodeFunctionInfo = getHashCodeFunctionInfo(type)
+    protected fun IrBuilderWithScope.getHashCodeOf(hashCodeFunctionInfo: HashCodeFunctionInfo, irValue: IrExpression): IrExpression {
         val hashCodeFunctionSymbol = hashCodeFunctionInfo.symbol
         val hasDispatchReceiver = hashCodeFunctionSymbol.hasDispatchReceiver()
         return irCall(
@@ -264,6 +264,10 @@ abstract class DataClassMembersGenerator(
     interface HashCodeFunctionInfo {
         val symbol: IrSimpleFunctionSymbol
         fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>)
+    }
+
+    open fun getHashCodeFunctionInfo(property: IrProperty): HashCodeFunctionInfo {
+        return getHashCodeFunctionInfo(property.type)
     }
 
     abstract fun getHashCodeFunctionInfo(type: IrType): HashCodeFunctionInfo

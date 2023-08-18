@@ -272,6 +272,10 @@ class AnnotationImplementationMemberGenerator(
         return irCallOp(context.irBuiltIns.intXorSymbol, context.irBuiltIns.intType, multiplied, propertyValueHashCode)
     }
 
+    private fun IrBuilderWithScope.getHashCodeOf(type: IrType, irValue: IrExpression): IrExpression {
+        return getHashCodeOf(getHashCodeFunctionInfo(type), irValue)
+    }
+
     // Manual implementation of equals is required for following reasons:
     // 1. `other` should be casted to interface instead of implementation
     // 2. Properties should be retrieved using getters without accessing backing fields
