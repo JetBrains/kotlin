@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.jvm.JvmCodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.jvm.TopPackageNamesProvider
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
-import javax.annotation.PostConstruct
 import javax.inject.Inject
 
 abstract class AbstractJavaClassFinder : JavaClassFinder {
@@ -54,7 +53,6 @@ abstract class AbstractJavaClassFinder : JavaClassFinder {
         this.project = project
     }
 
-    @PostConstruct
     open fun initialize(
         trace: BindingTrace,
         codeAnalyzer: KotlinCodeAnalyzer,
