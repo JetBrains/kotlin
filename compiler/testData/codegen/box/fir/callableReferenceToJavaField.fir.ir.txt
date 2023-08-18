@@ -46,8 +46,6 @@ FILE fqName:foo fileName:/main.kt
             <T0>: java.lang.reflect.Field
             arg0: CALL 'public final fun <get-javaField> (): java.lang.reflect.Field? declared in kotlin.reflect.jvm' type=java.lang.reflect.Field? origin=GET_PROPERTY
               $receiver: PROPERTY_REFERENCE 'protected/*protected and package*/ open a: @[FlexibleNullability] foo.A?' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] foo.A? visibility:protected/*protected and package*/' getter='protected/*protected and package*/ open fun <get-a> (): @[FlexibleNullability] foo.A? declared in bar.Base' setter='protected/*protected and package*/ open fun <set-a> (<set-?>: @[FlexibleNullability] foo.A?): kotlin.Unit declared in bar.Base' type=kotlin.reflect.KMutableProperty1<foo.Derived, @[FlexibleNullability] foo.A?> origin=null
-                <1>: <none>
-                <2>: <none>
           p0: GET_VAR '<this>: foo.Derived declared in foo.Derived.foo' type=foo.Derived origin=null
           p1: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in foo.A' type=foo.A origin=null
             s: CONST String type=kotlin.String value="OK"

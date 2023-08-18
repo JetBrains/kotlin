@@ -144,7 +144,7 @@ class CallAndReferenceGenerator(
                     IrPropertyReferenceImpl(
                         startOffset, endOffset, type,
                         propertySymbol,
-                        typeArgumentsCount = (type as? IrSimpleType)?.arguments?.size ?: 0,
+                        typeArgumentsCount = 0,
                         field = symbol,
                         getter = if (referencedField.isStatic) null else propertySymbol.owner.getter?.symbol,
                         setter = if (referencedField.isStatic) null else propertySymbol.owner.setter?.symbol,

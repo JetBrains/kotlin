@@ -20,7 +20,6 @@ FILE fqName:<root> fileName:/protectedJavaFieldRef.kt
       FIELD PROPERTY_BACKING_FIELD name:ref type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final]
         EXPRESSION_BODY
           PROPERTY_REFERENCE 'protected/*protected and package*/ open j: @[FlexibleNullability] kotlin.String?' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/' getter='protected/*protected and package*/ open fun <get-j> (): @[FlexibleNullability] kotlin.String? declared in p.Base' setter='protected/*protected and package*/ open fun <set-j> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in p.Base' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
-            <1>: <none>
             $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ref> visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?>
         correspondingProperty: PROPERTY name:ref visibility:public modality:FINAL [val]
