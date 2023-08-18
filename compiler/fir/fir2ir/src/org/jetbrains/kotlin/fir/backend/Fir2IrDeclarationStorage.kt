@@ -243,14 +243,6 @@ class Fir2IrDeclarationStorage(
         return fileCache[firFile]!!
     }
 
-    fun enterScope(declaration: IrDeclaration) {
-        enterScope(declaration.symbol)
-    }
-
-    fun leaveScope(declaration: IrDeclaration) {
-        leaveScope(declaration.symbol)
-    }
-
     fun enterScope(symbol: IrSymbol) {
         symbolTable.enterScope(symbol)
         if (symbol is IrSimpleFunctionSymbol ||
@@ -716,14 +708,14 @@ class Fir2IrDeclarationStorage(
                     containerSource = simpleFunction?.containerSource,
                 ).apply {
                     metadata = FirMetadataSource.Function(function)
-                    enterScope(this)
+                    enterScope(this.symbol)
                     bindAndDeclareParameters(
                         function, irParent,
                         thisReceiverOwner, isStatic = simpleFunction?.isStatic == true,
                         forSetter = false,
                     )
                     convertAnnotationsForNonDeclaredMembers(function, origin)
-                    leaveScope(this)
+                    leaveScope(this.symbol)
                 }
             }
             result
@@ -825,9 +817,9 @@ class Fir2IrDeclarationStorage(
                     // Add to cache before generating parameters to prevent an infinite loop when an annotation value parameter is annotated
                     // with the annotation itself.
                     constructorCache[constructor] = this
-                    enterScope(this)
+                    enterScope(this.symbol)
                     bindAndDeclareParameters(constructor, irParent, irParent, isStatic = false, forSetter = false)
-                    leaveScope(this)
+                    leaveScope(this.symbol)
                 }
             }
         }
@@ -915,7 +907,7 @@ class Fir2IrDeclarationStorage(
                 }
                 // NB: we should enter accessor' scope before declaring its parameters
                 // (both setter default and receiver ones, if any)
-                enterScope(this)
+                enterScope(this.symbol)
                 if (propertyAccessor == null && isSetter) {
                     declareDefaultSetterParameter(
                         property.returnTypeRef.toIrType(ConversionTypeOrigin.SETTER),
@@ -928,7 +920,7 @@ class Fir2IrDeclarationStorage(
                     forSetter = isSetter,
                     parentPropertyReceiver = property.receiverParameter,
                 )
-                leaveScope(this)
+                leaveScope(this.symbol)
                 if (irParent != null) {
                     parent = irParent
                 }
@@ -1114,7 +1106,7 @@ class Fir2IrDeclarationStorage(
                 ).apply {
                     metadata = FirMetadataSource.Property(property)
                     convertAnnotationsForNonDeclaredMembers(property, origin)
-                    enterScope(this)
+                    enterScope(this.symbol)
                     if (irParent != null) {
                         parent = irParent
                     }
@@ -1194,7 +1186,7 @@ class Fir2IrDeclarationStorage(
                             setterForPropertyCache[symbol] = it.symbol
                         }
                     }
-                    leaveScope(this)
+                    leaveScope(this.symbol)
                 }
             }
             if (property.isFakeOverride(fakeOverrideOwnerLookupTag)) {
@@ -1574,7 +1566,7 @@ class Fir2IrDeclarationStorage(
         }.apply {
             parent = irParent
             metadata = FirMetadataSource.Property(property)
-            enterScope(this)
+            enterScope(this.symbol)
             delegate = declareIrVariable(
                 startOffset, endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,
                 NameUtils.propertyDelegateName(property.name), property.delegate!!.resolvedType.toIrType(),
@@ -1598,7 +1590,7 @@ class Fir2IrDeclarationStorage(
                 }
             }
             annotationGenerator.generate(this, property)
-            leaveScope(this)
+            leaveScope(this.symbol)
         }
         localStorage.putDelegatedProperty(property, irProperty)
         return irProperty

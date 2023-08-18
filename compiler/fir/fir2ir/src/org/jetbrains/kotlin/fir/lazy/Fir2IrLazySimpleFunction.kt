@@ -66,7 +66,7 @@ class Fir2IrLazySimpleFunction(
     override var contextReceiverParametersCount: Int = fir.contextReceiversForFunctionOrContainingProperty().size
 
     override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
-        declarationStorage.enterScope(this)
+        declarationStorage.enterScope(this.symbol)
 
         buildList {
             declarationStorage.addContextReceiverParametersTo(
@@ -83,7 +83,7 @@ class Fir2IrLazySimpleFunction(
                 }
             }
         }.apply {
-            declarationStorage.leaveScope(this@Fir2IrLazySimpleFunction)
+            declarationStorage.leaveScope(this@Fir2IrLazySimpleFunction.symbol)
         }
     }
 

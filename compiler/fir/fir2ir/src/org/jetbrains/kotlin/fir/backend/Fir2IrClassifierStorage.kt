@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.addToStdlib.getOrPut
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -613,7 +612,7 @@ class Fir2IrClassifierStorage(
                     name = enumEntry.name,
                     symbol = symbol,
                 ).apply {
-                    declarationStorage.enterScope(this)
+                    declarationStorage.enterScope(this.symbol)
                     if (irParent != null) {
                         this.parent = irParent
                     }
@@ -626,7 +625,7 @@ class Fir2IrClassifierStorage(
                         )
                         this.correspondingClass = klass
                     }
-                    declarationStorage.leaveScope(this)
+                    declarationStorage.leaveScope(this.symbol)
                 }
             }
             enumEntryCache[enumEntry] = result

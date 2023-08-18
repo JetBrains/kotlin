@@ -84,12 +84,12 @@ class Fir2IrLazyConstructor(
         val containingClass = parent as? IrClass
         val outerClass = containingClass?.parentClassOrNull
         if (containingClass?.isInner == true && outerClass != null) {
-            declarationStorage.enterScope(this)
+            declarationStorage.enterScope(this.symbol)
             declareThisReceiverParameter(
                 thisType = outerClass.thisReceiver!!.type,
                 thisOrigin = origin
             ).apply {
-                declarationStorage.leaveScope(this@Fir2IrLazyConstructor)
+                declarationStorage.leaveScope(this@Fir2IrLazyConstructor.symbol)
             }
         } else null
     }
@@ -99,7 +99,7 @@ class Fir2IrLazyConstructor(
     override var contextReceiverParametersCount: Int = fir.contextReceivers.size
 
     override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
-        declarationStorage.enterScope(this)
+        declarationStorage.enterScope(this.symbol)
 
         buildList {
             declarationStorage.addContextReceiverParametersTo(
@@ -118,7 +118,7 @@ class Fir2IrLazyConstructor(
                 }
             }
         }.apply {
-            declarationStorage.leaveScope(this@Fir2IrLazyConstructor)
+            declarationStorage.leaveScope(this@Fir2IrLazyConstructor.symbol)
         }
     }
 

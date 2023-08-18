@@ -218,7 +218,7 @@ class Fir2IrConverter(
         // Add synthetic members *before* fake override generations.
         // Otherwise, redundant members, e.g., synthetic toString _and_ fake override toString, will be added.
         if (klass is FirRegularClass && irConstructor != null && (irClass.isValue || irClass.isData)) {
-            declarationStorage.enterScope(irConstructor)
+            declarationStorage.enterScope(irConstructor.symbol)
             val dataClassMembersGenerator = DataClassMembersGenerator(components)
             if (irClass.isSingleFieldValueClass) {
                 allDeclarations += dataClassMembersGenerator.generateSingleFieldValueClassMembers(klass, irClass)
@@ -229,7 +229,7 @@ class Fir2IrConverter(
             if (irClass.isData) {
                 allDeclarations += dataClassMembersGenerator.generateDataClassMembers(klass, irClass)
             }
-            declarationStorage.leaveScope(irConstructor)
+            declarationStorage.leaveScope(irConstructor.symbol)
         }
         with(fakeOverrideGenerator) {
             irClass.addFakeOverrides(klass, allDeclarations)
@@ -245,7 +245,7 @@ class Fir2IrConverter(
     ): IrClass {
         val conversionData = codeFragment.conversionData
 
-        declarationStorage.enterScope(irClass)
+        declarationStorage.enterScope(irClass.symbol)
 
         val signature = irClass.symbol.signature!!
 
@@ -321,7 +321,7 @@ class Fir2IrConverter(
         irClass.declarations.add(irPrimaryConstructor)
         irClass.declarations.add(irFragmentFunction)
 
-        declarationStorage.leaveScope(irClass)
+        declarationStorage.leaveScope(irClass.symbol)
         return irClass
     }
 
@@ -428,7 +428,7 @@ class Fir2IrConverter(
             is FirScript -> {
                 parent as IrFile
                 declarationStorage.getOrCreateIrScript(declaration).also { irScript ->
-                    declarationStorage.enterScope(irScript)
+                    declarationStorage.enterScope(irScript.symbol)
                     irScript.parent = parent
                     for (scriptStatement in declaration.statements) {
                         when (scriptStatement) {
@@ -445,7 +445,7 @@ class Fir2IrConverter(
                             processMemberDeclaration(scriptStatement, null, irScript)
                         }
                     }
-                    declarationStorage.leaveScope(irScript)
+                    declarationStorage.leaveScope(irScript.symbol)
                 }
             }
             is FirSimpleFunction -> {

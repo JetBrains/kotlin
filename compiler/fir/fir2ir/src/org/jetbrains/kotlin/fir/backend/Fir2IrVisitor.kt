@@ -142,7 +142,7 @@ class Fir2IrVisitor(
         val irParentEnumClass = irEnumEntry.parent as? IrClass
         // If the enum entry has its own members, we need to introduce a synthetic class.
         if (correspondingClass != null) {
-            declarationStorage.enterScope(irEnumEntry)
+            declarationStorage.enterScope(irEnumEntry.symbol)
             classifierStorage.putEnumEntryClassInScope(enumEntry, correspondingClass)
             val anonymousObject = (enumEntry.initializer as FirAnonymousObjectExpression).anonymousObject
             converter.processAnonymousObjectHeaders(anonymousObject, correspondingClass)
@@ -160,7 +160,7 @@ class Fir2IrVisitor(
                     )
                 )
             }
-            declarationStorage.leaveScope(irEnumEntry)
+            declarationStorage.leaveScope(irEnumEntry.symbol)
         } else if (initializer is FirAnonymousObjectExpression) {
             // Otherwise, this is a default-ish enum entry, which doesn't need its own synthetic class.
             // During raw FIR building, we put the delegated constructor call inside an anonymous object.
@@ -217,7 +217,7 @@ class Fir2IrVisitor(
     override fun visitScript(script: FirScript, data: Any?): IrElement {
         return declarationStorage.getCachedIrScript(script)!!.also { irScript ->
             irScript.parent = conversionScope.parentFromStack()
-            declarationStorage.enterScope(irScript)
+            declarationStorage.enterScope(irScript.symbol)
 
             irScript.explicitCallParameters = script.parameters.map { parameter ->
                 declarationStorage.createIrVariable(parameter, irScript, givenOrigin = IrDeclarationOrigin.SCRIPT_CALL_PARAMETER)
@@ -318,7 +318,7 @@ class Fir2IrVisitor(
                     irScript.configure(script) { declarationStorage.getCachedIrScript(it.fir)?.symbol }
                 }
             }
-            declarationStorage.leaveScope(irScript)
+            declarationStorage.leaveScope(irScript.symbol)
         }
     }
 
@@ -326,12 +326,12 @@ class Fir2IrVisitor(
         val irClass = classifierStorage.getCachedIrCodeFragment(codeFragment)!!
         val irFunction = irClass.declarations.firstIsInstance<IrSimpleFunction>()
 
-        declarationStorage.enterScope(irFunction)
+        declarationStorage.enterScope(irFunction.symbol)
         conversionScope.withParent(irFunction) {
             val irBlock = codeFragment.block.convertToIrBlock(forceUnitType = false)
             irFunction.body = irFactory.createExpressionBody(irBlock)
         }
-        declarationStorage.leaveScope(irFunction)
+        declarationStorage.leaveScope(irFunction.symbol)
 
         return irFunction
     }
@@ -384,9 +384,9 @@ class Fir2IrVisitor(
         data: Any?
     ): IrElement = whileAnalysing(session, anonymousInitializer) {
         val irAnonymousInitializer = declarationStorage.getCachedIrAnonymousInitializer(anonymousInitializer)!!
-        declarationStorage.enterScope(irAnonymousInitializer)
+        declarationStorage.enterScope(irAnonymousInitializer.symbol)
         irAnonymousInitializer.body = convertToIrBlockBody(anonymousInitializer.body!!)
-        declarationStorage.leaveScope(irAnonymousInitializer)
+        declarationStorage.leaveScope(irAnonymousInitializer.symbol)
         return irAnonymousInitializer
     }
 

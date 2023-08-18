@@ -77,7 +77,7 @@ class Fir2IrLazyPropertyAccessor(
     override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
         if (!isSetter && contextReceiverParametersCount == 0) emptyList()
         else {
-            declarationStorage.enterScope(this)
+            declarationStorage.enterScope(this.symbol)
 
             buildList {
                 declarationStorage.addContextReceiverParametersTo(
@@ -103,7 +103,7 @@ class Fir2IrLazyPropertyAccessor(
                     )
                 }
             }.apply {
-                declarationStorage.leaveScope(this@Fir2IrLazyPropertyAccessor)
+                declarationStorage.leaveScope(this@Fir2IrLazyPropertyAccessor.symbol)
             }
         }
     }

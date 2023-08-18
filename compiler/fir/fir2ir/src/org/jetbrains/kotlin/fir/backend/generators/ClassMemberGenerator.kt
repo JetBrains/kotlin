@@ -54,7 +54,7 @@ internal class ClassMemberGenerator(
     private fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T = conversionScope.applyParentFromStackTo(declaration)
 
     fun convertClassContent(irClass: IrClass, klass: FirClass): Unit = conversionScope.withContainingFirClass(klass) {
-        declarationStorage.enterScope(irClass)
+        declarationStorage.enterScope(irClass.symbol)
         conversionScope.withClass(irClass) {
             val allDeclarations = buildList {
                 addAll(klass.declarations)
@@ -68,7 +68,7 @@ internal class ClassMemberGenerator(
             val irPrimaryConstructor = primaryConstructor?.let { declarationStorage.getCachedIrConstructor(it)!! }
             if (irPrimaryConstructor != null) {
                 with(declarationStorage) {
-                    enterScope(irPrimaryConstructor)
+                    enterScope(irPrimaryConstructor.symbol)
                     irPrimaryConstructor.putParametersInScope(primaryConstructor)
                     convertFunctionContent(irPrimaryConstructor, primaryConstructor, containingClass = klass)
                 }
@@ -92,10 +92,10 @@ internal class ClassMemberGenerator(
             }
             annotationGenerator.generate(irClass, klass)
             if (irPrimaryConstructor != null) {
-                declarationStorage.leaveScope(irPrimaryConstructor)
+                declarationStorage.leaveScope(irPrimaryConstructor.symbol)
             }
         }
-        declarationStorage.leaveScope(irClass)
+        declarationStorage.leaveScope(irClass.symbol)
     }
 
     fun <T : IrFunction> convertFunctionContent(irFunction: T, firFunction: FirFunction?, containingClass: FirClass?): T {
@@ -104,7 +104,7 @@ internal class ClassMemberGenerator(
                 if (irFunction !is IrConstructor || !irFunction.isPrimary) {
                     // Scope for primary constructor should be entered before class declaration processing
                     with(declarationStorage) {
-                        enterScope(irFunction)
+                        enterScope(irFunction.symbol)
                         irFunction.putParametersInScope(firFunction)
                     }
                 }
@@ -194,7 +194,7 @@ internal class ClassMemberGenerator(
             }
             if (firFunction != null && (irFunction !is IrConstructor || !irFunction.isPrimary)) {
                 // Scope for primary constructor should be left after class declaration
-                declarationStorage.leaveScope(irFunction)
+                declarationStorage.leaveScope(irFunction.symbol)
             }
             if (irFunction is IrSimpleFunction && firFunction is FirSimpleFunction && containingClass != null) {
                 irFunction.overriddenSymbols = firFunction.generateOverriddenFunctionSymbols(containingClass)
@@ -241,12 +241,12 @@ internal class ClassMemberGenerator(
 
     fun convertFieldContent(irField: IrField, field: FirField): IrField {
         conversionScope.withParent(irField) {
-            declarationStorage.enterScope(irField)
+            declarationStorage.enterScope(irField.symbol)
             val initializerExpression = field.initializer
             if (irField.initializer == null && initializerExpression != null) {
                 irField.initializer = irFactory.createExpressionBody(visitor.convertToIrExpression(initializerExpression))
             }
-            declarationStorage.leaveScope(irField)
+            declarationStorage.leaveScope(irField.symbol)
         }
         return irField
     }
@@ -257,7 +257,7 @@ internal class ClassMemberGenerator(
     ) {
         val irField = backingField ?: return
         conversionScope.withParent(irField) {
-            declarationStorage.enterScope(this@initializeBackingField)
+            declarationStorage.enterScope(this@initializeBackingField.symbol)
             // NB: initializer can be already converted
             if (initializer == null && initializerExpression != null) {
                 initializer = irFactory.createExpressionBody(
@@ -277,7 +277,7 @@ internal class ClassMemberGenerator(
                     }
                 )
             }
-            declarationStorage.leaveScope(this@initializeBackingField)
+            declarationStorage.leaveScope(this@initializeBackingField.symbol)
         }
         property.backingField?.let { annotationGenerator.generate(irField, it) }
     }
@@ -296,7 +296,7 @@ internal class ClassMemberGenerator(
             convertFunctionContent(this, propertyAccessor, containingClass = null)
             if (isDefault) {
                 conversionScope.withParent(this) {
-                    declarationStorage.enterScope(this)
+                    declarationStorage.enterScope(this.symbol)
                     val backingField = correspondingProperty.backingField
                     val fieldSymbol = backingField?.symbol
                     val declaration = this
@@ -318,7 +318,7 @@ internal class ClassMemberGenerator(
                             )
                         )
                     }
-                    declarationStorage.leaveScope(this)
+                    declarationStorage.leaveScope(this.symbol)
                 }
             }
             if (containingClass != null) {
