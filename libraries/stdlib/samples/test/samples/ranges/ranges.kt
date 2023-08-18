@@ -54,32 +54,26 @@ class Ranges {
     }
 
     @Sample
-    fun intStep() {
-        val range = 1..6 step 2
-        assertPrints(range, "[1, 3, 5]")
-
-        assertTrue(1 in range)
-        assertFalse(2 in range)
-        assertTrue(3 in range)
+    fun stepInt() {
+        val ascendingProgression = 1..6 step 2
+        val descendingProgression = 6 downTo 1 step 2
+        assertPrints(ascendingProgression, "[1, 3, 5]")
+        assertPrints(descendingProgression, "[6, 4, 2]")
     }
 
     @Sample
-    fun longStep() {
-        val range = 1L..6L step 2L
-        assertPrints(range, "[1, 3, 5]")
-
-        assertTrue(1L in range)
-        assertFalse(2L in range)
-        assertTrue(3L in range)
+    fun stepLong() {
+        val ascendingProgression = 1L..6L step 2L
+        val descendingProgression = 6L downTo 1L step 2L
+        assertPrints(ascendingProgression, "[1, 3, 5]")
+        assertPrints(descendingProgression, "[6, 4, 2]")
     }
 
     @Sample
-    fun charStep() {
-        val range = 'a'..'e' step 2
-        assertPrints(range, "[a, c, e]")
-
-        assertTrue('a' in range)
-        assertFalse('b' in range)
-        assertTrue('c' in range)
+    fun stepChar() {
+        val ascendingProgression = 'a'..'f' step 2
+        val descendingProgression = 'f' downTo 'a' step 2
+        assertPrints(ascendingProgression, "[a, c, e]")
+        assertPrints(descendingProgression, "[f, d, b]")
     }
 }
