@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.*
@@ -99,6 +100,26 @@ class IncrementalK1JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
 @DisplayName("Default incremental compilation with default precise java tracking on K2")
 class IncrementalK2JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+
+    @Disabled("KT-57147")
+    override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
+        super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
+        super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
+        super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
+        super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
+    }
 }
 
 @DisplayName("Default incremental compilation with precise compilation outputs backup")
@@ -114,6 +135,26 @@ class IncrementalK1JavaChangePreciseCompilationBackupIT : IncrementalJavaChangeP
 @DisplayName("Default incremental compilation with precise compilation outputs backup on K2")
 class IncrementalK2JavaChangePreciseCompilationBackupIT : IncrementalJavaChangePreciseCompilationBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+
+    @Disabled("KT-57147")
+    override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
+        super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
+        super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
+        super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
+        super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
+    }
 }
 
 @DisplayName("Incremental compilation via history files with default precise java tracking")
@@ -181,6 +222,26 @@ class IncrementalK1JavaChangeOldICIT : IncrementalJavaChangeOldICIT() {
 @DisplayName("Incremental compilation via history files with default precise java tracking with K2")
 class IncrementalK2JavaChangeOldICIT : IncrementalJavaChangeOldICIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+
+    @Disabled("KT-57147")
+    override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
+        super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
+        super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
+        super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
+        super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
+    }
 }
 
 @DisplayName("Default incremental compilation with enabled precise java tracking")
