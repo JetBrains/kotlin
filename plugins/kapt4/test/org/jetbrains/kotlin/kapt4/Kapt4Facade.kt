@@ -13,16 +13,12 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementLifetim
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.findFacadeClass
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
-import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.test.KaptMessageCollectorProvider
 import org.jetbrains.kotlin.kapt3.test.kaptOptionsProvider
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
@@ -78,16 +74,6 @@ private fun run(
         buildKtModuleProviderByCompilerConfiguration(configuration)
     }
     val (module, psiFiles) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
-    val ktFiles = psiFiles.filterIsInstance<KtFile>()
-
-    val lightClasses = buildSet {
-        ktFiles.flatMapTo(this) { file ->
-            file.children.filterIsInstance<KtClassOrObject>().mapNotNull {
-                it.toLightClass()
-            }
-        }
-        ktFiles.mapNotNullTo(this) { ktFile -> ktFile.findFacadeClass() }.distinct()
-    }
 
     return KtAnalysisSessionProvider.getInstance(module.project).analyze(module) {
         val context = Kapt4ContextForStubGeneration(
@@ -95,7 +81,7 @@ private fun run(
             withJdk = false,
             WriterBackedKaptLogger(isVerbose = false),
             this@analyze,
-            lightClasses
+            psiFiles.filterIsInstance<KtFile>()
         )
         val generator = with(context) { Kapt4StubGenerator() }
         context to generator.generateStubs()
@@ -111,4 +97,3 @@ internal data class Kapt4ContextBinaryArtifact(
     override val kind: BinaryKind<Kapt4ContextBinaryArtifact>
         get() = Kind
 }
-

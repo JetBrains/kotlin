@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.asJava.findFacadeClass
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.base.kapt3.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
@@ -32,7 +30,6 @@ import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.prettyPrint
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.ServiceLoaderLite
 import java.io.File
@@ -57,7 +54,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             return false
         }
 
-        if (!optionsBuilder.checkOptions(logger, configuration)) return false
+        if (!optionsBuilder.checkAndUpdateOptions(logger, configuration)) return false
 
         val oldLanguageVersionSettings = configuration.languageVersionSettings
         val updatedConfiguration = configuration.copy().apply {
@@ -73,14 +70,13 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
         val standaloneAnalysisAPISession =
             buildStandaloneAnalysisAPISession(classLoader = Kapt4AnalysisHandlerExtension::class.java.classLoader) {
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION") // TODO: KT-61319 Kapt: remove usages of deprecated buildKtModuleProviderByCompilerConfiguration
                 buildKtModuleProviderByCompilerConfiguration(updatedConfiguration)
 
                 registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
             }
 
         val (module, psiFiles) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
-        val ktFiles = psiFiles.filterIsInstance<KtFile>()
 
         optionsBuilder.apply {
             projectBaseDir = projectBaseDir ?: module.project.basePath?.let(::File)
@@ -99,35 +95,23 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             logger.info(options.logString())
         }
 
+        var context: Kapt4ContextForStubGeneration? = null
         return try {
-            val lightClasses = buildSet {
-                ktFiles.flatMapTo(this) { file ->
-                    file.children.filterIsInstance<KtClassOrObject>().mapNotNull {
-                        it.toLightClass()
-                    }
-                }
-                ktFiles.mapNotNullTo(this) { ktFile -> ktFile.findFacadeClass() }.distinct()
-            }
-
             KtAnalysisSessionProvider.getInstance(module.project).analyze(module) {
-                val context = Kapt4ContextForStubGeneration(
-                    options,
-                    withJdk = false,
-                    logger,
-                    this,
-                    lightClasses
-                )
+                context = Kapt4ContextForStubGeneration(options, withJdk = false, logger, this, psiFiles.filterIsInstance<KtFile>())
 
-                if (options.mode != AptMode.APT_ONLY)
-                    generateStubs(context)
+                if (options.mode.generateStubs)
+                    generateStubs(context!!)
 
-                if (options.mode != AptMode.STUBS_ONLY)
-                    runProcessors(options, options.collectJavaSourceFiles(context.sourcesToReprocess), logger)
+                if (options.mode.runAnnotationProcessing)
+                    runProcessors(options, options.collectJavaSourceFiles(context!!.sourcesToReprocess), logger)
                 true
             }
         } catch (e: Exception) {
             logger.exception(e)
             false
+        } finally {
+            context?.close()
         }
     }
 
@@ -186,7 +170,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         }
     }
 
-    fun KaptOptions.Builder.checkOptions(logger: KaptLogger, configuration: CompilerConfiguration): Boolean {
+    private fun KaptOptions.Builder.checkAndUpdateOptions(logger: KaptLogger, configuration: CompilerConfiguration): Boolean {
         if (classesOutputDir == null) {
             if (configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
                 logger.error("Kapt does not support specifying JAR file outputs. Please specify the classes output directory explicitly.")
