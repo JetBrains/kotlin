@@ -35595,6 +35595,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("unresolvedVarargType.kt")
+            public void testUnresolvedVarargType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/unresolvedVarargType.kt");
+            }
+
+            @Test
             @TestMetadata("varargInSetter.kt")
             public void testVarargInSetter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/varargs/varargInSetter.kt");
