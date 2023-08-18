@@ -13,7 +13,7 @@ import kotlin.io.path.*
 import kotlin.test.assertTrue
 
 @DisplayName("Default incremental compilation with default precise java tracking")
-open class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = null) {
+abstract class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = null) {
 
     @DisplayName("Lib: tracked method signature ABI change")
     @GradleTest
@@ -91,13 +91,33 @@ open class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBas
     }
 }
 
+@DisplayName("Default incremental compilation with default precise java tracking on K1")
+class IncrementalK1JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+}
+
+@DisplayName("Default incremental compilation with default precise java tracking on K2")
+class IncrementalK2JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+}
+
 @DisplayName("Default incremental compilation with precise compilation outputs backup")
-open class IncrementalJavaChangePreciseCompilationBackupIT : IncrementalJavaChangeDefaultIT() {
+abstract class IncrementalJavaChangePreciseCompilationBackupIT : IncrementalJavaChangeDefaultIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
 }
 
-@DisplayName("Incremental compilation via classpath snapshots with default precise java tracking")
-class IncrementalJavaChangeOldICIT : IncrementalJavaChangeDefaultIT() {
+@DisplayName("Default incremental compilation with precise compilation outputs backup on K1")
+class IncrementalK1JavaChangePreciseCompilationBackupIT : IncrementalJavaChangePreciseCompilationBackupIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+}
+
+@DisplayName("Default incremental compilation with precise compilation outputs backup on K2")
+class IncrementalK2JavaChangePreciseCompilationBackupIT : IncrementalJavaChangePreciseCompilationBackupIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+}
+
+@DisplayName("Incremental compilation via history files with default precise java tracking")
+abstract class IncrementalJavaChangeOldICIT : IncrementalJavaChangeDefaultIT() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(useGradleClasspathSnapshot = false)
 
@@ -153,6 +173,16 @@ class IncrementalJavaChangeOldICIT : IncrementalJavaChangeDefaultIT() {
     }
 }
 
+@DisplayName("Incremental compilation via history files with default precise java tracking with K1")
+class IncrementalK1JavaChangeOldICIT : IncrementalJavaChangeOldICIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+}
+
+@DisplayName("Incremental compilation via history files with default precise java tracking with K2")
+class IncrementalK2JavaChangeOldICIT : IncrementalJavaChangeOldICIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+}
+
 @DisplayName("Default incremental compilation with enabled precise java tracking")
 class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(
     usePreciseJavaTracking = true
@@ -191,7 +221,7 @@ class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(
 }
 
 @DisplayName("Default incremental compilation with disabled precise java tracking")
-open class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaChangesBase(
+abstract class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaChangesBase(
     usePreciseJavaTracking = false
 ) {
     @DisplayName("Lib: tracked method signature ABI change")
@@ -237,9 +267,14 @@ open class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaCha
     }
 }
 
-@DisplayName("Default incremental compilation with disabled precise java tracking and enabled FIR")
-class IncrementalFirJavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(languageVersion = "2.0")
+@DisplayName("Default incremental compilation with disabled precise java tracking and enabled K1")
+class IncrementalK1JavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+}
+
+@DisplayName("Default incremental compilation with disabled precise java tracking and enabled K2")
+class IncrementalK2JavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
 
 @JvmGradlePluginTests

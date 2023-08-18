@@ -13,17 +13,14 @@ import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
-@JsGradlePluginTests
-open class KotlinJsIr10IncrementalGradlePluginIT : AbstractKotlinJsIncrementalGradlePluginIT(
-    irBackend = true
-)
-
-@JsGradlePluginTests
-class KotlinJsFirIncrementalGradlePluginIT : KotlinJsIr10IncrementalGradlePluginIT() {
+class KotlinJsIrK1IncrementalGradlePluginIT : AbstractKotlinJsIncrementalGradlePluginIT(irBackend = true) {
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(
-            languageVersion = "2.0"
-        )
+        get() = super.defaultBuildOptions.copyEnsuringK1()
+}
+
+class KotlinJsIrK2IncrementalGradlePluginIT : AbstractKotlinJsIncrementalGradlePluginIT(irBackend = true) {
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copyEnsuringK2()
 }
 
 @JsGradlePluginTests
