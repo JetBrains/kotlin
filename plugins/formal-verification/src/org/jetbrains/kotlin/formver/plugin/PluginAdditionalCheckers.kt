@@ -9,11 +9,18 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
+import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension.Factory
 
-class PluginAdditionalCheckers(session: FirSession) : FirAdditionalCheckersExtension(session) {
+class PluginAdditionalCheckers(session: FirSession, logLevel: LogLevel) : FirAdditionalCheckersExtension(session) {
+    companion object {
+        fun getFactory(logLevel: LogLevel): Factory {
+            return Factory { session -> PluginAdditionalCheckers(session, logLevel) }
+        }
+    }
+
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
-            get() = setOf(ViperPoweredDeclarationChecker(session))
+            get() = setOf(ViperPoweredDeclarationChecker(session, logLevel))
     }
 }
 

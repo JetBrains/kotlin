@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionSto
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.formver.plugin.FormalVerificationPluginExtensionRegistrar
+import org.jetbrains.kotlin.formver.plugin.LogLevel
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
-        FirExtensionRegistrarAdapter.registerExtension(FormalVerificationPluginExtensionRegistrar())
+        FirExtensionRegistrarAdapter.registerExtension(FormalVerificationPluginExtensionRegistrar(LogLevel.FULL_VIPER_DUMP))
     }
 }

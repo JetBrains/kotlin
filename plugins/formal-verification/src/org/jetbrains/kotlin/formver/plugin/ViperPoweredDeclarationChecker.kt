@@ -2,7 +2,6 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("UNCHECKED_CAST")
 
 package org.jetbrains.kotlin.formver.plugin
 
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.formver.conversion.ProgramConverter
 import org.jetbrains.kotlin.formver.scala.Option
 import org.jetbrains.kotlin.formver.scala.emptySeq
 import org.jetbrains.kotlin.formver.scala.seqOf
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Program
 import viper.silicon.Config
 import viper.silicon.logger.MemberSymbExLogger
 import viper.silicon.logger.`NoopSymbExLog$`
@@ -24,19 +24,22 @@ import viper.silicon.verifier.DefaultMainVerifier
 import viper.silver.cfg.silver.SilverCfg
 import viper.silver.reporter.StdIOReporter
 
-
-class ViperPoweredDeclarationChecker(val session: FirSession) : FirSimpleFunctionChecker() {
+class ViperPoweredDeclarationChecker(private val session: FirSession, private val logLevel: LogLevel) : FirSimpleFunctionChecker() {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         val programConversionContext = ProgramConverter(session)
         programConversionContext.addWithBody(declaration)
-        val program = programConversionContext.program.toViper()
+        val program = programConversionContext.program
 
-        reporter.reportOn(declaration.source, PluginErrors.VIPER_TEXT, declaration.name.asString(), program.toString(), context)
+        getProgramForLogging(program)?.let {
+            reporter.reportOn(declaration.source, PluginErrors.VIPER_TEXT, declaration.name.asString(), it.toViper().toString(), context)
+        }
+
+        val viperProgram = program.toViper()
 
         try {
             var anyErrors = false
 
-            val consistencyResults = program.checkTransitively()
+            val consistencyResults = viperProgram.checkTransitively()
             for (result in consistencyResults) {
                 reporter.reportOn(declaration.source, PluginErrors.VIPER_CONSISTENCY_ERROR, result.toString(), context)
                 anyErrors = true
@@ -44,7 +47,7 @@ class ViperPoweredDeclarationChecker(val session: FirSession) : FirSimpleFunctio
 
             if (!anyErrors) {
                 val verifier = newVerifier()
-                val results = verifier.verify(program, emptySeq<SilverCfg>(), Option.None<String>().toScala())
+                val results = verifier.verify(viperProgram, emptySeq<SilverCfg>(), Option.None<String>().toScala())
 
                 for (result in results) {
                     if (result.isFatal) {
@@ -58,12 +61,13 @@ class ViperPoweredDeclarationChecker(val session: FirSession) : FirSimpleFunctio
                 reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT, declaration.name.asString(), context)
             }
         } catch (e: Exception) {
-            System.err.println("Viper verification failed with an exception.  Viper text:\n$program\nException: $e")
+            System.err.println("Viper verification failed with an exception.  Viper text:\n$viperProgram\nException: $e")
             throw e
         }
     }
 
 
+    @Suppress("UNCHECKED_CAST")
     private fun newVerifier(): DefaultMainVerifier {
         val config = Config(seqOf("--ignoreFile", "dummy.vpr"))
         val verifier = DefaultMainVerifier(
@@ -73,5 +77,10 @@ class ViperPoweredDeclarationChecker(val session: FirSession) : FirSimpleFunctio
         )
         verifier.start()
         return verifier
+    }
+
+    private fun getProgramForLogging(program: Program): Program? = when (logLevel) {
+        LogLevel.ONLY_WARNINGS -> null
+        LogLevel.FULL_VIPER_DUMP -> program
     }
 }

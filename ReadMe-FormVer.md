@@ -10,6 +10,9 @@ specify the plugin `.jar` with `-Xplugin=`:
 dist/kotlinc/bin/kotlinc -language-version 2.0 -Xplugin=dist/kotlinc/lib/formver-compiler-plugin.jar,$HOME/.m2/repository/viper/silicon/1.1-SNAPSHOT/silicon-1.1-SNAPSHOT.jar myfile.kt
 ```
 
+The plugin accepts a number of command line options which can be passed via `-P plugin:org.jetbrains.kotlin.formver:OPTION=SETTING`:
+- Option `log_level`: permitted values `only_warnings`, `full_viper_dump`.
+
 ## Viper dependency
 
 To build the plugin, two main Viper dependencies are needed: 

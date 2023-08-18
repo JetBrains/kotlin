@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 
-class FormalVerificationPluginExtensionRegistrar : FirExtensionRegistrar() {
+class FormalVerificationPluginExtensionRegistrar(private val logLevel: LogLevel) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
-        +::PluginAdditionalCheckers
+        +PluginAdditionalCheckers.getFactory(logLevel)
     }
 }
 
@@ -21,6 +21,7 @@ class FormalVerificationPluginComponentRegistrar : CompilerPluginRegistrar() {
         get() = true
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        FirExtensionRegistrarAdapter.registerExtension(FormalVerificationPluginExtensionRegistrar())
+        val logLevel = configuration.get(FormalVerificationConfigurationKeys.LOG_LEVEL, LogLevel.defaultLogLevel())
+        FirExtensionRegistrarAdapter.registerExtension(FormalVerificationPluginExtensionRegistrar(logLevel))
     }
 }
