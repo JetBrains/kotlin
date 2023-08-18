@@ -18866,6 +18866,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("suppressedInvisibleReferenceQualifier.kt")
+        public void testSuppressedInvisibleReferenceQualifier() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/suppressedInvisibleReferenceQualifier.kt");
+        }
+
+        @Test
         @TestMetadata("SuspendExtension.kt")
         public void testSuspendExtension() throws Exception {
             runTest("compiler/testData/codegen/box/fir/SuspendExtension.kt");

@@ -15695,6 +15695,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/staticImportViaInheritance.kt");
         }
 
+        @TestMetadata("suppressedInvisibleReferenceQualifier.kt")
+        public void testSuppressedInvisibleReferenceQualifier() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/suppressedInvisibleReferenceQualifier.kt");
+        }
+
         @TestMetadata("SuspendExtension.kt")
         public void testSuspendExtension() throws Exception {
             runTest("compiler/testData/codegen/box/fir/SuspendExtension.kt");

@@ -1537,6 +1537,11 @@ class Fir2IrVisitor(
         return callGenerator.convertToGetObject(resolvedQualifier)
     }
 
+    override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: Any?): IrElement {
+        // Support for error suppression case
+        return visitResolvedQualifier(errorResolvedQualifier, data)
+    }
+
     private fun LogicOperationKind.toIrDynamicOperator() = when (this) {
         LogicOperationKind.AND -> IrDynamicOperator.ANDAND
         LogicOperationKind.OR -> IrDynamicOperator.OROR

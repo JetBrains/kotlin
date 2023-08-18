@@ -14990,6 +14990,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("suppressedInvisibleReferenceQualifier.kt")
+            public void testSuppressedInvisibleReferenceQualifier() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/suppressedInvisibleReferenceQualifier.kt");
+            }
+
+            @Test
             @TestMetadata("toLong.kt")
             public void testToLong() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/toLong.kt");

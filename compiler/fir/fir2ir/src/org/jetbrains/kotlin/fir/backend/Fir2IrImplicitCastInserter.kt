@@ -70,6 +70,11 @@ class Fir2IrImplicitCastInserter(
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: IrElement): IrElement = data
 
+    override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: IrElement): IrElement {
+        // Support for error suppression case
+        return visitResolvedQualifier(errorResolvedQualifier, data)
+    }
+
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: IrElement): IrElement = data
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: IrElement): IrElement = data
