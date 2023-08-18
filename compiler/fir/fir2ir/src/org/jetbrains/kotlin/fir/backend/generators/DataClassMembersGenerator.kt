@@ -56,17 +56,27 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
 
     fun generateSingleFieldValueClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
-        return MyDataClassMethodsGenerator(irClass, klass, IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER)
-            .generate(klass)
+        return MyDataClassMethodsGenerator(irClass, klass, IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER).generateHeaders()
+    }
+
+    fun generateBodiesForSingleFieldValueClassMembers(klass: FirRegularClass, irClass: IrClass) {
+        MyDataClassMethodsGenerator(irClass, klass, IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER).generateBodies()
     }
 
     fun generateMultiFieldValueClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
-        return MyDataClassMethodsGenerator(irClass, klass, IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER)
-            .generate(klass)
+        return MyDataClassMethodsGenerator(irClass, klass, IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER).generateHeaders()
+    }
+
+    fun generateBodiesForMultiFieldValueClassMembers(klass: FirRegularClass, irClass: IrClass) {
+        MyDataClassMethodsGenerator(irClass, klass, IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER).generateBodies()
     }
 
     fun generateDataClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
-        return MyDataClassMethodsGenerator(irClass, klass, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generate(klass)
+        return MyDataClassMethodsGenerator(irClass, klass, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generateHeaders()
+    }
+
+    fun generateBodiesForDataClassMembers(klass: FirRegularClass, irClass: IrClass) {
+        MyDataClassMethodsGenerator(irClass, klass, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generateBodies()
     }
 
     fun generateDataClassComponentBody(irFunction: IrFunction, klass: FirRegularClass) {
@@ -179,12 +189,74 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 UNDEFINED_OFFSET
             )
 
-        fun generate(klass: FirRegularClass): List<FirDeclaration> {
+        fun generateHeaders(): List<FirDeclaration> {
+            val result = mutableListOf<FirDeclaration>()
+            val contributedSyntheticFunctions = calculateSyntheticFirFunctions()
+
+            val toStringContributedFunction = contributedSyntheticFunctions[TO_STRING]
+            if (toStringContributedFunction != null) {
+                result.add(toStringContributedFunction)
+                val toStringFunction = createSyntheticIrFunction(
+                    TO_STRING,
+                    toStringContributedFunction,
+                    components.irBuiltIns.stringType,
+                )
+                irClass.declarations.add(toStringFunction)
+            }
+
+            val hashcodeNameContributedFunction = contributedSyntheticFunctions[HASHCODE_NAME]
+            if (hashcodeNameContributedFunction != null) {
+                result.add(hashcodeNameContributedFunction)
+                val hashCodeFunction = createSyntheticIrFunction(
+                    HASHCODE_NAME,
+                    hashcodeNameContributedFunction,
+                    components.irBuiltIns.intType,
+                )
+                irClass.declarations.add(hashCodeFunction)
+            }
+
+            val equalsContributedFunction = contributedSyntheticFunctions[EQUALS]
+            if (equalsContributedFunction != null) {
+                result.add(equalsContributedFunction)
+                val equalsFunction = createSyntheticIrFunction(
+                    EQUALS,
+                    equalsContributedFunction,
+                    components.irBuiltIns.booleanType,
+                    otherParameterNeeded = true,
+                    isOperator = true
+                )
+                irClass.declarations.add(equalsFunction)
+            }
+
+            return result
+        }
+
+        fun generateBodies() {
             val propertyParametersCount = irClass.primaryConstructor?.explicitParameters?.size ?: 0
             val properties = irClass.properties.filter { it.backingField != null }.take(propertyParametersCount).toList()
 
-            val result = mutableListOf<FirDeclaration>()
+            val contributedSyntheticFunctions = calculateSyntheticFirFunctions()
 
+            val toStringContributedFunction = contributedSyntheticFunctions[TO_STRING]
+            if (toStringContributedFunction != null) {
+                val toStringFunction = irClass.functions.first { it.name == TO_STRING && it.origin == origin }
+                irDataClassMembersGenerator.generateToStringMethod(toStringFunction, properties)
+            }
+
+            val hashcodeNameContributedFunction = contributedSyntheticFunctions[HASHCODE_NAME]
+            if (hashcodeNameContributedFunction != null) {
+                val hashCodeFunction = irClass.functions.first { it.name == HASHCODE_NAME && it.origin == origin }
+                irDataClassMembersGenerator.generateHashCodeMethod(hashCodeFunction, properties)
+            }
+
+            val equalsContributedFunction = contributedSyntheticFunctions[EQUALS]
+            if (equalsContributedFunction != null) {
+                val equalsFunction = irClass.functions.first { it.name == EQUALS && it.origin == origin }
+                irDataClassMembersGenerator.generateEqualsMethod(equalsFunction, properties)
+            }
+        }
+
+        private fun calculateSyntheticFirFunctions(): Map<Name, FirSimpleFunction> {
             val scope = klass.unsubstitutedScope(
                 components.session,
                 components.scopeSession,
@@ -206,46 +278,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                         }
                     }
                 }
-
-            val toStringContributedFunction = contributedSyntheticFunctions[TO_STRING]
-            if (toStringContributedFunction != null) {
-                result.add(toStringContributedFunction)
-                val toStringFunction = createSyntheticIrFunction(
-                    TO_STRING,
-                    toStringContributedFunction,
-                    components.irBuiltIns.stringType,
-                )
-                irDataClassMembersGenerator.generateToStringMethod(toStringFunction, properties)
-                irClass.declarations.add(toStringFunction)
-            }
-
-            val hashcodeNameContributedFunction = contributedSyntheticFunctions[HASHCODE_NAME]
-            if (hashcodeNameContributedFunction != null) {
-                result.add(hashcodeNameContributedFunction)
-                val hashCodeFunction = createSyntheticIrFunction(
-                    HASHCODE_NAME,
-                    hashcodeNameContributedFunction,
-                    components.irBuiltIns.intType,
-                )
-                irDataClassMembersGenerator.generateHashCodeMethod(hashCodeFunction, properties)
-                irClass.declarations.add(hashCodeFunction)
-            }
-
-            val equalsContributedFunction = contributedSyntheticFunctions[EQUALS]
-            if (equalsContributedFunction != null) {
-                result.add(equalsContributedFunction)
-                val equalsFunction = createSyntheticIrFunction(
-                    EQUALS,
-                    equalsContributedFunction,
-                    components.irBuiltIns.booleanType,
-                    otherParameterNeeded = true,
-                    isOperator = true
-                )
-                irDataClassMembersGenerator.generateEqualsMethod(equalsFunction, properties)
-                irClass.declarations.add(equalsFunction)
-            }
-
-            return result
+            return contributedSyntheticFunctions
         }
 
         fun generateComponentBody(irFunction: IrFunction) {

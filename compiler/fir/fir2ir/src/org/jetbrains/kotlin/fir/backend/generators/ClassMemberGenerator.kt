@@ -89,6 +89,20 @@ internal class ClassMemberGenerator(
                     else -> declaration.accept(visitor, null)
                 }
             }
+
+            if (klass is FirRegularClass && (irClass.isValue || irClass.isData)) {
+                val dataClassMembersGenerator = DataClassMembersGenerator(components)
+                if (irClass.isSingleFieldValueClass) {
+                    dataClassMembersGenerator.generateBodiesForSingleFieldValueClassMembers(klass, irClass)
+                }
+                if (irClass.isMultiFieldValueClass) {
+                    dataClassMembersGenerator.generateBodiesForMultiFieldValueClassMembers(klass, irClass)
+                }
+                if (irClass.isData) {
+                     dataClassMembersGenerator.generateBodiesForDataClassMembers(klass, irClass)
+                }
+            }
+
             annotationGenerator.generate(irClass, klass)
             if (irPrimaryConstructor != null) {
                 declarationStorage.leaveScope(irPrimaryConstructor.symbol)
