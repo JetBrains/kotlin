@@ -65,7 +65,6 @@ class Fir2IrConverter(
         fir2irVisitor: Fir2IrVisitor,
         runPreCacheBuiltinClasses: Boolean
     ) {
-        session.lazyDeclarationResolver.disableLazyResolveContractChecks()
         for (firFile in allFirFiles) {
             registerFileAndClasses(firFile, irModuleFragment)
         }
@@ -543,6 +542,7 @@ class Fir2IrConverter(
             commonMemberStorage: Fir2IrCommonMemberStorage,
             initializedIrBuiltIns: IrBuiltInsOverFir?
         ): Fir2IrResult {
+            session.lazyDeclarationResolver.disableLazyResolveContractChecks()
             val moduleDescriptor = FirModuleDescriptor(session, kotlinBuiltIns)
             val components = Fir2IrComponentsStorage(
                 session,
