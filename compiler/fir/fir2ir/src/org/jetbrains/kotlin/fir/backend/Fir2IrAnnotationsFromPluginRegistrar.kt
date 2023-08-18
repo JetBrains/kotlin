@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+// opt-in is safe, this code runs after fir2ir is over and all symbols are bound
+@OptIn(IrSymbolInternals::class)
 class Fir2IrAnnotationsFromPluginRegistrar(private val components: Fir2IrComponents) : IrAnnotationsFromPluginRegistrar() {
     private val generatedIrDeclarationsByFileByOffset = mutableMapOf<String, MutableMap<Pair<Int, Int>, MutableList<IrConstructorCall>>>()
 
@@ -44,7 +46,6 @@ class Fir2IrAnnotationsFromPluginRegistrar(private val components: Fir2IrCompone
         return true
     }
 
-    @OptIn(IrSymbolInternals::class)
     override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrConstructorCall>) {
         require(annotations.all { it.typeArgumentsCount == 0 && it.hasOnlySupportedAnnotationArgumentTypes() }) {
             "Saving annotations with arguments from IR to metadata is only supported for basic constants. See KT-58968"
@@ -106,7 +107,6 @@ class Fir2IrAnnotationsFromPluginRegistrar(private val components: Fir2IrCompone
         private val ClassId.topmostParentClassId: ClassId
             get() = parentClassId?.topmostParentClassId ?: this
 
-        @OptIn(IrSymbolInternals::class)
         private fun IrConstructorCall.toFirAnnotation(): FirAnnotation {
             val annotationClassId = this.symbol.owner.constructedClass.classId!!
             return buildAnnotation {
