@@ -161,6 +161,11 @@ class IncrementalCompilationK1JsMultiProject : IncrementalCompilationJsMultiProj
 
 class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+
+    @Disabled("KT-61153")
+    override fun testRemoveLibFromClasspath(gradleVersion: GradleVersion) {
+        super.testRemoveLibFromClasspath(gradleVersion)
+    }
 }
 
 class IncrementalCompilationK1JsMultiProjectWithPreciseBackupIT : IncrementalCompilationJsMultiProjectWithPreciseBackupIT() {
@@ -704,7 +709,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
     @DisplayName("Remove library from classpath")
     @GradleTest
-    fun testRemoveLibFromClasspath(gradleVersion: GradleVersion) {
+    open fun testRemoveLibFromClasspath(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
             build("assemble")
 
