@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
             condition: BLOCK type=kotlin.Boolean origin=ELVIS
               VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Boolean? [val]
                 GET_VAR 'c: kotlin.Boolean? declared in <root>.test1' type=kotlin.Boolean? origin=null
-              WHEN type=kotlin.Boolean origin=ELVIS
+              WHEN type=kotlin.Boolean origin=null
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'val tmp_0: kotlin.Boolean? declared in <root>.test1' type=kotlin.Boolean? origin=null
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
             condition: BLOCK type=kotlin.Boolean origin=ELVIS
               VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Boolean? [val]
                 GET_VAR 'c: kotlin.Boolean? declared in <root>.test2' type=kotlin.Boolean? origin=null
-              WHEN type=kotlin.Boolean origin=ELVIS
+              WHEN type=kotlin.Boolean origin=null
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'val tmp_1: kotlin.Boolean? declared in <root>.test2' type=kotlin.Boolean? origin=null
@@ -51,7 +51,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                 $this: BLOCK type=kotlin.collections.List<kotlin.String> origin=ELVIS
                   VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.collections.List<kotlin.String>? [val]
                     GET_VAR 'ss: kotlin.collections.List<kotlin.String>? declared in <root>.test3' type=kotlin.collections.List<kotlin.String>? origin=null
-                  WHEN type=kotlin.collections.List<kotlin.String> origin=ELVIS
+                  WHEN type=kotlin.collections.List<kotlin.String> origin=null
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                         arg0: GET_VAR 'val tmp_3: kotlin.collections.List<kotlin.String>? declared in <root>.test3' type=kotlin.collections.List<kotlin.String>? origin=null
@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                 $this: BLOCK type=kotlin.collections.List<kotlin.String> origin=ELVIS
                   VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.collections.List<kotlin.String>? [val]
                     GET_VAR 'ss: kotlin.collections.List<kotlin.String>? declared in <root>.test4' type=kotlin.collections.List<kotlin.String>? origin=null
-                  WHEN type=kotlin.collections.List<kotlin.String> origin=ELVIS
+                  WHEN type=kotlin.collections.List<kotlin.String> origin=null
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                         arg0: GET_VAR 'val tmp_5: kotlin.collections.List<kotlin.String>? declared in <root>.test4' type=kotlin.collections.List<kotlin.String>? origin=null

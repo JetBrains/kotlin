@@ -157,7 +157,7 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
                         $this: CALL 'private final fun <get-registrationMap> (): java.util.HashMap<java.lang.reflect.Type, kotlin.Any> declared in <root>' type=java.util.HashMap<java.lang.reflect.Type, kotlin.Any> origin=GET_PROPERTY
                         p0: CALL 'public final fun <get-applicableTo> (): java.lang.Class<E of <root>.PlatformExtensionsClashResolver> declared in <root>.PlatformExtensionsClashResolver' type=java.lang.Class<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out kotlin.Any?>>>>>> origin=GET_PROPERTY
                           $this: GET_VAR 'val resolver: <root>.PlatformExtensionsClashResolver<*> declared in <root>.resolveClashesIfAny' type=<root>.PlatformExtensionsClashResolver<*> origin=null
-                  WHEN type=kotlin.collections.Collection<<root>.ComponentDescriptor> origin=ELVIS
+                  WHEN type=kotlin.collections.Collection<<root>.ComponentDescriptor> origin=null
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                         arg0: GET_VAR 'val tmp_1: kotlin.collections.Collection<<root>.ComponentDescriptor>? declared in <root>.resolveClashesIfAny' type=kotlin.collections.Collection<<root>.ComponentDescriptor>? origin=null

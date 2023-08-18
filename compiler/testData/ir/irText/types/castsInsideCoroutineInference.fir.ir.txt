@@ -105,7 +105,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                             element: BLOCK type=@[ParameterName(name = 'value')] kotlin.Any origin=ELVIS
                               VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:@[ParameterName(name = 'value')] kotlin.Any? [val]
                                 GET_VAR 'value: @[ParameterName(name = 'value')] kotlin.Any? declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=@[ParameterName(name = 'value')] kotlin.Any? origin=null
-                              WHEN type=@[ParameterName(name = 'value')] kotlin.Any origin=ELVIS
+                              WHEN type=@[ParameterName(name = 'value')] kotlin.Any origin=null
                                 BRANCH
                                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                                     arg0: GET_VAR 'val tmp_0: @[ParameterName(name = 'value')] kotlin.Any? declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=@[ParameterName(name = 'value')] kotlin.Any? origin=null
@@ -140,7 +140,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                             e: BLOCK type=@[ParameterName(name = 'value')] kotlin.Any origin=ELVIS
                               VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:@[ParameterName(name = 'value')] kotlin.Any? [val]
                                 GET_VAR 'value: @[ParameterName(name = 'value')] kotlin.Any? declared in <root>.asChannel.<anonymous>.<anonymous>' type=@[ParameterName(name = 'value')] kotlin.Any? origin=null
-                              WHEN type=@[ParameterName(name = 'value')] kotlin.Any origin=ELVIS
+                              WHEN type=@[ParameterName(name = 'value')] kotlin.Any origin=null
                                 BRANCH
                                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                                     arg0: GET_VAR 'val tmp_1: @[ParameterName(name = 'value')] kotlin.Any? declared in <root>.asChannel.<anonymous>.<anonymous>' type=@[ParameterName(name = 'value')] kotlin.Any? origin=null

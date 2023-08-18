@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/dynamicElvisOperator.kt
         BLOCK type=dynamic origin=ELVIS
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:dynamic [val]
             GET_VAR 'd: dynamic declared in <root>.test' type=dynamic origin=null
-          WHEN type=dynamic origin=ELVIS
+          WHEN type=dynamic origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val tmp_0: dynamic declared in <root>.test' type=dynamic origin=null

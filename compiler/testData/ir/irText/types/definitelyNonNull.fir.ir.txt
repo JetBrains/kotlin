@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/definitelyNonNull.kt
         BLOCK type={T of <root>.elvisLike & Any} origin=ELVIS
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:T of <root>.elvisLike [val]
             GET_VAR 'x: T of <root>.elvisLike declared in <root>.elvisLike' type=T of <root>.elvisLike origin=null
-          WHEN type={T of <root>.elvisLike & Any} origin=ELVIS
+          WHEN type={T of <root>.elvisLike & Any} origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val tmp_0: T of <root>.elvisLike declared in <root>.elvisLike' type=T of <root>.elvisLike origin=null

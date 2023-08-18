@@ -174,7 +174,7 @@ FILE fqName:<root> fileName:/arrayAccessOperators.kt
                         $receiver: GET_VAR 'val myContainer: <root>.MyContainer declared in <root>.box.<anonymous>' type=<root>.MyContainer origin=null
                         $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                         index: CONST Int type=kotlin.Int value=0
-                    WHEN type=kotlin.String origin=ELVIS
+                    WHEN type=kotlin.String origin=null
                       BRANCH
                         if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                           arg0: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.box.<anonymous>' type=kotlin.String? origin=null

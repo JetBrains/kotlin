@@ -1194,7 +1194,8 @@ class Fir2IrVisitor(
         branches: List<IrBranch>,
         resultType: IrType
     ): IrExpression {
-        val irWhen = IrWhenImpl(startOffset, endOffset, resultType, origin, branches)
+        // Note: ELVIS origin is set only on wrapping block
+        val irWhen = IrWhenImpl(startOffset, endOffset, resultType, origin.takeIf { it != IrStatementOrigin.ELVIS }, branches)
         return if (subjectVariable == null) {
             irWhen
         } else {
