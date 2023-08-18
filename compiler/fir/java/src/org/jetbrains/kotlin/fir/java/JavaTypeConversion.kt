@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 private fun ClassId.toConeFlexibleType(
@@ -195,9 +196,9 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                             ?.toFirRegularClassSymbol(session)?.typeParameterSymbols
                     // Given `C<T : X>`, `C` -> `C<X>..C<*>?`.
                     when (mode) {
-                        FirJavaTypeConversionMode.ANNOTATION_MEMBER -> Array(classifier.typeParameters.size) { ConeStarProjection }
+                        FirJavaTypeConversionMode.ANNOTATION_MEMBER -> Array(classifier.allTypeParametersNumber()) { ConeStarProjection }
                         else -> typeParameterSymbols?.getProjectionsForRawType(session)
-                            ?: Array(classifier.typeParameters.size) { ConeStarProjection }
+                            ?: Array(classifier.allTypeParametersNumber()) { ConeStarProjection }
                     }
                 }
 
@@ -232,6 +233,16 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
 
         else -> ConeErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))
     }
+}
+
+private fun JavaClass.allTypeParametersNumber(): Int {
+    var current: JavaClass? = this
+    var result = 0
+    while (current != null) {
+        result += current.typeParameters.size
+        current = if (current.isStatic) null else current.outerClass
+    }
+    return result
 }
 
 // Returns true for covariant read-only container that has mutable pair with invariant parameter

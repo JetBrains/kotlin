@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-58579
 // FILE: Invariant.java
 public class Invariant<T> {}
