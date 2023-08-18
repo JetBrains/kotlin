@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
@@ -25,7 +26,7 @@ abstract class ScriptingIT : KGPBaseTest() {
 
     @DisplayName("basic script is working")
     @GradleTest
-    fun testScripting(gradleVersion: GradleVersion) {
+    open fun testScripting(gradleVersion: GradleVersion) {
         project("scripting", gradleVersion) {
             val appSubProject = subProject("app")
             val scriptTemplateSubProject = subProject("script-template")
@@ -54,7 +55,7 @@ abstract class ScriptingIT : KGPBaseTest() {
 
     @DisplayName("With custom file extension compiled incremental")
     @GradleTest
-    fun testScriptingCustomExtensionIncremental(gradleVersion: GradleVersion) {
+    open fun testScriptingCustomExtensionIncremental(gradleVersion: GradleVersion) {
         testScriptingCustomExtensionImpl(gradleVersion, withIC = true)
     }
 
@@ -128,6 +129,16 @@ class ScriptingK1IT : ScriptingIT() {
 @DisplayName("K2 Scripting plugin")
 class ScriptingK2IT : ScriptingIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+
+    @Disabled("KT-61137")
+    override fun testScripting(gradleVersion: GradleVersion) {
+        super.testScripting(gradleVersion)
+    }
+
+    @Disabled("KT-61137")
+    override fun testScriptingCustomExtensionIncremental(gradleVersion: GradleVersion) {
+        super.testScriptingCustomExtensionIncremental(gradleVersion)
+    }
 
     override fun GradleProject.disableLightTreeIfNeeded() {
         buildGradle.append(
