@@ -27,16 +27,20 @@ abstract class ScriptingIT : KGPBaseTest() {
     @GradleTest
     fun testScripting(gradleVersion: GradleVersion) {
         project("scripting", gradleVersion) {
+            val appSubProject = subProject("app")
+            val scriptTemplateSubProject = subProject("script-template")
+            appSubProject.disableLightTreeIfNeeded()
+            scriptTemplateSubProject.disableLightTreeIfNeeded()
             build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertCompiledKotlinSources(
                     listOf(
-                        subProject("app").kotlinSourcesDir().resolve("world.greet.kts").relativeTo(projectPath),
-                        subProject("script-template").kotlinSourcesDir().resolve("GreetScriptTemplate.kt").relativeTo(projectPath)
+                        appSubProject.kotlinSourcesDir().resolve("world.greet.kts").relativeTo(projectPath),
+                        scriptTemplateSubProject.kotlinSourcesDir().resolve("GreetScriptTemplate.kt").relativeTo(projectPath)
                     ),
                     output
                 )
                 assertFileExists(
-                    subProject("app").kotlinClassesDir().resolve("World_greet.class")
+                    appSubProject.kotlinClassesDir().resolve("World_greet.class")
                 )
             }
         }
@@ -56,7 +60,7 @@ abstract class ScriptingIT : KGPBaseTest() {
 
     private fun testScriptingCustomExtensionImpl(
         gradleVersion: GradleVersion,
-        withIC: Boolean
+        withIC: Boolean,
     ) {
         project(
             "scriptingCustomExtension",
@@ -67,6 +71,7 @@ abstract class ScriptingIT : KGPBaseTest() {
             )
         ) {
             val appSubproject = subProject("app")
+            appSubproject.disableLightTreeIfNeeded()
             val bobGreetSource = appSubproject.kotlinSourcesDir().resolve("bob.greet")
             val bobGreet = bobGreetSource.relativeTo(projectPath)
             val aliceGreet = appSubproject.kotlinSourcesDir().resolve("alice.greet").relativeTo(projectPath)
@@ -110,6 +115,9 @@ abstract class ScriptingIT : KGPBaseTest() {
         }
     }
 
+    open fun GradleProject.disableLightTreeIfNeeded() {
+
+    }
 }
 
 @DisplayName("K1 Scripting plugin")
@@ -120,4 +128,16 @@ class ScriptingK1IT : ScriptingIT() {
 @DisplayName("K2 Scripting plugin")
 class ScriptingK2IT : ScriptingIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+
+    override fun GradleProject.disableLightTreeIfNeeded() {
+        buildGradle.append(
+            """
+            tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configure {
+                compilerOptions {
+                    freeCompilerArgs.add("-Xuse-fir-lt=false") // Scripts are not yet supported with K2 in LightTree mode
+                }
+            }            
+            """.trimIndent()
+        )
+    }
 }
