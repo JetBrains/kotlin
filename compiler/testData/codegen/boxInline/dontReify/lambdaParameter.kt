@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-
 // FILE: 1.kt
 
 inline fun <T> foo(x: Any?): String {

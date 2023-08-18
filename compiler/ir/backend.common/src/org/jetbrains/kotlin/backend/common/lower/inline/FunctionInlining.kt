@@ -328,14 +328,14 @@ class FunctionInlining(
                 val receiverFromField = propertyReference.dispatchReceiver ?: propertyReference.extensionReceiver
                 getterCall.dispatchReceiver = getterCall.symbol.owner.dispatchReceiverParameter?.let { dispatchReceiverParam ->
                     val dispatchReceiverArgument = receiverFromField ?: tryToGetArg(0)
-                    dispatchReceiverArgument?.implicitCastIfNeededTo(dispatchReceiverParam.type)
+                    dispatchReceiverArgument?.doImplicitCastIfNeededTo(dispatchReceiverParam.type)
                 }
                 getterCall.extensionReceiver = getterCall.symbol.owner.extensionReceiverParameter?.let { extensionReceiverParam ->
                     val extensionReceiverArgument = when (getterCall.symbol.owner.dispatchReceiverParameter) {
                         null -> receiverFromField ?: tryToGetArg(0)
                         else -> tryToGetArg(if (receiverFromField != null) 0 else 1)
                     }
-                    extensionReceiverArgument?.implicitCastIfNeededTo(extensionReceiverParam.type)
+                    extensionReceiverArgument?.doImplicitCastIfNeededTo(extensionReceiverParam.type)
                 }
 
                 return wrapInStubFunction(super.visitExpression(getterCall), expression, propertyReference)
