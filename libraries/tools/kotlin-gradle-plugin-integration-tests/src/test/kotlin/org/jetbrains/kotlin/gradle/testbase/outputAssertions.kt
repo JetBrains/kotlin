@@ -172,6 +172,11 @@ fun BuildResult.assertNoBuildWarnings(
     }
 }
 
+val expectedK2KaptWarnings = setOf(
+    "w: [InternalKotlinGradlePluginPropertiesUsed | WARNING] ATTENTION! This build uses the following Kotlin Gradle Plugin properties:",
+    "w: Kapt currently doesn't support language version 2.0+. Falling back to 1.9."
+)
+
 /**
  * Asserts compilation is running via Kotlin daemon with given jvm arguments.
  */

@@ -69,7 +69,9 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             secondProject,
             listOf(":classes", ":testClasses"),
             listOf(":kaptKotlin", ":kaptGenerateStubsKotlin", ":compileKotlin", ":compileTestKotlin", ":compileJava")
-        )
+        ) {
+            assertNoBuildWarnings(expectedK2KaptWarnings)
+        }
     }
 
     @JsGradlePluginTests
@@ -294,16 +296,19 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         firstProject: TestProject,
         secondProject: TestProject,
         tasksToExecute: List<String>,
-        cacheableTasks: List<String>
+        cacheableTasks: List<String>,
+        additionalAssertions: BuildResult.() -> Unit = {},
     ) {
         firstProject.build(*tasksToExecute.toTypedArray()) {
             assertTasksPackedToCache(*cacheableTasks.toTypedArray())
+            additionalAssertions()
         }
 
         firstProject.build("clean")
 
         secondProject.build(*tasksToExecute.toTypedArray()) {
             assertTasksFromCache(*cacheableTasks.toTypedArray())
+            additionalAssertions()
         }
     }
 

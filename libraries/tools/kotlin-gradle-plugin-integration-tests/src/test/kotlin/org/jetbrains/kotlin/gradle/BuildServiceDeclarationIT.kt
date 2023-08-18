@@ -76,6 +76,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
             enableStableConfigurationCachePreview()
             build("build") {
                 assertOutputDoesNotContainBuildServiceDeclarationWarnings()
+                assertNoBuildWarnings(expectedK2KaptWarnings)
             }
         }
     }

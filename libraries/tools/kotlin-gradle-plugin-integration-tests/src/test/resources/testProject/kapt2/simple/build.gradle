@@ -19,5 +19,5 @@ dependencies {
 }
 
 tasks.named("compileKotlin", KotlinJvmCompile) {
-    compilerOptions.allWarningsAsErrors = true
+    compilerOptions.allWarningsAsErrors = false // compilation with LV=2.0 prints warning about kapt fallback
 }
