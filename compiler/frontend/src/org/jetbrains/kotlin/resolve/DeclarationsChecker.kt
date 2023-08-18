@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
@@ -796,14 +795,25 @@ class DeclarationsChecker(
                 if (propertyDescriptor.extensionReceiverParameter != null && !hasAnyAccessorImplementation) {
                     trace.report(EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT.on(property))
                 } else if (diagnosticSuppressor.shouldReportNoBody(propertyDescriptor)) {
-                    reportMustBeInitialized(
-                        propertyDescriptor,
-                        containingDeclaration,
-                        hasAnyAccessorImplementation,
-                        property,
-                        languageVersionSettings,
-                        trace
-                    )
+                    val isOpenValDeferredInitDeprecationWarning =
+                        !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
+                                propertyDescriptor.getEffectiveModality(languageVersionSettings) == Modality.OPEN &&
+                                !propertyDescriptor.isVar &&
+                                trace.bindingContext.get(IS_DEFINITELY_NOT_ASSIGNED_IN_CONSTRUCTOR, propertyDescriptor) == false
+                    // KT-61228
+                    val isFalsePositiveDeferredInitDeprecationWarning = isOpenValDeferredInitDeprecationWarning &&
+                            propertyDescriptor.getEffectiveModality() == Modality.FINAL
+                    if (!isFalsePositiveDeferredInitDeprecationWarning) {
+                        reportMustBeInitialized(
+                            propertyDescriptor,
+                            containingDeclaration,
+                            hasAnyAccessorImplementation,
+                            property,
+                            isOpenValDeferredInitDeprecationWarning,
+                            languageVersionSettings,
+                            trace
+                        )
+                    }
                 }
             } else if (property.typeReference == null && !languageVersionSettings.supportsFeature(LanguageFeature.ShortSyntaxForPropertyGetters)) {
                 trace.report(
@@ -832,6 +842,7 @@ class DeclarationsChecker(
         containingDeclaration: DeclarationDescriptor,
         hasAnyAccessorImplementation: Boolean,
         property: KtProperty,
+        isOpenValDeferredInitDeprecationWarning: Boolean,
         languageVersionSettings: LanguageVersionSettings,
         trace: BindingTrace,
     ) {
@@ -843,11 +854,6 @@ class DeclarationsChecker(
                 propertyDescriptor.getEffectiveModality(languageVersionSettings) != Modality.FINAL &&
                 trace.bindingContext.get(IS_DEFINITELY_NOT_ASSIGNED_IN_CONSTRUCTOR, propertyDescriptor) == false
         val suggestMakingItAbstract = containingDeclaration is ClassDescriptor && !hasAnyAccessorImplementation
-        val isOpenValDeferredInitDeprecationWarning =
-            !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
-                    propertyDescriptor.getEffectiveModality(languageVersionSettings) == Modality.OPEN &&
-                    !propertyDescriptor.isVar &&
-                    trace.bindingContext.get(IS_DEFINITELY_NOT_ASSIGNED_IN_CONSTRUCTOR, propertyDescriptor) == false
         if (isOpenValDeferredInitDeprecationWarning && !suggestMakingItFinal && suggestMakingItAbstract) {
             error("Not reachable case. Every \"open val + deferred init\" case that could be made `abstract`, also could be made `final`")
         }
@@ -1132,9 +1138,14 @@ class DeclarationsChecker(
     }
 }
 
-fun PropertyDescriptor.getEffectiveModality(languageVersionSettings: LanguageVersionSettings): Modality =
-    when (languageVersionSettings.supportsFeature(LanguageFeature.TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck) &&
-            modality == Modality.OPEN && (containingDeclaration as? ClassDescriptor)?.modality == Modality.FINAL) {
+private fun PropertyDescriptor.getEffectiveModality(): Modality =
+    when (modality == Modality.OPEN && (containingDeclaration as? ClassDescriptor)?.modality == Modality.FINAL) {
         true -> Modality.FINAL
+        false -> modality
+    }
+
+fun PropertyDescriptor.getEffectiveModality(languageVersionSettings: LanguageVersionSettings): Modality =
+    when (languageVersionSettings.supportsFeature(LanguageFeature.TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck)) {
+        true -> getEffectiveModality()
         false -> modality
     }
