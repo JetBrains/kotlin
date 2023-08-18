@@ -1,4 +1,6 @@
 // IGNORE_BACKEND: JS
+// IGNORE_BACKEND_K2: ANY
+// STATUS: This must be red code anyway, KT-36188
 
 // Test for KT-36188 bug compatibility between non-IR and IR backends
 
