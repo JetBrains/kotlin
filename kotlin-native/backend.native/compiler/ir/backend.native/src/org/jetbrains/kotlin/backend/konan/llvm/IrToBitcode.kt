@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 internal enum class FieldStorageKind {
     GLOBAL, // In the old memory model these are only accessible from the "main" thread.
@@ -1397,7 +1395,7 @@ internal class CodeGeneratorVisitor(
         if (function == null || !element.needDebugInfo(context) || currentCodeContext.scope() == null) return null
         val locationInfo = element.startLocation ?: return null
         val location = codegen.generateLocationInfo(locationInfo)
-        val file = (currentCodeContext.fileScope() as FileScope).file.file()
+        val file = (currentCodeContext.fileScope() as FileScope).file.diFileScope()
         return when (element) {
             is IrVariable -> if (shouldGenerateDebugInfo(element)) debugInfoLocalVariableLocation(
                     builder       = debugInfo.builder,
@@ -2083,8 +2081,8 @@ internal class CodeGeneratorVisitor(
         private val scope by lazy {
             if (!context.shouldContainLocationDebugInfo() || returnableBlock.startOffset == UNDEFINED_OFFSET)
                 return@lazy null
-            val lexicalBlockFile = DICreateLexicalBlockFile(debugInfo.builder, functionScope()!!.scope(), super.file.file())
-            DICreateLexicalBlock(debugInfo.builder, lexicalBlockFile, super.file.file(), returnableBlock.startLine(), returnableBlock.startColumn())!!
+            val lexicalBlockFile = DICreateLexicalBlockFile(debugInfo.builder, functionScope()!!.scope(), super.file.diFileScope())
+            DICreateLexicalBlock(debugInfo.builder, lexicalBlockFile, super.file.diFileScope(), returnableBlock.startLine(), returnableBlock.startColumn())!!
         }
 
         override fun scope() = scope
@@ -2102,7 +2100,7 @@ internal class CodeGeneratorVisitor(
         private val scope by lazy {
             if (!context.shouldContainLocationDebugInfo())
                 return@lazy null
-            file.file() as DIScopeOpaqueRef?
+            file.diFileScope() as DIScopeOpaqueRef?
         }
 
         override fun scope() = scope
@@ -2244,7 +2242,7 @@ internal class CodeGeneratorVisitor(
                     refBuilder = builder,
                     refScope = scope.scope as DIScopeOpaqueRef,
                     name = expression.computeSymbolName(),
-                    file = irFile.file(),
+                    file = irFile.diFileScope(),
                     lineNum = expression.startLine(),
                     sizeInBits = sizeInBits,
                     alignInBits = alignInBits,
@@ -2255,16 +2253,7 @@ internal class CodeGeneratorVisitor(
         }
     }
 
-
-    //-------------------------------------------------------------------------//
-    private fun IrFile.file(): DIFileRef {
-        return debugInfo.files.getOrPut(this.fileEntry.name) {
-            val path = this.fileEntry.name.toFileAndFolder(context.config)
-            DICreateFile(debugInfo.builder, path.file, path.folder)!!
-        }
-    }
-
-    //-------------------------------------------------------------------------//
+    private fun IrFile.diFileScope() = with(debugInfo) { diFileScope() }
 
     // Saved calculated IrFunction scope which is used several time for getting locations and generating debug info.
     private var irFunctionSavedScope: Pair<IrFunction, DIScopeOpaqueRef?>? = null
@@ -2296,20 +2285,14 @@ internal class CodeGeneratorVisitor(
             val nodebug = f is IrConstructor && f.parentAsClass.isSubclassOf(context.irBuiltIns.throwableClass.owner)
             if (functionLlvmValue != null) {
                 subprograms.getOrPut(functionLlvmValue) {
-                    memScoped {
-                        val subroutineType = subroutineType(codegen.llvmTargetData)
-                        diFunctionScope(name.asString(), functionLlvmValue.name!!, startLine, subroutineType, nodebug).also {
-                            if (!this@scope.isInline)
-                                functionLlvmValue.addDebugInfoSubprogram(it)
-                        }
+                    diFunctionScope(file(), functionLlvmValue.name!!, startLine, nodebug).also {
+                        if (!this@scope.isInline)
+                            functionLlvmValue.addDebugInfoSubprogram(it)
                     }
                 } as DIScopeOpaqueRef
             } else {
                 inlinedSubprograms.getOrPut(this@scope) {
-                    memScoped {
-                        val subroutineType = subroutineType(codegen.llvmTargetData)
-                        diFunctionScope(name.asString(), "<inlined-out:$name>", startLine, subroutineType, nodebug)
-                    }
+                    diFunctionScope(file(), "<inlined-out:$name>", startLine, nodebug)
                 } as DIScopeOpaqueRef
             }
         }
@@ -2317,30 +2300,14 @@ internal class CodeGeneratorVisitor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun LlvmCallable.scope(startLine:Int, subroutineType: DISubroutineTypeRef, nodebug: Boolean): DIScopeOpaqueRef? {
-        return debugInfo.subprograms.getOrPut(this) {
-            diFunctionScope(name!!, name!!, startLine, subroutineType, nodebug).also {
-                this@scope.addDebugInfoSubprogram(it)
+    private fun LlvmCallable.scope(startLine: Int, subroutineType: DISubroutineTypeRef, nodebug: Boolean) =
+            with(debugInfo) {
+                subprograms.getOrPut(this@scope) {
+                    diFunctionScope(file(), name!!, name!!, startLine, subroutineType, nodebug).also {
+                        this@scope.addDebugInfoSubprogram(it)
+                    }
+                } as DIScopeOpaqueRef
             }
-        }  as DIScopeOpaqueRef
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun diFunctionScope(name: String, linkageName: String, startLine: Int, subroutineType: DISubroutineTypeRef, nodebug: Boolean) = DICreateFunction(
-                builder = debugInfo.builder,
-                scope = debugInfo.compilationUnit,
-                name = (if (nodebug) "<NODEBUG>" else "") + name,
-                linkageName = linkageName,
-                file = file().file(),
-                lineNo = startLine,
-                type = subroutineType,
-                //TODO: need more investigations.
-                isLocal = 0,
-                isDefinition = 1,
-                scopeLine = 0)!!
-
-    //-------------------------------------------------------------------------//
-
 
     private fun IrFunction.returnsUnit() = returnType.isUnit().also {
         require(!isSuspend) { "Suspend functions should be lowered out at this point"}
