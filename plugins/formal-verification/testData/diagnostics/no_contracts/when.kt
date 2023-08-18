@@ -1,25 +1,56 @@
-fun <!VIPER_TEXT!>simple_if<!>(): Int {
-    if (true) {
-        return 0
-    } else {
-        return 1
+fun <!VIPER_TEXT!>return_when<!>(a: Boolean, b: Boolean, c: Boolean): Int {
+    return when {
+        a -> 0
+        b -> 1
+        c -> 2
+        else -> 3
     }
 }
-fun <!VIPER_TEXT!>if_on_parameter<!>(b: Boolean): Int {
-    if (b) {
-        return 0
-    } else {
-        return 1
+
+fun <!VIPER_TEXT!>when_return<!>(a: Boolean, b: Boolean, c: Boolean): Int {
+    when {
+        a -> return 0
+        b -> return 1
+        c -> return 2
+        else -> return 3
     }
 }
-fun <!VIPER_TEXT!>if_as_expression<!>(): Boolean {
-    var b = false
-    // Including side effects so that we can see the sequencing is correct.
-    return if (b) {
-        simple_if()
-        false
-    } else {
-        if_on_parameter(b)
-        true
+
+fun <!VIPER_TEXT!>single_branch_when<!>(a: Boolean): Int {
+    var x = 1
+    when {
+        a -> x = 2
     }
+    return x
+}
+
+fun <!VIPER_TEXT!>no_else_when<!>(a: Boolean, b: Boolean, c: Boolean): Int {
+    var y = 0
+    when {
+        a -> y = 1
+        b -> y = 2
+        c -> y = 3
+    }
+    return y
+}
+
+fun <!VIPER_TEXT!>when_with_subject_var<!>(x: Int): Int {
+    return when (x) {
+        1 -> 2
+        2 -> 3
+        else -> 42
+    }
+}
+
+fun <!VIPER_TEXT!>when_with_subject_call<!>(x: Int): Int {
+    return when (when_with_subject_var(x)) {
+        1 -> 2
+        2 -> 3
+        else -> 42
+    }
+}
+
+fun <!VIPER_TEXT!>empty_when<!>(): Int {
+    when { }
+    return 1
 }

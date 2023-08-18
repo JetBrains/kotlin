@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
@@ -75,36 +76,41 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
             else -> TODO("Constant Expression of type ${constExpression.kind} is not yet implemented.")
         }
 
-    override fun visitWhenExpression(whenExpression: FirWhenExpression, data: StmtConversionContext): Exp {
-        if (whenExpression.branches.size != 2) {
-            // For now only when expressions with 2 branches are supported so if statements can be encoded.
-            // When expressions with more than 2 branches can be embedded as nested if-else chains.
-            TODO("When expressions with more that two branches are not yet implemented")
-        }
+    override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: StmtConversionContext): Exp =
+        // TODO: find a way to not evaluate subject multiple times if it is a function call
+        whenSubjectExpression.whenRef.value.subject!!.accept(this, data)
 
-        return when (whenExpression.subject) {
-            null -> {
-                val cvar = data.newAnonVar(data.embedType(whenExpression.typeRef.coneTypeOrNull!!))
-                val cond = whenExpression.branches[0].condition.accept(this, data)
-                // TODO: tidy this up and split it into helper functions.
-                val thenCtx = StmtConverter(data)
-                val thenResult = whenExpression.branches[0].result.accept(this, thenCtx)
-                thenCtx.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), thenResult))
-                val elseCtx = StmtConverter(data)
-                val elseResult = whenExpression.branches[1].result.accept(this, elseCtx)
-                elseCtx.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), elseResult))
-                data.addDeclaration(cvar.toLocalVarDecl())
-                data.addStatement(
-                    Stmt.If(
-                        cond,
-                        thenCtx.block,
-                        elseCtx.block
-                    )
-                )
-                cvar.toLocalVar()
-            }
-            else -> TODO("Can't embed $whenExpression since when expressions with a subject other than null are not yet supported.")
+    private fun convertWhenBranches(whenBranches: List<FirWhenBranch>, data: StmtConversionContext, cvar: VariableEmbedding?) {
+        // NOTE: I think that this will also work with "in" or "is" conditions when implemented, but I'm not 100% sure
+        if (whenBranches.isEmpty()) return // base case, there are no branches
+
+        val cond = whenBranches[0].condition.accept(this, data)
+        val thenCtx = StmtConverter(data)
+        val elseCtx = StmtConverter(data)
+        val thenResult = whenBranches[0].result.accept(this, thenCtx)
+        cvar?.let { thenCtx.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), thenResult)) }
+
+        // TODO: probably there is a simpler way to do this
+        if (whenBranches.size == 2 && whenBranches[1].condition is FirElseIfTrueCondition) {
+            // When last branch is an else
+            val elseResult = whenBranches[1].result.accept(this, elseCtx)
+            cvar?.let { elseCtx.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), elseResult)) }
+        } else {
+            // Recursive case
+            convertWhenBranches(whenBranches.drop(1), elseCtx, cvar)
         }
+        data.addStatement(Stmt.If(cond, thenCtx.block, elseCtx.block))
+    }
+
+    override fun visitWhenExpression(whenExpression: FirWhenExpression, data: StmtConversionContext): Exp {
+        val cvar = if (whenExpression.usedAsExpression) {
+            data.newAnonVar(data.embedType(whenExpression.typeRef.coneTypeOrNull!!))
+        } else {
+            null
+        }
+        cvar?.let { data.addDeclaration(cvar.toLocalVarDecl()) }
+        convertWhenBranches(whenExpression.branches, data, cvar)
+        return cvar?.toLocalVar() ?: UnitDomain.element
     }
 
     override fun visitPropertyAccessExpression(

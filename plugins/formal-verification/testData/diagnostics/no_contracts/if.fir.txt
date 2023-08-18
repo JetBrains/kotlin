@@ -1,0 +1,37 @@
+FILE: if.kt
+    public final fun simple_if(): R|kotlin/Int| {
+        when () {
+            Boolean(true) ->  {
+                ^simple_if Int(0)
+            }
+            else ->  {
+                ^simple_if Int(1)
+            }
+        }
+
+    }
+    public final fun if_on_parameter(b: R|kotlin/Boolean|): R|kotlin/Int| {
+        when () {
+            R|<local>/b| ->  {
+                ^if_on_parameter Int(0)
+            }
+            else ->  {
+                ^if_on_parameter Int(1)
+            }
+        }
+
+    }
+    public final fun if_as_expression(): R|kotlin/Boolean| {
+        lvar b: R|kotlin/Boolean| = Boolean(false)
+        ^if_as_expression when () {
+            R|<local>/b| ->  {
+                R|/simple_if|()
+                Boolean(false)
+            }
+            else ->  {
+                R|/if_on_parameter|(R|<local>/b|)
+                Boolean(true)
+            }
+        }
+
+    }

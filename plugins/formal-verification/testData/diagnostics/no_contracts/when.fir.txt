@@ -1,37 +1,95 @@
 FILE: when.kt
-    public final fun simple_if(): R|kotlin/Int| {
-        when () {
-            Boolean(true) ->  {
-                ^simple_if Int(0)
+    public final fun return_when(a: R|kotlin/Boolean|, b: R|kotlin/Boolean|, c: R|kotlin/Boolean|): R|kotlin/Int| {
+        ^return_when when () {
+            R|<local>/a| ->  {
+                Int(0)
+            }
+            R|<local>/b| ->  {
+                Int(1)
+            }
+            R|<local>/c| ->  {
+                Int(2)
             }
             else ->  {
-                ^simple_if Int(1)
+                Int(3)
             }
         }
 
     }
-    public final fun if_on_parameter(b: R|kotlin/Boolean|): R|kotlin/Int| {
+    public final fun when_return(a: R|kotlin/Boolean|, b: R|kotlin/Boolean|, c: R|kotlin/Boolean|): R|kotlin/Int| {
         when () {
+            R|<local>/a| ->  {
+                ^when_return Int(0)
+            }
             R|<local>/b| ->  {
-                ^if_on_parameter Int(0)
+                ^when_return Int(1)
+            }
+            R|<local>/c| ->  {
+                ^when_return Int(2)
             }
             else ->  {
-                ^if_on_parameter Int(1)
+                ^when_return Int(3)
             }
         }
 
     }
-    public final fun if_as_expression(): R|kotlin/Boolean| {
-        lvar b: R|kotlin/Boolean| = Boolean(false)
-        ^if_as_expression when () {
-            R|<local>/b| ->  {
-                R|/simple_if|()
-                Boolean(false)
-            }
-            else ->  {
-                R|/if_on_parameter|(R|<local>/b|)
-                Boolean(true)
+    public final fun single_branch_when(a: R|kotlin/Boolean|): R|kotlin/Int| {
+        lvar x: R|kotlin/Int| = Int(1)
+        when () {
+            R|<local>/a| ->  {
+                R|<local>/x| = Int(2)
             }
         }
 
+        ^single_branch_when R|<local>/x|
+    }
+    public final fun no_else_when(a: R|kotlin/Boolean|, b: R|kotlin/Boolean|, c: R|kotlin/Boolean|): R|kotlin/Int| {
+        lvar y: R|kotlin/Int| = Int(0)
+        when () {
+            R|<local>/a| ->  {
+                R|<local>/y| = Int(1)
+            }
+            R|<local>/b| ->  {
+                R|<local>/y| = Int(2)
+            }
+            R|<local>/c| ->  {
+                R|<local>/y| = Int(3)
+            }
+        }
+
+        ^no_else_when R|<local>/y|
+    }
+    public final fun when_with_subject_var(x: R|kotlin/Int|): R|kotlin/Int| {
+        ^when_with_subject_var when (R|<local>/x|) {
+            ==($subj$, Int(1)) ->  {
+                Int(2)
+            }
+            ==($subj$, Int(2)) ->  {
+                Int(3)
+            }
+            else ->  {
+                Int(42)
+            }
+        }
+
+    }
+    public final fun when_with_subject_call(x: R|kotlin/Int|): R|kotlin/Int| {
+        ^when_with_subject_call when (R|/when_with_subject_var|(R|<local>/x|)) {
+            ==($subj$, Int(1)) ->  {
+                Int(2)
+            }
+            ==($subj$, Int(2)) ->  {
+                Int(3)
+            }
+            else ->  {
+                Int(42)
+            }
+        }
+
+    }
+    public final fun empty_when(): R|kotlin/Int| {
+        when () {
+        }
+
+        ^empty_when Int(1)
     }

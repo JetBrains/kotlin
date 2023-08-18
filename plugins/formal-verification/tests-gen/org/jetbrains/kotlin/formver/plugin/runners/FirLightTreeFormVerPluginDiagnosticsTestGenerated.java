@@ -82,6 +82,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("if.kt")
+        public void testIf() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/if.kt");
+        }
+
+        @Test
         @TestMetadata("loop.kt")
         public void testLoop() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/loop.kt");

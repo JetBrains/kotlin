@@ -144,14 +144,10 @@ method global$pkg_$returns_null_with_if(local$x: dom$Nullable[Int], local$y: dom
     local$x != (dom$Nullable$null(): dom$Nullable[Int]) ||
     local$y != (dom$Nullable$null(): dom$Nullable[Int])
 {
-  var anonymous$1: dom$Unit
   if (local$x == (dom$Nullable$null(): dom$Nullable[Int])) {
     ret$ := local$y
-    anonymous$1 := dom$Unit$element()
   } else {
-    ret$ := local$z
-    anonymous$1 := dom$Unit$element()
-  }
+    ret$ := local$z}
 }
 
 /returns_null.kt:(832,861): info: Generated Viper text for non_nullable_returns_not_null:
