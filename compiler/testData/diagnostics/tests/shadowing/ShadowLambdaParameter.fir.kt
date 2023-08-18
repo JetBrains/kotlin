@@ -6,8 +6,12 @@ fun foo3(i: (Pair) -> Unit) {}
 
 fun bar(x: Int, y: Int) {
     foo1 { x -> x }
-    foo2 { x: Int, y: Int -> x + y }
-    foo3 { (x, y) -> x + y }
+    foo2 { x: Int, y: Int ->
+        val x = x
+    }
+    foo3 { (x, y) ->
+        val x = x
+    }
 }
 
 data class Pair(val a: Int, val b: Int)

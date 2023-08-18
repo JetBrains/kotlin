@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
@@ -82,30 +83,39 @@ fun generateDestructuringBlock(
     tmpVariable: Boolean
 ): FirBlock {
     return buildBlock {
-        if (tmpVariable) {
-            statements += container
-        }
-        val isVar = multiDeclaration.isVar
-        for ((index, entry) in multiDeclaration.entries.withIndex()) {
-            if (entry == null) continue
-            statements += buildProperty {
-                this.moduleData = moduleData
-                origin = FirDeclarationOrigin.Source
-                returnTypeRef = entry.returnTypeRef
-                name = entry.name
-                initializer = buildComponentCall {
-                    val componentCallSource = entry.source?.fakeElement(KtFakeSourceElementKind.DesugaredComponentFunctionCall)
-                    source = componentCallSource
-                    explicitReceiver = generateResolvedAccessExpression(componentCallSource, container)
-                    componentIndex = index + 1
-                }
-                this.isVar = isVar
-                symbol = FirPropertySymbol(entry.name) // TODO?
-                source = entry.source
-                isLocal = true
-                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                annotations += entry.annotations
+        statements.addDestructuringStatements(moduleData, multiDeclaration, container, tmpVariable)
+    }
+}
+
+internal fun MutableList<FirStatement>.addDestructuringStatements(
+    moduleData: FirModuleData,
+    multiDeclaration: DestructuringDeclaration,
+    container: FirVariable,
+    tmpVariable: Boolean,
+) {
+    if (tmpVariable) {
+        this += container
+    }
+    val isVar = multiDeclaration.isVar
+    for ((index, entry) in multiDeclaration.entries.withIndex()) {
+        if (entry == null) continue
+        this += buildProperty {
+            this.moduleData = moduleData
+            origin = FirDeclarationOrigin.Source
+            returnTypeRef = entry.returnTypeRef
+            name = entry.name
+            initializer = buildComponentCall {
+                val componentCallSource = entry.source?.fakeElement(KtFakeSourceElementKind.DesugaredComponentFunctionCall)
+                source = componentCallSource
+                explicitReceiver = generateResolvedAccessExpression(componentCallSource, container)
+                componentIndex = index + 1
             }
+            this.isVar = isVar
+            symbol = FirPropertySymbol(entry.name) // TODO?
+            source = entry.source
+            isLocal = true
+            status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+            annotations += entry.annotations
         }
     }
 }

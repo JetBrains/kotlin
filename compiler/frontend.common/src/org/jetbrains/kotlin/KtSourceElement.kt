@@ -220,6 +220,10 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // where `it` parameter declaration has fake source
     object ItLambdaParameter : KtFakeSourceElementKind()
 
+    // { (a, b) -> foo() } -> { x -> val (a, b) = x; { foo() } }
+    // where the inner block { foo() } has fake source
+    object LambdaDestructuringBlock : KtFakeSourceElementKind()
+
     // for java annotations implicit constructor is generated
     // with a fake source which refers to containing class
     object ImplicitJavaAnnotationConstructor : KtFakeSourceElementKind()

@@ -8,16 +8,13 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.getOperationSymbol
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes.*
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -53,6 +50,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class LightTreeRawFirExpressionBuilder(
     session: FirSession,
@@ -176,12 +174,12 @@ class LightTreeRawFirExpressionBuilder(
                         isNoinline = false
                         isVararg = false
                     }
-                    destructuringStatements += generateDestructuringBlock(
+                    destructuringStatements.addDestructuringStatements(
                         baseModuleData,
                         multiDeclaration,
                         multiParameter,
                         tmpVariable = false
-                    ).statements
+                    )
                     multiParameter
                 } else {
                     valueParameter.firValueParameter
@@ -190,7 +188,10 @@ class LightTreeRawFirExpressionBuilder(
 
             body = withForcedLocalContext {
                 if (block != null) {
-                    declarationBuilder.convertBlockExpressionWithoutBuilding(block!!).apply {
+                    val kind = runIf(destructuringStatements.isNotEmpty()) {
+                    KtFakeSourceElementKind.LambdaDestructuringBlock
+                }
+                val bodyBlock = declarationBuilder.convertBlockExpressionWithoutBuilding(block!!, kind).apply {
                         statements.firstOrNull()?.let {
                             if (it.isContractBlockFirCheck()) {
                                 this@buildAnonymousFunction.contractDescription = it.toLegacyRawContractDescription()
@@ -209,8 +210,18 @@ class LightTreeRawFirExpressionBuilder(
                                 }
                             )
                         }
-                        statements.addAll(0, destructuringStatements)
                     }.build()
+
+                if (destructuringStatements.isNotEmpty()) {
+                    // Destructured variables must be in a separate block so that they can be shadowed.
+                    buildBlock {
+                        source = bodyBlock.source?.realElement()
+                        statements.addAll(destructuringStatements)
+                        statements.add(bodyBlock)
+                    }
+                } else {
+                    bodyBlock
+                }
                 } else {
                     buildSingleExpressionBlock(buildErrorExpression(null, ConeSyntaxDiagnostic("Lambda has no body")))
                 }

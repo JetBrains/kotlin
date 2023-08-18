@@ -31,7 +31,10 @@ FILE: [ResolvedTo(IMPORTS)] entryUnderscoreInDestructuringDeclarationParameterIn
         R|/x|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<X, kotlin/Unit>] x@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] <destruct>: R|X|): R|kotlin/Unit| <inline=NoInline>  {
             [ResolvedTo(BODY_RESOLVE)] lval <unused var>: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component1|()
             [ResolvedTo(BODY_RESOLVE)] lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component2|()
-            ^@x Unit
+             {
+                ^@x Unit
+            }
+
         }
         )
     }

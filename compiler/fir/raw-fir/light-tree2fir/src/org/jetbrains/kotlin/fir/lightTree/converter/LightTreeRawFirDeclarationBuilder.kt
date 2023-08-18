@@ -133,7 +133,7 @@ class LightTreeRawFirDeclarationBuilder(
         return convertBlockExpressionWithoutBuilding(block).build()
     }
 
-    fun convertBlockExpressionWithoutBuilding(block: LighterASTNode): FirBlockBuilder {
+    fun convertBlockExpressionWithoutBuilding(block: LighterASTNode, kind: KtFakeSourceElementKind? = null): FirBlockBuilder {
         val firStatements = block.forEachChildrenReturnList<FirStatement> { node, container ->
             @Suppress("RemoveRedundantQualifierName")
             when (node.tokenType) {
@@ -147,7 +147,7 @@ class LightTreeRawFirDeclarationBuilder(
             }
         }
         return FirBlockBuilder().apply {
-            source = block.toFirSourceElement()
+            source = block.toFirSourceElement(kind)
             firStatements.forEach { firStatement ->
                 val isForLoopBlock = firStatement is FirBlock && firStatement.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
                 if (firStatement !is FirBlock || isForLoopBlock || firStatement.annotations.isNotEmpty()) {

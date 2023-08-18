@@ -1738,14 +1738,14 @@ open class PsiRawFirBuilder(
                             isNoinline = false
                             isVararg = false
                         }
-                        destructuringStatements += generateDestructuringBlock(
+                        destructuringStatements.addDestructuringStatements(
                             baseModuleData,
                             multiDeclaration,
                             multiParameter,
                             tmpVariable = false,
                             localEntries = true,
                             extractAnnotationsTo = { extractAnnotationsTo(it) },
-                        ) { toFirOrImplicitType() }.statements
+                        ) { toFirOrImplicitType() }
                         multiParameter
                     } else {
                         val typeRef = valueParameter.typeReference?.convertSafe() ?: FirImplicitTypeRefImplWithoutSource
@@ -1768,7 +1768,10 @@ open class PsiRawFirBuilder(
                         val errorExpression = buildErrorExpression(source, ConeSyntaxDiagnostic("Lambda has no body"))
                         FirSingleExpressionBlock(errorExpression.toReturn())
                     } else {
-                        configureBlockWithoutBuilding(ktBody).apply {
+                        val kind = runIf(destructuringStatements.isNotEmpty()) {
+                            KtFakeSourceElementKind.LambdaDestructuringBlock
+                        }
+                        val bodyBlock = configureBlockWithoutBuilding(ktBody, kind).apply {
                             statements.firstOrNull()?.let {
                                 if (it.isContractBlockFirCheck()) {
                                     this@buildAnonymousFunction.contractDescription = it.toLegacyRawContractDescription()
@@ -1787,8 +1790,18 @@ open class PsiRawFirBuilder(
                                     }
                                 )
                             }
-                            statements.addAll(0, destructuringStatements)
                         }.build()
+
+                        if (destructuringStatements.isNotEmpty()) {
+                            // Destructured variables must be in a separate block so that they can be shadowed.
+                            buildBlock {
+                                source = bodyBlock.source?.realElement()
+                                statements.addAll(destructuringStatements)
+                                statements.add(bodyBlock)
+                            }
+                        } else {
+                            bodyBlock
+                        }
                     }
                 }
                 context.firFunctionTargets.removeLast()
@@ -2244,9 +2257,9 @@ open class PsiRawFirBuilder(
             return configureBlockWithoutBuilding(expression).build()
         }
 
-        private fun configureBlockWithoutBuilding(expression: KtBlockExpression): FirBlockBuilder {
+        private fun configureBlockWithoutBuilding(expression: KtBlockExpression, kind: KtFakeSourceElementKind? = null): FirBlockBuilder {
             return FirBlockBuilder().apply {
-                source = expression.toFirSourceElement()
+                source = expression.toFirSourceElement(kind)
                 for (statement in expression.statements) {
                     val firStatement = statement.toFirStatement { "Statement expected: ${statement.text}" }
                     val isForLoopBlock =

@@ -131,35 +131,55 @@ internal fun generateDestructuringBlock(
 ): FirBlock {
     return buildBlock {
         source = multiDeclaration.toKtPsiSourceElement()
-        if (tmpVariable) {
-            statements += container
+        statements.addDestructuringStatements(
+            moduleData,
+            multiDeclaration,
+            container,
+            tmpVariable,
+            localEntries,
+            extractAnnotationsTo,
+            toFirOrImplicitTypeRef
+        )
+    }
+}
+
+internal fun MutableList<FirStatement>.addDestructuringStatements(
+    moduleData: FirModuleData,
+    multiDeclaration: KtDestructuringDeclaration,
+    container: FirVariable,
+    tmpVariable: Boolean,
+    localEntries: Boolean,
+    extractAnnotationsTo: KtAnnotated.(FirAnnotationContainerBuilder) -> Unit,
+    toFirOrImplicitTypeRef: KtTypeReference?.() -> FirTypeRef,
+) {
+    if (tmpVariable) {
+        this += container
+    }
+    val isVar = multiDeclaration.isVar
+    for ((index, entry) in multiDeclaration.entries.withIndex()) {
+        val name = if (entry.nameIdentifier?.text == "_") {
+            SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+        } else {
+            entry.nameAsSafeName
         }
-        val isVar = multiDeclaration.isVar
-        for ((index, entry) in multiDeclaration.entries.withIndex()) {
-            val name = if (entry.nameIdentifier?.text == "_") {
-                SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-            } else {
-                entry.nameAsSafeName
+        val entrySource = entry.toKtPsiSourceElement()
+        this += buildProperty {
+            source = entrySource
+            this.moduleData = moduleData
+            origin = FirDeclarationOrigin.Source
+            returnTypeRef = entry.typeReference.toFirOrImplicitTypeRef()
+            this.name = name
+            initializer = buildComponentCall {
+                val componentCallSource = entrySource.fakeElement(KtFakeSourceElementKind.DesugaredComponentFunctionCall)
+                source = componentCallSource
+                explicitReceiver = generateResolvedAccessExpression(componentCallSource, container)
+                componentIndex = index + 1
             }
-            val entrySource = entry.toKtPsiSourceElement()
-            statements += buildProperty {
-                source = entrySource
-                this.moduleData = moduleData
-                origin = FirDeclarationOrigin.Source
-                returnTypeRef = entry.typeReference.toFirOrImplicitTypeRef()
-                this.name = name
-                initializer = buildComponentCall {
-                    val componentCallSource = entrySource.fakeElement(KtFakeSourceElementKind.DesugaredComponentFunctionCall)
-                    source = componentCallSource
-                    explicitReceiver = generateResolvedAccessExpression(componentCallSource, container)
-                    componentIndex = index + 1
-                }
-                this.isVar = isVar
-                isLocal = localEntries
-                status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL)
-                symbol = FirPropertySymbol(name)
-                entry.extractAnnotationsTo(this)
-            }
+            this.isVar = isVar
+            isLocal = localEntries
+            status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL)
+            symbol = FirPropertySymbol(name)
+            entry.extractAnnotationsTo(this)
         }
     }
 }
