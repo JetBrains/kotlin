@@ -34,10 +34,19 @@ fun createExpectActualTypeParameterSubstitutor(
 fun areCompatibleExpectActualTypes(
     expectedType: ConeKotlinType?,
     actualType: ConeKotlinType?,
-    actualSession: FirSession
+    actualSession: FirSession,
+    dynamicTypesEqualToAnything: Boolean = true
 ): Boolean {
     if (expectedType == null) return actualType == null
     if (actualType == null) return false
+
+    if (!dynamicTypesEqualToAnything) {
+        val isExpectedDynamic = expectedType is ConeDynamicType
+        val isActualDynamic = actualType is ConeDynamicType
+        if (isExpectedDynamic && !isActualDynamic || !isExpectedDynamic && isActualDynamic) {
+            return false
+        }
+    }
 
     return AbstractTypeChecker.equalTypes(
         actualSession.typeContext,

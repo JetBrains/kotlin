@@ -20,9 +20,9 @@ expect class Foo {
 actual class Foo {
     actual constructor(p: dynamic) {}
 
-    actual fun f1(s: dynamic): dynamic = null!!
+    actual fun <!ACTUAL_WITHOUT_EXPECT!>f1<!>(s: dynamic): dynamic = null!!
 
     actual fun f2(s: dynamic): MutableMap<Boolean?, Foo> = null!!
 
-    actual fun <T : Set<Number>> f3(t: T): dynamic = null!!
+    actual fun <T : Set<Number>> <!ACTUAL_WITHOUT_EXPECT!>f3<!>(t: T): dynamic = null!!
 }
