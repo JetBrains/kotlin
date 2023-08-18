@@ -35,6 +35,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$return_unit() returns (ret$: dom$Unit)
 {
 }
@@ -75,6 +77,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$return_int() returns (ret$: Int)
 {
@@ -118,6 +122,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$take_int_return_unit(local$x: Int)
   returns (ret$: dom$Unit)
 {
@@ -160,6 +166,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$take_int_return_int(local$x: Int) returns (ret$: Int)
 {
   ret$ := local$x
@@ -201,6 +209,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$take_int_return_int_expr(local$x: Int)
   returns (ret$: Int)
@@ -245,6 +255,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$with_int_declaration() returns (ret$: Int)
 {
   var local$x: Int
@@ -288,6 +300,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$int_assignment() returns (ret$: dom$Unit)
 {

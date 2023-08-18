@@ -1,0 +1,3 @@
+FILE: function_object.kt
+    public final fun unit_function(@R|kotlin/Suppress|(names = vararg(String(UNUSED_PARAMETER))) f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }

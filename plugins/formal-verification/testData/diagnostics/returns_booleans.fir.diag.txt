@@ -35,6 +35,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$returns_true() returns (ret$: Bool)
   ensures true
   ensures ret$ == true
@@ -79,6 +81,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$returns_false() returns (ret$: Bool)
   ensures true
   ensures ret$ == false
@@ -122,6 +126,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$incorrectly_returns_false() returns (ret$: Bool)
   ensures ret$ == true
@@ -171,6 +177,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$conditional_basic(local$b: Bool) returns (ret$: Bool)
   ensures ret$ == true ==> true
   ensures ret$ == false ==> local$b
@@ -214,6 +222,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$binary_logic_expressions(local$a: Bool, local$b: Bool)
   returns (ret$: Bool)
@@ -260,6 +270,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$logical_not(local$b: Bool) returns (ret$: Bool)
   ensures ret$ == true ==> !local$b && local$b
   ensures ret$ == false ==> local$b || !local$b
@@ -303,6 +315,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$binary_logic_expressions(local$a: Bool, local$b: Bool)
   returns (ret$: Bool)

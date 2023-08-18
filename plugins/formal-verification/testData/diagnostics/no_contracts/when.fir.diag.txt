@@ -35,6 +35,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$simple_if() returns (ret$: Int)
 {
   var anonymous$1: dom$Unit
@@ -84,6 +86,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$if_on_parameter(local$b: Bool) returns (ret$: Int)
 {
   var anonymous$1: dom$Unit
@@ -132,6 +136,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$simple_if() returns (ret$: Int)
 

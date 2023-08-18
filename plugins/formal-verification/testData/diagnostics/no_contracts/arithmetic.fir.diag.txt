@@ -35,6 +35,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$addition(local$x: Int) returns (ret$: dom$Unit)
 {
   var local$y: Int
@@ -77,6 +79,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$subtraction(local$x: Int) returns (ret$: dom$Unit)
 {
@@ -121,6 +125,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$multiplication(local$x: Int) returns (ret$: dom$Unit)
 {
   var local$y: Int
@@ -163,6 +169,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$division(local$x: Int) returns (ret$: dom$Unit)
 {

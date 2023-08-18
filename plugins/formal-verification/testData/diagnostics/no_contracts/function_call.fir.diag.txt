@@ -35,6 +35,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$f(local$x: Int) returns (ret$: Int)
 {
   ret$ := local$x
@@ -76,6 +78,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$f(local$x: Int) returns (ret$: Int)
 
@@ -124,6 +128,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$f(local$x: Int) returns (ret$: Int)
 

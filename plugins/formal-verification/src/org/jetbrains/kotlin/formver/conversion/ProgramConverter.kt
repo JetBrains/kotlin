@@ -29,7 +29,7 @@ class ProgramConverter(val session: FirSession) : ProgramConversionContext {
     val program: Program
         get() = Program(
             listOf(UnitDomain, NullableDomain), /* Domains */
-            listOf(), /* Fields */
+            SpecialFields.all, /* Fields */
             methods.values.toList(), /* Methods */
         )
 
@@ -46,6 +46,7 @@ class ProgramConverter(val session: FirSession) : ProgramConversionContext {
         type.isInt -> IntTypeEmbedding
         type.isBoolean -> BooleanTypeEmbedding
         type.isNothing -> NothingTypeEmbedding
+        type.isSomeFunctionType(session) -> FunctionTypeEmbedding
         type.isNullable -> NullableTypeEmbedding(embedType(type.withNullability(ConeNullability.NOT_NULL, session.typeContext)))
         else -> throw NotImplementedError("The embedding for type $type is not yet implemented.")
     }

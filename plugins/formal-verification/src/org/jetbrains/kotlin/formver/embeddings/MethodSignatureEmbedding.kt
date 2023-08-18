@@ -27,6 +27,7 @@ class MethodSignatureEmbedding(val name: MangledName, val params: List<VariableE
             returns.map { it.toLocalVarDecl() },
             params.flatMap { it.invariants() } + pres,
             params.flatMap { it.invariants() } +
+                    params.flatMap { it.dynamicInvariants() } +
                     returns.flatMap { it.invariants() } + posts,
             body, pos, info, trafos,
         )

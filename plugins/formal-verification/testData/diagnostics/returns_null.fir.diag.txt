@@ -35,6 +35,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$simple_returns_null(local$x: dom$Nullable[Int])
   returns (ret$: dom$Nullable[Int])
   ensures ret$ == (dom$Nullable$null(): dom$Nullable[Int])
@@ -79,6 +81,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$returns_null_implies(local$x: dom$Nullable[Bool])
   returns (ret$: dom$Nullable[Bool])
@@ -126,6 +130,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$returns_null_with_if(local$x: dom$Nullable[Int], local$y: dom$Nullable[Int],
   local$z: dom$Nullable[Int])
@@ -185,6 +191,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$non_nullable_returns_not_null(local$x: Int)
   returns (ret$: Int)
   ensures true
@@ -228,6 +236,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$non_nullable_returns_null(local$x: Int)
   returns (ret$: Int)
@@ -277,6 +287,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$non_nullable_compared_to_null(local$x: Int, local$y: Int)
   returns (ret$: Int)

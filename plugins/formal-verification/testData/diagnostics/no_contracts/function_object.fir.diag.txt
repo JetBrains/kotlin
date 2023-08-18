@@ -1,4 +1,4 @@
-/loop.kt:(4,14): info: Generated Viper text for while_loop:
+/function_object.kt:(4,17): info: Generated Viper text for unit_function:
 domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
@@ -37,13 +37,10 @@ domain dom$Nullable[T]  {
 
 field special$function_object_call_counter: Int
 
-method global$pkg_$while_loop(local$b: Bool) returns (ret$: Int)
+method global$pkg_$unit_function(local$f: Ref) returns (ret$: dom$Unit)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
 {
-  while (local$b) {
-    var local$a: Int
-    var local$c: Int
-    local$a := 1
-    local$c := 2
-  }
-  ret$ := 0
 }

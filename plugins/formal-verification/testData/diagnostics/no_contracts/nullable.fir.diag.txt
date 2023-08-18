@@ -35,6 +35,8 @@ domain dom$Nullable[T]  {
   }
 }
 
+field special$function_object_call_counter: Int
+
 method global$pkg_$use_nullable_twice(local$x: dom$Nullable[Int])
   returns (ret$: dom$Nullable[Int])
 {
@@ -81,6 +83,8 @@ domain dom$Nullable[T]  {
       nx)
   }
 }
+
+field special$function_object_call_counter: Int
 
 method global$pkg_$use_nullable_twice(local$x: dom$Nullable[Int])
   returns (ret$: dom$Nullable[Int])
