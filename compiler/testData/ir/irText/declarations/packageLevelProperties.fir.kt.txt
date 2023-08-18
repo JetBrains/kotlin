@@ -43,6 +43,5 @@ var test8: Int /* by */
     return #test8$delegate.getValue<Int, Int>(thisRef = null, property = ::test8)
   }
   set(<set-?>: Int) {
-    #test8$delegate.setValue<Int>(thisRef = null, property = ::test8, value = <set-?>)
+    return #test8$delegate.setValue<Int>(thisRef = null, property = ::test8, value = <set-?>)
   }
-

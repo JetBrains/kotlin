@@ -124,8 +124,9 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
         annotations:
           A(x = 'test2.set.param')
       BLOCK_BODY
-        CALL 'public final fun setValue (thisRef: kotlin.Any?, kProp: kotlin.Any?, newValue: kotlin.Int): kotlin.Unit declared in <root>.Cell' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test2$delegate type:<root>.Cell visibility:private [final,static]' type=<root>.Cell origin=null
-          thisRef: CONST Null type=kotlin.Nothing? value=null
-          kProp: PROPERTY_REFERENCE 'public final test2: kotlin.Int' field=null getter='public final fun <get-test2> (): kotlin.Int declared in <root>' setter='public final fun <set-test2> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-          newValue: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-test2>' type=kotlin.Int origin=null
+        RETURN type=kotlin.Nothing from='public final fun <set-test2> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>'
+          CALL 'public final fun setValue (thisRef: kotlin.Any?, kProp: kotlin.Any?, newValue: kotlin.Int): kotlin.Unit declared in <root>.Cell' type=kotlin.Unit origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test2$delegate type:<root>.Cell visibility:private [final,static]' type=<root>.Cell origin=null
+            thisRef: CONST Null type=kotlin.Nothing? value=null
+            kProp: PROPERTY_REFERENCE 'public final test2: kotlin.Int' field=null getter='public final fun <get-test2> (): kotlin.Int declared in <root>' setter='public final fun <set-test2> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<*> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            newValue: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-test2>' type=kotlin.Int origin=null

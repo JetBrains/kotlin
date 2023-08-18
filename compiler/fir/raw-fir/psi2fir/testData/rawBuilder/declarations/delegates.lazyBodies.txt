@@ -14,7 +14,7 @@ FILE: delegates.kt
             ^ D|/variable|.getValue#(Null(null), ::R|/variable|)
         }
         public? set(<set-?>: <implicit>): R|kotlin/Unit| {
-            D|/variable|.setValue#(Null(null), ::R|/variable|, R|<local>/variable|)
+            ^ D|/variable|.setValue#(Null(null), ::R|/variable|, R|<local>/variable|)
         }
     public? final? interface Base : R|kotlin/Any| {
     }

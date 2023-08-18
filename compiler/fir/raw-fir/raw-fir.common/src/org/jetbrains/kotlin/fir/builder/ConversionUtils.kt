@@ -462,6 +462,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     }
     if (isVar && (setter == null || setter is FirDefaultPropertyAccessor)) {
         val annotations = setter?.annotations
+        val returnTarget = FirFunctionTarget(null, isLambda = false)
         val parameterAnnotations = setter?.valueParameters?.firstOrNull()?.annotations
         val setterStatus = setter?.status
         val setterElement = setter?.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor) ?: fakeSource
@@ -492,25 +493,29 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
             }
             valueParameters += parameter
             body = FirSingleExpressionBlock(
-                buildFunctionCall {
-                    source = fakeSource
-                    explicitReceiver = delegateAccess()
-                    calleeReference = buildSimpleNamedReference {
+                buildReturnExpression {
+                    result = buildFunctionCall {
                         source = fakeSource
-                        name = OperatorNameConventions.SET_VALUE
-                    }
-                    argumentList = buildArgumentList {
-                        arguments += thisRef()
-                        arguments += propertyRef()
-                        arguments += buildPropertyAccessExpression {
-                            calleeReference = buildResolvedNamedReference {
-                                source = fakeSource
-                                name = SpecialNames.IMPLICIT_SET_PARAMETER
-                                resolvedSymbol = parameter.symbol
+                        explicitReceiver = delegateAccess()
+                        calleeReference = buildSimpleNamedReference {
+                            source = fakeSource
+                            name = OperatorNameConventions.SET_VALUE
+                        }
+                        argumentList = buildArgumentList {
+                            arguments += thisRef()
+                            arguments += propertyRef()
+                            arguments += buildPropertyAccessExpression {
+                                calleeReference = buildResolvedNamedReference {
+                                    source = fakeSource
+                                    name = SpecialNames.IMPLICIT_SET_PARAMETER
+                                    resolvedSymbol = parameter.symbol
+                                }
                             }
                         }
+                        origin = FirFunctionCallOrigin.Operator
                     }
-                    origin = FirFunctionCallOrigin.Operator
+                    target = returnTarget
+                    source = fakeSource
                 }
             )
             if (annotations != null) {
@@ -518,6 +523,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
             }
             propertySymbol = this@generateAccessorsByDelegate.symbol
         }.also {
+            returnTarget.bind(it)
             it.initContainingClassAttr(context)
         }
     }

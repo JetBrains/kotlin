@@ -26,7 +26,7 @@ FILE: [ResolvedTo(RAW_FIR)] delegatesScript.kts
                 ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
@@ -34,7 +34,7 @@ FILE: [ResolvedTo(RAW_FIR)] delegatesScript.kts
                 ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
 
 
@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
@@ -74,7 +74,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
 
 
@@ -106,7 +106,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
@@ -114,7 +114,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
 
 
@@ -146,7 +146,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
 
 
@@ -186,7 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
@@ -194,7 +194,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
 
 
@@ -226,7 +226,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
@@ -234,7 +234,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
 
 
@@ -266,7 +266,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
@@ -274,7 +274,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
 
 
@@ -306,7 +306,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
@@ -314,7 +314,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
 
 
@@ -346,7 +346,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
@@ -354,7 +354,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
 
 
@@ -391,7 +391,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
@@ -399,7 +399,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
 
 
@@ -436,7 +436,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
@@ -444,7 +444,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
 
 
@@ -481,7 +481,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
@@ -489,7 +489,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
             }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
 
 
@@ -540,7 +540,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
             }
             public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
-                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
             }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
@@ -548,7 +548,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)
             }
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
-                D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+                ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
 
 
@@ -599,7 +599,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatesScript.kts
                 ^ D|/variableWithExplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithExplicitType|)
             }
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
-                D|/variableWithExplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+                ^ D|/variableWithExplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
             }
 
         public final [ResolvedTo(BODY_RESOLVE)] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
@@ -607,6 +607,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatesScript.kts
                 ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)
             }
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
-                D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+                ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
 

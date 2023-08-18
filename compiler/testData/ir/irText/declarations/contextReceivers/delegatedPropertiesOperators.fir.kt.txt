@@ -42,7 +42,7 @@ class Result {
       return <this>.#s$delegate.getValue($context_receiver_0 = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s)
     }
     set(<set-?>: String) {
-      <this>.#s$delegate.setValue($context_receiver_0 = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s, value = <set-?>)
+      return <this>.#s$delegate.setValue($context_receiver_0 = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s, value = <set-?>)
     }
 
 }

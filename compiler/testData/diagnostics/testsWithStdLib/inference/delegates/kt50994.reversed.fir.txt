@@ -9,7 +9,7 @@ FILE: kt50994.reversed.kt
                 ^ this@R|/ProcessorWithParent|.D|/ProcessorWithParent.processor|.R|SubstitutionOverride</Delegate.getValue: R|Stub (chain inference): TypeVariable(+TP)?|>|(this@R|/ProcessorWithParent|, ::R|/ProcessorWithParent.processor|)
             }
             public set(<set-?>: R|ProcessorWithChildren?|): R|kotlin/Unit| {
-                this@R|/ProcessorWithParent|.D|/ProcessorWithParent.processor|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/ProcessorWithParent|, ::R|/ProcessorWithParent.processor|, R|<local>/processor|)
+                ^ this@R|/ProcessorWithParent|.D|/ProcessorWithParent.processor|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/ProcessorWithParent|, ::R|/ProcessorWithParent.processor|, R|<local>/processor|)
             }
 
     }
@@ -23,7 +23,7 @@ FILE: kt50994.reversed.kt
                 ^ this@R|/ProcessorWithChildren|.D|/ProcessorWithChildren.processors|.R|SubstitutionOverride</Delegate.getValue: R|kotlin/collections/MutableCollection<Stub (chain inference): TypeVariable(+TC)>|>|(this@R|/ProcessorWithChildren|, ::R|/ProcessorWithChildren.processors|)
             }
             public set(<set-?>: R|kotlin/collections/MutableCollection<ProcessorWithParent>|): R|kotlin/Unit| {
-                this@R|/ProcessorWithChildren|.D|/ProcessorWithChildren.processors|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/ProcessorWithChildren|, ::R|/ProcessorWithChildren.processors|, R|<local>/processors|)
+                ^ this@R|/ProcessorWithChildren|.D|/ProcessorWithChildren.processors|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/ProcessorWithChildren|, ::R|/ProcessorWithChildren.processors|, R|<local>/processors|)
             }
 
     }
@@ -37,7 +37,7 @@ FILE: kt50994.reversed.kt
                 ^ this@R|/Processor2WithParent|.D|/Processor2WithParent.processor|.R|SubstitutionOverride</Delegate.getValue: R|Processor2WithChildren?|>|(this@R|/Processor2WithParent|, ::R|/Processor2WithParent.processor|)
             }
             public set(<set-?>: R|Processor2WithChildren?|): R|kotlin/Unit| {
-                this@R|/Processor2WithParent|.D|/Processor2WithParent.processor|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Processor2WithParent|, ::R|/Processor2WithParent.processor|, R|<local>/processor|)
+                ^ this@R|/Processor2WithParent|.D|/Processor2WithParent.processor|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Processor2WithParent|, ::R|/Processor2WithParent.processor|, R|<local>/processor|)
             }
 
     }
@@ -51,7 +51,7 @@ FILE: kt50994.reversed.kt
                 ^ this@R|/Processor2WithChildren|.D|/Processor2WithChildren.processors|.R|SubstitutionOverride</Delegate.getValue: R|kotlin/collections/MutableCollection<Stub (chain inference): TypeVariable(+TC)>|>|(this@R|/Processor2WithChildren|, ::R|/Processor2WithChildren.processors|)
             }
             public set(<set-?>: R|kotlin/collections/MutableCollection<Processor2WithParent>|): R|kotlin/Unit| {
-                this@R|/Processor2WithChildren|.D|/Processor2WithChildren.processors|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Processor2WithChildren|, ::R|/Processor2WithChildren.processors|, R|<local>/processors|)
+                ^ this@R|/Processor2WithChildren|.D|/Processor2WithChildren.processors|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Processor2WithChildren|, ::R|/Processor2WithChildren.processors|, R|<local>/processors|)
             }
 
     }
@@ -65,7 +65,7 @@ FILE: kt50994.reversed.kt
                 ^ this@R|/Processor3WithParent|.D|/Processor3WithParent.processor|.R|SubstitutionOverride</Delegate.getValue: R|Processor3WithChildren?|>|(this@R|/Processor3WithParent|, ::R|/Processor3WithParent.processor|)
             }
             public set(<set-?>: R|Processor3WithChildren?|): R|kotlin/Unit| {
-                this@R|/Processor3WithParent|.D|/Processor3WithParent.processor|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Processor3WithParent|, ::R|/Processor3WithParent.processor|, R|<local>/processor|)
+                ^ this@R|/Processor3WithParent|.D|/Processor3WithParent.processor|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Processor3WithParent|, ::R|/Processor3WithParent.processor|, R|<local>/processor|)
             }
 
     }
@@ -79,7 +79,7 @@ FILE: kt50994.reversed.kt
                 ^ this@R|/Processor3WithChildren|.D|/Processor3WithChildren.processors|.R|SubstitutionOverride</Delegate.getValue: R|kotlin/collections/MutableCollection<Stub (chain inference): TypeVariable(+TC)>|>|(this@R|/Processor3WithChildren|, ::R|/Processor3WithChildren.processors|)
             }
             public set(<set-?>: R|kotlin/collections/MutableCollection<Processor3WithParent>|): R|kotlin/Unit| {
-                this@R|/Processor3WithChildren|.D|/Processor3WithChildren.processors|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Processor3WithChildren|, ::R|/Processor3WithChildren.processors|, R|<local>/processors|)
+                ^ this@R|/Processor3WithChildren|.D|/Processor3WithChildren.processors|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Processor3WithChildren|, ::R|/Processor3WithChildren.processors|, R|<local>/processors|)
             }
 
     }

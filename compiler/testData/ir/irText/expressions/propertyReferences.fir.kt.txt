@@ -99,7 +99,7 @@ var delegatedVar: Int /* by */
     return #delegatedVar$delegate.getValue(thisRef = null, kProp = ::delegatedVar)
   }
   set(<set-?>: Int) {
-    #delegatedVar$delegate.setValue(thisRef = null, kProp = ::delegatedVar, value = <set-?>)
+    return #delegatedVar$delegate.setValue(thisRef = null, kProp = ::delegatedVar, value = <set-?>)
   }
 
 val test_delegatedVar: KMutableProperty0<Int>
