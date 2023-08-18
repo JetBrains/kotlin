@@ -1450,9 +1450,7 @@ class Fir2IrDeclarationStorage(
                 isAssignable = false,
                 symbol = IrValueParameterSymbolImpl(),
                 index = index,
-                varargElementType =
-                    if (!valueParameter.isVararg) null
-                    else valueParameter.returnTypeRef.coneType.arrayElementType()?.toIrType(typeOrigin),
+                varargElementType = valueParameter.varargElementType?.toIrType(typeOrigin),
                 isCrossinline = valueParameter.isCrossinline,
                 isNoinline = valueParameter.isNoinline,
                 isHidden = false,

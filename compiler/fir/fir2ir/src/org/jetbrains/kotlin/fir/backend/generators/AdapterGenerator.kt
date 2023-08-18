@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -44,6 +43,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeVariance
@@ -138,7 +138,6 @@ internal class AdapterGenerator(
         }
     }
 
-    @OptIn(IrSymbolInternals::class)
     internal fun generateAdaptedCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
         explicitReceiverExpression: IrExpression?,
@@ -146,14 +145,13 @@ internal class AdapterGenerator(
         type: IrSimpleType
     ): IrExpression {
         val firAdaptee = callableReferenceAccess.toResolvedCallableReference()?.resolvedSymbol?.fir as? FirFunction
-        val adaptee = adapteeSymbol.owner
         val expectedReturnType = type.arguments.last().typeOrNull
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
             val boundDispatchReceiver = callableReferenceAccess.findBoundReceiver(explicitReceiverExpression, isDispatch = true)
             val boundExtensionReceiver = callableReferenceAccess.findBoundReceiver(explicitReceiverExpression, isDispatch = false)
 
             val irAdapterFunction = createAdapterFunctionForCallableReference(
-                callableReferenceAccess, startOffset, endOffset, firAdaptee!!, adaptee, type, boundDispatchReceiver, boundExtensionReceiver
+                callableReferenceAccess, startOffset, endOffset, firAdaptee!!, type, boundDispatchReceiver, boundExtensionReceiver
             )
             val irCall = createAdapteeCallForCallableReference(
                 callableReferenceAccess, firAdaptee, adapteeSymbol, irAdapterFunction, type, boundDispatchReceiver, boundExtensionReceiver
@@ -176,7 +174,7 @@ internal class AdapterGenerator(
                 irAdapterFunction.valueParameters.size, null, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
             ).apply {
                 extensionReceiver = boundDispatchReceiver ?: boundExtensionReceiver
-                reflectionTarget = adaptee.symbol
+                reflectionTarget = adapteeSymbol
             }
             IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE).apply {
                 statements.add(irAdapterFunction)
@@ -203,7 +201,6 @@ internal class AdapterGenerator(
         startOffset: Int,
         endOffset: Int,
         firAdaptee: FirFunction,
-        adaptee: IrFunction,
         type: IrSimpleType,
         boundDispatchReceiver: IrExpression?,
         boundExtensionReceiver: IrExpression?
@@ -211,11 +208,15 @@ internal class AdapterGenerator(
         val returnType = type.arguments.last().typeOrNull!!
         val parameterTypes = type.arguments.dropLast(1).map { it.typeOrNull!! }
         val firMemberAdaptee = firAdaptee as FirMemberDeclaration
+        val name = when (firAdaptee) {
+            is FirConstructor -> SpecialNames.INIT
+            else -> firAdaptee.symbol.name
+        }
         return irFactory.createSimpleFunction(
             startOffset = startOffset,
             endOffset = endOffset,
             origin = IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
-            name = adaptee.name,
+            name = name,
             visibility = DescriptorVisibilities.LOCAL,
             isInline = firMemberAdaptee.isInline,
             isExpect = false,
@@ -288,7 +289,6 @@ internal class AdapterGenerator(
     private fun IrValueDeclaration.toIrGetValue(startOffset: Int, endOffset: Int): IrGetValue =
         IrGetValueImpl(startOffset, endOffset, this.type, this.symbol)
 
-    @OptIn(IrSymbolInternals::class)
     private fun createAdapteeCallForCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
         firAdaptee: FirFunction,
@@ -297,11 +297,8 @@ internal class AdapterGenerator(
         adaptedType: IrSimpleType,
         boundDispatchReceiver: IrExpression?,
         boundExtensionReceiver: IrExpression?
-    ): IrExpression {
-        val adapteeFunction = adapteeSymbol.owner
-        val startOffset = adapteeFunction.startOffset
-        val endOffset = adapteeFunction.endOffset
-        val type = adapteeFunction.returnType
+    ): IrExpression = callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
+        val type = firAdaptee.returnTypeRef.toIrType(typeConverter)
         val irCall = when (adapteeSymbol) {
             is IrConstructorSymbol ->
                 IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, adapteeSymbol)
@@ -312,7 +309,7 @@ internal class AdapterGenerator(
                     type,
                     adapteeSymbol,
                     callableReferenceAccess.typeArguments.size,
-                    adapteeFunction.valueParameters.size,
+                    firAdaptee.valueParameters.size + firAdaptee.contextReceivers.size,
                     origin = null,
                     superQualifierSymbol = null
                 )
@@ -337,7 +334,7 @@ internal class AdapterGenerator(
             val adaptedReceiverValue = IrGetValueImpl(
                 startOffset, endOffset, adaptedReceiverParameter.type, adaptedReceiverParameter.symbol
             )
-            if (adapteeFunction.extensionReceiverParameter != null) {
+            if (firAdaptee.receiverParameter != null) {
                 irCall.extensionReceiver = adaptedReceiverValue
             } else {
                 irCall.dispatchReceiver = adaptedReceiverValue
@@ -353,16 +350,17 @@ internal class AdapterGenerator(
             return adapterFunction.valueParameters[parameterIndex + parameterShift].toIrGetValue(startOffset, endOffset)
         }
 
-        adapteeFunction.valueParameters.zip(firAdaptee.valueParameters).forEachIndexed { index, (valueParameter, firParameter) ->
-            when (val mappedArgument = mappedArguments?.get(firParameter)) {
+        firAdaptee.valueParameters.forEachIndexed { index, valueParameter ->
+            val varargElementType = valueParameter.varargElementType?.toIrType()
+            val parameterType = valueParameter.returnTypeRef.toIrType(typeConverter)
+            when (val mappedArgument = mappedArguments?.get(valueParameter)) {
                 is ResolvedCallArgument.VarargArgument -> {
                     val valueArgument = if (mappedArgument.arguments.isEmpty()) {
                         null
                     } else {
-                        val parameterType = valueParameter.type
                         val reifiedVarargElementType: IrType
                         val reifiedVarargType: IrType
-                        if (valueParameter.varargElementType?.isTypeParameter() == true &&
+                        if (varargElementType?.isTypeParameter() == true &&
                             parameterType is IrSimpleType &&
                             !parameterType.isPrimitiveArray()
                         ) {
@@ -375,7 +373,7 @@ internal class AdapterGenerator(
                                 parameterType.abbreviation
                             )
                         } else {
-                            reifiedVarargElementType = valueParameter.varargElementType!!
+                            reifiedVarargElementType = varargElementType!!
                             reifiedVarargType = parameterType
                         }
 
@@ -402,7 +400,7 @@ internal class AdapterGenerator(
                         irCall.putValueArgument(
                             index, IrVarargImpl(
                                 startOffset, endOffset,
-                                valueParameter.type, valueParameter.varargElementType!!,
+                                parameterType, varargElementType!!,
                                 listOf(IrSpreadElementImpl(startOffset, endOffset, irValueArgument))
                             )
                         )
@@ -416,7 +414,7 @@ internal class AdapterGenerator(
         }
 
         with(callGenerator) {
-            return irCall.applyTypeArguments(callableReferenceAccess)
+            irCall.applyTypeArguments(callableReferenceAccess)
         }
     }
 

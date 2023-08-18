@@ -849,3 +849,9 @@ internal fun FirVariable.irTypeForPotentiallyComponentCall(predefinedType: IrTyp
     }
     return typeRef.toIrType(typeConverter)
 }
+
+internal val FirValueParameter.varargElementType: ConeKotlinType?
+    get() {
+        if (!isVararg) return null
+        return returnTypeRef.coneType.arrayElementType()
+    }
