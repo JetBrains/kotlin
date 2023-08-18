@@ -15249,6 +15249,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("genericOnJavaWildcardBoundedByRaw.kt")
+            public void testGenericOnJavaWildcardBoundedByRaw() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/genericOnJavaWildcardBoundedByRaw.kt");
+            }
+
+            @Test
             @TestMetadata("hasErrorInConstrainingTypes.kt")
             public void testHasErrorInConstrainingTypes() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/hasErrorInConstrainingTypes.kt");
