@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
@@ -79,7 +77,7 @@ class IrBuiltInsOverDescriptors(
     private val builtInsModule = builtIns.builtInsModule
 
     private val kotlinInternalPackage = StandardClassIds.BASE_INTERNAL_PACKAGE
-    private val kotlinInternalIrPackage = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(builtInsModule, kotlinInternalPackage)
+    override val kotlinInternalPackageFragment = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(builtInsModule, kotlinInternalPackage)
 
     private val packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
 
@@ -294,17 +292,7 @@ class IrBuiltInsOverDescriptors(
     override val anyClass = builtIns.any.toIrSymbol()
     override val anyNType = anyType.makeNullable()
 
-    private val intrinsicConstAnnotationFqName = kotlinInternalPackage.child(Name.identifier("IntrinsicConstEvaluation"))
-    private val intrinsicConstClass = irFactory.buildClass {
-        name = intrinsicConstAnnotationFqName.shortName()
-        kind = ClassKind.ANNOTATION_CLASS
-        modality = Modality.FINAL
-    }.apply {
-        parent = kotlinInternalIrPackage
-        createImplicitParameterDeclarationWithWrappedDescriptor()
-        addConstructor() { isPrimary = true }
-        addFakeOverrides(IrTypeSystemContextImpl(this@IrBuiltInsOverDescriptors))
-    }
+    private val intrinsicConstClass = createIntrinsicConstEvaluationClass()
     private val intrinsicConstType = intrinsicConstClass.defaultType
     private val intrinsicConstConstructor = intrinsicConstClass.primaryConstructor as IrConstructor
 

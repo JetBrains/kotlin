@@ -53,8 +53,6 @@ class IrBuiltInsOverFir(
     private val moduleDescriptor: FirModuleDescriptor,
     irMangler: KotlinMangler.IrMangler
 ) : IrBuiltIns() {
-    private var initialized: Boolean = false
-
     private val session: FirSession
         get() = components.session
 
@@ -65,7 +63,10 @@ class IrBuiltInsOverFir(
 
     private val kotlinPackage = StandardClassIds.BASE_KOTLIN_PACKAGE
 
-    override val operatorsPackageFragment = createPackage(KOTLIN_INTERNAL_IR_FQN)
+    override val kotlinInternalPackageFragment: IrExternalPackageFragment = createPackage(StandardClassIds.BASE_INTERNAL_PACKAGE)
+    private val kotlinInternalIrPackageFragment: IrExternalPackageFragment = createPackage(StandardClassIds.BASE_INTERNAL_IR_PACKAGE)
+    override val operatorsPackageFragment: IrExternalPackageFragment
+        get() = kotlinInternalIrPackageFragment
 
     private val irSignatureBuilder = PublicIdSignatureComputer(irMangler)
 
@@ -127,7 +128,11 @@ class IrBuiltInsOverFir(
     override val stringClass: IrClassSymbol by lazy { loadClass(StandardClassIds.String) }
     override val stringType: IrType get() = stringClass.defaultTypeWithoutArguments
 
-    internal val intrinsicConst by lazy { loadClass(StandardClassIds.Annotations.IntrinsicConstEvaluation) }
+    internal val intrinsicConst by lazy {
+        // Old versions of stdlib may not contain @IntrinsicConstEvaluation (AV < 1.7),
+        //   so in this case we should create annotation class manually
+        /*loadClassSafe(StandardClassIds.Annotations.IntrinsicConstEvaluation) ?: */createIntrinsicConstEvaluationClass().symbol
+    }
 
     private val intrinsicConstAnnotation: IrConstructorCall by lazy {
         val constructor = intrinsicConst.constructors.single()
@@ -242,18 +247,18 @@ class IrBuiltInsOverFir(
     override val ieee754equalsFunByOperandType: MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol>
         get() = _ieee754equalsFunByOperandType
 
-    override lateinit var eqeqeqSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var eqeqSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var throwCceSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var throwIseSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var andandSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var ororSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var illegalArgumentExceptionSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var dataClassArrayMemberHashCodeSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var dataClassArrayMemberToStringSymbol: IrSimpleFunctionSymbol private set
+    override val eqeqeqSymbol: IrSimpleFunctionSymbol
+    override val eqeqSymbol: IrSimpleFunctionSymbol
+    override val throwCceSymbol: IrSimpleFunctionSymbol
+    override val throwIseSymbol: IrSimpleFunctionSymbol
+    override val andandSymbol: IrSimpleFunctionSymbol
+    override val ororSymbol: IrSimpleFunctionSymbol
+    override val noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol
+    override val illegalArgumentExceptionSymbol: IrSimpleFunctionSymbol
+    override val dataClassArrayMemberHashCodeSymbol: IrSimpleFunctionSymbol
+    override val dataClassArrayMemberToStringSymbol: IrSimpleFunctionSymbol
 
-    override lateinit var checkNotNullSymbol: IrSimpleFunctionSymbol private set
+    override val checkNotNullSymbol: IrSimpleFunctionSymbol
     override val arrayOfNulls: IrSimpleFunctionSymbol by lazy {
         val firSymbol = symbolProvider
             .getTopLevelFunctionSymbols(kotlinPackage, Name.identifier("arrayOfNulls")).first {
@@ -265,15 +270,13 @@ class IrBuiltInsOverFir(
     override val linkageErrorSymbol: IrSimpleFunctionSymbol
         get() = TODO("Not yet implemented")
 
-    override lateinit var lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
-    override lateinit var lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
-    override lateinit var greaterOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
-    override lateinit var greaterFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
+    override val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
+    override val lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
+    override val greaterOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
+    override val greaterFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
 
-    internal fun initialize() {
-        if (initialized) return
-        initialized = true
-        with(this.operatorsPackageFragment) {
+    init {
+        with(this.kotlinInternalIrPackageFragment) {
 
             fun addBuiltinOperatorSymbol(
                 name: String,
@@ -504,12 +507,12 @@ class IrBuiltInsOverFir(
         findProperties(packageFqName, name)
 
     override fun findClass(name: Name, vararg packageNameSegments: String): IrClassSymbol? =
-        referenceClassByFqname(FqName.fromSegments(packageNameSegments.asList()), name)
+        loadClassSafe(FqName.fromSegments(packageNameSegments.asList()), name)
 
     override fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? =
-        referenceClassByFqname(packageFqName, name)
+        loadClassSafe(packageFqName, name)
 
-    private fun referenceClassByFqname(packageName: FqName, identifier: Name): IrClassSymbol? {
+    private fun loadClassSafe(packageName: FqName, identifier: Name): IrClassSymbol? {
         return loadClassSafe(ClassId(packageName, identifier))
     }
 
@@ -534,7 +537,7 @@ class IrBuiltInsOverFir(
 
 // ---------------
 
-    private fun referenceClassByFqname(topLevelFqName: FqName): IrClassSymbol? {
+    private fun loadClassSafe(topLevelFqName: FqName): IrClassSymbol? {
         return loadClassSafe(ClassId.topLevel(topLevelFqName))
     }
 
@@ -551,7 +554,7 @@ class IrBuiltInsOverFir(
     private fun IrType.getMaybeBuiltinClass(): IrClass? {
         val lhsClassFqName = classFqName!!
         return baseIrTypes.find { it.classFqName == lhsClassFqName }?.getClass()
-            ?: referenceClassByFqname(lhsClassFqName)?.owner
+            ?: loadClassSafe(lhsClassFqName)?.owner
     }
 
     private fun createPackage(fqName: FqName): IrExternalPackageFragment =

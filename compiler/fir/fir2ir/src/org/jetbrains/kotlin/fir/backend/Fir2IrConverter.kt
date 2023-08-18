@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.backend.common.sourceElement
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -577,7 +575,6 @@ class Fir2IrConverter(
             components.annotationsFromPluginRegistrar = Fir2IrAnnotationsFromPluginRegistrar(components)
 
             fir2IrExtensions.registerDeclarations(commonMemberStorage.symbolTable)
-            irBuiltIns.initialize()
 
             val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltIns)
 

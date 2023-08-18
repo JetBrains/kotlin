@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.ir
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
@@ -17,8 +21,12 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.util.addFakeOverrides
+import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
  * Symbols for builtins that are available without any context and are not specific to any backend
@@ -190,6 +198,20 @@ abstract class IrBuiltIns {
     abstract fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol
 
     abstract val operatorsPackageFragment: IrExternalPackageFragment
+    abstract val kotlinInternalPackageFragment: IrExternalPackageFragment
+
+    protected fun createIntrinsicConstEvaluationClass(): IrClass {
+        return irFactory.buildClass {
+            name = StandardClassIds.Annotations.IntrinsicConstEvaluation.shortClassName
+            kind = ClassKind.ANNOTATION_CLASS
+            modality = Modality.FINAL
+        }.apply {
+            parent = kotlinInternalPackageFragment
+            createImplicitParameterDeclarationWithWrappedDescriptor()
+            addConstructor { isPrimary = true }
+            addFakeOverrides(IrTypeSystemContextImpl(this@IrBuiltIns))
+        }
+    }
 
     companion object {
         val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")
