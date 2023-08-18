@@ -80,26 +80,25 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         // TODO: find a way to not evaluate subject multiple times if it is a function call
         whenSubjectExpression.whenRef.value.subject!!.accept(this, data)
 
-    private fun convertWhenBranches(whenBranches: List<FirWhenBranch>, data: StmtConversionContext, cvar: VariableEmbedding?) {
+    private fun convertWhenBranches(whenBranches: Iterator<FirWhenBranch>, data: StmtConversionContext, cvar: VariableEmbedding?) {
         // NOTE: I think that this will also work with "in" or "is" conditions when implemented, but I'm not 100% sure
-        if (whenBranches.isEmpty()) return // base case, there are no branches
+        if (!whenBranches.hasNext()) return
 
-        val cond = whenBranches[0].condition.accept(this, data)
-        val thenCtx = StmtConverter(data)
-        val elseCtx = StmtConverter(data)
-        val thenResult = whenBranches[0].result.accept(this, thenCtx)
-        cvar?.let { thenCtx.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), thenResult)) }
+        val branch = whenBranches.next()
 
-        // TODO: probably there is a simpler way to do this
-        if (whenBranches.size == 2 && whenBranches[1].condition is FirElseIfTrueCondition) {
-            // When last branch is an else
-            val elseResult = whenBranches[1].result.accept(this, elseCtx)
-            cvar?.let { elseCtx.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), elseResult)) }
+        // Note that only the last condition can be a FirElseIfTrue
+        if (branch.condition is FirElseIfTrueCondition) {
+            val result = branch.result.accept(this, data)
+            cvar?.let { data.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), result)) }
         } else {
-            // Recursive case
-            convertWhenBranches(whenBranches.drop(1), elseCtx, cvar)
+            val cond = branch.condition.accept(this, data)
+            val thenCtx = StmtConverter(data)
+            val thenResult = branch.result.accept(this, thenCtx)
+            cvar?.let { thenCtx.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), thenResult)) }
+            val elseCtx = StmtConverter(data)
+            convertWhenBranches(whenBranches, elseCtx, cvar)
+            data.addStatement(Stmt.If(cond, thenCtx.block, elseCtx.block))
         }
-        data.addStatement(Stmt.If(cond, thenCtx.block, elseCtx.block))
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: StmtConversionContext): Exp {
@@ -109,7 +108,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
             null
         }
         cvar?.let { data.addDeclaration(cvar.toLocalVarDecl()) }
-        convertWhenBranches(whenExpression.branches, data, cvar)
+        convertWhenBranches(whenExpression.branches.iterator(), data, cvar)
         return cvar?.toLocalVar() ?: UnitDomain.element
     }
 
