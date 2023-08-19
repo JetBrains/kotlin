@@ -863,7 +863,9 @@ class FunctionInlining(
                 irExpression = IrBlockImpl(
                     if (isDefaultArg) variableInitializer.startOffset else UNDEFINED_OFFSET,
                     if (isDefaultArg) variableInitializer.endOffset else UNDEFINED_OFFSET,
-                    if (inlineArgumentsWithTheirOriginalTypeAndOffset) parameter.getOriginalType() else variableInitializer.type,
+                    // If original type of parameter is T, then `parameter.type` is T after substitution or erasure,
+                    // depending on whether T reified or not.
+                    parameter.type,
                     InlinerExpressionLocationHint((currentScope.irElement as IrSymbolOwner).symbol)
                 ).apply {
                     statements.add(variableInitializer)

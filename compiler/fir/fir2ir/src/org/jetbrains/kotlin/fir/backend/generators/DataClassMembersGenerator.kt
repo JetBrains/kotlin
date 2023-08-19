@@ -100,6 +100,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             private fun getHashCodeFunction(klass: IrClass): IrSimpleFunctionSymbol =
                 klass.functions.singleOrNull {
                     it.name.asString() == "hashCode" && it.valueParameters.isEmpty() && it.extensionReceiverParameter == null
+                            && it.origin != IrDeclarationOrigin.FAKE_OVERRIDE
                 }?.symbol
                     ?: context.irBuiltIns.anyClass.functions.single { it.owner.name.asString() == "hashCode" }
 
