@@ -171,6 +171,7 @@ private val functionInliningPhase = makeCustomWasmModulePhase(
             innerClassesSupport = context.innerClassesSupport,
             inlineFunctionResolver = WasmInlineFunctionResolver(context),
             insertAdditionalImplicitCasts = true,
+            alwaysCreateTemporaryVariablesForArguments = true,
             shouldNotEraseWhenInliningTo = {
                 (it as? IrFunction)?.isTopLevelInPackage(
                     "jsCheckIsNullOrUndefinedAdapter",

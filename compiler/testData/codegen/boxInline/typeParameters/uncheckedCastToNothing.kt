@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-
 // FILE: 1.kt
 inline fun <U> unchecked(any: Any): Any {
     @Suppress("UNCHECKED_CAST")
