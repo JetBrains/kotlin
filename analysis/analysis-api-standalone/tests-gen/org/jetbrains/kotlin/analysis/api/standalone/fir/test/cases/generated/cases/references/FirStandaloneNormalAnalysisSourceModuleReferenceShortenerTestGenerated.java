@@ -293,6 +293,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("kdocQualifierSelected_rootIdePrefix.kt")
+    public void testKdocQualifierSelected_rootIdePrefix() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/kdocQualifierSelected_rootIdePrefix.kt");
+    }
+
+    @Test
     @TestMetadata("kdocUnresolved.kt")
     public void testKdocUnresolved() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/kdocUnresolved.kt");
