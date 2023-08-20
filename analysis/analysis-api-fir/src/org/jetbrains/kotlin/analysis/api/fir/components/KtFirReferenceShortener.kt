@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
+import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
@@ -156,22 +157,15 @@ internal class KtFirReferenceShortener(
     private fun buildSymbol(firSymbol: FirBasedSymbol<*>): KtSymbol = analysisSession.firSymbolBuilder.buildSymbol(firSymbol)
 }
 
-private fun FqName.dropFakeRootPrefixIfPresent(): FqName {
-    val pathSegments = pathSegments()
-    return if (pathSegments.firstOrNull()?.asString() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) {
-        FqName.fromSegments(pathSegments.drop(1).map { it.asString() })
-    } else this
-}
+private fun FqName.dropFakeRootPrefixIfPresent(): FqName =
+    tail(FqName(ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE))
 
 private data class AdditionalImports(val simpleImports: Set<FqName>, val starImports: Set<FqName>)
 
-private inline fun <reified T : KtElement> KtFile.findSmallestElementOfTypeContainingSelection(selection: TextRange): T? {
-    val parents = findElementAt(selection.startOffset)
-        ?.parentsWithSelf
-        ?.toList()
-
-    return parents?.filterIsInstance<T>()?.firstOrNull { selection in it.textRange }
-}
+private inline fun <reified T : KtElement> KtFile.findSmallestElementOfTypeContainingSelection(selection: TextRange): T? =
+    findElementAt(selection.startOffset)
+        ?.parentsOfType<T>(withSelf = true)
+        ?.firstOrNull { selection in it.textRange }
 
 /**
  * How a symbol is imported. The order of the enum entry represents the priority of imports. If a symbol is available from multiple kinds of
@@ -437,7 +431,7 @@ private class ElementsToShortenCollector(
 
         val classifierId = resolvedTypeRef.type.lowerBoundIfFlexible().candidateClassId ?: return
 
-        findTypeToShorten(classifierId, typeElement)?.let(::addElementToShorten)
+        findTypeQualifierToShorten(classifierId, typeElement)?.let(::addElementToShorten)
     }
 
     /**
@@ -488,20 +482,6 @@ private class ElementsToShortenCollector(
         yieldAll(qualifiersToShorten)
     }.filter { starImport == it.importAllInParent }.mapNotNull { it.nameToImport }.distinct()
 
-    private fun findTypeToShorten(wholeClassifierId: ClassId, wholeTypeElement: KtUserType): ElementToShorten? {
-        val positionScopes =
-            shorteningContext.findScopesAtPosition(wholeTypeElement, getNamesToImport(), towerContextProvider) ?: return null
-        val allClassIds = wholeClassifierId.outerClassesWithSelf
-        val allQualifiedTypeElements = wholeTypeElement.qualifiedTypesWithSelf
-        return findClassifierElementsToShorten(
-            positionScopes,
-            allClassIds,
-            allQualifiedTypeElements,
-            ::ShortenType,
-            this::findFakePackageToShorten
-        )
-    }
-
     private fun findFakePackageToShorten(typeElement: KtUserType): ShortenType? {
         val deepestTypeWithQualifier = typeElement.qualifiedTypesWithSelf.last()
 
@@ -525,18 +505,16 @@ private class ElementsToShortenCollector(
 
     private fun findTypeQualifierToShorten(
         wholeClassQualifier: ClassId,
-        wholeQualifierElement: KtDotQualifiedExpression
+        wholeQualifierElement: KtElement,
     ): ElementToShorten? {
         val positionScopes: List<FirScope> =
             shorteningContext.findScopesAtPosition(wholeQualifierElement, getNamesToImport(), towerContextProvider) ?: return null
-        val allClassIds: Sequence<ClassId> = wholeClassQualifier.outerClassesWithSelf
-        val allQualifiers: Sequence<KtDotQualifiedExpression> = wholeQualifierElement.qualifiedExpressionsWithSelf
+        val allClassIds = wholeClassQualifier.outerClassesWithSelf
+        val allQualifiers = wholeQualifierElement.qualifiedElementsWithSelf
         return findClassifierElementsToShorten(
             positionScopes,
             allClassIds,
             allQualifiers,
-            ::ShortenQualifier,
-            this::findFakePackageToShorten
         )
     }
 
@@ -743,12 +721,10 @@ private class ElementsToShortenCollector(
         return !element.containingFile.hasImportDirectiveForDifferentSymbolWithSameName(classId)
     }
 
-    private inline fun <E : KtElement> findClassifierElementsToShorten(
+    private fun findClassifierElementsToShorten(
         positionScopes: List<FirScope>,
         allClassIds: Sequence<ClassId>,
-        allQualifiedElements: Sequence<E>,
-        createElementToShorten: (E, nameToImport: FqName?, importAllInParent: Boolean) -> ElementToShorten,
-        findFakePackageToShortenFn: (E) -> ElementToShorten?,
+        allQualifiedElements: Sequence<KtElement>,
     ): ElementToShorten? {
         for ((classId, element) in allClassIds.zip(allQualifiedElements)) {
             val classSymbol = shorteningContext.toClassSymbol(classId) ?: return null
@@ -792,7 +768,23 @@ private class ElementsToShortenCollector(
                 }
             }
         }
-        return findFakePackageToShortenFn(allQualifiedElements.last())
+        return findFakePackageToShorten(allQualifiedElements.last())
+    }
+
+    private fun createElementToShorten(element: KtElement, nameToImport: FqName?, importAllInParent: Boolean): ElementToShorten {
+        return when (element) {
+            is KtUserType -> ShortenType(element, nameToImport, importAllInParent)
+            is KtDotQualifiedExpression -> ShortenQualifier(element, nameToImport, importAllInParent)
+            else -> error("Unexpected ${element::class}")
+        }
+    }
+
+    private fun findFakePackageToShorten(element: KtElement): ElementToShorten? {
+        return when (element) {
+            is KtUserType -> findFakePackageToShorten(element)
+            is KtDotQualifiedExpression -> findFakePackageToShorten(element)
+            else -> error("Unexpected ${element::class}")
+        }
     }
 
     private fun importedClassifierOverwritesAvailableClassifier(
@@ -1199,6 +1191,13 @@ private class ElementsToShortenCollector(
 
     private val ClassId.outerClassesWithSelf: Sequence<ClassId>
         get() = generateSequence(this) { it.outerClassId }
+
+    private val KtElement.qualifiedElementsWithSelf: Sequence<KtElement>
+        get() = when (this) {
+            is KtUserType -> qualifiedTypesWithSelf
+            is KtDotQualifiedExpression -> qualifiedExpressionsWithSelf
+            else -> error("Unexpected ${this::class}")
+        }
 
     /**
      * Note: The resulting sequence does not contain non-qualified types!
