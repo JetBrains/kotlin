@@ -68,6 +68,7 @@ public actual annotation class JsName(actual val name: String)
  */
 @Retention(AnnotationRetention.SOURCE)
 @Target(FILE)
+@SinceKotlin("1.9")
 public actual annotation class JsFileName(actual val name: String)
 
 /**
