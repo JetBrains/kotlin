@@ -479,7 +479,7 @@ publishing {
         val kotlinTestJsPublication = register("js", MavenPublication::class) {
             artifactId = "kotlin-test-js"
             from(jsComponent)
-            artifact(tasks.getByPath(":kotlin-test:kotlin-test-js:sourcesJar") as Jar)
+            artifact(tasks.getByPath(":kotlin-test:kotlin-test-js-ir:jsSourcesJar") as org.gradle.jvm.tasks.Jar)
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-js:javadocJar") as Jar)
             configureKotlinPomAttributes(project, "Kotlin Test for JS")
         }
