@@ -39,26 +39,6 @@ class FirOverloadByLambdaReturnTypeResolver(
     ): Set<Candidate> where T : FirStatement, T : FirResolvable {
         if (bestCandidates.size <= 1) return bestCandidates
 
-        /*
-         * Inference session may look into candidate of call, and for that it uses callee reference.
-         * So we need replace reference with proper candidate before calling inference session
-         */
-        val shouldRunCompletion = if (inferenceSession != FirInferenceSession.DEFAULT) {
-            var shouldRunCompletion = true
-            val originalReference = qualifiedAccess.calleeReference
-            for (candidate in bestCandidates) {
-                qualifiedAccess.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate))
-                shouldRunCompletion = shouldRunCompletion && inferenceSession.shouldRunCompletion(qualifiedAccess)
-                if (!shouldRunCompletion) break
-            }
-            qualifiedAccess.replaceCalleeReference(originalReference)
-            shouldRunCompletion
-        } else {
-            true
-        }
-
-        if (!shouldRunCompletion) return bestCandidates
-
         return reduceCandidatesImpl(
             qualifiedAccess,
             bestCandidates,
@@ -137,7 +117,7 @@ class FirOverloadByLambdaReturnTypeResolver(
                 firstCandidate.system,
                 firstAtom,
                 firstCandidate,
-                ConstraintSystemCompletionMode.FULL,
+                forOverloadByLambdaReturnType = true,
             )
             while (iterator.hasNext()) {
                 val (candidate, atom) = iterator.next()
@@ -147,7 +127,6 @@ class FirOverloadByLambdaReturnTypeResolver(
                     atom,
                     candidate,
                     results,
-                    ConstraintSystemCompletionMode.FULL,
                 )
             }
 

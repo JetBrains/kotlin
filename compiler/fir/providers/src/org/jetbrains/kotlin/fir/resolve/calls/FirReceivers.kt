@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildInaccessibleReceiverExp
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
-import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.smartcastScope
@@ -28,8 +26,10 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.constructType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SmartcastStability
 
@@ -89,6 +89,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
 
     abstract val isContextReceiver: Boolean
 
+    // Type before smart cast
     val originalType: ConeKotlinType = type
 
     var implicitScope: FirTypeScope? =
@@ -144,19 +145,6 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
 
     @RequiresOptIn
     annotation class ImplicitReceiverInternals
-
-    @Deprecated(level = DeprecationLevel.ERROR, message = "Builder inference should not modify implicit receivers. KT-54708")
-    fun updateTypeInBuilderInference(type: ConeKotlinType) {
-        this.type = type
-        originalReceiverExpression = receiverExpression(boundSymbol, type, contextReceiverNumber, inaccessibleReceiver)
-        _receiverExpression = null
-        implicitScope = type.scope(
-            useSiteSession = useSiteSession,
-            scopeSession = scopeSession,
-            callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
-            requiredMembersPhase = FirResolvePhase.STATUS,
-        )
-    }
 
     /*
      * Should be called only in ImplicitReceiverStack

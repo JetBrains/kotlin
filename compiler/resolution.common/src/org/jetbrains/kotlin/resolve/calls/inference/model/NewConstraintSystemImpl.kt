@@ -41,7 +41,7 @@ class NewConstraintSystemImpl(
     private val properTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val notProperTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val intersectionTypesCache: MutableMap<Collection<KotlinTypeMarker>, EmptyIntersectionTypeInfo?> = mutableMapOf()
-    override var typeVariablesThatAreNotCountedAsProperTypes: Set<TypeConstructorMarker>? = null
+    override var typeVariablesThatAreCountedAsProperTypes: Set<TypeConstructorMarker>? = null
 
     private var couldBeResolvedWithUnrestrictedBuilderInference: Boolean = false
 
@@ -51,23 +51,25 @@ class NewConstraintSystemImpl(
      * @see [org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context.typeVariablesThatAreNotCountedAsProperTypes]
      * @see [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
      */
-    fun withTypeVariablesThatAreNotCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> Unit) {
+    override fun <R> withTypeVariablesThatAreCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> R): R {
         checkState(State.BUILDING)
         // Cleaning cache is necessary because temporarily we change the meaning of what does "proper type" mean
         properTypesCache.clear()
         notProperTypesCache.clear()
 
-        require(typeVariablesThatAreNotCountedAsProperTypes == null) {
+        require(typeVariablesThatAreCountedAsProperTypes == null) {
             "Currently there should be no nested withDisallowingOnlyThisTypeVariablesForProperTypes calls"
         }
 
-        typeVariablesThatAreNotCountedAsProperTypes = typeVariables
+        typeVariablesThatAreCountedAsProperTypes = typeVariables
 
-        block()
+        val result = block()
 
-        typeVariablesThatAreNotCountedAsProperTypes = null
+        typeVariablesThatAreCountedAsProperTypes = null
         properTypesCache.clear()
         notProperTypesCache.clear()
+
+        return result
     }
 
     private enum class State {
@@ -221,6 +223,7 @@ class NewConstraintSystemImpl(
     // ConstraintSystemBuilder
     private fun transactionRegisterVariable(variable: TypeVariableMarker) {
         if (state != State.TRANSACTION) return
+        if (variable.freshTypeConstructor() in storage.allTypeVariables) return
         typeVariablesTransaction.add(variable)
     }
 
@@ -302,13 +305,24 @@ class NewConstraintSystemImpl(
         }
 
     fun addOuterSystem(outerSystem: ConstraintStorage) {
-        addOtherSystem(outerSystem)
+        require(!storage.usesOuterCs)
+
+        storage.usesOuterCs = true
         storage.outerSystemVariablesPrefixSize = outerSystem.allTypeVariables.size
+        @OptIn(AssertionsOnly::class)
+        storage.outerCS = outerSystem
+
+        addOtherSystem(outerSystem, isAddingOuter = true)
     }
 
-    fun setBaseSystem(outerSystem: ConstraintStorage) {
-        addOtherSystem(outerSystem)
-        storage.outerSystemVariablesPrefixSize = outerSystem.outerSystemVariablesPrefixSize
+    fun setBaseSystem(baseSystem: ConstraintStorage) {
+        require(storage.allTypeVariables.isEmpty())
+        storage.usesOuterCs = baseSystem.usesOuterCs
+        storage.outerSystemVariablesPrefixSize = baseSystem.outerSystemVariablesPrefixSize
+        @OptIn(AssertionsOnly::class)
+        storage.outerCS = (baseSystem as? MutableConstraintStorage)?.outerCS
+
+        addOtherSystem(baseSystem)
     }
 
     fun prepareForGlobalCompletion() {
@@ -317,6 +331,16 @@ class NewConstraintSystemImpl(
     }
 
     override fun addOtherSystem(otherSystem: ConstraintStorage) {
+        addOtherSystem(otherSystem, isAddingOuter = false)
+    }
+
+    fun replaceContentWith(otherSystem: ConstraintStorage) {
+        addOtherSystem(otherSystem, isAddingOuter = false, clearNotFixedTypeVariables = true)
+    }
+
+    private fun addOtherSystem(otherSystem: ConstraintStorage, isAddingOuter: Boolean, clearNotFixedTypeVariables: Boolean = false) {
+        runOuterCSRelatedAssertions(otherSystem, isAddingOuter)
+
         if (otherSystem.allTypeVariables.isNotEmpty()) {
             otherSystem.allTypeVariables.forEach {
                 transactionRegisterVariable(it.value)
@@ -324,16 +348,47 @@ class NewConstraintSystemImpl(
             storage.allTypeVariables.putAll(otherSystem.allTypeVariables)
             notProperTypesCache.clear()
         }
+
+        // `clearNotFixedTypeVariables` means that we're mostly replacing the content, thus we need to remove variables that have been fixed
+        // in `otherSystem` from `this.notFixedTypeVariables`, too
+        if (clearNotFixedTypeVariables) {
+            notFixedTypeVariables.clear()
+        }
+
         for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
             notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
         }
-        storage.initialConstraints.addAll(otherSystem.initialConstraints)
+
+        val currentInitialConstraints = storage.initialConstraints.toSet()
+
+        otherSystem.initialConstraints.filterTo(storage.initialConstraints) {
+            it !in currentInitialConstraints
+        }
+
         storage.maxTypeDepthFromInitialConstraints =
             max(storage.maxTypeDepthFromInitialConstraints, otherSystem.maxTypeDepthFromInitialConstraints)
         storage.errors.addAll(otherSystem.errors)
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
         storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
+
+    }
+
+
+    private fun runOuterCSRelatedAssertions(otherSystem: ConstraintStorage, isAddingOuter: Boolean) {
+        if (!otherSystem.usesOuterCs) return
+
+        // When integrating a child system back, it's ok that for root CS, `storage.usesOuterCs == false`
+        @OptIn(AssertionsOnly::class)
+        if ((otherSystem as? MutableConstraintStorage)?.outerCS === storage) return
+
+        require(storage.usesOuterCs)
+
+        if (!isAddingOuter) {
+            require(storage.outerSystemVariablesPrefixSize == otherSystem.outerSystemVariablesPrefixSize) {
+                "Expected to be ${otherSystem.outerSystemVariablesPrefixSize}, but ${storage.outerSystemVariablesPrefixSize} found"
+            }
+        }
     }
 
     // ResultTypeResolver.Context, ConstraintSystemBuilder
@@ -357,11 +412,11 @@ class NewConstraintSystemImpl(
                 it
 
             if (typeToCheck == null) return@contains false
-            if (typeVariablesThatAreNotCountedAsProperTypes != null) {
-                return@contains typeVariablesThatAreNotCountedAsProperTypes!!.contains(typeToCheck.typeConstructor())
+            if (typeVariablesThatAreCountedAsProperTypes?.contains(typeToCheck.typeConstructor()) == true) {
+                return@contains false
             }
 
-            storage.allTypeVariables.containsKey(typeToCheck.typeConstructor())
+            return@contains storage.allTypeVariables.containsKey(typeToCheck.typeConstructor())
         }
 
     override fun isTypeVariable(type: KotlinTypeMarker): Boolean {
@@ -530,6 +585,13 @@ class NewConstraintSystemImpl(
             otherVariableWithConstraints.removeConstrains { containsTypeVariable(it.type, freshTypeConstructor) }
         }
 
+        val substitutorForFixedVariables = typeSubstitutorByTypeConstructor(mapOf(freshTypeConstructor to resultType))
+
+        storage.fixedTypeVariables.filter { containsTypeVariable(it.value, freshTypeConstructor) }
+            .forEach { (otherVariable, otherResultType) ->
+                storage.fixedTypeVariables[otherVariable] = substitutorForFixedVariables.safeSubstitute(otherResultType)
+            }
+
         storage.fixedTypeVariables[freshTypeConstructor] = resultType
 
         // Substitute freshly fixed type variable into missed constraints
@@ -689,7 +751,7 @@ class NewConstraintSystemImpl(
         return buildCurrentSubstitutor(emptyMap())
     }
 
-    override fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, StubTypeMarker>): TypeSubstitutorMarker {
+    override fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         return storage.buildCurrentSubstitutor(this, additionalBindings)
     }
@@ -714,6 +776,8 @@ class NewConstraintSystemImpl(
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         return storage
     }
+
+    val usesOuterCs: Boolean get() = storage.usesOuterCs
 
     // PostponedArgumentsAnalyzer.Context
     override fun hasUpperOrEqualUnitConstraint(type: KotlinTypeMarker): Boolean {
