@@ -357,6 +357,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return c1 == c2
     }
 
+    override fun areEqualCapturedType(c1: CapturedTypeConstructorMarker, c2: CapturedTypeConstructorMarker): Boolean {
+        require(c1 is ConeCapturedTypeConstructor && c2 is ConeCapturedTypeConstructor)
+
+        return (c1.original ?: c1) == (c2.original ?: c2)
+    }
+
     override fun TypeConstructorMarker.isDenotable(): Boolean {
         return when (this) {
             is ConeClassLikeLookupTag,

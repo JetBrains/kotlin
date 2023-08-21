@@ -35,10 +35,19 @@ class CandidateFactory private constructor(
     companion object {
         private fun buildBaseSystem(context: ResolutionContext, callInfo: CallInfo): ConstraintStorage {
             val system = context.inferenceComponents.createConstraintSystem()
-            system.addOuterSystem(context.bodyResolveContext.outerConstraintStorage)
-            callInfo.arguments.forEach {
-                system.addSubsystemFromExpression(it)
+
+            val subsystems = buildList {
+                callInfo.arguments.forEach {
+                    processAllSubsystemsFromExpression(it, this::add)
+                }
             }
+
+            if (subsystems.any { it.usesOuterCs }) {
+                system.addOuterSystem(context.bodyResolveContext.outerConstraintStorage)
+            }
+
+            subsystems.forEach(system::addOtherSystem)
+
             return system.asReadOnlyStorage()
         }
     }
@@ -79,6 +88,7 @@ class CandidateFactory private constructor(
                 ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> false
             },
             isFromOriginalTypeInPresenceOfSmartCast,
+            context.bodyResolveContext.inferenceSession,
         )
 
         // The counterpart in FE 1.0 checks if the given descriptor is VariableDescriptor yet not PropertyDescriptor.
@@ -158,6 +168,7 @@ class CandidateFactory private constructor(
             baseSystem,
             callInfo,
             originScope = null,
+            inferenceSession = context.bodyResolveContext.inferenceSession,
         )
     }
 
@@ -187,23 +198,26 @@ class CandidateFactory private constructor(
     }
 }
 
-fun PostponedArgumentsAnalyzerContext.addSubsystemFromExpression(statement: FirStatement): Boolean {
-    return when (statement) {
+fun processAllSubsystemsFromExpression(statement: FirStatement, processor: (ConstraintStorage) -> Unit) {
+    when (statement) {
         is FirQualifiedAccessExpression,
         is FirWhenExpression,
         is FirTryExpression,
         is FirCheckNotNullCall,
-        is FirElvisExpression -> {
-            val candidate = (statement as FirResolvable).candidate() ?: return false
-            addOtherSystem(candidate.system.asReadOnlyStorage())
-            true
+        is FirElvisExpression,
+        -> {
+            val candidate = (statement as FirResolvable).candidate() ?: return
+            processor(candidate.system.asReadOnlyStorage())
         }
 
-        is FirSafeCallExpression -> addSubsystemFromExpression(statement.selector)
-        is FirWrappedArgumentExpression -> addSubsystemFromExpression(statement.expression)
-        is FirBlock -> statement.returnExpressions().any { addSubsystemFromExpression(it) }
-        else -> false
+        is FirSafeCallExpression -> processAllSubsystemsFromExpression(statement.selector, processor)
+        is FirWrappedArgumentExpression -> processAllSubsystemsFromExpression(statement.expression, processor)
+        is FirBlock -> statement.returnExpressions().forEach { processAllSubsystemsFromExpression(it, processor) }
     }
+}
+
+fun PostponedArgumentsAnalyzerContext.addSubsystemFromExpression(statement: FirStatement) {
+    processAllSubsystemsFromExpression(statement, this::addOtherSystem)
 }
 
 internal fun FirResolvable.candidate(): Candidate? {

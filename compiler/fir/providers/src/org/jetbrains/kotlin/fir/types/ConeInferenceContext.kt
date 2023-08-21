@@ -270,7 +270,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return ConeCapturedType(
             captureStatus,
             lowerType,
-            constructor = ConeCapturedTypeConstructor(constructorProjection, constructorSupertypes as List<ConeKotlinType>)
+            constructor = ConeCapturedTypeConstructor(constructorProjection, original = null, constructorSupertypes as List<ConeKotlinType>)
         )
     }
 

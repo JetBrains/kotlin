@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeRawScopeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.scopes.impl.FirScopeWithCallableCopyReturnTypeUpdater
-import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
-import org.jetbrains.kotlin.fir.scopes.impl.dynamicMembersStorage
-import org.jetbrains.kotlin.fir.scopes.impl.getOrBuildScopeForIntegerConstantOperatorType
+import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -23,6 +21,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 
 fun FirSmartCastExpression.smartcastScope(
     useSiteSession: FirSession,
@@ -107,8 +106,21 @@ private fun ConeKotlinType.scope(
     is ConeDefinitelyNotNullType -> original.scope(useSiteSession, scopeSession, requiredMembersPhase)
     is ConeIntegerConstantOperatorType -> scopeSession.getOrBuildScopeForIntegerConstantOperatorType(useSiteSession, this)
     is ConeIntegerLiteralConstantType -> error("ILT should not be in receiver position")
+    is ConeTypeVariableType ->
+        (this.typeConstructor.originalTypeParameter as? FirTypeParameter)
+            ?.toConeType()?.scope(useSiteSession, scopeSession, requiredMembersPhase)
+            ?: StandardClassIds.Any.defaultType(emptyList()).scope(useSiteSession, scopeSession, requiredMembersPhase)
     else -> null
 }
+
+fun ConeKotlinType.memberScopeForTypeVariable(): Boolean =
+    when (this) {
+        is ConeTypeVariableType -> true
+        is ConeFlexibleType -> lowerBound.memberScopeForTypeVariable()
+        is ConeDefinitelyNotNullType -> original.memberScopeForTypeVariable()
+        is ConeIntersectionType -> intersectedTypes.any { it.memberScopeForTypeVariable() }
+        else -> true
+    }
 
 private fun ConeClassLikeType.classScope(
     useSiteSession: FirSession,

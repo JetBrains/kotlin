@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
-import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession
-import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
-import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
-import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
+import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -57,6 +54,7 @@ class BodyResolveContext(
     @PrivateForInline
     var regularTowerDataContexts = FirRegularTowerDataContexts(regular = FirTowerDataContext())
 
+    // TODO: Rename to postponed
     @PrivateForInline
     val specialTowerDataContexts = FirSpecialTowerDataContexts()
 
@@ -343,7 +341,20 @@ class BodyResolveContext(
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withAnonymousFunctionTowerDataContext(symbol: FirAnonymousFunctionSymbol, f: () -> T): T {
-        return withTemporaryRegularContext(specialTowerDataContexts.getAnonymousFunctionContext(symbol), f)
+        return withTemporaryRegularContext(specialTowerDataContexts.getAnonymousFunctionContext(symbol)) {
+            val inferenceSession = specialTowerDataContexts.getAnonymousFunctionInferenceSession(symbol)
+            if (inferenceSession != null) {
+                if (inferenceSession is FirBuilderInferenceSession2) {
+                    withOuterConstraintStorage(inferenceSession.outerSystem.currentStorage()) {
+                        withInferenceSession(inferenceSession, f)
+                    }
+                } else {
+                    withInferenceSession(inferenceSession, f)
+                }
+            } else {
+                f()
+            }
+        }
     }
 
     @OptIn(PrivateForInline::class)
@@ -382,9 +393,11 @@ class BodyResolveContext(
             // to use information from local class inside it.
             // However, we should not copy other kinds of inference sessions,
             // otherwise we can "inherit" type variables from there provoking inference problems
-            if (this@BodyResolveContext.inferenceSession is FirBuilderInferenceSession) {
+            if (this@BodyResolveContext.inferenceSession is FirBuilderInferenceSession2) {
                 inferenceSession = this@BodyResolveContext.inferenceSession
             }
+
+            outerConstraintStorage = this@BodyResolveContext.outerConstraintStorage
         }
 
     // withElement PUBLIC API
@@ -751,7 +764,9 @@ class BodyResolveContext(
 
     @OptIn(PrivateForInline::class)
     fun storeContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-        specialTowerDataContexts.storeAnonymousFunctionContext(anonymousFunction.symbol, towerDataContext)
+        specialTowerDataContexts.storeAnonymousFunctionContext(
+            anonymousFunction.symbol, towerDataContext, inferenceSession.takeIf { it is FirBuilderInferenceSession2 }
+        )
     }
 
     @OptIn(PrivateForInline::class)
@@ -863,13 +878,11 @@ class BodyResolveContext(
     }
 
     inline fun <T> forPropertyDelegateAccessors(
-        property: FirProperty,
         resolutionContext: ResolutionContext,
         callCompleter: FirCallCompleter,
         f: FirDelegatedPropertyInferenceSession.() -> T
     ) {
         val inferenceSession = FirDelegatedPropertyInferenceSession(
-            property,
             resolutionContext,
             callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
         )

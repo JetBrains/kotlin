@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionResultOverridesOtherToPreserveCompatibility
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.inference.FirStubTypeTransformer
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -66,6 +67,15 @@ class FirCallCompletionResultsWriterTransformer(
     private val context: BodyResolveContext,
     private val mode: Mode = Mode.Normal,
 ) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
+
+    // TODO: do we really need to transform all children for unexpected element?
+    override fun <E : FirElement> transformElement(element: E, data: ExpectedArgumentType?): E {
+        return super.transformElement(element, data)
+    }
+
+    override fun transformTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: ExpectedArgumentType?): FirStatement {
+        return typeOperatorCall
+    }
 
     private fun finallySubstituteOrNull(type: ConeKotlinType): ConeKotlinType? {
         val result = finalSubstitutor.substituteOrNull(type)
@@ -140,6 +150,12 @@ class FirCallCompletionResultsWriterTransformer(
             extensionReceiver = extensionReceiver?.transformSingle(integerOperatorApproximator, expectedExtensionReceiverType)
         }
 
+        if (subCandidate.usedOuterCs) {
+            val updaterForThisReferences = TypeUpdaterForThisReferences()
+            dispatchReceiver = dispatchReceiver.transformSingle(updaterForThisReferences, null)
+            extensionReceiver = extensionReceiver.transformSingle(updaterForThisReferences, null)
+        }
+
         (qualifiedAccessExpression as? FirQualifiedAccessExpression)?.apply {
             replaceCalleeReference(calleeReference.toResolvedReference())
             replaceDispatchReceiver(dispatchReceiver)
@@ -162,6 +178,31 @@ class FirCallCompletionResultsWriterTransformer(
         if (declaration !is FirErrorFunction) {
             qualifiedAccessExpression.replaceTypeArguments(typeArguments)
         }
+
+        for (postponedCall in subCandidate.postponedCalls) {
+            postponedCall.transformSingle(this, null)
+        }
+
+        for (postponedAccess in subCandidate.postponedAccesses) {
+            postponedAccess.replaceConeTypeOrNull(finallySubstituteOrSelf(postponedAccess.resolvedType))
+
+            if (postponedAccess is FirSmartCastExpression) {
+                postponedAccess.replaceSmartcastType(
+                    postponedAccess.smartcastType.withReplacedConeType(finallySubstituteOrNull(postponedAccess.smartcastType.coneType))
+                )
+            }
+        }
+
+        for (declarationToUpdate in subCandidate.updateDeclarations) {
+            declarationToUpdate()
+        }
+
+        // TODO: Be aware of exponent
+        val firStubTypeTransformer = FirStubTypeTransformer(finalSubstitutor)
+        for (lambda in subCandidate.pclaLambdas) {
+            lambda.transformSingle(firStubTypeTransformer, null)
+        }
+
         session.lookupTracker?.recordTypeResolveAsLookup(type, qualifiedAccessExpression.source, context.file.source)
         return qualifiedAccessExpression
     }
@@ -214,7 +255,7 @@ class FirCallCompletionResultsWriterTransformer(
 
     private fun FirBasedSymbol<*>.updateSubstitutedMemberIfReceiverContainsTypeVariable(): FirBasedSymbol<*>? {
         // TODO: Add assertion that this function returns not-null only for BI and delegation inference
-        if (mode != Mode.DelegatedPropertyCompletion) return null
+        // if (mode != Mode.DelegatedPropertyCompletion) return null
 
         val fir = fir
         if (fir !is FirCallableDeclaration) return null
@@ -510,10 +551,19 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
 
+        var dispatchReceiver = subCandidate.dispatchReceiverExpression()
+        var extensionReceiver = subCandidate.chosenExtensionReceiverExpression()
+
+        if (subCandidate.usedOuterCs) {
+            val updaterForThisReferences = TypeUpdaterForThisReferences()
+            dispatchReceiver = dispatchReceiver.transformSingle(updaterForThisReferences, null)
+            extensionReceiver = extensionReceiver.transformSingle(updaterForThisReferences, null)
+        }
+
         return callableReferenceAccess.apply {
             replaceCalleeReference(resolvedReference)
-            replaceDispatchReceiver(subCandidate.dispatchReceiverExpression())
-            replaceExtensionReceiver(subCandidate.chosenExtensionReceiverExpression())
+            replaceDispatchReceiver(dispatchReceiver)
+            replaceExtensionReceiver(extensionReceiver)
             if (calleeReference.candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
                 addNonFatalDiagnostic(ConeResolutionResultOverridesOtherToPreserveCompatibility)
             }
@@ -533,16 +583,31 @@ class FirCallCompletionResultsWriterTransformer(
             qualifiedAccessExpression: FirQualifiedAccessExpression,
             data: Any?,
         ): FirStatement {
-            val originalType = qualifiedAccessExpression.resolvedType
-            val substitutedReceiverType = finallySubstituteOrNull(originalType) ?: return qualifiedAccessExpression
-            qualifiedAccessExpression.replaceConeTypeOrNull(substitutedReceiverType)
-            session.lookupTracker?.recordTypeResolveAsLookup(substitutedReceiverType, qualifiedAccessExpression.source, context.file.source)
-            return qualifiedAccessExpression
+            return transformTypeRefForQualifiedAccess(qualifiedAccessExpression)
         }
 
         override fun transformPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Any?): FirStatement {
             return transformQualifiedAccessExpression(propertyAccessExpression, data)
         }
+    }
+
+    private inner class TypeUpdaterForThisReferences : FirTransformer<Any?>() {
+        override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+            return element
+        }
+
+        override fun transformThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Any?): FirStatement {
+            return transformTypeRefForQualifiedAccess(thisReceiverExpression)
+        }
+    }
+
+    private fun transformTypeRefForQualifiedAccess(qualifiedAccessExpression: FirQualifiedAccessExpression): FirQualifiedAccessExpression {
+        val originalType = qualifiedAccessExpression.resolvedType
+        val substitutedReceiverType = finallySubstituteOrNull(originalType) ?: return qualifiedAccessExpression
+         qualifiedAccessExpression.replaceConeTypeOrNull(substitutedReceiverType)
+
+        session.lookupTracker?.recordTypeResolveAsLookup(substitutedReceiverType, qualifiedAccessExpression.source, context.file.source)
+        return qualifiedAccessExpression
     }
 
     private fun FirTypeRef.substitute(candidate: Candidate): ConeKotlinType {
@@ -705,6 +770,15 @@ class FirCallCompletionResultsWriterTransformer(
         if (resultReceiverType != null) {
             receiverParameter.replaceTypeRef(receiverParameter.typeRef.resolvedTypeFromPrototype(resultReceiverType))
             needUpdateLambdaType = true
+        }
+
+        for (valueParameter in anonymousFunction.valueParameters) {
+            val initialParameterType = valueParameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()
+            val resultParameterType = initialParameterType?.let { finallySubstituteOrNull(it) }
+            if (resultParameterType != null) {
+                valueParameter.replaceReturnTypeRef(valueParameter.returnTypeRef.resolvedTypeFromPrototype(resultParameterType))
+                needUpdateLambdaType = true
+            }
         }
 
         val initialReturnType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()

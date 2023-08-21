@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeBuilderInferenceSubstitutionConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.InitialConstraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -35,7 +36,11 @@ abstract class FirInferenceSessionForChainedResolve(
         // do nothing
     }
 
-    override fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement {
+    override fun <T> processPartiallyResolvedCall(
+        call: T,
+        resolutionMode: ResolutionMode,
+        completionMode: ConstraintSystemCompletionMode
+    ) where T : FirResolvable, T : FirStatement {
         partiallyResolvedCalls += call to call.candidate
     }
 
