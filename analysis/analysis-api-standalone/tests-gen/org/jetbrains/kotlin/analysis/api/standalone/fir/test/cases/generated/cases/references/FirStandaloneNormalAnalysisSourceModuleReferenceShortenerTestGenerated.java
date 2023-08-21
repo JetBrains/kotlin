@@ -95,6 +95,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("classBodyScope_constructorParameterVsTopLevelProperty.kt")
+    public void testClassBodyScope_constructorParameterVsTopLevelProperty() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/classBodyScope_constructorParameterVsTopLevelProperty.kt");
+    }
+
+    @Test
     @TestMetadata("classScopes.kt")
     public void testClassScopes() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/classScopes.kt");

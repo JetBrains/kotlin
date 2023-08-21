@@ -158,6 +158,9 @@ open class FirDeclarationsResolveTransformer(
                         property.transformBackingField(transformer, withExpectedType(property.returnTypeRef))
                         backingFieldIsAlreadyResolved = true
                     }
+                    property.initializer?.let { initializer ->
+                        transformer.firResolveContextCollector?.addStatementContext(initializer, context)
+                    }
                 }
                 val delegate = property.delegate
                 if (delegate != null) {
