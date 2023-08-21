@@ -28,7 +28,7 @@ class ConeArgumentConstraintPosition(argument: FirElement) : ArgumentConstraintP
     }
 }
 
-object ConeExpectedTypeConstraintPosition : ExpectedTypeConstraintPosition<Nothing?>(null) {
+class ConeExpectedTypeConstraintPosition(topLevelCall: FirElement) : ExpectedTypeConstraintPosition<FirElement>(topLevelCall) {
     override fun toString(): String = "ExpectedType for some call"
 }
 

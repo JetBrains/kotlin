@@ -27,5 +27,5 @@ fun testMaterialize() {
     val buildee = build {
         shareTypeInfo(null, materialize())
     }
-    checkExactType<Buildee<Nothing?>>(<!ARGUMENT_TYPE_MISMATCH("Buildee<kotlin.Nothing?>; Buildee<kotlin.Nothing>")!>buildee<!>)
+    checkExactType<Buildee<Nothing?>>(buildee)
 }

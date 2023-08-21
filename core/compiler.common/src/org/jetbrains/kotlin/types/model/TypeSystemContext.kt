@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.types.model
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeChecker
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -279,8 +282,12 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         }
     }
 
-    fun KotlinTypeMarker.extractTypeVariables(): Set<TypeVariableTypeConstructorMarker> =
+    fun KotlinTypeMarker.extractTypeVariables(includeTypeItself: Boolean = false): Set<TypeVariableTypeConstructorMarker> =
         buildSet {
+            // TODO: Drop parameter
+            if (includeTypeItself) {
+                addIfNotNull(typeConstructor() as? TypeVariableTypeConstructorMarker)
+            }
             extractTypeOf(this) { it as? TypeVariableTypeConstructorMarker }
         }
 
@@ -550,6 +557,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker
     fun createEmptySubstitutor(): TypeSubstitutorMarker
+
+    fun createSubstitutionFromSubtypingStubTypesToTypeVariables(): TypeSubstitutorMarker
 
     /**
      * @returns substituted type or [type] if there were no substitution

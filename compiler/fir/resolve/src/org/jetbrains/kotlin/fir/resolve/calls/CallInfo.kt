@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.Name
@@ -36,6 +37,10 @@ data class CallInfo(
     val containingDeclarations: List<FirDeclaration>,
 
     val candidateForCommonInvokeReceiver: Candidate? = null,
+
+    val isDelegateExpression: Boolean = false,
+
+    val resolutionMode: ResolutionMode,
 
     // Four properties for callable references only
     val expectedType: ConeKotlinType? = null,
