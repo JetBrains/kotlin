@@ -22,6 +22,8 @@ class ResultTypeResolver(
     private val languageVersionSettings: LanguageVersionSettings
 ) {
     interface Context : TypeSystemInferenceExtensionContext {
+        val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
+        val outerSystemVariablesPrefixSize: Int
         fun isProperType(type: KotlinTypeMarker): Boolean
         fun buildNotFixedVariablesToStubTypesSubstitutor(): TypeSubstitutorMarker
         fun isReified(variable: TypeVariableMarker): Boolean
@@ -220,6 +222,8 @@ class ResultTypeResolver(
 
                 if (typesWithoutStubs.isNotEmpty()) {
                     commonSuperType = computeCommonSuperType(typesWithoutStubs)
+                } else if (outerSystemVariablesPrefixSize > 0) {
+                    commonSuperType = createSubstitutionFromSubtypingStubTypesToTypeVariables().safeSubstitute(commonSuperType)
                 }
             }
 
@@ -273,11 +277,22 @@ class ResultTypeResolver(
         }
 
         if (!atLeastOneProper) return emptyList()
-        if (!atLeastOneNonProper) return lowerConstraintTypes
+
+        // Non PCLA fast-path
+        if (outerSystemVariablesPrefixSize == 0) {
+            if (!atLeastOneNonProper) return lowerConstraintTypes
+            val notFixedToStubTypesSubstitutor = buildNotFixedVariablesToStubTypesSubstitutor()
+
+            return lowerConstraintTypes.map {
+                if (isProperTypeForFixation(it))
+                    it
+                else
+                    notFixedToStubTypesSubstitutor.safeSubstitute(it)
+            }
+        }
 
         val notFixedToStubTypesSubstitutor = buildNotFixedVariablesToStubTypesSubstitutor()
-
-        return lowerConstraintTypes.map { if (isProperTypeForFixation(it)) it else notFixedToStubTypesSubstitutor.safeSubstitute(it) }
+        return lowerConstraintTypes.map { notFixedToStubTypesSubstitutor.safeSubstitute(it) }
     }
 
     private fun Context.sinkIntegerLiteralTypes(types: List<KotlinTypeMarker>): List<KotlinTypeMarker> {
@@ -336,7 +351,7 @@ class ResultTypeResolver(
     }
 
     private fun Context.isProperTypeForFixation(type: KotlinTypeMarker): Boolean =
-        isProperTypeForFixation(type) { isProperType(it) }
+        isProperTypeForFixation(type, notFixedTypeVariables.keys) { isProperType(it) }
 
     private fun findResultIfThereIsEqualsConstraint(c: Context, variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? =
         with(c) {

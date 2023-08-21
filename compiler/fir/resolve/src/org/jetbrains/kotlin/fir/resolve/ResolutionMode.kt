@@ -28,7 +28,11 @@ sealed class ResolutionMode(
     }
 
     data object ContextIndependent : ResolutionMode(forceFullCompletion = true)
-    data object ReceiverResolution : ResolutionMode(forceFullCompletion = true)
+
+    sealed class ReceiverResolution(val forCallableReference: Boolean) : ResolutionMode(forceFullCompletion = true) {
+        data object ForCallableReference : ReceiverResolution(forCallableReference = true)
+        companion object : ReceiverResolution(forCallableReference = false)
+    }
 
     class WithExpectedType(
         val expectedTypeRef: FirResolvedTypeRef,
