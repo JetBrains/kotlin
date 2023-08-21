@@ -221,6 +221,14 @@ class MutableVariableWithConstraints private constructor(
         }
     }
 
+    fun runConstraintsSimplification() {
+        val currentState = constraints.toList()
+        mutableConstraints.apply {
+            clear()
+            addAll(currentState)
+        }
+    }
+
     private fun isUsefulConstraint(constraint: Constraint, equalityConstraints: Map<Int, List<Constraint>>): Boolean {
         if (constraint.kind == ConstraintKind.EQUALITY) return true
         return equalityConstraints[constraint.typeHashCode]?.none { it.type == constraint.type } ?: true
@@ -251,4 +259,15 @@ internal class MutableConstraintStorage : ConstraintStorage {
     override val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>> = SmartList()
 
     override var outerSystemVariablesPrefixSize: Int = 0
+
+    override var usesOuterCs: Boolean = false
+
+    @AssertionsOnly
+    internal var outerCS: ConstraintStorage? = null
 }
+
+/**
+ * Annotated member is used only for assertion purposes and does not affect semantics
+ */
+@RequiresOptIn
+annotation class AssertionsOnly

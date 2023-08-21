@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-enum class ConstraintSystemCompletionMode {
-    FULL,
+enum class ConstraintSystemCompletionMode(val allLambdasShouldBeAnalyzed: Boolean) {
+    FULL(true),
+    PCLA_POSTPONED_CALL(true),
 
     /**
      * This mode allows us to infer variables in calls, which have enough type-info to be completed right-away
@@ -18,6 +19,6 @@ enum class ConstraintSystemCompletionMode {
      * x.plus(run { x }) // Here, to select plus overload we need to analyze lambda
      * ```
      */
-    PARTIAL,
-    UNTIL_FIRST_LAMBDA
+    PARTIAL(false),
+    UNTIL_FIRST_LAMBDA(false),
 }

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
+import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.types.model.typeConstructor
 
 val SAM_LOOKUP_NAME = Name.special("<SAM-CONSTRUCTOR>")
@@ -190,7 +191,7 @@ fun Candidate.resolveSubCallArgument(
      *   placeholder type with value 0, but argument contains type with proper literal value
      */
     val type: ConeKotlinType = context.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.fir as FirCallableDeclaration).type
-    val argumentType = candidate.substitutor.substituteOrSelf(type)
+    val argumentType = candidate.substitutor.substituteOrSelf(type).prepareTypeForPartiallyCompletedPCLACall(candidate, csBuilder)
     resolvePlainArgumentType(
         csBuilder,
         argument,
@@ -202,6 +203,26 @@ fun Candidate.resolveSubCallArgument(
         isDispatch,
         useNullableArgumentType
     )
+}
+
+// For PCLA/Delegate inference partially completed calls, there might be a situation when
+// - There are already fixed variables (because we need them for lambda analysis)
+// - They are used in return types
+//
+// In this case, we substitute them explicitly because otherwise
+// TypeCheckerStateForConstraintInjector.fixedTypeVariable throws an exception.
+//
+// Note that this is not relevant outside PCLA context because
+// - For partial completion, we avoid fixing TVs that are used inside return types
+// - For FULL completion, we would run completion results writing, so there would be no candidates and type variables inside return types.
+//
+// See singleBranchConditionLastStatementInLambda.kt and assignmentUsingIncompletePCLACall.kt tests
+private fun ConeKotlinType.prepareTypeForPartiallyCompletedPCLACall(
+    candidate: Candidate, outerCSBuilder: ConstraintSystemBuilder
+): ConeKotlinType {
+    if (!candidate.system.usesOuterCs) return this
+
+    return outerCSBuilder.buildCurrentSubstitutor().safeSubstitute(candidate.callInfo.session.typeContext, this) as ConeKotlinType
 }
 
 fun Candidate.resolvePlainExpressionArgument(

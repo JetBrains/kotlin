@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.types.model
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeChecker
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.types.Variance
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -310,6 +312,9 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
      */
     fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker
 
+    @K2Only
+    fun createSubstitutionFromSubtypingStubTypesToTypeVariables(): TypeSubstitutorMarker
+
     fun createCapturedStarProjectionForSelfType(
         typeVariable: TypeVariableTypeConstructorMarker,
         typesForRecursiveTypeParameters: List<KotlinTypeMarker>,
@@ -588,3 +593,6 @@ fun requireOrDescribe(condition: Boolean, value: Any?) {
 
 @RequiresOptIn("This kinds of type is obsolete and should not be used until you really need it")
 annotation class ObsoleteTypeKind
+
+@RequiresOptIn
+annotation class K2Only

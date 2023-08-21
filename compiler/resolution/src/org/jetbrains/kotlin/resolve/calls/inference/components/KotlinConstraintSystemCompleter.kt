@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.resolve.calls.components.transformToResolvedLambda
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.model.MultiLambdaBuilderInferenceRestriction
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.*
@@ -279,7 +282,7 @@ class KotlinConstraintSystemCompleter(
         // continue completion (rerun stages) only if ready for fixation variables with proper constraints have appeared
         // (after analysing a lambda with the builder inference)
         // otherwise we don't continue and report "not enough type information" error
-        return variableForFixation?.hasProperConstraint == true
+        return variableForFixation?.isReady == true
     }
 
     private fun transformToAtomWithNewFunctionalExpectedType(
@@ -319,7 +322,7 @@ class KotlinConstraintSystemCompleter(
             topLevelType
         ) ?: return false
 
-        if (!variableForFixation.hasProperConstraint) return false
+        if (!variableForFixation.isReady) return false
 
         fixVariable(this, notFixedTypeVariables.getValue(variableForFixation.variable), topLevelAtoms, diagnosticsHolder)
 
@@ -340,7 +343,7 @@ class KotlinConstraintSystemCompleter(
                 postponedArguments, completionMode, topLevelType,
             ) ?: break
 
-            assert(!variableForFixation.hasProperConstraint) {
+            assert(!variableForFixation.isReady) {
                 "At this stage there should be no remaining variables with proper constraints"
             }
 

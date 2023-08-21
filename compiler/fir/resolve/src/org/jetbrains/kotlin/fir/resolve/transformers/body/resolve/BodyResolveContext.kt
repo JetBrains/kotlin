@@ -20,12 +20,9 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
-import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession
-import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
-import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
+import org.jetbrains.kotlin.fir.resolve.inference.FirPCLAInferenceSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -40,7 +37,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.util.PrivateForInline
 
 class BodyResolveContext(
@@ -57,6 +53,7 @@ class BodyResolveContext(
     @PrivateForInline
     var regularTowerDataContexts = FirRegularTowerDataContexts(regular = FirTowerDataContext())
 
+    // TODO: Rename to postponed
     @PrivateForInline
     val specialTowerDataContexts = FirSpecialTowerDataContexts()
 
@@ -107,16 +104,6 @@ class BodyResolveContext(
             insideClassHeader = old
         }
     }
-
-    /**
-     * CS for an outer type system if it's relevant, for example, in the case of `val x by myGenericDelegateCall()`,
-     * relevant `getValue` call is expected to be resolved in the context of an outer CS built from `myGenericDelegateCall()` and
-     * probably using its type variables inside `getValue` candidates resolution.
-     *
-     * Note that it's not assumed to modify the storage, but only use it as a base system content for the candidate.
-     */
-    @set:PrivateForInline
-    var outerConstraintStorage: ConstraintStorage = ConstraintStorage.Empty
 
     val anonymousFunctionsAnalyzedInDependentContext: MutableSet<FirFunctionSymbol<*>> = mutableSetOf()
 
@@ -263,7 +250,6 @@ class BodyResolveContext(
                 holder.scopeSession
             )
             addReceiver(labelName, receiver, additionalLabelName)
-            (inferenceSession as? FirBuilderInferenceSession)?.addLambdaImplicitReceiver(receiver)
         }
 
         f()
@@ -331,11 +317,11 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <R> withInferenceSession(inferenceSession: FirInferenceSession, block: () -> R): R {
+    inline fun <R, S : FirInferenceSession> withInferenceSession(inferenceSession: S, block: S.() -> R): R {
         val oldSession = this.inferenceSession
         this.inferenceSession = inferenceSession
         return try {
-            block()
+            inferenceSession.block()
         } finally {
             this.inferenceSession = oldSession
         }
@@ -352,10 +338,17 @@ class BodyResolveContext(
     }
 
     @PrivateForInline
-    inline fun <T> withTemporaryRegularContext(newContext: FirTowerDataContext?, f: () -> T): T {
-        if (newContext == null) return f()
+    inline fun <T> withTemporaryRegularContext(newContext: PostponedAtomsResolutionContext?, f: () -> T): T {
+        val (towerDataContext, newInferenceSession) = newContext ?: return f()
+
         return withTowerDataModeCleanup {
-            withTowerDataContexts(regularTowerDataContexts.replaceAndSetActiveRegularContext(newContext), f)
+            withTowerDataContexts(regularTowerDataContexts.replaceAndSetActiveRegularContext(towerDataContext)) {
+                if (newInferenceSession !== this.inferenceSession) {
+                    withInferenceSession(newInferenceSession) { f() }
+                } else {
+                    f()
+                }
+            }
         }
     }
 
@@ -382,7 +375,7 @@ class BodyResolveContext(
             // to use information from local class inside it.
             // However, we should not copy other kinds of inference sessions,
             // otherwise we can "inherit" type variables from there provoking inference problems
-            if (this@BodyResolveContext.inferenceSession is FirBuilderInferenceSession) {
+            if (this@BodyResolveContext.inferenceSession is FirPCLAInferenceSession) {
                 inferenceSession = this@BodyResolveContext.inferenceSession
             }
         }
@@ -756,7 +749,9 @@ class BodyResolveContext(
 
     @OptIn(PrivateForInline::class)
     fun storeContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-        specialTowerDataContexts.storeAnonymousFunctionContext(anonymousFunction.symbol, towerDataContext)
+        specialTowerDataContexts.storeAnonymousFunctionContext(
+            anonymousFunction.symbol, towerDataContext, inferenceSession
+        )
     }
 
     @OptIn(PrivateForInline::class)
@@ -867,38 +862,6 @@ class BodyResolveContext(
         }
     }
 
-    inline fun <T> forPropertyDelegateAccessors(
-        property: FirProperty,
-        resolutionContext: ResolutionContext,
-        callCompleter: FirCallCompleter,
-        f: FirDelegatedPropertyInferenceSession.() -> T
-    ) {
-        val inferenceSession = FirDelegatedPropertyInferenceSession(
-            property,
-            resolutionContext,
-            callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
-        )
-
-        withInferenceSession(inferenceSession) {
-            inferenceSession.f()
-        }
-    }
-
-    @OptIn(PrivateForInline::class)
-    inline fun <T> withOuterConstraintStorage(
-        storage: ConstraintStorage,
-        f: () -> T
-    ): T {
-        val oldStorage = this.outerConstraintStorage
-        this.outerConstraintStorage = storage
-        return try {
-            f()
-        } finally {
-            this.outerConstraintStorage = oldStorage
-        }
-    }
-
-
     @OptIn(PrivateForInline::class)
     inline fun <T> withConstructor(constructor: FirConstructor, f: () -> T): T =
         withContainer(constructor, f)
@@ -956,7 +919,8 @@ class BodyResolveContext(
     fun storeCallableReferenceContext(callableReferenceAccess: FirCallableReferenceAccess) {
         specialTowerDataContexts.storeCallableReferenceContext(
             callableReferenceAccess,
-            towerDataContext.createSnapshot(keepMutable = false)
+            towerDataContext.createSnapshot(keepMutable = false),
+            inferenceSession,
         )
     }
 

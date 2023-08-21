@@ -123,21 +123,6 @@ object CheckExtensionReceiver : ResolutionStage() {
 
         candidate.chosenExtensionReceiver = receiver.expression
 
-        val checkBuilderInferenceRestriction =
-            !context.session.languageVersionSettings
-                .supportsFeature(LanguageFeature.NoBuilderInferenceWithoutAnnotationRestriction)
-        if (checkBuilderInferenceRestriction) {
-            val resolvedType = receiver.expression.resolvedType
-            if (resolvedType is ConeStubTypeForChainInference) {
-                val typeVariable = resolvedType.constructor.variable
-                sink.yieldDiagnostic(
-                    StubBuilderInferenceReceiver(
-                        (typeVariable.typeConstructor.originalTypeParameter as ConeTypeParameterLookupTag).typeParameterSymbol
-                    )
-                )
-            }
-        }
-
         sink.yieldIfNeed()
     }
 
@@ -261,6 +246,39 @@ object CheckContextReceivers : ResolutionStage() {
         }
 
         candidate.contextReceiverArguments = resultingContextReceiverArguments
+    }
+}
+
+object TypeVariablesInExplicitReceivers : ResolutionStage() {
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        if (callInfo.callSite.isAnyOfDelegateOperators()) return
+
+        val explicitReceiver = callInfo.explicitReceiver ?: return checkOtherCases(candidate)
+
+        val typeVariableType = explicitReceiver.resolvedType.obtainTypeVariable() ?: return checkOtherCases(candidate)
+        val typeParameter =
+            (typeVariableType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol?.fir
+                ?: return checkOtherCases(candidate)
+
+        sink.reportDiagnostic(TypeVariableAsExplicitReceiver(explicitReceiver, typeParameter))
+    }
+
+    private fun checkOtherCases(candidate: Candidate) {
+        require(candidate.chosenExtensionReceiverExpression()?.resolvedType?.obtainTypeVariable() == null) {
+            "Found TV in extension receiver of $candidate"
+        }
+
+        require(candidate.dispatchReceiverExpression()?.resolvedType?.obtainTypeVariable() == null) {
+            "Found TV in dispatch receiver of $candidate"
+        }
+    }
+
+    private fun ConeKotlinType.obtainTypeVariable(): ConeTypeVariableType? = when (this) {
+        is ConeFlexibleType -> lowerBound.obtainTypeVariable()
+        is ConeTypeVariableType -> this
+        is ConeDefinitelyNotNullType -> original.obtainTypeVariable()
+        is ConeIntersectionType -> intersectedTypes.firstNotNullOfOrNull { it.obtainTypeVariable() }
+        else -> null
     }
 }
 
@@ -569,7 +587,7 @@ internal object EagerResolveOfCallableReferences : CheckerStage() {
             if (atom is ResolvedCallableReferenceAtom) {
                 val (applicability, success) =
                     context.bodyResolveComponents.callResolver.resolveCallableReference(
-                        candidate.csBuilder, atom, hasSyntheticOuterCall = candidate.callInfo.name == ACCEPT_SPECIFIC_TYPE.callableName
+                        candidate, atom, hasSyntheticOuterCall = candidate.callInfo.name == ACCEPT_SPECIFIC_TYPE.callableName
                     )
                 if (!success) {
                     // If the resolution was unsuccessful, we ensure that an error will be reported for the callable reference

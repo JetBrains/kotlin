@@ -316,13 +316,13 @@ private fun mapInapplicableCandidateError(
                     rootCause.expectedContextReceiverType.removeTypeVariableTypes(typeContext)
                 )
 
-            is StubBuilderInferenceReceiver -> {
-                val typeParameterSymbol = rootCause.typeParameterSymbol
+            is TypeVariableAsExplicitReceiver -> {
+                val typeParameter = rootCause.typeParameter
                 @OptIn(SymbolInternals::class)
                 FirErrors.BUILDER_INFERENCE_STUB_RECEIVER.createOn(
-                    qualifiedAccessSource ?: source,
-                    typeParameterSymbol.name,
-                    (typeParameterSymbol.containingDeclarationSymbol.fir as FirMemberDeclaration).nameOrSpecialName
+                    rootCause.explicitReceiver.source,
+                    typeParameter.symbol.name,
+                    (typeParameter.symbol.containingDeclarationSymbol.fir as FirMemberDeclaration).nameOrSpecialName
                 )
             }
 
