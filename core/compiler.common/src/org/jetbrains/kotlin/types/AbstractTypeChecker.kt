@@ -563,6 +563,15 @@ object AbstractTypeChecker {
         // superType might be a definitely notNull type (see KT-42824)
         val superOriginalType = superType.asDefinitelyNotNullType()?.original() ?: superType
         val superTypeCaptured = superOriginalType.asCapturedType()
+
+        // see testData/diagnostics/tests/inference/builderInference/stubTypes/capturedTypes.kt
+        if (superTypeCaptured != null) {
+            val subTypeCaptured = subType.asCapturedType()
+            if (subTypeCaptured != null && state.typeSystemContext.areEqualCapturedType(superTypeCaptured.typeConstructor(), subTypeCaptured.typeConstructor())) {
+                return true
+            }
+        }
+
         val lowerType = superTypeCaptured?.lowerType()
         if (superTypeCaptured != null && lowerType != null) {
             // If superType is nullable, e.g., to check if Foo? a subtype of Captured<in Foo>?, we check the LHS, Foo?,

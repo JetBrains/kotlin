@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.freshTypeConstructor
+import org.jetbrains.kotlin.types.model.safeSubstitute
 
 data class ReturnArgumentsAnalysisResult(
     val returnArguments: Collection<FirExpression>,
-    val inferenceSession: FirInferenceSession?
+    val inferenceSession: FirInferenceSession?,
 )
 
 interface LambdaAnalyzer {
@@ -35,8 +35,9 @@ interface LambdaAnalyzer {
         contextReceivers: List<ConeKotlinType>,
         parameters: List<ConeKotlinType>,
         expectedReturnType: ConeKotlinType?, // null means, that return type is not proper i.e. it depends on some type variables
-        stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>,
-        candidate: Candidate
+        candidate: Candidate,
+        notFixedTypeVariablesInInputTypes: Set<TypeConstructorMarker>,
+        currentSubstitutor: ConeSubstitutor,
     ): ReturnArgumentsAnalysisResult
 }
 
@@ -44,21 +45,20 @@ class PostponedArgumentsAnalyzer(
     private val resolutionContext: ResolutionContext,
     private val lambdaAnalyzer: LambdaAnalyzer,
     private val components: InferenceComponents,
-    private val callResolver: FirCallResolver
+    private val callResolver: FirCallResolver,
 ) {
 
     fun analyze(
         c: PostponedArgumentsAnalyzerContext,
         argument: PostponedResolvedAtom,
         candidate: Candidate,
-        completionMode: ConstraintSystemCompletionMode
     ) {
         when (argument) {
             is ResolvedLambdaAtom ->
-                analyzeLambda(c, argument, candidate, completionMode)
+                analyzeLambda(c, argument, candidate)
 
             is LambdaWithTypeVariableAsExpectedTypeAtom ->
-                analyzeLambda(c, argument.transformToResolvedLambda(c.getBuilder(), resolutionContext), candidate, completionMode)
+                analyzeLambda(c, argument.transformToResolvedLambda(c.getBuilder(), resolutionContext), candidate)
 
             is ResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
         }
@@ -98,7 +98,6 @@ class PostponedArgumentsAnalyzer(
         c: PostponedArgumentsAnalyzerContext,
         lambda: ResolvedLambdaAtom,
         candidate: Candidate,
-        completionMode: ConstraintSystemCompletionMode,
         //diagnosticHolder: KotlinDiagnosticsHolder
     ): ReturnArgumentsAnalysisResult {
         // TODO: replace with `require(!lambda.analyzed)` when KT-54767 will be fixed
@@ -106,9 +105,13 @@ class PostponedArgumentsAnalyzer(
             return ReturnArgumentsAnalysisResult(lambda.returnStatements, inferenceSession = null)
         }
 
+        (resolutionContext.bodyResolveContext.inferenceSession as? FirBuilderInferenceSession2)?.let { builderInferenceSession ->
+            lambda.receiver?.let { builderInferenceSession.fixVariablesForMemberScope(it, candidate) }
+            // TODO: context receivers
+        }
+
         val unitType = components.session.builtinTypes.unitType.type
-        val stubsForPostponedVariables = c.bindingStubsForPostponedVariables()
-        val currentSubstitutor = c.buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(c) })
+        val currentSubstitutor = c.buildCurrentSubstitutor(emptyMap()) as ConeSubstitutor
 
         fun substitute(type: ConeKotlinType) = (currentSubstitutor.safeSubstitute(c, type) as ConeKotlinType).independentInstance()
 
@@ -126,21 +129,31 @@ class PostponedArgumentsAnalyzer(
             else -> null
         }
 
+        val notFixedTypeVariablesInInputTypes =
+            lambda.inputTypes
+                .flatMap {
+                    with(c) {
+                        it.extractTypeVariables(
+                            includeTypeItself = resolutionContext.bodyResolveContext.inferenceSession is FirBuilderInferenceSession2
+                        )
+                    }
+                }.filterTo(mutableSetOf()) { it in c.notFixedTypeVariables }
+
         val results = lambdaAnalyzer.analyzeAndGetLambdaReturnArguments(
             lambda,
             receiver,
             contextReceivers,
             parameters,
             expectedTypeForReturnArguments,
-            stubsForPostponedVariables,
-            candidate
+            candidate,
+            notFixedTypeVariablesInInputTypes,
+            currentSubstitutor,
         )
         applyResultsOfAnalyzedLambdaToCandidateSystem(
             c,
             lambda,
             candidate,
             results,
-            completionMode,
             ::substitute
         )
         return results
@@ -151,10 +164,9 @@ class PostponedArgumentsAnalyzer(
         lambda: ResolvedLambdaAtom,
         candidate: Candidate,
         results: ReturnArgumentsAnalysisResult,
-        completionMode: ConstraintSystemCompletionMode,
-        substitute: (ConeKotlinType) -> ConeKotlinType = c.createSubstituteFunctorForLambdaAnalysis()
+        substitute: (ConeKotlinType) -> ConeKotlinType = c.createSubstituteFunctorForLambdaAnalysis(),
     ) {
-        val (returnArguments, inferenceSession) = results
+        val (returnArguments, _) = results
 
         val checkerSink: CheckerSink = CheckerSinkImpl(candidate)
         val builder = c.getBuilder()
@@ -169,11 +181,6 @@ class PostponedArgumentsAnalyzer(
             // If the lambda returns Unit, the last expression is not returned and should not be constrained.
             val isLastExpression = it == lastExpression
 
-            // Don't add last call for builder-inference
-            // Note, that we don't use the same condition "(returnTypeRef.type.isUnitOrFlexibleUnit || lambda.atom.shouldReturnUnit(returnArguments))"
-            // as in the if below, because "lambda.atom.shouldReturnUnit(returnArguments)" might mean that the last statement is not completed
-            if (isLastExpression && lambdaExpectedTypeIsUnit && inferenceSession is FirBuilderInferenceSession) return@forEach
-
             // TODO (KT-55837) questionable moment inherited from FE1.0 (the `haveSubsystem` case):
             //    fun <T> foo(): T
             //    run {
@@ -182,8 +189,8 @@ class PostponedArgumentsAnalyzer(
             //    }
             //  Things get even weirder if T has an upper bound incompatible with Unit.
             // Not calling `addSubsystemFromExpression` for builder-inference is crucial
-            val haveSubsystem = c.addSubsystemFromExpression(it)
-            if (isLastExpression && !haveSubsystem &&
+            c.addSubsystemFromExpression(it)
+            if (isLastExpression &&
                 (lambdaExpectedTypeIsUnit || lambda.atom.shouldReturnUnit(returnArguments))
             ) return@forEach
 
@@ -212,25 +219,6 @@ class PostponedArgumentsAnalyzer(
         lambda.analyzed = true
         lambda.returnStatements = returnArguments
         c.resolveForkPointsConstraints()
-
-        if (inferenceSession != null) {
-            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, builder, completionMode)
-
-            if (postponedVariables == null) {
-                builder.removePostponedVariables()
-                return
-            }
-
-            for ((constructor, resultType) in postponedVariables) {
-                val variableWithConstraints = builder.currentStorage().notFixedTypeVariables[constructor] ?: continue
-                val variable = variableWithConstraints.typeVariable as ConeTypeVariable
-
-                builder.unmarkPostponedVariable(variable)
-                builder.addSubtypeConstraint(resultType, variable.defaultType(c), BuilderInferencePosition)
-            }
-
-            c.removePostponedTypeVariablesFromConstraints(postponedVariables.keys)
-        }
     }
 
     fun PostponedArgumentsAnalyzerContext.createSubstituteFunctorForLambdaAnalysis(): (ConeKotlinType) -> ConeKotlinType {
@@ -244,7 +232,7 @@ fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
     csBuilder: ConstraintSystemBuilder,
     context: ResolutionContext,
     expectedType: ConeKotlinType? = null,
-    returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
+    returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null,
 ): ResolvedLambdaAtom {
     val fixedExpectedType = (csBuilder.buildCurrentSubstitutor() as ConeSubstitutor)
         .substituteOrSelf(expectedType ?: this.expectedType)

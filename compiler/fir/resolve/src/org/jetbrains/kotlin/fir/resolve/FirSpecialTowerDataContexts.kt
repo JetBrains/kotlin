@@ -7,26 +7,41 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 
 class FirSpecialTowerDataContexts {
     private val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext> = mutableMapOf()
+    private val inferenceSessionForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirInferenceSession> = mutableMapOf()
     private val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext> = mutableMapOf()
 
     fun getAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol): FirTowerDataContext? {
         return towerDataContextForAnonymousFunctions[symbol]
     }
 
+    fun getAnonymousFunctionInferenceSession(symbol: FirAnonymousFunctionSymbol): FirInferenceSession? {
+        return inferenceSessionForAnonymousFunctions[symbol]
+    }
+
     fun getCallableReferenceContext(access: FirCallableReferenceAccess): FirTowerDataContext? {
         return towerDataContextForCallableReferences[access]
     }
 
-    fun storeAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol, context: FirTowerDataContext) {
+    fun storeAnonymousFunctionContext(
+        symbol: FirAnonymousFunctionSymbol,
+        context: FirTowerDataContext,
+        inferenceSession: FirInferenceSession?,
+    ) {
         towerDataContextForAnonymousFunctions[symbol] = context
+
+        if (inferenceSession != null) {
+            inferenceSessionForAnonymousFunctions[symbol] = inferenceSession
+        }
     }
 
     fun dropAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol) {
         towerDataContextForAnonymousFunctions.remove(symbol)
+        inferenceSessionForAnonymousFunctions.remove(symbol)
     }
 
     fun storeCallableReferenceContext(access: FirCallableReferenceAccess, context: FirTowerDataContext) {
