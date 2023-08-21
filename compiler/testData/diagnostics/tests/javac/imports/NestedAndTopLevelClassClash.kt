@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SKIP_JAVAC
 // FILE: a/B.java
 package a;

@@ -176,6 +176,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE by error<KtTypeReference>()
+
+        val MISSING_DEPENDENCY_CLASS by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<ConeKotlinType>("type")
+        }
     }
 
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {

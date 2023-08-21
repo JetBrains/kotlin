@@ -1,8 +1,8 @@
 // FILE: J.java
 public class J {
-    public static fun f(Byte x) {}
-    public static fun f(Integer x) {}
-    public static fun f(Long x) {}
+    public static void f(Byte x) {}
+    public static void f(Integer x) {}
+    public static void f(Long x) {}
 }
 
 // FILE: x.kt
