@@ -1523,6 +1523,7 @@ class Fir2IrDeclarationStorage(
                     IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR, startOffset, endOffset, dontUseSignature = true
                 )
             }
+            annotationGenerator.generate(this, property)
             leaveScope(this)
         }
         localStorage.putDelegatedProperty(property, irProperty)
