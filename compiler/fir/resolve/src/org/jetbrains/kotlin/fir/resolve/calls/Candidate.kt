@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
-import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
+import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.PostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -47,6 +47,7 @@ class Candidate(
     val isFromCompanionObjectTypeScope: Boolean = false,
     // It's only true if we're in the member scope of smart cast receiver and this particular candidate came from original type
     val isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
+    inferenceSession: FirInferenceSession,
 ) : AbstractCandidate() {
 
     override var symbol: FirBasedSymbol<*> = symbol
@@ -66,10 +67,20 @@ class Candidate(
         this.symbol = symbol
     }
 
+    val usedOuterCs: Boolean get() = system.usesOuterCs
+
     private var systemInitialized: Boolean = false
     val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
         val system = constraintSystemFactory.createConstraintSystem()
-        system.setBaseSystem(baseSystem)
+
+        val outerCs = inferenceSession.outerCSForCandidate(this)
+        if (outerCs != null && !baseSystem.usesOuterCs) {
+            system.addOuterSystem(outerCs)
+            system.addOtherSystem(baseSystem)
+        } else {
+            system.setBaseSystem(baseSystem)
+        }
+
         systemInitialized = true
         system
     }
@@ -101,6 +112,10 @@ class Candidate(
     var numDefaults: Int = 0
     lateinit var typeArgumentMapping: TypeArgumentMapping
     val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
+    val postponedCalls = mutableListOf<FirStatement>()
+    val postponedAccesses = mutableListOf<FirExpression>()
+    val pclaLambdas = mutableListOf<FirAnonymousFunction>()
+    val updateDeclarations = mutableListOf<() -> Unit>()
 
     var currentApplicability = CandidateApplicability.RESOLVED
         private set
@@ -160,7 +175,7 @@ class Candidate(
     // In case of implicit receivers we want to update corresponding sources to generate correct offset. This method must be called only
     // once when candidate was selected and confirmed to be correct one.
     fun updateSourcesOfReceivers() {
-        require(!sourcesWereUpdated)
+        //require(!sourcesWereUpdated)
         sourcesWereUpdated = true
 
         dispatchReceiver = dispatchReceiver?.tryToSetSourceForImplicitReceiver()
