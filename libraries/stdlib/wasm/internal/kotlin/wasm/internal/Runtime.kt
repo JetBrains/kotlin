@@ -118,5 +118,6 @@ internal fun stringGetPoolSize(): Int =
 
 // This initializer is a special case in FieldInitializersLowering
 @Suppress("DEPRECATION")
+@OptIn(ExperimentalStdlibApi::class)
 @EagerInitialization
 internal val stringPool: Array<String?> = Array(stringGetPoolSize())
