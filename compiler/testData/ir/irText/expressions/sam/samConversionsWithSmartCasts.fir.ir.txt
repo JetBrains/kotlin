@@ -104,8 +104,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
         r: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
           CALL 'public open fun id <T> (x: @[FlexibleNullability] T of <root>.J.id?): @[FlexibleNullability] T of <root>.J.id? declared in <root>.J' type=@[FlexibleNullability] kotlin.Function0<kotlin.Unit>? origin=null
             <T>: @[FlexibleNullability] kotlin.Function0<kotlin.Unit>?
-            x: TYPE_OP type=@[FlexibleNullability] kotlin.Function0<kotlin.Unit>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] kotlin.Function0<kotlin.Unit>?
-              GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test8' type=kotlin.Function0<kotlin.Unit> origin=null
+            x: GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test8' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test9 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public open fun run1 (r: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null

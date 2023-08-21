@@ -18816,6 +18816,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("Mockito.kt")
+        public void testMockito() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/Mockito.kt");
+        }
+
+        @Test
         @TestMetadata("NameHighlighter.kt")
         public void testNameHighlighter() throws Exception {
             runTest("compiler/testData/codegen/box/fir/NameHighlighter.kt");
