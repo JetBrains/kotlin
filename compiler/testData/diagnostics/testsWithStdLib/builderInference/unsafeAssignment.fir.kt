@@ -7,18 +7,18 @@ fun <T : Any> myBuilder(block: Foo<T>.() -> Unit) : Foo<T> = Foo<T>().apply(bloc
 
 fun main(arg: Any) {
     val x = 57
-    val value = <!TYPE_MISMATCH, TYPE_MISMATCH!>myBuilder {
+    val value = myBuilder {
         doSmthng("one ")
-        run { a; this }.a = 10
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>a += 1<!>
-        this.a = 57
+        run { a; this }.a = <!ASSIGNMENT_TYPE_MISMATCH!>10<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>a<!> += 1
+        this.a = <!ASSIGNMENT_TYPE_MISMATCH!>57<!>
         this.<!ILLEGAL_SELECTOR, VARIABLE_EXPECTED!>(a)<!> = 57
-        a = x
-        (a) = x
+        a = <!ASSIGNMENT_TYPE_MISMATCH!>x<!>
+        (a) = <!ASSIGNMENT_TYPE_MISMATCH!>x<!>
         a.<!FUNCTION_CALL_EXPECTED, VARIABLE_EXPECTED!>hashCode<!> = 99
         if (arg is String) {
             a = arg
         }
-    }<!>
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value.a?.<!UNRESOLVED_REFERENCE!>count<!> { <!UNRESOLVED_REFERENCE!>it<!> in 'l' .. 'q' })
+    }
+    println(value.a?.count { it in 'l' .. 'q' })
 }

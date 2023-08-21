@@ -143,7 +143,6 @@ abstract class TypeCheckerStateForConstraintSystem(
     // extract type variable only from type like Captured(out T)
     private fun extractTypeVariableForSubtype(subType: KotlinTypeMarker, superType: KotlinTypeMarker): KotlinTypeMarker? =
         with(extensionTypeContext) {
-
             val typeMarker = subType.asSimpleType()?.asCapturedType() ?: return null
 
             val projection = typeMarker.typeConstructorProjection()
