@@ -353,12 +353,18 @@ class Fir2IrImplicitCastInserter(
                 )
         }
 
-        @OptIn(IrSymbolInternals::class)
         internal fun implicitNotNullCast(original: IrExpression): IrTypeOperatorCall {
             // Cast type massage 1. Remove @EnhancedNullability
             // Cast type massage 2. Convert it to a non-null variant (in case of @FlexibleNullability)
-            val castType = original.type.removeAnnotations {
-                val classId = it.symbol.owner.parentAsClass.classId
+            val castType = original.type.removeAnnotations { annotationCall ->
+                val constructorSymbol = annotationCall.symbol.takeIf { it.isBound } ?: return@removeAnnotations false
+                /*
+                 * @EnhancedNullability and @FlexibleNullability are symbols from builtins and should be already
+                 *   bound at the time of body conversion, so it's safe to take the owner for them
+                 * If symbol is unbound then this annotation can not be neither @EnhancedNullability or @FlexibleNullability
+                 */
+                @OptIn(IrSymbolInternals::class)
+                val classId = constructorSymbol.owner.parentAsClass.classId
                 classId == StandardClassIds.Annotations.EnhancedNullability ||
                         classId == StandardClassIds.Annotations.FlexibleNullability
             }.makeNotNull()
