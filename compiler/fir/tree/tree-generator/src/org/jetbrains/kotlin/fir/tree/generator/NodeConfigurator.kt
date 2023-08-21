@@ -571,8 +571,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         smartCastExpression.configure {
             +field("originalExpression", expression, withReplace = true).withTransform()
             +field("typesFromSmartCast", "Collection<ConeKotlinType>", null, customType = coneKotlinTypeType)
-            +field("smartcastType", typeRef)
-            +field("smartcastTypeWithoutNullableNothing", typeRef, nullable = true)
+            +field("smartcastType", typeRef, withReplace = true)
+            +field("smartcastTypeWithoutNullableNothing", typeRef, nullable = true, withReplace = true)
             +booleanField("isStable")
             +smartcastStability
         }
