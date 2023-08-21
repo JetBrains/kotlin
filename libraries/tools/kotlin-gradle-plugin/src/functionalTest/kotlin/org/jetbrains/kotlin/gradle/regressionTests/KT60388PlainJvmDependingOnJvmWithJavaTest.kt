@@ -20,14 +20,20 @@ import kotlin.test.Test
 import kotlin.test.fail
 
 class KT60388PlainJvmDependingOnJvmWithJavaTest {
-    private val rootProject = buildProject {
-        allprojects { project -> project.enableDefaultStdlibDependency(false) }
-    }
+    private val rootProject = buildProject()
 
     @Test
     fun `test - plain jvm - depends on - jvm withJava`() {
-        val producer = buildProjectWithMPP(projectBuilder = { withName("producer").withParent(rootProject) })
-        val consumer = buildProjectWithJvm(projectBuilder = { withName("consumer").withParent(rootProject) })
+        val producer = buildProjectWithMPP(
+            projectBuilder = { withName("producer").withParent(rootProject) },
+            preApplyCode = {
+                enableDefaultStdlibDependency(false)
+            }
+        )
+        val consumer = buildProjectWithJvm(
+            projectBuilder = { withName("consumer").withParent(rootProject) },
+            preApplyCode = { enableDefaultStdlibDependency(false) }
+        )
 
         producer.multiplatformExtension.apply {
             jvm().withJava()
@@ -44,8 +50,14 @@ class KT60388PlainJvmDependingOnJvmWithJavaTest {
 
     @Test
     fun `test - plain jvm - depends on - jvm withJava and java plugin`() {
-        val producer = buildProjectWithMPP(projectBuilder = { withName("producer").withParent(rootProject) })
-        val consumer = buildProjectWithJvm(projectBuilder = { withName("consumer").withParent(rootProject) })
+        val producer = buildProjectWithMPP(
+            projectBuilder = { withName("producer").withParent(rootProject) },
+            preApplyCode = { enableDefaultStdlibDependency(false) }
+        )
+        val consumer = buildProjectWithJvm(
+            projectBuilder = { withName("consumer").withParent(rootProject) },
+            preApplyCode = { enableDefaultStdlibDependency(false) }
+        )
 
         producer.multiplatformExtension.apply {
             producer.plugins.apply("java")

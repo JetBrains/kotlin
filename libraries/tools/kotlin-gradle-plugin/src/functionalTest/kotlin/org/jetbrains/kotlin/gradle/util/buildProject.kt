@@ -37,7 +37,12 @@ fun buildProject(
     .apply(configureProject)
     .let { it as ProjectInternal }
 
-fun buildProjectWithMPP(projectBuilder: ProjectBuilder.() -> Unit = { }, code: Project.() -> Unit = {}) = buildProject(projectBuilder) {
+fun buildProjectWithMPP(
+    projectBuilder: ProjectBuilder.() -> Unit = { },
+    preApplyCode: Project.() -> Unit = {},
+    code: Project.() -> Unit = {}
+) = buildProject(projectBuilder) {
+    preApplyCode()
     project.applyMultiplatformPlugin()
     disableLegacyWarning(project)
     code()
@@ -48,7 +53,12 @@ fun buildProjectWithKPM(projectBuilder: ProjectBuilder.() -> Unit = { }, code: P
     code()
 }
 
-fun buildProjectWithJvm(projectBuilder: ProjectBuilder.() -> Unit = {}, code: Project.() -> Unit = {}) = buildProject(projectBuilder) {
+fun buildProjectWithJvm(
+    projectBuilder: ProjectBuilder.() -> Unit = {},
+    preApplyCode: Project.() -> Unit = {},
+    code: Project.() -> Unit = {}
+) = buildProject(projectBuilder) {
+    preApplyCode()
     project.applyKotlinJvmPlugin()
     code()
 }

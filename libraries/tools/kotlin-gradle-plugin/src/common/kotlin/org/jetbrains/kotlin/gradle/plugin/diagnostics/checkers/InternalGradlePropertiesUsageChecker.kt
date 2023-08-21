@@ -12,15 +12,13 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
-import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal object InternalGradlePropertiesUsageChecker : KotlinGradleProjectChecker {
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         KotlinPluginLifecycle.Stage.ReadyForExecution.await()
 
         val internalPropertiesUsed = PropertiesProvider.PropertyNames.allInternalProperties().filter { name ->
-            @OptIn(UnsafeApi::class)
-            kotlinPropertiesProvider.property(name) != null
+            kotlinPropertiesProvider.property(name).orNull != null
         }
         val internalPropertiesFiltered = internalPropertiesUsed.minus(PropertiesProvider.PropertyNames.MPP_13X_FLAGS_SET_BY_PLUGIN)
         if (internalPropertiesFiltered.isEmpty()) return

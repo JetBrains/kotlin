@@ -135,8 +135,8 @@ open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase(
 
 open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
     override fun apply(project: Project) {
-        warnAboutKotlin12xMppDeprecation(project)
         project.applyPlugin<KotlinCommonPluginWrapper>()
+        warnAboutKotlin12xMppDeprecation(project)
     }
 }
 

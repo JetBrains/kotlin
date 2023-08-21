@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
-import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal fun runDeprecationDiagnostics(project: Project) {
     checkAndReportDeprecatedMppProperties(project)
@@ -32,8 +31,7 @@ private fun checkAndReportDeprecatedMppProperties(project: Project) {
         if (propertyName in propertiesSetByPlugin && projectProperties.mpp13XFlagsSetByPlugin)
             return@mapNotNull null
 
-        @OptIn(UnsafeApi::class)
-        propertyName.takeIf { projectProperties.property(propertyName) != null }
+        propertyName.takeIf { projectProperties.property(propertyName).orNull != null }
     }
 
     if (usedProperties.isEmpty()) return
