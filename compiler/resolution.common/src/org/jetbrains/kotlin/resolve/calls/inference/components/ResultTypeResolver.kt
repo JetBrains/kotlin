@@ -22,6 +22,8 @@ class ResultTypeResolver(
     private val languageVersionSettings: LanguageVersionSettings
 ) {
     interface Context : TypeSystemInferenceExtensionContext {
+        val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
+        val outerSystemVariablesPrefixSize: Int
         fun isProperType(type: KotlinTypeMarker): Boolean
         fun buildNotFixedVariablesToStubTypesSubstitutor(): TypeSubstitutorMarker
         fun isReified(variable: TypeVariableMarker): Boolean
@@ -220,6 +222,8 @@ class ResultTypeResolver(
 
                 if (typesWithoutStubs.isNotEmpty()) {
                     commonSuperType = computeCommonSuperType(typesWithoutStubs)
+                } else if (outerSystemVariablesPrefixSize > 0) {
+                    commonSuperType = createSubstitutionFromSubtypingStubTypesToTypeVariables().safeSubstitute(commonSuperType)
                 }
             }
 
@@ -273,6 +277,14 @@ class ResultTypeResolver(
         }
 
         if (!atLeastOneProper) return emptyList()
+
+        // PCLA slow path
+        // We only allow using TVs fixation for nested PCLA calls
+        if (outerSystemVariablesPrefixSize > 0) {
+            val notFixedToStubTypesSubstitutor = buildNotFixedVariablesToStubTypesSubstitutor()
+            return lowerConstraintTypes.map { notFixedToStubTypesSubstitutor.safeSubstitute(it) }
+        }
+
         if (!atLeastOneNonProper) return lowerConstraintTypes
 
         val notFixedToStubTypesSubstitutor = buildNotFixedVariablesToStubTypesSubstitutor()
@@ -336,7 +348,7 @@ class ResultTypeResolver(
     }
 
     private fun Context.isProperTypeForFixation(type: KotlinTypeMarker): Boolean =
-        isProperTypeForFixation(type) { isProperType(it) }
+        isProperTypeForFixation(type, notFixedTypeVariables.keys) { isProperType(it) }
 
     private fun findResultIfThereIsEqualsConstraint(c: Context, variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? =
         with(c) {
