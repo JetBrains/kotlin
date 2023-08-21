@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 
-class KlibMetadataDeserializerForDecompiler(
+internal class KlibMetadataDeserializerForDecompiler(
     packageFqName: FqName,
     private val proto: ProtoBuf.PackageFragment,
     private val nameResolver: NameResolver,

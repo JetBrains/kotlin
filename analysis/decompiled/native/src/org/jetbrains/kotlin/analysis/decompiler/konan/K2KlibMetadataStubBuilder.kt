@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFin
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
-class K2KlibMetadataStubBuilder(
+internal class K2KlibMetadataStubBuilder(
     private val version: Int,
     fileType: FileType,
     private val serializerProtocol: () -> SerializerExtensionProtocol,

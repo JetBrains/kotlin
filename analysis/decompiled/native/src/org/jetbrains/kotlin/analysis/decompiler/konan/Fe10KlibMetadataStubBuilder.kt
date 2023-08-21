@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 
-open class Fe10KlibMetadataStubBuilder(
+internal open class Fe10KlibMetadataStubBuilder(
     version: Int,
     fileType: FileType,
     private val serializerProtocol: () -> SerializerExtensionProtocol,
