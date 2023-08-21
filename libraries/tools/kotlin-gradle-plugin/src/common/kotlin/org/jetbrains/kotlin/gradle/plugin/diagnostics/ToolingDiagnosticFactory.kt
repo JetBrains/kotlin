@@ -8,26 +8,11 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
 @InternalKotlinGradlePluginApi // used in integration tests
-abstract class ToolingDiagnosticFactory(private val predefinedSeverity: ToolingDiagnostic.Severity?, customId: String?) {
-    constructor(customId: String) : this(null, customId)
-    constructor(predefinedSeverity: ToolingDiagnostic.Severity?) : this(predefinedSeverity, null)
+abstract class ToolingDiagnosticFactory(val severity: ToolingDiagnostic.Severity) {
+    open val id: String = this::class.simpleName!!
 
-    open val id: String = customId ?: this::class.simpleName!!
-
-    protected fun build(message: String, severity: ToolingDiagnostic.Severity? = null, throwable: Throwable? = null): ToolingDiagnostic {
-        if (severity == null && predefinedSeverity == null) {
-            error(
-                "Can't determine severity. " +
-                        "Either provide it in constructor of ToolingDiagnosticFactory, or in the 'build'-function invocation"
-            )
-        }
-        if (severity != null && predefinedSeverity != null) {
-            error(
-                "Please provide severity either in ToolingDiagnosticFactory constructor, or as the 'build'-function parameter," +
-                        " but not both at once"
-            )
-        }
-        return ToolingDiagnostic(id, message, severity ?: predefinedSeverity!!, throwable)
+    protected fun build(message: String, throwable: Throwable? = null): ToolingDiagnostic {
+        return ToolingDiagnostic(id, message, severity, throwable)
     }
 
     protected fun String.onlyIf(condition: Boolean) = if (condition) this else ""

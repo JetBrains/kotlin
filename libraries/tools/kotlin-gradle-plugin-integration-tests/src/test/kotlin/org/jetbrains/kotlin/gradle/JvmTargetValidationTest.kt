@@ -41,7 +41,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             buildAndFail("assemble") {
-                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Error)
             }
         }
     }
@@ -75,7 +75,8 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build("assemble") {
-                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Error)
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Warning)
             }
         }
     }
@@ -99,7 +100,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build("assemble") {
-                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Warning)
             }
         }
     }
@@ -125,7 +126,8 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build("assemble") {
-                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Warning)
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Error)
             }
         }
     }
@@ -147,7 +149,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build("build") {
-                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Error)
             }
         }
     }
@@ -190,11 +192,11 @@ class JvmTargetValidationTest : KGPBaseTest() {
 
             build("build") {
                 assertHasDiagnostic(
-                    KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks,
+                    KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Warning,
                     withSubstring = "compileTestKotlin"
                 )
                 assertNoDiagnostic(
-                    KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks,
+                    KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Warning,
                     withSubstring = "compileKotlin"
                 )
             }
@@ -253,7 +255,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             javaSourcesDir().resolve("demo/HelloWorld.java").deleteExisting()
 
             build("assemble") {
-                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Error)
             }
 
             javaSourcesDir().resolve("demo/Greeter.java").modify {
@@ -261,7 +263,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             }
 
             build("assemble") {
-                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Error)
             }
         }
     }
@@ -291,7 +293,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build(":compileKotlin") {
-                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Warning)
             }
         }
     }
@@ -324,7 +326,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build(":compileKotlin") {
-                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Warning)
             }
 
             javaSourcesDir().resolve("demo").run {
@@ -344,7 +346,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             }
 
             build(":compileKotlin") {
-                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Warning)
             }
         }
     }
@@ -400,11 +402,11 @@ class JvmTargetValidationTest : KGPBaseTest() {
 
             if (gradleVersion.baseVersion >= GradleVersion.version("8.0")) {
                 buildAndFail("assemble") {
-                    assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                    assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Error)
                 }
             } else {
                 build("assemble") {
-                    assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                    assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Warning)
                 }
             }
         }
@@ -432,7 +434,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             buildAndFail(":lib:compileKotlinJvmWithJava") {
-                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Error)
             }
         }
     }

@@ -301,22 +301,21 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object InconsistentTargetCompatibilityForKotlinAndJavaTasks : ToolingDiagnosticFactory(predefinedSeverity = null) {
-        operator fun invoke(
-            javaTaskName: String,
-            targetCompatibility: String,
-            kotlinTaskName: String,
-            jvmTarget: String,
-            severity: ToolingDiagnostic.Severity,
-        ) = build(
+    abstract class InconsistentTargetCompatibilityForKotlinAndJavaTasks(
+        severity: ToolingDiagnostic.Severity
+    ) : ToolingDiagnosticFactory(severity) {
+        override val id: String = InconsistentTargetCompatibilityForKotlinAndJavaTasks::class.simpleName!!
+        operator fun invoke(javaTaskName: String, targetCompatibility: String, kotlinTaskName: String, jvmTarget: String) = build(
             """
                 Inconsistent JVM-target compatibility detected for tasks '$javaTaskName' ($targetCompatibility) and '$kotlinTaskName' ($jvmTarget).
                 ${if (severity == WARNING) "This will become an error in Gradle 8.0." else ""}
                 Consider using JVM Toolchain: https://kotl.in/gradle/jvm/toolchain
                 Learn more about JVM-target validation: https://kotl.in/gradle/jvm/target-validation 
-            """.trimIndent(),
-            severity
+            """.trimIndent()
         )
+
+        object Warning : InconsistentTargetCompatibilityForKotlinAndJavaTasks(WARNING)
+        object Error : InconsistentTargetCompatibilityForKotlinAndJavaTasks(FATAL)
     }
 
     object JsEnvironmentNotChosenExplicitly : ToolingDiagnosticFactory(WARNING) {

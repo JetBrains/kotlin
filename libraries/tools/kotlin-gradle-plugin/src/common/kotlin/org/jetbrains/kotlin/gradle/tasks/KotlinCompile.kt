@@ -358,10 +358,10 @@ abstract class KotlinCompile @Inject constructor(
     private fun validateKotlinAndJavaHasSameTargetCompatibility(
         args: K2JVMCompilerArguments,
     ) {
-        val severity = when (jvmTargetValidationMode.get()) {
-            JvmTargetValidationMode.ERROR -> ToolingDiagnostic.Severity.FATAL
-            JvmTargetValidationMode.WARNING -> ToolingDiagnostic.Severity.WARNING
-            else -> return
+        val factory = when (jvmTargetValidationMode.get()) {
+            JvmTargetValidationMode.ERROR -> KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Error
+            JvmTargetValidationMode.WARNING -> KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks.Warning
+            JvmTargetValidationMode.IGNORE -> return
         }
 
         associatedJavaCompileTaskTargetCompatibility.orNull?.let { targetCompatibility ->
@@ -376,12 +376,11 @@ abstract class KotlinCompile @Inject constructor(
             val jvmTarget = args.jvmTarget ?: JvmTarget.DEFAULT.toString()
             if (normalizedJavaTarget != jvmTarget) {
                 reportDiagnostic(
-                    KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks(
+                    factory(
                         javaTaskName = associatedJavaCompileTaskName.get(),
                         targetCompatibility = targetCompatibility,
                         kotlinTaskName = name,
                         jvmTarget = args.jvmTarget ?: "not provided explicitly, picked up default ${JvmTarget.DEFAULT}",
-                        severity = severity
                     )
                 )
             }
