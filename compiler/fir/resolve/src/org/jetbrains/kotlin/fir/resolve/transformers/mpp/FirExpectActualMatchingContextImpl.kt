@@ -457,6 +457,7 @@ class FirExpectActualMatchingContextImpl private constructor(
                 actual fun foo() {} <-- twice checked (from A and B) and added to mapping
             }
         }
+        Can be fixed after KT-61361.
          */
         expectToCompatibilityMap.asMutableMap()[expectMember] = compatibility
     }
