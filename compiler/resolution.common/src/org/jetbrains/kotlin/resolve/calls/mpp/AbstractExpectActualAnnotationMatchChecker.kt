@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.mpp.TypeAliasSymbolMarker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType as IncompatibilityType
 
 object AbstractExpectActualAnnotationMatchChecker {
@@ -20,6 +21,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         StandardClassIds.Annotations.SinceKotlin,
         StandardClassIds.Annotations.Suppress,
         StandardClassIds.Annotations.WasExperimental,
+        OptInNames.OPT_IN_CLASS_ID,
     )
 
     class Incompatibility(
