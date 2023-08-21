@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.formver
 
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
-class FormalVerificationPluginExtensionRegistrar(private val logLevel: LogLevel) : FirExtensionRegistrar() {
+class FormalVerificationPluginExtensionRegistrar(private val config: PluginConfiguration) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
-        +PluginAdditionalCheckers.getFactory(logLevel)
+        +PluginAdditionalCheckers.getFactory(config)
     }
 }
 

@@ -10,6 +10,8 @@ pill {
 }
 
 dependencies {
+    implementation(project(":kotlin-formver-compiler-plugin.common"))
+
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-model"))
 

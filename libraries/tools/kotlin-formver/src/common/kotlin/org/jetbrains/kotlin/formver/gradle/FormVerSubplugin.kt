@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.formver.gradle.model.builder.FormVerModelBuilder
+import org.jetbrains.kotlin.formver.FormalVerificationPluginNames
 import org.jetbrains.kotlin.gradle.plugin.*
 import javax.inject.Inject
 
@@ -18,8 +19,6 @@ class FormVerGradleSubplugin
 ) : KotlinCompilerPluginSupportPlugin {
     companion object {
         private const val FORMVER_ARTIFACT_NAME = "kotlin-formver-compiler-plugin-embeddable"
-
-        private const val LOG_LEVEL_ARG_NAME = "log_level"
     }
 
     override fun apply(target: Project) {
@@ -38,7 +37,11 @@ class FormVerGradleSubplugin
             val options = mutableListOf<SubpluginOption>()
 
             formVerExtension.myLogLevel?.let {
-                options += SubpluginOption(LOG_LEVEL_ARG_NAME, it)
+                options += SubpluginOption(FormalVerificationPluginNames.LOG_LEVEL_OPTION_NAME, it)
+            }
+
+            formVerExtension.myUnsupportedFeatureBehaviour?.let {
+                options += SubpluginOption(FormalVerificationPluginNames.UNSUPPORTED_FEATURE_BEHAVIOUR_OPTION_NAME, it)
             }
 
             options

@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.formver.PluginConfiguration
 import org.jetbrains.kotlin.formver.embeddings.ClassEmbedding
 import org.jetbrains.kotlin.formver.embeddings.MethodSignatureEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 
 interface ProgramConversionContext {
+    val config: PluginConfiguration
 
     fun add(symbol: FirFunctionSymbol<*>): MethodSignatureEmbedding
 

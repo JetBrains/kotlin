@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.formver.FormalVerificationPluginExtensionRegistrar
 import org.jetbrains.kotlin.formver.LogLevel
+import org.jetbrains.kotlin.formver.PluginConfiguration
+import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -19,6 +21,7 @@ class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentCo
         val logLevel =
             if (module.files.any { it.name.contains("full_viper_dump") }) LogLevel.FULL_VIPER_DUMP
             else LogLevel.SHORT_VIPER_DUMP
-        FirExtensionRegistrarAdapter.registerExtension(FormalVerificationPluginExtensionRegistrar(logLevel))
+        val config = PluginConfiguration(logLevel, UnsupportedFeatureBehaviour.THROW_EXCEPTION)
+        FirExtensionRegistrarAdapter.registerExtension(FormalVerificationPluginExtensionRegistrar(config))
     }
 }

@@ -5,8 +5,4 @@
 
 package org.jetbrains.kotlin.formver
 
-object FormalVerificationPluginNames {
-    const val PLUGIN_ID = "org.jetbrains.kotlin.formver"
-    const val LOG_LEVEL_OPTION_NAME = "log_level"
-    const val UNSUPPORTED_FEATURE_BEHAVIOUR_OPTION_NAME = "unsupported_feature_behaviour"
-}
+class PluginConfiguration(val logLevel: LogLevel, val behaviour: UnsupportedFeatureBehaviour)

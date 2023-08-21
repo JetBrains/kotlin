@@ -25,9 +25,10 @@ private val VerifierError.error: KtDiagnosticFactory1<String>
         is VerificationError -> PluginErrors.VIPER_VERIFICATION_ERROR
     }
 
-class ViperPoweredDeclarationChecker(private val session: FirSession, private val logLevel: LogLevel) : FirSimpleFunctionChecker() {
+class ViperPoweredDeclarationChecker(private val session: FirSession, private val config: PluginConfiguration) :
+    FirSimpleFunctionChecker() {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        val programConversionContext = ProgramConverter(session)
+        val programConversionContext = ProgramConverter(session, config)
         programConversionContext.addWithBody(declaration)
         val program = programConversionContext.program
 
@@ -52,7 +53,7 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
     }
 
 
-    private fun getProgramForLogging(program: Program): Program? = when (logLevel) {
+    private fun getProgramForLogging(program: Program): Program? = when (config.logLevel) {
         LogLevel.ONLY_WARNINGS -> null
         LogLevel.SHORT_VIPER_DUMP -> program.toShort()
         LogLevel.FULL_VIPER_DUMP -> program

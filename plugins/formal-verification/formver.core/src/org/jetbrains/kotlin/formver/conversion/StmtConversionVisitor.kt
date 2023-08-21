@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.viper.ast.AccessPredicate
 import org.jetbrains.kotlin.formver.viper.ast.Exp
@@ -48,7 +49,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
     // translating statements here, after all.  It isn't 100% clear how best to
     // communicate this.
     override fun visitElement(element: FirElement, data: StmtConversionContext): Exp =
-        TODO("Not yet implemented for $element (${element.source.text})")
+        handleUnimplementedElement("Not yet implemented for $element (${element.source.text})", data)
 
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: StmtConversionContext): Exp {
         val expr = returnExpression.result.accept(this, data)
@@ -67,7 +68,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
             ConstantValueKind.Int -> Exp.IntLit((constExpression.value as Long).toInt())
             ConstantValueKind.Boolean -> Exp.BoolLit(constExpression.value as Boolean)
             ConstantValueKind.Null -> NullableDomain.nullVal((data.embedType(constExpression) as NullableTypeEmbedding).elementType.type)
-            else -> TODO("Constant Expression of type ${constExpression.kind} is not yet implemented.")
+            else -> handleUnimplementedElement("Constant Expression of type ${constExpression.kind} is not yet implemented.", data)
         }
 
     override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: StmtConversionContext): Exp =
@@ -114,7 +115,6 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         val type = data.embedType(propertyAccessExpression)
         return when (symbol) {
             is FirValueParameterSymbol -> VariableEmbedding(symbol.callableId.embedName(), type).toLocalVar()
-
             is FirPropertySymbol -> {
                 val varEmbedding = VariableEmbedding(symbol.callableId.embedName(), type)
                 if (symbol.isLocal) {
@@ -135,7 +135,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
                     return anon.toLocalVar()
                 }
             }
-            else -> TODO("Implement other property accesses")
+            else -> handleUnimplementedElement("Property access ${propertyAccessExpression.source} not implemented", data)
         }
     }
 
@@ -152,7 +152,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         return when (equalityOperatorCall.operation) {
             FirOperation.EQ -> convertEqCmp(left, leftType, right, rightType)
             FirOperation.NOT_EQ -> Exp.Not(convertEqCmp(left, leftType, right, rightType))
-            else -> TODO("Equality comparison operation ${equalityOperatorCall.operation} not yet implemented.")
+            else -> handleUnimplementedElement("Equality comparison operation ${equalityOperatorCall.operation} not yet implemented.", data)
         }
     }
 
@@ -227,7 +227,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         val symbol = property.symbol
         val type = property.returnTypeRef.coneTypeOrNull!!
         if (!symbol.isLocal) {
-            TODO("Implement non-local properties")
+            handleUnimplementedElement("Non-local property ${property.source} is not yet implemented.", data)
         }
         val cvar = VariableEmbedding(symbol.callableId.embedName(), data.embedType(type))
         val propInitializer = property.initializer
@@ -299,4 +299,16 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: StmtConversionContext): Exp =
         data.signature.receiver?.toLocalVar()
             ?: throw IllegalArgumentException("Can't resolve the 'this' receiver since the function does not have one.")
+
+    private fun handleUnimplementedElement(msg: String, data: StmtConversionContext): Exp =
+        when (data.config.behaviour) {
+            UnsupportedFeatureBehaviour.THROW_EXCEPTION ->
+                TODO(msg)
+            UnsupportedFeatureBehaviour.ASSUME_UNREACHABLE -> {
+                // TODO: This is not perfect, sa the resulting Viper may not typecheck.
+                System.err.println(msg) // hack for while we're actively developing this to see what we're missing
+                data.addStatement(Stmt.Assume(Exp.BoolLit(false)))
+                UnitDomain.element
+            }
+        }
 }

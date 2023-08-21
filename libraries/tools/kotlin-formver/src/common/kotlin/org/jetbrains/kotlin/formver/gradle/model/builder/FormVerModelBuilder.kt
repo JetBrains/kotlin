@@ -18,7 +18,7 @@ class FormVerModelBuilder : ToolingModelBuilder {
     override fun buildAll(modelName: String, project: Project): Any {
         require(canBuild(modelName)) { "buildAll(\"$modelName\") has been called while canBeBuild is false" }
         val extension = project.extensions.getByType(FormVerExtension::class.java)
-        return FormVerImpl(project.name, extension.myLogLevel)
+        return FormVerImpl(project.name, extension.myLogLevel, extension.myUnsupportedFeatureBehaviour)
     }
 
 }

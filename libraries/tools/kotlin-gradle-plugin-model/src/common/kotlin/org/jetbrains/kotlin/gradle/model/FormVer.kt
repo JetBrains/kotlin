@@ -27,4 +27,11 @@ interface FormVer {
      * @return the Viper log level
      */
     val logLevel: String?
+
+    /**
+     * Returns the desired behaviour when encountering unsupported Kotlin features.
+     *
+     * @return the behaviour for unsupported features
+     */
+    val unsupportedFeatureBehaviour: String?
 }

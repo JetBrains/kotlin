@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    compileOnly(project(":kotlin-formver-compiler-plugin.common"))
     compileOnly(project(":kotlin-formver-compiler-plugin.viper"))
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))

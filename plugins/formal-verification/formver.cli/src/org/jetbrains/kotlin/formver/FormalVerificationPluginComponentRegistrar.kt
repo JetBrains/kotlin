@@ -15,6 +15,11 @@ class FormalVerificationPluginComponentRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val logLevel = configuration.get(FormalVerificationConfigurationKeys.LOG_LEVEL, LogLevel.defaultLogLevel())
-        FirExtensionRegistrarAdapter.registerExtension(FormalVerificationPluginExtensionRegistrar(logLevel))
+        val behaviour = configuration.get(
+            FormalVerificationConfigurationKeys.UNSUPPORTED_FEATURE_BEHAVIOUR,
+            UnsupportedFeatureBehaviour.defaultBehaviour()
+        )
+        val config = PluginConfiguration(logLevel, behaviour)
+        FirExtensionRegistrarAdapter.registerExtension(FormalVerificationPluginExtensionRegistrar(config))
     }
 }

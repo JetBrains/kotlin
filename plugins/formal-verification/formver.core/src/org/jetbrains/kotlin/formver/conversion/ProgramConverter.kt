@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.formver.PluginConfiguration
+import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Method
@@ -29,8 +31,7 @@ import org.jetbrains.kotlin.formver.viper.domains.UnitDomain
  * performed via this context to ensure they can be deduplicated.
  * We need the FirSession to get access to the TypeContext.
  */
-class ProgramConverter(val session: FirSession) : ProgramConversionContext {
-
+class ProgramConverter(val session: FirSession, override val config: PluginConfiguration) : ProgramConversionContext {
     private val methods: MutableMap<MangledName, Method> = mutableMapOf()
     private val classes: MutableMap<ClassName, ClassEmbedding> = mutableMapOf()
 
@@ -80,7 +81,14 @@ class ProgramConverter(val session: FirSession) : ProgramConversionContext {
             if (classLikeSymbol is FirRegularClassSymbol) {
                 add(classLikeSymbol)
             } else {
-                TODO("Implement other class symbols")
+                when (config.behaviour) {
+                    UnsupportedFeatureBehaviour.THROW_EXCEPTION ->
+                        throw NotImplementedError("The embedding for type $type is not yet implemented.")
+                    UnsupportedFeatureBehaviour.ASSUME_UNREACHABLE -> {
+                        System.err.println("Requested type $type, for which we do not yet have an embedding.")
+                        UnitTypeEmbedding
+                    }
+                }
             }
         }
     }
