@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.Companion.Trigger1
  * }
  */
 
-object NullableDomain : Domain("Nullable") {
+object NullableDomain : BuiltinDomain("Nullable") {
     val T = Type.TypeVar("T")
     override val typeVars: List<Type.TypeVar> = listOf(T)
     val Nullable: Type = this.toType()

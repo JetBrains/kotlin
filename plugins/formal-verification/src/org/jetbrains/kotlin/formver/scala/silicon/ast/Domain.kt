@@ -99,6 +99,7 @@ abstract class Domain(
 ) : IntoViper<viper.silver.ast.Domain> {
     val name = DomainName(baseName)
 
+    open val includeInShortDump: Boolean = true
     abstract val typeVars: List<Type.TypeVar>
     abstract val functions: List<DomainFunc>
     abstract val axioms: List<DomainAxiom>
@@ -133,4 +134,13 @@ abstract class Domain(
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
     ): Exp.DomainFuncApp = Exp.DomainFuncApp(func.name, args, typeVarMap, func.typ, pos, info, trafos)
+}
+
+abstract class BuiltinDomain(
+    baseName: String,
+    pos: Position = Position.NoPosition,
+    info: Info = Info.NoInfo,
+    trafos: Trafos = Trafos.NoTrafos,
+) : Domain(baseName, pos, info, trafos) {
+    override val includeInShortDump: Boolean = false
 }

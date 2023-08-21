@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
-        FirExtensionRegistrarAdapter.registerExtension(FormalVerificationPluginExtensionRegistrar(LogLevel.FULL_VIPER_DUMP))
+        val logLevel =
+            if (module.files.any { it.name.contains("full_viper_dump") }) LogLevel.FULL_VIPER_DUMP
+            else LogLevel.SHORT_VIPER_DUMP
+        FirExtensionRegistrarAdapter.registerExtension(FormalVerificationPluginExtensionRegistrar(logLevel))
     }
 }

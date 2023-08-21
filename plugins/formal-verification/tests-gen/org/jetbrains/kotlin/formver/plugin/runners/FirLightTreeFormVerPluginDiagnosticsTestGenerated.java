@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.formver.plugin.runners;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -67,6 +67,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         @TestMetadata("boolean_logic.kt")
         public void testBoolean_logic() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/boolean_logic.kt");
+        }
+
+        @Test
+        @TestMetadata("full_viper_dump.kt")
+        public void testFull_viper_dump() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/full_viper_dump.kt");
         }
 
         @Test

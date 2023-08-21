@@ -8,13 +8,24 @@ package org.jetbrains.kotlin.formver.scala.silicon.ast
 import org.jetbrains.kotlin.formver.scala.IntoViper
 import org.jetbrains.kotlin.formver.scala.MangledName
 
-data class Field(
+open class Field(
     val name: MangledName,
     val type: Type,
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
 ) : IntoViper<viper.silver.ast.Field> {
+    open val includeInShortDump: Boolean = true
     override fun toViper(): viper.silver.ast.Field =
         viper.silver.ast.Field(name.mangled, type.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
+}
+
+class BuiltinField(
+    name: MangledName,
+    type: Type,
+    pos: Position = Position.NoPosition,
+    info: Info = Info.NoInfo,
+    trafos: Trafos = Trafos.NoTrafos,
+) : Field(name, type, pos, info, trafos) {
+    override val includeInShortDump: Boolean = false
 }

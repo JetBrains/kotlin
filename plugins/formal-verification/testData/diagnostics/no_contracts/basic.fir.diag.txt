@@ -1,217 +1,27 @@
 /basic.kt:(4,15): info: Generated Viper text for return_unit:
-domain dom$Unit  {
-
-  function dom$Unit$element(): dom$Unit
-}
-
-domain dom$Nullable[T]  {
-
-  function dom$Nullable$null(): dom$Nullable[T]
-
-  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
-
-  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
-
-  axiom dom$Nullable$some_not_null {
-    (forall x: T ::
-      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
-      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
-      (dom$Nullable$null(): dom$Nullable[T]))
-  }
-
-  axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T ::
-      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
-      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
-      x)
-  }
-
-  axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall nx: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
-      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
-      nx)
-  }
-}
-
-field special$function_object_call_counter: Int
-
 method global$pkg_$return_unit() returns (ret$: dom$Unit)
 {
 }
 
 /basic.kt:(25,35): info: Generated Viper text for return_int:
-domain dom$Unit  {
-
-  function dom$Unit$element(): dom$Unit
-}
-
-domain dom$Nullable[T]  {
-
-  function dom$Nullable$null(): dom$Nullable[T]
-
-  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
-
-  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
-
-  axiom dom$Nullable$some_not_null {
-    (forall x: T ::
-      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
-      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
-      (dom$Nullable$null(): dom$Nullable[T]))
-  }
-
-  axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T ::
-      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
-      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
-      x)
-  }
-
-  axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall nx: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
-      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
-      nx)
-  }
-}
-
-field special$function_object_call_counter: Int
-
 method global$pkg_$return_int() returns (ret$: Int)
 {
   ret$ := 0
 }
 
 /basic.kt:(60,80): info: Generated Viper text for take_int_return_unit:
-domain dom$Unit  {
-
-  function dom$Unit$element(): dom$Unit
-}
-
-domain dom$Nullable[T]  {
-
-  function dom$Nullable$null(): dom$Nullable[T]
-
-  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
-
-  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
-
-  axiom dom$Nullable$some_not_null {
-    (forall x: T ::
-      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
-      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
-      (dom$Nullable$null(): dom$Nullable[T]))
-  }
-
-  axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T ::
-      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
-      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
-      x)
-  }
-
-  axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall nx: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
-      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
-      nx)
-  }
-}
-
-field special$function_object_call_counter: Int
-
 method global$pkg_$take_int_return_unit(local$x: Int)
   returns (ret$: dom$Unit)
 {
 }
 
 /basic.kt:(126,145): info: Generated Viper text for take_int_return_int:
-domain dom$Unit  {
-
-  function dom$Unit$element(): dom$Unit
-}
-
-domain dom$Nullable[T]  {
-
-  function dom$Nullable$null(): dom$Nullable[T]
-
-  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
-
-  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
-
-  axiom dom$Nullable$some_not_null {
-    (forall x: T ::
-      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
-      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
-      (dom$Nullable$null(): dom$Nullable[T]))
-  }
-
-  axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T ::
-      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
-      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
-      x)
-  }
-
-  axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall nx: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
-      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
-      nx)
-  }
-}
-
-field special$function_object_call_counter: Int
-
 method global$pkg_$take_int_return_int(local$x: Int) returns (ret$: Int)
 {
   ret$ := local$x
 }
 
 /basic.kt:(176,200): info: Generated Viper text for take_int_return_int_expr:
-domain dom$Unit  {
-
-  function dom$Unit$element(): dom$Unit
-}
-
-domain dom$Nullable[T]  {
-
-  function dom$Nullable$null(): dom$Nullable[T]
-
-  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
-
-  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
-
-  axiom dom$Nullable$some_not_null {
-    (forall x: T ::
-      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
-      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
-      (dom$Nullable$null(): dom$Nullable[T]))
-  }
-
-  axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T ::
-      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
-      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
-      x)
-  }
-
-  axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall nx: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
-      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
-      nx)
-  }
-}
-
-field special$function_object_call_counter: Int
-
 method global$pkg_$take_int_return_int_expr(local$x: Int)
   returns (ret$: Int)
 {
@@ -219,44 +29,6 @@ method global$pkg_$take_int_return_int_expr(local$x: Int)
 }
 
 /basic.kt:(222,242): info: Generated Viper text for with_int_declaration:
-domain dom$Unit  {
-
-  function dom$Unit$element(): dom$Unit
-}
-
-domain dom$Nullable[T]  {
-
-  function dom$Nullable$null(): dom$Nullable[T]
-
-  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
-
-  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
-
-  axiom dom$Nullable$some_not_null {
-    (forall x: T ::
-      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
-      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
-      (dom$Nullable$null(): dom$Nullable[T]))
-  }
-
-  axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T ::
-      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
-      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
-      x)
-  }
-
-  axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall nx: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
-      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
-      nx)
-  }
-}
-
-field special$function_object_call_counter: Int
-
 method global$pkg_$with_int_declaration() returns (ret$: Int)
 {
   var local$x: Int
@@ -265,44 +37,6 @@ method global$pkg_$with_int_declaration() returns (ret$: Int)
 }
 
 /basic.kt:(285,299): info: Generated Viper text for int_assignment:
-domain dom$Unit  {
-
-  function dom$Unit$element(): dom$Unit
-}
-
-domain dom$Nullable[T]  {
-
-  function dom$Nullable$null(): dom$Nullable[T]
-
-  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
-
-  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
-
-  axiom dom$Nullable$some_not_null {
-    (forall x: T ::
-      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
-      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
-      (dom$Nullable$null(): dom$Nullable[T]))
-  }
-
-  axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T ::
-      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
-      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
-      x)
-  }
-
-  axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall nx: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
-      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
-      nx)
-  }
-}
-
-field special$function_object_call_counter: Int
-
 method global$pkg_$int_assignment() returns (ret$: dom$Unit)
 {
   var local$x: Int

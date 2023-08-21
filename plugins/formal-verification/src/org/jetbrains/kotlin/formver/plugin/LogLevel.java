@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.formver.plugin;
 import org.jetbrains.annotations.NotNull;
 
 public enum LogLevel {
-    ONLY_WARNINGS, FULL_VIPER_DUMP;
+    ONLY_WARNINGS, SHORT_VIPER_DUMP, FULL_VIPER_DUMP;
 
     @NotNull
     public static LogLevel defaultLogLevel() {

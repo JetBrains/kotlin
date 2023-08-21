@@ -1,0 +1,3 @@
+FILE: full_viper_dump.kt
+    public final fun f(): R|kotlin/Unit| {
+    }

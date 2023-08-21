@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.formver.scala.silicon.ast.*
  * seem to suffice (hence why it is not present here).  It isn't quite clear why this is the case, but
  * since we don't generally need to talk about equality of units this should be fine.
  */
-object UnitDomain : Domain("Unit") {
+object UnitDomain : BuiltinDomain("Unit") {
     override val typeVars: List<Type.TypeVar> = emptyList()
 
     val elementFunc = createDomainFunc("element", emptyList(), toType())

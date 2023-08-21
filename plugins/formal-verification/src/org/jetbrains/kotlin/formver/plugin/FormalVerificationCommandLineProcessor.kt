@@ -33,6 +33,7 @@ class FormalVerificationCommandLineProcessor : CommandLineProcessor {
         when (option) {
             LOG_LEVEL_OPTION -> when (value) {
                 "only_warnings" -> configuration.put(LOG_LEVEL, LogLevel.ONLY_WARNINGS)
+                "short_viper_dump" -> configuration.put(LOG_LEVEL, LogLevel.SHORT_VIPER_DUMP)
                 "full_viper_dump" -> configuration.put(LOG_LEVEL, LogLevel.FULL_VIPER_DUMP)
                 else -> throw CliOptionProcessingException("Invalid setting $value for ${option.optionName}")
             }

@@ -1,42 +1,4 @@
 /arithmetic.kt:(4,12): info: Generated Viper text for addition:
-domain dom$Unit  {
-
-  function dom$Unit$element(): dom$Unit
-}
-
-domain dom$Nullable[T]  {
-
-  function dom$Nullable$null(): dom$Nullable[T]
-
-  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
-
-  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
-
-  axiom dom$Nullable$some_not_null {
-    (forall x: T ::
-      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
-      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
-      (dom$Nullable$null(): dom$Nullable[T]))
-  }
-
-  axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T ::
-      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
-      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
-      x)
-  }
-
-  axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall nx: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
-      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
-      nx)
-  }
-}
-
-field special$function_object_call_counter: Int
-
 method global$pkg_$addition(local$x: Int) returns (ret$: dom$Unit)
 {
   var local$y: Int
@@ -44,44 +6,6 @@ method global$pkg_$addition(local$x: Int) returns (ret$: dom$Unit)
 }
 
 /arithmetic.kt:(47,58): info: Generated Viper text for subtraction:
-domain dom$Unit  {
-
-  function dom$Unit$element(): dom$Unit
-}
-
-domain dom$Nullable[T]  {
-
-  function dom$Nullable$null(): dom$Nullable[T]
-
-  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
-
-  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
-
-  axiom dom$Nullable$some_not_null {
-    (forall x: T ::
-      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
-      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
-      (dom$Nullable$null(): dom$Nullable[T]))
-  }
-
-  axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T ::
-      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
-      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
-      x)
-  }
-
-  axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall nx: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
-      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
-      nx)
-  }
-}
-
-field special$function_object_call_counter: Int
-
 method global$pkg_$subtraction(local$x: Int) returns (ret$: dom$Unit)
 {
   var local$y: Int
@@ -89,44 +13,6 @@ method global$pkg_$subtraction(local$x: Int) returns (ret$: dom$Unit)
 }
 
 /arithmetic.kt:(93,107): info: Generated Viper text for multiplication:
-domain dom$Unit  {
-
-  function dom$Unit$element(): dom$Unit
-}
-
-domain dom$Nullable[T]  {
-
-  function dom$Nullable$null(): dom$Nullable[T]
-
-  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
-
-  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
-
-  axiom dom$Nullable$some_not_null {
-    (forall x: T ::
-      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
-      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
-      (dom$Nullable$null(): dom$Nullable[T]))
-  }
-
-  axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T ::
-      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
-      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
-      x)
-  }
-
-  axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall nx: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
-      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
-      nx)
-  }
-}
-
-field special$function_object_call_counter: Int
-
 method global$pkg_$multiplication(local$x: Int) returns (ret$: dom$Unit)
 {
   var local$y: Int
@@ -134,44 +20,6 @@ method global$pkg_$multiplication(local$x: Int) returns (ret$: dom$Unit)
 }
 
 /arithmetic.kt:(142,150): info: Generated Viper text for division:
-domain dom$Unit  {
-
-  function dom$Unit$element(): dom$Unit
-}
-
-domain dom$Nullable[T]  {
-
-  function dom$Nullable$null(): dom$Nullable[T]
-
-  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
-
-  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
-
-  axiom dom$Nullable$some_not_null {
-    (forall x: T ::
-      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
-      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
-      (dom$Nullable$null(): dom$Nullable[T]))
-  }
-
-  axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T ::
-      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
-      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
-      x)
-  }
-
-  axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall nx: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
-      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
-      nx)
-  }
-}
-
-field special$function_object_call_counter: Int
-
 method global$pkg_$division(local$x: Int) returns (ret$: dom$Unit)
 {
   var local$y: Int

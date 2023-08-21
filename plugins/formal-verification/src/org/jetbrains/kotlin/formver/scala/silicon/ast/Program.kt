@@ -32,4 +32,13 @@ data class Program(
         info.toViper(),
         trafos.toViper(),
     )
+
+    fun toShort(): Program = Program(
+        domains.filter { it.includeInShortDump },
+        fields.filter { it.includeInShortDump },
+        methods,
+        pos,
+        info,
+        trafos,
+    )
 }
