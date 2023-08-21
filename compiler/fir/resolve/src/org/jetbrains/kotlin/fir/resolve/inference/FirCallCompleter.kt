@@ -41,8 +41,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompat
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.model.StubTypeMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -80,18 +78,11 @@ class FirCallCompleter(
         val completionMode = candidate.computeCompletionMode(
             session.inferenceComponents, resolutionMode, initialType
         ).let {
-            // The difference between `shouldAvoidFullCompletion` and `!shouldRunCompletion` is very subtle:
-            // we don't run even partial completion for `!inferenceSession.shouldRunCompletion(call)`, while actually
-            // do that for `shouldAvoidFullCompletion`
-            //
-            // As for implementations, `shouldRunCompletion` only works for Builder inference, while `shouldAvoidFullCompletion` is for
-            // delegate inference where it's assumed to have partially completed intermediate calls.
-            //
-            // Ideally, we should get rid of `shouldRunCompletion` once Builder inference is rewritten (see KT-61041 for tracking)
-            if (it == ConstraintSystemCompletionMode.FULL && inferenceSession.shouldAvoidFullCompletion(call))
-                ConstraintSystemCompletionMode.PARTIAL
-            else
-                it
+            when {
+                it == ConstraintSystemCompletionMode.FULL ->
+                    inferenceSession.customCompletionModeInsteadOfFull(call) ?: ConstraintSystemCompletionMode.FULL
+                else -> it
+            }
         }
 
         val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
@@ -101,35 +92,27 @@ class FirCallCompleter(
 
         return when (completionMode) {
             ConstraintSystemCompletionMode.FULL -> {
-                if (inferenceSession.shouldRunCompletion(call)) {
-                    runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-                    val finalSubstitutor = candidate.system.asReadOnlyStorage()
-                        .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
-                    val completedCall = call.transformSingle(
-                        FirCallCompletionResultsWriterTransformer(
-                            session, components.scopeSession, finalSubstitutor,
-                            components.returnTypeCalculator,
-                            session.typeApproximator,
-                            components.dataFlowAnalyzer,
-                            components.integerLiteralAndOperatorApproximationTransformer,
-                            components.samResolver,
-                            components.context,
-                        ),
-                        null
-                    )
-                    inferenceSession.addCompletedCall(completedCall, candidate)
-                    completedCall
-                } else {
-                    inferenceSession.processPartiallyResolvedCall(call, resolutionMode)
-                    call
-                }
+                runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
+                val finalSubstitutor = candidate.system.asReadOnlyStorage()
+                    .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
+                call.transformSingle(
+                    FirCallCompletionResultsWriterTransformer(
+                        session, components.scopeSession, finalSubstitutor,
+                        components.returnTypeCalculator,
+                        session.typeApproximator,
+                        components.dataFlowAnalyzer,
+                        components.integerLiteralAndOperatorApproximationTransformer,
+                        components.samResolver,
+                        components.context,
+                    ),
+                    null
+                )
             }
 
-            ConstraintSystemCompletionMode.PARTIAL -> {
+            ConstraintSystemCompletionMode.PARTIAL, ConstraintSystemCompletionMode.PCLA_POSTPONED_CALL -> {
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-                if (inferenceSession is FirDelegatedPropertyInferenceSession) {
-                    inferenceSession.processPartiallyResolvedCall(call, resolutionMode)
-                }
+
+                inferenceSession.processPartiallyResolvedCall(call, resolutionMode, completionMode)
 
                 call
             }
@@ -183,8 +166,8 @@ class FirCallCompleter(
         completionMode: ConstraintSystemCompletionMode,
         call: T,
         initialType: ConeKotlinType,
-        analyzer: PostponedArgumentsAnalyzer? = null
-    ) where T : FirResolvable, T : FirStatement {
+        analyzer: PostponedArgumentsAnalyzer? = null,
+    ) where T : FirStatement {
         @Suppress("NAME_SHADOWING")
         val analyzer = analyzer ?: createPostponedArgumentsAnalyzer(transformer.resolutionContext)
         completer.complete(
@@ -194,7 +177,7 @@ class FirCallCompleter(
             initialType,
             transformer.resolutionContext
         ) {
-            analyzer.analyze(candidate.system, it, candidate, completionMode)
+            analyzer.analyze(candidate.system, it, candidate)
         }
     }
 
@@ -251,8 +234,8 @@ class FirCallCompleter(
             contextReceivers: List<ConeKotlinType>,
             parameters: List<ConeKotlinType>,
             expectedReturnType: ConeKotlinType?,
-            stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>,
-            candidate: Candidate
+            candidate: Candidate,
+            withPCLASession: Boolean,
         ): ReturnArgumentsAnalysisResult {
             val lambdaArgument: FirAnonymousFunction = lambdaAtom.atom
             val needItParam = lambdaArgument.valueParameters.isEmpty() && parameters.size == 1
@@ -355,29 +338,33 @@ class FirCallCompleter(
                 } ?: components.noExpectedType
             )
 
-            val builderInferenceSession = runIf(stubsForPostponedVariables.isNotEmpty()) {
-                @Suppress("UNCHECKED_CAST")
-                FirBuilderInferenceSession(
-                    lambdaArgument,
-                    transformer.resolutionContext,
-                    stubsForPostponedVariables as Map<ConeTypeVariable, ConeStubType>
-                )
-            }
-
             transformer.context.withAnonymousFunctionTowerDataContext(lambdaArgument.symbol) {
-                if (builderInferenceSession != null) {
-                    transformer.context.withInferenceSession(builderInferenceSession) {
-                        lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
+                val pclaInferenceSession =
+                    runIf(withPCLASession) {
+                        candidate.lambdasAnalyzedWithPCLA += lambdaArgument
+
+                        FirPCLAInferenceSession(candidate, session.inferenceComponents, transformer.context.returnTypeCalculator)
+                    }
+
+                if (pclaInferenceSession != null) {
+                    transformer.context.withInferenceSession(pclaInferenceSession) {
+                        transformer.context.withOuterConstraintStorage(candidate.system.currentStorage()) {
+                            lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
+                        }
+
+                        applyResultsToMainCandidate()
                     }
                 } else {
-                    lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
+                    transformer.context.inferenceSession.runLambdaCompletion(candidate) {
+                        lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
+                    }
                 }
             }
             transformer.context.dropContextForAnonymousFunction(lambdaArgument)
 
             val returnArguments = components.dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambdaArgument).map { it.expression }
 
-            return ReturnArgumentsAnalysisResult(returnArguments, builderInferenceSession)
+            return ReturnArgumentsAnalysisResult(returnArguments, null)
         }
     }
 

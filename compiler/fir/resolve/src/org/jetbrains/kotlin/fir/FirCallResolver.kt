@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
-import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
+import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
@@ -397,10 +397,11 @@ class FirCallResolver(
     }
 
     fun resolveCallableReference(
-        constraintSystemBuilder: ConstraintSystemBuilder,
+        containingCallCandidate: Candidate,
         resolvedCallableReferenceAtom: ResolvedCallableReferenceAtom,
         hasSyntheticOuterCall: Boolean,
-    ): Pair<CandidateApplicability, Boolean> {
+    ): Pair<CandidateApplicability, Boolean> = components.context.inferenceSession.runCallableReferenceResolution(containingCallCandidate) {
+        val constraintSystemBuilder = containingCallCandidate.csBuilder
         val callableReferenceAccess = resolvedCallableReferenceAtom.reference
         val calleeReference = callableReferenceAccess.calleeReference
         val lhs = resolvedCallableReferenceAtom.lhs
@@ -449,7 +450,7 @@ class FirCallResolver(
                     calleeReference.source
                 )
                 resolvedCallableReferenceAtom.resultingReference = errorReference
-                return applicability to false
+                return@runCallableReferenceResolution applicability to false
             }
             reducedCandidates.size > 1 -> {
                 if (resolvedCallableReferenceAtom.hasBeenPostponed) {
@@ -459,10 +460,10 @@ class FirCallResolver(
                         calleeReference.source
                     )
                     resolvedCallableReferenceAtom.resultingReference = errorReference
-                    return applicability to false
+                    return@runCallableReferenceResolution applicability to false
                 }
                 resolvedCallableReferenceAtom.hasBeenPostponed = true
-                return applicability to true
+                return@runCallableReferenceResolution applicability to true
             }
         }
 
@@ -485,7 +486,7 @@ class FirCallResolver(
         resolvedCallableReferenceAtom.resultingReference = reference
         resolvedCallableReferenceAtom.resultingTypeForCallableReference = chosenCandidate.resultingTypeForCallableReference
 
-        return applicability to true
+        return@runCallableReferenceResolution applicability to true
     }
 
     fun resolveDelegatingConstructorCall(
@@ -858,7 +859,7 @@ class FirCallResolver(
          *   can be important in builder inference mode, and it will never work if we skip completion here.
          * See inferenceFromLambdaReturnStatement.kt test.
          */
-        if (components.context.inferenceSession !is FirBuilderInferenceSession &&
+        if (!candidate.usedOuterCs &&
             createResolvedReferenceWithoutCandidateForLocalVariables &&
             explicitReceiver?.resolvedType !is ConeIntegerLiteralType &&
             coneSymbol is FirVariableSymbol &&
