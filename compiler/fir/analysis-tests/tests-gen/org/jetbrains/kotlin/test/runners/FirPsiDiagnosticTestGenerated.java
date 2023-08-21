@@ -6904,6 +6904,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             }
 
             @Test
+            @TestMetadata("malformedRawTypes.kt")
+            public void testMalformedRawTypes() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/malformedRawTypes.kt");
+            }
+
+            @Test
             @TestMetadata("NamedParameterInConcurrentMap.kt")
             public void testNamedParameterInConcurrentMap() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/NamedParameterInConcurrentMap.kt");
