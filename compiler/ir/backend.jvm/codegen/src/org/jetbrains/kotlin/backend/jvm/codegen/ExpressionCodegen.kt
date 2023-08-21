@@ -438,8 +438,8 @@ class ExpressionCodegen(
             }
         }
 
-        info.variables.reversed().forEach {
-            frameMap.leave(it.declaration.symbol)
+        for (i in info.variables.size - 1 downTo 0) {
+            frameMap.leave(info.variables[i].declaration.symbol)
         }
     }
 
