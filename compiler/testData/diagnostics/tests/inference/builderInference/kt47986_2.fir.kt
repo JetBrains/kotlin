@@ -9,6 +9,6 @@ fun <K> id(x: K) = x
 
 fun main() {
     val x = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>buildFoo<!> { // can't infer
-        val y = id(::bar)
+        val y = id(::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>)
     }
 }
