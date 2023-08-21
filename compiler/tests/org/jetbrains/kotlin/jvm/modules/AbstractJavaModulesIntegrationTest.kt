@@ -218,13 +218,15 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("moduleD", listOf(c, b, a))
     }
 
-    fun testSpecifyPathToModuleInfoInArguments() {
+    // TODO (KT-60797): missing JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE.
+    fun testSpecifyPathToModuleInfoInArguments() = muteForK2 {
         val a = module("moduleA")
 
         val kotlinOptions = mutableListOf(
             "$testDataDirectory/someOtherDirectoryWithTheActualModuleInfo/module-info.java",
             "-jdk-home", jdkHome.path,
-            "-Xmodule-path=${a.path}"
+            "-Xmodule-path=${a.path}",
+            "-language-version", languageVersion.versionString,
         )
         compileLibrary(
             "moduleB",
