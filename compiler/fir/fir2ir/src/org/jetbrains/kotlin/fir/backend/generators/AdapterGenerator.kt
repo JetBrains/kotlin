@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.*
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
+import org.jetbrains.kotlin.fir.scopes.processAllCallables
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -446,9 +449,9 @@ internal class AdapterGenerator(
             }
 
         val samFirType = substitutedParameterType.removeExternalProjections() ?: substitutedParameterType
+        if (!samFirType.isSamType) return this
         val samType = samFirType.toIrType(ConversionTypeOrigin.DEFAULT)
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
-        if (!samType.isSamType) return this
         return IrTypeOperatorCallImpl(
             this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType,
             castArgumentToFunctionalInterfaceForSamType(this, argument.resolvedType, samFirType)
@@ -836,4 +839,19 @@ internal class AdapterGenerator(
             irAdapterFunction.parent = conversionScope.parent()!!
         }
     }
+
+    context(Fir2IrComponents)
+    private val ConeKotlinType.isSamType: Boolean
+        get() {
+            val classSymbol = this.lowerBoundIfFlexible().toRegularClassSymbol(session) ?: return false
+            if (!classSymbol.isInterface) return false
+            val scope = classSymbol.unsubstitutedScope()
+            var abstractNumber = 0
+            scope.processAllCallables {
+                if (it.isAbstract) {
+                    abstractNumber++
+                }
+            }
+            return abstractNumber == 1
+        }
 }

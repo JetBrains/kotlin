@@ -11,8 +11,11 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.util.isSetter
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.util.PrivateForInline
 
 @OptIn(PrivateForInline::class)
@@ -63,14 +66,19 @@ class Fir2IrConversionScope {
 
     fun parentFromStack(): IrDeclarationParent = parentStack.last()
 
-    fun parentAccessorOfPropertyFromStack(property: IrProperty): IrSimpleFunction? {
+    fun parentAccessorOfPropertyFromStack(propertySymbol: IrPropertySymbol): IrSimpleFunction {
+        // It is safe to access an owner of property symbol here, because this function may be called
+        // only from property accessor of corresponding property
+        // We inside accessor -> accessor is built -> property is built
+        @OptIn(IrSymbolInternals::class)
+        val property = propertySymbol.owner
         for (parent in parentStack.asReversed()) {
             when (parent) {
-                property.getter -> return property.getter
-                property.setter -> return property.setter
+                property.getter -> return parent as IrSimpleFunction
+                property.setter -> return parent as IrSimpleFunction
             }
         }
-        return null
+        error("Accessor of property ${property.render()} not found on parent stack")
     }
 
     fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T {

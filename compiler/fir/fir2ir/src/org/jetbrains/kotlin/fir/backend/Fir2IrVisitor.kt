@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -741,7 +742,7 @@ class Fir2IrVisitor(
                 val irFunction = when (boundSymbol) {
                     is FirFunctionSymbol -> declarationStorage.getIrFunctionSymbol(boundSymbol).owner
                     is FirPropertySymbol -> {
-                        val property = declarationStorage.getIrPropertySymbol(boundSymbol).owner as? IrProperty
+                        val property = declarationStorage.getIrPropertySymbol(boundSymbol) as? IrPropertySymbol
                         property?.let { conversionScope.parentAccessorOfPropertyFromStack(it) }
                     }
                     else -> null

@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.diagnostics.startOffsetSkippingComments
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.backend.unsubstitutedScope
 import org.jetbrains.kotlin.fir.builder.buildFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -39,11 +41,8 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -187,7 +186,6 @@ private fun FirBasedSymbol<*>.toSymbolForCall(
 }
 
 context(Fir2IrComponents)
-@OptIn(IrSymbolInternals::class)
 fun FirReference.toSymbolForCall(
     dispatchReceiver: FirExpression,
     conversionScope: Fir2IrConversionScope,
@@ -215,11 +213,14 @@ fun FirReference.toSymbolForCall(
 
         is FirThisReference -> {
             when (val boundSymbol = boundSymbol) {
-                is FirClassSymbol<*> -> classifierStorage.getIrClassSymbol(boundSymbol).owner.thisReceiver?.symbol
-                is FirFunctionSymbol -> declarationStorage.getIrFunctionSymbol(boundSymbol).owner.extensionReceiverParameter?.symbol
+                is FirClassSymbol<*> -> classifierStorage.getIrClassSymbol(boundSymbol)
+                is FirFunctionSymbol -> {
+                    val firClassSymbol = boundSymbol.receiverParameter?.typeRef?.coneType?.toRegularClassSymbol(session)
+                    firClassSymbol?.let { classifierStorage.getIrClassSymbol(it) }
+                }
                 is FirPropertySymbol -> {
-                    val property = declarationStorage.getIrPropertySymbol(boundSymbol).owner as? IrProperty
-                    property?.let { conversionScope.parentAccessorOfPropertyFromStack(it) }?.symbol
+                    val propertySymbol = declarationStorage.getIrPropertySymbol(boundSymbol) as? IrPropertySymbol
+                    propertySymbol?.let { conversionScope.parentAccessorOfPropertyFromStack(it).symbol }
                 }
                 is FirScriptSymbol -> declarationStorage.getCachedIrScript(boundSymbol.fir)?.thisReceiver?.symbol
                 else -> null
@@ -560,15 +561,6 @@ fun FirClass.irOrigin(firProvider: FirProvider): IrDeclarationOrigin = when {
         else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
     }
 }
-
-@OptIn(IrSymbolInternals::class)
-val IrType.isSamType: Boolean
-    get() {
-        val irClass = classOrNull ?: return false
-        if (irClass.owner.kind != ClassKind.INTERFACE) return false
-        val am = irClass.functions.singleOrNull { it.owner.modality == Modality.ABSTRACT }
-        return am != null
-    }
 
 fun Fir2IrComponents.createSafeCallConstruction(
     receiverVariable: IrVariable,
