@@ -31,7 +31,7 @@ fun <E> intersect(vararg x: In<E>): E = null as E
 fun test() {
     val ret = build {
         emit("1")
-        intersect(getIn(), getIn())
+        <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR!>intersect<!>(getIn(), getIn())
         intersect(getIn(), Test.foo(getIn()))
         intersect(Test.foo(getIn()), Test.foo(getIn()))
         intersect(Test.foo(getIn()), getIn())

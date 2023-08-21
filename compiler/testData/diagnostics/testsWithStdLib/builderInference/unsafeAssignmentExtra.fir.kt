@@ -62,8 +62,8 @@ fun main(arg: Any, condition: Boolean) {
     // See KT-54664
     val value3 = myBuilder {
         accept("")
-        a = 45
-        bar(<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>::a<!>)
+        a = <!ASSIGNMENT_TYPE_MISMATCH!>45<!>
+        bar(::<!INAPPLICABLE_CANDIDATE!>a<!>)
     }
 
     fun baz(t: Int) {}
