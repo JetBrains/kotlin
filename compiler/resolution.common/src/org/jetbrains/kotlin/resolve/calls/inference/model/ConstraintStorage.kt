@@ -49,6 +49,8 @@ interface ConstraintStorage {
     val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>>
 
     /**
+     *  Outer system for a call means some set of variables defined beside it/its arguments
+     *
      *  In case some candidate's CS is built in the context of some outer CS, first [outerSystemVariablesPrefixSize] in the list
      *  of [allTypeVariables] belong to the outer CS.
      *
@@ -61,6 +63,8 @@ interface ConstraintStorage {
      *  Also, see docs/fir/delegated_property_inference.md
      */
     val outerSystemVariablesPrefixSize: Int
+
+    val usesOuterCs: Boolean
 
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker> get() = emptyMap()
@@ -77,6 +81,8 @@ interface ConstraintStorage {
         override val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>> = emptyList()
 
         override val outerSystemVariablesPrefixSize: Int get() = 0
+
+        override val usesOuterCs: Boolean get() = false
     }
 }
 

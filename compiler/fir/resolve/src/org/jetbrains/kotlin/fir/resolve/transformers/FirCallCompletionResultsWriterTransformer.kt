@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.inference.FirStubTypeTransformer
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -32,7 +34,10 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
@@ -124,7 +129,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         if (mode == Mode.DelegatedPropertyCompletion) {
             // Update type for `$delegateField` in `$$delegateField.get/setValue()` calls inside accessors
-            val typeUpdater = TypeUpdaterForDelegateArguments()
+            val typeUpdater = TypeUpdaterForPCLAAndDelegateReceivers()
             qualifiedAccessExpression.transformExplicitReceiver(typeUpdater, null)
         }
 
@@ -135,6 +140,12 @@ class FirCallCompletionResultsWriterTransformer(
             val expectedExtensionReceiverType = (declaration as? FirCallableDeclaration)?.receiverParameter?.typeRef?.coneType
             dispatchReceiver = dispatchReceiver?.transformSingle(integerOperatorApproximator, expectedDispatchReceiverType)
             extensionReceiver = extensionReceiver?.transformSingle(integerOperatorApproximator, expectedExtensionReceiverType)
+        }
+
+        if (subCandidate.usedOuterCs) {
+            val updaterForThisReferences = TypeUpdaterForPCLAAndDelegateReceivers()
+            dispatchReceiver = dispatchReceiver?.transformSingle(updaterForThisReferences, null)
+            extensionReceiver = extensionReceiver?.transformSingle(updaterForThisReferences, null)
         }
 
         qualifiedAccessExpression.apply {
@@ -171,6 +182,21 @@ class FirCallCompletionResultsWriterTransformer(
         if (declaration !is FirErrorFunction) {
             qualifiedAccessExpression.replaceTypeArguments(typeArguments)
         }
+
+        for (postponedCall in subCandidate.postponedPCLACalls) {
+            postponedCall.transformSingle(this, null)
+        }
+
+        for (callback in subCandidate.onCompletionResultsWritingCallbacks) {
+            callback(finalSubstitutor)
+        }
+
+        // TODO: Be aware of exponent
+        val firStubTypeTransformer = FirStubTypeTransformer(finalSubstitutor)
+        for (lambda in subCandidate.lambdasAnalyzedWithPCLA) {
+            lambda.transformSingle(firStubTypeTransformer, null)
+        }
+
         session.lookupTracker?.recordTypeResolveAsLookup(type, qualifiedAccessExpression.source, context.file.source)
         return qualifiedAccessExpression
     }
@@ -195,7 +221,7 @@ class FirCallCompletionResultsWriterTransformer(
      * TODO: In future, it would be nice to get rid of it and there's actually a way to do it – not using substitution overrides (see KT-61618)
      */
     private fun Candidate.updateSubstitutedMemberIfReceiverContainsTypeVariable() {
-        val updatedSymbol = symbol.updateSubstitutedMemberIfReceiverContainsTypeVariable() ?: return
+        val updatedSymbol = symbol.updateSubstitutedMemberIfReceiverContainsTypeVariable(usedOuterCs) ?: return
         val oldSymbol = symbol
 
         @OptIn(Candidate.UpdatingSymbol::class)
@@ -221,9 +247,9 @@ class FirCallCompletionResultsWriterTransformer(
         }
     }
 
-    private fun FirBasedSymbol<*>.updateSubstitutedMemberIfReceiverContainsTypeVariable(): FirBasedSymbol<*>? {
+    private fun FirBasedSymbol<*>.updateSubstitutedMemberIfReceiverContainsTypeVariable(usedOuterCs: Boolean): FirBasedSymbol<*>? {
         // TODO: Add assertion that this function returns not-null only for BI and delegation inference
-        if (mode != Mode.DelegatedPropertyCompletion) return null
+        if (mode != Mode.DelegatedPropertyCompletion && !usedOuterCs) return null
 
         val fir = fir
         if (fir !is FirCallableDeclaration) return null
@@ -240,6 +266,22 @@ class FirCallCompletionResultsWriterTransformer(
             ) as? FirClassSubstitutionScope ?: return null
 
         val original = fir.originalForSubstitutionOverride ?: return null
+
+        if (fir is FirSyntheticProperty && fir.symbol is FirSimpleSyntheticPropertySymbol && original is FirSyntheticProperty) {
+            var result: FirBasedSymbol<*>? = null
+            FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(session, updatedDispatchReceiverType, scope)
+                ?.processPropertiesByName(fir.name) {
+                    val newProperty = it.fir as? FirSyntheticProperty ?: return@processPropertiesByName
+                    val originalForNew = newProperty.originalForSubstitutionOverride ?: return@processPropertiesByName
+                    if (originalForNew.getter.delegate == original.getter.delegate) {
+                        check(result == null)
+                        result = it
+                    }
+                }
+
+            return result ?: error("Not found synthetic property: ${fir.renderWithType()}")
+        }
+
         return findSingleSubstitutedSymbolWithOriginal(original.symbol) { processor ->
             when (original) {
                 is FirSimpleFunction -> scope.processFunctionsByName(original.name, processor)
@@ -519,10 +561,19 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
 
+        var dispatchReceiver = subCandidate.dispatchReceiverExpression()
+        var extensionReceiver = subCandidate.chosenExtensionReceiverExpression()
+
+        if (subCandidate.usedOuterCs) {
+            val updaterForThisReferences = TypeUpdaterForPCLAAndDelegateReceivers()
+            dispatchReceiver = dispatchReceiver?.transformSingle(updaterForThisReferences, null)
+            extensionReceiver = extensionReceiver?.transformSingle(updaterForThisReferences, null)
+        }
+
         return callableReferenceAccess.apply {
             replaceCalleeReference(resolvedReference)
-            replaceDispatchReceiver(subCandidate.dispatchReceiverExpression())
-            replaceExtensionReceiver(subCandidate.chosenExtensionReceiverExpression())
+            replaceDispatchReceiver(dispatchReceiver)
+            replaceExtensionReceiver(extensionReceiver)
             if (calleeReference.candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
                 addNonFatalDiagnostic(ConeResolutionResultOverridesOtherToPreserveCompatibility)
             }
@@ -533,24 +584,32 @@ class FirCallCompletionResultsWriterTransformer(
         return smartCastExpression.transformOriginalExpression(this, data)
     }
 
-    private inner class TypeUpdaterForDelegateArguments : FirTransformer<Any?>() {
+    private inner class TypeUpdaterForPCLAAndDelegateReceivers : FirTransformer<Any?>() {
         override fun <E : FirElement> transformElement(element: E, data: Any?): E {
             return element
+        }
+
+        override fun transformThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Any?): FirStatement {
+            return transformTypeRefForQualifiedAccess(thisReceiverExpression)
         }
 
         override fun transformQualifiedAccessExpression(
             qualifiedAccessExpression: FirQualifiedAccessExpression,
             data: Any?,
         ): FirStatement {
+            return transformTypeRefForQualifiedAccess(qualifiedAccessExpression)
+        }
+
+        override fun transformPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Any?): FirStatement {
+            return transformQualifiedAccessExpression(propertyAccessExpression, data)
+        }
+
+        private fun transformTypeRefForQualifiedAccess(qualifiedAccessExpression: FirQualifiedAccessExpression): FirQualifiedAccessExpression {
             val originalType = qualifiedAccessExpression.resolvedType
             val substitutedReceiverType = finallySubstituteOrNull(originalType) ?: return qualifiedAccessExpression
             qualifiedAccessExpression.replaceConeTypeOrNull(substitutedReceiverType)
             session.lookupTracker?.recordTypeResolveAsLookup(substitutedReceiverType, qualifiedAccessExpression.source, context.file.source)
             return qualifiedAccessExpression
-        }
-
-        override fun transformPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Any?): FirStatement {
-            return transformQualifiedAccessExpression(propertyAccessExpression, data)
         }
     }
 
