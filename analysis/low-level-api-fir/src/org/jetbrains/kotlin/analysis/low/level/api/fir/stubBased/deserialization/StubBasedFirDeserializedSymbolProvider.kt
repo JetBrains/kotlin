@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,18 +7,16 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.getNotNullValueForNotNullContext
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
-import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
-import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
@@ -29,9 +27,8 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import java.util.ArrayList
+import org.jetbrains.kotlin.fir.caches.getValue
 
 typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
 
@@ -197,12 +194,12 @@ internal open class StubBasedFirDeserializedSymbolProvider(
         }
     }
 
-    private fun getClass(
-        classId: ClassId,
-        parentContext: StubBasedFirDeserializationContext? = null
-    ): FirRegularClassSymbol? {
-        return classCache.getValue(classId, parentContext)
-    }
+    private fun getClass(classId: ClassId, parentContext: StubBasedFirDeserializationContext? = null): FirRegularClassSymbol? =
+        if (parentContext?.classLikeDeclaration != null) {
+            classCache.getNotNullValueForNotNullContext(classId, parentContext)
+        } else {
+            classCache.getValue(classId, parentContext)
+        }
 
     private fun getTypeAlias(classId: ClassId, context: StubBasedFirDeserializationContext? = null): FirTypeAliasSymbol? {
         if (!classId.relativeClassName.isOneSegmentFQN()) return null
@@ -294,15 +291,11 @@ internal open class StubBasedFirDeserializedSymbolProvider(
             outerClassSymbol = null,
             outerTypeParameters = emptyList(),
             initialOrigin,
-            classLikeDeclaration
+            classLikeDeclaration,
         )
-        if (classLikeDeclaration is KtClassOrObject) {
-            return classCache.getValue(
-                classId,
-                deserializationContext
-            )
-        }
-        return typeAliasCache.getValue(classId, deserializationContext)
+
+        val cache = if (classLikeDeclaration is KtClassOrObject) classCache else typeAliasCache
+        return cache.getNotNullValueForNotNullContext(classId, deserializationContext)
     }
 
     fun getTopLevelCallableSymbol(
