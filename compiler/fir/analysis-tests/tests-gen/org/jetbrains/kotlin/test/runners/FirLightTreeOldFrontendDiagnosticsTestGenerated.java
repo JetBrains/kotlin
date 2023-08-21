@@ -16866,6 +16866,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("theSimplestBuilder.kt")
+                public void testTheSimplestBuilder() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/theSimplestBuilder.kt");
+                }
+
+                @Test
                 @TestMetadata("withoutAnnotationDisabledFeature.kt")
                 public void testWithoutAnnotationDisabledFeature() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/withoutAnnotationDisabledFeature.kt");
