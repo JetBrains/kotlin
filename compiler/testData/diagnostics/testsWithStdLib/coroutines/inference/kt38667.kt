@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// ISSUE: KT-38667
 // !OPT_IN: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 
@@ -12,11 +13,11 @@ abstract class AnimationBuilder<T>
 abstract class DurationBasedAnimationBuilder<T> : AnimationBuilder<T>()
 class TweenBuilder<T> : DurationBasedAnimationBuilder<T>()
 class TransitionSpec<S> {
-    fun <T> tween(init: TweenBuilder<T>.() -> Unit): DurationBasedAnimationBuilder<T> = TweenBuilder<T>().apply(init)
-    infix fun <T, V : AnimationVector> PropKey<T, V>.using(builder: AnimationBuilder<T>) {}
+    fun <E> tween(init: TweenBuilder<E>.() -> Unit): DurationBasedAnimationBuilder<E> = TweenBuilder<E>().apply(init)
+    infix fun <F, V : AnimationVector> PropKey<F, V>.using(builder: AnimationBuilder<F>) {}
 }
-class TransitionDefinition<T> {
-    fun transition(fromState: T? = null, toState: T? = null, init: TransitionSpec<T>.() -> Unit) {}
+class TransitionDefinition<X> {
+    fun transition(fromState: X? = null, toState: X? = null, init: TransitionSpec<X>.() -> Unit) {}
 }
 @OptIn(ExperimentalTypeInference::class)
 fun <T> transitionDefinition(init: TransitionDefinition<T>.() -> Unit) = TransitionDefinition<T>().apply(init)

@@ -1,1 +1,3 @@
 /kt47986_2.fir.kt:(187,195): error: Not enough information to infer type argument for 'K'.
+
+/kt47986_2.fir.kt:(234,237): error: Not enough information to infer type argument for 'L'.

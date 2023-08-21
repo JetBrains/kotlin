@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -183,6 +184,11 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeAmbiguousFunctionTypeKinds -> FirErrors.AMBIGUOUS_FUNCTION_TYPE_KIND.createOn(source, kinds)
     is ConeUnsupportedClassLiteralsWithEmptyLhs -> FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS.createOn(source)
     is ConeMissingConstructorKeyword -> FirErrors.MISSING_CONSTRUCTOR_KEYWORD.createOn(source)
+    is ConeUsingTypeVariableAsExplicitReceiver -> FirErrors.BUILDER_INFERENCE_STUB_RECEIVER.createOn(
+        explicitReceiver.source,
+        typeParameter.symbol.name,
+        (typeParameter.symbol.containingDeclarationSymbol as? FirCallableSymbol<*>)?.name ?: Name.identifier("unknown")
+    )
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 
@@ -412,6 +418,7 @@ private fun mapSystemHasContradictionError(
             )
         }
     }.ifEmpty {
+
         listOfNotNull(
             diagnostic.candidate.errors.firstNotNullOfOrNull {
                 val message = when (it) {
