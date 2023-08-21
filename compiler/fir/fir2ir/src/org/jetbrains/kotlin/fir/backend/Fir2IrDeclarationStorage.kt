@@ -1088,7 +1088,7 @@ class Fir2IrDeclarationStorage(
                                 NameUtils.propertyDelegateName(property.name), true, delegate
                             )
                         } else {
-                            val initializer = property.backingField?.initializer ?: property.initializer
+                            val initializer = getEffectivePropertyInitializer(property, resolveIfNeeded = true)
                             // There are cases when we get here for properties
                             // that have no backing field. For example, in the
                             // funExpression.kt test there's an attempt
@@ -1155,6 +1155,22 @@ class Fir2IrDeclarationStorage(
             }
             result
         }
+    }
+
+    /**
+     * In partial module compilation (see [org.jetbrains.kotlin.analysis.api.fir.components.KtFirCompilerFacility]),
+     * referenced properties might be resolved only up to [FirResolvePhase.CONTRACTS],
+     * however the backend requires the exact initializer type.
+     */
+    private fun getEffectivePropertyInitializer(property: FirProperty, resolveIfNeeded: Boolean): FirExpression? {
+        val initializer = property.backingField?.initializer ?: property.initializer
+
+        if (resolveIfNeeded && initializer is FirConstExpression<*>) {
+            property.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            return getEffectivePropertyInitializer(property, resolveIfNeeded = false)
+        }
+
+        return initializer
     }
 
     fun getCachedIrProperty(property: FirProperty): IrProperty? {
