@@ -704,7 +704,7 @@ private fun findDefaultValue(source: KtLightSourceElement): KtLightSourceElement
 
 fun ConeKotlinType.getInlineClassUnderlyingType(session: FirSession): ConeKotlinType {
     require(this.isSingleFieldValueClass(session))
-    return toRegularClassSymbol(session)!!.primaryConstructorSymbol()!!.valueParameterSymbols[0].resolvedReturnTypeRef.coneType
+    return toRegularClassSymbol(session)!!.primaryConstructorSymbol(session)!!.valueParameterSymbols[0].resolvedReturnTypeRef.coneType
 }
 
 fun FirNamedFunctionSymbol.directOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): List<FirNamedFunctionSymbol> {

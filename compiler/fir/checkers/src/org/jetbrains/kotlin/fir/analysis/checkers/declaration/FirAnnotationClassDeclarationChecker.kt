@@ -168,7 +168,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
     }
 
     private fun checkCyclesInParameters(annotation: FirRegularClassSymbol, context: CheckerContext, reporter: DiagnosticReporter) {
-        val primaryConstructor = annotation.primaryConstructorSymbol() ?: return
+        val primaryConstructor = annotation.primaryConstructorSymbol(context.session) ?: return
         val checker = CycleChecker(annotation, context.session)
         for (valueParameter in primaryConstructor.valueParameterSymbols) {
             if (checker.parameterHasCycle(annotation, valueParameter)) {
@@ -182,7 +182,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
         private val annotationsWithCycle = mutableSetOf(targetAnnotation)
 
         fun annotationHasCycle(annotation: FirRegularClassSymbol): Boolean {
-            val primaryConstructor = annotation.primaryConstructorSymbol() ?: return false
+            val primaryConstructor = annotation.primaryConstructorSymbol(session) ?: return false
             for (valueParameter in primaryConstructor.valueParameterSymbols) {
                 if (parameterHasCycle(annotation, valueParameter)) return true
             }

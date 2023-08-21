@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.modality
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
@@ -96,13 +97,9 @@ internal val FirBasedSymbol<*>.isLocalMember: Boolean
 internal val FirCallableSymbol<*>.isExtensionMember: Boolean
     get() = resolvedReceiverTypeRef != null && dispatchReceiverType != null
 
-fun FirClassSymbol<*>.primaryConstructorSymbol(): FirConstructorSymbol? {
-    for (declarationSymbol in this.declarationSymbols) {
-        if (declarationSymbol is FirConstructorSymbol && declarationSymbol.isPrimary) {
-            return declarationSymbol
-        }
-    }
-    return null
+@OptIn(SymbolInternals::class)
+fun FirClassSymbol<*>.primaryConstructorSymbol(session: FirSession): FirConstructorSymbol? {
+    return fir.primaryConstructorIfAny(session)
 }
 
 fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession) = with(session.typeContext) {
