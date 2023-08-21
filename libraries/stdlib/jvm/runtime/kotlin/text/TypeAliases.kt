@@ -7,7 +7,6 @@
 
 package kotlin.text
 
-@OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual // New 'append' members are added compared to the expect declaration
 @SinceKotlin("1.1") public actual typealias Appendable = java.lang.Appendable
 
