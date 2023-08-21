@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.contextReceiversForFunctionOrContainingProperty
-import org.jetbrains.kotlin.fir.backend.generateOverriddenFunctionSymbols
+import org.jetbrains.kotlin.fir.backend.generators.generateOverriddenFunctionSymbols
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass

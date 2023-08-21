@@ -424,21 +424,6 @@ internal fun FirSimpleFunction.processOverriddenFunctionSymbols(
     }
 }
 
-context(Fir2IrComponents)
-internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(containingClass: FirClass): List<IrSimpleFunctionSymbol> {
-    val superClasses = containingClass.getSuperTypesAsIrClasses() ?: return emptyList()
-    val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
-
-    processOverriddenFunctionSymbols(containingClass) {
-        for (overridden in fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(it, superClasses)) {
-            assert(overridden != symbol) { "Cannot add function $overridden to its own overriddenSymbols" }
-            overriddenSet += overridden
-        }
-    }
-
-    return overriddenSet.toList()
-}
-
 fun FirTypeScope.processOverriddenFunctionsFromSuperClasses(
     functionSymbol: FirNamedFunctionSymbol,
     containingClass: FirClass,
@@ -472,15 +457,6 @@ fun FirTypeScope.processOverriddenPropertiesFromSuperClasses(
     }
 
 context(Fir2IrComponents)
-@OptIn(IrSymbolInternals::class)
-private fun FirClass.getSuperTypesAsIrClasses(): Set<IrClass>? {
-    val irClass =
-        declarationStorage.classifierStorage.getIrClassSymbol(symbol).owner as? IrClass ?: return null
-
-    return irClass.superTypes.mapNotNull { it.classifierOrNull?.owner as? IrClass }.toSet()
-}
-
-context(Fir2IrComponents)
 internal fun FirProperty.processOverriddenPropertySymbols(
     containingClass: FirClass,
     processor: (FirPropertySymbol) -> Unit
@@ -500,51 +476,6 @@ internal fun FirProperty.processOverriddenPropertySymbols(
         ProcessorAction.NEXT
     }
 
-    return overriddenSet.toList()
-}
-
-context(Fir2IrComponents)
-internal fun FirProperty.generateOverriddenPropertySymbols(containingClass: FirClass): List<IrPropertySymbol> {
-    val superClasses = containingClass.getSuperTypesAsIrClasses() ?: return emptyList()
-    val overriddenSet = mutableSetOf<IrPropertySymbol>()
-
-    processOverriddenPropertySymbols(containingClass) {
-        for (overridden in fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(it, superClasses)) {
-            assert(overridden != symbol) { "Cannot add property $overridden to its own overriddenSymbols" }
-            overriddenSet += overridden
-        }
-    }
-
-    return overriddenSet.toList()
-}
-
-context(Fir2IrComponents)
-@OptIn(IrSymbolInternals::class)
-internal fun FirProperty.generateOverriddenAccessorSymbols(containingClass: FirClass, isGetter: Boolean): List<IrSimpleFunctionSymbol> {
-    val scope = containingClass.unsubstitutedScope()
-    scope.processPropertiesByName(name) {}
-    val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
-    val superClasses = containingClass.getSuperTypesAsIrClasses() ?: return emptyList()
-
-    scope.processOverriddenPropertiesFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
-        if (!session.visibilityChecker.isVisibleForOverriding(
-                candidateInDerivedClass = symbol.fir, candidateInBaseClass = overriddenSymbol.fir
-            )
-        ) {
-            return@processOverriddenPropertiesFromSuperClasses ProcessorAction.NEXT
-        }
-
-        for (overriddenIrPropertySymbol in fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(overriddenSymbol, superClasses)) {
-            val overriddenIrAccessorSymbol =
-                if (isGetter) overriddenIrPropertySymbol.owner.getter?.symbol
-                else overriddenIrPropertySymbol.owner.setter?.symbol
-            if (overriddenIrAccessorSymbol != null) {
-                assert(overriddenIrAccessorSymbol != symbol) { "Cannot add property $overriddenIrAccessorSymbol to its own overriddenSymbols" }
-                overriddenSet += overriddenIrAccessorSymbol
-            }
-        }
-        ProcessorAction.NEXT
-    }
     return overriddenSet.toList()
 }
 
