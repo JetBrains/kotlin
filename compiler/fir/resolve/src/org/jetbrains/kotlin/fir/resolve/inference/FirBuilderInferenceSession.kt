@@ -78,8 +78,8 @@ class FirBuilderInferenceSession(
         val dispatchReceiver = dispatchReceiver
         return when {
             extensionReceiver == null && dispatchReceiver == null -> false
-            dispatchReceiver?.coneType?.containsStubType() == true -> true
-            extensionReceiver?.coneType?.containsStubType() == true -> symbol.fir.hasBuilderInferenceAnnotation(session)
+            dispatchReceiver?.resolvedType?.containsStubType() == true -> true
+            extensionReceiver?.resolvedType?.containsStubType() == true -> symbol.fir.hasBuilderInferenceAnnotation(session)
             else -> false
         }
     }

@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.resolve.AnnotationTargetList
@@ -452,7 +455,7 @@ fun checkTypeMismatch(
     isInitializer: Boolean
 ) {
     var lValueType = lValueOriginalType
-    var rValueType = rValue.coneType
+    var rValueType = rValue.resolvedType
     if (source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
         if (!lValueType.isNullable && rValueType.isNullable) {
             val tempType = rValueType
@@ -512,7 +515,7 @@ fun checkTypeMismatch(
 }
 
 internal fun checkCondition(condition: FirExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-    val coneType = condition.coneType.lowerBoundIfFlexible()
+    val coneType = condition.resolvedType.lowerBoundIfFlexible()
     if (coneType !is ConeErrorType && !coneType.isSubtypeOf(context.session.typeContext, context.session.builtinTypes.booleanType.type)) {
         reporter.reportOn(
             condition.source,

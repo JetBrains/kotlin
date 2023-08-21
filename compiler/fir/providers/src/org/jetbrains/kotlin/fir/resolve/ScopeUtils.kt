@@ -41,7 +41,7 @@ fun FirSmartCastExpression.smartcastScope(
         return smartcastScope
     }
 
-    val originalScope = originalExpression.coneType.scope(
+    val originalScope = originalExpression.resolvedType.scope(
         useSiteSession = useSiteSession,
         scopeSession = scopeSession,
         fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,

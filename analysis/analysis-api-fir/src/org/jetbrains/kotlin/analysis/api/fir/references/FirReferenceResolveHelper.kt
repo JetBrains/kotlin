@@ -261,7 +261,7 @@ internal object FirReferenceResolveHelper {
         symbolBuilder: KtSymbolByFirBuilder
     ): Collection<KtSymbol> {
         val lhs = expression.arguments.firstOrNull() ?: return emptyList()
-        val scope = lhs.coneType.scope(
+        val scope = lhs.resolvedType.scope(
             session,
             analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
             FakeOverrideTypeCalculator.DoNothing,

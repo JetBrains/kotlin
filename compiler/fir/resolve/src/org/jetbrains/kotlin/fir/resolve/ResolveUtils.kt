@@ -414,7 +414,7 @@ private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSm
             SmartcastStability.STABLE_VALUE
         }
 
-    val originalType = expression.coneType.fullyExpandedType(session)
+    val originalType = expression.resolvedType.fullyExpandedType(session)
     val allTypes = typesFromSmartCast.also {
         if (originalType !is ConeStubType) {
             it += originalType.fullyExpandedType(session)

@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -41,7 +41,7 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker() {
          * 3. `val x get() = ...`
          */
         val type = when (declaration) {
-            is FirProperty -> declaration.initializer?.coneType ?: declaration.getter?.body?.singleExpressionType
+            is FirProperty -> declaration.initializer?.resolvedType ?: declaration.getter?.body?.singleExpressionType
             is FirFunction -> declaration.body?.singleExpressionType
             else -> error("Should not be there")
         } ?: return
@@ -76,5 +76,5 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker() {
     }
 
     private val FirBlock.singleExpressionType
-        get() = ((this as? FirSingleExpressionBlock)?.statement as? FirReturnExpression)?.result?.coneType
+        get() = ((this as? FirSingleExpressionBlock)?.statement as? FirReturnExpression)?.result?.resolvedType
 }

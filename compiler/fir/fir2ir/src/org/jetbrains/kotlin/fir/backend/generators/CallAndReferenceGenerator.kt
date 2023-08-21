@@ -73,7 +73,7 @@ class CallAndReferenceGenerator(
         explicitReceiverExpression: IrExpression?,
         isDelegate: Boolean
     ): IrExpression {
-        val type = approximateFunctionReferenceType(callableReferenceAccess.coneType).toIrType()
+        val type = approximateFunctionReferenceType(callableReferenceAccess.resolvedType).toIrType()
 
         val callableSymbol = callableReferenceAccess.calleeReference.toResolvedCallableSymbol()
         if (callableSymbol?.origin == FirDeclarationOrigin.SamConstructor) {
@@ -106,7 +106,7 @@ class CallAndReferenceGenerator(
                     val referencedProperty = symbol.owner
                     val referencedPropertyGetter = referencedProperty.getter
                     val referencedPropertySetterSymbol =
-                        if (callableReferenceAccess.coneType.isKMutableProperty(session)) referencedProperty.setter?.symbol
+                        if (callableReferenceAccess.resolvedType.isKMutableProperty(session)) referencedProperty.setter?.symbol
                         else null
                     val backingFieldSymbol = when {
                         referencedPropertyGetter != null -> null
@@ -163,7 +163,7 @@ class CallAndReferenceGenerator(
                         // Receivers are being applied inside
                         with(adapterGenerator) {
                             // TODO: Figure out why `adaptedType` is different from the `type`?
-                            val adaptedType = callableReferenceAccess.coneType.toIrType() as IrSimpleType
+                            val adaptedType = callableReferenceAccess.resolvedType.toIrType() as IrSimpleType
                             generateAdaptedCallableReference(callableReferenceAccess, explicitReceiverExpression, symbol, adaptedType)
                         }
                     } else {
@@ -791,13 +791,13 @@ class CallAndReferenceGenerator(
         qualifier: FirResolvedQualifier,
         callableReferenceAccess: FirCallableReferenceAccess?
     ): IrExpression? {
-        val classSymbol = (qualifier.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)
+        val classSymbol = (qualifier.resolvedType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)
 
         if (callableReferenceAccess?.isBound == false) {
             return null
         }
 
-        val irType = qualifier.coneType.toIrType()
+        val irType = qualifier.resolvedType.toIrType()
         return qualifier.convertWithOffsets { startOffset, endOffset ->
             if (classSymbol != null) {
                 IrGetObjectValueImpl(
@@ -1010,7 +1010,7 @@ class CallAndReferenceGenerator(
         var irArgument = visitor.convertToIrExpression(argument)
         if (parameter != null) {
             with(visitor.implicitCastInserter) {
-                irArgument = irArgument.cast(argument, argument.coneType, parameter.returnTypeRef.coneType)
+                irArgument = irArgument.cast(argument, argument.resolvedType, parameter.returnTypeRef.coneType)
             }
         }
         with(adapterGenerator) {
@@ -1088,7 +1088,7 @@ class CallAndReferenceGenerator(
                 )
                 if (conversionFunctions.isNotEmpty()) {
                     elements.forEachIndexed { i, irVarargElement ->
-                        val targetFun = argument.arguments[i].coneType.toIrType().classifierOrNull?.let { conversionFunctions[it] }
+                        val targetFun = argument.arguments[i].resolvedType.toIrType().classifierOrNull?.let { conversionFunctions[it] }
                         if (targetFun != null && irVarargElement is IrExpression) {
                             elements[i] =
                                 irVarargElement.applyToElement(argument.arguments[i], targetFun)
@@ -1103,7 +1103,7 @@ class CallAndReferenceGenerator(
                     Name.identifier("to" + targetTypeFqName.shortName().asString()),
                     StandardNames.BUILT_INS_PACKAGE_NAME.asString()
                 )
-                val sourceTypeClassifier = argument.coneType.toIrType().classifierOrNull ?: return this
+                val sourceTypeClassifier = argument.resolvedType.toIrType().classifierOrNull ?: return this
 
                 val conversionFunction = conversionFunctions[sourceTypeClassifier] ?: return this
 
@@ -1251,7 +1251,7 @@ class CallAndReferenceGenerator(
                             with(visitor.implicitCastInserter) {
                                 it.cast(
                                     qualifiedAccess.extensionReceiver,
-                                    qualifiedAccess.extensionReceiver.coneType,
+                                    qualifiedAccess.extensionReceiver.resolvedType,
                                     receiverType.coneType,
                                 )
                             }

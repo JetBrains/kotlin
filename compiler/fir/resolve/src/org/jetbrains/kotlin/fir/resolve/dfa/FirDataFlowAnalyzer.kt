@@ -404,8 +404,8 @@ abstract class FirDataFlowAnalyzer(
         val rightConst = rightOperand as? FirConstExpression<*>
         val leftIsNullConst = leftConst?.kind == ConstantValueKind.Null
         val rightIsNullConst = rightConst?.kind == ConstantValueKind.Null
-        val leftIsNull = leftIsNullConst || leftOperand.coneType.isNullableNothing && !rightIsNullConst
-        val rightIsNull = rightIsNullConst || rightOperand.coneType.isNullableNothing && !leftIsNullConst
+        val leftIsNull = leftIsNullConst || leftOperand.resolvedType.isNullableNothing && !rightIsNullConst
+        val rightIsNull = rightIsNullConst || rightOperand.resolvedType.isNullableNothing && !leftIsNullConst
 
         node.mergeIncomingFlow { _, flow ->
             when {
@@ -432,10 +432,10 @@ abstract class FirDataFlowAnalyzer(
 
         val operandVariable = variableStorage.getOrCreateIfReal(flow, operand) ?: return
         val expressionVariable = variableStorage.createSynthetic(expression)
-        if (const.kind == ConstantValueKind.Boolean && operand.coneType.isBooleanOrNullableBoolean) {
+        if (const.kind == ConstantValueKind.Boolean && operand.resolvedType.isBooleanOrNullableBoolean) {
             val expected = (const.value as Boolean)
             flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq expected))
-            if (operand.coneType.isBoolean) {
+            if (operand.resolvedType.isBoolean) {
                 flow.addImplication((expressionVariable eq !isEq) implies (operandVariable eq !expected))
             }
         } else {
@@ -459,8 +459,8 @@ abstract class FirDataFlowAnalyzer(
         operation: FirOperation,
     ) {
         val isEq = operation.isEq()
-        val leftOperandType = leftOperand.coneType
-        val rightOperandType = rightOperand.coneType
+        val leftOperandType = leftOperand.resolvedType
+        val rightOperandType = rightOperand.resolvedType
         val leftIsNullable = leftOperandType.isMarkedNullable
         val rightIsNullable = rightOperandType.isMarkedNullable
 
@@ -581,7 +581,7 @@ abstract class FirDataFlowAnalyzer(
     private fun CFGNode<*>.mergeWhenBranchEntryFlow() = mergeIncomingFlow { _, flow ->
         val previousConditionExitNode = previousNodes.singleOrNull() as? WhenBranchConditionExitNode ?: return@mergeIncomingFlow
         val previousCondition = previousConditionExitNode.fir.condition
-        if (!previousCondition.coneType.isBoolean) return@mergeIncomingFlow
+        if (!previousCondition.resolvedType.isBoolean) return@mergeIncomingFlow
         val previousConditionVariable = variableStorage.get(flow, previousCondition) ?: return@mergeIncomingFlow
         flow.commitOperationStatement(previousConditionVariable eq false)
     }
@@ -591,7 +591,7 @@ abstract class FirDataFlowAnalyzer(
         conditionExitNode.mergeIncomingFlow()
         resultEnterNode.mergeIncomingFlow { _, flow ->
             // If the condition is invalid, don't generate smart casts to Any or Boolean.
-            if (whenBranch.condition.coneType.isBoolean) {
+            if (whenBranch.condition.resolvedType.isBoolean) {
                 val conditionVariable = variableStorage.get(flow, whenBranch.condition) ?: return@mergeIncomingFlow
                 flow.commitOperationStatement(conditionVariable eq true)
             }
@@ -624,7 +624,7 @@ abstract class FirDataFlowAnalyzer(
         val (loopConditionExitNode, loopBlockEnterNode) = graphBuilder.exitWhileLoopCondition(loop)
         loopConditionExitNode.mergeIncomingFlow()
         loopBlockEnterNode.mergeIncomingFlow { _, flow ->
-            if (loop.condition.coneType.isBoolean) {
+            if (loop.condition.resolvedType.isBoolean) {
                 val conditionVariable = variableStorage.get(flow, loop.condition) ?: return@mergeIncomingFlow
                 flow.commitOperationStatement(conditionVariable eq true)
             }
@@ -668,7 +668,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun processLoopExit(flow: MutableFlow, node: LoopExitNode, conditionExitNode: LoopConditionExitNode) {
         if (conditionExitNode.isDead || node.previousNodes.count { !it.isDead } > 1) return
-        if (conditionExitNode.fir.coneType.isBoolean) {
+        if (conditionExitNode.fir.resolvedType.isBoolean) {
             val variable = variableStorage.get(flow, conditionExitNode.fir) ?: return
             flow.commitOperationStatement(variable eq false)
         }
@@ -973,7 +973,7 @@ abstract class FirDataFlowAnalyzer(
         if (isAssignment) {
             // `propertyVariable` can be an alias to `initializerVariable`, in which case this will add
             // a redundant type statement which is fine...probably
-            flow.addTypeStatement(flow.unwrapVariable(propertyVariable) typeEq initializer.coneType)
+            flow.addTypeStatement(flow.unwrapVariable(propertyVariable) typeEq initializer.resolvedType)
         }
     }
 
@@ -1014,7 +1014,7 @@ abstract class FirDataFlowAnalyzer(
         val flowFromRight = rightOperandNode.getFlow(path)
 
         val leftVariable = variableStorage.get(flowFromLeft, fir.leftOperand)
-        val leftIsBoolean = leftVariable != null && fir.leftOperand.coneType.isBoolean
+        val leftIsBoolean = leftVariable != null && fir.leftOperand.resolvedType.isBoolean
         if (!leftOperandNode.isDead && rightOperandNode.isDead) {
             // If the right operand does not terminate, then we know that the value of the entire expression
             // has to be saturating (true for or, false for and), and it has to be produced by the left operand.
@@ -1024,7 +1024,7 @@ abstract class FirDataFlowAnalyzer(
             }
         } else {
             val rightVariable = variableStorage.get(flowFromRight, fir.rightOperand)
-            val rightIsBoolean = rightVariable != null && fir.rightOperand.coneType.isBoolean
+            val rightIsBoolean = rightVariable != null && fir.rightOperand.resolvedType.isBoolean
             val operatorVariable = variableStorage.createSynthetic(fir)
             // If `left && right` is true, then both are evaluated to true. If `left || right` is false, then both are false.
             // Approved type statements for RHS already contain everything implied by the corresponding value of LHS.

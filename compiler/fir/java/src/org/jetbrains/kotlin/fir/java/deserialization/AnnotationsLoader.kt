@@ -95,7 +95,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                     visitExpression(name, buildArrayLiteral {
                         guessArrayTypeIfNeeded(name, elements)?.let {
                             coneTypeOrNull = it.coneTypeOrNull
-                        } ?: elements.firstOrNull()?.coneType?.createOutArrayType()?.let {
+                        } ?: elements.firstOrNull()?.resolvedType?.createOutArrayType()?.let {
                             coneTypeOrNull = it
                         }
                         argumentList = buildArgumentList {

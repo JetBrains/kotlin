@@ -343,7 +343,7 @@ open class FirDeclarationsResolveTransformer(
                 val substitutor = createTypeSubstitutorByTypeConstructor(
                     typeVariableTypeToStubType, session.typeContext, approximateIntegerLiterals = true
                 )
-                val delegateExpressionType = delegateExpression.coneType
+                val delegateExpressionType = delegateExpression.resolvedType
                 val stubTypeSubstituted = substitutor.substituteOrNull(delegateExpressionType)
                 delegateExpression.replaceConeTypeOrNull(stubTypeSubstituted)
             }
@@ -880,7 +880,7 @@ open class FirDeclarationsResolveTransformer(
         // In correct code this doesn't matter, as all return expression types should be subtypes of the expected type.
         // In incorrect code, this would change diagnostics: we can get errors either on the entire lambda, or only on its
         // return statements. The former kind of makes more sense, but the latter is more readable.
-        val inferredFromReturnExpressions = session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.expression.coneType })
+        val inferredFromReturnExpressions = session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.expression.resolvedType })
         return inferredFromReturnExpressions?.let { returnTypeRef.resolvedTypeFromPrototype(it) }
             ?: session.builtinTypes.unitType // Empty lambda returns Unit
     }

@@ -64,7 +64,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         return context.withWhenExpression(whenExpression, session) with@{
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
-            val subjectType = whenExpression.subject?.coneType?.fullyExpandedType(session)
+            val subjectType = whenExpression.subject?.resolvedType?.fullyExpandedType(session)
             var completionNeeded = false
             context.withWhenSubjectType(subjectType, components) {
                 when {
@@ -281,7 +281,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                 // Sometimes return type for special call for elvis operator might be nullable,
                 // but result is not nullable if the right type is not nullable
                 result.replaceConeTypeOrNull(
-                    result.coneType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
+                    result.resolvedType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
                 )
             }
         }

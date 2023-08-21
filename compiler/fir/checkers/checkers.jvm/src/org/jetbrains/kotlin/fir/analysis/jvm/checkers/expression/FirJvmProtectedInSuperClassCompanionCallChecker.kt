@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_CLASS_ID
@@ -38,7 +38,7 @@ object FirJvmProtectedInSuperClassCompanionCallChecker : FirBasicExpressionCheck
         } ?: return
 
         if (dispatchReceiver is FirNoReceiverExpression) return
-        val dispatchClassSymbol = dispatchReceiver.coneType.toRegularClassSymbol(context.session) ?: return
+        val dispatchClassSymbol = dispatchReceiver.resolvedType.toRegularClassSymbol(context.session) ?: return
         val calleeReference = expression.calleeReference
         val resolvedSymbol = calleeReference?.toResolvedCallableSymbol() ?: return
 

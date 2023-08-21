@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -91,7 +92,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             memberRequiredPhase = null,
         )
 
-        val delegateToScope = firField.initializer!!.coneType
+        val delegateToScope = firField.initializer!!.resolvedType
             .fullyExpandedType(session)
             .lowerBoundIfFlexible()
             .scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, null) ?: return

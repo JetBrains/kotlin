@@ -11,7 +11,9 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COMPONENT_PREFIX
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.diagnostics.startOffsetSkippingComments
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.buildFileAnnotationsContainer
@@ -28,8 +30,11 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
-import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -246,7 +251,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
         }
         // Member fake override or bound callable reference
         dispatchReceiver !is FirNoReceiverExpression -> {
-            val callSiteDispatchReceiverType = dispatchReceiver.coneType
+            val callSiteDispatchReceiverType = dispatchReceiver.resolvedType
             val declarationSiteDispatchReceiverType = dispatchReceiverType
             val type = if (callSiteDispatchReceiverType is ConeDynamicType && declarationSiteDispatchReceiverType != null) {
                 declarationSiteDispatchReceiverType

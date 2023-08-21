@@ -604,13 +604,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         fun operatorReturnTypeMatches(candidate: Candidate): Boolean {
             // After KT-45503, non-assign flavor of operator is checked more strictly: the return type must be assignable to the variable.
-            val operatorCallReturnType = resolvedOperatorCall.coneType
+            val operatorCallReturnType = resolvedOperatorCall.resolvedType
             val substitutor = candidate.system.currentStorage()
                 .buildAbstractResultingSubstitutor(candidate.system.typeSystemContext) as ConeSubstitutor
             return AbstractTypeChecker.isSubtypeOf(
                 session.typeContext,
                 substitutor.substituteOrSelf(operatorCallReturnType),
-                leftArgument.coneType
+                leftArgument.resolvedType
             )
         }
         // following `!!` is safe since `operatorIsSuccessful = true` implies `operatorCallReference != null`
@@ -691,7 +691,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             !assignIsSuccessful && !operatorIsSuccessful -> chooseResolved()
             !assignIsSuccessful && operatorIsSuccessful -> chooseOperator()
             assignIsSuccessful && !operatorIsSuccessful -> chooseAssign()
-            leftArgument.coneType is ConeDynamicType -> chooseAssign()
+            leftArgument.resolvedType is ConeDynamicType -> chooseAssign()
             !operatorReturnTypeMatches -> chooseAssign()
             else -> reportAmbiguity()
         }
@@ -1117,7 +1117,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     )
                     type
                 } else {
-                    lhs.coneType
+                    lhs.resolvedType
                 }
             }
             is FirResolvedReifiedParameterReference -> {
@@ -1189,7 +1189,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         dataFlowAnalyzer.exitConstExpression(constExpression as FirConstExpression<*>)
         constExpression.resultType = type
 
-        return when (val resolvedType = constExpression.coneType) {
+        return when (val resolvedType = constExpression.resolvedType) {
             is ConeErrorType -> buildErrorExpression {
                 expression = constExpression
                 diagnostic = resolvedType.diagnostic

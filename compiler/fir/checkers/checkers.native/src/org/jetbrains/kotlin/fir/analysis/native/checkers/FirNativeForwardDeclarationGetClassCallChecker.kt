@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.fir.analysis.native.checkers.forwardDeclarationKindO
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 
 object FirNativeForwardDeclarationGetClassCallChecker : FirGetClassCallChecker() {
     override fun check(expression: FirGetClassCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val declarationToCheck = expression.argument.coneType.toRegularClassSymbol(context.session) ?: return
+        val declarationToCheck = expression.argument.resolvedType.toRegularClassSymbol(context.session) ?: return
 
         if (expression.arguments.firstOrNull() !is FirResolvedQualifier) {
             return
@@ -28,7 +28,7 @@ object FirNativeForwardDeclarationGetClassCallChecker : FirGetClassCallChecker()
             reporter.reportOn(
                 expression.source,
                 FirNativeErrors.FORWARD_DECLARATION_AS_CLASS_LITERAL,
-                expression.argument.coneType,
+                expression.argument.resolvedType,
                 context,
             )
         }

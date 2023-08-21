@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -158,7 +159,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
                         data.constValueProvider
                     )?.addEmptyVarargValuesFor(symbol)
                     ?: return null
-                return AnnotationValue.create(qualifiedAccessExpression.coneType, mapping)
+                return AnnotationValue.create(qualifiedAccessExpression.resolvedType, mapping)
             }
 
             symbol.callableId.packageName.asString() == "kotlin" -> {

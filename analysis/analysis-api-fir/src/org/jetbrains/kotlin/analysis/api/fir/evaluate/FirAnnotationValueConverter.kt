@@ -179,7 +179,7 @@ internal object FirAnnotationValueConverter {
                         val qualifierParts = mutableListOf<String?>()
 
                         fun process(expression: FirExpression) {
-                            val errorType = expression.coneType as? ConeErrorType
+                            val errorType = expression.resolvedType as? ConeErrorType
                             val unresolvedName = when (val diagnostic = errorType?.diagnostic) {
                                 is ConeUnresolvedTypeQualifierError -> diagnostic.qualifier
                                 is ConeUnresolvedNameError -> diagnostic.qualifier

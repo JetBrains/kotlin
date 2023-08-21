@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker() {
@@ -36,7 +36,7 @@ object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker() {
         context.callsOrAssignments.lastOrNull()?.let {
             val arguments = when (it) {
                 is FirFunctionCall ->
-                    if (it.coneType.toRegularClassSymbol(context.session)?.classKind == ClassKind.ANNOTATION_CLASS) {
+                    if (it.resolvedType.toRegularClassSymbol(context.session)?.classKind == ClassKind.ANNOTATION_CLASS) {
                         it.arguments
                     } else {
                         return false

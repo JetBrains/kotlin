@@ -1469,7 +1469,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(unitExpression: FirUnitExpression) {
-        generate(unitExpression.coneType)
+        generate(unitExpression.resolvedType)
     }
 
     private fun FlowContent.generate(breakExpression: FirBreakExpression) {
@@ -1530,7 +1530,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(expression: FirExpression) {
-        exprType(expression.coneType.toFirResolvedTypeRef()) {
+        exprType(expression.resolvedType.toFirResolvedTypeRef()) {
             when (expression) {
                 is FirBlock -> generateBlockIfAny(expression)
                 is FirGetClassCall -> generate(expression)

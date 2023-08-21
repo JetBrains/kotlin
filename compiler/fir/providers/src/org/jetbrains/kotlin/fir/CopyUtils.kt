@@ -84,7 +84,7 @@ fun List<FirAnnotation>.computeTypeAttributes(
     for (annotation in this) {
         val classId = when (shouldExpandTypeAliases) {
             true -> annotation.tryExpandClassId(session)
-            false -> annotation.coneType.classId
+            false -> annotation.resolvedType.classId
         }
         when (classId) {
             CompilerConeAttributes.Exact.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.Exact

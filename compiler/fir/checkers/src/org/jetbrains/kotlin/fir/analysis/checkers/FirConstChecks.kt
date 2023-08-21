@@ -85,7 +85,7 @@ internal fun checkConstantArguments(
             }
         }
         expression is FirGetClassCall -> {
-            var coneType = (expression as? FirCall)?.argument?.coneType
+            var coneType = (expression as? FirCall)?.argument?.resolvedType
 
             if (coneType is ConeErrorType)
                 return ConstantArgumentKind.NOT_CONST
@@ -109,7 +109,7 @@ internal fun checkConstantArguments(
         }
         expressionSymbol is FirConstructorSymbol -> {
             if (expression is FirCallableReferenceAccess) return null
-            if (expression.coneType.isUnsignedType) {
+            if (expression.resolvedType.isUnsignedType) {
                 (expression as FirFunctionCall).arguments.forEach { argumentExpression ->
                     checkConstantArguments(argumentExpression, session)?.let { return it }
                 }
@@ -122,7 +122,7 @@ internal fun checkConstantArguments(
             if (calleeReference is FirErrorNamedReference) {
                 return null
             }
-            if (expression.coneType.classId == StandardClassIds.KClass) {
+            if (expression.resolvedType.classId == StandardClassIds.KClass) {
                 return ConstantArgumentKind.NOT_KCLASS_LITERAL
             }
 
@@ -140,7 +140,7 @@ internal fun checkConstantArguments(
 
             for (exp in expression.arguments.plus(expression.dispatchReceiver).plus(expression.extensionReceiver)) {
                 if (exp is FirNoReceiverExpression) continue
-                val expClassId = exp.coneType.lowerBoundIfFlexible().classId
+                val expClassId = exp.resolvedType.lowerBoundIfFlexible().classId
                 // TODO, KT-59823: add annotation for allowed constant types
                 if (expClassId !in StandardClassIds.constantAllowedTypes) {
                     return ConstantArgumentKind.NOT_CONST
@@ -152,8 +152,11 @@ internal fun checkConstantArguments(
             return null
         }
         expression is FirQualifiedAccessExpression -> {
-            val expressionType = expression.coneType
-            if (expressionType.isReflectFunctionType(session) || expressionType.isKProperty(session) || expressionType.isKMutableProperty(session)) {
+            val expressionType = expression.resolvedType
+            if (expressionType.isReflectFunctionType(session) || expressionType.isKProperty(session) || expressionType.isKMutableProperty(
+                    session
+                )
+            ) {
                 return checkConstantArguments(expression.dispatchReceiver, session)
             }
 
@@ -163,7 +166,8 @@ internal fun checkConstantArguments(
             val property = propertySymbol.fir
             when {
                 property.unwrapFakeOverrides().symbol.canBeEvaluated() || property.isCompileTimeBuiltinProperty() -> {
-                    val receiver = listOf(expression.dispatchReceiver, expression.extensionReceiver).single { it != FirNoReceiverExpression }
+                    val receiver =
+                        listOf(expression.dispatchReceiver, expression.extensionReceiver).single { it != FirNoReceiverExpression }
                     return checkConstantArguments(receiver, session)
                 }
                 propertySymbol.isLocal || propertySymbol.callableId.className?.isRoot == false -> return ConstantArgumentKind.NOT_CONST
@@ -195,7 +199,7 @@ private fun FirExpression.isForbiddenComplexConstant(session: FirSession): Boole
 
 private val FirExpression.isComplexBooleanConstant
     get(): Boolean = when {
-        !coneType.isBoolean -> false
+        !resolvedType.isBoolean -> false
         this is FirConstExpression<*> -> false
         usesVariableAsConstant -> false
         else -> true

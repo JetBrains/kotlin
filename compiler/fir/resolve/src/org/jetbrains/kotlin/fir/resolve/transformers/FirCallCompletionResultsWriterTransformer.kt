@@ -195,7 +195,7 @@ class FirCallCompletionResultsWriterTransformer(
             ?: return functionCall
         val result = prepareQualifiedTransform(functionCall, calleeReference)
         val subCandidate = calleeReference.candidate
-        val resultType = result.coneType.substituteType(subCandidate)
+        val resultType = result.resolvedType.substituteType(subCandidate)
         if (calleeReference.isError) {
             subCandidate.argumentMapping?.let {
                 result.replaceArgumentList(buildArgumentListForErrorCall(result.argumentList, it))
@@ -352,7 +352,7 @@ class FirCallCompletionResultsWriterTransformer(
         val subCandidate = calleeReference.candidate
         val typeArguments = computeTypeArguments(callableReferenceAccess, subCandidate)
 
-        val initialType = calleeReference.candidate.substitutor.substituteOrSelf(callableReferenceAccess.coneType)
+        val initialType = calleeReference.candidate.substitutor.substituteOrSelf(callableReferenceAccess.resolvedType)
         val finalType = finallySubstituteOrSelf(initialType)
 
         callableReferenceAccess.replaceConeTypeOrNull(finalType)
@@ -394,7 +394,7 @@ class FirCallCompletionResultsWriterTransformer(
             qualifiedAccessExpression: FirQualifiedAccessExpression,
             data: Any?
         ): FirStatement {
-            val originalType = qualifiedAccessExpression.coneType
+            val originalType = qualifiedAccessExpression.resolvedType
             val substitutedReceiverType = finallySubstituteOrNull(originalType) ?: return qualifiedAccessExpression
             qualifiedAccessExpression.replaceConeTypeOrNull(substitutedReceiverType)
             session.lookupTracker?.recordTypeResolveAsLookup(substitutedReceiverType, qualifiedAccessExpression.source, context.file.source)
@@ -570,7 +570,7 @@ class FirCallCompletionResultsWriterTransformer(
         // Prefer the expected type over the inferred one - the latter is a subtype of the former in valid code,
         // and there will be ARGUMENT_TYPE_MISMATCH errors on the lambda's return expressions in invalid code.
         val resultReturnType = expectedReturnType
-            ?: session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.coneType })
+            ?: session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.resolvedType })
             ?: session.builtinTypes.unitType.type
 
         if (initialReturnType != resultReturnType) {
@@ -702,7 +702,7 @@ class FirCallCompletionResultsWriterTransformer(
         syntheticCall: D,
         data: ExpectedArgumentType?
     ) where D : FirResolvable, D : FirExpression {
-        val newData = data?.getExpectedType(syntheticCall)?.toExpectedType() ?: syntheticCall.coneType.toExpectedType()
+        val newData = data?.getExpectedType(syntheticCall)?.toExpectedType() ?: syntheticCall.resolvedType.toExpectedType()
 
         if (syntheticCall is FirTryExpression) {
             syntheticCall.transformCalleeReference(this, newData)
@@ -747,7 +747,7 @@ class FirCallCompletionResultsWriterTransformer(
         val expectedArrayElementType = expectedArrayType?.arrayElementType()
         arrayLiteral.transformChildren(this, expectedArrayElementType?.toExpectedType())
         val arrayElementType =
-            session.typeContext.commonSuperTypeOrNull(arrayLiteral.arguments.map { it.coneType })?.let {
+            session.typeContext.commonSuperTypeOrNull(arrayLiteral.arguments.map { it.resolvedType })?.let {
                 typeApproximator.approximateToSuperType(it, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference)
                     ?: it
             } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.type

@@ -86,7 +86,7 @@ class MemberScopeTowerLevel(
         var (empty, candidates) = scope.collectCandidates(processScopeMembers)
 
         val scopeWithoutSmartcast = getOriginalReceiverExpressionIfStableSmartCast()
-            ?.coneType
+            ?.resolvedType
             ?.scope(
                 session,
                 scopeSession,
@@ -383,7 +383,7 @@ class ScopeTowerLevel(
         )
 
         return givenExtensionReceiverOptions.none { extensionReceiver ->
-            val extensionReceiverType = extensionReceiver.coneType
+            val extensionReceiverType = extensionReceiver.resolvedType
             // If some receiver is non class like, we should not skip it
             if (extensionReceiverType !is ConeClassLikeType) return@none true
 

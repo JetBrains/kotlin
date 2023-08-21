@@ -147,7 +147,7 @@ private fun Candidate.resolveBlockArgument(
         checkApplicabilityForArgumentType(
             csBuilder,
             block,
-            block.coneType,
+            block.resolvedType,
             expectedType?.type,
             SimpleConstraintSystemConstraintPosition,
             isReceiver = false,
@@ -513,7 +513,7 @@ private fun getExpectedTypeWithImplicintIntegerCoercion(
     val argumentType =
         if (argument.isIntegerLiteralOrOperatorCall()) {
             if (candidateExpectedType.fullyExpandedType(session).isUnsignedTypeOrNullableUnsignedType)
-                argument.coneType
+                argument.resolvedType
             else null
         } else {
             argument.calleeReference?.toResolvedCallableSymbol()?.takeIf {

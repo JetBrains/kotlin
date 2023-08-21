@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -185,7 +185,7 @@ class Fir2IrImplicitCastInserter(
     }
 
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: IrElement): IrElement =
-        (data as IrThrow).cast(throwExpression, throwExpression.exception.coneType, throwExpression.coneType)
+        (data as IrThrow).cast(throwExpression, throwExpression.exception.resolvedType, throwExpression.resolvedType)
 
     override fun visitBlock(block: FirBlock, data: IrElement): IrElement =
         (data as? IrContainerExpression)?.insertImplicitCasts() ?: data
@@ -193,7 +193,7 @@ class Fir2IrImplicitCastInserter(
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: IrElement): IrElement {
         val irReturn = data as? IrReturn ?: return data
         val expectedType = returnExpression.target.labeledElement.returnTypeRef
-        irReturn.value = irReturn.value.cast(returnExpression.result, returnExpression.result.coneType, expectedType.coneType)
+        irReturn.value = irReturn.value.cast(returnExpression.result, returnExpression.result.resolvedType, expectedType.coneType)
         return data
     }
 
@@ -273,7 +273,7 @@ class Fir2IrImplicitCastInserter(
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: IrElement): IrElement {
         // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
         return if (smartCastExpression.isStable && smartCastExpression.smartcastTypeWithoutNullableNothing == null) {
-            implicitCastOrExpression(data as IrExpression, smartCastExpression.coneType)
+            implicitCastOrExpression(data as IrExpression, smartCastExpression.resolvedType)
         } else {
             data as IrExpression
         }

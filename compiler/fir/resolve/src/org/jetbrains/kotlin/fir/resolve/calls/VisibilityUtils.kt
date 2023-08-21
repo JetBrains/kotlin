@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNullableNothing
 import org.jetbrains.kotlin.fir.types.makeConeTypeDefinitelyNotNullOrNotNull
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -86,11 +86,11 @@ private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiver: FirEx
     val expressionWithSmartcastIfStable =
         (dispatchReceiver as? FirSmartCastExpression)?.takeIf { it.isStable } ?: return null
 
-    val receiverType = dispatchReceiver.coneType
+    val receiverType = dispatchReceiver.resolvedType
     if (receiverType.isNullableNothing) return null
 
     val originalExpression = expressionWithSmartcastIfStable.originalExpression
-    val originalType = originalExpression.coneType
+    val originalType = originalExpression.resolvedType
     val originalTypeNotNullable =
         originalType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
 

@@ -933,7 +933,7 @@ class Fir2IrDeclarationStorage(
         firInitializerExpression: FirExpression?,
         type: IrType? = null
     ): IrField = convertCatching(property) {
-        val inferredType = type ?: firInitializerExpression!!.coneType.toIrType()
+        val inferredType = type ?: firInitializerExpression!!.resolvedType.toIrType()
         return declareIrField { symbol ->
             irFactory.createField(
                 startOffset = startOffset,
@@ -1101,7 +1101,7 @@ class Fir2IrDeclarationStorage(
                                 property.name, property.isVal, initializer, typeToUse
                             ).also { field ->
                                 if (initializer is FirConstExpression<*>) {
-                                    val constType = initializer.coneType.toIrType()
+                                    val constType = initializer.resolvedType.toIrType()
                                     field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
                                 }
                             }
@@ -1291,7 +1291,7 @@ class Fir2IrDeclarationStorage(
         return createIrField(
             field,
             irParent = irClass,
-            type = initializer?.coneType ?: field.returnTypeRef.coneType,
+            type = initializer?.resolvedType ?: field.returnTypeRef.coneType,
             origin = IrDeclarationOrigin.DELEGATE
         ).apply {
             metadata = FirMetadataSource.Field(field)
@@ -1467,7 +1467,7 @@ class Fir2IrDeclarationStorage(
         // Note: for components call, we have to change type here (to original component type) to keep compatibility with PSI2IR
         // Some backend optimizations related to withIndex() probably depend on this type: index should always be Int
         // See e.g. forInStringWithIndexWithExplicitlyTypedIndexVariable.kt from codegen box tests
-        val type = ((variable.initializer as? FirComponentCall)?.coneType ?: variable.returnTypeRef.coneType).toIrType()
+        val type = ((variable.initializer as? FirComponentCall)?.resolvedType ?: variable.returnTypeRef.coneType).toIrType()
         // Some temporary variables are produced in RawFirBuilder, but we consistently use special names for them.
         val origin = when {
             givenOrigin != null -> givenOrigin
@@ -1509,7 +1509,7 @@ class Fir2IrDeclarationStorage(
             enterScope(this)
             delegate = declareIrVariable(
                 startOffset, endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,
-                NameUtils.propertyDelegateName(property.name), property.delegate!!.coneType.toIrType(),
+                NameUtils.propertyDelegateName(property.name), property.delegate!!.resolvedType.toIrType(),
                 isVar = false, isConst = false, isLateinit = false
             )
             delegate.parent = irParent

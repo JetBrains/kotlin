@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.argument
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 object FirNativeForwardDeclarationTypeOperatorChecker : FirTypeOperatorCallChecker() {
@@ -27,7 +28,7 @@ object FirNativeForwardDeclarationTypeOperatorChecker : FirTypeOperatorCallCheck
 
         when (expression.operation) {
             FirOperation.AS, FirOperation.SAFE_AS -> {
-                val sourceClass = expression.argument.coneType.toRegularClassSymbol(context.session)
+                val sourceClass = expression.argument.resolvedType.toRegularClassSymbol(context.session)
                 // It can make sense to avoid warning if sourceClass is subclass of class with such property,
                 // but for the sake of simplicity, we don't do it now.
                 if (sourceClass != null && sourceClass.classKind == fwdKind.classKind && sourceClass.name == declarationToCheck.name) {
@@ -44,8 +45,8 @@ object FirNativeForwardDeclarationTypeOperatorChecker : FirTypeOperatorCallCheck
                 reporter.reportOn(
                     expression.source,
                     FirNativeErrors.UNCHECKED_CAST_TO_FORWARD_DECLARATION,
-                    expression.argument.coneType,
-                    expression.argument.coneType,
+                    expression.argument.resolvedType,
+                    expression.argument.resolvedType,
                     context,
                 )
             }

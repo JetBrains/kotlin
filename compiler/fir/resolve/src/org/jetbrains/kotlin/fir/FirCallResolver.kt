@@ -585,7 +585,7 @@ class FirCallResolver(
                 //calleeReference and annotationTypeRef are both error nodes so we need to avoid doubling of the diagnostic report
                 else ConeStubDiagnostic(
                     //prefer diagnostic with symbol, e.g. to use the symbol during navigation in IDE
-                    (annotation.coneType as? ConeErrorType)?.diagnostic as? ConeDiagnosticWithSymbol<*>
+                    (annotation.resolvedType as? ConeErrorType)?.diagnostic as? ConeDiagnosticWithSymbol<*>
                         ?: ConeUnresolvedNameError(reference.name)),
                 reference.source
             )
@@ -722,7 +722,7 @@ class FirCallResolver(
                                 ConeResolutionToClassifierError(singleExpectedCandidate!!, fir.symbol)
                             }
                             else -> {
-                                val coneType = explicitReceiver?.coneType
+                                val coneType = explicitReceiver?.resolvedType
                                 when {
                                     coneType != null && !coneType.isUnit -> {
                                         ConeFunctionExpectedError(
@@ -751,7 +751,7 @@ class FirCallResolver(
                     name.asString() == "invoke" && explicitReceiver is FirConstExpression<*> ->
                         ConeFunctionExpectedError(
                             explicitReceiver.value?.toString() ?: "",
-                            explicitReceiver.coneType,
+                            explicitReceiver.resolvedType,
                         )
                     reference is FirSuperReference && (reference.superTypeRef.firClassLike(session) as? FirClass)?.isInterface == true -> ConeNoConstructorError
                     else -> ConeUnresolvedNameError(name)
