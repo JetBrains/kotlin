@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.konan
 
+import kotlinBuildProperties
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.ProjectProperty.KONAN_HOME
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -51,7 +52,7 @@ internal abstract class KonanCliRunner(
     final override val mainClass get() = "org.jetbrains.kotlin.cli.utilities.MainKt"
     final override val daemonEntryPoint get() = "daemonMain"
 
-    final override val mustRunViaExec get() = false.also { System.setProperty(runFromDaemonPropertyName, "true") }
+    override val mustRunViaExec get() = false.also { System.setProperty(runFromDaemonPropertyName, "true") }
 
     final override val execSystemPropertiesBlacklist: Set<String>
         get() = super.execSystemPropertiesBlacklist + runFromDaemonPropertyName
@@ -136,11 +137,18 @@ internal class CliToolConfig(konanHome: String, target: String) : AbstractToolCo
 
 /** Kotlin/Native C-interop tool runner */
 internal class KonanCliInteropRunner(
-        project: Project,
+        private val project: Project,
         additionalJvmArgs: List<String> = emptyList(),
         konanHome: String = project.konanHome
 ) : KonanCliRunner("cinterop", project, additionalJvmArgs, konanHome) {
     private val projectDir = project.projectDir.toString()
+
+    override val mustRunViaExec: Boolean
+        get() = if (project.kotlinBuildProperties.getBoolean("kotlin.native.allowRunningCinteropInProcess")) {
+            super.mustRunViaExec
+        } else {
+            true
+        }
 
     override fun transformArgs(args: List<String>): List<String> {
         return super.transformArgs(args) + listOf("-Xproject-dir", projectDir)
