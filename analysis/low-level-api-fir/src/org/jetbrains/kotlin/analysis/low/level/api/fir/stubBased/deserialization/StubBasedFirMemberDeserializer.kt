@@ -53,7 +53,7 @@ internal class StubBasedFirDeserializationContext(
     private val initialOrigin: FirDeclarationOrigin,
     val classLikeDeclaration: KtClassLikeDeclaration? = null
 ) {
-    val session: FirSession = moduleData.session
+    val session: FirSession get() = moduleData.session
 
     val allTypeParameters: List<FirTypeParameterSymbol> =
         typeDeserializer.ownTypeParameters + outerTypeParameters
@@ -67,10 +67,10 @@ internal class StubBasedFirDeserializationContext(
         capturesTypeParameters: Boolean = true,
         containingDeclarationSymbol: FirBasedSymbol<*>? = this.outerClassSymbol
     ): StubBasedFirDeserializationContext = StubBasedFirDeserializationContext(
-        moduleData,
-        packageFqName,
-        relativeClassName,
-        StubBasedFirTypeDeserializer(
+        moduleData = moduleData,
+        packageFqName = packageFqName,
+        relativeClassName = relativeClassName,
+        typeDeserializer = StubBasedFirTypeDeserializer(
             moduleData,
             annotationDeserializer,
             typeDeserializer,
@@ -78,11 +78,26 @@ internal class StubBasedFirDeserializationContext(
             owner,
             initialOrigin
         ),
-        annotationDeserializer,
-        containerSource,
-        outerClassSymbol,
-        if (capturesTypeParameters) allTypeParameters else emptyList(),
-        initialOrigin
+        annotationDeserializer = annotationDeserializer,
+        containerSource = containerSource,
+        outerClassSymbol = outerClassSymbol,
+        outerTypeParameters = if (capturesTypeParameters) allTypeParameters else emptyList(),
+        initialOrigin = initialOrigin
+    )
+
+    fun withClassLikeDeclaration(
+        classLikeDeclaration: KtClassLikeDeclaration,
+    ): StubBasedFirDeserializationContext = StubBasedFirDeserializationContext(
+        moduleData = moduleData,
+        packageFqName = packageFqName,
+        relativeClassName = relativeClassName,
+        typeDeserializer = typeDeserializer,
+        annotationDeserializer = annotationDeserializer,
+        containerSource = containerSource,
+        outerClassSymbol = outerClassSymbol,
+        outerTypeParameters = outerTypeParameters,
+        initialOrigin = initialOrigin,
+        classLikeDeclaration = classLikeDeclaration,
     )
 
     val memberDeserializer: StubBasedFirMemberDeserializer = StubBasedFirMemberDeserializer(this, initialOrigin)

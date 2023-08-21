@@ -185,6 +185,7 @@ internal fun deserializeClassToSymbol(
             addDeclaration(constructor)
             constructor
         }
+
         classOrObject.body?.declarations?.forEach { declaration ->
             when (declaration) {
                 is KtConstructor<*> -> addDeclaration(memberDeserializer.loadConstructor(declaration, classOrObject, this))
@@ -192,17 +193,16 @@ internal fun deserializeClassToSymbol(
                 is KtProperty -> addDeclaration(memberDeserializer.loadProperty(declaration, symbol))
                 is KtEnumEntry -> addDeclaration(memberDeserializer.loadEnumEntry(declaration, symbol, classId))
                 is KtClassOrObject -> {
-                    val name = declaration.name
-                        ?: errorWithAttachment("Class doesn't have name $declaration") {
-                            withPsiEntry("class", declaration)
-                        }
-                    val nestedClassId =
-                        classId.createNestedClassId(Name.identifier(name))
-                    deserializeNestedClass(nestedClassId, context)?.fir?.let { addDeclaration(it) }
+                    val name = declaration.name ?: errorWithAttachment("Class doesn't have name $declaration") {
+                        withPsiEntry("class", declaration)
+                    }
+
+                    val nestedClassId = classId.createNestedClassId(Name.identifier(name))
+                    // Add declaration to the context to avoid redundant provider access to the class map
+                    deserializeNestedClass(nestedClassId, context.withClassLikeDeclaration(declaration))?.fir?.let(this::addDeclaration)
                 }
-                is KtTypeAlias -> addDeclaration(
-                    memberDeserializer.loadTypeAlias(declaration, FirTypeAliasSymbol(classId))
-                )
+
+                is KtTypeAlias -> addDeclaration(memberDeserializer.loadTypeAlias(declaration, FirTypeAliasSymbol(classId)))
             }
         }
 
