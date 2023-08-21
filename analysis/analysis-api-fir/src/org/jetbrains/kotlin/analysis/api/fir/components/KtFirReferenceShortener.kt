@@ -85,7 +85,7 @@ internal class KtFirReferenceShortener(
         val declarationToVisit = file.findSmallestElementOfTypeContainingSelection<KtDeclaration>(selection)
             ?: file
 
-        val firDeclaration = declarationToVisit.getCorrespondingFirDeclaration() ?: return ShortenCommandImpl(
+        val firDeclaration = declarationToVisit.getCorrespondingFirElement() ?: return ShortenCommandImpl(
             file.createSmartPointer(),
             importsToAdd = emptySet(),
             starImportsToAdd = emptySet(),
@@ -140,7 +140,7 @@ internal class KtFirReferenceShortener(
         )
     }
 
-    private fun KtElement.getCorrespondingFirDeclaration(): FirDeclaration? {
+    private fun KtElement.getCorrespondingFirElement(): FirElement? {
         require(this is KtFile || this is KtDeclaration)
 
         val firElement = getOrBuildFir(firResolveSession)
@@ -148,6 +148,7 @@ internal class KtFirReferenceShortener(
         return when (firElement) {
             is FirDeclaration -> firElement
             is FirAnonymousFunctionExpression -> firElement.anonymousFunction
+            is FirFunctionTypeParameter -> firElement
             else -> null
         }
     }
