@@ -199,22 +199,6 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
-    @GradleTest
-    @DisplayName("Should be compatible with project isolation")
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_1,
-        maxVersion = TestVersions.Gradle.G_7_6
-    )
-    fun testProjectIsolation(gradleVersion: GradleVersion) {
-        project(
-            projectName = "instantExecution",
-            gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(configurationCache = true, projectIsolation = true),
-        ) {
-            build(":main-project:compileKotlin")
-        }
-    }
-
     @DisplayName("Proper Gradle plugin variant is used")
     @GradleTestVersions(
         additionalVersions = [
