@@ -386,6 +386,7 @@ private fun mapSystemHasContradictionError(
             )
         }
     }.ifEmpty {
+
         listOfNotNull(
             diagnostic.candidate.errors.firstNotNullOfOrNull {
                 val message = when (it) {
@@ -402,6 +403,8 @@ private fun mapSystemHasContradictionError(
                     }
                     if (morePreciseDiagnosticExists) return@firstNotNullOfOrNull null
                 }
+
+                if (it is NewConstraintError && it.position.from is ExpectedTypeConstraintPosition<*>) return@firstNotNullOfOrNull null
 
                 FirErrors.NEW_INFERENCE_ERROR.createOn(qualifiedAccessSource ?: source, message)
             }
@@ -444,12 +447,16 @@ private fun ConstraintSystemError.toDiagnostic(
                         else
                             upperConeType.withNullability(ConeNullability.NULLABLE, typeContext)
 
-                    FirErrors.TYPE_MISMATCH.createOn(
-                        qualifiedAccessSource ?: source,
-                        upperConeType.removeTypeVariableTypes(typeContext),
-                        inferredType.removeTypeVariableTypes(typeContext),
-                        typeMismatchDueToNullability
-                    )
+                    if (candidate.callInfo.callSite == position.topLevelCall) {
+                        FirErrors.TYPE_MISMATCH.createOn(
+                            qualifiedAccessSource ?: source,
+                            upperConeType.removeTypeVariableTypes(typeContext),
+                            inferredType.removeTypeVariableTypes(typeContext),
+                            typeMismatchDueToNullability
+                        )
+                    } else {
+                        null
+                    }
                 }
 
                 else -> null
