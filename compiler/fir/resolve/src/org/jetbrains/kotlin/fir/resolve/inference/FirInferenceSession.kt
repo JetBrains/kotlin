@@ -5,20 +5,52 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 
 abstract class FirInferenceSession {
     companion object {
-        val DEFAULT: FirInferenceSession = object : FirStubInferenceSession() {}
+        val DEFAULT: FirInferenceSession = object : FirInferenceSession() {
+            override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = true
+
+            override fun <T> processPartiallyResolvedCall(
+                call: T,
+                resolutionMode: ResolutionMode,
+                completionMode: ConstraintSystemCompletionMode,
+            ) where T : FirResolvable, T : FirStatement {
+                // Do nothing
+            }
+
+            override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
+                // Do nothing
+            }
+        }
+
+        @JvmStatic
+        protected fun prepareSharedBaseSystem(
+            outerSystem: NewConstraintSystemImpl,
+            components: InferenceComponents,
+        ): NewConstraintSystemImpl {
+            return components.createConstraintSystem().apply {
+                addOuterSystem(outerSystem.currentStorage())
+            }
+        }
     }
+
+    open fun <T> runLambdaCompletion(candidate: Candidate, block: () -> T): T = block()
+
+    open fun <T> runCallableReferenceResolution(candidate: Candidate, block: () -> T): T = block()
+
+    open fun handleQualifiedAccess(qualifiedAccessExpression: FirExpression, data: ResolutionMode) {}
 
     abstract fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement
 
@@ -28,29 +60,17 @@ abstract class FirInferenceSession {
      */
     open fun <T> shouldAvoidFullCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = false
 
-    abstract fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement
+    abstract fun <T> processPartiallyResolvedCall(
+        call: T,
+        resolutionMode: ResolutionMode,
+        completionMode: ConstraintSystemCompletionMode
+    ) where T : FirResolvable, T : FirStatement
+
     abstract fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
 
-    abstract fun inferPostponedVariables(
-        lambda: ResolvedLambdaAtom,
-        constraintSystemBuilder: ConstraintSystemBuilder,
-        completionMode: ConstraintSystemCompletionMode,
-        candidate: Candidate
-    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>?
-
     open fun <R> onCandidatesResolution(call: FirFunctionCall, candidatesResolutionCallback: () -> R) = candidatesResolutionCallback()
-}
 
-abstract class FirStubInferenceSession : FirInferenceSession() {
-    override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = true
+    open fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? = null
 
-    override fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement {}
-    override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
-
-    override fun inferPostponedVariables(
-        lambda: ResolvedLambdaAtom,
-        constraintSystemBuilder: ConstraintSystemBuilder,
-        completionMode: ConstraintSystemCompletionMode,
-        candidate: Candidate
-    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
+    open fun addSubtypeConstraintIfCompatible(lowerType: ConeKotlinType, upperType: ConeKotlinType, element: FirElement) {}
 }

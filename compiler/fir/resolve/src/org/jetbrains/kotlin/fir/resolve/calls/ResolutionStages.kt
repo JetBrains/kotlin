@@ -266,6 +266,39 @@ object CheckContextReceivers : ResolutionStage() {
     }
 }
 
+object TypeVariablesInExplicitReceivers : ResolutionStage() {
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        if (callInfo.callSite.isAnyOfDelegateOperators()) return
+
+        val explicitReceiver = callInfo.explicitReceiver ?: return checkOtherCases(candidate)
+
+        val typeVariableType = explicitReceiver.resolvedType.obtainTypeVariable() ?: return checkOtherCases(candidate)
+        val typeParameter =
+            (typeVariableType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol?.fir
+                ?: return checkOtherCases(candidate)
+
+        sink.reportDiagnostic(TypeVariableAsExplicitReceiver(explicitReceiver, typeParameter))
+    }
+
+    private fun checkOtherCases(candidate: Candidate) {
+        require(candidate.chosenExtensionReceiverExpression()?.resolvedType?.obtainTypeVariable() == null) {
+            "Found TV in extension receiver of $candidate"
+        }
+
+        require(candidate.dispatchReceiverExpression()?.resolvedType?.obtainTypeVariable() == null) {
+            "Found TV in extension receiver of $candidate"
+        }
+    }
+
+    private fun ConeKotlinType.obtainTypeVariable(): ConeTypeVariableType? = when (this) {
+        is ConeFlexibleType -> lowerBound.obtainTypeVariable()
+        is ConeTypeVariableType -> this
+        is ConeDefinitelyNotNullType -> original.obtainTypeVariable()
+        is ConeIntersectionType -> intersectedTypes.firstNotNullOfOrNull { it.obtainTypeVariable() }
+        else -> null
+    }
+}
+
 private fun Candidate.findClosestMatchingReceivers(
     expectedType: ConeKotlinType,
     receiverGroups: List<List<FirExpression>>,
@@ -561,7 +594,7 @@ internal object EagerResolveOfCallableReferences : CheckerStage() {
             if (atom is ResolvedCallableReferenceAtom) {
                 val (applicability, success) =
                     context.bodyResolveComponents.callResolver.resolveCallableReference(
-                        candidate.csBuilder, atom, hasSyntheticOuterCall = candidate.callInfo.name == ACCEPT_SPECIFIC_TYPE.callableName
+                        candidate, atom, hasSyntheticOuterCall = candidate.callInfo.name == ACCEPT_SPECIFIC_TYPE.callableName
                     )
                 if (!success) {
                     // If the resolution was unsuccessful, we ensure that an error will be reported for the callable reference

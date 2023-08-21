@@ -11,17 +11,33 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
-sealed class ResolutionMode(val forceFullCompletion: Boolean) {
-    sealed class ContextDependent : ResolutionMode(forceFullCompletion = false) {
-        companion object Default : ContextDependent() {
+sealed class ResolutionMode(
+    val forceFullCompletion: Boolean,
+    // Only true AugmentedAssignmentCallOption, don't run even slightest form of completion
+    val skipCompletion: Boolean = false,
+    // isReceiverOrTopLevel != forceFullCompletion -> Delegate
+    // Collect postponed calls
+    val isReceiverOrTopLevel: Boolean = forceFullCompletion,
+) {
+    sealed class ContextDependent(
+        skipCompletion: Boolean = false,
+        isReceiverOrTopLevel: Boolean,
+    ) : ResolutionMode(forceFullCompletion = false, skipCompletion, isReceiverOrTopLevel) {
+        companion object Default : ContextDependent(isReceiverOrTopLevel = false) {
             override fun toString(): String = "ContextDependent"
         }
 
-        data object Delegate : ContextDependent()
+        data object Delegate : ContextDependent(isReceiverOrTopLevel = true)
+
+        data object AugmentedAssignmentCallOption : ContextDependent(isReceiverOrTopLevel = false, skipCompletion = true)
     }
 
     data object ContextIndependent : ResolutionMode(forceFullCompletion = true)
-    data object ReceiverResolution : ResolutionMode(forceFullCompletion = true)
+
+    sealed class ReceiverResolution(val forCallableReference: Boolean) : ResolutionMode(forceFullCompletion = true) {
+        data object ForCallableReference : ReceiverResolution(forCallableReference = true)
+        companion object : ReceiverResolution(forCallableReference = false)
+    }
 
     class WithExpectedType(
         val expectedTypeRef: FirResolvedTypeRef,
@@ -42,7 +58,7 @@ sealed class ResolutionMode(val forceFullCompletion: Boolean) {
 
         fun copy(
             mayBeCoercionToUnitApplied: Boolean = this.mayBeCoercionToUnitApplied,
-            forceFullCompletion: Boolean = this.forceFullCompletion
+            forceFullCompletion: Boolean = this.forceFullCompletion,
         ): WithExpectedType = WithExpectedType(
             expectedTypeRef, mayBeCoercionToUnitApplied, expectedTypeMismatchIsReportedInChecker, fromCast, shouldBeStrictlyEnforced,
             forceFullCompletion
@@ -97,11 +113,15 @@ fun ResolutionMode.expectedType(components: BodyResolveComponents): FirTypeRef? 
     is ResolutionMode.WithExpectedType -> expectedTypeRef.takeIf { !this.fromCast }
     is ResolutionMode.ContextIndependent,
     is ResolutionMode.AssignmentLValue,
-    is ResolutionMode.ReceiverResolution -> components.noExpectedType
+    is ResolutionMode.ReceiverResolution,
+    -> components.noExpectedType
     else -> null
 }
 
-fun withExpectedType(expectedTypeRef: FirTypeRef, expectedTypeMismatchIsReportedInChecker: Boolean = false): ResolutionMode = when {
+fun withExpectedType(
+    expectedTypeRef: FirTypeRef,
+    expectedTypeMismatchIsReportedInChecker: Boolean = false,
+): ResolutionMode = when {
     expectedTypeRef is FirResolvedTypeRef -> ResolutionMode.WithExpectedType(
         expectedTypeRef,
         expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker
