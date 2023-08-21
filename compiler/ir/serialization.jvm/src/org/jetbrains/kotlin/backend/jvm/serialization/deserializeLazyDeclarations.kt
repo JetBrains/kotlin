@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.LazyIrFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
@@ -91,7 +93,24 @@ fun deserializeFromByteArray(
         internationService = internationService
     )
     for (declarationProto in irProto.declarationList) {
-        deserializer.deserializeDeclaration(declarationProto, setParent = false)
+        val declaration = deserializer.deserializeDeclaration(declarationProto, setParent = false)
+        val parent = try {
+            declaration.parent
+        } catch (_: UninitializedPropertyAccessException) {
+            // HERE IS AN EXPLANATION:
+            // If declaration.parent has a parent by itself, then such a parent is its inner class parent
+            // If it does not, then it is a function in toplevelParent not knowing about it...
+            //
+            // We have no other way to check whether parent was set or not.
+            declaration.parent = toplevelParent
+            declaration.parent
+        }
+
+        if (parent is IrDeclarationContainer) {
+            if (declaration !in parent.declarations) {
+                parent.declarations += declaration
+            }
+        }
     }
 
     symbolTable.signaturer.withFileSignature(dummyFileSignature) {
@@ -106,7 +125,7 @@ private class IrLibraryFileFromAnnotation(
     private val signatures: List<ProtoIdSignature>,
     private val strings: List<String>,
     private val bodies: List<JvmIr.XStatementOrExpression>,
-    private val debugInfo: List<String>
+    private val debugInfo: List<String>,
 ) : IrLibraryFile() {
     override fun declaration(index: Int): ProtoDeclaration {
         error("This method is never supposed to be called")
@@ -127,7 +146,7 @@ private class IrLibraryFileFromAnnotation(
 private fun referencePublicSymbol(
     symbolTable: SymbolTable,
     idSig: IdSignature,
-    symbolKind: BinarySymbolData.SymbolKind
+    symbolKind: BinarySymbolData.SymbolKind,
 ): IrSymbol {
     with(symbolTable) {
         return when (symbolKind) {
@@ -148,7 +167,7 @@ private fun referencePublicSymbol(
 fun makeSimpleFakeOverrideBuilder(
     symbolTable: SymbolTable,
     typeSystemContext: IrTypeSystemContext,
-    symbolDeserializer: IrSymbolDeserializer
+    symbolDeserializer: IrSymbolDeserializer,
 ): IrLinkerFakeOverrideProvider {
     return IrLinkerFakeOverrideProvider(
         object : FileLocalAwareLinker {
@@ -156,7 +175,7 @@ fun makeSimpleFakeOverrideBuilder(
                 symbolDeserializer.referencePropertyByLocalSignature(idSignature)
 
             override fun tryReferencingSimpleFunctionByLocalSignature(
-                parent: IrDeclaration, idSignature: IdSignature
+                parent: IrDeclaration, idSignature: IdSignature,
             ): IrSimpleFunctionSymbol =
                 symbolDeserializer.referenceSimpleFunctionByLocalSignature(idSignature)
         },
@@ -173,7 +192,7 @@ private fun buildFakeOverridesForLocalClasses(
     symbolTable: SymbolTable,
     typeSystemContext: IrTypeSystemContext,
     symbolDeserializer: IrSymbolDeserializer,
-    toplevel: IrClass
+    toplevel: IrClass,
 ) {
     val builder = makeSimpleFakeOverrideBuilder(symbolTable, typeSystemContext, symbolDeserializer)
     toplevel.acceptChildrenVoid(
@@ -192,7 +211,7 @@ private fun buildFakeOverridesForLocalClasses(
 }
 
 class PrePopulatedDeclarationTable(
-    sig2symbol: Map<IdSignature, IrSymbol>
+    sig2symbol: Map<IdSignature, IrSymbol>,
 ) : FakeOverrideDeclarationTable(JvmIrMangler, signatureSerializerFactory = ::IdSignatureFactory) {
     private val symbol2Sig = sig2symbol.entries.associate { (x, y) -> y to x }
 
