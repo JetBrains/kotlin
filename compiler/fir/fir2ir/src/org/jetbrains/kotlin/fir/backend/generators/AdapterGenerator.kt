@@ -562,12 +562,21 @@ internal class AdapterGenerator(
         }
         // If the expected type is a built-in functional type, we don't need SAM conversion.
         val expectedType = argument.getExpectedType(parameter)
-        if (expectedType is ConeTypeParameterType || expectedType.isSomeFunctionType(session)) {
+        if (expectedType.isTypeParameterBased() || expectedType.isSomeFunctionType(session)) {
             return false
         }
         // On the other hand, the actual type should be either a functional type or a subtype of a class that has a contributed `invoke`.
         val expectedFunctionType = getFunctionTypeForPossibleSamType(parameter.returnTypeRef.coneType)
         return argument.isFunctional(session, scopeSession, expectedFunctionType, ReturnTypeCalculatorForFullBodyResolve.Default)
+    }
+
+    private fun ConeKotlinType.isTypeParameterBased(): Boolean {
+        return when (this) {
+            is ConeTypeParameterType -> true
+            is ConeDefinitelyNotNullType -> original.isTypeParameterBased()
+            is ConeFlexibleType -> lowerBound.isTypeParameterBased()
+            else -> false
+        }
     }
 
     internal fun getFunctionTypeForPossibleSamType(parameterType: ConeKotlinType): ConeKotlinType? {
