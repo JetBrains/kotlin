@@ -137,12 +137,17 @@ a force push, your work will be left in a weird state.
 
 ### Merging upstream
 
-Upstream changes may need to be merged multiple times, as
-merging them into `formal-verification` isn't enough to make
-them compatible with other branches.  You can work around this
-by applying your changes to the new `formal-verification` tip
-as a cherry-pick.  TODO: document this process once we've
-successfully done it some time.
+We rebase `upstream/master` onto `formal-verification` on Mondays.
+This may involve resolving merge conflicts between upstream and our changes.
+If you rebase `formal-verification` into your own branch, you will
+typically have to resolve these conflicts again: to avoid this, do 
+an interactive rebase and remove any old commits you see, keeping only
+those commits that you've added to your branch since it split off
+`formal-verification`.  (Normally, rebase handles this for you, but
+because `formal-verification` has been rebased it can fail to see that
+certain commits from your branch are already present in `formal-verification`.)
+This should ensure that only merge conflicts introduced by your branch
+have to be merged.
 
 ### Code review
 
