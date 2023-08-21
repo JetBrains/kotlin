@@ -13,7 +13,7 @@ dependencies {
     compileOnly(libs.native.platform)
 
     embedded(project(":daemon-common")) { isTransitive = false }
-    embedded(libs.bundles.native.platform.all)
+    embedded(libs.native.platform)
 }
 
 tasks.withType<KotlinCompilationTask<*>> {

@@ -532,10 +532,15 @@ allprojects {
 
         mavenCentral()
 
+        maven("https://repo.gradle.org/gradle/public") { // TODO: mirror the artifact to our infrastructure
+            content {
+                includeVersionByRegex("net\\.rubygrapefruit", ".+", "0\\.22-milestone-24")
+            }
+        }
+
         @Suppress("DEPRECATION")
         jcenter {
             content {
-                includeVersionByRegex("net\\.rubygrapefruit", ".+", "0\\.14")
                 includeVersionByRegex("io\\.ktor", ".+", "1\\.1\\.5")
                 includeVersion("khttp", "khttp", "1.0.0")
                 includeVersion("org.jetbrains.kotlinx", "kotlinx-serialization-runtime", "0.4.2")
