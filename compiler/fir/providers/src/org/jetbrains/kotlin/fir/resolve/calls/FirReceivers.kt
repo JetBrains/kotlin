@@ -89,7 +89,8 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
 
     abstract val isContextReceiver: Boolean
 
-    val originalType: ConeKotlinType = type
+    // Before smart cast
+    var originalType: ConeKotlinType = type
 
     var implicitScope: FirTypeScope? =
         type.scope(
@@ -148,6 +149,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     @Deprecated(level = DeprecationLevel.ERROR, message = "Builder inference should not modify implicit receivers. KT-54708")
     fun updateTypeInBuilderInference(type: ConeKotlinType) {
         this.type = type
+        this.originalType = type
         originalReceiverExpression = receiverExpression(boundSymbol, type, contextReceiverNumber, inaccessibleReceiver)
         _receiverExpression = null
         implicitScope = type.scope(
