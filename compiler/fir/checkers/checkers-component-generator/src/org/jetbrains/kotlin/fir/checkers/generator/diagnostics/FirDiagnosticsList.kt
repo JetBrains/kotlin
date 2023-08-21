@@ -174,6 +174,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNRESOLVED_IMPORT by error<PsiElement>(PositioningStrategy.IMPORT_LAST_NAME) {
             parameter<String>("reference")
         }
+
+        val DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE by error<KtTypeReference>()
     }
 
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {

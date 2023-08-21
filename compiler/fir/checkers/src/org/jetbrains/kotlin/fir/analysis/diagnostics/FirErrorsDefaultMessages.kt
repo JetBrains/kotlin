@@ -192,6 +192,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_E
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIVISION_BY_ZERO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_SCOPE_VIOLATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_LABEL_IN_WHEN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_RECEIVER_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_SUPERTYPE
@@ -769,6 +770,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(MISSING_CONSTRUCTOR_KEYWORD, "Use the 'constructor' keyword after the modifiers of the primary constructor.")
         map.put(UNRESOLVED_REFERENCE, "Unresolved reference ''{0}''.", NULLABLE_STRING)
         map.put(UNRESOLVED_IMPORT, "Unresolved reference ''{0}''.", NULLABLE_STRING) // &
+        map.put(DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE, "Duplicate parameter name in a function type.")
         map.put(UNRESOLVED_LABEL, "Unresolved label.")
         map.put(DESERIALIZATION_ERROR, "Deserialization error.")
         map.put(ERROR_FROM_JAVA_RESOLUTION, "Java resolution error.")
