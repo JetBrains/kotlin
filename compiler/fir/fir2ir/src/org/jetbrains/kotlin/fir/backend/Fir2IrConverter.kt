@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -42,13 +43,11 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class Fir2IrConverter(
     private val moduleDescriptor: FirModuleDescriptor,
@@ -238,7 +237,6 @@ class Fir2IrConverter(
         return irClass
     }
 
-    @OptIn(IrSymbolInternals::class)
     private fun processCodeFragmentMembers(
         codeFragment: FirCodeFragment,
         irClass: IrClass = classifierStorage.getCachedIrCodeFragment(codeFragment)!!
@@ -263,11 +261,15 @@ class Fir2IrConverter(
                 isPrimary = true
             ).apply {
                 parent = irClass
+                val firAnyConstructor = session.builtinTypes.anyType.toRegularClassSymbol(session)!!.fir.primaryConstructorIfAny(session)!!
+                val irAnyConstructor = declarationStorage.getIrConstructorSymbol(firAnyConstructor)
                 body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
-                    statements += IrDelegatingConstructorCallImpl.fromSymbolOwner(
+                    statements += IrDelegatingConstructorCallImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         irBuiltIns.unitType,
-                        irBuiltIns.anyClass.owner.declarations.firstIsInstance<IrConstructor>().symbol
+                        irAnyConstructor,
+                        typeArgumentsCount = 0,
+                        valueArgumentsCount = 0
                     )
                 }
             }
