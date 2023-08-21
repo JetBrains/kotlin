@@ -125,6 +125,13 @@ private fun ConeKotlinType.scope(
     is ConeDefinitelyNotNullType -> original.scope(useSiteSession, scopeSession, requiredMembersPhase)
     is ConeIntegerConstantOperatorType -> scopeSession.getOrBuildScopeForIntegerConstantOperatorType(useSiteSession, this)
     is ConeIntegerLiteralConstantType -> error("ILT should not be in receiver position")
+    // See testData/diagnostics/tests/inference/builderInference/memberScopeOfCapturedTypeForPostponedCall.kt
+    is ConeCapturedType -> {
+        val supertypes =
+            constructor.supertypes?.takeIf { it.isNotEmpty() }
+                ?: listOf(useSiteSession.builtinTypes.anyType.type)
+        useSiteSession.typeContext.intersectTypes(supertypes).scope(useSiteSession, scopeSession, requiredMembersPhase)
+    }
     else -> null
 }
 

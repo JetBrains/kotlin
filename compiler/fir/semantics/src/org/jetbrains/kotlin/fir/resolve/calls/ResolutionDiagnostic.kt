@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
@@ -158,6 +158,7 @@ object AdaptedCallableReferenceIsUsedWithReflection : ResolutionDiagnostic(RESOL
 
 object TypeParameterAsExpression : ResolutionDiagnostic(INAPPLICABLE)
 
-class StubBuilderInferenceReceiver(
-    val typeParameterSymbol: FirTypeParameterSymbol
+class TypeVariableAsExplicitReceiver(
+    val explicitReceiver: FirExpression,
+    val typeParameter: FirTypeParameter,
 ) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
