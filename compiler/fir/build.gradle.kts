@@ -22,6 +22,7 @@ subprojects {
         tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
             kotlinOptions {
                 freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.fir.symbols.SymbolInternals"
+                freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.types.model.K2Only"
             }
         }
     }
