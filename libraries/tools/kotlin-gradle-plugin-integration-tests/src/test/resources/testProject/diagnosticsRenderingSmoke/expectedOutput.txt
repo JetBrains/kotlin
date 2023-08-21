@@ -6,9 +6,6 @@ kotlin.mpp.enableCompatibilityMetadataVariant, kotlin.mpp.hierarchicalStructureS
 Read the details here: https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#deprecate-hmpp-properties
 #diagnostic-end
 
-e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
-#diagnostic-end
-
 w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'project ':subprojectA'':
 Explicit .dependsOn() edges were configured for the following source sets:
 [commonMain]
@@ -20,11 +17,11 @@ to your gradle.properties
 Learn more about hierarchy templates: https://kotl.in/hierarchy-template
 #diagnostic-end
 
-
-> Configure project :subprojectB
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
 #diagnostic-end
 
+
+> Configure project :subprojectB
 w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'project ':subprojectB'':
 Explicit .dependsOn() edges were configured for the following source sets:
 [commonMain]
@@ -40,4 +37,7 @@ w: [UnusedSourceSetsWarning | WARNING] The Kotlin source set unusedCreatedInAfte
 
 You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
 See https://kotl.in/connecting-source-sets
+#diagnostic-end
+
+e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
 #diagnostic-end

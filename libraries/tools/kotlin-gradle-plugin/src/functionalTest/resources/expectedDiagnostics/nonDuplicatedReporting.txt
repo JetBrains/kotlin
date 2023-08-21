@@ -2,10 +2,6 @@
 
 It has multiple lines of text
 ----
-[TEST_DIAGNOSTIC_ONE_PER_PROJECT | WARNING] This is a test diagnostics that should be reported once per project
-
-It has multiple lines of text
-----
 [TEST_DIAGNOSTIC_ONE_PER_BUILD | WARNING] This is a test diagnostics that should be reported once per build
 
 It has multiple lines of text

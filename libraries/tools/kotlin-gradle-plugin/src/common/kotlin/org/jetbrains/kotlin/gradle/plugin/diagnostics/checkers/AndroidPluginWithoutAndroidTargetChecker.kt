@@ -20,7 +20,7 @@ internal object AndroidPluginWithoutAndroidTargetChecker : KotlinGradleProjectCh
 
         val androidPluginId = project.findAppliedAndroidPluginIdOrNull() ?: return
         if (project.findAndroidTarget() != null) return
-        collector.reportOncePerGradleProject(
+        collector.report(
             project,
             KotlinToolingDiagnostics.AndroidTargetIsMissing(project.name, project.path, androidPluginId)
         )

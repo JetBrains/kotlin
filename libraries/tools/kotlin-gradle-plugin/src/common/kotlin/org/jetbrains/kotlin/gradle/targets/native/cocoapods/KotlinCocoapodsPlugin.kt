@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerProject
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -372,13 +371,13 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         dependencyName: String,
     ) {
         if (pod.name == dependencyName) {
-            project.reportDiagnosticOncePerProject(CocoapodsPluginDiagnostics.InteropBindingSelfDependency(pod.name))
+            project.reportDiagnostic(CocoapodsPluginDiagnostics.InteropBindingSelfDependency(pod.name))
             return
         }
 
         val dependencyPod = cocoapodsExtension.pods.findByName(dependencyName)
             ?: run {
-                project.reportDiagnosticOncePerProject(CocoapodsPluginDiagnostics.InteropBindingUnknownDependency(pod.name, dependencyName))
+                project.reportDiagnostic(CocoapodsPluginDiagnostics.InteropBindingUnknownDependency(pod.name, dependencyName))
                 return
             }
 

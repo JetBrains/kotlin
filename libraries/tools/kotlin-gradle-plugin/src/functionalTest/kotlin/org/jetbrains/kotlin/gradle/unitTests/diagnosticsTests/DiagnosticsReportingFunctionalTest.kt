@@ -32,20 +32,6 @@ class DiagnosticsReportingFunctionalTest {
         }
     }
 
-
-    @Test
-    fun testOncePerProjectReporting() {
-        buildProjectWithMockedCheckers {
-            applyKotlinJvmPlugin()
-            evaluate()
-
-            reportOnePerProjectTestDiagnostic()
-            reportOnePerProjectTestDiagnostic()
-
-            checkDiagnostics("oncePerProjectReporting")
-        }
-    }
-
     @Test
     fun testOncePerBuildReporting() {
         val root = buildProjectWithMockedCheckers()
@@ -93,26 +79,6 @@ class DiagnosticsReportingFunctionalTest {
         }
 
         root.checkDiagnostics("deduplicationWithDifferentSeverities", compactRendering = false)
-    }
-
-    @Test
-    fun testOncePerProjectAndPerBuildAreEquivalentForRoot() {
-        val root = buildProject()
-
-        root.applyKotlinJvmPlugin()
-        root.reportOnePerProjectTestDiagnostic()
-
-        // using same diagnostic with same ID as in "per-project". They should be deduplicated properly.
-        root.reportDiagnosticOncePerBuild(
-            ToolingDiagnostic(
-                "TEST_DIAGNOSTIC_ONE_PER_PROJECT",
-                "This is a test diagnostics that should be reported once per project\n\nIt has multiple lines of text",
-                WARNING
-            )
-        )
-        root.evaluate()
-
-        root.checkDiagnostics("oncePerProjectAndOncePerBuildAreEquivalentForRoot")
     }
 
     @Test
@@ -164,7 +130,7 @@ private fun buildProjectWithMockedCheckers(
     project.allprojects {
         project.extensions.extraProperties.set(
             KOTLIN_GRADLE_PROJECT_CHECKERS_OVERRIDE,
-            listOf(MockChecker, MockPerProjectChecker, MockPerBuildChecker)
+            listOf(MockChecker, MockPerBuildChecker)
         )
     }
 
@@ -177,17 +143,6 @@ private fun Project.reportTestDiagnostic(severity: Severity = WARNING) {
     kotlinToolingDiagnosticsCollector.report(
         project,
         ToolingDiagnostic("TEST_DIAGNOSTIC", "This is a test diagnostic\n\nIt has multiple lines of text", severity)
-    )
-}
-
-private fun Project.reportOnePerProjectTestDiagnostic(severity: Severity = WARNING) {
-    kotlinToolingDiagnosticsCollector.reportOncePerGradleProject(
-        project,
-        ToolingDiagnostic(
-            "TEST_DIAGNOSTIC_ONE_PER_PROJECT",
-            "This is a test diagnostics that should be reported once per project\n\nIt has multiple lines of text",
-            severity
-        )
     )
 }
 
@@ -205,12 +160,6 @@ private fun Project.reportOnePerBuildTestDiagnostic(severity: Severity = WARNING
 internal object MockChecker : KotlinGradleProjectChecker {
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         project.reportTestDiagnostic()
-    }
-}
-
-internal object MockPerProjectChecker : KotlinGradleProjectChecker {
-    override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
-        project.reportOnePerProjectTestDiagnostic()
     }
 }
 

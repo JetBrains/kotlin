@@ -22,7 +22,7 @@ internal object DisabledNativeTargetsChecker : KotlinGradleProjectChecker {
             .map { it.name }
 
         if (disabledTargets.isNotEmpty()) {
-            collector.reportOncePerGradleProject(project, KotlinToolingDiagnostics.DisabledKotlinNativeTargets(disabledTargets))
+            collector.report(project, KotlinToolingDiagnostics.DisabledKotlinNativeTargets(disabledTargets))
         }
     }
 }
