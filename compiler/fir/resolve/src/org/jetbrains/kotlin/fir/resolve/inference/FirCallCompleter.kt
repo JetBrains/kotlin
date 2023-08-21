@@ -41,8 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompat
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.model.StubTypeMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -102,8 +101,10 @@ class FirCallCompleter(
 
         return when (completionMode) {
             ConstraintSystemCompletionMode.FULL -> {
-                if (inferenceSession.shouldRunCompletion(call)) {
-                    runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
+                val shouldRunCompletion = inferenceSession.shouldRunCompletion(call)
+                runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
+
+                if (shouldRunCompletion) {
                     val finalSubstitutor = candidate.system.asReadOnlyStorage()
                         .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
                     val completedCall = call.transformSingle(
@@ -128,7 +129,7 @@ class FirCallCompleter(
 
             ConstraintSystemCompletionMode.PARTIAL -> {
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-                if (inferenceSession is FirDelegatedPropertyInferenceSession) {
+                if (inferenceSession is FirDelegatedPropertyInferenceSession || inferenceSession is FirBuilderInferenceSession2) {
                     inferenceSession.processPartiallyResolvedCall(call, resolutionMode)
                 }
 
@@ -147,6 +148,8 @@ class FirCallCompleter(
         if (resolutionMode !is ResolutionMode.WithExpectedType) return
         val expectedType = resolutionMode.expectedTypeRef.coneTypeSafe<ConeKotlinType>() ?: return
 
+        val position = ConeExpectedTypeConstraintPosition(candidate.callInfo.callSite)
+
         val system = candidate.system
         when {
             // If type mismatch is assumed to be reported in the checker, we should not add a subtyping constraint that leads to error.
@@ -156,25 +159,25 @@ class FirCallCompleter(
             // the resulting expression type cannot be inferred to something that is a subtype of `expectedType`,
             // thus the diagnostic should be reported.
             !resolutionMode.shouldBeStrictlyEnforced || resolutionMode.expectedTypeMismatchIsReportedInChecker -> {
-                system.addSubtypeConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
+                system.addSubtypeConstraintIfCompatible(initialType, expectedType, position)
             }
             resolutionMode.fromCast -> {
                 if (candidate.isFunctionForExpectTypeFromCastFeature()) {
                     system.addSubtypeConstraint(
                         initialType, expectedType,
-                        ConeExpectedTypeConstraintPosition,
+                        position,
                     )
                 }
             }
             !expectedType.isUnitOrFlexibleUnit || !resolutionMode.mayBeCoercionToUnitApplied -> {
-                system.addSubtypeConstraint(initialType, expectedType, ConeExpectedTypeConstraintPosition)
+                system.addSubtypeConstraint(initialType, expectedType, position)
             }
             system.notFixedTypeVariables.isEmpty() -> return
             expectedType.isUnit -> {
-                system.addEqualityConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
+                system.addEqualityConstraintIfCompatible(initialType, expectedType, position)
             }
             else -> {
-                system.addSubtypeConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
+                system.addSubtypeConstraintIfCompatible(initialType, expectedType, position)
             }
         }
     }
@@ -195,7 +198,7 @@ class FirCallCompleter(
             initialType,
             transformer.resolutionContext
         ) {
-            analyzer.analyze(candidate.system, it, candidate, completionMode)
+            analyzer.analyze(candidate.system, it, candidate)
         }
     }
 
@@ -252,8 +255,9 @@ class FirCallCompleter(
             contextReceivers: List<ConeKotlinType>,
             parameters: List<ConeKotlinType>,
             expectedReturnType: ConeKotlinType?,
-            stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>,
-            candidate: Candidate
+            candidate: Candidate,
+            notFixedTypeVariablesInInputTypes: Set<TypeConstructorMarker>,
+            currentSubstitutor: ConeSubstitutor,
         ): ReturnArgumentsAnalysisResult {
             val lambdaArgument: FirAnonymousFunction = lambdaAtom.atom
             val needItParam = lambdaArgument.valueParameters.isEmpty() && parameters.size == 1
@@ -356,16 +360,20 @@ class FirCallCompleter(
                 } ?: components.noExpectedType
             )
 
-            val builderInferenceSession = runIf(stubsForPostponedVariables.isNotEmpty()) {
-                @Suppress("UNCHECKED_CAST")
-                FirBuilderInferenceSession(
-                    lambdaArgument,
-                    transformer.resolutionContext,
-                    stubsForPostponedVariables as Map<ConeTypeVariable, ConeStubType>
-                )
-            }
-
             transformer.context.withAnonymousFunctionTowerDataContext(lambdaArgument.symbol) {
+                for (implicitReceiverValue in transformer.context.towerDataContext.implicitReceiverStack) {
+                    val newType = currentSubstitutor.substituteOrNull(implicitReceiverValue.type) ?: continue
+                    // TODO: recreate implicit receivers?
+                    @Suppress("DEPRECATION_ERROR")
+                    implicitReceiverValue.updateTypeInBuilderInference(newType)
+                }
+
+                val builderInferenceSession =
+                    // TODO: Think of delegation+PCLA combination
+                    runIf(notFixedTypeVariablesInInputTypes.isNotEmpty() && transformer.context.inferenceSession !is FirBuilderInferenceSession2) {
+                        FirBuilderInferenceSession2(candidate)
+                    }
+
                 if (builderInferenceSession != null) {
                     transformer.context.withInferenceSession(builderInferenceSession) {
                         lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
@@ -378,7 +386,7 @@ class FirCallCompleter(
 
             val returnArguments = components.dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambdaArgument).map { it.expression }
 
-            return ReturnArgumentsAnalysisResult(returnArguments, builderInferenceSession)
+            return ReturnArgumentsAnalysisResult(returnArguments, null)
         }
     }
 

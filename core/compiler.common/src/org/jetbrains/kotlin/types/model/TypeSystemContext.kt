@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.types.model
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeChecker
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.types.Variance
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -432,6 +434,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker? = null): Boolean
 
     fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean
+
+    fun areEqualCapturedType(c1: CapturedTypeConstructorMarker, c2: CapturedTypeConstructorMarker): Boolean = c1 == c2
 
     fun TypeConstructorMarker.isDenotable(): Boolean
 

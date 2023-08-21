@@ -465,7 +465,10 @@ open class FirDeclarationsResolveTransformer(
             // left in the backingField (witch is always present).
             variable.transformBackingField(transformer, withExpectedType(variable.returnTypeRef))
         } else {
-            val resolutionMode = withExpectedType(variable.returnTypeRef)
+            val resolutionMode = withExpectedType(variable.returnTypeRef) {
+                storeVariableReturnType(variable, forceRewriting = true)
+                variable.backingField?.replaceReturnTypeRef(variable.returnTypeRef)
+            }
             if (variable.initializer != null) {
                 variable.transformInitializer(transformer, resolutionMode)
                 storeVariableReturnType(variable)
@@ -1111,9 +1114,9 @@ open class FirDeclarationsResolveTransformer(
         )
     }
 
-    private fun storeVariableReturnType(variable: FirVariable) {
+    private fun storeVariableReturnType(variable: FirVariable, forceRewriting: Boolean = false) {
         val initializer = variable.initializer
-        if (variable.returnTypeRef is FirImplicitTypeRef) {
+        if (variable.returnTypeRef is FirImplicitTypeRef || forceRewriting) {
             val resultType = when {
                 initializer != null -> {
                     val unwrappedInitializer = initializer.unwrapSmartcastExpression()
@@ -1123,20 +1126,17 @@ open class FirDeclarationsResolveTransformer(
                 else -> null
             }
 
-            variable.transformReturnTypeRef(
-                transformer,
-                withExpectedType(
-                    resultType?.let {
-                        val expectedType = it.toExpectedTypeRef()
-                        expectedType.approximateDeclarationType(session, variable.visibilityForApproximation(), variable.isLocal)
-                    } ?: buildErrorTypeRef {
-                        diagnostic = ConeLocalVariableNoTypeOrInitializer(variable)
-                        source = variable.source
-                    }
-                )
+            variable.replaceReturnTypeRef(
+                resultType?.let {
+                    val expectedType = it.toExpectedTypeRef()
+                    expectedType.approximateDeclarationType(session, variable.visibilityForApproximation(), variable.isLocal)
+                } ?: buildErrorTypeRef {
+                    diagnostic = ConeLocalVariableNoTypeOrInitializer(variable)
+                    source = variable.source
+                }
             )
-            if (variable.getter?.returnTypeRef is FirImplicitTypeRef) {
-                variable.getter?.transformReturnTypeRef(transformer, withExpectedType(variable.returnTypeRef))
+            if (variable.getter?.returnTypeRef is FirImplicitTypeRef || forceRewriting) {
+                variable.getter?.replaceReturnTypeRef(variable.returnTypeRef)
             }
         }
     }

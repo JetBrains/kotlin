@@ -102,7 +102,6 @@ class FirDelegatedPropertyInferenceSession(
                     commonSystem,
                     lambdaAtom,
                     containingCandidateForLambda,
-                    ConstraintSystemCompletionMode.FULL,
                 )
             }
         }

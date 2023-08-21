@@ -62,6 +62,8 @@ interface ConstraintStorage {
      */
     val outerSystemVariablesPrefixSize: Int
 
+    val usesOuterCs: Boolean
+
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker> get() = emptyMap()
         override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints> get() = emptyMap()
@@ -77,6 +79,8 @@ interface ConstraintStorage {
         override val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>> = emptyList()
 
         override val outerSystemVariablesPrefixSize: Int get() = 0
+
+        override val usesOuterCs: Boolean get() = false
     }
 }
 

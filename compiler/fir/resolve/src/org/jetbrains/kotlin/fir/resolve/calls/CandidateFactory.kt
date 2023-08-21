@@ -79,6 +79,7 @@ class CandidateFactory private constructor(
                 ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> false
             },
             isFromOriginalTypeInPresenceOfSmartCast,
+            context.bodyResolveContext.inferenceSession,
         )
 
         // The counterpart in FE 1.0 checks if the given descriptor is VariableDescriptor yet not PropertyDescriptor.
@@ -158,6 +159,7 @@ class CandidateFactory private constructor(
             baseSystem,
             callInfo,
             originScope = null,
+            inferenceSession = context.bodyResolveContext.inferenceSession,
         )
     }
 

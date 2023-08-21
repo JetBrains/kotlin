@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 
 abstract class FirInferenceSession {
     companion object {
         val DEFAULT: FirInferenceSession = object : FirStubInferenceSession() {}
     }
+
+    open fun handleQualifiedAccess(qualifiedAccessExpression: FirExpression) {}
 
     abstract fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement
 
@@ -31,14 +31,9 @@ abstract class FirInferenceSession {
     abstract fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement
     abstract fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
 
-    abstract fun inferPostponedVariables(
-        lambda: ResolvedLambdaAtom,
-        constraintSystemBuilder: ConstraintSystemBuilder,
-        completionMode: ConstraintSystemCompletionMode,
-        // TODO: diagnostic holder
-    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>?
-
     open fun <R> onCandidatesResolution(call: FirFunctionCall, candidatesResolutionCallback: () -> R) = candidatesResolutionCallback()
+
+    open fun outerCSForCandidate(candidate: Candidate): ConstraintStorage? = null
 }
 
 abstract class FirStubInferenceSession : FirInferenceSession() {
@@ -47,9 +42,4 @@ abstract class FirStubInferenceSession : FirInferenceSession() {
     override fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement {}
     override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
 
-    override fun inferPostponedVariables(
-        lambda: ResolvedLambdaAtom,
-        constraintSystemBuilder: ConstraintSystemBuilder,
-        completionMode: ConstraintSystemCompletionMode
-    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
 }

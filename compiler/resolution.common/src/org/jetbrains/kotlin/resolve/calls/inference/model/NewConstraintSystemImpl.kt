@@ -301,9 +301,10 @@ class NewConstraintSystemImpl(
             )
         }
 
-    fun addOuterSystem(outerSystem: ConstraintStorage) {
+    fun addOuterSystem(outerSystem: ConstraintStorage, usesOuterCs: Boolean = false) {
         addOtherSystem(outerSystem)
         storage.outerSystemVariablesPrefixSize = outerSystem.allTypeVariables.size
+        storage.usesOuterCs = storage.usesOuterCs || usesOuterCs
     }
 
     fun setBaseSystem(outerSystem: ConstraintStorage) {
@@ -327,13 +328,20 @@ class NewConstraintSystemImpl(
         for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
             notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
         }
-        storage.initialConstraints.addAll(otherSystem.initialConstraints)
+
+        val currentInitialConstraints = storage.initialConstraints.toSet()
+
+        otherSystem.initialConstraints.filterTo(storage.initialConstraints) {
+            it !in currentInitialConstraints
+        }
+
         storage.maxTypeDepthFromInitialConstraints =
             max(storage.maxTypeDepthFromInitialConstraints, otherSystem.maxTypeDepthFromInitialConstraints)
         storage.errors.addAll(otherSystem.errors)
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
         storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
+        storage.usesOuterCs = storage.usesOuterCs || otherSystem.usesOuterCs
     }
 
     // ResultTypeResolver.Context, ConstraintSystemBuilder
@@ -714,6 +722,8 @@ class NewConstraintSystemImpl(
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         return storage
     }
+
+    val usesOuterCs: Boolean get() = storage.usesOuterCs
 
     // PostponedArgumentsAnalyzer.Context
     override fun hasUpperOrEqualUnitConstraint(type: KotlinTypeMarker): Boolean {
