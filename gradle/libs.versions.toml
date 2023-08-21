@@ -16,6 +16,7 @@ kotlinx-metadataJvm = "0.6.2"
 # Forcing gson version because of https://github.com/google/gson/pull/1991
 gson = { strictly = "2.8.9" } # should be in sync with version.properties
 jetbrains-ideaExt = "1.0.1"
+native-platform = "0.14"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -34,6 +35,32 @@ ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
 jdom2 = { module = "org.jdom:jdom2", version.ref = "jdom2" }
+native-platform = { module = "net.rubygrapefruit:native-platform", version.ref = "native-platform" }
+native-platform-freebsd-i386-libstdcpp = { module = "net.rubygrapefruit:native-platform-freebsd-i386-libstdcpp", version.ref = "native-platform" }
+native-platform-freebsd-i386-libcpp = { module = "net.rubygrapefruit:native-platform-freebsd-i386-libcpp", version.ref = "native-platform" }
+native-platform-freebsd-amd64-libstdcpp = { module = "net.rubygrapefruit:native-platform-freebsd-amd64-libstdcpp", version.ref = "native-platform" }
+native-platform-freebsd-amd64-libcpp = { module = "net.rubygrapefruit:native-platform-freebsd-amd64-libcpp", version.ref = "native-platform" }
+native-platform-linux-i386 = { module = "net.rubygrapefruit:native-platform-linux-i386", version.ref = "native-platform" }
+native-platform-linux-amd64 = { module = "net.rubygrapefruit:native-platform-linux-amd64", version.ref = "native-platform" }
+native-platform-osx-i386 = { module = "net.rubygrapefruit:native-platform-osx-i386", version.ref = "native-platform" }
+native-platform-osx-amd64 = { module = "net.rubygrapefruit:native-platform-osx-amd64", version.ref = "native-platform" }
+native-platform-windows-i386 = { module = "net.rubygrapefruit:native-platform-windows-i386", version.ref = "native-platform" }
+native-platform-windows-amd64 = { module = "net.rubygrapefruit:native-platform-windows-amd64", version.ref = "native-platform" }
 
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
+
+[bundles]
+native-platform-all = [
+    "native-platform",
+    "native-platform-freebsd-i386-libstdcpp",
+    "native-platform-freebsd-i386-libcpp",
+    "native-platform-freebsd-amd64-libstdcpp",
+    "native-platform-freebsd-amd64-libcpp",
+    "native-platform-linux-i386",
+    "native-platform-linux-amd64",
+    "native-platform-osx-i386",
+    "native-platform-osx-amd64",
+    "native-platform-windows-i386",
+    "native-platform-windows-amd64",
+]
