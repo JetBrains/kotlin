@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
-import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession
+import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession2
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -805,7 +805,7 @@ class FirCallResolver(
          *   can be important in builder inference mode, and it will never work if we skip completion here.
          * See inferenceFromLambdaReturnStatement.kt test.
          */
-        if (components.context.inferenceSession !is FirBuilderInferenceSession &&
+        if (components.context.inferenceSession !is FirBuilderInferenceSession2 &&
             createResolvedReferenceWithoutCandidateForLocalVariables &&
             explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() == null &&
             coneSymbol is FirVariableSymbol &&

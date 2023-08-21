@@ -355,7 +355,6 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.dist() {
     val stdlibMinimal by distLibrariesProject.configurations
     val commonStdlib by distLibrariesProject.configurations
     val commonStdlibSources by distLibrariesProject.configurations
-    val stdlibJS by distLibrariesProject.configurations
     val stdlibSources by distLibrariesProject.configurations
 
     create("dist") {
@@ -382,10 +381,6 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.dist() {
             archive("kotlin-stdlib-common-sources.jar") {
                 extractedDirectory(commonStdlibSources.singleFile)
             }
-        }
-
-        directory("js") {
-            extractedDirectory(stdlibJS.singleFile)
         }
 
         directory("kotlinc") {

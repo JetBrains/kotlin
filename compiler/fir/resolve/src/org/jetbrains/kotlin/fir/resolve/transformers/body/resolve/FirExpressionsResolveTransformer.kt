@@ -92,7 +92,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         transformQualifiedAccessExpression(qualifiedAccessExpression, data, isUsedAsReceiver = false)
     }
 
-    fun transformQualifiedAccessExpression(
+    private fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode,
         isUsedAsReceiver: Boolean,
@@ -174,6 +174,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
         }
 
+        // TODO: Smart casts??
         // If we're resolving the LHS of an assignment, skip DFA to prevent the access being treated as a variable read and
         // smart-casts being applied.
         if (data !is ResolutionMode.AssignmentLValue) {
@@ -190,6 +191,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
             }
         }
+
+        if (result is FirExpression) {
+            context.inferenceSession.handleQualifiedAccess(result)
+        }
+
         return result
     }
 

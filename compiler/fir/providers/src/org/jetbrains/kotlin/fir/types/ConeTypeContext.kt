@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.LowerIfFlexi
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 class ErrorTypeConstructor(val reason: String) : TypeConstructorMarker {
     override fun toString(): String = reason
@@ -356,6 +355,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
         if (c1 is ErrorTypeConstructor || c2 is ErrorTypeConstructor) return false
         return c1 == c2
+    }
+
+    override fun areEqualCapturedType(c1: CapturedTypeConstructorMarker, c2: CapturedTypeConstructorMarker): Boolean {
+        require(c1 is ConeCapturedTypeConstructor && c2 is ConeCapturedTypeConstructor)
+
+        return (c1.original ?: c1) == (c2.original ?: c2)
     }
 
     override fun TypeConstructorMarker.isDenotable(): Boolean {

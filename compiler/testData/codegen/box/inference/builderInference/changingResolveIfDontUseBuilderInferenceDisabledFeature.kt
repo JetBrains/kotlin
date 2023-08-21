@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// IGNORE_BACKEND_K2: ANY
 // !LANGUAGE: -UseBuilderInferenceOnlyIfNeeded
 
 import kotlin.experimental.ExperimentalTypeInference

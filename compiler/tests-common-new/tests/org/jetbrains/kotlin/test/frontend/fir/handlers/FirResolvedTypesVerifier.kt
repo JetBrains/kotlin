@@ -108,7 +108,9 @@ class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(
 
         private fun checkElementWithConeType(element: FirElement, type: ConeKotlinType) {
             when (checkConeType(type)) {
-                ConeTypeStatus.TypeVariableFound -> detectedTypeVariableTypesParents += element
+                ConeTypeStatus.TypeVariableFound -> {
+                    detectedTypeVariableTypesParents += element
+                }
                 ConeTypeStatus.StubFound -> detectedStubTypesParents += element
                 null -> {}
             }
