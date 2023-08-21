@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.nio.file.Path
 
 internal inline fun <R> withExtendedTypeRenderer(testDataFile: Path, action: () -> R): R {
-    val extendedTypeRendererOld = PsiClassRenderer.extendedTypeRenderer
+    val extendedTypeRendererOld = PsiClassRenderer.extendedTypeRenderer.get()
     return try {
-        PsiClassRenderer.extendedTypeRenderer = testDataFile.toString().endsWith("typeAnnotations.kt")
+        PsiClassRenderer.extendedTypeRenderer.set(testDataFile.toString().endsWith("typeAnnotations.kt"))
         action()
     } finally {
-        PsiClassRenderer.extendedTypeRenderer = extendedTypeRendererOld
+        PsiClassRenderer.extendedTypeRenderer.set(extendedTypeRendererOld)
     }
 }
 
