@@ -129,7 +129,9 @@ To work in this style, ensure that `pull.rebase` is set to
    up-to-date with `formal-verification` and make a pull request
    via GitHub for `formal-verification`.  You can choose between rebasing
    your change onto `formal-verification` or squashing your changes into a
-   single commit.
+   single commit.  On Linux, you can use the `pull_request.sh` script to open a browser tab
+   with `formal-verification` as the target; GitHub will by default suggest you
+   make a PR against `JetBrains/kotlin:master`, which is *not* correct.
 
 Due to the large number of force pushes, it doesn't really work here
 to share branches amongst multiple people; if the other person does
@@ -155,6 +157,7 @@ When you've finished work on a branch, open a pull request on
 GitHub against the `formal-verification` branch in `jesyspa/kotlin`
 (**not** `JetBrains/kotlin`! unfortunately that's the default) and
 add someone else as a reviewer.  Some tips:
+- On Linux, the `pull_request.sh` script will open a tab and set the base branch correctly for you.
 - Anyone can do reviews: don't worry about whom you ask.
 - That said, if someone is most familiar with the part you're changing, they may be the best choice.
 - Keeping your changes small and focused can make reviewing (and merging!) easier.
