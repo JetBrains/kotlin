@@ -34,6 +34,11 @@ sourceSets {
 
 publish()
 
-runtimeJar()
+runtimeJarWithRelocation {
+    from(mainSourceSet.output)
+    relocate("net.rubygrapefruit.platform", "$kotlinEmbeddableRootPackage.net.rubygrapefruit.platform") {
+        exclude("net.rubygrapefruit.platform.internal.**") // cannot be relocated due to jni integration
+    }
+}
 sourcesJar()
 javadocJar()
