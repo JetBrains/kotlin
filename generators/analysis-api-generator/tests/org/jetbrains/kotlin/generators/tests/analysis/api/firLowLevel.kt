@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractScriptLaz
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractScriptWholeFileResolvePhaseTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceLazyDeclarationResolveScopeBasedTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceWholeFileResolvePhaseTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.AbstractResolveExtensionDisposalAfterModificationEventTest
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
@@ -280,6 +281,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
 
         testClass<AbstractContextCollectorScriptTest> {
             model("contextCollector", pattern = TestGeneratorUtil.KTS)
+        }
+
+        testClass<AbstractResolveExtensionDisposalAfterModificationEventTest> {
+            model("resolveExtensionDisposal")
         }
     }
 
