@@ -4453,6 +4453,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         }
 
         @Test
+        @TestMetadata("kt55678.kt")
+        public void testKt55678() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/simple/kt55678.kt");
+        }
+
+        @Test
         @TestMetadata("params.kt")
         public void testParams() throws Exception {
             runTest("compiler/testData/codegen/boxInline/simple/params.kt");
