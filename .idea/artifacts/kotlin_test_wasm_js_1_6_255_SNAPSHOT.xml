@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="kotlin-test-wasm-js-1.6.255-SNAPSHOT">
-    <output-path>$PROJECT_DIR$/libraries/kotlin.test/wasm/build/libs</output-path>
-    <root id="archive" name="kotlin-test-wasm-js-1.6.255-SNAPSHOT.jar">
-      <element id="module-output" name="kotlin.kotlin-test.kotlin-test-wasm.jsMain" />
-    </root>
-  </artifact>
-</component>

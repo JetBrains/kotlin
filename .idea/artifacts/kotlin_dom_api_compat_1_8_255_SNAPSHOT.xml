@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="kotlin-dom-api-compat-1.8.255-SNAPSHOT">
-    <output-path>$PROJECT_DIR$/libraries/kotlin-dom-api-compat/build/libs</output-path>
-    <root id="archive" name="kotlin-dom-api-compat-1.8.255-SNAPSHOT.jar">
-      <element id="module-output" name="kotlin.kotlin-dom-api-compat.main" />
-    </root>
-  </artifact>
-</component>
