@@ -331,6 +331,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val reference: String
     }
 
+    interface DuplicateParameterNameInFunctionType : KtFirDiagnostic<KtTypeReference> {
+        override val diagnosticClass get() = DuplicateParameterNameInFunctionType::class
+    }
+
     interface CreatingAnInstanceOfAbstractClass : KtFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = CreatingAnInstanceOfAbstractClass::class
     }

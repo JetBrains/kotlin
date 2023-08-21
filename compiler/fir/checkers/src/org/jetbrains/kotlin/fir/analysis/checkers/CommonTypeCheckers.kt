@@ -17,6 +17,7 @@ object CommonTypeCheckers : TypeCheckers() {
         FirUnsupportedDefaultValueInFunctionTypeParameterChecker,
         FirUnsupportedModifiersInFunctionTypeParameterChecker,
         FirStarProjectionModifierChecker,
+        FirDuplicateParameterNameInFunctionTypeChecker,
         FirOptionalExpectationTypeChecker
     )
 }
