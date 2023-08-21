@@ -82,7 +82,6 @@ public actual inline fun Long.countOneBits(): Int =
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Long] number.
  */
-@ExperimentalStdlibApi
 public actual fun Long.countLeadingZeroBits(): Int = wasm_i64_clz(this).toInt()
 
 /**
