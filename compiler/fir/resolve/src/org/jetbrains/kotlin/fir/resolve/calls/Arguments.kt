@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPo
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
+import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.returnExpressions
@@ -195,7 +197,13 @@ fun Candidate.resolveSubCallArgument(
      *   placeholder type with value 0, but argument contains type with proper literal value
      */
     val type: ConeKotlinType = context.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.fir as FirCallableDeclaration).type
-    val argumentType = candidate.substitutor.substituteOrSelf(type)
+    // See testData/diagnostics/tests/inference/builderInference/propertySubstitution.kt
+    // Chained substitutor with `system.buildCurrentSubstitutor()` is necessary for PARTIAL_BI because it might fix some type variables
+    // participating in return types (unlike regular PARTIAL)
+    // But since we use PARTIAL_BI only when otherwise there would be FULL, but we don't run completion results writing,
+    // we had to to this
+    val argumentType =
+        ChainedSubstitutor(candidate.substitutor, system.buildCurrentSubstitutor() as ConeSubstitutor).substituteOrSelf(type)
     resolvePlainArgumentType(
         csBuilder,
         argument,

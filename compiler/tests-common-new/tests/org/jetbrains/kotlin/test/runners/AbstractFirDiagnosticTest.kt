@@ -41,12 +41,18 @@ import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConf
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import java.io.File
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         baseFirDiagnosticTestConfiguration()
         enableLazyResolvePhaseChecking()
         configureFirParser(parser)
+    }
+
+    override fun runTest(filePath: String) {
+        if ("// FIR_IGNORE" in File(filePath).readText()) return
+        super.runTest(filePath)
     }
 }
 

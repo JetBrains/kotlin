@@ -93,7 +93,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         transformQualifiedAccessExpression(qualifiedAccessExpression, data, isUsedAsReceiver = false, isUsedAsGetClassReceiver = false)
     }
 
-    fun transformQualifiedAccessExpression(
+    private fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode,
         isUsedAsReceiver: Boolean,
@@ -172,6 +172,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
         }
 
+        // TODO: Smart casts??
         // If we're resolving the LHS of an assignment, skip DFA to prevent the access being treated as a variable read and
         // smart-casts being applied.
         if (data !is ResolutionMode.AssignmentLValue) {
@@ -188,6 +189,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
             }
         }
+
+        if (result is FirExpression) {
+            context.inferenceSession.handleQualifiedAccess(result, data)
+        }
+
         return result
     }
 
@@ -1035,7 +1041,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         val result = variableAssignment.transformRValue(
             transformer,
-            withExpectedType(
+            if (variableAssignment.lValue.resolvedType.contains { it is ConeTypeVariableType })
+                ResolutionMode.ContextIndependent
+            else
+                withExpectedType(
                 variableAssignment.lValue.resolvedType.toFirResolvedTypeRef(),
                 expectedTypeMismatchIsReportedInChecker = true
             ),
@@ -1059,10 +1068,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val transformedLHS = when (explicitReceiver) {
             is FirPropertyAccessExpression ->
                 transformQualifiedAccessExpression(
-                    explicitReceiver, ResolutionMode.ContextIndependent, isUsedAsReceiver = true, isUsedAsGetClassReceiver = false
+                    explicitReceiver, ResolutionMode.ReceiverResolution, isUsedAsReceiver = true, isUsedAsGetClassReceiver = false
                 ) as FirExpression
             else ->
-                explicitReceiver?.transformSingle(this, ResolutionMode.ContextIndependent)
+                explicitReceiver?.transformSingle(this, ResolutionMode.ReceiverResolution)
         }.apply {
             if (this is FirResolvedQualifier && callableReferenceAccess.hasQuestionMarkAtLHS) {
                 replaceIsNullableLHSForCallableReference(true)
