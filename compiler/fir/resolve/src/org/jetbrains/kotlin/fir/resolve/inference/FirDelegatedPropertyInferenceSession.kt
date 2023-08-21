@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
-import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirDelegatedPropertyInferenceSession(
-    val property: FirProperty,
     resolutionContext: ResolutionContext,
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
 ) : FirInferenceSessionForChainedResolve(resolutionContext) {
@@ -47,7 +45,11 @@ class FirDelegatedPropertyInferenceSession(
     override fun <T> shouldAvoidFullCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement =
         call.isAnyOfDelegateOperators()
 
-    override fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement {
+    override fun <T> processPartiallyResolvedCall(
+        call: T,
+        resolutionMode: ResolutionMode,
+        completionMode: ConstraintSystemCompletionMode
+    ) where T : FirResolvable, T : FirStatement {
         if (resolutionMode != ResolutionMode.ContextDependent.Delegate && !call.isAnyOfDelegateOperators()) return
 
         val candidate = call.candidate
@@ -70,6 +72,9 @@ class FirDelegatedPropertyInferenceSession(
         val name = calleeReference.name
         return name == OperatorNameConventions.PROVIDE_DELEGATE || name == OperatorNameConventions.GET_VALUE || name == OperatorNameConventions.SET_VALUE
     }
+
+    override fun outerCSForCandidate(candidate: Candidate): ConstraintStorage? =
+        resolutionContext.bodyResolveContext.outerConstraintStorage.takeIf { it !== ConstraintStorage.Empty }
 
     fun completeCandidates(): List<FirResolvable> {
         val commonSystem = currentConstraintSystem.apply { prepareForGlobalCompletion() }
@@ -102,7 +107,6 @@ class FirDelegatedPropertyInferenceSession(
                     commonSystem,
                     lambdaAtom,
                     containingCandidateForLambda,
-                    ConstraintSystemCompletionMode.FULL,
                 )
             }
         }

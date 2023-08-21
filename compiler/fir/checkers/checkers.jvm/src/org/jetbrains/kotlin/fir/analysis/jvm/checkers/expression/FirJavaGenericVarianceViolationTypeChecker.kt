@@ -144,8 +144,9 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
                 constructor.apply {
                     ConeCapturedTypeConstructor(
                         projection.removeOutProjection(isCovariant),
+                        original = constructor,
                         supertypes?.map { it.removeOutProjection(isCovariant) },
-                        typeParameterMarker
+                        typeParameterMarker,
                     )
                 },
                 attributes,

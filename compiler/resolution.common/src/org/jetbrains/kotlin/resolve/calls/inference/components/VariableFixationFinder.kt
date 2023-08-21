@@ -27,6 +27,12 @@ class VariableFixationFinder(
         val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
         val postponedTypeVariables: List<TypeVariableMarker>
         val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>>
+        val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
+
+        /**
+         * See [org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.outerSystemVariablesPrefixSize]
+         */
+        val outerSystemVariablesPrefixSize: Int
 
         /**
          * If not null, that property means that we should assume temporary
@@ -38,6 +44,8 @@ class VariableFixationFinder(
          * [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
          */
         val typeVariablesThatAreNotCountedAsProperTypes: Set<TypeConstructorMarker>?
+
+        val typeVariablesFromOuter: Set<TypeConstructorMarker>?
 
         fun isReified(variable: TypeVariableMarker): Boolean
     }
@@ -153,7 +161,7 @@ class VariableFixationFinder(
         if (allTypeVariables.isEmpty()) return null
 
         val dependencyProvider = TypeVariableDependencyInformationProvider(
-            notFixedTypeVariables, postponedArguments, topLevelType.takeIf { completionMode == PARTIAL }, this
+            notFixedTypeVariables, postponedArguments, topLevelType.takeIf { completionMode == PARTIAL }, this,
         )
 
         val candidate =
@@ -197,7 +205,8 @@ class VariableFixationFinder(
 
     private fun Context.isNotFixedRelevantVariable(it: KotlinTypeMarker): Boolean {
         if (!notFixedTypeVariables.containsKey(it.typeConstructor())) return false
-        if (typeVariablesThatAreNotCountedAsProperTypes == null) return true
+        if (typeVariablesThatAreNotCountedAsProperTypes == null && typeVariablesFromOuter == null) return true
+        if (typeVariablesFromOuter != null) return !typeVariablesFromOuter!!.contains(it.typeConstructor())
         return typeVariablesThatAreNotCountedAsProperTypes!!.contains(it.typeConstructor())
     }
 
