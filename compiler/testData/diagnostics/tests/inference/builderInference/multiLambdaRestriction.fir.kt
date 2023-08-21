@@ -21,7 +21,7 @@ fun <R> b(first: () -> List<R>, second: (List<R>) -> Unit) {}
 fun test2() {
     b(
         first = {
-            buildList { add("") }
+            buildList { add(<!ARGUMENT_TYPE_MISMATCH!>""<!>) }
         },
         second = <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{
             it.myExt() // Note: must be extension to add constraints

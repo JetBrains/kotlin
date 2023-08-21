@@ -77,4 +77,12 @@ internal class FirSmartCastExpressionImpl(
     override fun replaceOriginalExpression(newOriginalExpression: FirExpression) {
         originalExpression = newOriginalExpression
     }
+
+    override fun replaceSmartcastType(newSmartcastType: FirTypeRef) {
+        smartcastType = newSmartcastType
+    }
+
+    override fun replaceSmartcastTypeWithoutNullableNothing(newSmartcastTypeWithoutNullableNothing: FirTypeRef?) {
+        smartcastTypeWithoutNullableNothing = newSmartcastTypeWithoutNullableNothing
+    }
 }
