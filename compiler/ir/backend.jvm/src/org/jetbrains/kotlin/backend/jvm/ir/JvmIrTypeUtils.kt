@@ -17,12 +17,11 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.unexpectedSymbolKind
+import org.jetbrains.kotlin.types.Variance
 
 /**
  * Perform as much type erasure as is significant for JVM signature generation.
@@ -41,9 +40,9 @@ fun IrType.eraseTypeParameters(): IrType = when (this) {
         when (val owner = classifier.owner) {
             is IrScript -> {
                 assert(arguments.isEmpty()) { "Script can't be generic: " + owner.render() }
-                IrSimpleTypeImpl(classifier, nullability, emptyList(), annotations)
+                this.buildSimpleType { arguments = emptyList() }
             }
-            is IrClass -> IrSimpleTypeImpl(classifier, nullability, arguments.map { it.eraseTypeParameters() }, annotations)
+            is IrClass -> this.buildSimpleType { arguments = this@eraseTypeParameters.arguments.map { it.eraseTypeParameters() } }
             is IrTypeParameter -> {
                 val upperBound = owner.erasedUpperBound
                 IrSimpleTypeImpl(
@@ -63,8 +62,15 @@ fun IrType.eraseTypeParameters(): IrType = when (this) {
 
 private fun IrTypeArgument.eraseTypeParameters(): IrTypeArgument = when (this) {
     is IrStarProjection -> this
-    is IrTypeProjection -> makeTypeProjection(type.eraseTypeParameters(), variance)
+    is IrTypeProjection -> customMakeTypeProjection(type.eraseTypeParameters(), variance)
 }
+
+private fun customMakeTypeProjection(type: IrType, variance: Variance): IrTypeProjection =
+    when (type) {
+        is IrSimpleType -> type.toBuilder().apply { this.variance = variance }.buildTypeProjection()
+        is IrErrorType -> type
+        else -> error("Unknown IrType kind: $type")
+    }
 
 /**
  * Computes the erased class for this type parameter according to the java erasure rules.
