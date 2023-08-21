@@ -46,6 +46,8 @@ class ConeTypeVariableTypeConstructor(
     fun recordInfoAboutTypeVariableUsagesAsInvariantOrContravariantParameter() {
         isContainedInInvariantOrContravariantPositions = true
     }
+
+    override fun toString(): String = "${this::class.simpleName}($debugName)"
 }
 
 // ----------------------------------- Stub types -----------------------------------

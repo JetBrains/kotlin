@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
-import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
+import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.PostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.util.CodeFragmentAdjustment
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class Candidate(
     symbol: FirBasedSymbol<*>,
@@ -47,6 +48,7 @@ class Candidate(
     val isFromCompanionObjectTypeScope: Boolean = false,
     // It's only true if we're in the member scope of smart cast receiver and this particular candidate came from original type
     val isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
+    inferenceSession: FirInferenceSession,
 ) : AbstractCandidate() {
 
     override var symbol: FirBasedSymbol<*> = symbol
@@ -66,10 +68,21 @@ class Candidate(
         this.symbol = symbol
     }
 
+    val usedOuterCs: Boolean get() = system.usesOuterCs
+
     private var systemInitialized: Boolean = false
     val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
         val system = constraintSystemFactory.createConstraintSystem()
-        system.setBaseSystem(baseSystem)
+
+        val baseCSFromInferenceSession =
+            runUnless(baseSystem.usesOuterCs) { inferenceSession.baseConstraintStorageForCandidate(this) }
+        if (baseCSFromInferenceSession != null) {
+            system.setBaseSystem(baseCSFromInferenceSession)
+            system.addOtherSystem(baseSystem)
+        } else {
+            system.setBaseSystem(baseSystem)
+        }
+
         systemInitialized = true
         system
     }
@@ -102,6 +115,9 @@ class Candidate(
     var functionTypesOfSamConversions: HashMap<FirExpression, ConeKotlinType>? = null
     lateinit var typeArgumentMapping: TypeArgumentMapping
     val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
+    val postponedPCLACalls = mutableListOf<FirStatement>()
+    val lambdasAnalyzedWithPCLA = mutableListOf<FirAnonymousFunction>()
+    val onCompletionResultsWritingCallbacks = mutableListOf<(ConeSubstitutor) -> Unit>()
 
     var currentApplicability = CandidateApplicability.RESOLVED
         private set
