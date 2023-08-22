@@ -104,7 +104,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
     }
 
     private val IrSimpleFunction.isFinalDefaultValGetter: Boolean
-        get() = origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR &&
+        get() = origin === IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR &&
                 correspondingPropertySymbol?.let { it.owner.getter == this && it.owner.setter == null } == true &&
                 modality == Modality.FINAL
 

@@ -165,8 +165,8 @@ abstract class AnnotationCodegen(
     }
 
     private fun isMovedReceiverParameterOfStaticValueClassReplacement(parameter: IrValueParameter, parent: IrDeclaration): Boolean =
-        (parent.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT || parent.origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT) &&
-                parameter.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
+        (parent.origin === JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT || parent.origin === JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT) &&
+                parameter.origin === IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
 
     private fun generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent: MutableSet<String>, annotationClass: Class<*>) {
         val descriptor = Type.getType(annotationClass).descriptor
@@ -342,9 +342,9 @@ abstract class AnnotationCodegen(
             when {
                 declaration.origin.isSynthetic ->
                     true
-                declaration.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
-                declaration.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
-                        declaration.origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION ->
+                declaration.origin === JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
+                declaration.origin === JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
+                        declaration.origin === IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION ->
                     true
                 else ->
                     false
@@ -397,7 +397,7 @@ abstract class AnnotationCodegen(
         annotated: IrAnnotationContainer,
         type: IrType?
     ) {
-        if ((annotated as? IrDeclaration)?.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
+        if ((annotated as? IrDeclaration)?.origin === JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
             type == null || !context.state.configuration.getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)
         ) {
             return
@@ -426,7 +426,7 @@ abstract class AnnotationCodegen(
 
         private val IrClass.isCompiledToJvm8OrHigher: Boolean
             get() =
-                (origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB || origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) &&
+                (origin === IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB || origin === IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) &&
                         isCompiledToJvm8OrHigher(source)
     }
 

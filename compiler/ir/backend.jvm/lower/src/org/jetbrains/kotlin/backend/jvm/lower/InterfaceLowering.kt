@@ -124,12 +124,12 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                  *    and $annotation methods are always moved without bridges
                  */
                 (!function.isCompiledToJvmDefault(jvmDefaultMode) && (DescriptorVisibilities.isPrivate(function.visibility)
-                        || function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
-                        || function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS)) ||
-                        (function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
+                        || function.origin === IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+                        || function.origin === JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS)) ||
+                        (function.origin === JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
                                 (isCompatibilityMode || jvmDefaultMode == JvmDefaultMode.ENABLE) &&
                                 function.isCompiledToJvmDefault(jvmDefaultMode)) -> {
-                    if (function.origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA) {
+                    if (function.origin === JvmLoweredDeclarationOrigin.INLINE_LAMBDA) {
                         //move as is
                         val defaultImplsClass = context.cachedDeclarations.getDefaultImplsClass(irClass)
                         defaultImplsClass.declarations.add(function)
@@ -158,7 +158,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                  */
                 isCompatibilityMode -> {
                     val visibility =
-                        if (function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER)
+                        if (function.origin === IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER)
                             context.mapping.defaultArgumentsOriginalFunction[function]!!.visibility
                         else function.visibility
                     if (!DescriptorVisibilities.isPrivate(visibility)) {
@@ -193,7 +193,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
     private fun handleAnnotationClass(irClass: IrClass) {
         // We produce $DefaultImpls for annotation classes only to move $annotations methods (for property annotations) there.
         val annotationsMethods =
-            irClass.functions.filter { it.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS }
+            irClass.functions.filter { it.origin === JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS }
         if (annotationsMethods.none()) return
 
         for (function in annotationsMethods) {

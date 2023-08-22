@@ -45,8 +45,8 @@ open class JvmInventNamesForLocalClasses(
         val file = clazz.parent as? IrFile
             ?: throw AssertionError("Top-level class expected: ${clazz.render()}")
         val classFqn =
-            if (clazz.origin == IrDeclarationOrigin.FILE_CLASS ||
-                clazz.origin == IrDeclarationOrigin.SYNTHETIC_FILE_CLASS
+            if (clazz.origin === IrDeclarationOrigin.FILE_CLASS ||
+                clazz.origin === IrDeclarationOrigin.SYNTHETIC_FILE_CLASS
             ) {
                 file.getFileClassInfo().fileClassFqName
             } else {

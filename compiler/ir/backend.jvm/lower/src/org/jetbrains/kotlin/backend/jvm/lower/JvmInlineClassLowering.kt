@@ -378,7 +378,7 @@ internal class JvmInlineClassLowering(
     override fun visitGetField(expression: IrGetField): IrExpression {
         val field = expression.symbol.owner
         val parent = field.parent
-        if (field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD &&
+        if (field.origin === IrDeclarationOrigin.PROPERTY_BACKING_FIELD &&
             parent is IrClass &&
             parent.isSingleFieldValueClass &&
             field.name == parent.inlineClassFieldName
@@ -498,7 +498,7 @@ internal class JvmInlineClassLowering(
             val context = this@JvmInlineClassLowering.context
             val underlyingType = getInlineClassUnderlyingType(valueClass)
             irExprBody(
-                if (untypedEquals.origin == IrDeclarationOrigin.DEFINED) {
+                if (untypedEquals.origin === IrDeclarationOrigin.DEFINED) {
                     val boxFunction = context.inlineClassReplacements.getBoxFunction(valueClass)
 
                     fun irBox(expr: IrExpression) = irCall(boxFunction).apply { putValueArgument(0, expr) }

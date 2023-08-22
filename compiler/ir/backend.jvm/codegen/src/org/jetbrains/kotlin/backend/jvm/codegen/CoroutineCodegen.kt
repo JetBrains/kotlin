@@ -63,7 +63,7 @@ internal fun MethodNode.acceptWithStateMachine(
         lineNumber = lineNumber,
         sourceFile = classCodegen.irClass.file.name, // SuspendLambda.invokeSuspend is not suspend
         needDispatchReceiver = irFunction.isSuspend && (irFunction.dispatchReceiverParameter != null
-                || irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION),
+                || irFunction.origin === JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION),
         internalNameForDispatchReceiver = classCodegen.type.internalName,
         putContinuationParameterToLvt = false,
         initialVarsCountByType = varsCountByType,
@@ -90,11 +90,11 @@ internal fun IrFunction.suspendForInlineToOriginal(): IrSimpleFunction? {
 internal fun IrFunction.isSuspendCapturingCrossinline(): Boolean =
     this is IrSimpleFunction && hasContinuation() && parentAsClass.declarations.any {
         it is IrSimpleFunction && it.attributeOwnerId == attributeOwnerId &&
-                it.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
+                it.origin === JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
     }
 
 internal fun IrFunction.continuationClass(): IrClass? =
-    (body as? IrBlockBody)?.statements?.find { it is IrClass && it.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS }
+    (body as? IrBlockBody)?.statements?.find { it is IrClass && it.origin === JvmLoweredDeclarationOrigin.CONTINUATION_CLASS }
             as IrClass?
 
 internal fun IrExpression?.isReadOfInlineLambda(): Boolean = isReadOfCrossinline() ||

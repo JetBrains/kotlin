@@ -124,7 +124,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 resultField,
                 labelField,
                 capturedThisField,
-                irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION
+                irFunction.origin === JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION
             )
             copyAttributes(attributeContainer)
         }
@@ -233,7 +233,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
         // Fixup dispatch parameter to outer class
         if (irFunction.parentAsClass.isInner) {
             val movedDispatchParameter = static.valueParameters[0]
-            assert(movedDispatchParameter.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER) {
+            assert(movedDispatchParameter.origin === IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER) {
                 "MOVED_DISPATCH_RECEIVER should be the first parameter in ${static.render()}"
             }
             static.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -317,8 +317,8 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 // Sometimes, suspend methods of SAM adapters or function references require a continuation class.
                 // However, the attribute owner is used to store the name of the SAM adapter or the function reference itself.
                 // So here we add a local class name using the suspend method itself as the key.
-                if (function.parentAsClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
-                    function.parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                if (function.parentAsClass.origin === JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
+                    function.parentAsClass.origin === JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
                 ) {
                     context.putLocalClassType(
                         function.attributeOwnerId,
@@ -402,8 +402,8 @@ private fun IrSimpleFunction.suspendFunctionViewOrStub(context: JvmBackendContex
     if (!isSuspend) return this
     // If superinterface is in another file, the bridge to default method will already have continuation parameter,
     // so skip it. See KT-47549.
-    if (origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE &&
-        valueParameters.lastOrNull()?.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
+    if (origin === JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE &&
+        valueParameters.lastOrNull()?.origin === JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
     ) return this
     // We need to use suspend function originals here, since if we use 'this' here,
     // turing FlowCollector into 'fun interface' leads to AbstractMethodError. See KT-49294.
@@ -433,7 +433,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
 
         // The continuation parameter goes before the default argument mask(s) and handler for default argument stubs.
         // TODO: It would be nice if AddContinuationLowering could insert the continuation argument before default stub generation.
-        val index = valueParameters.firstOrNull { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }?.index
+        val index = valueParameters.firstOrNull { it.origin === IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }?.index
             ?: valueParameters.size
         function.valueParameters += valueParameters.take(index).map {
             it.copyTo(function, index = it.index, type = it.type.substitute(substitutionMap))
@@ -474,7 +474,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
     // Calls inside continuation are already generated with continuation parameter as well as calls to suspendImpls
     val owner = symbol.owner
     if (owner !is IrSimpleFunction || !owner.isSuspend || caller?.isInvokeSuspendOfContinuation() == true
-        || owner.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION
+        || owner.origin === JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION
         || owner.continuationParameter() != null
     ) return this
     val view = owner.suspendFunctionViewOrStub(context)
@@ -492,7 +492,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
             it.putValueArgument(i + if (i >= continuationParameter.index) 1 else 0, getValueArgument(i))
         }
         if (caller != null) {
-            val continuation = if (caller.origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA)
+            val continuation = if (caller.origin === JvmLoweredDeclarationOrigin.INLINE_LAMBDA)
                 IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, continuationParameter.type, JvmLoweredStatementOrigin.FAKE_CONTINUATION)
             else
                 IrGetValueImpl(

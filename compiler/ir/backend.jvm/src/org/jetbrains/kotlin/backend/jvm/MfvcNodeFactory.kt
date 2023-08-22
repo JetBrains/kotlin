@@ -83,7 +83,7 @@ fun createLeafMfvcNode(
     return LeafMfvcNode(type, methodFullNameMode, nameParts, field, unboxMethod, defaultMethodsImplementationSourceNode)
 }
 
-fun IrClass.isKotlinExternalStub() = origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+fun IrClass.isKotlinExternalStub() = origin === IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 
 @OptIn(ExperimentalContracts::class)
 private fun IrClass.throwWhenNotExternalIsNull(value: Any?) {

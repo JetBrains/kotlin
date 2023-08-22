@@ -871,7 +871,7 @@ private class ScriptToClassTransformer(
         val earlierScriptIndex = when {
             scriptSymbolOwner is IrScript ->
                 irScript.earlierScripts!!.indexOfFirst { it == scriptSymbol }
-            (scriptSymbolOwner as? IrClass)?.origin == IrDeclarationOrigin.SCRIPT_CLASS -> {
+            (scriptSymbolOwner as? IrClass)?.origin === IrDeclarationOrigin.SCRIPT_CLASS -> {
                 irScript.earlierScripts!!.indexOfFirst { it.owner.targetClass == scriptSymbol }
             }
             else -> return null
@@ -896,7 +896,7 @@ private class ScriptToClassTransformer(
             val prevScriptClassType =
                 when {
                     scriptSymbolOwner is IrScript -> scriptSymbolOwner.targetClass?.owner
-                    (scriptSymbolOwner as? IrClass)?.origin == IrDeclarationOrigin.SCRIPT_CLASS -> scriptSymbolOwner
+                    (scriptSymbolOwner as? IrClass)?.origin === IrDeclarationOrigin.SCRIPT_CLASS -> scriptSymbolOwner
                     else -> null
                 }
             return if (prevScriptClassType == null) getPrevScriptObjectExpression
@@ -914,12 +914,12 @@ private class ScriptToClassTransformer(
                 val newExpression =
                     if (data.isInScriptConstructor) {
                         val correspondingCtorParam = irScriptClass.constructors.single().valueParameters.find {
-                            it.origin == IrDeclarationOrigin.SCRIPT_CALL_PARAMETER && it.name == correspondingVariable.name
+                            it.origin === IrDeclarationOrigin.SCRIPT_CALL_PARAMETER && it.name == correspondingVariable.name
                         } ?: error("script explicit parameter ${correspondingVariable.name.asString()} not found")
                         builder.irGet(correspondingCtorParam.type, correspondingCtorParam.symbol)
                     } else {
                         val correspondingField = irScriptClass.declarations.find {
-                            it is IrField &&  it.origin == IrDeclarationOrigin.SCRIPT_CALL_PARAMETER && it.name == correspondingVariable.name
+                            it is IrField &&  it.origin === IrDeclarationOrigin.SCRIPT_CALL_PARAMETER && it.name == correspondingVariable.name
                         } ?: error("script explicit parameter ${correspondingVariable.name.asString()} corresponding property not found")
                         val scriptReceiver =
                             getAccessCallForScriptInstance(data, expression.startOffset, expression.endOffset, expression.origin, null)
@@ -960,7 +960,7 @@ private class ScriptToClassTransformer(
                 }?.dispatchReceiverParameter
             }
             else -> null
-        }?.origin == IrDeclarationOrigin.SCRIPT_THIS_RECEIVER
+        }?.origin === IrDeclarationOrigin.SCRIPT_THIS_RECEIVER
 }
 
 private class ScriptFixLambdasTransformer(val irScriptClass: IrClass) : IrElementTransformer<ScriptFixLambdasTransformerContext> {
@@ -996,7 +996,7 @@ private class ScriptFixLambdasTransformer(val irScriptClass: IrClass) : IrElemen
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: ScriptFixLambdasTransformerContext): IrSimpleFunction =
         with(declaration) {
-            if (data.insideTopLevelDestructuringDeclaration && origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
+            if (data.insideTopLevelDestructuringDeclaration && origin === IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
                 visibility = DescriptorVisibilities.LOCAL
                 val dataForChildren =
                     if (dispatchReceiverParameter?.type == irScriptClass.defaultType) {

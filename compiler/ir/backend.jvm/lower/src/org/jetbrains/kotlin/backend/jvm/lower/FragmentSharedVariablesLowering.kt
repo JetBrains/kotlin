@@ -82,7 +82,7 @@ class FragmentSharedVariablesLowering(
     private fun promoteParametersForCapturesToRefs(declaration: IrFunction): Map<IrValueParameterSymbol, IrValueParameterSymbol> {
         val promotedParameters = mutableMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
         declaration.valueParameters = declaration.valueParameters.map {
-            if (it.origin == IrDeclarationOrigin.SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT) {
+            if (it.origin === IrDeclarationOrigin.SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT) {
                 val newParameter =
                     it.copyTo(
                         declaration,

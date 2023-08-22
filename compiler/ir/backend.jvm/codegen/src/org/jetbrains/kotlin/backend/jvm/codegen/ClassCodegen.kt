@@ -164,7 +164,7 @@ class ClassCodegen private constructor(
             if (method.name.asString() != "<clinit>" &&
                 method.origin != JvmLoweredDeclarationOrigin.INLINE_LAMBDA &&
                 method.origin != IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR &&
-                !(method.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE && method.body == null)
+                !(method.origin === IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE && method.body == null)
             ) {
                 generateMethod(method, smap)
             }
@@ -342,7 +342,7 @@ class ClassCodegen private constructor(
     private fun generateField(field: IrField) {
         val fieldType = typeMapper.mapType(field)
         val fieldSignature =
-            if (field.origin == IrDeclarationOrigin.PROPERTY_DELEGATE) null
+            if (field.origin === IrDeclarationOrigin.PROPERTY_DELEGATE) null
             else methodSignatureMapper.mapFieldSignature(field)
         val fieldName = field.name.asString()
         val flags = field.computeFieldFlags(context, state.languageVersionSettings)
@@ -356,7 +356,7 @@ class ClassCodegen private constructor(
         if (field.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD) {
             val skipNullabilityAnnotations =
                 flags and (Opcodes.ACC_SYNTHETIC or Opcodes.ACC_ENUM) != 0 ||
-                        (field.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE && irClass.isSyntheticSingleton)
+                        (field.origin === IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE && irClass.isSyntheticSingleton)
             object : AnnotationCodegen(this@ClassCodegen, skipNullabilityAnnotations) {
                 override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                     return fv.visitAnnotation(descr, visible)
@@ -406,8 +406,8 @@ class ClassCodegen private constructor(
 
         val (node, smap) = generateMethodNode(method)
         node.preprocessSuspendMarkers(
-            method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE || method.isEffectivelyInlineOnly(),
-            method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
+            method.origin === JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE || method.isEffectivelyInlineOnly(),
+            method.origin === JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
         )
         val mv = with(node) { visitor.newMethod(method.descriptorOrigin, access, name, desc, signature, exceptions.toTypedArray()) }
         val smapCopier = SourceMapCopier(classSMAP, smap)
@@ -511,7 +511,7 @@ class ClassCodegen private constructor(
         get() = isSamWrapper && visibility == DescriptorVisibilities.PUBLIC
 
     private val IrClass.isSamWrapper: Boolean
-        get() = origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
+        get() = origin === IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
 
     private val IrClass.isAnnotationImplementation: Boolean
         get() = origin == ANNOTATION_IMPLEMENTATION
@@ -546,7 +546,7 @@ class ClassCodegen private constructor(
             // class initializer, but can be referred to from anywhere within the scope of the class. That's why we have to ensure
             // that all references to classes inside of <clinit> have a non-null `parentFunction`.
             parentFunction: IrFunction? = (irClass.parent as? IrFunction)?.takeIf {
-                it.origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
+                it.origin === JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
             },
         ): ClassCodegen =
             context.getOrCreateClassCodegen(irClass) { ClassCodegen(irClass, context, parentFunction) }.also {
@@ -578,7 +578,7 @@ private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): 
 private fun IrClass.getSynthAccessFlag(languageVersionSettings: LanguageVersionSettings): Int {
     if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME))
         return Opcodes.ACC_SYNTHETIC
-    if (origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION &&
+    if (origin === IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION &&
         languageVersionSettings.supportsFeature(LanguageFeature.SamWrapperClassesAreSynthetic)
     )
         return Opcodes.ACC_SYNTHETIC
@@ -599,14 +599,14 @@ private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersio
             ) Opcodes.ACC_SYNTHETIC else 0)
 
 private fun IrField.isPrivateCompanionFieldInInterface(languageVersionSettings: LanguageVersionSettings): Boolean =
-    origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
+    origin === IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
             languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField) &&
             parentAsClass.isJvmInterface &&
             DescriptorVisibilities.isPrivate(parentAsClass.companionObject()!!.visibility)
 
 private val IrDeclarationOrigin.flags: Int
     get() = (if (isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
-            (if (this == IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) Opcodes.ACC_ENUM else 0)
+            (if (this === IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) Opcodes.ACC_ENUM else 0)
 
 private val Modality.flags: Int
     get() = when (this) {

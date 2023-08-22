@@ -105,9 +105,9 @@ class IrInlineCodegen(
         } else {
             val isInlineParameter = irValueParameter.isInlineParameter()
             val kind = when {
-                irValueParameter.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION ->
+                irValueParameter.origin === IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION ->
                     ValueKind.DEFAULT_MASK
-                irValueParameter.origin == IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION ->
+                irValueParameter.origin === IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION ->
                     ValueKind.METHOD_HANDLE_IN_DEFAULT
                 argumentExpression is IrContainerExpression && argumentExpression.origin == IrStatementOrigin.DEFAULT_VALUE ->
                     if (isInlineParameter)

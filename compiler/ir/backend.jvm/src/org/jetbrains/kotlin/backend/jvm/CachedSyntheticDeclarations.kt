@@ -404,7 +404,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
             // The only function accessors placed on interfaces are for private functions and JvmDefault implementations.
             // The two cannot clash.
             currentClass?.irElement?.let { element ->
-                element is IrClass && element.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS && element.parentAsClass == parentAsClass
+                element is IrClass && element.origin === JvmLoweredDeclarationOrigin.DEFAULT_IMPLS && element.parentAsClass == parentAsClass
             } ?: false -> if (!DescriptorVisibilities.isPrivate(visibility)) "\$jd" else ""
 
             // Accessor for _s_uper-qualified call
@@ -432,7 +432,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
 
     private fun IrField.fieldAccessorSuffix(superQualifierSymbol: IrClassSymbol?): String {
         // Special _c_ompanion _p_roperty suffix for accessing companion backing field moved to outer
-        if (origin == JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD && !parentAsClass.isCompanion) {
+        if (origin === JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD && !parentAsClass.isCompanion) {
             return "cp"
         }
 
@@ -468,10 +468,10 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
     }
 
     private val IrConstructor.isOrShouldBeHiddenDueToOrigin: Boolean
-        get() = !(origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
-                origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
-                origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR ||
-                origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
+        get() = !(origin === IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+                origin === JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
+                origin === JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR ||
+                origin === IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
 
     fun getSyntheticConstructorWithMangledParams(declaration: IrConstructor) =
         getSyntheticConstructorAccessor(declaration, context.hiddenConstructorsWithMangledParams)

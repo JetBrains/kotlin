@@ -132,7 +132,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
 
     override fun visitClass(declaration: IrClass): IrStatement {
         // Bridges in DefaultImpl classes are handled in InterfaceLowering.
-        if (declaration.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS || declaration.isAnnotationClass)
+        if (declaration.origin === JvmLoweredDeclarationOrigin.DEFAULT_IMPLS || declaration.isAnnotationClass)
             return super.visitClass(declaration)
 
         val bridgeTargets = declaration.functions.filterTo(SmartList()) { it.isPotentialBridgeTarget() }
@@ -198,7 +198,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         // multiple different default argument stubs, but for now we need this special case
         // to avoid a ClassCastException in the inliner (KT-46389).
         val targetFunction = irFunction.resolveFakeOverride() ?: irFunction
-        if (targetFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+        if (targetFunction.origin === IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
             return
         }
         // Add the current method to the blacklist if it is concrete or final

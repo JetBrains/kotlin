@@ -37,4 +37,4 @@ class MultifileFacadeFileEntry(
 }
 
 fun IrFunction.isMultifileBridge(): Boolean =
-    (parent as? IrClass)?.origin == IrDeclarationOrigin.JVM_MULTIFILE_CLASS
+    (parent as? IrClass)?.origin === IrDeclarationOrigin.JVM_MULTIFILE_CLASS

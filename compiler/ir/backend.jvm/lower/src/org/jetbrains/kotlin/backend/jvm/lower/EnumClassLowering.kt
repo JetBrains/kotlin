@@ -140,7 +140,7 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
             get() = declarations.any { it.isGetEntriesFunction }
 
         private val IrDeclaration.isGetEntriesFunction: Boolean
-            get() = this is IrFunction && name == SpecialNames.ENUM_GET_ENTRIES && origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
+            get() = this is IrFunction && name == SpecialNames.ENUM_GET_ENTRIES && origin === IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
 
         private fun buildEnumEntryField(enumEntry: IrEnumEntry): IrField =
             context.cachedDeclarations.getFieldForEnumEntry(enumEntry).apply {

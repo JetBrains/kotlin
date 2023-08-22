@@ -161,7 +161,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         }
 
         val implFunParent = implFun.parent
-        if (implFunParent is IrClass && implFunParent.origin == IrDeclarationOrigin.JVM_MULTIFILE_CLASS) {
+        if (implFunParent is IrClass && implFunParent.origin === IrDeclarationOrigin.JVM_MULTIFILE_CLASS) {
             // LambdaMetafactory treats multifile class part members as non-accessible,
             // even if the member is referenced via facade,
             // because corresponding part class is non-accessible
@@ -238,7 +238,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
                         ?: continue
                 else
                     irMemberFun
-            if (irImplFun.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
+            if (irImplFun.origin === IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
                 continue
             if (!irImplFun.isCompiledToJvmDefault(context.config.jvmDefaultMode))
                 return true
@@ -337,7 +337,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         }
 
         val newReference =
-            if (implFun.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA || implFun.isAnonymousFunction)
+            if (implFun.origin === IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA || implFun.isAnonymousFunction)
                 remapExtensionLambda(implFun as IrSimpleFunction, reference)
             else
                 reference

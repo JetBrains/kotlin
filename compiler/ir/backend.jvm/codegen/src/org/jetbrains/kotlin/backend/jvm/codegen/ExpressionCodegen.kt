@@ -284,21 +284,21 @@ class ExpressionCodegen(
 
         if ((DescriptorVisibilities.isPrivate(irFunction.visibility) && !shouldGenerateNonNullAssertionsForPrivateFun(irFunction)) ||
             irFunction.origin.isSynthetic ||
-            irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA ||
+            irFunction.origin === JvmLoweredDeclarationOrigin.INLINE_LAMBDA ||
             // TODO: refine this condition to not generate nullability assertions on parameters
             //       corresponding to captured variables and anonymous object super constructor arguments
             (irFunction is IrConstructor && irFunction.parentAsClass.isAnonymousObject) ||
             // TODO: Implement this as a lowering, so that we can more easily exclude generated methods.
-            irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
-            irFunction.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
+            irFunction.origin === JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
+            irFunction.origin === JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
             // Although these are accessible from Java, the functions they bridge to already have the assertions.
-            irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL ||
-            irFunction.origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE ||
-            irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
-            irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ||
-            irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER ||
-            irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
-            irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
+            irFunction.origin === IrDeclarationOrigin.BRIDGE_SPECIAL ||
+            irFunction.origin === JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE ||
+            irFunction.origin === JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
+            irFunction.origin === IrDeclarationOrigin.IR_BUILTINS_STUB ||
+            irFunction.origin === IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER ||
+            irFunction.parentAsClass.origin === JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
+            irFunction.parentAsClass.origin === JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
             irFunction.isMultifileBridge()
         )
             return
@@ -321,14 +321,14 @@ class ExpressionCodegen(
     // * Local function for lambda survives at this stage if it was used in 'invokedynamic'-based code.
     // * Hidden constructors with mangled parameters require non-null assertions (see KT-53492)
     private fun shouldGenerateNonNullAssertionsForPrivateFun(irFunction: IrFunction): Boolean {
-        if (irFunction is IrSimpleFunction && irFunction.isOperator || irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return true
+        if (irFunction is IrSimpleFunction && irFunction.isOperator || irFunction.origin === IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return true
         if (context.hiddenConstructorsWithMangledParams.containsKey(irFunction)) return true
         return false
     }
 
     private fun generateNonNullAssertion(param: IrValueParameter) {
-        if (param.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS ||
-            param.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
+        if (param.origin === JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS ||
+            param.origin === IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
         )
             return
         val asmType = param.type.asmType
@@ -345,7 +345,7 @@ class ExpressionCodegen(
     }
 
     private fun writeParameterInLocalVariableTable(startLabel: Label, endLabel: Label) {
-        if (!irFunction.isInline && irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) return
+        if (!irFunction.isInline && irFunction.origin === IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) return
         if (!irFunction.isStatic) {
             mv.visitLocalVariable("this", classCodegen.type.descriptor, null, startLabel, endLabel, 0)
         }
@@ -354,7 +354,7 @@ class ExpressionCodegen(
             writeValueParameterInLocalVariableTable(extensionReceiverParameter, startLabel, endLabel, true)
         }
         for (param in irFunction.valueParameters) {
-            if (param.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION || param.origin == IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION)
+            if (param.origin === IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION || param.origin === IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION)
                 continue
             writeValueParameterInLocalVariableTable(param, startLabel, endLabel, false)
         }
@@ -521,7 +521,7 @@ class ExpressionCodegen(
     private fun IrDeclaration.getClassWithDeclaredFunction(): IrClass? {
         val parent = this.parentClassOrNull ?: return null
         if (!parent.isInterface || (this is IrFunction && this.hasJvmDefault())) return parent
-        return parent.declarations.singleOrNull { it.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS } as IrClass
+        return parent.declarations.singleOrNull { it.origin === JvmLoweredDeclarationOrigin.DEFAULT_IMPLS } as IrClass
     }
 
     private fun IrInlinedFunctionBlock.buildOrGetClassSMAP(data: BlockInfo): SMAP {
@@ -535,7 +535,7 @@ class ExpressionCodegen(
             .filterIsInstance<IrSimpleFunction>()
             .filter { it.attributeOwnerId == callee } // original callee could be transformed after lowerings, so we must get correct one
             .filter {
-                if (inlineCall.usesDefaultArguments()) it.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+                if (inlineCall.usesDefaultArguments()) it.origin === IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
                 else it.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
             }
             .filter { it.origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE } // filter functions with $$forInline postfix
@@ -846,7 +846,7 @@ class ExpressionCodegen(
             // We only initialize enum entries with a subtype of `fieldType` and can avoid the CHECKCAST.
             // This is important for some tools which analyze bytecode for enum classes by looking at the
             // initializer of the $VALUES field.
-            if (callee.origin == IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) {
+            if (callee.origin === IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) {
                 value.materialize()
             } else {
                 value.materializeAt(fieldType, callee.type)
@@ -857,7 +857,7 @@ class ExpressionCodegen(
             assert(expression.type.isUnit())
             unitValue
         } else {
-            if (expression.symbol.owner.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE) {
+            if (expression.symbol.owner.origin === IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE) {
                 putNeedClassReificationMarker(expression.symbol.owner.parentAsClass)
             }
             mv.visitFieldInsn(if (isStatic) Opcodes.GETSTATIC else Opcodes.GETFIELD, ownerName, fieldName, fieldType.descriptor)
@@ -868,7 +868,7 @@ class ExpressionCodegen(
     override fun visitSetField(expression: IrSetField, data: BlockInfo): PromisedValue {
         val expressionValue = expression.value
         // Do not add redundant field initializers that initialize to default values.
-        val inClassInit = irFunction.origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
+        val inClassInit = irFunction.origin === JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
         val isFieldInitializer = expression.origin == IrStatementOrigin.INITIALIZE_FIELD
         val skip = (irFunction is IrConstructor || inClassInit) && isFieldInitializer && expressionValue is IrConst<*> &&
                 isDefaultValueForType(expression.symbol.owner.type.asmType, expressionValue.value)
@@ -966,7 +966,7 @@ class ExpressionCodegen(
             val childCodegen = ClassCodegen.getOrCreate(declaration, context, enclosingFunctionForLocalObjects)
             childCodegen.generate()
             closureReifiedMarkers[declaration] = childCodegen.reifiedTypeParametersUsages
-            if (irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER || declaration.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
+            if (irFunction.origin === IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER || declaration.origin === JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
                 context.typeToCachedSMAP[childCodegen.type] = SMAP(childCodegen.smap.resultMappings)
             }
         }
@@ -1553,7 +1553,7 @@ class ExpressionCodegen(
     ): IrCallGenerator {
         if (!element.symbol.owner.isInlineFunctionCall(context) ||
             classCodegen.irClass.fileParent.fileEntry is MultifileFacadeFileEntry ||
-            irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
+            irFunction.origin === JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
             irFunction.isInvokeSuspendOfContinuation()
         ) {
             return IrCallGenerator.DefaultCallGenerator
@@ -1600,7 +1600,7 @@ class ExpressionCodegen(
     }
 
     val isFinallyMarkerRequired: Boolean
-        get() = irFunction.isInline || irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA
+        get() = irFunction.isInline || irFunction.origin === JvmLoweredDeclarationOrigin.INLINE_LAMBDA
 
     companion object {
         internal fun generateClassInstance(v: InstructionAdapter, classType: IrType, typeMapper: IrTypeMapper, wrapPrimitives: Boolean) {

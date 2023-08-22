@@ -82,7 +82,7 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
             // References to generic synthetic Java properties aren't inlined in K1. Fixes KT-57103
             if (typeArgumentsCount > 0 &&
                 symbol.owner.origin.let {
-                    it == IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE || it == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+                    it === IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE || it === IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
                 }
             ) this
             // ::property -> { receiver -> receiver.property }; prefer direct field access if allowed.

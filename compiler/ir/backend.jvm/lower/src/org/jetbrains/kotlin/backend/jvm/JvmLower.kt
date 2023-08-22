@@ -121,10 +121,10 @@ internal val propertiesPhase = makeIrFilePhase(
 )
 
 internal val IrClass.isGeneratedLambdaClass: Boolean
-    get() = origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
-            origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
-            origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
-            origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
+    get() = origin === JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
+            origin === JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
+            origin === JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
+            origin === JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
 
 internal class JvmVisibilityPolicy : VisibilityPolicy {
     // Note: any condition that results in non-`LOCAL` visibility here should be duplicated in `JvmLocalClassPopupLowering`,

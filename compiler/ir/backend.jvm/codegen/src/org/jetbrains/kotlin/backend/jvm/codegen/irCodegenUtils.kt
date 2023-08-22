@@ -301,7 +301,7 @@ internal fun IrDeclaration.isDeprecatedCallable(context: JvmBackendContext): Boo
             annotations.any { it.symbol == context.ir.symbols.javaLangDeprecatedConstructorWithDeprecatedFlag }
 
 internal fun IrFunction.isDeprecatedFunction(context: JvmBackendContext): Boolean =
-    origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ||
+    origin === JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ||
             isDeprecatedCallable(context) ||
             (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.isDeprecatedCallable(context) == true ||
             isAccessorForDeprecatedPropertyImplementedByDelegation ||
@@ -309,7 +309,7 @@ internal fun IrFunction.isDeprecatedFunction(context: JvmBackendContext): Boolea
 
 private val IrFunction.isAccessorForDeprecatedPropertyImplementedByDelegation: Boolean
     get() =
-        origin == IrDeclarationOrigin.DELEGATED_MEMBER &&
+        origin === IrDeclarationOrigin.DELEGATED_MEMBER &&
                 this is IrSimpleFunction &&
                 correspondingPropertySymbol != null &&
                 overriddenSymbols.any {

@@ -21,22 +21,22 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 
 fun IrFunction.continuationParameter(): IrValueParameter? = when {
     isInvokeSuspendOfLambda() || isInvokeSuspendForInlineOfLambda() -> dispatchReceiverParameter
-    else -> valueParameters.singleOrNull { it.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS }
+    else -> valueParameters.singleOrNull { it.origin === JvmLoweredDeclarationOrigin.CONTINUATION_CLASS }
 }
 
 fun IrFunction.isInvokeSuspendOfLambda(): Boolean =
-    name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
+    name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass.origin === JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
 
 private fun IrFunction.isInvokeSuspendForInlineOfLambda(): Boolean =
-    origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
-            && parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
+    origin === JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
+            && parentAsClass.origin === JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
 
 fun IrFunction.isInvokeSuspendOfContinuation(): Boolean =
-    name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
+    name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass.origin === JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
 
 private fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean =
     isSuspend && name.asString().let { name -> name == "invoke" || name.startsWith("invoke-") }
-            && parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+            && parentAsClass.origin === JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
             // References to inline functions don't count since they're not really *references* - the contents
             // of the inline function are copy-pasted into the `invoke` method, and may require a continuation.
             // (TODO: maybe the reference itself should be the continuation, just like lambdas?)

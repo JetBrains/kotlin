@@ -174,7 +174,7 @@ private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrEl
 
     private fun postprocessMovedThis(irCall: IrCall) {
         val movedThisParameter = irCall.symbol.owner.valueParameters
-            .find { it.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER }
+            .find { it.origin === IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER }
             ?: return
         val movedThisParameterIndex = movedThisParameter.index
         irCall.putValueArgument(
@@ -237,9 +237,9 @@ internal fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod(
     implementation: IrSimpleFunction? = resolveFakeOverride()
 ): Boolean =
     implementation == null ||
-            implementation.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||
+            implementation.origin === IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||
             implementation.isCompiledToJvmDefault(jvmDefaultMode) ||
-            origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+            origin === IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
             hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME) ||
             isCloneableClone()
 
@@ -314,4 +314,4 @@ internal fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDef
 }
 
 private fun isDefaultImplsBridge(f: IrSimpleFunction) =
-    f.origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
+    f.origin === JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE

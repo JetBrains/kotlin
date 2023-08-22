@@ -69,5 +69,5 @@ private class MakePropertyDelegateMethodsStaticLowering(val context: JvmBackendC
     }
 
     private fun IrSimpleFunction.isSyntheticDelegateMethod(): Boolean =
-        origin == IrDeclarationOrigin.PROPERTY_DELEGATE && name.asString().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)
+        origin === IrDeclarationOrigin.PROPERTY_DELEGATE && name.asString().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)
 }

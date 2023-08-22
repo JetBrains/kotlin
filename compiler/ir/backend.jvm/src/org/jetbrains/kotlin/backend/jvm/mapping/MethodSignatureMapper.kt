@@ -109,7 +109,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             }
         } ?: return newName
 
-        if (function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+        if (function.origin === IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
             assert(newName.endsWith(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX)) { "Default adapter should end with \$default: ${function.render()}" }
             return newName.substringBeforeLast(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX) + "$" + suffix + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX
         }
@@ -140,7 +140,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     }
 
     private val IrSimpleFunction.originalForDefaultAdapter: IrSimpleFunction?
-        get() = if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+        get() = if (origin === IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
             (attributeOwnerId as IrFunction).symbol.owner as IrSimpleFunction
         } else null
 
@@ -212,7 +212,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     private fun isBoxMethodForInlineClass(function: IrFunction): Boolean =
         function.parent.let { it is IrClass && it.isSingleFieldValueClass } &&
-                function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER &&
+                function.origin === JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER &&
                 function.name.asString() == "box-impl"
 
     fun mapFakeOverrideSignatureSkipGeneric(function: IrFunction): JvmMethodSignature =
@@ -236,7 +236,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         ) {
             // Overrides of special builtin in Kotlin classes always have special signature
             if ((function as? IrSimpleFunction)?.getDifferentNameForJvmBuiltinFunction() == null ||
-                (function.parent as? IrClass)?.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+                (function.parent as? IrClass)?.origin === IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
             ) {
                 return mapSignature(function.initialSignatureFunction!!, skipGenericSignature)
             }
@@ -290,7 +290,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             val newGenericSignature = specialSignatureInfo.replaceValueParametersIn(signature.genericsSignature)
             return JvmMethodGenericSignature(signature.asmMethod, signature.valueParameters, newGenericSignature)
         }
-        if (function.origin == JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB) {
+        if (function.origin === JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB) {
             return JvmMethodGenericSignature(signature.asmMethod, signature.valueParameters, null)
         }
 
@@ -448,8 +448,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     private fun getJvmMethodNameIfSpecial(irFunction: IrSimpleFunction): String? {
         if (
-            irFunction.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT ||
-            irFunction.origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT
+            irFunction.origin === JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT ||
+            irFunction.origin === JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT
         ) {
             return null
         }
