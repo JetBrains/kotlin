@@ -25,4 +25,10 @@ class SwiftExportTest : AbstractNativeSwiftExportTest() {
         val testDir = File("native/native.tests/testData/SwiftExport/primitive_type_functions")
         runTest(testDir.absolutePath)
     }
+
+    @Test
+    fun bridgedTypes() {
+        val testDir = File("native/native.tests/testData/SwiftExport/bridged_types")
+        runTest(testDir.absolutePath)
+    }
 }
