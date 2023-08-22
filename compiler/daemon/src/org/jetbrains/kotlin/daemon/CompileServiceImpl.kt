@@ -616,20 +616,24 @@ abstract class CompileServiceImplBase(
         val rootProjectDir = incrementalCompilationOptions.rootProjectDir
         val buildDir = incrementalCompilationOptions.buildDir
 
-        val modulesApiHistory = incrementalCompilationOptions.multiModuleICSettings?.run {
-            reporter.info { "Use module detection: $useModuleDetection" }
-            val modulesInfo = incrementalCompilationOptions.modulesInfo
-                ?: error("The build is configured to use the history-file based IC approach, but doesn't provide the modulesInfo")
-            check(rootProjectDir != null) {
-                "rootProjectDir is expected to be non null when the history-file based IC approach is used"
-            }
+        val modulesApiHistory = if (incrementalCompilationOptions.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
+            EmptyModulesApiHistory
+        } else {
+            incrementalCompilationOptions.multiModuleICSettings?.run {
+                reporter.info { "Use module detection: $useModuleDetection" }
+                val modulesInfo = incrementalCompilationOptions.modulesInfo
+                    ?: error("The build is configured to use the history-file based IC approach, but doesn't provide the modulesInfo")
+                check(rootProjectDir != null) {
+                    "rootProjectDir is expected to be non null when the history-file based IC approach is used"
+                }
 
-            if (!useModuleDetection) {
-                ModulesApiHistoryJvm(rootProjectDir, modulesInfo)
-            } else {
-                ModulesApiHistoryAndroid(rootProjectDir, modulesInfo)
-            }
-        } ?: EmptyModulesApiHistory
+                if (!useModuleDetection) {
+                    ModulesApiHistoryJvm(rootProjectDir, modulesInfo)
+                } else {
+                    ModulesApiHistoryAndroid(rootProjectDir, modulesInfo)
+                }
+            } ?: EmptyModulesApiHistory
+        }
 
         val useK2 = k2jvmArgs.useK2 || LanguageVersion.fromVersionString(k2jvmArgs.languageVersion)?.usesK2 == true
         // TODO: This should be reverted after implementing of fir-based java tracker (KT-57147).

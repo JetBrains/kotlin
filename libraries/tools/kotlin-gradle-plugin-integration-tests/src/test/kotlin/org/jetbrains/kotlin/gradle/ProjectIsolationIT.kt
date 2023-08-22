@@ -14,11 +14,10 @@ class ProjectIsolationIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(configurationCache = true, projectIsolation = true)
 
-    @DisplayName("Should be compatible with project isolation")
+    @DisplayName("JVM project should be compatible with project isolation")
     @JvmGradlePluginTests
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_1,
-        maxVersion = TestVersions.Gradle.G_7_6
     )
     @GradleTest
     fun testProjectIsolationInJvmSimple(gradleVersion: GradleVersion) {
