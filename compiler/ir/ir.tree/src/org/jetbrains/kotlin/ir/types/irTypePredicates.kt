@@ -80,6 +80,9 @@ private fun IrClass.hasFqNameEqualToSignature(signature: IdSignature.CommonSigna
 fun IrClassifierSymbol.isClassWithFqName(fqName: FqNameUnsafe): Boolean =
     this is IrClassSymbol && classFqNameEquals(this, fqName)
 
+fun IrClass.isClassWithFqName(fqName: FqName): Boolean =
+    classFqNameEquals(this, fqName)
+
 private fun classFqNameEquals(symbol: IrClassSymbol, fqName: FqNameUnsafe): Boolean {
     assert(symbol.isBound)
     return classFqNameEquals(symbol.owner, fqName)
@@ -107,7 +110,10 @@ val primitiveArrayTypesSignatures: Map<PrimitiveType, IdSignature.CommonSignatur
     }
 
 private fun classFqNameEquals(declaration: IrClass, fqName: FqNameUnsafe): Boolean =
-    declaration.hasEqualFqName(fqName.toSafe())
+    classFqNameEquals(declaration, fqName.toSafe())
+
+private fun classFqNameEquals(declaration: IrClass, fqName: FqName): Boolean =
+    declaration.hasEqualFqName(fqName)
 
 fun IrType.isAny(): Boolean = isNotNullClassType(IdSignatureValues.any)
 fun IrType.isNullableAny(): Boolean = isNullableClassType(IdSignatureValues.any)

@@ -795,7 +795,7 @@ class ExpressionCodegen(
         get() = parent.let { parent ->
             val isBoxedResult = this is IrValueParameter && parent is IrSimpleFunction &&
                     parent.dispatchReceiverParameter != this &&
-                    (parent.parent as? IrClass)?.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME &&
+                    (parent.parent as? IrClass)?.isClassWithFqName(StandardNames.RESULT_FQ_NAME) != true &&
                     parent.resultIsActuallyAny(index) == true
             return if (isBoxedResult) context.irBuiltIns.anyNType else type
         }
