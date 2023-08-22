@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.statistics.old
 
-import org.gradle.api.invocation.Gradle
+import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.statistics.AbstractKotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import javax.management.ObjectName
 
 internal class Pre232IdeaKotlinBuildStatsService internal constructor(
-    gradle: Gradle,
+    project: Project,
     beanName: ObjectName
-) : AbstractKotlinBuildStatsService(gradle, beanName), Pre232IdeaKotlinBuildStatsMXBean {
+) : AbstractKotlinBuildStatsService(project, beanName),
+    Pre232IdeaKotlinBuildStatsMXBean {
 
     override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?, weight: Long?): Boolean =
         KotlinBuildStatHandler().report(sessionLogger, metric, value, subprojectName, weight)
