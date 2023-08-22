@@ -1,5 +1,5 @@
-MODULE_FRAGMENT name:<Sources of main>
-  FILE fqName:<root> fileName:/classKinds.kt
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:classKinds.kt
     CLASS ANNOTATION_CLASS name:Anno modality:OPEN visibility:public superTypes:[kotlin.Annotation]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Anno
       CONSTRUCTOR visibility:public <> () returnType:<root>.Anno [primary]

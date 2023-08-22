@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
@@ -199,7 +200,13 @@ private class CollectingIrGenerationExtension : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         assertFalse { ::result.isInitialized }
 
-        val dumpOptions = DumpIrTreeOptions(normalizeNames = true, stableOrder = true)
+        val dumpOptions = DumpIrTreeOptions(
+            normalizeNames = true,
+            stableOrder = true,
+            printModuleName = false,
+            printFilePath = false
+        )
+
         result = moduleFragment.dump(dumpOptions)
     }
 }

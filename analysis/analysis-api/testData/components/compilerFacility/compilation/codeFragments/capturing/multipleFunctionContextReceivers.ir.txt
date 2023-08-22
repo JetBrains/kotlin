@@ -1,5 +1,5 @@
-MODULE_FRAGMENT name:<Sources of main>
-  FILE fqName:<root> fileName:/fragment.kt
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:fragment.kt
     CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
       CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]

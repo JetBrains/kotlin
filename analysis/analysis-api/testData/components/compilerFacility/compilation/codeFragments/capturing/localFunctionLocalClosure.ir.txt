@@ -1,5 +1,5 @@
-MODULE_FRAGMENT name:<Sources of main>
-  FILE fqName:<root> fileName:/localFunctionLocalClosure.kt
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:localFunctionLocalClosure.kt
     FUN name:consume visibility:public modality:FINAL <> (n:kotlin.Int) returnType:kotlin.Unit
       VALUE_PARAMETER name:n index:0 type:kotlin.Int
       BLOCK_BODY
@@ -12,7 +12,7 @@ MODULE_FRAGMENT name:<Sources of main>
             CALL 'public final fun consume (n: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
               n: GET_VAR 'val x: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
         CALL 'local final fun call (): kotlin.Unit declared in <root>.test' type=kotlin.Unit origin=null
-  FILE fqName:<root> fileName:/fragment.kt
+  FILE fqName:<root> fileName:fragment.kt
     CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
       CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]

@@ -82,6 +82,18 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
         }
     }
 
+    component(
+        "compilerFacility",
+        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)
+                and frontendIs(FrontendKind.Fir)
+                and analysisSessionModeIs(AnalysisSessionMode.Normal)
+                and analysisApiModeIs(AnalysisApiMode.Ide)
+    ) {
+        test(AbstractCompilerFacilityTest::class) {
+            model("compilation", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+    }
+
     group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource)) {
         generateAnalysisApiComponentsTests()
         generateAnalysisApiNonComponentsTests()
@@ -217,18 +229,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
                 AnalysisApiMode.Standalone ->
                     model(it, "resolveCall")
             }
-        }
-    }
-
-    component(
-        "compilerFacility",
-        filter = testModuleKindIs(TestModuleKind.Source)
-                and frontendIs(FrontendKind.Fir)
-                and analysisSessionModeIs(AnalysisSessionMode.Normal)
-                and analysisApiModeIs(AnalysisApiMode.Ide)
-    ) {
-        test(AbstractCompilerFacilityTest::class) {
-            model("compilation", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 

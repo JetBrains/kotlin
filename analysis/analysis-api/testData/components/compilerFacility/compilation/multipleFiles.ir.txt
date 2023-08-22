@@ -1,5 +1,5 @@
-MODULE_FRAGMENT name:<Sources of main>
-  FILE fqName:main fileName:/main.kt
+MODULE_FRAGMENT
+  FILE fqName:main fileName:main.kt
     CLASS OBJECT name:Main modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:main.Main
       CONSTRUCTOR visibility:private <> () returnType:main.Main [primary]

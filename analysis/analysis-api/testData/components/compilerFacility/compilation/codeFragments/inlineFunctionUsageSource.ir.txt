@@ -1,5 +1,5 @@
-MODULE_FRAGMENT name:<Sources of main>
-  FILE fqName:<root> fileName:/inlineFunctionUsageSource.kt
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:inlineFunctionUsageSource.kt
     FUN name:call visibility:public modality:FINAL <> (block:kotlin.Function1<kotlin.Int, kotlin.Int>) returnType:kotlin.Unit [inline]
       VALUE_PARAMETER name:block index:0 type:kotlin.Function1<kotlin.Int, kotlin.Int>
       BLOCK_BODY
@@ -12,7 +12,7 @@ MODULE_FRAGMENT name:<Sources of main>
       BLOCK_BODY
         VAR name:x type:kotlin.Int [val]
           CONST Int type=kotlin.Int value=0
-  FILE fqName:<root> fileName:/fragment.kt
+  FILE fqName:<root> fileName:fragment.kt
     CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
       CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]

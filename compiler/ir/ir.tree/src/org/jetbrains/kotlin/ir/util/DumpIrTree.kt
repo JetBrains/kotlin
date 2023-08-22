@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -62,6 +61,8 @@ data class DumpIrTreeOptions(
     val printFlagsInDeclarationReferences: Boolean = true,
     val printSignatures: Boolean = false,
     val printTypeAbbreviations: Boolean = true,
+    val printModuleName: Boolean = true,
+    val printFilePath: Boolean = true,
 )
 
 private fun IrFile.shouldSkipDump(): Boolean {

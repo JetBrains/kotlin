@@ -1,5 +1,5 @@
-MODULE_FRAGMENT name:<Sources of main>
-  FILE fqName:<root> fileName:/localFunctionMultipleCapturing.kt
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:localFunctionMultipleCapturing.kt
     CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo
       CONSTRUCTOR visibility:public <> () returnType:<root>.Foo [primary]
@@ -40,7 +40,7 @@ MODULE_FRAGMENT name:<Sources of main>
     FUN name:consume visibility:public modality:FINAL <> (obj:kotlin.Any) returnType:kotlin.Unit
       VALUE_PARAMETER name:obj index:0 type:kotlin.Any
       BLOCK_BODY
-  FILE fqName:<root> fileName:/fragment.kt
+  FILE fqName:<root> fileName:fragment.kt
     CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
       CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]

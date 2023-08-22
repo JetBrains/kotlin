@@ -241,14 +241,22 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
     override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?): String =
         "?DECLARATION? ${declaration::class.java.simpleName} $declaration"
 
-    override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): String =
-        "MODULE_FRAGMENT name:${declaration.name}"
+    override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): String {
+        return buildString {
+            append("MODULE_FRAGMENT")
+            if (options.printModuleName) {
+                append(" name:").append(declaration.name)
+            }
+        }
+    }
 
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: Nothing?): String =
         "EXTERNAL_PACKAGE_FRAGMENT fqName:${declaration.packageFqName}"
 
-    override fun visitFile(declaration: IrFile, data: Nothing?): String =
-        "FILE fqName:${declaration.packageFqName} fileName:${declaration.path}"
+    override fun visitFile(declaration: IrFile, data: Nothing?): String {
+        val fileName = if (options.printFilePath) declaration.path else declaration.name
+        return "FILE fqName:${declaration.packageFqName} fileName:$fileName"
+    }
 
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String =
         declaration.runTrimEnd {
