@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.project.structure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 
 public abstract class ProjectStructureProvider {
     /**
@@ -23,6 +25,19 @@ public abstract class ProjectStructureProvider {
      * sources that originally belong to a source module should be treated rather as a part of the synthetic one.
      */
     public abstract fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule
+
+    /**
+     * Project-global [LanguageVersionSettings]. For source modules lacking [LanguageVersionSettings]
+     * (such as [KtNotUnderContentRootModule]), the default settings apply.
+     */
+    public open val globalLanguageVersionSettings: LanguageVersionSettings
+        get() = LanguageVersionSettingsImpl.DEFAULT
+
+    /**
+     * Project-global [LanguageVersionSettings] for [KtLibraryModule]s and [KtLibrarySourceModule]s.
+     */
+    public open val libraryLanguageVersionSettings: LanguageVersionSettings
+        get() = globalLanguageVersionSettings
 
     public companion object {
         public fun getInstance(project: Project): ProjectStructureProvider {

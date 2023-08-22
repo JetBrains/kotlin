@@ -179,7 +179,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
     fun createNotUnderContentRootResolvableSession(module: KtNotUnderContentRootModule): LLFirNotUnderContentRootResolvableModuleSession {
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(JvmPlatforms.unspecifiedJvmPlatform)
-        val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
+        val languageVersionSettings = ProjectStructureProvider.getInstance(project).globalLanguageVersionSettings
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
 
@@ -333,7 +333,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
         val platform = module.platform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
-        val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
+        val languageVersionSettings = ProjectStructureProvider.getInstance(project).libraryLanguageVersionSettings
 
         val scopeProvider = FirKotlinScopeProvider()
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
@@ -427,7 +427,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerModuleData(moduleData)
             registerIdeComponents(project)
             register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
-            registerCommonComponents(LanguageVersionSettingsImpl.DEFAULT/*TODO*/)
+            registerCommonComponents(ProjectStructureProvider.getInstance(project).libraryLanguageVersionSettings)
             registerCommonComponentsAfterExtensionsAreConfigured()
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)

@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 class KtStaticModuleProvider(
+    override val globalLanguageVersionSettings: LanguageVersionSettings,
     private val builtinsModule: KtBuiltinsModule,
     private val projectStructure: KtModuleProjectStructure,
 ) : KtStaticProjectStructureProvider() {
