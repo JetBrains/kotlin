@@ -358,9 +358,11 @@ internal constructor(
     @get:Internal // these sources are normally a subset of `source` ones which are already tracked
     val commonSources: ConfigurableFileCollection = project.files()
 
-    @Optional
-    @get:Input
-    val konanDataDir: String? = project.konanDataDir
+    @get:Internal
+    val konanDataDir: Provider<String?> = project.provider { project.konanDataDir }
+
+    @get:Internal
+    val konanHome: Provider<String> = project.provider { project.konanHome }
 
     @get:Nested
     override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
@@ -430,7 +432,7 @@ internal constructor(
     override val additionalCompilerOptions: Provider<Collection<String>>
         get() = compilerOptions.freeCompilerArgs as Provider<Collection<String>>
 
-    private val runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project)
+    private val runnerSettings = KotlinNativeCompilerRunner.Settings.of(konanHome.get(), konanDataDir.getOrNull(), project)
     // endregion.
 
     @Suppress("DeprecatedCallableAddReplaceWith")
@@ -759,6 +761,8 @@ internal class CacheBuilder(
 
         companion object {
             fun createWithProject(
+                konanHome: String,
+                konanDataDir: String?,
                 project: Project,
                 binary: NativeBinary,
                 konanTarget: KonanTarget,
@@ -767,7 +771,7 @@ internal class CacheBuilder(
             ): Settings {
                 val konanCacheKind = project.getKonanCacheKind(konanTarget)
                 return Settings(
-                    runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project),
+                    runnerSettings = KotlinNativeCompilerRunner.Settings.of(konanHome, konanDataDir, project),
                     konanCacheKind = konanCacheKind,
                     libraries = binary.compilation.compileDependencyFiles,
                     gradleUserHomeDir = project.gradle.gradleUserHomeDir,
@@ -1074,8 +1078,13 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     val outputFile: File
         get() = outputFileProvider.get()
 
-    private val runnerSettings = KotlinNativeToolRunner.Settings.fromProject(project)
+    @get:Internal
+    val konanDataDir: Provider<String?> = project.provider { project.konanDataDir }
 
+    @get:Internal
+    val konanHome: Provider<String> = project.provider { project.konanHome }
+
+    private val runnerSettings = KotlinNativeToolRunner.Settings.of(konanHome.get(), konanDataDir.getOrNull(), project)
     // Inputs and outputs.
 
     @OutputFile
