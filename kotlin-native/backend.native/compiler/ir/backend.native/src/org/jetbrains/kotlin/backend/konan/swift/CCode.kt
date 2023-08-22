@@ -37,6 +37,10 @@ sealed interface CCode {
         override fun render(): String = if (isLocal) "#include \"$path\"" else "#include <$path>"
     }
 
+    data class Pragma(val command: String) : CCode {
+        override fun render(): String = "#pragma $command"
+    }
+
     sealed interface Type : CCode {
         val precedence: Int get() = 0
 
@@ -292,6 +296,8 @@ private val String?.indented get() = this?.let { " $it" } ?: ""
 //region Preprocessor
 
 fun CCode.Builder.include(path: String, isLocal: Boolean = false) = CCode.Include(path, isLocal)
+
+fun CCode.Builder.pragma(command: String) = CCode.Pragma(command)
 
 //endregion
 
