@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedValueAnalyzer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -36,7 +38,7 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.pipeline.signatureComposerForJvmFir2Ir
+import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.toResolvedSymbol
@@ -140,20 +142,10 @@ internal class KtFirCompilerFacility(
             allowNonCachedDeclarations = true
         )
 
-        val fir2IrResult = Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
-            rootModuleSession,
-            scopeSession,
-            firFilesToCompile,
-            fir2IrExtensions,
-            fir2IrConfiguration,
-            JvmIrMangler,
-            IrFactoryImpl,
-            FirJvmVisibilityConverter,
-            Fir2IrJvmSpecialAnnotationSymbolProvider(),
-            DefaultBuiltIns.Instance,
-            Fir2IrCommonMemberStorage(signatureComposerForJvmFir2Ir(false), FirJvmKotlinMangler()),
-            initializedIrBuiltIns = null
-        )
+        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
+        val irGenerationExtensions = IrGenerationExtension.getInstances(project)
+        val fir2IrResult = FirResult(listOf(ModuleCompilerAnalyzedOutput(rootModuleSession, scopeSession, firFilesToCompile)))
+            .convertToIrAndActualizeForJvm(fir2IrExtensions, fir2IrConfiguration, irGenerationExtensions, diagnosticsReporter)
 
         ProgressManager.checkCanceled()
 
