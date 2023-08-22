@@ -7,10 +7,9 @@
 package runtime.basic.initializers6
 
 import kotlin.test.*
-
-import kotlin.native.concurrent.*
-import kotlin.concurrent.*
 import kotlin.concurrent.AtomicInt
+import kotlin.concurrent.*
+import kotlin.native.concurrent.*
 
 val aWorkerId = AtomicInt(0)
 val bWorkersCount = 3

@@ -16,8 +16,7 @@ import kotlin.concurrent.*
  * An [Int] value that is always updated atomically.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
-@Deprecated("Use kotlin.concurrent.AtomicInt instead.", ReplaceWith("kotlin.concurrent.AtomicInt"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@Deprecated("Use kotlin.concurrent.AtomicInt instead.", ReplaceWith("kotlin.concurrent.AtomicInt"), DeprecationLevel.ERROR)
 public class AtomicInt(public @Volatile var value: Int) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
@@ -73,7 +72,7 @@ public class AtomicInt(public @Volatile var value: Int) {
     /**
      * Atomically increments the current value by one.
      */
-    @Deprecated("Use incrementAndGet() or getAndIncrement() instead.", ReplaceWith("this.incrementAndGet()"))
+    @Deprecated("Use incrementAndGet() or getAndIncrement() instead.", ReplaceWith("this.incrementAndGet()"), DeprecationLevel.ERROR)
     public fun increment(): Unit {
         addAndGet(1)
     }
@@ -81,7 +80,7 @@ public class AtomicInt(public @Volatile var value: Int) {
     /**
      * Atomically decrements the current value by one.
      */
-    @Deprecated("Use decrementAndGet() or getAndDecrement() instead.", ReplaceWith("this.decrementAndGet()"))
+    @Deprecated("Use decrementAndGet() or getAndDecrement() instead.", ReplaceWith("this.decrementAndGet()"), DeprecationLevel.ERROR)
     public fun decrement(): Unit {
         addAndGet(-1)
     }
@@ -96,8 +95,7 @@ public class AtomicInt(public @Volatile var value: Int) {
  * A [Long] value that is always updated atomically.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
-@Deprecated("Use kotlin.concurrent.AtomicLong instead.", ReplaceWith("kotlin.concurrent.AtomicLong"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@Deprecated("Use kotlin.concurrent.AtomicLong instead.", ReplaceWith("kotlin.concurrent.AtomicLong"), DeprecationLevel.ERROR)
 public class AtomicLong(public @Volatile var value: Long = 0L)  {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
@@ -153,13 +151,13 @@ public class AtomicLong(public @Volatile var value: Long = 0L)  {
     /**
      * Atomically adds the [given value][delta] to the current value and returns the new value.
      */
-    @Deprecated("Use addAndGet(delta: Long) instead.")
+    @Deprecated(message = "Use addAndGet(delta: Long) instead.", level = DeprecationLevel.ERROR)
     public fun addAndGet(delta: Int): Long = addAndGet(delta.toLong())
 
     /**
      * Atomically increments the current value by one.
      */
-    @Deprecated("Use incrementAndGet() or getAndIncrement() instead.", ReplaceWith("this.incrementAndGet()"))
+    @Deprecated("Use incrementAndGet() or getAndIncrement() instead.", ReplaceWith("this.incrementAndGet()"), DeprecationLevel.ERROR)
     public fun increment(): Unit {
         addAndGet(1L)
     }
@@ -167,7 +165,7 @@ public class AtomicLong(public @Volatile var value: Long = 0L)  {
     /**
      * Atomically decrements the current value by one.
      */
-    @Deprecated("Use decrementAndGet() or getAndDecrement() instead.", ReplaceWith("this.decrementAndGet()"))
+    @Deprecated("Use decrementAndGet() or getAndDecrement() instead.", ReplaceWith("this.decrementAndGet()"), DeprecationLevel.ERROR)
     fun decrement(): Unit {
         addAndGet(-1L)
     }
@@ -181,8 +179,7 @@ public class AtomicLong(public @Volatile var value: Long = 0L)  {
 /**
  * An object reference that is always updated atomically.
  */
-@Deprecated("Use kotlin.concurrent.AtomicReference instead.", ReplaceWith("kotlin.concurrent.AtomicReference"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@Deprecated("Use kotlin.concurrent.AtomicReference instead.", ReplaceWith("kotlin.concurrent.AtomicReference"), DeprecationLevel.ERROR)
 public class AtomicReference<T>(public @Volatile var value: T) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
@@ -223,8 +220,7 @@ public class AtomicReference<T>(public @Volatile var value: T) {
  * [kotlinx.cinterop.NativePtr] is a value type, hence it is stored in [AtomicNativePtr] without boxing
  * and [compareAndSet], [compareAndSwap] operations perform comparison by value.
  */
-@Deprecated("Use kotlin.concurrent.AtomicNativePtr instead.", ReplaceWith("kotlin.concurrent.AtomicNativePtr"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@Deprecated("Use kotlin.concurrent.AtomicNativePtr instead.", ReplaceWith("kotlin.concurrent.AtomicNativePtr"), DeprecationLevel.ERROR)
 public class AtomicNativePtr(public @Volatile var value: NativePtr) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
@@ -281,8 +277,7 @@ private fun debugString(value: Any?): String {
  * This class was useful only with legacy memory manager. Please use [AtomicReference] instead.
  */
 @FreezingIsDeprecated
-@Deprecated("Use kotlin.concurrent.AtomicReference instead.", ReplaceWith("kotlin.concurrent.AtomicReference"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@Deprecated("Use kotlin.concurrent.AtomicReference instead.", ReplaceWith("kotlin.concurrent.AtomicReference"), DeprecationLevel.ERROR)
 public class FreezableAtomicReference<T>(public @Volatile var value: T) {
 
     /**

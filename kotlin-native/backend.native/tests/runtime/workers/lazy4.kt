@@ -7,10 +7,9 @@
 package runtime.workers.lazy4
 
 import kotlin.test.*
-
-import kotlin.native.concurrent.*
-import kotlin.concurrent.*
 import kotlin.concurrent.AtomicInt
+import kotlin.concurrent.*
+import kotlin.native.concurrent.*
 
 const val WORKERS_COUNT = 20
 

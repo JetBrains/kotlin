@@ -2,7 +2,7 @@
 
 import kotlinx.cinterop.*
 import kt44283.*
-import kotlin.native.concurrent.AtomicInt
+import kotlin.concurrent.AtomicInt
 import kotlin.test.*
 
 val callbackCounter = AtomicInt(0)
@@ -14,7 +14,7 @@ fun main() {
         memScoped {
             println("Hello, Kotlin/Native! ${it.ptr.pointed.d}")
         }
-        callbackCounter.increment()
+        callbackCounter.incrementAndGet()
     }
 
     assertEquals(0, callbackCounter.value)

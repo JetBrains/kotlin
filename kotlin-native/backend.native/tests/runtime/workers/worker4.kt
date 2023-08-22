@@ -7,8 +7,8 @@
 package runtime.workers.worker4
 
 import kotlin.test.*
-import kotlin.native.concurrent.*
 import kotlin.concurrent.AtomicInt
+import kotlin.native.concurrent.*
 
 @Test fun runTest1() {
     withWorker {

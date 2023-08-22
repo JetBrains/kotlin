@@ -9,6 +9,7 @@
 
 package conversions
 
+import kotlin.concurrent.AtomicReference
 import kotlin.native.concurrent.freeze
 import kotlin.native.concurrent.isFrozen
 import kotlin.native.internal.ObjCErrorException
@@ -946,7 +947,7 @@ class TestStringConversion {
     lateinit var str: Any
 }
 
-fun foo(a: kotlin.native.concurrent.AtomicReference<*>) {}
+fun foo(a: kotlin.concurrent.AtomicReference<*>) {}
 
 interface GH3825 {
     @Throws(MyException::class) fun call0(callback: () -> Boolean)
