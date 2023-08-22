@@ -37,7 +37,7 @@ class JvmSignatureClashDetector(
     fun trackFakeOverrideMethod(irFunction: IrFunction) {
         if (irFunction.dispatchReceiverParameter != null) {
             for (overriddenFunction in getOverriddenFunctions(irFunction as IrSimpleFunction)) {
-                trackMethod(irFunction, mapRawSignature(overriddenFunction))
+                if (!overriddenFunction.isFakeOverride) trackMethod(irFunction, mapRawSignature(overriddenFunction))
             }
         } else {
             trackMethod(irFunction, mapRawSignature(irFunction))
