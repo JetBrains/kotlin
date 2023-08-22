@@ -14,6 +14,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunner
+import org.jetbrains.kotlin.compilerRunner.konanDataDir
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
@@ -48,7 +49,7 @@ class NativeCompilerDownloader(
 
     val compilerDirectory: File
         get() = DependencyDirectories
-            .getLocalKonanDir(project.kotlinPropertiesProvider.konanDataDir)
+            .getLocalKonanDir(project.konanDataDir)
             .resolve(dependencyNameWithOsAndVersion)
 
     private val logger: Logger
@@ -200,7 +201,7 @@ class NativeCompilerDownloader(
 
     private fun checkClassPath() {
         project.providers.of(NativeCompilerDownloaderClassPathChecker::class.java) {
-            it.parameters.classPath.setFrom(KotlinNativeToolRunner.Settings.fromProject(project).classpath)
+            it.parameters.classPath.setFrom(KotlinNativeToolRunner.Settings.of(project.konanHome, project.konanDataDir, project).classpath)
         }.usedAtConfigurationTime(project.configurationTimePropertiesAccessor).get()
     }
 
@@ -228,7 +229,6 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
         }
 
         downloader.downloadIfNeeded()
-
         logger.info("Kotlin/Native distribution: $konanHome")
     } else {
         logger.info("User-provided Kotlin/Native distribution: $konanHome")
@@ -239,4 +239,3 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
         PlatformLibrariesGenerator(project, konanTarget).generatePlatformLibsIfNeeded()
     }
 }
-

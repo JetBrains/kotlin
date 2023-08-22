@@ -324,6 +324,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: Kona
     put(BinaryOptions.runtimeAssertionsMode, konanConfig.runtimeAssertsMode)
     put(LAZY_IR_FOR_CACHES, konanConfig.lazyIrForCaches)
     put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, konanConfig.threadsCount)
+    putIfNotNull(KONAN_DATA_DIR, konanConfig.distribution.localKonanDir.absolutePath)
 }
 
 private fun Array<String>?.toNonNullList() = this?.asList().orEmpty()

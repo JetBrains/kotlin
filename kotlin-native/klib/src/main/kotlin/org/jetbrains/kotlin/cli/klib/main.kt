@@ -120,7 +120,6 @@ object KlibToolLogger : Logger, IrMessageLogger {
     }
 }
 
-// TODO(Dmitrii Krasnov): I'm not sure that we should put konan distribution dir here
 val defaultRepository = File(DependencyDirectories.localKonanDir.resolve("klib").absolutePath)
 
 open class ModuleDeserializer(val library: ByteArray) {

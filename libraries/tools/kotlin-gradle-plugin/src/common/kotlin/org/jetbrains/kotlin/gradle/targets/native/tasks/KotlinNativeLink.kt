@@ -63,7 +63,13 @@ constructor(
     val compilation: KotlinNativeCompilation
         get() = binary.compilation
 
-    private val runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project)
+    @get:Internal
+    val konanDataDir: Provider<String?> = project.provider { project.konanDataDir }
+
+    @get:Internal
+    val konanHome: Provider<String> = project.provider { project.konanHome }
+
+    private val runnerSettings = KotlinNativeCompilerRunner.Settings.of(konanHome.get(), konanDataDir.getOrNull(), project)
 
     final override val toolOptions: KotlinCommonCompilerToolOptions = objectFactory
         .newInstance<KotlinCommonCompilerToolOptionsDefault>()
@@ -205,7 +211,7 @@ constructor(
     private val externalDependenciesArgs by lazy { ExternalDependenciesBuilder(project, compilation).buildCompilerArgs() }
 
     private val cacheBuilderSettings by lazy {
-        CacheBuilder.Settings.createWithProject(project, binary, konanTarget, toolOptions, externalDependenciesArgs)
+        CacheBuilder.Settings.createWithProject(konanHome.get(), konanDataDir.getOrNull(), project, binary, konanTarget, toolOptions, externalDependenciesArgs)
     }
 
     private class CacheSettings(val orchestration: NativeCacheOrchestration, val kind: NativeCacheKind,

@@ -54,14 +54,10 @@ apply plugin: "kotlin.native.build-tools-conventions"
 
 ext {
     distDir = UtilsKt.getKotlinNativeDist(project)
-    // TODO(Dmitrii Krasnov): remove else branch after KT-50463 will be in current bootstrap
-    def konanDataDir = project.findProperty('konan.data.dir')
-    dependenciesDir = konanDataDir != null ?
-            DependencyDirectories.INSTANCE.getDependenciesRoot(konanDataDir.toString())
-            : DependencyDirectories.defaultDependenciesRoot
+    def konanDataDir = project.hasProperty('konan.data.dir') ? project.property('konan.data.dir').toString() : null
+    dependenciesDir = DependencyDirectories.INSTANCE.getDependenciesRoot(konanDataDir)
     experimentalEnabled = project.hasProperty("org.jetbrains.kotlin.native.experimentalTargets")
-    // TODO(Dmitrii Krasnov): add konanDataDir to the buildDistribution after KT-50463 will be in current bootstrap
-    platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath),
+    platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath, konanDataDir),
             ext.experimentalEnabled)
 
     cacheableTargetNames = platformManager.hostPlatform.cacheableTargets

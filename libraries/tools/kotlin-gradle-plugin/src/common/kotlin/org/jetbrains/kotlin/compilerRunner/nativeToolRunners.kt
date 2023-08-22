@@ -31,7 +31,8 @@ private val Project.jvmArgs
     get() = PropertiesProvider(this).nativeJvmArgs?.split("\\s+".toRegex()).orEmpty()
 
 internal val Project.konanHome: String
-    get() = PropertiesProvider(this).nativeHome?.let { file(it).absolutePath }
+    get() = PropertiesProvider(this).konanDataDir?.let { NativeCompilerDownloader(project).compilerDirectory.absolutePath }
+        ?: PropertiesProvider(this).nativeHome?.let { file(it).absolutePath }
         ?: NativeCompilerDownloader(project).compilerDirectory.absolutePath
 
 internal val Project.disableKonanDaemon: Boolean
@@ -90,14 +91,14 @@ internal abstract class KotlinNativeToolRunner(
         val konanDataDir: String?,
     ) {
         companion object {
-            fun fromProject(project: Project) = Settings(
+            fun of(konanHome: String, konanDataDir: String?, project: Project) = Settings(
                 konanVersion = project.konanVersion,
-                konanHome = project.konanHome,
-                konanPropertiesFile = project.file("${project.konanHome}/konan/konan.properties"),
+                konanHome = konanHome,
+                konanPropertiesFile = project.file("${konanHome}/konan/konan.properties"),
                 useXcodeMessageStyle = project.useXcodeMessageStyle,
                 jvmArgs = project.jvmArgs,
-                classpath = project.files(project.kotlinNativeCompilerJar, "${project.konanHome}/konan/lib/trove4j.jar"),
-                konanDataDir = project.konanDataDir
+                classpath = project.files(project.kotlinNativeCompilerJar, "${konanHome}/konan/lib/trove4j.jar"),
+                konanDataDir = konanDataDir
             )
         }
     }
@@ -146,15 +147,15 @@ internal abstract class KotlinNativeToolRunner(
         super.run(args + extractArgsFromSettings())
     }
 
-    private fun extractArgsFromSettings(): List<String> {
-        return settings.konanDataDir?.let { listOf("-Xkonan-data-dir", it) } ?: emptyList()
+    protected open fun extractArgsFromSettings(): List<String> {
+        return settings.konanDataDir?.let { listOf("-Xkonan-data-dir=$it") } ?: emptyList()
     }
 }
 
 /** A common ancestor for all runners that run the cinterop tool. */
 internal abstract class AbstractKotlinNativeCInteropRunner(
     toolName: String,
-    settings: Settings,
+    private val settings: Settings,
     executionContext: GradleExecutionContext,
     metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
 ) : KotlinNativeToolRunner(toolName, settings, executionContext, metricsReporter) {
@@ -169,6 +170,10 @@ internal abstract class AbstractKotlinNativeCInteropRunner(
             result["PATH"] = "$it;${System.getenv("PATH")}"
         }
         result
+    }
+
+    override fun extractArgsFromSettings(): List<String> {
+        return settings.konanDataDir?.let { listOf("-Xkonan-data-dir", it) } ?: emptyList()
     }
 
     private val llvmExecutablesPath: String? by lazy {
@@ -222,8 +227,8 @@ internal class KotlinNativeCompilerRunner(
         val disableKonanDaemon: Boolean,
     ) {
         companion object {
-            fun fromProject(project: Project) = Settings(
-                parent = KotlinNativeToolRunner.Settings.fromProject(project),
+            fun of(konanHome: String, konanDataDir: String?, project: Project) = Settings(
+                parent = KotlinNativeToolRunner.Settings.of(konanHome, konanDataDir, project),
                 disableKonanDaemon = project.disableKonanDaemon,
             )
         }
@@ -260,7 +265,7 @@ internal class KotlinNativeLibraryGenerationRunner(
 
     companion object {
         fun fromProject(project: Project) = KotlinNativeLibraryGenerationRunner(
-            settings = Settings.fromProject(project),
+            settings = Settings.of(project.konanHome, project.konanDataDir, project),
             executionContext = GradleExecutionContext.fromProject(project),
             metricsReporter = GradleBuildMetricsReporter()
         )
