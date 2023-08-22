@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -252,26 +251,11 @@ class NaiveSourceBasedFileEntryImpl(
     val lineStartOffsetsAreEmpty: Boolean
         get() = lineStartOffsets.isEmpty()
 
-    private val MAX_SAVED_LINE_NUMBERS = 50
-
-    // Map with several last calculated line numbers.
-    // Calculating for same offset is made many times during code and debug info generation.
-    // In the worst case at least getting column recalculates line because it is usually called after getting line.
-    private val calculatedBeforeLineNumbers = object : SLRUCache<Int, Int>(
-        MAX_SAVED_LINE_NUMBERS / 2, MAX_SAVED_LINE_NUMBERS / 2
-    ) {
-        override fun createValue(key: Int): Int {
-            val index = lineStartOffsets.binarySearch(key)
-            return if (index >= 0) index else -index - 2
-        }
-    }
-
-    private val lineNumberLock = Any()
-
     override fun getLineNumber(offset: Int): Int {
         if (offset == SYNTHETIC_OFFSET) return 0
         if (offset < 0) return UNDEFINED_LINE_NUMBER
-        return synchronized(lineNumberLock) { calculatedBeforeLineNumbers.get(offset) }
+        val index = lineStartOffsets.binarySearch(offset)
+        return if (index >= 0) index else -index - 2
     }
 
     override fun getColumnNumber(offset: Int): Int {
