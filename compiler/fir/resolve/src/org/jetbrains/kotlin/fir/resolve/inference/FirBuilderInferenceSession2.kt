@@ -22,11 +22,13 @@ class FirBuilderInferenceSession2(
     private val qualifiedAccessesToProcess = mutableSetOf<FirExpression>()
 
     override fun <T> shouldAvoidFullCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement {
-        return call.candidate()?.usedOuterCs == true
+        val candidate = call.candidate() ?: return false
+        return candidate.usedOuterCs && candidate.postponedAtoms.isEmpty() /*call.candidate()?.usedOuterCs == true*/
     }
 
+    // Should write completion results
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement =
-        true
+        call.candidate()?.usedOuterCs != true
 
     override fun handleQualifiedAccess(qualifiedAccessExpression: FirExpression, data: ResolutionMode) {
         if (qualifiedAccessExpression.resultType.containsNotFixedTypeVariables() && (qualifiedAccessExpression as? FirResolvable)?.candidate() == null) {
