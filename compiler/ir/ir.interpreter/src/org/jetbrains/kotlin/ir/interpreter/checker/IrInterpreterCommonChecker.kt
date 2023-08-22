@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.statements
 
-class IrInterpreterCommonChecker : IrInterpreterChecker {
+class IrInterpreterCommonChecker : IrInterpreterChecker() {
     private val visitedStack = mutableListOf<IrElement>()
 
     private inline fun IrElement.asVisited(crossinline block: () -> Boolean): Boolean {

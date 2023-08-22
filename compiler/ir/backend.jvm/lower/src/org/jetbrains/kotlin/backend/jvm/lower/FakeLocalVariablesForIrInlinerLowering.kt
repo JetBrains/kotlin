@@ -44,7 +44,7 @@ internal val fakeLocalVariablesForIrInlinerLowering = makeIrFilePhase<JvmBackend
 
 internal class FakeLocalVariablesForIrInlinerLowering(
     override val context: JvmBackendContext
-) : IrElementVisitorVoid, FakeInliningLocalVariables<IrInlinedFunctionBlock>, FileLoweringPass {
+) : IrElementVisitorVoid(), FakeInliningLocalVariables<IrInlinedFunctionBlock>, FileLoweringPass {
     private val inlinedStack = mutableListOf<IrInlinedFunctionBlock>()
     private var container: IrDeclaration? = null
 
@@ -102,7 +102,7 @@ internal class FakeLocalVariablesForIrInlinerLowering(
     }
 }
 
-private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesProcessor.Data> {
+private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesProcessor.Data>() {
     data class Data(val processingOriginalDeclarations: Boolean)
 
     private val inlinedStack = mutableListOf<IrInlinedFunctionBlock>()
@@ -162,7 +162,7 @@ private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesPro
     }
 }
 
-private class FunctionParametersProcessor : IrElementVisitorVoid {
+private class FunctionParametersProcessor : IrElementVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }

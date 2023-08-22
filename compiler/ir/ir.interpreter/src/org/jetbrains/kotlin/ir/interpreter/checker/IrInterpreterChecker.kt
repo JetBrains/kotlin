@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrInterpreterChecker : IrElementVisitor<Boolean, IrInterpreterCheckerData>
+abstract class IrInterpreterChecker : IrElementVisitor<Boolean, IrInterpreterCheckerData>()
 
 class IrInterpreterCheckerData(
     val irFile: IrFile,

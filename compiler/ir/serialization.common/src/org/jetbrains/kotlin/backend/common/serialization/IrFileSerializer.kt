@@ -1370,7 +1370,7 @@ open class IrFileSerializer(
             }
         } else {
             file.acceptVoid(
-                object : IrElementVisitorVoid {
+                object : IrElementVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }

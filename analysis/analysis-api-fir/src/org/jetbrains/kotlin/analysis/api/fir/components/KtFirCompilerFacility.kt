@@ -463,7 +463,7 @@ internal class KtFirCompilerFacility(
     }
 }
 
-private class IrDeclarationMappingCollectingVisitor : IrElementVisitorVoid {
+private class IrDeclarationMappingCollectingVisitor : IrElementVisitorVoid() {
     private val collectedMappings = HashMap<FirDeclaration, IrDeclaration>()
 
     val mappings: Map<FirDeclaration, IrDeclaration>
@@ -488,7 +488,7 @@ private class IrDeclarationMappingCollectingVisitor : IrElementVisitorVoid {
     }
 }
 
-private class IrDeclarationPatchingVisitor(private val mapping: Map<FirDeclaration, IrDeclaration>) : IrElementVisitorVoid {
+private class IrDeclarationPatchingVisitor(private val mapping: Map<FirDeclaration, IrDeclaration>) : IrElementVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }

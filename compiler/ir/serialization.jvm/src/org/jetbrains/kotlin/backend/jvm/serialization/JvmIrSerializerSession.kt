@@ -92,7 +92,7 @@ private fun forEveryDeclarationToSerialize(topDeclaration: IrDeclaration, mode: 
     }
 }
 
-private object ForVisibleInlineFunctionsVisitor : IrElementVisitor<Unit, (IrDeclaration) -> Unit> {
+private object ForVisibleInlineFunctionsVisitor : IrElementVisitor<Unit, (IrDeclaration) -> Unit>() {
     override fun visitElement(element: IrElement, data: (IrDeclaration) -> Unit) {
         error("Visitor only for nonlocal declarations")
     }

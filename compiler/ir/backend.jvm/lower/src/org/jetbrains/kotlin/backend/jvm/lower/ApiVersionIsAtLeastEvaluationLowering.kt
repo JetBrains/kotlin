@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 internal class ApiVersionIsAtLeastEvaluationLowering(val context: JvmBackendContext) : FileLoweringPass,
-    IrElementTransformer<ApiVersionIsAtLeastEvaluationLowering.Data> {
+    IrElementTransformer<ApiVersionIsAtLeastEvaluationLowering.Data>() {
 
     private val apiVersion = context.state.languageVersionSettings.apiVersion.version
 

@@ -139,7 +139,7 @@ class ExpressionCodegen(
     val classCodegen: ClassCodegen,
     val smap: SourceMapper,
     val reifiedTypeParametersUsages: ReifiedTypeParametersUsages,
-) : IrElementVisitor<PromisedValue, BlockInfo>, BaseExpressionCodegen {
+) : IrElementVisitor<PromisedValue, BlockInfo>(), BaseExpressionCodegen {
     override fun toString(): String = signature.toString()
 
     var finallyDepth = 0
@@ -1231,7 +1231,7 @@ class ExpressionCodegen(
     // such as D8 will see locals information that makes no sense.
     private fun endUnreferencedDoWhileLocals(blockInfo: BlockInfo, loop: IrDoWhileLoop, continueLabel: Label) {
         val referencedValues = hashSetOf<IrValueSymbol>()
-        loop.condition.acceptVoid(object : IrElementVisitorVoid {
+        loop.condition.acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

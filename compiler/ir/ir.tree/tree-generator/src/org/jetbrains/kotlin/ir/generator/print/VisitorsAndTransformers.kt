@@ -21,19 +21,21 @@ private val transformerTypeName = ClassName(VISITOR_PACKAGE, "IrElementTransform
 private val typeTransformerTypeName = ClassName(VISITOR_PACKAGE, "IrTypeTransformer")
 
 fun printVisitor(generationPath: File, model: Model): GeneratedFile {
-    val visitorType = TypeSpec.interfaceBuilder(visitorTypeName).apply {
+    val visitorType = TypeSpec.classBuilder(visitorTypeName).apply {
+        modifiers += KModifier.ABSTRACT
         val r = TypeVariableName("R", KModifier.OUT)
         val d = TypeVariableName("D", KModifier.IN)
         addTypeVariable(r)
         addTypeVariable(d)
 
         fun buildVisitFun(element: Element) = FunSpec.builder(element.visitFunName).apply {
+            if (KModifier.ABSTRACT !in modifiers) addModifiers(KModifier.OPEN)
             addParameter(element.visitorParam, element.toPoetStarParameterized())
             addParameter("data", d)
             returns(r)
         }
 
-        addFunction(buildVisitFun(model.rootElement).addModifiers(KModifier.ABSTRACT).build())
+        addFunction(buildVisitFun(model.rootElement).apply { modifiers -= KModifier.OPEN }.addModifiers(KModifier.ABSTRACT).build())
 
         for (element in model.elements) {
             element.visitorParent?.let { parent ->
@@ -50,8 +52,9 @@ fun printVisitor(generationPath: File, model: Model): GeneratedFile {
 fun printVisitorVoid(generationPath: File, model: Model): GeneratedFile {
     val dataType = NOTHING.copy(nullable = true)
 
-    val visitorType = TypeSpec.interfaceBuilder(visitorVoidTypeName).apply {
-        addSuperinterface(visitorTypeName.parameterizedBy(UNIT, dataType))
+    val visitorType = TypeSpec.classBuilder(visitorVoidTypeName).apply {
+        modifiers += KModifier.ABSTRACT
+        superclass(visitorTypeName.parameterizedBy(UNIT, dataType))
 
         fun buildVisitFun(element: Element) = FunSpec.builder(element.visitFunName).apply {
             addModifiers(KModifier.OVERRIDE)
@@ -61,6 +64,7 @@ fun printVisitorVoid(generationPath: File, model: Model): GeneratedFile {
         }
 
         fun buildVisitVoidFun(element: Element) = FunSpec.builder(element.visitFunName).apply {
+            if (KModifier.ABSTRACT !in modifiers) addModifiers(KModifier.OPEN)
             addParameter(element.visitorParam, element.toPoetStarParameterized())
         }
 
@@ -81,11 +85,12 @@ fun printVisitorVoid(generationPath: File, model: Model): GeneratedFile {
 }
 
 fun printTransformer(generationPath: File, model: Model): GeneratedFile {
-    val visitorType = TypeSpec.interfaceBuilder(transformerTypeName).apply {
+    val visitorType = TypeSpec.classBuilder(transformerTypeName).apply {
+        modifiers += KModifier.ABSTRACT
         val d = TypeVariableName("D", KModifier.IN)
         addTypeVariable(d)
 
-        addSuperinterface(visitorTypeName.parameterizedBy(model.rootElement.toPoetStarParameterized(), d))
+        superclass(visitorTypeName.parameterizedBy(model.rootElement.toPoetStarParameterized(), d))
 
         fun buildVisitFun(element: Element) = FunSpec.builder(element.visitFunName).apply {
             addModifiers(KModifier.OVERRIDE)
@@ -119,6 +124,7 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
     val transformTypeFunName = "transformType"
 
     fun FunSpec.Builder.addVisitTypeStatement(element: Element, field: Field) {
+        if (KModifier.ABSTRACT !in modifiers) addModifiers(KModifier.OPEN)
         val visitorParam = element.visitorParam
         val access = "$visitorParam.${field.name}"
         when (field) {
@@ -153,10 +159,11 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
         return irTypeFields + parentsFields
     }
 
-    val visitorType = TypeSpec.interfaceBuilder(typeTransformerTypeName).apply {
+    val visitorType = TypeSpec.classBuilder(typeTransformerTypeName).apply {
+        modifiers += KModifier.ABSTRACT
         val d = TypeVariableName("D", KModifier.IN)
         addTypeVariable(d)
-        addSuperinterface(transformerTypeName.parameterizedBy(d))
+        superclass(transformerTypeName.parameterizedBy(d))
 
         val abstractVisitFun = FunSpec.builder(transformTypeFunName).apply {
             val poetNullableIrType = irTypeType.toPoet().copy(nullable = true)

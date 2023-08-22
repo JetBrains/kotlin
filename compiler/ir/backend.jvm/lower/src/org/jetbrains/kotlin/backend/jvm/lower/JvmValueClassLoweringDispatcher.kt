@@ -64,7 +64,7 @@ internal class JvmValueClassLoweringDispatcher(private val context: JvmBackendCo
     }
 }
 
-private class NeedsToVisit(private val context: JvmBackendContext) : IrElementVisitorVoid {
+private class NeedsToVisit(private val context: JvmBackendContext) : IrElementVisitorVoid() {
     var result = false
     private val replacements = context.valueClassLoweringDispatcherSharedData
     private val visitedParameters = mutableSetOf<IrSymbol>()

@@ -18,7 +18,7 @@ fun IrElement.remapTypes(typeRemapper: TypeRemapper) {
     acceptVoid(RemapTypesHelper(typeRemapper))
 }
 
-private class RemapTypesHelper(private val typeRemapper: TypeRemapper) : IrElementVisitorVoid {
+private class RemapTypesHelper(private val typeRemapper: TypeRemapper) : IrElementVisitorVoid() {
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)

@@ -31,7 +31,7 @@ class DeclarationGenerator(
     val context: WasmModuleCodegenContext,
     private val allowIncompleteImplementations: Boolean,
     private val hierarchyDisjointUnions: DisjointUnions<IrClassSymbol>,
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
 
     // Shortcuts
     private val backendContext: WasmBackendContext = context.backendContext
