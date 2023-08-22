@@ -338,6 +338,9 @@
 
 /libraries/maven-settings.xml "Kotlin Build Infrastructure"
 /libraries/pom.xml "Kotlin Build Infrastructure"
+/libraries/mvnw "Kotlin Build Infrastructure"
+/libraries/mvnw.cmd "Kotlin Build Infrastructure"
+/libraries/.mvn/wrapper/maven-wrapper.properties "Kotlin Build Infrastructure"
 /libraries/ReadMe.md A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
 
 /license/ "Kotlin Build Infrastructure"
