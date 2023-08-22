@@ -36,7 +36,7 @@ internal val markNecessaryInlinedClassesAsRegenerated = makeIrModulePhase(
     prerequisite = setOf(functionInliningPhase, createSeparateCallForInlinedLambdas)
 )
 
-class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
+class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendContext) : IrElementVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptChildrenVoid(this)
     }
@@ -64,7 +64,7 @@ class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendCo
 
     private fun IrInlinedFunctionBlock.collectDeclarationsThatMustBeRegenerated(): Set<IrAttributeContainer> {
         val classesToRegenerate = mutableSetOf<IrAttributeContainer>()
-        this.acceptVoid(object : IrElementVisitorVoid {
+        this.acceptVoid(object : IrElementVisitorVoid() {
             private val containersStack = mutableListOf<IrAttributeContainer>()
             private val inlinableParameters = mutableListOf<IrValueParameter>()
             private val reifiedArguments = mutableListOf<IrType>()
@@ -177,7 +177,7 @@ class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendCo
             (this@recursiveWalkDown as? IrSimpleType)?.arguments?.forEach { it.typeOrNull?.recursiveWalkDown(visitor) }
         }
 
-        this.acceptVoid(object : IrElementVisitorVoid {
+        this.acceptVoid(object : IrElementVisitorVoid() {
             private val visitedClasses = mutableSetOf<IrClass>()
 
             override fun visitElement(element: IrElement) {
@@ -212,7 +212,7 @@ class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendCo
     }
 
     private fun IrElement.setUpCorrectAttributesForAllInnerElements(mustBeRegenerated: Set<IrAttributeContainer>) {
-        this.acceptChildrenVoid(object : IrElementVisitorVoid {
+        this.acceptChildrenVoid(object : IrElementVisitorVoid() {
             private fun checkAndSetUpCorrectAttributes(element: IrAttributeContainer) {
                 when {
                     element !in mustBeRegenerated && element.originalBeforeInline != null -> element.setUpOriginalAttributes()
@@ -239,7 +239,7 @@ class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendCo
     }
 
     private fun IrElement.setUpOriginalAttributes() {
-        acceptVoid(object : IrElementVisitorVoid {
+        acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 if (element is IrAttributeContainer && element.originalBeforeInline != null) {
                     // Basically we need to generate SEQUENCE of `element.originalBeforeInline` and find the original one.

@@ -29,7 +29,7 @@ import java.util.Comparator
  *
  * Parent class should be Any or class, annotated with @AllPropertiesConstructor
  */
-class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrElementVisitorVoid {
+class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrElementVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }

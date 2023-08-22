@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  * This Actualizer processes expect overridable declarations in non-expect classes and replaces them with the associated actual overridable
  * declarations overriding the actual base class members.The newly created actual fake overrides are stored in expectActualMap.
  */
-internal class FakeOverridesActualizer(private val expectActualMap: MutableMap<IrSymbol, IrSymbol>) : IrElementVisitorVoid {
+internal class FakeOverridesActualizer(private val expectActualMap: MutableMap<IrSymbol, IrSymbol>) : IrElementVisitorVoid() {
     override fun visitClass(declaration: IrClass) {
         if (!declaration.isExpect) {
             actualizeFakeOverrides(declaration)

@@ -86,7 +86,7 @@ internal class InsertImplicitCasts(
 
     private fun postprocessReturnExpressions(element: IrElement) {
         // We need to re-create type parameter context for casts of postprocessed return values.
-        element.acceptChildrenVoid(object : IrElementVisitorVoid {
+        element.acceptChildrenVoid(object : IrElementVisitorVoid() {
             override fun visitReturn(expression: IrReturn) {
                 super.visitReturn(expression)
                 val expectedReturnType = expectedFunctionExpressionReturnType[expression.returnTargetSymbol.descriptor] ?: return
