@@ -128,10 +128,10 @@ internal class OperatorExpressionGenerator(
     }
 
     private fun IrStatementOrigin.toIrDynamicOperator() = when (this) {
-        is IrStatementOrigin.EQEQ -> IrDynamicOperator.EQEQ
-        is IrStatementOrigin.EXCLEQ -> IrDynamicOperator.EXCLEQ
-        is IrStatementOrigin.EQEQEQ -> IrDynamicOperator.EQEQEQ
-        is IrStatementOrigin.EXCLEQEQ -> IrDynamicOperator.EXCLEQEQ
+        IrStatementOrigin.EQEQ -> IrDynamicOperator.EQEQ
+        IrStatementOrigin.EXCLEQ -> IrDynamicOperator.EXCLEQ
+        IrStatementOrigin.EQEQEQ -> IrDynamicOperator.EQEQEQ
+        IrStatementOrigin.EXCLEQEQ -> IrDynamicOperator.EXCLEQEQ
         else -> null
     }
 

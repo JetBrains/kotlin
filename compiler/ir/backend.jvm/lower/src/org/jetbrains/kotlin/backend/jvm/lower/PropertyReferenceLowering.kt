@@ -52,8 +52,10 @@ internal val propertyReferencePhase = makeIrFilePhase(
 )
 
 internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
-    // Marking a property reference with this origin causes it to not generate a class.
-    object REFLECTED_PROPERTY_REFERENCE : IrStatementOriginImpl("REFLECTED_PROPERTY_REFERENCE")
+    companion object {
+        // Marking a property reference with this origin causes it to not generate a class.
+        val REFLECTED_PROPERTY_REFERENCE by IrStatementOriginImpl
+    }
 
     // TODO: join IrLocalDelegatedPropertyReference and IrPropertyReference via the class hierarchy?
     private val IrMemberAccessExpression<*>.getter: IrSimpleFunctionSymbol?

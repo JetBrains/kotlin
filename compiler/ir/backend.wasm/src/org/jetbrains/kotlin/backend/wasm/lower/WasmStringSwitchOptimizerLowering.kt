@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-private object OPTIMISED_WHEN_SUBJECT : IrDeclarationOriginImpl("OPTIMISED_WHEN_SUBJECT")
+private val OPTIMISED_WHEN_SUBJECT by IrDeclarationOriginImpl
 
 class WasmStringSwitchOptimizerLowering(
     private val context: WasmBackendContext

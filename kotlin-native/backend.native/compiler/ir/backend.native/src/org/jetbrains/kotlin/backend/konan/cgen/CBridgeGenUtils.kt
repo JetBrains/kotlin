@@ -151,7 +151,7 @@ internal class KotlinCBridgeBuilder(
         isKotlinToC: Boolean,
         foreignExceptionMode: ForeignExceptionMode.Mode = ForeignExceptionMode.default
 ) {
-    private val origin: CBridgeOrigin = if (isKotlinToC) CBridgeOrigin.KOTLIN_TO_C_BRIDGE else CBridgeOrigin.C_TO_KOTLIN_BRIDGE
+    private val origin = if (isKotlinToC) CBridgeOrigin.KOTLIN_TO_C_BRIDGE else CBridgeOrigin.C_TO_KOTLIN_BRIDGE
 
     private val kotlinBridgeBuilder = KotlinBridgeBuilder(startOffset, endOffset, cName, stubs, isExternal = isKotlinToC, foreignExceptionMode, origin)
     private val cBridgeBuilder = CFunctionBuilder()
@@ -261,7 +261,7 @@ internal class CCallBuilder {
     }
 }
 
-sealed class CBridgeOrigin(name: String): IrDeclarationOriginImpl(name, isSynthetic = true) {
-    object KOTLIN_TO_C_BRIDGE: CBridgeOrigin("KOTLIN_TO_C_BRIDGE")
-    object C_TO_KOTLIN_BRIDGE: CBridgeOrigin("C_TO_KOTLIN_BRIDGE")
+object CBridgeOrigin {
+    val KOTLIN_TO_C_BRIDGE by IrDeclarationOriginImpl.Synthetic
+    val C_TO_KOTLIN_BRIDGE by IrDeclarationOriginImpl.Synthetic
 }

@@ -44,7 +44,7 @@ private fun Context.getTypeConversionImpl(
     }.symbol
 }
 
-internal object DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION : IrDeclarationOriginImpl("INLINE_CLASS_SPECIAL_FUNCTION")
+internal val DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION = IrDeclarationOriginImpl("INLINE_CLASS_SPECIAL_FUNCTION")
 
 private fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
         if (hasQuestionMark) this.defaultType.makeNullable() else this.defaultType

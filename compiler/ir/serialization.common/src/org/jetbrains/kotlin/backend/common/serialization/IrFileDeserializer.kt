@@ -92,7 +92,7 @@ class FileDeserializationState(
         linker.fakeOverrideBuilder,
         compatibilityMode = moduleDeserializer.compatibilityMode,
         linker.partialLinkageSupport.isEnabled,
-        internationService = linker.internationService
+        internationService = linker.internationService,
     )
 
     val fileDeserializer = IrFileDeserializer(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)

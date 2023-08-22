@@ -1100,7 +1100,9 @@ private class ObjCBlockPointerValuePassing(
                 )
             }
 
-    private object OBJC_BLOCK_FUNCTION_IMPL : IrDeclarationOriginImpl("OBJC_BLOCK_FUNCTION_IMPL")
+    private companion object {
+        private val OBJC_BLOCK_FUNCTION_IMPL by IrDeclarationOriginImpl
+    }
 
     private fun IrBuilderWithScope.createKotlinFunctionObject(blockPointer: IrExpression): IrExpression {
         val constructor = generateKotlinFunctionClass()

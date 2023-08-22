@@ -8,16 +8,18 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 
-interface JsStatementOrigins {
-    object BIND_CALL : IrStatementOriginImpl("BIND_CALL")
-    object STATEMENT_ORIGIN_COROUTINE_IMPL : IrStatementOriginImpl("COROUTINE_IMPL")
-    object SYNTHESIZED_STATEMENT : IrStatementOriginImpl("SYNTHESIZED_STATEMENT")
-    object CALLABLE_REFERENCE_CREATE : IrStatementOriginImpl("CALLABLE_REFERENCE_CREATE")
-    object CALLABLE_REFERENCE_INVOKE : IrStatementOriginImpl("CALLABLE_REFERENCE_INVOKE")
-    object EXPLICIT_INVOKE : IrStatementOriginImpl("EXPLICIT_INVOKE")
-    object FACTORY_ORIGIN : IrDeclarationOriginImpl("FACTORY_ORIGIN")
-    object COROUTINE_ROOT_LOOP : IrStatementOriginImpl("COROUTINE_ROOT_LOOP")
-    object COROUTINE_SWITCH : IrStatementOriginImpl("COROUTINE_SWITCH")
-    object CLASS_REFERENCE : IrStatementOriginImpl("CLASS_REFERENCE")
-    object IMPLEMENTATION_DELEGATION_CALL : IrStatementOriginImpl("IMPLEMENTATION_DELEGATION_CALL")
+object JsStatementOrigins {
+    val BIND_CALL by IrStatementOriginImpl
+    val STATEMENT_ORIGIN_COROUTINE_IMPL = IrStatementOriginImpl("COROUTINE_IMPL")
+    val SYNTHESIZED_STATEMENT by IrStatementOriginImpl
+    val CALLABLE_REFERENCE_CREATE by IrStatementOriginImpl
+    val CALLABLE_REFERENCE_INVOKE by IrStatementOriginImpl
+    val EXPLICIT_INVOKE by IrStatementOriginImpl
+
+    val FACTORY_ORIGIN by IrDeclarationOriginImpl
+
+    val COROUTINE_ROOT_LOOP by IrStatementOriginImpl
+    val COROUTINE_SWITCH by IrStatementOriginImpl
+    val CLASS_REFERENCE by IrStatementOriginImpl
+    val IMPLEMENTATION_DELEGATION_CALL by IrStatementOriginImpl
 }

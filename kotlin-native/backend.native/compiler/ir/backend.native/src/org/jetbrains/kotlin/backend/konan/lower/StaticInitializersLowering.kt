@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 
-internal object DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER : IrDeclarationOriginImpl("STATIC_GLOBAL_INITIALIZER")
-internal object DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER : IrDeclarationOriginImpl("STATIC_THREAD_LOCAL_INITIALIZER")
-internal object DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER : IrDeclarationOriginImpl("STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER")
+internal val DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER = IrDeclarationOriginImpl("STATIC_GLOBAL_INITIALIZER")
+internal val DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER = IrDeclarationOriginImpl("STATIC_THREAD_LOCAL_INITIALIZER")
+internal val DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER = IrDeclarationOriginImpl("STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER")
 
 internal val IrFunction.isStaticInitializer: Boolean
     get() = origin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER

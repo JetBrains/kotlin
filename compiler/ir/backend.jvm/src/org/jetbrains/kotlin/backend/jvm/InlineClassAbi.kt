@@ -33,7 +33,7 @@ object InlineClassAbi {
      * perform inline class mangling and so in the absence of jvm signatures in the metadata we need to avoid
      * inline class mangling as well in the function references used as arguments to the signature string intrinsic.
      */
-    object UNMANGLED_FUNCTION_REFERENCE : IrStatementOriginImpl("UNMANGLED_FUNCTION_REFERENCE")
+    val UNMANGLED_FUNCTION_REFERENCE by IrStatementOriginImpl
 
     /**
      * Unwraps inline class types to their underlying representation.

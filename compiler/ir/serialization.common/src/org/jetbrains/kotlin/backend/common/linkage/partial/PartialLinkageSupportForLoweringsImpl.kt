@@ -100,7 +100,7 @@ internal class PartialLinkageSupportForLoweringsImpl(
                 startOffset
             }
 
-            else -> if (origin is PartiallyLinkedDeclarationOrigin) {
+            else -> if (origin in PartiallyLinkedDeclarationOrigin.entries) {
                 // There is no sense to take coordinates from the declaration that does not exist in the code.
                 // Let's take the coordinates of the parent.
                 parent.startOffsetOfFirstDenotableIrElement()

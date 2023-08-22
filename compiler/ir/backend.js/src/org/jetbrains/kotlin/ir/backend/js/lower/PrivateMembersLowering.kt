@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
-private val STATIC_THIS_PARAMETER = object : IrDeclarationOriginImpl("STATIC_THIS_PARAMETER") {}
+private val STATIC_THIS_PARAMETER by IrDeclarationOriginImpl
 
 class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 

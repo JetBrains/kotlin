@@ -312,8 +312,9 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
         }
     }
 
-    private object OVERRIDING_INITIALIZER_BY_CONSTRUCTOR :
-            IrDeclarationOriginImpl("OVERRIDING_INITIALIZER_BY_CONSTRUCTOR")
+    private companion object {
+        private val OVERRIDING_INITIALIZER_BY_CONSTRUCTOR by IrDeclarationOriginImpl
+    }
 
     private fun IrConstructor.overridesConstructor(other: IrConstructor): Boolean {
         return this.descriptor.valueParameters.size == other.descriptor.valueParameters.size &&

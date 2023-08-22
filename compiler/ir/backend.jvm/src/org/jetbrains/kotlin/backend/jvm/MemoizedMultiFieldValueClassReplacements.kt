@@ -387,8 +387,7 @@ class MemoizedMultiFieldValueClassReplacements(
 
     private val IrProperty.backingFieldIfNotToRemove get() = backingField?.takeUnless { it in getFieldsToRemove(this.parentAsClass) }
 
-    @Suppress("ClassName")
-    private object FLATTENED_NOTHING_DEFAULT_VALUE : IrStatementOriginImpl("FLATTENED_NOTHING_DEFAULT_VALUE")
+    private val FLATTENED_NOTHING_DEFAULT_VALUE by IrStatementOriginImpl
 
     fun mapFunctionMfvcStructures(
         irBuilder: IrBlockBuilder,

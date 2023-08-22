@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-object FINALLY_EXPRESSION : IrStatementOriginImpl("FINALLY_EXPRESSION")
+val FINALLY_EXPRESSION by IrStatementOriginImpl
 
 class FinallyBlocksLowering(val context: CommonBackendContext, private val throwableType: IrType): FileLoweringPass, IrElementTransformerVoidWithContext() {
 

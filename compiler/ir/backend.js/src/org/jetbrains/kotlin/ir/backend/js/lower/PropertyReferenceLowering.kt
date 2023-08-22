@@ -271,6 +271,6 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
     }
 
     companion object {
-        object PROPERTY_REFERENCE_FACTORY : IrDeclarationOriginImpl("PROPERTY_REFERNCE_FACTORY")
+        val PROPERTY_REFERENCE_FACTORY = IrDeclarationOriginImpl("PROPERTY_REFERNCE_FACTORY")
     }
 }

@@ -469,9 +469,9 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
     }
 
     companion object {
-        object LAMBDA_IMPL : IrDeclarationOriginImpl("LAMBDA_IMPL")
-        object FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
-        object GENERATED_MEMBER_IN_CALLABLE_REFERENCE : IrDeclarationOriginImpl("GENERATED_MEMBER_IN_CALLABLE_REFERENCE")
+        val LAMBDA_IMPL by IrDeclarationOriginImpl
+        val FUNCTION_REFERENCE_IMPL by IrDeclarationOriginImpl
+        val GENERATED_MEMBER_IN_CALLABLE_REFERENCE by IrDeclarationOriginImpl
 
         val BOUND_RECEIVER_NAME = Name.identifier("\$boundThis")
     }

@@ -164,7 +164,7 @@ class PropertyLazyInitLowering(
     }
 
     companion object {
-        object PROPERTY_INIT_FUN_CALL : IrStatementOriginImpl("PROPERTY_INIT_FUN_CALL")
+        val PROPERTY_INIT_FUN_CALL by IrStatementOriginImpl
     }
 }
 

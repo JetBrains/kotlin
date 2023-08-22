@@ -36,7 +36,7 @@ internal class KonanForwardDeclarationModuleDeserializer(
     }
 
     companion object {
-        private val FORWARD_DECLARATION_ORIGIN = object : IrDeclarationOriginImpl("FORWARD_DECLARATION_ORIGIN") {}
+        private val FORWARD_DECLARATION_ORIGIN by IrDeclarationOriginImpl
     }
 
     private val declaredDeclaration = mutableMapOf<IdSignature, IrClass>()

@@ -169,10 +169,10 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         val jsInitializer = value?.accept(IrElementToJsExpressionTransformer(), context)
 
         val syntheticVariable = when (declaration.origin) {
-            is IrDeclarationOrigin.IR_TEMPORARY_VARIABLE -> true
-            is IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER -> true
-            is IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER -> true
-            is ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT -> true
+            IrDeclarationOrigin.IR_TEMPORARY_VARIABLE -> true
+            IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER -> true
+            IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER -> true
+            ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT -> true
             else -> false
         }
 

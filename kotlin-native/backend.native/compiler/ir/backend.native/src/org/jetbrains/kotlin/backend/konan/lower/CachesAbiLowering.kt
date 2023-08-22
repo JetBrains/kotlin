@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 /**
  * Allows to distinguish external declarations to internal ABI.
  */
-internal object INTERNAL_ABI_ORIGIN : IrDeclarationOriginImpl("INTERNAL_ABI")
+internal val INTERNAL_ABI_ORIGIN = IrDeclarationOriginImpl("INTERNAL_ABI")
 
 /**
  * Sometimes we need to reference symbols that are not declared in metadata.

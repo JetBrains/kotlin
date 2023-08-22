@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal class InitializersLowering(val context: CommonBackendContext) : ClassLoweringPass {
-
-    object STATEMENT_ORIGIN_ANONYMOUS_INITIALIZER : IrStatementOriginImpl("ANONYMOUS_INITIALIZER")
-
-    object DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER : IrDeclarationOriginImpl("ANONYMOUS_INITIALIZER")
+    companion object {
+        val STATEMENT_ORIGIN_ANONYMOUS_INITIALIZER = IrStatementOriginImpl("ANONYMOUS_INITIALIZER")
+        val DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER = IrDeclarationOriginImpl("ANONYMOUS_INITIALIZER")
+    }
 
     override fun lower(irClass: IrClass) {
         if (irClass.isInterface) return

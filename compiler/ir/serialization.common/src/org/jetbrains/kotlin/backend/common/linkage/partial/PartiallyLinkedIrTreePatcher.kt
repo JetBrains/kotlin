@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.PARTIAL_LINKAGE_RUNTIME_ERROR
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.PARTIAL_LINKAGE_RUNTIME_ERROR
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.linkage.partial.*
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.*
@@ -457,7 +457,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
         override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
             // Optimization: Don't patch expressions under generated synthetic declarations.
-            return if (declaration.origin is PartiallyLinkedDeclarationOrigin)
+            return if (declaration.origin in PartiallyLinkedDeclarationOrigin.entries)
                 declaration // There are neither expressions nor annotations to patch.
             else {
                 declaration.filterUnusableAnnotations()

@@ -439,7 +439,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                     if (!hasSameLineNumber(argument, expression)) {
                         return null
                     }
-                    return rewriteCompoundAssignmentAsPrefixIncrDecr(expression, argument, expression.origin is IrStatementOrigin.MINUSEQ)
+                    return rewriteCompoundAssignmentAsPrefixIncrDecr(expression, argument, expression.origin == IrStatementOrigin.MINUSEQ)
                 }
                 IrStatementOrigin.EQ -> {
                     val value = expression.value
