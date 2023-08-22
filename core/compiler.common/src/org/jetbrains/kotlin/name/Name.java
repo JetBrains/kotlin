@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.name;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.utils.StringInterner;
 
 public final class Name implements Comparable<Name> {
     @NotNull
@@ -25,7 +26,7 @@ public final class Name implements Comparable<Name> {
     private final boolean special;
 
     private Name(@NotNull String name, boolean special) {
-        this.name = name;
+        this.name = StringInterner.interned(name);
         this.special = special;
     }
 
