@@ -28,14 +28,16 @@ class FirBuilderInferenceSession2(
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement =
         true
 
-    override fun handleQualifiedAccess(qualifiedAccessExpression: FirExpression) {
+    override fun handleQualifiedAccess(qualifiedAccessExpression: FirExpression, data: ResolutionMode) {
         if (qualifiedAccessExpression.resultType.containsNotFixedTypeVariables() && (qualifiedAccessExpression as? FirResolvable)?.candidate() == null) {
             qualifiedAccessesToProcess.add(qualifiedAccessExpression)
             outerCandidate.postponedAccesses += qualifiedAccessExpression
 
             if (qualifiedAccessExpression is FirSmartCastExpression) {
-                handleQualifiedAccess(qualifiedAccessExpression.originalExpression)
+                handleQualifiedAccess(qualifiedAccessExpression.originalExpression, data)
             }
+
+            (data as? ResolutionMode.ContextIndependent.ForDeclaration)?.declaration?.let(outerCandidate.updateDeclarations::add)
         }
     }
 
