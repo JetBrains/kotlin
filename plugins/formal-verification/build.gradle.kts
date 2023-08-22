@@ -9,12 +9,6 @@ repositories {
     mavenLocal()
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-
 dependencies {
     implementation("viper:silicon:1.1-SNAPSHOT")
 
@@ -79,6 +73,7 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
+    javaLauncher.set(javaToolchains.launcherFor { languageVersion.set(JavaLanguageVersion.of(11))})
 }.also { confugureFirPluginAnnotationsDependency(it) }
 
 runtimeJar()
