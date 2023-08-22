@@ -40,7 +40,7 @@ internal val addSuperQualifierToJavaFieldAccessPhase = makeIrFilePhase(
 // This lowering changes field accesses so that codegen will correctly generate access to a public field in a Java superclass of a Kotlin
 // class, even if that field is "shadowed" by a property in the Kotlin class, with a _private_ field with the same name.
 // See KT-49507 and KT-48954 as good examples for cases we try to handle here.
-private object AddSuperQualifierToJavaFieldAccessLowering : IrElementVisitorVoid, FileLoweringPass {
+private object AddSuperQualifierToJavaFieldAccessLowering : IrElementVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)
     }

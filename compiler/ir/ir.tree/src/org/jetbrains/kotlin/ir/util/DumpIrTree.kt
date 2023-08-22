@@ -103,7 +103,7 @@ internal fun List<IrDeclaration>.stableOrdered(): List<IrDeclaration> {
 class DumpIrTreeVisitor(
     out: Appendable,
     private val options: DumpIrTreeOptions = DumpIrTreeOptions(),
-) : IrElementVisitor<Unit, String> {
+) : IrElementVisitor<Unit, String>() {
 
     private val printer = Printer(out, "  ")
     private val elementRenderer = RenderIrElementVisitor(options)
@@ -455,7 +455,7 @@ class DumpTreeFromSourceLineVisitor(
     private val lineNumber: Int,
     out: Appendable,
     options: DumpIrTreeOptions,
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     private val dumper = DumpIrTreeVisitor(out, options)
 
     override fun visitElement(element: IrElement) {

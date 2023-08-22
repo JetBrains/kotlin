@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.types.classOrFail
 
-class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor {
+class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor() {
     override fun visitFunction(declaration: IrFunction, data: IrInterpreterPreprocessorData): IrStatement {
         // It is useless to visit default accessor, we probably want to leave code there as it is
         if (declaration.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) return declaration

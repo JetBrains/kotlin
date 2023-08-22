@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 class ManglerChecker(
     vararg _manglers: KotlinMangler<IrDeclaration>,
     private val needsChecking: (IrDeclarationBase) -> Boolean = hasDescriptor
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
 
     companion object {
         val hasDescriptor: (IrDeclarationBase) -> Boolean = { it.symbol.hasDescriptor }
@@ -30,7 +30,7 @@ class ManglerChecker(
         element.acceptChildrenVoid(this)
     }
 
-    private val skipper = object : IrElementVisitor<Boolean, Nothing?> {
+    private val skipper = object : IrElementVisitor<Boolean, Nothing?>() {
         override fun visitElement(element: IrElement, data: Nothing?): Boolean {
             error("unexpected element: ${element.render()}")
         }

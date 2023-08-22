@@ -132,7 +132,7 @@ open class IrMangleComputer(
         }
     }
 
-    private inner class Visitor : IrElementVisitorVoid {
+    private inner class Visitor : IrElementVisitorVoid() {
 
         override fun visitElement(element: IrElement) =
             error("unexpected element ${element.render()}")

@@ -35,7 +35,7 @@ internal class ActualFakeOverridesAdder(
     private val expectToActualClassMap: Map<ClassId, IrClassSymbol>,
     private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext,
     private val typeSystemContext: IrTypeSystemContext
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     private val missingActualMembersMap = mutableMapOf<IrClass, FakeOverrideInfo>()
 
     override fun visitClass(declaration: IrClass) {

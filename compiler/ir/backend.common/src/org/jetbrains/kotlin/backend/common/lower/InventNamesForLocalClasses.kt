@@ -43,7 +43,7 @@ abstract class InventNamesForLocalClasses(
         fun makeLocal(): Data = if (isLocal) this else copy(isLocal = true)
     }
 
-    private inner class NameInventor : IrElementVisitor<Unit, Data> {
+    private inner class NameInventor : IrElementVisitor<Unit, Data>() {
         private val anonymousClassesCount = mutableMapOf<String, Int>()
         private val localFunctionNames = mutableMapOf<IrFunctionSymbol, String>()
 
