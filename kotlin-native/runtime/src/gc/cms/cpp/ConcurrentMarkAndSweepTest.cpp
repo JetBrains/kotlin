@@ -1146,6 +1146,9 @@ TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
 }
 
 TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
+#if __has_feature(thread_sanitizer)
+    GTEST_SKIP() << "Broken with TSAN";
+#endif
     std_support::vector<Mutator> mutators(2);
     std::atomic<test_support::Object<Payload>*> object1 = nullptr;
     std::atomic<test_support::RegularWeakReferenceImpl*> weak = nullptr;
