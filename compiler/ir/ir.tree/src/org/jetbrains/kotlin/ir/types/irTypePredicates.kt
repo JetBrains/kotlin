@@ -80,6 +80,9 @@ private fun IrClass.hasFqNameEqualToSignature(signature: IdSignature.CommonSigna
 fun IrClassifierSymbol.isClassWithFqName(fqName: FqNameUnsafe): Boolean =
     this is IrClassSymbol && classFqNameEquals(this, fqName)
 
+fun IrClass.isClassWithFqName(fqName: FqNameUnsafe): Boolean =
+    classFqNameEquals(this, fqName)
+
 private fun classFqNameEquals(symbol: IrClassSymbol, fqName: FqNameUnsafe): Boolean {
     assert(symbol.isBound)
     return classFqNameEquals(symbol.owner, fqName)
