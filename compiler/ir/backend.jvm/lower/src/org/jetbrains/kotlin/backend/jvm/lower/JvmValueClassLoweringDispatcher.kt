@@ -81,7 +81,7 @@ private class NeedsToVisit(private val context: JvmBackendContext) : IrElementVi
     private val IrClass.needsHandling: Boolean
         get() = isValue || typeParameters.any { it.acceptAndGetResult() }
     private val IrType.needsHandling: Boolean
-        get() = classifierOrNull?.isBound == true && erasedUpperBound.needsHandling || this is IrSimpleType && arguments.any { it.typeOrNull?.needsHandling == true }
+        get() = this is IrSimpleType && (classifier.isBound && erasedUpperBound.needsHandling || arguments.any { it.typeOrNull?.needsHandling == true })
 
     override fun visitClass(declaration: IrClass) {
         visitClassHeader(declaration)
@@ -123,7 +123,7 @@ private class NeedsToVisit(private val context: JvmBackendContext) : IrElementVi
     private fun visitFunction(declaration: IrFunction, withBody: Boolean) {
         visitFunctionHeader(declaration)
         if (result) return
-        if(withBody) visitFunctionBody(declaration)
+        if (withBody) visitFunctionBody(declaration)
     }
 
     private fun visitFunctionBody(declaration: IrFunction) {
