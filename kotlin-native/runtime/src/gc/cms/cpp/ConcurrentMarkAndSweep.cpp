@@ -76,7 +76,7 @@ void gc::ConcurrentMarkAndSweep::ThreadData::beginCooperation() {
 }
 
 bool gc::ConcurrentMarkAndSweep::ThreadData::cooperative() const {
-    return cooperative_.load(std::memory_order_relaxed);
+    return cooperative_.load(std::memory_order_consume);
 }
 
 void gc::ConcurrentMarkAndSweep::ThreadData::publish() {
