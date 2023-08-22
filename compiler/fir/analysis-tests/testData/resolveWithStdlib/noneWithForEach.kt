@@ -1,7 +1,3 @@
-// IGNORE_DIAGNOSTIC_API
-// IGNORE_REVERSED_RESOLVE
-// Ignore reason: KT-58786
-
 interface Diagnostic {
     val name: String
 }

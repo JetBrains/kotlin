@@ -1,0 +1,19 @@
+Module: a
+FILE: a.kt
+    public final typealias Foo<T> = R|kotlin/collections/List<kotlin/String>|
+    public final class C<T> : R|kotlin/Any| {
+        public constructor<T>(): R|C<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val foo: R|Foo<T>?| = Null(null)
+            public get(): R|Foo<T>?|
+
+    }
+Module: b
+FILE: b.kt
+    public final val bar: R|Foo<kotlin/Int>?| = R|/C.C|<R|kotlin/Int|>().R|SubstitutionOverride</C.foo: R|Foo<kotlin/Int>?|>|
+        public get(): R|Foo<kotlin/Int>?|
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

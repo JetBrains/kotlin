@@ -36466,6 +36466,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("deserializedAbbreviationWithRedundantArgument.kt")
+        public void testDeserializedAbbreviationWithRedundantArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/typealias/deserializedAbbreviationWithRedundantArgument.kt");
+        }
+
+        @Test
         @TestMetadata("enumEntryQualifier.kt")
         public void testEnumEntryQualifier() throws Exception {
             runTest("compiler/testData/codegen/box/typealias/enumEntryQualifier.kt");

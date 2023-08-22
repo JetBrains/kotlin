@@ -6,4 +6,3 @@ public final class Context : R|kotlin/Any| {
 }
 
 public final typealias SuspendWithContext = R|suspend test/Context.() -> kotlin/Unit|
-

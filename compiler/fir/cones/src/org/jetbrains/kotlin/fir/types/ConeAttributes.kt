@@ -110,6 +110,15 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         return create(attributes)
     }
 
+    fun replace(oldAttribute: ConeAttribute<*>, newAttribute: ConeAttribute<*>): ConeAttributes {
+        return create(buildList {
+            arrayMap.mapNotNullTo(this) { attr ->
+                attr.takeUnless { it == oldAttribute }
+            }
+            add(newAttribute)
+        })
+    }
+
     private inline fun perform(other: ConeAttributes, op: ConeAttribute<*>.(ConeAttribute<*>?) -> ConeAttribute<*>?): ConeAttributes {
         if (this.isEmpty() && other.isEmpty()) return this
         val attributes = mutableListOf<ConeAttribute<*>>()
