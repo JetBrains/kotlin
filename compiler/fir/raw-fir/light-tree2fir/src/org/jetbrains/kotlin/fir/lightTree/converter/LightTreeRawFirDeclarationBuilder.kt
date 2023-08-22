@@ -1366,7 +1366,7 @@ class LightTreeRawFirDeclarationBuilder(
     internal fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
         var modifiers = Modifier()
         var isVar = false
-        val entries = mutableListOf<FirVariable?>()
+        val entries = mutableListOf<DestructuringEntry>()
         val source = destructingDeclaration.toFirSourceElement()
         var firExpression: FirExpression? = null
         destructingDeclaration.forEachChildren {
@@ -1387,14 +1387,14 @@ class LightTreeRawFirDeclarationBuilder(
                 ConeSyntaxDiagnostic("Initializer required for destructuring declaration")
             ),
             source,
-            modifiers
+            modifiers.annotations
         )
     }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMultiDeclarationName
      */
-    private fun convertDestructingDeclarationEntry(entry: LighterASTNode): FirVariable? {
+    private fun convertDestructingDeclarationEntry(entry: LighterASTNode): DestructuringEntry {
         var modifiers = Modifier()
         var identifier: String? = null
         var firType: FirTypeRef? = null
@@ -1411,18 +1411,13 @@ class LightTreeRawFirDeclarationBuilder(
         } else {
             identifier.nameAsSafeName()
         }
-        return buildProperty {
-            source = entry.toFirSourceElement()
-            moduleData = baseModuleData
-            origin = FirDeclarationOrigin.Source
-            returnTypeRef = firType ?: implicitType
-            this.name = name
-            isVar = false
-            symbol = FirPropertySymbol(name)
-            isLocal = true
-            status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-            annotations += modifiers.annotations
-        }
+
+        return DestructuringEntry(
+            source = entry.toFirSourceElement(),
+            returnTypeRef = firType ?: implicitType,
+            name = name,
+            annotations = modifiers.annotations,
+        )
     }
 
     /**

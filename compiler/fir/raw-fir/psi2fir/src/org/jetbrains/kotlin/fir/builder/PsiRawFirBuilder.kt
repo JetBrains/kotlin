@@ -164,7 +164,26 @@ open class PsiRawFirBuilder(
             }
         }
 
-    protected open inner class Visitor : KtVisitor<FirElement, FirElement?>() {
+    protected open inner class Visitor : KtVisitor<FirElement, FirElement?>(), DestructuringContext<KtDestructuringDeclarationEntry> {
+
+        override val KtDestructuringDeclarationEntry.returnTypeRef: FirTypeRef
+            get() = typeReference.toFirOrImplicitType()
+
+        @Suppress("ConflictingExtensionProperty")
+        override val KtDestructuringDeclarationEntry.name: Name
+            get() = if (nameIdentifier?.text == "_") {
+                SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+            } else {
+                nameAsSafeName
+            }
+
+        override val KtDestructuringDeclarationEntry.source: KtSourceElement
+            get() = toKtPsiSourceElement()
+
+        override fun KtDestructuringDeclarationEntry.extractAnnotationsTo(target: FirAnnotationContainerBuilder) {
+            (this as KtAnnotated).extractAnnotationsTo(target)
+        }
+
         private inline fun <reified R : FirElement> KtElement?.convertSafe(): R? =
             this?.let { convertElement(it, null)} as? R
 
@@ -1192,10 +1211,7 @@ open class PsiRawFirBuilder(
                                 destructuringContainerVar,
                                 tmpVariable = false,
                                 localEntries = false,
-                                extractAnnotationsTo = { extractAnnotationsTo(it) },
-                            ) {
-                                toFirOrImplicitType()
-                            }.apply {
+                            ).apply {
                                 statements.forEach {
                                     (it as FirProperty).destructuringDeclarationContainerVariable = destructuringContainerVar.symbol
                                 }
@@ -1744,8 +1760,7 @@ open class PsiRawFirBuilder(
                             multiParameter,
                             tmpVariable = false,
                             localEntries = true,
-                            extractAnnotationsTo = { extractAnnotationsTo(it) },
-                        ) { toFirOrImplicitType() }
+                        )
                         multiParameter
                     } else {
                         val typeRef = valueParameter.typeReference?.convertSafe() ?: FirImplicitTypeRefImplWithoutSource
@@ -2596,15 +2611,13 @@ open class PsiRawFirBuilder(
                             typeRef = ktParameter.typeReference.toFirOrImplicitType(),
                         )
                         if (multiDeclaration != null) {
-                            val destructuringBlock = generateDestructuringBlock(
+                            blockBuilder.statements.addDestructuringStatements(
                                 baseModuleData,
                                 multiDeclaration = multiDeclaration,
                                 container = firLoopParameter,
                                 tmpVariable = true,
                                 localEntries = true,
-                                extractAnnotationsTo = { extractAnnotationsTo(it) },
-                            ) { toFirOrImplicitType() }
-                            blockBuilder.statements.addAll(destructuringBlock.statements)
+                            )
                         } else {
                             blockBuilder.statements.add(firLoopParameter)
                         }
@@ -2968,10 +2981,7 @@ open class PsiRawFirBuilder(
                 baseVariable,
                 tmpVariable = true,
                 localEntries = true,
-                extractAnnotationsTo = { extractAnnotationsTo(it) },
-            ) {
-                toFirOrImplicitType()
-            }
+            )
         }
 
         override fun visitClassLiteralExpression(expression: KtClassLiteralExpression, data: FirElement?): FirElement {

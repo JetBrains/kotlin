@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,28 +7,76 @@ package org.jetbrains.kotlin.fir.lightTree.fir
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.builder.DestructuringContext
+import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
+import org.jetbrains.kotlin.fir.builder.addDestructuringStatements
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.generateTemporaryVariable
-import org.jetbrains.kotlin.fir.lightTree.converter.generateDestructuringBlock
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
 data class DestructuringDeclaration(
     val isVar: Boolean,
-    val entries: List<FirVariable?>,
+    val entries: List<DestructuringEntry>,
     val initializer: FirExpression,
     val source: KtSourceElement,
-    val modifier: Modifier,
+    val annotations: List<FirAnnotation>,
 ) {
-    fun toFirDestructingDeclaration(moduleData: FirModuleData): FirExpression {
+    fun toFirDestructingDeclaration(
+        moduleData: FirModuleData,
+        tmpVariable: Boolean = true,
+        localEntries: Boolean = true,
+    ): FirExpression {
         val baseVariable = generateTemporaryVariable(
             moduleData,
             source,
             SpecialNames.DESTRUCT,
             initializer,
-            extractedAnnotations = modifier.annotations
+            extractedAnnotations = annotations
         )
-        return generateDestructuringBlock(moduleData, this, baseVariable, tmpVariable = true)
+        return buildBlock {
+            statements.addDestructuringStatements(moduleData, this@DestructuringDeclaration, baseVariable, tmpVariable, localEntries)
+        }
+    }
+}
+
+class DestructuringEntry(
+    val source: KtSourceElement,
+    val returnTypeRef: FirTypeRef,
+    val name: Name,
+    val annotations: List<FirAnnotation>,
+) {
+    @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+    companion object : DestructuringContext<DestructuringEntry> {
+        override val DestructuringEntry.returnTypeRef: FirTypeRef get() = returnTypeRef
+        override val DestructuringEntry.name: Name get() = name
+        override val DestructuringEntry.source: KtSourceElement get() = source
+        override fun DestructuringEntry.extractAnnotationsTo(target: FirAnnotationContainerBuilder) {
+            target.annotations += annotations
+        }
+    }
+}
+
+fun MutableList<FirStatement>.addDestructuringStatements(
+    moduleData: FirModuleData,
+    multiDeclaration: DestructuringDeclaration,
+    container: FirVariable,
+    tmpVariable: Boolean,
+    localEntries: Boolean,
+) {
+    with(DestructuringEntry) {
+        addDestructuringStatements(
+            moduleData,
+            container,
+            multiDeclaration.entries,
+            multiDeclaration.isVar,
+            tmpVariable,
+            localEntries
+        )
     }
 }

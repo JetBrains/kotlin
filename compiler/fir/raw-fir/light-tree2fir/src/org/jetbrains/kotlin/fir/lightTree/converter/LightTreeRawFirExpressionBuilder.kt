@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
 import org.jetbrains.kotlin.fir.lightTree.fir.WhenEntry
+import org.jetbrains.kotlin.fir.lightTree.fir.addDestructuringStatements
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
@@ -178,7 +179,8 @@ class LightTreeRawFirExpressionBuilder(
                         baseModuleData,
                         multiDeclaration,
                         multiParameter,
-                        tmpVariable = false
+                        tmpVariable = false,
+                        localEntries = true
                     )
                     multiParameter
                 } else {
@@ -1172,13 +1174,13 @@ class LightTreeRawFirExpressionBuilder(
                         valueParameter.returnTypeRef
                     )
                     if (multiDeclaration != null) {
-                        val destructuringBlock = generateDestructuringBlock(
+                        statements.addDestructuringStatements(
                             baseModuleData,
                             multiDeclaration,
                             firLoopParameter,
-                            tmpVariable = true
+                            tmpVariable = true,
+                            localEntries = true,
                         )
-                        statements.addAll(destructuringBlock.statements)
                     } else {
                         statements.add(firLoopParameter)
                     }

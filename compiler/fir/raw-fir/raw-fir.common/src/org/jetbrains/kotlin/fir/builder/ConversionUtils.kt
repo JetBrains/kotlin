@@ -299,6 +299,18 @@ fun generateResolvedAccessExpression(source: KtSourceElement?, variable: FirVari
         }
     }
 
+fun FirVariable.toComponentCall(
+    entrySource: KtSourceElement?,
+    index: Int,
+): FirComponentCall {
+    return buildComponentCall {
+        val componentCallSource = entrySource?.fakeElement(KtFakeSourceElementKind.DesugaredComponentFunctionCall)
+        source = componentCallSource
+        explicitReceiver = generateResolvedAccessExpression(componentCallSource, this@toComponentCall)
+        componentIndex = index + 1
+    }
+}
+
 val FirClassBuilder.ownerRegularOrAnonymousObjectSymbol
     get() = when (this) {
         is FirAnonymousObjectBuilder -> symbol
