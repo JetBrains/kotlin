@@ -36,7 +36,7 @@ data class Program(
     fun toShort(): Program = Program(
         domains.filter { it.includeInShortDump },
         fields.filter { it.includeInShortDump },
-        methods,
+        methods.filter { it.includeInShortDump },
         pos,
         info,
         trafos,

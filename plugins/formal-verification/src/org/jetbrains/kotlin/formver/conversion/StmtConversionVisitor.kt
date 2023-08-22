@@ -164,9 +164,19 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         return returnExp
     }
 
+    override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: StmtConversionContext): Exp {
+        val args = getFunctionCallArguments(implicitInvokeCall).map { it.accept(this, data) }
+        val retType = implicitInvokeCall.calleeReference.toResolvedCallableSymbol()!!.resolvedReturnType
+        val returnVar = data.newAnonVar(data.embedType(retType))
+        val returnExp = returnVar.toLocalVar()
+        data.addDeclaration(returnVar.toLocalVarDecl())
+        // NOTE: Since it is only relevant to update the number of times that a function object is called,
+        // the function call invocation is intentionally not assigned to the return variable
+        data.addStatement(Stmt.MethodCall(InvokeFunctionObjectName.mangled, args.take(1), listOf()))
+        return returnExp
+    }
+
     private fun getFunctionCallArguments(functionCall: FirFunctionCall): List<FirExpression> {
-        // I'm sure there's a nicer and more functional way of writing this, feel free to
-        // refactor if you know how. :)
         val receiver = if (functionCall.dispatchReceiver !is FirNoReceiverExpression) {
             listOf(functionCall.dispatchReceiver)
         } else {

@@ -30,7 +30,7 @@ class ProgramConverter(val session: FirSession) : ProgramConversionContext {
         get() = Program(
             listOf(UnitDomain, NullableDomain), /* Domains */
             SpecialFields.all, /* Fields */
-            methods.values.toList(), /* Methods */
+            SpecialMethods.all + methods.values.toList(), /* Methods */
         )
 
     fun addWithBody(declaration: FirSimpleFunction) {
@@ -53,7 +53,6 @@ class ProgramConverter(val session: FirSession) : ProgramConversionContext {
 
     private fun embedSignature(symbol: FirNamedFunctionSymbol): MethodSignatureEmbedding {
         val retType = symbol.resolvedReturnTypeRef.type
-
         val params = symbol.valueParameterSymbols.map {
             VariableEmbedding(it.embedName(), embedType(it.resolvedReturnType))
         }
