@@ -1146,11 +1146,14 @@ TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
 }
 
 TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
-    std_support::vector<Mutator> mutators(2);
+#if __has_feature(thread_sanitizer)
+    // GTEST_SKIP() << "Broken with TSAN";
+#endif
     std::atomic<test_support::Object<Payload>*> object1 = nullptr;
     std::atomic<test_support::RegularWeakReferenceImpl*> weak = nullptr;
     std::atomic<bool> done = false;
-    auto f0 = mutators[0].Execute([&](mm::ThreadData& threadData, Mutator &) {
+    Mutator m1;
+    auto f0 = m1.Execute([&](mm::ThreadData& threadData, Mutator &) {
         GlobalObjectHolder global1{threadData};
         auto& object1_local = AllocateObject(threadData);
         object1 = &object1_local;
@@ -1174,7 +1177,8 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
         done = true;
     });
 
-    auto f1 = mutators[1].Execute([&](mm::ThreadData& threadData, Mutator &) {
+    Mutator m2;
+    auto f1 = m2.Execute([&](mm::ThreadData& threadData, Mutator &) {
         while (object1.load() == nullptr) {}
         ObjHolder holder;
         auto& weak_local = InstallWeakReference(threadData, object1.load()->header(), holder.slot());
