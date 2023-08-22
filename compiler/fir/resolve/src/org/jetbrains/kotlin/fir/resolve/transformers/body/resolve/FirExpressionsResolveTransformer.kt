@@ -186,7 +186,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         if (result is FirExpression) {
-            context.inferenceSession.handleQualifiedAccess(result)
+            context.inferenceSession.handleQualifiedAccess(result, data)
         }
 
         return result

@@ -18,7 +18,7 @@ abstract class FirInferenceSession {
         val DEFAULT: FirInferenceSession = object : FirStubInferenceSession() {}
     }
 
-    open fun handleQualifiedAccess(qualifiedAccessExpression: FirExpression) {}
+    open fun handleQualifiedAccess(qualifiedAccessExpression: FirExpression, data: ResolutionMode) {}
 
     abstract fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement
 
