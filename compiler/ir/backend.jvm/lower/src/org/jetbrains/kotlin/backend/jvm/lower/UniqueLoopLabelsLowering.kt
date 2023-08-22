@@ -22,7 +22,7 @@ internal val uniqueLoopLabelsPhase = makeIrFilePhase(
 
 private class UniqueLoopLabelsLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.accept(object : IrElementVisitor<Unit, String> {
+        irFile.accept(object : IrElementVisitor<Unit, String>() {
             // This counter is intentionally not local to every declaration because their names might clash.
             private var counter = 0
 

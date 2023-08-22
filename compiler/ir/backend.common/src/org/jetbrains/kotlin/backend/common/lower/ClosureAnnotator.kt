@@ -247,7 +247,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
             else -> null
         }
 
-    private inner class ClosureCollectorVisitor : IrElementVisitor<Unit, ClosureBuilder?> {
+    private inner class ClosureCollectorVisitor : IrElementVisitor<Unit, ClosureBuilder?>() {
 
         override fun visitElement(element: IrElement, data: ClosureBuilder?) {
             element.acceptChildren(this, data)

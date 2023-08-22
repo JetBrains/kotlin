@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.parcelize.serializers.ParcelizeExtensionBase
 abstract class ParcelizeIrTransformerBase(
     protected val context: IrPluginContext,
     protected val androidSymbols: AndroidSymbols
-) : ParcelizeExtensionBase, IrElementVisitorVoid {
+) : IrElementVisitorVoid(), ParcelizeExtensionBase {
     private val irFactory: IrFactory = IrFactoryImpl
 
     protected val deferredOperations = mutableListOf<() -> Unit>()

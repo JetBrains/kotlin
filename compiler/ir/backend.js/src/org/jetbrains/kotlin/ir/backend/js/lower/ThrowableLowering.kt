@@ -58,7 +58,7 @@ class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunc
             }
         }
 
-    inner class Transformer : IrElementTransformer<IrDeclarationParent> {
+    inner class Transformer : IrElementTransformer<IrDeclarationParent>() {
         private val anyConstructor = context.irBuiltIns.anyClass.constructors.first()
 
         override fun visitClass(declaration: IrClass, data: IrDeclarationParent) = super.visitClass(declaration, declaration)

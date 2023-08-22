@@ -84,7 +84,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             return SuspendFunctionKind.NEEDS_STATE_MACHINE            // Suspend lambdas always need coroutine implementation.
 
         var numberOfSuspendCalls = 0
-        body.acceptVoid(object : IrElementVisitorVoid {
+        body.acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -528,7 +528,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         val stateMachineFunction: IrFunction
     )
 
-    protected open class VariablesScopeTracker : IrElementVisitorVoid {
+    protected open class VariablesScopeTracker : IrElementVisitorVoid() {
 
         protected val scopeStack = mutableListOf<MutableSet<IrVariable>>(mutableSetOf())
 

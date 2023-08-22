@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class ExpressionBodyTransformer(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(object : IrElementVisitorVoid {
+        irFile.acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

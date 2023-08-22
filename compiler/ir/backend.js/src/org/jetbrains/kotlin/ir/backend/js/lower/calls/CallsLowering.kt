@@ -34,7 +34,7 @@ class CallsLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     )
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildren(object : IrElementTransformer<IrDeclaration> {
+        irBody.transformChildren(object : IrElementTransformer<IrDeclaration>() {
             override fun visitFunction(declaration: IrFunction, data: IrDeclaration): IrStatement {
                 return super.visitFunction(declaration, declaration)
             }

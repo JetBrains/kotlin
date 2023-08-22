@@ -72,7 +72,7 @@ class FakeOverrideChecker(
     }
 
     fun check(module: IrModuleFragment) {
-        module.acceptVoid(object : IrElementVisitorVoid {
+        module.acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

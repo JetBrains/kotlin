@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.name.Name
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class ParcelableIrTransformer(private val context: IrPluginContext, private val androidSymbols: AndroidSymbols) :
-    ParcelableExtensionBase, IrElementVisitorVoid {
+    ParcelableExtensionBase, IrElementVisitorVoid() {
     private val serializerFactory = IrParcelSerializerFactory(androidSymbols)
 
     private val deferredOperations = mutableListOf<() -> Unit>()
@@ -52,7 +52,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
         deferredOperations.forEach { it() }
 
         // Remap broken stubs, which psi2ir generates for the synthetic descriptors coming from the ParcelizeResolveExtension.
-        moduleFragment.acceptChildrenVoid(object : IrElementVisitorVoid {
+        moduleFragment.acceptChildrenVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildren(this, null)
             }

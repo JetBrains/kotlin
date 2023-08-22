@@ -76,7 +76,7 @@ class JvmIrLinkageModeTest : CodegenTestCase() {
         override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
             val file = moduleFragment.files.single()
             val signatures = mutableListOf<IdSignature>()
-            file.acceptVoid(object : IrElementVisitorVoid {
+            file.acceptVoid(object : IrElementVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }

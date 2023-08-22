@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
  * overriding [getActualClass], [getActualProperty], [getActualConstructor], and [getActualFunction].
  */
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-abstract class ExpectSymbolTransformer : IrElementVisitorVoid {
+abstract class ExpectSymbolTransformer : IrElementVisitorVoid() {
 
     protected abstract fun getActualClass(descriptor: ClassDescriptor): IrClassSymbol?
 
