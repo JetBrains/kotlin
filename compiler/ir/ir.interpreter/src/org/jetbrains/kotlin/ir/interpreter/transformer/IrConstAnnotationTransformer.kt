@@ -33,8 +33,8 @@ internal abstract class IrConstAnnotationTransformer(
 ) : IrConstTransformer(
     interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
 ) {
-    internal fun transformAnnotations(annotationContainer: IrAnnotationContainer) {
-        annotationContainer.annotations.forEach { annotation ->
+    internal fun transformAnnotations(annotations: List<IrConstructorCall>) {
+        annotations.forEach { annotation ->
             transformAnnotation(annotation)
         }
     }
