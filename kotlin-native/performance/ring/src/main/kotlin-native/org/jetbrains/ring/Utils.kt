@@ -18,7 +18,7 @@
 
 package org.jetbrains.ring
 
-import kotlin.native.concurrent.FreezableAtomicReference as KAtomicRef
+import kotlin.concurrent.AtomicReference as KAtomicRef
 import kotlin.native.concurrent.isFrozen
 import kotlin.native.concurrent.freeze
 
@@ -45,7 +45,7 @@ public actual class AtomicRef<T> constructor(@PublishedApi internal val a: KAtom
         while (true) {
             val cur = a.value
             if (cur === value) return cur
-            if (a.compareAndSwap(cur, value) === cur) return cur
+            if (a.compareAndExchange(cur, value) === cur) return cur
         }
     }
 
