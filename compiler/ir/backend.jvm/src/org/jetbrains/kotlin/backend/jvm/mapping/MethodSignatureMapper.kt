@@ -468,11 +468,10 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         if (!isBuiltIn) return null
         return allOverridden(includeSelf = true)
             .filter { it.isBuiltIn }
-            .mapNotNull {
+            .firstNotNullOfOrNull {
                 val signature = it.computeJvmSignature()
                 SpecialGenericSignatures.SIGNATURE_TO_JVM_REPRESENTATION_NAME[signature]?.asString()
             }
-            .firstOrNull()
     }
 
     private fun IrSimpleFunction.getBuiltinSpecialPropertyGetterName(): String? {

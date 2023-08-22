@@ -138,11 +138,11 @@ public class JvmSignatureWriter extends JvmDescriptorTypeWriter<Type> {
 
     @NotNull
     public JvmMethodGenericSignature makeJvmMethodSignature(@NotNull String name) {
-        List<Type> types = new ArrayList<>(kotlinParameterTypes.size());
-        for (JvmMethodParameterSignature parameter : kotlinParameterTypes) {
-            types.add(parameter.getAsmType());
+        Type[] types = new Type[kotlinParameterTypes.size()];
+        for (int i = 0; i < kotlinParameterTypes.size(); i++) {
+            types[i] = kotlinParameterTypes.get(i).getAsmType();
         }
-        Method asmMethod = new Method(name, jvmReturnType, types.toArray(new Type[types.size()]));
+        Method asmMethod = new Method(name, jvmReturnType, types);
         return new JvmMethodGenericSignature(asmMethod, kotlinParameterTypes, makeJavaGenericSignature());
     }
 
