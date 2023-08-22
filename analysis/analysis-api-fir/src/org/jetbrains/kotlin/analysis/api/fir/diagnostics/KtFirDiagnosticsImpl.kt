@@ -3816,6 +3816,16 @@ internal class DeclarationCantBeInlinedImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KtFirDiagnostic.DeclarationCantBeInlined
 
+internal class DeclarationCantBeInlinedDeprecationErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KtFirDiagnostic.DeclarationCantBeInlinedDeprecationError
+
+internal class DeclarationCantBeInlinedDeprecationWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KtFirDiagnostic.DeclarationCantBeInlinedDeprecationWarning
+
 internal class OverrideByInlineImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
@@ -3847,6 +3857,16 @@ internal class InlinePropertyWithBackingFieldImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KtFirDiagnostic.InlinePropertyWithBackingField
+
+internal class InlinePropertyWithBackingFieldDeprecationErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KtFirDiagnostic.InlinePropertyWithBackingFieldDeprecationError
+
+internal class InlinePropertyWithBackingFieldDeprecationWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KtFirDiagnostic.InlinePropertyWithBackingFieldDeprecationWarning
 
 internal class IllegalInlineParameterModifierImpl(
     firDiagnostic: KtPsiDiagnostic,

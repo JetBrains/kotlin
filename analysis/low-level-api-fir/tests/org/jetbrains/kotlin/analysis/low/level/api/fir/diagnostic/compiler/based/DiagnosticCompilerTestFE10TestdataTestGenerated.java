@@ -508,6 +508,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("inlineConstructorParameter.kt")
+        public void testInlineConstructorParameter() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inlineConstructorParameter.kt");
+        }
+
+        @Test
         @TestMetadata("inlineDeprecationsOnImplicitCalls.kt")
         public void testInlineDeprecationsOnImplicitCalls() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inlineDeprecationsOnImplicitCalls.kt");

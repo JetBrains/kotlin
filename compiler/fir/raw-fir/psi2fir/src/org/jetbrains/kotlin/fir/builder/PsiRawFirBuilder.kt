@@ -703,6 +703,7 @@ open class PsiRawFirBuilder(
                     type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                     visibility,
                     symbol,
+                    isInline = hasModifier(INLINE_KEYWORD),
                 ).also { getter ->
                     getter.initContainingClassAttr()
                     getter.replaceAnnotations(parameterAnnotations.filterUseSiteTarget(PROPERTY_GETTER))
@@ -714,7 +715,8 @@ open class PsiRawFirBuilder(
                     type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                     visibility,
                     symbol,
-                    parameterAnnotations = parameterAnnotations.filterUseSiteTarget(SETTER_PARAMETER)
+                    parameterAnnotations = parameterAnnotations.filterUseSiteTarget(SETTER_PARAMETER),
+                    isInline = hasModifier(INLINE_KEYWORD),
                 ).also { setter ->
                     setter.initContainingClassAttr()
                     setter.replaceAnnotations(parameterAnnotations.filterUseSiteTarget(PROPERTY_SETTER))

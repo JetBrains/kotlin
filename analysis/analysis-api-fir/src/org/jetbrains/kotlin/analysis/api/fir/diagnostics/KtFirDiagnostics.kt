@@ -3165,6 +3165,14 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DeclarationCantBeInlined::class
     }
 
+    interface DeclarationCantBeInlinedDeprecationError : KtFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = DeclarationCantBeInlinedDeprecationError::class
+    }
+
+    interface DeclarationCantBeInlinedDeprecationWarning : KtFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = DeclarationCantBeInlinedDeprecationWarning::class
+    }
+
     interface OverrideByInline : KtFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = OverrideByInline::class
     }
@@ -3189,6 +3197,14 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface InlinePropertyWithBackingField : KtFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = InlinePropertyWithBackingField::class
+    }
+
+    interface InlinePropertyWithBackingFieldDeprecationError : KtFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = InlinePropertyWithBackingFieldDeprecationError::class
+    }
+
+    interface InlinePropertyWithBackingFieldDeprecationWarning : KtFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = InlinePropertyWithBackingFieldDeprecationWarning::class
     }
 
     interface IllegalInlineParameterModifier : KtFirDiagnostic<KtElement> {

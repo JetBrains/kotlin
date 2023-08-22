@@ -508,6 +508,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("inlineConstructorParameter.kt")
+        public void testInlineConstructorParameter() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inlineConstructorParameter.kt");
+        }
+
+        @Test
         @TestMetadata("inlineDeprecationsOnImplicitCalls.kt")
         public void testInlineDeprecationsOnImplicitCalls() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inlineDeprecationsOnImplicitCalls.kt");

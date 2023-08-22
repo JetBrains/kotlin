@@ -39,6 +39,7 @@ abstract class FirDefaultPropertyAccessor(
     visibility: Visibility,
     modality: Modality = Modality.FINAL,
     effectiveVisibility: EffectiveVisibility? = null,
+    isInline: Boolean = false,
     symbol: FirPropertyAccessorSymbol,
     resolvePhase: FirResolvePhase,
 ) : FirPropertyAccessorImpl(
@@ -47,10 +48,12 @@ abstract class FirDefaultPropertyAccessor(
     moduleData,
     origin,
     FirDeclarationAttributes(),
-    status = if (effectiveVisibility == null)
-        FirDeclarationStatusImpl(visibility, modality)
-    else
-        FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility),
+    status = when (effectiveVisibility) {
+        null -> FirDeclarationStatusImpl(visibility, modality)
+        else -> FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility)
+    }.apply {
+        this.isInline = isInline
+    },
     propertyTypeRef,
     deprecationsProvider = UnresolvedDeprecationProvider,
     containerSource = null,
@@ -104,6 +107,7 @@ class FirDefaultPropertyGetter(
     propertySymbol: FirPropertySymbol,
     modality: Modality = Modality.FINAL,
     effectiveVisibility: EffectiveVisibility? = null,
+    isInline: Boolean = false,
     symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
 ) : FirDefaultPropertyAccessor(
@@ -117,6 +121,7 @@ class FirDefaultPropertyGetter(
     visibility = visibility,
     modality = modality,
     effectiveVisibility = effectiveVisibility,
+    isInline = isInline,
     symbol = symbol,
     resolvePhase = resolvePhase,
 )
@@ -130,6 +135,7 @@ class FirDefaultPropertySetter(
     propertySymbol: FirPropertySymbol,
     modality: Modality = Modality.FINAL,
     effectiveVisibility: EffectiveVisibility? = null,
+    isInline: Boolean = false,
     propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
     parameterAnnotations: List<FirAnnotation> = emptyList(),
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
@@ -155,6 +161,7 @@ class FirDefaultPropertySetter(
     visibility = visibility,
     modality = modality,
     effectiveVisibility = effectiveVisibility,
+    isInline = isInline,
     symbol = propertyAccessorSymbol,
     resolvePhase = resolvePhase,
 )
