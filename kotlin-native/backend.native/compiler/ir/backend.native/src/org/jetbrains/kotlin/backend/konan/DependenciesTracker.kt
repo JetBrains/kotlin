@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.atMostOne
+import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
 import org.jetbrains.kotlin.backend.konan.ir.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.FunctionOrigin

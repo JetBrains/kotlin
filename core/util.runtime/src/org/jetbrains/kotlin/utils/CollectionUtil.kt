@@ -47,3 +47,31 @@ inline fun <reified T, reified R, C : MutableCollection<in R>> Iterable<*>.filte
     }
     return destination
 }
+
+/**
+ * Returns the single element of the collection if it contains at most one element.
+ *
+ * If the collection is empty, returns `null`.
+ *
+ * If the collection contains exactly one element, returns that element.
+ *
+ * If the collection contains more than one element, throws an exception.
+ */
+fun <T> Collection<T>.atMostOne(): T? {
+    return when (size) {
+        0 -> null
+        1 -> this.iterator().next()
+        else -> throw IllegalArgumentException("Collection has more than one element.")
+    }
+}
+
+/**
+ * Returns at most one element from the iterable that satisfies the given predicate.
+ *
+ * If there are no elements that satisfy [predicate], returns `null`.
+ *
+ * If there is exactly one element that satisfies [predicate], returns that element.
+ *
+ * If there are more such elements, throws an exception.
+ */
+inline fun <T> Iterable<T>.atMostOne(predicate: (T) -> Boolean): T? = this.filter(predicate).atMostOne()
