@@ -2,12 +2,54 @@
 
 ## Running the plugin
 
-To execute the plugin, build the `dist` target and then
+To execute the plugin in another project, make sure you've installed the plugin to your local
+Maven repository (`./gradlew install`) and then use the Gradle plugin in your project.
+
+In `settings.gradle.kts`, configure your Gradle plugin repositories to allow local plugins:
+
+```kotlin
+pluginManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+```
+
+Then in `build.gradle.kts`, enable the plugin.  Make sure that you also enable the Maven
+local respository here: it's necessary to find the standard library for the plugin.
+
+```kotlin
+plugins {
+    id("org.jetbrains.kotlin.jvm") version "1.9.10"
+    id("org.jetbrains.kotlin.plugin.formver") version "1.9.255-SNAPSHOT"
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+```
+
+Command-line options can be enabled using the `formver` configuration block:
+
+```kotlin
+formver {
+    setLogLevel("full_viper_dump")
+}
+```
+
+However, keep in mind that the Viper is dump is provided as an info message: this message will not be shown
+unless you run `gradle` with the `--info` flag.
+
+### Running from the command line
+
+To execute the plugin directly, build the `dist` target and then
 specify the plugin `.jar` with `-Xplugin=`:
 
 ```sh
 ./gradlew dist
-dist/kotlinc/bin/kotlinc -language-version 2.0 -Xplugin=dist/kotlinc/lib/formver-compiler-plugin.jar,$HOME/.m2/repository/viper/silicon/1.1-SNAPSHOT/silicon-1.1-SNAPSHOT.jar myfile.kt
+dist/kotlinc/bin/kotlinc -language-version 2.0 -Xplugin=dist/kotlinc/lib/formver-compiler-plugin.jar myfile.kt
 ```
 
 The plugin accepts a number of command line options which can be passed via `-P plugin:org.jetbrains.kotlin.formver:OPTION=SETTING`:

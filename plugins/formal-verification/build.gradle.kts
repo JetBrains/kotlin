@@ -14,7 +14,7 @@ dependencies {
     embedded(project(":kotlin-formver-compiler-plugin.common")) { isTransitive = false }
     embedded(project(":kotlin-formver-compiler-plugin.core")) { isTransitive = false }
     embedded(project(":kotlin-formver-compiler-plugin.plugin")) { isTransitive = false }
-    embedded(project(":kotlin-formver-compiler-plugin.viper")) { isTransitive = false }
+    embedded(project(":kotlin-formver-compiler-plugin.viper")) { isTransitive = true }
 
     testApiJUnit5()
     testApi(projectTests(":compiler:tests-common-new"))
