@@ -398,6 +398,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_MODIFIER_FORM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_PRIVATE_CONSTRUCTOR_IN_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_TAIL_RECURSIVE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_VARARG_SPREAD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOTHING_TO_INLINE
@@ -982,6 +983,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NON_INTERNAL_PUBLISHED_API, "'@PublishedApi' annotation is only applicable to internal declaration.")
         map.put(VOLATILE_ON_VALUE, "'@Volatile' annotation cannot be used on immutable properties.")
         map.put(VOLATILE_ON_DELEGATE, "'@Volatile' annotation cannot be used on delegated properties.")
+        map.put(
+            NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION,
+            "The lambda expression here is an inlined argument, so this annotation cannot be stored anywhere.",
+        )
 
         // OptIn
         map.put(OPT_IN_USAGE, "{1}", TO_STRING, STRING)
