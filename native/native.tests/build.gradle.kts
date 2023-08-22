@@ -3,8 +3,6 @@ plugins {
     id("jps-compatible")
 }
 
-project.configureJvmToolchain(JdkMajorVersion.JDK_11_0)
-
 dependencies {
     testImplementation(kotlinStdlib())
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }

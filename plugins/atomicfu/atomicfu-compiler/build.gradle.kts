@@ -12,8 +12,6 @@ plugins {
     id("jps-compatible")
 }
 
-project.configureJvmToolchain(JdkMajorVersion.JDK_11_0)
-
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
 val nativeTargetName = HostManager.host.name
 
@@ -59,9 +57,6 @@ repositories {
 }
 
 dependencies {
-    if (!kotlinBuildProperties.isInIdeaSync) {
-        testImplementation(project(mapOf("path" to ":native:native.tests")))
-    }
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 
