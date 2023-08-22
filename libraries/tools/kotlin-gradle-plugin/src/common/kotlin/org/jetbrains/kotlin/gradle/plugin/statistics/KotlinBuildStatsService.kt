@@ -9,14 +9,20 @@ import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.initialization.BuildRequestMetaData
 import org.gradle.invocation.DefaultGradle
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
+import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler.Companion.runSafe
 import org.jetbrains.kotlin.gradle.plugin.statistics.old.Pre232IdeaKotlinBuildStatsMXBean
 import org.jetbrains.kotlin.gradle.plugin.statistics.old.Pre232IdeaKotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.utils.loadProperty
+import org.jetbrains.kotlin.gradle.utils.localProperties
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -103,7 +109,9 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
 
             return runSafe("${KotlinBuildStatsService::class.java}.getOrCreateInstance") {
                 val gradle = project.gradle
-                statisticsIsEnabled = statisticsIsEnabled ?: checkStatisticsEnabled(gradle)
+                val configurationTimePropertiesAccessor = project.configurationTimePropertiesAccessor
+                statisticsIsEnabled = statisticsIsEnabled
+                    ?: checkStatisticsEnabled(gradle, project.providers, configurationTimePropertiesAccessor)
                 if (statisticsIsEnabled != true) {
                     null
                 } else {
@@ -120,13 +128,16 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
                             )
                             instance = JMXKotlinBuildStatsService(mbs, beanName)
                         } else {
-                            val newInstance = DefaultKotlinBuildStatsService(gradle, beanName)
+                            val newInstance = DefaultKotlinBuildStatsService(
+                                project,
+                                beanName
+                            )
 
                             instance = newInstance
                             log.debug("Instantiated ${getServiceName()}: new instance $instance")
                             mbs.registerMBean(StandardMBean(newInstance, KotlinBuildStatsMXBean::class.java), beanName)
 
-                            registerPre232IdeaStatsBean(mbs, gradle, log)
+                            registerPre232IdeaStatsBean(mbs, log, project)
                         }
 
                         BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
@@ -143,10 +154,14 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
         }
 
         //To support backward compatibility with Idea before 232 version
-        private fun registerPre232IdeaStatsBean(mbs: MBeanServer, gradle: Gradle, log: Logger) {
+        private fun registerPre232IdeaStatsBean(
+            mbs: MBeanServer,
+            log: Logger,
+            project: Project
+        ) {
             val beanName = ObjectName(JMX_BEAN_NAME_BEFORE_232_IDEA)
             if (!mbs.isRegistered(beanName)) {
-                val newInstance = Pre232IdeaKotlinBuildStatsService(gradle, beanName)
+                val newInstance = Pre232IdeaKotlinBuildStatsService(project, beanName)
                 mbs.registerMBean(StandardMBean(newInstance, Pre232IdeaKotlinBuildStatsMXBean::class.java), beanName)
                 log.debug("Register JMX service for backward compatibility")
             }
@@ -195,15 +210,17 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
 
         private var statisticsIsEnabled: Boolean? = null
 
-        private fun checkStatisticsEnabled(gradle: Gradle): Boolean {
+        private fun checkStatisticsEnabled(
+            gradle: Gradle,
+            providerFactory: ProviderFactory,
+            configurationTimePropertiesAccessor: ConfigurationTimePropertiesAccessor,
+        ): Boolean {
             return if (File(gradle.gradleUserHomeDir, DISABLE_STATISTICS_FILE_NAME).exists()) {
                 false
             } else {
-                if (gradle.rootProject.hasProperty(ENABLE_STATISTICS_PROPERTY_NAME)) {
-                    gradle.rootProject.property(ENABLE_STATISTICS_PROPERTY_NAME).toString().toBoolean()
-                } else {
-                    DEFAULT_STATISTICS_STATE
-                }
+                providerFactory.gradleProperty(ENABLE_STATISTICS_PROPERTY_NAME)
+                    .usedAtConfigurationTime(configurationTimePropertiesAccessor)
+                    .orNull?.toBoolean() ?: DEFAULT_STATISTICS_STATE
             }
         }
     }
@@ -255,7 +272,7 @@ internal class JMXKotlinBuildStatsService(private val mbs: MBeanServer, private 
 }
 
 internal abstract class AbstractKotlinBuildStatsService(
-    gradle: Gradle,
+    project: Project,
     private val beanName: ObjectName,
 ) : KotlinBuildStatsService() {
     companion object {
@@ -265,22 +282,21 @@ internal abstract class AbstractKotlinBuildStatsService(
         private val logger = Logging.getLogger(AbstractKotlinBuildStatsService::class.java)
     }
 
-    private val forcePropertiesValidation = if (gradle.rootProject.hasProperty(FORCE_VALUES_VALIDATION)) {
-        gradle.rootProject.property(FORCE_VALUES_VALIDATION).toString().toBoolean()
-    } else {
-        false
-    }
+    private val localProperties = project.localProperties
 
-    private val customSessionLoggerRootPath: String? = if (gradle.rootProject.hasProperty(CUSTOM_LOGGER_ROOT_PATH)) {
-        logger.warn("$CUSTOM_LOGGER_ROOT_PATH property for test purpose only")
-        gradle.rootProject.property(CUSTOM_LOGGER_ROOT_PATH) as String
-    } else {
-        null
-    }
+    private val forcePropertiesValidation = project
+        .loadProperty(FORCE_VALUES_VALIDATION, localProperties)
+        .orNull?.toBoolean() ?: false
 
+    private val customSessionLoggerRootPath: String? = project
+        .loadProperty(CUSTOM_LOGGER_ROOT_PATH, localProperties)
+        .orNull
+        ?.also {
+            logger.warn("$CUSTOM_LOGGER_ROOT_PATH property for test purpose only")
+        }
 
     private val sessionLoggerRootPath =
-        customSessionLoggerRootPath?.let { File(it) } ?: gradle.gradleUserHomeDir
+        customSessionLoggerRootPath?.let { File(it) } ?: project.gradle.gradleUserHomeDir
 
     protected val sessionLogger = BuildSessionLogger(
         sessionLoggerRootPath,
@@ -310,9 +326,10 @@ internal abstract class AbstractKotlinBuildStatsService(
 }
 
 internal class DefaultKotlinBuildStatsService internal constructor(
-    gradle: Gradle,
+    project: Project,
     beanName: ObjectName,
-) : AbstractKotlinBuildStatsService(gradle, beanName), KotlinBuildStatsMXBean {
+) : AbstractKotlinBuildStatsService(project, beanName),
+    KotlinBuildStatsMXBean {
 
     override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?, weight: Long?): Boolean =
         KotlinBuildStatHandler().report(sessionLogger, metric, value, subprojectName, weight)
