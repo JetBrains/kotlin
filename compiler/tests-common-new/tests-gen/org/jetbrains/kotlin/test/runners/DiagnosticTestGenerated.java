@@ -2944,6 +2944,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("propertyTargetOnEnumEntry_error.kt")
+                public void testPropertyTargetOnEnumEntry_error() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/propertyTargetOnEnumEntry_error.kt");
+                }
+
+                @Test
+                @TestMetadata("propertyTargetOnEnumEntry_warning.kt")
+                public void testPropertyTargetOnEnumEntry_warning() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/propertyTargetOnEnumEntry_warning.kt");
+                }
+
+                @Test
                 @TestMetadata("ReceiverAnnotations.kt")
                 public void testReceiverAnnotations() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/ReceiverAnnotations.kt");
