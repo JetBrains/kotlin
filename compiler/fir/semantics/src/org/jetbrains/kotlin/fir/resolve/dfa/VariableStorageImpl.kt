@@ -27,6 +27,10 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 @OptIn(DfaInternals::class)
 class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
@@ -47,7 +51,12 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         val realFir = fir.unwrapElement()
         val identifier = getIdentifierBySymbol(flow, symbol, realFir)
         val stability = symbol.getStability(fir)
-        requireNotNull(stability) { "Stability for initialized variable always should be computable" }
+        requireWithAttachment(stability != null, { "Stability for initialized variable always should be computable" }) {
+            withFirSymbolEntry("symbol", symbol)
+            withFirEntry("fir", fir)
+            withEntry("identifier", identifier.toString())
+        }
+
         return _realVariables[identifier] ?: createReal(flow, identifier, realFir, stability)
     }
 
@@ -172,7 +181,9 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
                 when (val receiverFir = receiverSymbol.fir) {
                     is FirAnonymousObject -> PropertyStability.STABLE_VALUE
                     is FirRegularClass -> if (receiverFir.modality == Modality.FINAL) PropertyStability.STABLE_VALUE else PropertyStability.PROPERTY_WITH_GETTER
-                    else -> throw IllegalStateException("Should not be here: $receiverFir")
+                    else -> errorWithAttachment("Should not be here: $${receiverFir::class.simpleName}") {
+                        withFirEntry("fir", receiverFir)
+                    }
                 }
             }
             else -> {
