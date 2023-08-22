@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.ir.interpreter.fqName
 import org.jetbrains.kotlin.ir.interpreter.isAccessToNotNullableObject
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor.Companion.isEnumName
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor.Companion.isKCallableNameCall
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.types.isStringClassType
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.statements
@@ -114,11 +117,6 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
 
     override fun visitSyntheticBody(body: IrSyntheticBody, data: IrInterpreterCheckerData): Boolean {
         return body.kind == IrSyntheticBodyKind.ENUM_VALUES || body.kind == IrSyntheticBodyKind.ENUM_VALUEOF
-    }
-
-    private fun IrConst<*>.isNaN(): Boolean {
-        return this.kind == IrConstKind.Double && IrConstKind.Double.valueOf(this).isNaN() ||
-                this.kind == IrConstKind.Float && IrConstKind.Float.valueOf(this).isNaN()
     }
 
     override fun visitConst(expression: IrConst<*>, data: IrInterpreterCheckerData): Boolean {
