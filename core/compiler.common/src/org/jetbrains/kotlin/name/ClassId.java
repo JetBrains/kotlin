@@ -133,6 +133,12 @@ public final class ClassId {
         return new ClassId(new FqName(packageName), new FqName(className), isLocal);
     }
 
+    public boolean isEqualTo(@NotNull FqName fqName) {
+        return fqName.asString().length() == packageFqName.asString().length() + relativeClassName.asString().length() + 1 &&
+               fqName.asString().startsWith(packageFqName.asString()) &&
+               fqName.asString().endsWith(relativeClassName.asString());
+    }
+
     /**
      * @return a string where packages are delimited by '/' and classes by '.', e.g. "kotlin/Map.Entry"
      */

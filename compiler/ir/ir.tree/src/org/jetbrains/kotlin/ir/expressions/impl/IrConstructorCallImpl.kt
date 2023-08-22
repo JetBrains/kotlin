@@ -13,15 +13,14 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.initializeParameterArguments
-import org.jetbrains.kotlin.ir.util.initializeTypeArguments
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.ClassId
 
 class IrConstructorCallImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override var symbol: IrConstructorSymbol,
+    symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
     override var constructorTypeArgumentsCount: Int,
     valueArgumentsCount: Int,
@@ -33,6 +32,20 @@ class IrConstructorCallImpl(
     override val valueArguments: Array<IrExpression?> = initializeParameterArguments(valueArgumentsCount)
 
     override var contextReceiversCount = 0
+
+    private var _classId: ClassId? = null
+
+    override var classId: ClassId
+        get() {
+            return _classId ?: symbol.owner.parentAsClass.classIdOrFail.also { _classId = it }
+        }
+        set(_) = error("Can't change classId of constructor call: ${render()}")
+
+    override var symbol = symbol
+        set(value) {
+            _classId = null
+            field = value
+        }
 
     companion object {
         @ObsoleteDescriptorBasedAPI

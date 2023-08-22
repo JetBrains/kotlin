@@ -336,15 +336,14 @@ tailrec fun IrDeclaration.getPackageFragment(): IrPackageFragment {
         ?: (parent as IrDeclaration).getPackageFragment()
 }
 
-fun IrConstructorCall.isAnnotation(name: FqName) = symbol.owner.parentAsClass.fqNameWhenAvailable == name
+fun IrConstructorCall.isAnnotation(fqName: FqName): Boolean =
+    classId.isEqualTo(fqName)
 
 fun IrAnnotationContainer.getAnnotation(name: FqName): IrConstructorCall? =
     annotations.find { it.isAnnotation(name) }
 
-fun IrAnnotationContainer.hasAnnotation(name: FqName) =
-    annotations.any {
-        it.symbol.owner.parentAsClass.hasEqualFqName(name)
-    }
+fun IrAnnotationContainer.hasAnnotation(fqName: FqName): Boolean =
+    annotations.any { it.isAnnotation(fqName) }
 
 fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
     annotations.any {

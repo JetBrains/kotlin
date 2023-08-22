@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.generator.config
 import org.jetbrains.kotlin.ir.generator.util.TypeRef
 import org.jetbrains.kotlin.ir.generator.util.TypeVariable
 import org.jetbrains.kotlin.ir.generator.util.type
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
@@ -73,6 +74,7 @@ abstract class AbstractTreeBuilder {
         val int = type<Int>()
         val string = type<String>()
         val boolean = type<Boolean>()
+        val classId = type<ClassId>()
     }
 }
 
