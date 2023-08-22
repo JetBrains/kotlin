@@ -86,6 +86,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
         }
 
         @Test
+        @TestMetadata("duplicateLibrary.kt")
+        public void testDuplicateLibrary() throws Exception {
+            runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/duplicateLibrary.kt");
+        }
+
+        @Test
         @TestMetadata("imports.kt")
         public void testImports() throws Exception {
             runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/imports.kt");

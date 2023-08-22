@@ -1,0 +1,1 @@
+text.takeUnless { it.isEmpty() }?.length
