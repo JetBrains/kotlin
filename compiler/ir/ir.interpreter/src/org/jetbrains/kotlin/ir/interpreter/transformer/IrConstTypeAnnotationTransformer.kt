@@ -37,7 +37,7 @@ internal class IrConstTypeAnnotationTransformer(
     override fun <Type : IrType?> transformType(container: IrElement, type: Type, data: IrConstTransformer.Data): Type {
         if (type == null) return type
 
-        constTransformer.transformAnnotations(type)
+        constTransformer.transformAnnotations(type.annotations)
         if (type is IrSimpleType) {
             type.arguments.mapNotNull { it.typeOrNull }.forEach { transformType(container, it, data) }
         }
