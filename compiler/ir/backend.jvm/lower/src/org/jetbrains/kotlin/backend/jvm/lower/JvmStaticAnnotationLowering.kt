@@ -119,7 +119,7 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
         // Case 1: `external` static methods are moved to the outer class. JNI code does not care about visibility.
         isExternal -> true
         // Case 2: `JvmStatic` is useless on inline-only methods because they're not visible to any Java code anyway.
-        origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS -> false
+        origin === JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS -> false
         isEffectivelyInlineOnly() -> false
         // Case 3: protected non-inline needs a static proxy in the parent to be callable from subclasses
         // of said parent in different packages even in pure Kotlin due to JVM visibility rules.

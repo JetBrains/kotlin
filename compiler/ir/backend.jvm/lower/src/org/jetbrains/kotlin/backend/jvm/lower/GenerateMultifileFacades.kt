@@ -215,13 +215,13 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
 
     if (DescriptorVisibilities.isPrivate(originalVisibility) ||
         name == StaticInitializersLowering.clinitName ||
-        origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
-        origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA ||
-        origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
-        origin == IrDeclarationOrigin.PROPERTY_DELEGATE ||
-        origin == IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR ||
+        origin === JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
+        origin === JvmLoweredDeclarationOrigin.INLINE_LAMBDA ||
+        origin === IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
+        origin === IrDeclarationOrigin.PROPERTY_DELEGATE ||
+        origin === IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR ||
         // $annotations methods in the facade are only needed for const properties.
-        (origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
+        (origin === JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
                 (metadata as? MetadataSource.Property)?.isConst != true)
     ) return null
 

@@ -72,7 +72,7 @@ object InlineClassAbi {
         }
 
         val suffix = hashSuffix(irFunction, mangleReturnTypes, useOldMangleRules)
-        if (suffix == null && ((irFunction.parent as? IrClass)?.isValue != true || irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
+        if (suffix == null && ((irFunction.parent as? IrClass)?.isValue != true || irFunction.origin === IrDeclarationOrigin.IR_BUILTINS_STUB)) {
             return irFunction.name
         }
 

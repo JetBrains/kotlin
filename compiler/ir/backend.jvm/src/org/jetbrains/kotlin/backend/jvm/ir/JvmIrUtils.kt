@@ -92,7 +92,7 @@ fun IrSimpleFunction.isCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boo
     assert(!isFakeOverride && parentAsClass.isInterface && modality != Modality.ABSTRACT) {
         "`isCompiledToJvmDefault` should be called on non-fakeoverrides and non-abstract methods from interfaces ${ir2string(this)}"
     }
-    if (origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return false
+    if (origin === IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return false
     if (hasJvmDefault()) return true
     when (val klass = parentAsClass) {
         is IrLazyClass -> klass.classProto?.let {
@@ -256,12 +256,12 @@ fun IrProperty.needsAccessor(accessor: IrSimpleFunction): Boolean = when {
 }
 
 val IrDeclaration.isStaticInlineClassReplacement: Boolean
-    get() = origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
-            || origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR
+    get() = origin === JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
+            || origin === JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR
 
 val IrDeclaration.isStaticMultiFieldValueClassReplacement: Boolean
-    get() = origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT
-            || origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
+    get() = origin === JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT
+            || origin === JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
 
 val IrDeclaration.isStaticValueClassReplacement: Boolean
     get() = isStaticMultiFieldValueClassReplacement || isStaticInlineClassReplacement
@@ -308,9 +308,9 @@ inline fun IrElement.hasChild(crossinline block: (IrElement) -> Boolean): Boolea
 }
 
 val IrClass.isSyntheticSingleton: Boolean
-    get() = (origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL
-            || origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
-            || origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE)
+    get() = (origin === JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+            || origin === JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+            || origin === JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE)
             && primaryConstructor!!.valueParameters.isEmpty()
 
 fun IrSimpleFunction.suspendFunctionOriginal(): IrSimpleFunction =
@@ -330,7 +330,7 @@ private fun IrSimpleFunction.isOrOverridesDefaultParameterStub(): Boolean =
     DFS.ifAny(
         listOf(this),
         { it.overriddenSymbols.map(IrSimpleFunctionSymbol::owner) },
-        { it.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER }
+        { it.origin === IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER }
     )
 
 fun IrClass.buildAssertionsDisabledField(backendContext: JvmBackendContext, topLevelClass: IrClass) =
@@ -365,7 +365,7 @@ fun IrField.constantValue(): IrConst<*>? {
     //   2. implicitly generates an initialization of that field in <clinit>
     // It is only allowed on final fields of primitive/string types. Java applies it whenever possible; Kotlin only applies it to
     // `const val`s to avoid making values part of the library's ABI unless explicitly requested by the author.
-    val implicitConst = isFinal && isStatic && origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+    val implicitConst = isFinal && isStatic && origin === IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
     return if (implicitConst || correspondingPropertySymbol?.owner?.isConst == true) value else null
 }
 
@@ -524,7 +524,7 @@ fun IrFunction.extensionReceiverName(state: GenerationState): String {
 }
 
 fun IrFunction.isBridge(): Boolean =
-    origin == IrDeclarationOrigin.BRIDGE || origin == IrDeclarationOrigin.BRIDGE_SPECIAL
+    origin === IrDeclarationOrigin.BRIDGE || origin === IrDeclarationOrigin.BRIDGE_SPECIAL
 
 // Enum requires external implementation of entries if it's either a Java enum, or a Kotlin enum compiled with pre-1.8 LV/AV.
 fun IrClass.isEnumClassWhichRequiresExternalEntries(): Boolean =

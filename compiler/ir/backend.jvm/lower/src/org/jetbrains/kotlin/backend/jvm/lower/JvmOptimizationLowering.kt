@@ -94,7 +94,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
 
             val callee = expression.symbol.owner
 
-            if (callee.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
+            if (callee.origin === IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
                 return optimizePropertyAccess(expression, data)
             }
 
@@ -217,7 +217,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                             return when {
                                 initializerValue.isVar ->
                                     null
-                                initializerValue.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE ->
+                                initializerValue.origin === IrDeclarationOrigin.IR_TEMPORARY_VARIABLE ->
                                     getInlineableValueForTemporaryVal(initializerValue)
                                         ?: initializer
                                 else ->
@@ -275,7 +275,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 val first = statements[0]
                 val second = statements[1]
                 if (first is IrVariable
-                    && first.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+                    && first.origin === IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
                     && second is IrGetValue
                     && first.symbol == second.symbol
                 ) {
@@ -378,7 +378,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
         }
 
         private fun IrStatement.isLoopVariable() =
-            this is IrVariable && origin == IrDeclarationOrigin.FOR_LOOP_VARIABLE
+            this is IrVariable && origin === IrDeclarationOrigin.FOR_LOOP_VARIABLE
 
         private fun IrContainerExpression.rewritePostfixIncrDecr(): IrCall? {
             if (origin != IrStatementOrigin.POSTFIX_INCR && origin != IrStatementOrigin.POSTFIX_DECR) return null

@@ -98,7 +98,7 @@ class MemoizedMultiFieldValueClassReplacements(
         body: IrFunction.() -> Unit,
     ): IrSimpleFunction = commonBuildReplacementInner(function, noFakeOverride, body) {
         origin = when {
-            function.origin == IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER ->
+            function.origin === IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER ->
                 JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD
 
             function is IrConstructor && function.constructedClass.isMultiFieldValueClass ->
@@ -253,10 +253,10 @@ class MemoizedMultiFieldValueClassReplacements(
     override val getReplacementFunctionImpl: (IrFunction) -> IrSimpleFunction? =
         storageManager.createMemoizedFunctionWithNullableValues { function ->
             when {
-                (function.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && function.visibility == DescriptorVisibilities.LOCAL) ||
+                (function.origin === IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && function.visibility == DescriptorVisibilities.LOCAL) ||
                         function.isStaticValueClassReplacement ||
-                        function.origin == IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER && function.isAccessor ||
-                        function.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
+                        function.origin === IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER && function.isAccessor ||
+                        function.origin === JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
                         (function.origin.isSynthetic && function.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION &&
                                 !(function is IrConstructor && function.constructedClass.isMultiFieldValueClass && !function.isPrimary)) ||
                         function.isMultiFieldValueClassFieldGetter -> null
@@ -270,7 +270,7 @@ class MemoizedMultiFieldValueClassReplacements(
                         null
 
                     function.isValueClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod() ||
-                            function.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
+                            function.origin === IrDeclarationOrigin.IR_BUILTINS_STUB ->
                         createMethodReplacement(function)
 
                     else ->

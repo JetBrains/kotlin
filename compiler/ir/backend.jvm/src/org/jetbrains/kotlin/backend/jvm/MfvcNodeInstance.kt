@@ -285,9 +285,9 @@ fun IrBuilderWithScope.savableStandaloneVariable(
     name: String? = null,
     isVar: Boolean,
     origin: IrDeclarationOrigin,
-    isTemporary: Boolean = origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
-            || origin == JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE
-            || origin == JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_PARAMETER,
+    isTemporary: Boolean = origin === IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+            || origin === JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE
+            || origin === JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_PARAMETER,
     saveVariable: (IrVariable) -> Unit,
 ): IrVariable {
     val variable = if (isTemporary || name == null) scope.createTemporaryVariableDeclaration(
@@ -322,7 +322,7 @@ fun <T : IrElement> IrStatementsBuilder<T>.savableStandaloneVariableWithSetter(
     name: String? = null,
     isMutable: Boolean = false,
     origin: IrDeclarationOrigin,
-    isTemporary: Boolean = origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+    isTemporary: Boolean = origin === IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
     saveVariable: (IrVariable) -> Unit,
 ) = savableStandaloneVariable(expression.type, name, isMutable, origin, isTemporary, saveVariable).also {
     +irSet(it, expression)

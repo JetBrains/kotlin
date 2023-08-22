@@ -64,7 +64,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 .takeIf {
                     (irFunction.isInline && irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) ||
                             (!isSynthetic && irFunction.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) ||
-                            (irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION)
+                            (irFunction.origin === JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION)
                 },
             getThrownExceptions(irFunction)?.toTypedArray()
         )
@@ -132,7 +132,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
     private fun shouldGenerateAnnotationsOnValueParameters(): Boolean =
         when {
-            irFunction.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ->
+            irFunction.origin === JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ->
                 false
             irFunction is IrConstructor && irFunction.parentAsClass.shouldNotGenerateConstructorParameterAnnotations() ->
                 false
@@ -146,7 +146,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     // will throw an exception if we generate any.)
     // The same applies for continuations.
     private fun IrClass.shouldNotGenerateConstructorParameterAnnotations() =
-        isAnonymousObject || origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS || origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
+        isAnonymousObject || origin === JvmLoweredDeclarationOrigin.CONTINUATION_CLASS || origin === JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
 
     private fun IrFunction.getVisibilityForDefaultArgumentStub(): Int =
         when {
@@ -157,7 +157,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         }
 
     private fun IrFunction.calculateMethodFlags(): Int {
-        if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+        if (origin === IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
             return getVisibilityForDefaultArgumentStub() or Opcodes.ACC_SYNTHETIC or
                     (if (isDeprecatedFunction(context)) Opcodes.ACC_DEPRECATED else 0) or
                     (if (this is IrConstructor) 0 else Opcodes.ACC_STATIC)
@@ -170,8 +170,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             } else {
                 when ((this as? IrSimpleFunction)?.modality) {
                     Modality.FINAL -> when {
-                        origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER -> 0
-                        origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> 0
+                        origin === JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER -> 0
+                        origin === IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> 0
                         parentAsClass.isInterface && body != null -> 0
                         else -> Opcodes.ACC_FINAL
                     }
@@ -212,7 +212,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
     private fun getThrownExceptions(function: IrFunction): List<String>? {
         if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.DoNotGenerateThrowsForDelegatedKotlinMembers) &&
-            function.origin == IrDeclarationOrigin.DELEGATED_MEMBER
+            function.origin === IrDeclarationOrigin.DELEGATED_MEMBER
         ) return null
 
         // @Throws(vararg exceptionClasses: KClass<out Throwable>)
@@ -332,8 +332,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
 
 private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
-    origin == IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER ||
-            origin == JvmLoweredDeclarationOrigin.SYNTHETIC_MARKER_PARAMETER
+    origin === IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER ||
+            origin === JvmLoweredDeclarationOrigin.SYNTHETIC_MARKER_PARAMETER
 
 private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, state: GenerationState) {
     irFunction.extensionReceiverParameter?.let {
@@ -345,11 +345,11 @@ private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, st
         // A construct emitted by a Java compiler must be marked as mandated if it corresponds to a formal parameter
         // declared implicitly in source code (§8.8.1, §8.8.9, §8.9.3, §15.9.5.1).
         val access = when {
-            irParameter.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
+            irParameter.origin === JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
             // TODO mark these backend-common origins as synthetic? (note: ExpressionCodegen is still expected
             //      to generate LVT entries for them)
-            irParameter.origin == IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER -> Opcodes.ACC_MANDATED
-            irParameter.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER -> Opcodes.ACC_SYNTHETIC
+            irParameter.origin === IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER -> Opcodes.ACC_MANDATED
+            irParameter.origin === IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER -> Opcodes.ACC_SYNTHETIC
             irParameter.origin == BOUND_VALUE_PARAMETER -> Opcodes.ACC_SYNTHETIC
             irParameter.origin == BOUND_RECEIVER_PARAMETER -> Opcodes.ACC_SYNTHETIC
             irParameter.origin.isSynthetic -> Opcodes.ACC_SYNTHETIC

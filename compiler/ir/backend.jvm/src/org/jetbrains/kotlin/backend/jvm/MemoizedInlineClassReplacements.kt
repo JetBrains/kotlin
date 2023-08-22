@@ -48,9 +48,9 @@ class MemoizedInlineClassReplacements(
             when {
                 // Don't mangle anonymous or synthetic functions, except for generated SAM wrapper methods
                 (it.isLocal && it is IrSimpleFunction && it.overriddenSymbols.isEmpty()) ||
-                        (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == DescriptorVisibilities.LOCAL) ||
+                        (it.origin === IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == DescriptorVisibilities.LOCAL) ||
                         it.isStaticValueClassReplacement ||
-                        it.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
+                        it.origin === JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
                         it.origin.isSynthetic && it.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION ->
                     null
 
@@ -72,7 +72,7 @@ class MemoizedInlineClassReplacements(
                             null
 
                         it.isValueClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod() ||
-                                it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
+                                it.origin === IrDeclarationOrigin.IR_BUILTINS_STUB ->
                             createMethodReplacement(it)
 
                         else ->
@@ -245,7 +245,7 @@ class MemoizedInlineClassReplacements(
             modality = Modality.OPEN
         }
         origin = when {
-            function.origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER ->
+            function.origin === IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER ->
                 JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
 
             function is IrConstructor && function.constructedClass.isSingleFieldValueClass ->

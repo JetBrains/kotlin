@@ -315,7 +315,7 @@ internal class ReflectiveAccessLowering(
                 call.symbol.owner.extensionReceiverParameter?.let { parameterTypes.add(it.type) }
                 call.extensionReceiver?.let { arguments.add(it) }
             }
-            call.dispatchReceiver != null && call.symbol.owner.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> {
+            call.dispatchReceiver != null && call.symbol.owner.origin === IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> {
                 call.symbol.owner.dispatchReceiverParameter?.let { parameterTypes.add(it.type) }
                 call.dispatchReceiver?.let { arguments.add(it) }
             }

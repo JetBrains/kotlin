@@ -183,7 +183,7 @@ private class FunctionParametersProcessor : IrElementVisitorVoid {
 
         val varName = this.name.asString().substringAfterLast("_")
         val varNewName = when {
-            this.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER -> {
+            this.origin === IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER -> {
                 val functionName = (inlinedBlock.inlineDeclaration as? IrDeclarationWithName)?.name
                 functionName?.let { name -> "\$this$$name" } ?: AsmUtil.RECEIVER_PARAMETER_NAME
             }

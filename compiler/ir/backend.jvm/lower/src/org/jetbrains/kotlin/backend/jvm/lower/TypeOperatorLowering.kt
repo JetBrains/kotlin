@@ -789,8 +789,8 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
     private fun String.trimForRuntimeAssertion() = StringUtil.trimMiddle(this, 50)
 
     private fun IrFunction.isDelegated() =
-        origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR ||
-                origin == IrDeclarationOrigin.DELEGATED_MEMBER
+        origin === IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR ||
+                origin === IrDeclarationOrigin.DELEGATED_MEMBER
 
     private fun CharSequence.validSourcePosition(startOffset: Int, endOffset: Int): Boolean =
         startOffset in 0 until endOffset && endOffset < length

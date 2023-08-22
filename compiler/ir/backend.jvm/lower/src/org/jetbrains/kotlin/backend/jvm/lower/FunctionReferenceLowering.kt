@@ -466,7 +466,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         // This code is partially duplicated in IrUtils getAdapteeFromAdaptedForReferenceFunction
         // The difference is utils version supports ReturnableBlock, but returns called function instead of call node.
         private val adapteeCall: IrFunctionAccessExpression? =
-            if (callee.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) {
+            if (callee.origin === IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) {
                 // The body of a callable reference adapter contains either only a call, or an IMPLICIT_COERCION_TO_UNIT type operator
                 // applied to a call. That call's target is the original function which we need to get owner/name/signature.
                 val call = when (val statement = callee.body!!.statements.single()) {
@@ -489,7 +489,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
         private val adaptedReferenceOriginalTarget: IrFunction? = adapteeCall?.symbol?.owner
         private val isFunInterfaceConstructorReference =
-            callee.origin == IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR
+            callee.origin === IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR
         private val constructedFunInterfaceSymbol: IrClassSymbol? =
             if (isFunInterfaceConstructorReference)
                 callee.returnType.classOrNull
@@ -537,7 +537,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     context.ir.symbols.functionAdapter.defaultType
                 else null,
             )
-            if (samInterface != null && origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
+            if (samInterface != null && origin === JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
                 // Old back-end generates formal type parameters as in SAM supertype.
                 // Here we create formal type parameters with same names and equivalent upper bounds.
                 // We don't really perform any type substitutions within class body

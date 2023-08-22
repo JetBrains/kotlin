@@ -34,7 +34,7 @@ abstract class MemoizedValueClassAbstractReplacements(
     protected abstract val getReplacementFunctionImpl: (IrFunction) -> IrSimpleFunction?
 
     protected fun IrFunction.isRemoveAtSpecialBuiltinStub() =
-        origin == IrDeclarationOrigin.IR_BUILTINS_STUB &&
+        origin === IrDeclarationOrigin.IR_BUILTINS_STUB &&
                 name.asString() == "remove" &&
                 valueParameters.size == 1 &&
                 valueParameters[0].type.isInt()

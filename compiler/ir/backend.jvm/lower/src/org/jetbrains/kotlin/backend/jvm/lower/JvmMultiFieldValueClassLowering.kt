@@ -681,7 +681,7 @@ internal class JvmMultiFieldValueClassLowering(
 
     override fun visitParameter(parameter: IrValueParameter) {
         // default MFVC parameter is the special case, it is handled separately
-        if (parameter.origin == JvmLoweredDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER) return
+        if (parameter.origin === JvmLoweredDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER) return
         if (parameter.defaultValue == null) return
         val fakeFunction = context.irFactory.buildFun {
             returnType = context.irBuiltIns.unitType
@@ -1173,9 +1173,9 @@ internal class JvmMultiFieldValueClassLowering(
 
     private val IrDeclarationOrigin.isTemporary
         get() =
-            this == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
-                    || this == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
-                    || this == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER
+            this === IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+                    || this === IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
+                    || this === IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER
 
     override fun visitVariable(declaration: IrVariable): IrStatement {
         val initializer = declaration.initializer

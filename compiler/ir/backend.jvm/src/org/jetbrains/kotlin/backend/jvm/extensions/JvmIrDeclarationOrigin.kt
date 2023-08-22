@@ -29,11 +29,11 @@ val IrDeclaration.descriptorOrigin: JvmIrDeclarationOrigin
     get() {
         val psiElement = findPsiElementForDeclarationOrigin()
         return when {
-            origin == IrDeclarationOrigin.FILE_CLASS ->
+            origin === IrDeclarationOrigin.FILE_CLASS ->
                 JvmIrDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, this)
             (this is IrSimpleFunction && isSuspend && isEffectivelyInlineOnly()) ||
-                    origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE ||
-                    origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE ->
+                    origin === JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE ||
+                    origin === JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE ->
                 JvmIrDeclarationOrigin(JvmDeclarationOriginKind.INLINE_VERSION_OF_SUSPEND_FUN, psiElement, this)
             else -> JvmIrDeclarationOrigin(JvmDeclarationOriginKind.OTHER, psiElement, this)
         }

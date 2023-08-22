@@ -85,7 +85,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
         if (inInlineFunctionScope) return false
         val backingField = property.resolveFakeOverride()!!.backingField
         return backingField?.parent == currentClass?.irElement &&
-                backingField?.origin == JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD
+                backingField?.origin === JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD
     }
 
     private fun IrBuilderWithScope.substituteSetter(irProperty: IrProperty, expression: IrCall): IrExpression {

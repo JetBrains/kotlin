@@ -45,7 +45,7 @@ private class StaticDefaultFunctionLowering(val context: JvmBackendContext) : Ir
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement = super.visitFunction(
-        if (declaration.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER && declaration.dispatchReceiverParameter != null)
+        if (declaration.origin === IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER && declaration.dispatchReceiverParameter != null)
             getStaticFunctionWithReceivers(declaration).also {
                 it.body = declaration.moveBodyTo(it)
             }

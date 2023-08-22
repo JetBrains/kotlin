@@ -52,11 +52,11 @@ internal fun IrProperty.getSingletonOrConstantForOptimizableDelegatedProperty():
                         && valueArgumentsCount == 0
                         && symbol.owner.run {
                     modality == Modality.FINAL
-                            && origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                            && origin === IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                             && ((body?.statements?.singleOrNull() as? IrReturn)?.value as? IrGetField)?.symbol?.owner?.isFinal == true
                 }
             is IrGetValue ->
-                symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER
+                symbol.owner.origin === IrDeclarationOrigin.INSTANCE_RECEIVER
             else -> false
         }
 

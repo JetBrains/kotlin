@@ -385,8 +385,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         get() =
             symbol.owner.let {
                 it is IrProperty && it.backingField == null &&
-                        (it.origin == IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE
-                                || it.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
+                        (it.origin === IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE
+                                || it.origin === IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
             }
 
     // Create an instance of KProperty that overrides the get() and set() methods to directly call getX() and setX() on the object.
