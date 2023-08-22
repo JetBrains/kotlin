@@ -128,9 +128,7 @@ private fun Project.setupBasicCommonizedCInteropConfigurationAttributes(
     configuration: Configuration,
     commonizerTarget: SharedCommonizerTarget,
 ) {
-    configuration.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
     configuration.attributes.attribute(CommonizerTargetAttribute.attribute, commonizerTarget.identityString)
-    configuration.attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
-    configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_CINTEROP))
+    configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_COMMONIZED_CINTEROP))
     configuration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
 }
