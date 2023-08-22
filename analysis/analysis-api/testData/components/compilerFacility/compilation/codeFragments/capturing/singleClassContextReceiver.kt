@@ -1,4 +1,4 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 class Ctx1
 
 context(Ctx1)

@@ -1,5 +1,7 @@
 fun test() {
-    call(Foo())
+    with(Foo()) {
+        call()
+    }
 }
 
 context(Foo)
@@ -10,3 +12,5 @@ fun call() {
 class Foo {
     val foo: String = "foo"
 }
+
+// LANGUAGE: +ContextReceivers
