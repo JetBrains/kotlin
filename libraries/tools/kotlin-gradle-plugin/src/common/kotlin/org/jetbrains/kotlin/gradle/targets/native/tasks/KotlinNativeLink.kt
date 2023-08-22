@@ -356,7 +356,7 @@ constructor(
     fun compile() {
         val metricsReporter = metrics.get()
 
-        addBuildMetricsForTaskAction(metricsReporter = metricsReporter, languageVersion = parseLanguageVersion(externalDependenciesArgs)) {
+        addBuildMetricsForTaskAction(metricsReporter = metricsReporter, languageVersion = null) {
             validatedExportedLibraries()
 
             val output = outputFile.get()

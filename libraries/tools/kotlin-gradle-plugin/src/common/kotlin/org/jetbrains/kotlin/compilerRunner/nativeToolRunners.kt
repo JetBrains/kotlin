@@ -73,7 +73,6 @@ private val Project.kotlinNativeCompilerJar: String
     else
         "$konanHome/konan/lib/kotlin-native.jar"
 
-
 internal abstract class KotlinNativeToolRunner(
     protected val toolName: String,
     private val settings: Settings,

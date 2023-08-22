@@ -52,7 +52,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input val outputKind: CompilerOutputKind,
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations,
-    private val projectLayout: ProjectLayout
+    private val projectLayout: ProjectLayout,
 ) : DefaultTask(),
     UsesBuildMetricsService,
     KotlinToolTask<KotlinCommonCompilerToolOptions> {
@@ -183,7 +183,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Internal
     val konanHome: Provider<String> = project.provider { project.konanHome }
 
-    private val runnerSettings = KotlinNativeCompilerRunner.Settings.of(konanHome.get(), konanDataDir.getOrNull(),project)
+    private val runnerSettings = KotlinNativeCompilerRunner.Settings.of(konanHome.get(), konanDataDir.getOrNull(), project)
 
     init {
         baseName.convention(project.name)

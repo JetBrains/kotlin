@@ -303,6 +303,43 @@ class TryK2IT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Native: check that only expected tasks use languageVersion")
+    @NativeGradlePluginTests
+    @GradleTest
+    fun smokeTestForNativeTasks(gradleVersion: GradleVersion) {
+        project("native-configuration-cache", gradleVersion) {
+            enableTryK2()
+            build("build") {
+                if (HostManager.hostIsMac) {
+                    assertOutputContains(
+                        """
+                            |##### 'kotlin.experimental.tryK2' results #####
+                            |:lib:compileCommonMainKotlinMetadata: 2.0 language version
+                            |:lib:compileKotlinIosArm64: 2.0 language version
+                            |:lib:compileKotlinIosSimulatorArm64: 2.0 language version
+                            |:lib:compileKotlinIosX64: 2.0 language version
+                            |:lib:compileKotlinLinuxX64: 2.0 language version
+                            |:lib:compileTestKotlinIosSimulatorArm64: 2.0 language version
+                            |:lib:compileTestKotlinIosX64: 2.0 language version
+                            |:lib:compileTestKotlinLinuxX64: 2.0 language version
+                            |##### 100% (8/8) tasks have been compiled with Kotlin 2.0 #####
+                        """.trimMargin().normalizeLineEndings()
+                    )
+                } else {
+                    assertOutputContains(
+                        """
+                            |##### 'kotlin.experimental.tryK2' results #####
+                            |:lib:compileKotlinLinuxX64: 2.0 language version
+                            |:lib:compileCommonMainKotlinMetadata: 2.0 language version
+                            |:lib:compileTestKotlinLinuxX64: 2.0 language version
+                            |##### 100% (3/3) tasks have been compiled with Kotlin 2.0 #####
+                        """.trimMargin().normalizeLineEndings()
+                    )
+                }
+            }
+        }
+    }
+
     private fun TestProject.enableTryK2() = gradleProperties.appendText(
         """
         |

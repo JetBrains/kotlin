@@ -1168,7 +1168,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
                 addAll(extraOpts)
 
             }
-        addBuildMetricsForTaskAction(buildMetrics, languageVersion = parseLanguageVersion(args)) {
+        addBuildMetricsForTaskAction(buildMetrics, languageVersion =  null) {
             outputFile.parentFile.mkdirs()
             KotlinNativeCInteropRunner.createExecutionContext(
                 task = this,
