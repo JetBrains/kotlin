@@ -34,27 +34,35 @@ public enum JvmPrimitiveType {
     DOUBLE(PrimitiveType.DOUBLE, "double", "D", "java.lang.Double"),
     ;
 
-    private static final Set<FqName> WRAPPERS_CLASS_NAMES;
     private static final Map<String, JvmPrimitiveType> TYPE_BY_NAME;
     private static final Map<PrimitiveType, JvmPrimitiveType> TYPE_BY_PRIMITIVE_TYPE;
     private static final Map<String, JvmPrimitiveType> TYPE_BY_DESC;
+    private static final Set<String> WRAPPER_CLASS_INTERNAL_NAMES;
+    private static final Map<String, String> OWNER_TO_BOXING_METHOD_DESCRIPTOR;
 
     static {
-        WRAPPERS_CLASS_NAMES = new HashSet<FqName>();
         TYPE_BY_NAME = new HashMap<String, JvmPrimitiveType>();
         TYPE_BY_PRIMITIVE_TYPE = new EnumMap<PrimitiveType, JvmPrimitiveType>(PrimitiveType.class);
         TYPE_BY_DESC = new HashMap<String, JvmPrimitiveType>();
+        WRAPPER_CLASS_INTERNAL_NAMES = new HashSet<>();
+        OWNER_TO_BOXING_METHOD_DESCRIPTOR = new HashMap<>();
 
         for (JvmPrimitiveType type : values()) {
-            WRAPPERS_CLASS_NAMES.add(type.getWrapperFqName());
             TYPE_BY_NAME.put(type.getJavaKeywordName(), type);
             TYPE_BY_PRIMITIVE_TYPE.put(type.getPrimitiveType(), type);
             TYPE_BY_DESC.put(type.getDesc(), type);
+            String internalName = type.wrapperFqName.asString().replace('.', '/');
+            WRAPPER_CLASS_INTERNAL_NAMES.add(internalName);
+            OWNER_TO_BOXING_METHOD_DESCRIPTOR.put(internalName, "(" + type.desc + ")L" + internalName + ";");
         }
     }
 
-    public static boolean isWrapperClassName(@NotNull FqName className) {
-        return WRAPPERS_CLASS_NAMES.contains(className);
+    public static boolean isWrapperClassInternalName(@NotNull String internalName) {
+        return WRAPPER_CLASS_INTERNAL_NAMES.contains(internalName);
+    }
+
+    public static boolean isBoxingMethodDescriptor(@NotNull String owner, @NotNull String methodDescriptor) {
+        return methodDescriptor.equals(OWNER_TO_BOXING_METHOD_DESCRIPTOR.get(owner));
     }
 
     @NotNull

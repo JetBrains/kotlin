@@ -246,11 +246,7 @@ private fun isWrapperClassNameOrNumber(internalClassName: String) =
     isWrapperClassName(internalClassName) || internalClassName == Type.getInternalName(Number::class.java)
 
 private fun isWrapperClassName(internalClassName: String) =
-    JvmPrimitiveType.isWrapperClassName(buildFqNameByInternal(internalClassName))
-
-
-private fun buildFqNameByInternal(internalClassName: String) =
-    FqName(Type.getObjectType(internalClassName).className)
+    JvmPrimitiveType.isWrapperClassInternalName(internalClassName)
 
 private fun isUnboxingMethodName(name: String) =
     UNBOXING_METHOD_NAMES.contains(name)
@@ -275,10 +271,8 @@ fun AbstractInsnNode.isCoroutinePrimitiveBoxing(): Boolean {
     }
 }
 
-private fun MethodInsnNode.isBoxingMethodDescriptor(): Boolean {
-    val ownerType = Type.getObjectType(owner)
-    return desc == Type.getMethodDescriptor(ownerType, AsmUtil.unboxType(ownerType))
-}
+private fun MethodInsnNode.isBoxingMethodDescriptor() =
+    JvmPrimitiveType.isBoxingMethodDescriptor(owner, desc)
 
 fun AbstractInsnNode.isJavaLangClassBoxing() =
     isMethodInsnWith(Opcodes.INVOKESTATIC) {
