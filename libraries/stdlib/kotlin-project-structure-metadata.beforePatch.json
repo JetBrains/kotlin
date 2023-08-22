@@ -26,6 +26,30 @@
         "sourceSet": [
           "commonMain"
         ]
+      },
+      {
+        "name": "wasmJsApiElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      },
+      {
+        "name": "wasmJsRuntimeElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      },
+      {
+        "name": "wasmWasiApiElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      },
+      {
+        "name": "wasmWasiRuntimeElements",
+        "sourceSet": [
+          "commonMain"
+        ]
       }
     ],
     "sourceSets": [

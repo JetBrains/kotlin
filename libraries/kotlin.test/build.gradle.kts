@@ -341,8 +341,8 @@ val (wasmWasiApi, wasmWasiRuntime) = listOf("api", "runtime").map { usage ->
 wasmWasiRuntime.extendsFrom(wasmWasiApi)
 
 dependencies {
-    wasmJsApi(project(":kotlin-stdlib-wasm-js"))
-    wasmWasiApi(project(":kotlin-stdlib-wasm-wasi"))
+    wasmJsApi(project(":kotlin-stdlib"))
+    wasmWasiApi(project(":kotlin-stdlib"))
 }
 
 artifacts {

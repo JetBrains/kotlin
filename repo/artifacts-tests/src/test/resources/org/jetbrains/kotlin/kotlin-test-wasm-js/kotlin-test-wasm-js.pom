@@ -35,7 +35,7 @@
   <dependencies>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-stdlib-wasm-js</artifactId>
+      <artifactId>kotlin-stdlib</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>compile</scope>
     </dependency>

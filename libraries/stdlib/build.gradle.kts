@@ -5,7 +5,12 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
+import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
@@ -212,6 +217,30 @@ kotlin {
         }
     }
 
+    D8RootPlugin.apply(rootProject).version = v8Version
+
+    fun KotlinWasmTargetDsl.commonWasmTargetConfiguration() {
+        (this as KotlinTargetWithNodeJsDsl).nodejs()
+        compilations {
+            all {
+                kotlinOptions.freeCompilerArgs += listOf("-Xallow-kotlin-package", "-Xexpect-actual-classes")
+            }
+            val main by getting
+            main.apply {
+                kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
+                kotlinOptions.allWarningsAsErrors = true
+            }
+        }
+    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        commonWasmTargetConfiguration()
+    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmWasi {
+        commonWasmTargetConfiguration()
+    }
+
     sourceSets {
         all {
             kotlin.setSrcDirs(emptyList<File>())
@@ -361,6 +390,104 @@ kotlin {
             kotlin.srcDir(jsCommonTestSrcDir)
         }
 
+        val nativeWasmMain by creating {
+            dependsOn(commonMain.get())
+            kotlin.srcDir("native-wasm/src")
+        }
+
+        val nativeWasmTest by creating {
+            dependsOn(commonTest.get())
+            kotlin.srcDir("native-wasm/test")
+        }
+
+        val wasmCommonMain by creating {
+            dependsOn(nativeWasmMain)
+            val prepareWasmBuiltinSources by tasks.registering(Sync::class)
+            kotlin {
+                srcDir(prepareWasmBuiltinSources)
+                srcDir("wasm/builtins")
+                srcDir("wasm/internal")
+                srcDir("wasm/runtime")
+                srcDir("wasm/src")
+                srcDir("wasm/stubs")
+            }
+            prepareWasmBuiltinSources.configure {
+                val unimplementedNativeBuiltIns =
+                    (file("$rootDir/core/builtins/native/kotlin/").list().toSortedSet() - file("wasm/builtins/kotlin/").list())
+                        .map { "core/builtins/native/kotlin/$it" }
+
+                val sources = listOf(
+                    "core/builtins/src/kotlin/"
+                ) + unimplementedNativeBuiltIns
+
+
+
+                val excluded = listOf(
+                    // included in commonMain
+                    "internal/InternalAnnotations.kt",
+                    // JS-specific optimized version of emptyArray() already defined
+                    "ArrayIntrinsics.kt",
+                    // Included with K/N collections
+                    "Collections.kt", "Iterator.kt", "Iterators.kt"
+                )
+
+                sources.forEach { path ->
+                    from("$rootDir/$path") {
+                        into(path.dropLastWhile { it != '/' })
+                        excluded.forEach {
+                            exclude(it)
+                        }
+                    }
+                }
+
+                into("$buildDir/src/wasm-builtin-sources")
+            }
+
+        }
+        val wasmCommonTest by creating {
+            dependsOn(nativeWasmTest)
+            kotlin {
+                srcDir("wasm/test")
+            }
+        }
+
+        val wasmJsMain by getting {
+            dependsOn(wasmCommonMain)
+            kotlin {
+                srcDir("wasm/js/builtins")
+                srcDir("wasm/js/internal")
+                srcDir("wasm/js/src")
+            }
+        }
+        val wasmJsTest by getting {
+            dependsOn(wasmCommonTest)
+            dependencies {
+                api(project(":kotlin-test:kotlin-test-wasm-js"))
+            }
+            kotlin {
+                srcDir("wasm/js/test")
+            }
+        }
+        val wasmWasiMain by getting {
+            dependsOn(wasmCommonMain)
+            kotlin {
+                srcDir("wasm/wasi/builtins")
+                srcDir("wasm/wasi/src")
+            }
+            languageSettings {
+                optIn("kotlin.wasm.unsafe.UnsafeWasmMemoryApi")
+            }
+        }
+        val wasmWasiTest by getting {
+            dependsOn(wasmCommonTest)
+            dependencies {
+                api(project(":kotlin-test:kotlin-test-wasm-wasi"))
+            }
+            kotlin {
+                srcDir("wasm/wasi/test")
+            }
+        }
+
         all sourceSet@ {
             languageSettings {
                 // TODO: progressiveMode = use build property 'test.progressive.mode'
@@ -491,6 +618,13 @@ tasks {
         }
     }
 
+    val wasmJsJar by existing(Jar::class) {
+        manifestAttributes(manifest, "Main")
+    }
+    val wasmWasiJar by existing(Jar::class) {
+        manifestAttributes(manifest, "Main")
+    }
+
     artifacts {
         val distJsJar = configurations.create("distJsJar")
         val distJsSourcesJar = configurations.create("distJsSourcesJar")
@@ -526,6 +660,19 @@ tasks {
         check.configure { dependsOn(jvmLongRunningTest) }
     }
 
+    listOf("Js", "Wasi").forEach { wasmTarget ->
+        named("compileTestKotlinWasm$wasmTarget", AbstractKotlinCompile::class) {
+            // TODO: fix all warnings, enable -Werror
+            compilerOptions.suppressWarnings = true
+            // exclusions due to KT-51647
+            exclude("generated/minmax/*")
+            exclude("collections/MapTest.kt")
+        }
+        named("compileTestDevelopmentExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
+            kotlinOptions.freeCompilerArgs += listOf("-Xwasm-enable-array-range-checks")
+        }
+    }
+
     /*
     We are using a custom 'kotlin-project-structure-metadata' to ensure 'nativeApiElements' lists 'commonMain' as source set
     */
@@ -557,49 +704,6 @@ tasks {
     }
 
 }
-
-// republishing artifacts from kotlin-stdlib-wasm-* projects
-// TODO: replace with wasm targets compilation in this project
-fun wasmOutgoingConfigurations(target: KotlinWasmTargetAttribute) {
-    val targetName = target.toString().replaceFirstChar { it.uppercase() }
-    val klib = resolvingConfiguration("wasm${targetName}Klib")
-    val sources = resolvingConfiguration("wasm${targetName}Sources")
-    dependencies {
-        klib(project(":kotlin-stdlib-wasm-$target", configuration = "wasmRuntimeElements"))
-        sources(project(":kotlin-stdlib-wasm-$target", configuration = "wasmSourcesElements"))
-    }
-    listOf(KotlinUsages.KOTLIN_API, KotlinUsages.KOTLIN_RUNTIME).map { usage ->
-        val name = usage.substringAfter("kotlin-")
-        val configuration = outgoingConfiguration("wasm${targetName}${name.replaceFirstChar { it.uppercase() }}Elements") {
-            attributes {
-                attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-                attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, objects.named("non-jvm"))
-                attribute(Usage.USAGE_ATTRIBUTE, objects.named(usage))
-                attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
-                attribute(KotlinWasmTargetAttribute.wasmTargetAttribute, target)
-            }
-        }
-        artifacts.add(configuration.name, provider { klib.singleFile }) {
-            builtBy(klib)
-        }
-    }
-    val outSources = outgoingConfiguration("wasm${targetName}SourcesElements") {
-        attributes {
-            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
-            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.SOURCES))
-            attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, objects.named("non-jvm"))
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
-            attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
-            attribute(KotlinWasmTargetAttribute.wasmTargetAttribute, target)
-        }
-    }
-    artifacts.add(outSources.name, provider { sources.singleFile }) {
-        builtBy(sources)
-    }
-}
-
-wasmOutgoingConfigurations(KotlinWasmTargetAttribute.js)
-wasmOutgoingConfigurations(KotlinWasmTargetAttribute.wasi)
 
 
 // region ==== Publishing ====
@@ -718,10 +822,8 @@ publishing {
 
         val wasmJsModule by existing(MavenPublication::class)
         val wasmWasiModule by existing(MavenPublication::class)
-        // an arbitrary empty classpath configuration is used for the following sboms
-        // TODO: replace with classpath configurations of the corresponding target compilations when they are migrated here (though empty as well)
-        configureSbom("Wasm-Js", "kotlin-stdlib-wasm-js", setOf("metadataCompileClasspath"), wasmJsModule)
-        configureSbom("Wasm-Wasi", "kotlin-stdlib-wasm-wasi", setOf("metadataCompileClasspath"), wasmWasiModule)
+        configureSbom("Wasm-Js", "kotlin-stdlib-wasm-js", setOf("wasmJsRuntimeClasspath"), wasmJsModule)
+        configureSbom("Wasm-Wasi", "kotlin-stdlib-wasm-wasi", setOf("wasmWasiRuntimeClasspath"), wasmWasiModule)
     }
 }
 
