@@ -103,7 +103,7 @@ enum class EvaluationMode {
 
         private fun IrFunction?.isCompileTimePropertyAccessor(): Boolean {
             val property = this?.property ?: return false
-            return property.isConst || (property.resolveFakeOverride() ?: property).isMarkedAsIntrinsicConstEvaluation()
+            return property.isConst || property.isMarkedAsIntrinsicConstEvaluation()
         }
 
         override fun canEvaluateBlock(block: IrBlock): Boolean = block.origin == IrStatementOrigin.WHEN || block.statements.size == 1
