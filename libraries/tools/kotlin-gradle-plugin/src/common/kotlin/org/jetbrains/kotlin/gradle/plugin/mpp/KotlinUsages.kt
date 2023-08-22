@@ -20,7 +20,21 @@ object KotlinUsages {
     const val KOTLIN_API = "kotlin-api"
     const val KOTLIN_RUNTIME = "kotlin-runtime"
     const val KOTLIN_METADATA = "kotlin-metadata"
+
+    /**
+     * Platform CInterop usage:
+     * These are CInterop files that represent executable .klibs for a given konan target
+     * ! NOTE !: This usage is compatible with [KOTLIN_API], [JAVA_API] and [JAVA_RUNTIME]
+     */
     const val KOTLIN_CINTEROP = "kotlin-cinterop"
+
+    /**
+     * Commonized CInterop usage:
+     * This CInterops are produced by the commonizer.
+     * ! Note !: This usage is intended only for project to project dependencies.
+     * Unlike [KOTLIN_CINTEROP] this usage is not marked compatible with [KOTLIN_API], [JAVA_API] or [JAVA_RUNTIME]
+     */
+    const val KOTLIN_COMMONIZED_CINTEROP = "kotlin-commonized-cinterop"
     const val KOTLIN_SOURCES = "kotlin-sources"
 
     // Following two constants were removed in Gradle 8.0 from 'Usages' class
