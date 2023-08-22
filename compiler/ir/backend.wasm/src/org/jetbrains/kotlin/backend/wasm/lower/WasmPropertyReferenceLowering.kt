@@ -310,5 +310,7 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
         return type.classifier == expectedClass
     }
 
-    private object DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION : IrDeclarationOriginImpl("KPROPERTIES_FOR_DELEGATION")
+    private companion object {
+        private val DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION = IrDeclarationOriginImpl("KPROPERTIES_FOR_DELEGATION")
+    }
 }

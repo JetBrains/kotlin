@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-private object SCRIPT_FUNCTION : IrDeclarationOriginImpl("SCRIPT_FUNCTION")
+private val SCRIPT_FUNCTION by IrDeclarationOriginImpl
 
 class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {

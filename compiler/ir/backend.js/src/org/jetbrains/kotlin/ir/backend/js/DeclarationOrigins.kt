@@ -9,21 +9,21 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 
 object JsLoweredDeclarationOrigin {
-    object JS_INTRINSICS_STUB : IrDeclarationOriginImpl("JS_INTRINSICS_STUB")
-    object JS_CLOSURE_BOX_CLASS_DECLARATION : IrDeclarationOriginImpl("JS_CLOSURE_BOX_CLASS_DECLARATION")
-    object BRIDGE_WITH_STABLE_NAME : IrDeclarationOriginImpl("BRIDGE_WITH_STABLE_NAME")
-    object BRIDGE_WITHOUT_STABLE_NAME : IrDeclarationOriginImpl("BRIDGE_WITHOUT_STABLE_NAME")
-    object BRIDGE_PROPERTY_ACCESSOR : IrDeclarationOriginImpl("BRIDGE_PROPERTY_ACCESSOR")
-    object OBJECT_GET_INSTANCE_FUNCTION : IrDeclarationOriginImpl("OBJECT_GET_INSTANCE_FUNCTION")
-    object JS_SHADOWED_EXPORT : IrDeclarationOriginImpl("JS_SHADOWED_EXPORT")
-    object JS_SUPER_CONTEXT_PARAMETER : IrDeclarationOriginImpl("JS_SUPER_CONTEXT_PARAMETER")
-    object JS_SHADOWED_DEFAULT_PARAMETER : IrDeclarationOriginImpl("JS_SHADOWED_DEFAULT_PARAMETER")
-    object ENUM_GET_INSTANCE_FUNCTION : IrDeclarationOriginImpl("ENUM_GET_INSTANCE_FUNCTION")
+    val JS_INTRINSICS_STUB by IrDeclarationOriginImpl
+    val JS_CLOSURE_BOX_CLASS_DECLARATION by IrDeclarationOriginImpl
+    val BRIDGE_WITH_STABLE_NAME by IrDeclarationOriginImpl
+    val BRIDGE_WITHOUT_STABLE_NAME by IrDeclarationOriginImpl
+    val BRIDGE_PROPERTY_ACCESSOR by IrDeclarationOriginImpl
+    val OBJECT_GET_INSTANCE_FUNCTION by IrDeclarationOriginImpl
+    val JS_SHADOWED_EXPORT by IrDeclarationOriginImpl
+    val JS_SUPER_CONTEXT_PARAMETER by IrDeclarationOriginImpl
+    val JS_SHADOWED_DEFAULT_PARAMETER by IrDeclarationOriginImpl
+    val ENUM_GET_INSTANCE_FUNCTION by IrDeclarationOriginImpl
 
     fun isBridgeDeclarationOrigin(origin: IrDeclarationOrigin) = when (origin) {
-        is BRIDGE_WITH_STABLE_NAME -> true
-        is BRIDGE_WITHOUT_STABLE_NAME -> true
-        is BRIDGE_PROPERTY_ACCESSOR -> true
+        BRIDGE_WITH_STABLE_NAME -> true
+        BRIDGE_WITHOUT_STABLE_NAME -> true
+        BRIDGE_PROPERTY_ACCESSOR -> true
         else -> false
     }
 }

@@ -61,9 +61,9 @@ import org.jetbrains.kotlin.name.Name
  * ```
  */
 internal class FunctionReferenceLowering(val generationState: NativeGenerationState) : FileLoweringPass {
-    private object DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
-
     companion object {
+        private val DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL = IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
+
         fun isLoweredFunctionReference(declaration: IrDeclaration): Boolean =
                 declaration.origin == DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
     }

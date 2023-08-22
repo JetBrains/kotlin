@@ -103,7 +103,7 @@ private class ArrayConstructorTransformer(
 }
 
 
-private object ArrayConstructorWrapper : IrDeclarationOriginImpl("arrayConstructorWrapper")
+private val ArrayConstructorWrapper = IrDeclarationOriginImpl("arrayConstructorWrapper")
 
 class ArrayConstructorReferenceLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {

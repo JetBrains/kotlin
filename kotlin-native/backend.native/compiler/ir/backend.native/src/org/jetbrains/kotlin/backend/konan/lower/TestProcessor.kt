@@ -45,11 +45,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal class TestProcessor (val context: Context) {
-
-    object TEST_SUITE_CLASS: IrDeclarationOriginImpl("TEST_SUITE_CLASS")
-    object TEST_SUITE_GENERATED_MEMBER: IrDeclarationOriginImpl("TEST_SUITE_GENERATED_MEMBER")
-
     companion object {
+        val TEST_SUITE_CLASS by IrDeclarationOriginImpl
+        val TEST_SUITE_GENERATED_MEMBER by IrDeclarationOriginImpl
+
         val COMPANION_GETTER_NAME = Name.identifier("getCompanion")
         val INSTANCE_GETTER_NAME = Name.identifier("createInstance")
 

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
-val ANNOTATION_IMPLEMENTATION = object : IrDeclarationOriginImpl("ANNOTATION_IMPLEMENTATION", isSynthetic = true) {}
+val ANNOTATION_IMPLEMENTATION by IrDeclarationOriginImpl.Synthetic
 
 class AnnotationImplementationLowering(
     val transformer: (IrFile) -> AnnotationImplementationTransformer

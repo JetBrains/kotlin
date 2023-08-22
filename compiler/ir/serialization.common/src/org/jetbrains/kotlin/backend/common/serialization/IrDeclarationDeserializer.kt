@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.*
 import kotlin.collections.set
+import kotlin.reflect.full.declaredMemberProperties
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructor as ProtoConstructor
@@ -252,7 +253,7 @@ class IrDeclarationDeserializer(
     private inline fun <T> withDeserializedIrDeclarationBase(
         proto: ProtoDeclarationBase,
         setParent: Boolean = true,
-        block: (IrSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T
+        block: (IrSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T,
     ): T where T : IrDeclaration, T : IrSymbolOwner {
         val (s, uid) = symbolDeserializer.deserializeIrSymbolToDeclare(proto.symbol)
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
@@ -556,7 +557,7 @@ class IrDeclarationDeserializer(
         proto: ProtoFunctionBase,
         setParent: Boolean = true,
         fallbackSymbolKind: SymbolKind,
-        block: (S, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T
+        block: (S, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T,
     ): T = withDeserializedIrDeclarationBase(proto.base, setParent) { symbol, idSig, startOffset, endOffset, origin, fcode ->
         val functionSymbol: S = symbol.checkSymbolType(fallbackSymbolKind)
         symbolTable.withScope(functionSymbol) {
@@ -621,7 +622,8 @@ class IrDeclarationDeserializer(
                     isFakeOverride = flags.isFakeOverride,
                 )
             }.apply {
-                overriddenSymbols = proto.overriddenList.memoryOptimizedMap { deserializeIrSymbolAndRemap(it).checkSymbolType(FUNCTION_SYMBOL) }
+                overriddenSymbols =
+                    proto.overriddenList.memoryOptimizedMap { deserializeIrSymbolAndRemap(it).checkSymbolType(FUNCTION_SYMBOL) }
             }
         }
 
@@ -726,7 +728,7 @@ class IrDeclarationDeserializer(
 
     private fun deserializeIrLocalDelegatedProperty(
         proto: ProtoLocalDelegatedProperty,
-        setParent: Boolean = true
+        setParent: Boolean = true,
     ): IrLocalDelegatedProperty =
         withDeserializedIrDeclarationBase(proto.base, setParent) { symbol, _, startOffset, endOffset, origin, fcode ->
             val flags = LocalVariableFlags.decode(fcode)
@@ -794,17 +796,20 @@ class IrDeclarationDeserializer(
             }
         }
 
-    companion object {
-        private val allKnownDeclarationOrigins = IrDeclarationOrigin::class.nestedClasses.toList()
-        private val declarationOriginIndex =
-            allKnownDeclarationOrigins.mapNotNull { it.objectInstance as? IrDeclarationOriginImpl }.associateBy { it.name }
+    private companion object {
+        private val declarationOriginIndex by lazy {
+            IrDeclarationOrigin.Companion::class
+                .declaredMemberProperties
+                .mapNotNull { it.get(IrDeclarationOrigin.Companion) as? IrDeclarationOriginImpl }
+                .associateBy { it.name }
+        }
     }
 
     private fun deserializeIrDeclarationOrigin(protoName: Int): IrDeclarationOrigin {
         val originName = libraryFile.string(protoName)
         return IrDeclarationOrigin.GeneratedByPlugin.fromSerializedString(originName)
             ?: declarationOriginIndex[originName]
-            ?: object : IrDeclarationOriginImpl(originName) {}
+            ?: IrDeclarationOriginImpl(originName)
     }
 
     fun deserializeDeclaration(proto: ProtoDeclaration, setParent: Boolean = true): IrDeclaration {

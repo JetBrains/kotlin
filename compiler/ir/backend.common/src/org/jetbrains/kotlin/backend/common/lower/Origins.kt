@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 
-interface LoweredStatementOrigins  {
-    object STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE : IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE")
-    object SYNTHESIZED_INIT_BLOCK : IrStatementOriginImpl("SYNTHESIZED_INIT_BLOCK")
-    object DEFAULT_DISPATCH_CALL : IrStatementOriginImpl("DEFAULT_DISPATCH_CALL")
+object LoweredStatementOrigins {
+    val STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE = IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE")
+    val SYNTHESIZED_INIT_BLOCK by IrStatementOriginImpl
+    val DEFAULT_DISPATCH_CALL by IrStatementOriginImpl
 }

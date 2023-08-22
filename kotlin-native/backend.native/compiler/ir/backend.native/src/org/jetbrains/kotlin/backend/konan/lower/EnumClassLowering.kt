@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.ARGUMENTS_REORDERING_FOR_CALL
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -85,7 +85,7 @@ internal class EnumsSupport(
     }
 }
 
-internal object DECLARATION_ORIGIN_ENUM : IrDeclarationOriginImpl("ENUM")
+internal val DECLARATION_ORIGIN_ENUM = IrDeclarationOriginImpl("ENUM")
 
 internal class NativeEnumWhenLowering constructor(context: Context) : EnumWhenLowering(context) {
     override fun mapConstEnumEntry(entry: IrEnumEntry): Int {

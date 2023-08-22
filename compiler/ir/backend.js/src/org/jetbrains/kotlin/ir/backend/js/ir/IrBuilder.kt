@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 
 object JsIrBuilder {
-    object SYNTHESIZED_DECLARATION : IrDeclarationOriginImpl("SYNTHESIZED_DECLARATION")
+    val SYNTHESIZED_DECLARATION by IrDeclarationOriginImpl
 
     fun buildCall(
         target: IrSimpleFunctionSymbol,

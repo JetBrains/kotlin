@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
-object ES6_INIT_CALL : IrStatementOriginImpl("ES6_INIT_CALL")
-object ES6_CONSTRUCTOR_REPLACEMENT : IrDeclarationOriginImpl("ES6_CONSTRUCTOR_REPLACEMENT")
-object ES6_SYNTHETIC_EXPORT_CONSTRUCTOR: IrDeclarationOriginImpl("ES6_SYNTHETIC_EXPORT_CONSTRUCTOR")
-object ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT : IrDeclarationOriginImpl("ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT")
-object ES6_INIT_FUNCTION : IrDeclarationOriginImpl("ES6_INIT_FUNCTION")
-object ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT : IrStatementOriginImpl("ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT")
-object ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT : IrDeclarationOriginImpl("ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT")
+val ES6_INIT_CALL by IrStatementOriginImpl
+val ES6_CONSTRUCTOR_REPLACEMENT by IrDeclarationOriginImpl
+val ES6_SYNTHETIC_EXPORT_CONSTRUCTOR by IrDeclarationOriginImpl
+val ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT by IrDeclarationOriginImpl
+val ES6_INIT_FUNCTION by IrDeclarationOriginImpl
+val ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT by IrStatementOriginImpl
+val ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT by IrDeclarationOriginImpl
 
 val IrDeclaration.isEs6ConstructorReplacement: Boolean
     get() = origin == ES6_CONSTRUCTOR_REPLACEMENT || origin == ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT

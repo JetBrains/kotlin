@@ -44,7 +44,7 @@ class JsCodeOutliningLowering(val backendContext: JsIrBackendContext) : BodyLowe
     }
 
     companion object {
-        val OUTLINED_JS_CODE_ORIGIN = object : IrDeclarationOriginImpl("OUTLINED_JS_CODE") {}
+        val OUTLINED_JS_CODE_ORIGIN = IrDeclarationOriginImpl("OUTLINED_JS_CODE")
     }
 }
 

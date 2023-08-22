@@ -215,7 +215,7 @@ abstract class IrBuiltIns {
 
     companion object {
         val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")
-        val BUILTIN_OPERATOR = object : IrDeclarationOriginImpl("OPERATOR") {}
+        val BUILTIN_OPERATOR = IrDeclarationOriginImpl("OPERATOR")
     }
 }
 

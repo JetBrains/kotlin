@@ -171,7 +171,8 @@ internal class ObjectClassLowering(val generationState: NativeGenerationState) :
     }
 
 
-    // This is a hack to avoid early freezing. Should be removed when freezing is removed
-    object IrStatementOriginFieldPreInit : IrStatementOriginImpl("FIELD_PRE_INIT")
-
+    companion object {
+        // This is a hack to avoid early freezing. Should be removed when freezing is removed
+        val IrStatementOriginFieldPreInit = IrStatementOriginImpl("FIELD_PRE_INIT")
+    }
 }

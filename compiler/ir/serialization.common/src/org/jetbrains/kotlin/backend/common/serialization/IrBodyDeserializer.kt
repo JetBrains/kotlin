@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import kotlin.reflect.full.declaredMemberProperties
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
@@ -857,11 +858,10 @@ class IrBodyDeserializer(
         code: () -> Long
     ): S? = if (condition) deserializeTypedSymbol(code(), fallbackSymbolKind, remap = true) else null
 
-    companion object {
-
-        private val allKnownStatementOrigins = IrStatementOrigin::class.nestedClasses.toList()
-
-        private val statementOriginIndex =
-            allKnownStatementOrigins.mapNotNull { it.objectInstance as? IrStatementOriginImpl }.associateBy { it.debugName }
+    private companion object {
+        private val statementOriginIndex = IrStatementOrigin.Companion::class
+            .declaredMemberProperties
+            .mapNotNull { it.get(IrStatementOrigin.Companion) as? IrStatementOrigin }
+            .associateBy { it.debugName }
     }
 }

@@ -506,7 +506,9 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         return listOf(replacement)
     }
 
-    private object UNSAFE_MFVC_SET_ORIGIN : IrStatementOrigin
+    private companion object {
+        private val UNSAFE_MFVC_SET_ORIGIN by IrStatementOriginImpl
+    }
 
     private fun RootMfvcNode.replaceMfvcNotStaticFields() {
         val fieldsToRemove = mfvc.fields.filter { !it.isStatic }.toList()

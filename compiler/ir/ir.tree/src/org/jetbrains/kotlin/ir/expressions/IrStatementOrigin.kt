@@ -5,96 +5,113 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-abstract class IrStatementOriginImpl(val debugName: String) : IrStatementOrigin {
+import kotlin.properties.PropertyDelegateProvider
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
+
+class IrStatementOriginImpl(override val debugName: String) : IrStatementOrigin, ReadOnlyProperty<Any?, IrStatementOriginImpl> {
+    override fun getValue(thisRef: Any?, property: KProperty<*>): IrStatementOriginImpl = this
+
     override fun toString(): String = debugName
+
+    companion object : PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, IrStatementOriginImpl>> {
+        override fun provideDelegate(thisRef: Any?, property: KProperty<*>): ReadOnlyProperty<Any?, IrStatementOriginImpl> =
+            IrStatementOriginImpl(property.name)
+    }
 }
 
 interface IrStatementOrigin {
-    object SAFE_CALL : IrStatementOriginImpl("SAFE_CALL")
+    val debugName: String
 
-    object UMINUS : IrStatementOriginImpl("UMINUS")
-    object UPLUS : IrStatementOriginImpl("UPLUS")
-    object EXCL : IrStatementOriginImpl("EXCL")
-    object EXCLEXCL : IrStatementOriginImpl("EXCLEXCL")
+    companion object {
+        val SAFE_CALL by IrStatementOriginImpl
 
-    object ELVIS : IrStatementOriginImpl("ELVIS")
+        val UMINUS by IrStatementOriginImpl
+        val UPLUS by IrStatementOriginImpl
+        val EXCL by IrStatementOriginImpl
+        val EXCLEXCL by IrStatementOriginImpl
 
-    object LT : IrStatementOriginImpl("LT")
-    object GT : IrStatementOriginImpl("GT")
-    object LTEQ : IrStatementOriginImpl("LTEQ")
-    object GTEQ : IrStatementOriginImpl("GTEQ")
+        val ELVIS by IrStatementOriginImpl
 
-    object EQEQ : IrStatementOriginImpl("EQEQ")
-    object EQEQEQ : IrStatementOriginImpl("EQEQEQ")
-    object EXCLEQ : IrStatementOriginImpl("EXCLEQ")
-    object EXCLEQEQ : IrStatementOriginImpl("EXCLEQEQ")
+        val LT by IrStatementOriginImpl
+        val GT by IrStatementOriginImpl
+        val LTEQ by IrStatementOriginImpl
+        val GTEQ by IrStatementOriginImpl
 
-    object IN : IrStatementOriginImpl("IN")
-    object NOT_IN : IrStatementOriginImpl("NOT_IN")
-    object ANDAND : IrStatementOriginImpl("ANDAND")
-    object OROR : IrStatementOriginImpl("OROR")
+        val EQEQ by IrStatementOriginImpl
+        val EQEQEQ by IrStatementOriginImpl
+        val EXCLEQ by IrStatementOriginImpl
+        val EXCLEQEQ by IrStatementOriginImpl
 
-    object PLUS : IrStatementOriginImpl("PLUS")
-    object MINUS : IrStatementOriginImpl("MINUS")
-    object MUL : IrStatementOriginImpl("MUL")
-    object DIV : IrStatementOriginImpl("DIV")
-    object PERC : IrStatementOriginImpl("PERC")
-    object RANGE : IrStatementOriginImpl("RANGE")
-    object RANGE_UNTIL : IrStatementOriginImpl("RANGE_UNTIL")
+        val IN by IrStatementOriginImpl
+        val NOT_IN by IrStatementOriginImpl
+        val ANDAND by IrStatementOriginImpl
+        val OROR by IrStatementOriginImpl
 
-    object INVOKE : IrStatementOriginImpl("INVOKE")
-    object VARIABLE_AS_FUNCTION : IrStatementOriginImpl("VARIABLE_AS_FUNCTION")
-    object GET_ARRAY_ELEMENT : IrStatementOriginImpl("GET_ARRAY_ELEMENT")
+        val PLUS by IrStatementOriginImpl
+        val MINUS by IrStatementOriginImpl
+        val MUL by IrStatementOriginImpl
+        val DIV by IrStatementOriginImpl
+        val PERC by IrStatementOriginImpl
+        val RANGE by IrStatementOriginImpl
+        val RANGE_UNTIL by IrStatementOriginImpl
 
-    object PREFIX_INCR : IrStatementOriginImpl("PREFIX_INCR")
-    object PREFIX_DECR : IrStatementOriginImpl("PREFIX_DECR")
-    object POSTFIX_INCR : IrStatementOriginImpl("POSTFIX_INCR")
-    object POSTFIX_DECR : IrStatementOriginImpl("POSTFIX_DECR")
+        val INVOKE by IrStatementOriginImpl
+        val VARIABLE_AS_FUNCTION by IrStatementOriginImpl
+        val GET_ARRAY_ELEMENT by IrStatementOriginImpl
 
-    object EQ : IrStatementOriginImpl("EQ")
-    object PLUSEQ : IrStatementOriginImpl("PLUSEQ")
-    object MINUSEQ : IrStatementOriginImpl("MINUSEQ")
-    object MULTEQ : IrStatementOriginImpl("MULTEQ")
-    object DIVEQ : IrStatementOriginImpl("DIVEQ")
-    object PERCEQ : IrStatementOriginImpl("PERCEQ")
+        val PREFIX_INCR by IrStatementOriginImpl
+        val PREFIX_DECR by IrStatementOriginImpl
+        val POSTFIX_INCR by IrStatementOriginImpl
+        val POSTFIX_DECR by IrStatementOriginImpl
 
-    object ARGUMENTS_REORDERING_FOR_CALL : IrStatementOriginImpl("ARGUMENTS_REORDERING_FOR_CALL")
-    object DESTRUCTURING_DECLARATION : IrStatementOriginImpl("DESTRUCTURING_DECLARATION")
+        val EQ by IrStatementOriginImpl
+        val PLUSEQ by IrStatementOriginImpl
+        val MINUSEQ by IrStatementOriginImpl
+        val MULTEQ by IrStatementOriginImpl
+        val DIVEQ by IrStatementOriginImpl
+        val PERCEQ by IrStatementOriginImpl
 
-    object GET_PROPERTY : IrStatementOriginImpl("GET_PROPERTY")
-    object GET_LOCAL_PROPERTY : IrStatementOriginImpl("GET_LOCAL_PROPERTY")
+        val ARGUMENTS_REORDERING_FOR_CALL by IrStatementOriginImpl
+        val DESTRUCTURING_DECLARATION by IrStatementOriginImpl
 
-    object IF : IrStatementOriginImpl("IF")
-    object WHEN : IrStatementOriginImpl("WHEN")
-    object WHEN_COMMA : IrStatementOriginImpl("WHEN_COMMA")
-    object WHILE_LOOP : IrStatementOriginImpl("WHILE_LOOP")
-    object DO_WHILE_LOOP : IrStatementOriginImpl("DO_WHILE_LOOP")
-    object FOR_LOOP : IrStatementOriginImpl("FOR_LOOP")
-    object FOR_LOOP_ITERATOR : IrStatementOriginImpl("FOR_LOOP_ITERATOR")
-    object FOR_LOOP_INNER_WHILE : IrStatementOriginImpl("FOR_LOOP_INNER_WHILE")
-    object FOR_LOOP_HAS_NEXT : IrStatementOriginImpl("FOR_LOOP_HAS_NEXT")
-    object FOR_LOOP_NEXT : IrStatementOriginImpl("FOR_LOOP_NEXT")
+        val GET_PROPERTY by IrStatementOriginImpl
+        val GET_LOCAL_PROPERTY by IrStatementOriginImpl
 
-    object LAMBDA : IrStatementOriginImpl("LAMBDA")
-    object DEFAULT_VALUE : IrStatementOriginImpl("DEFAULT_VALUE")
-    object ANONYMOUS_FUNCTION : IrStatementOriginImpl("ANONYMOUS_FUNCTION")
-    object OBJECT_LITERAL : IrStatementOriginImpl("OBJECT_LITERAL")
-    object ADAPTED_FUNCTION_REFERENCE : IrStatementOriginImpl("ADAPTED_FUNCTION_REFERENCE")
-    object SUSPEND_CONVERSION : IrStatementOriginImpl("SUSPEND_CONVERSION")
-    object FUN_INTERFACE_CONSTRUCTOR_REFERENCE : IrStatementOriginImpl("FUN_INTERFACE_CONSTRUCTOR_REFERENCE")
+        val IF by IrStatementOriginImpl
+        val WHEN by IrStatementOriginImpl
+        val WHEN_COMMA by IrStatementOriginImpl
+        val WHILE_LOOP by IrStatementOriginImpl
+        val DO_WHILE_LOOP by IrStatementOriginImpl
+        val FOR_LOOP by IrStatementOriginImpl
+        val FOR_LOOP_ITERATOR by IrStatementOriginImpl
+        val FOR_LOOP_INNER_WHILE by IrStatementOriginImpl
+        val FOR_LOOP_HAS_NEXT by IrStatementOriginImpl
+        val FOR_LOOP_NEXT by IrStatementOriginImpl
 
-    object INITIALIZE_PROPERTY_FROM_PARAMETER : IrStatementOriginImpl("INITIALIZE_PROPERTY_FROM_PARAMETER")
-    object INITIALIZE_FIELD : IrStatementOriginImpl("INITIALIZE_FIELD")
+        val LAMBDA by IrStatementOriginImpl
+        val DEFAULT_VALUE by IrStatementOriginImpl
+        val ANONYMOUS_FUNCTION by IrStatementOriginImpl
+        val OBJECT_LITERAL by IrStatementOriginImpl
+        val ADAPTED_FUNCTION_REFERENCE by IrStatementOriginImpl
+        val SUSPEND_CONVERSION by IrStatementOriginImpl
+        val FUN_INTERFACE_CONSTRUCTOR_REFERENCE by IrStatementOriginImpl
 
-    object PROPERTY_REFERENCE_FOR_DELEGATE : IrStatementOriginImpl("PROPERTY_REFERENCE_FOR_DELEGATE")
+        val INITIALIZE_PROPERTY_FROM_PARAMETER by IrStatementOriginImpl
+        val INITIALIZE_FIELD by IrStatementOriginImpl
 
-    object BRIDGE_DELEGATION : IrStatementOriginImpl("BRIDGE_DELEGATION")
+        val PROPERTY_REFERENCE_FOR_DELEGATE by IrStatementOriginImpl
 
-    object SYNTHETIC_NOT_AUTOBOXED_CHECK : IrStatementOriginImpl("SYNTHETIC_NOT_AUTOBOXED_CHECK")
+        val BRIDGE_DELEGATION by IrStatementOriginImpl
 
-    object PARTIAL_LINKAGE_RUNTIME_ERROR : IrStatementOriginImpl("PARTIAL_LINKAGE_RUNTIME_ERROR")
+        val SYNTHETIC_NOT_AUTOBOXED_CHECK by IrStatementOriginImpl
 
-    data class COMPONENT_N private constructor(val index: Int) : IrStatementOriginImpl("COMPONENT_$index") {
+        val PARTIAL_LINKAGE_RUNTIME_ERROR by IrStatementOriginImpl
+    }
+
+    data class COMPONENT_N private constructor(val index: Int) : IrStatementOrigin {
+        override val debugName: String = "COMPONENT_$index"
+
         companion object {
             private val precreatedComponents = Array(32) { i -> COMPONENT_N(i + 1) }
 

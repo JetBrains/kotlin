@@ -113,11 +113,13 @@ abstract class AbstractAtomicSymbols(
             annotations = emptyList()
         )
 
-    object ATOMICFU_GENERATED_CLASS : IrDeclarationOriginImpl("ATOMICFU_GENERATED_CLASS", isSynthetic = true)
-    object ATOMICFU_GENERATED_FUNCTION : IrDeclarationOriginImpl("ATOMICFU_GENERATED_FUNCTION", isSynthetic = true)
-    object ATOMICFU_GENERATED_FIELD : IrDeclarationOriginImpl("ATOMICFU_GENERATED_FIELD", isSynthetic = true)
-    object ATOMICFU_GENERATED_PROPERTY : IrDeclarationOriginImpl("ATOMICFU_GENERATED_PROPERTY", isSynthetic = true)
-    object ATOMICFU_GENERATED_PROPERTY_ACCESSOR : IrDeclarationOriginImpl("ATOMICFU_GENERATED_PROPERTY_ACCESSOR", isSynthetic = true)
+    companion object {
+        val ATOMICFU_GENERATED_CLASS by IrDeclarationOriginImpl.Synthetic
+        val ATOMICFU_GENERATED_FUNCTION by IrDeclarationOriginImpl.Synthetic
+        val ATOMICFU_GENERATED_FIELD by IrDeclarationOriginImpl.Synthetic
+        val ATOMICFU_GENERATED_PROPERTY by IrDeclarationOriginImpl.Synthetic
+        val ATOMICFU_GENERATED_PROPERTY_ACCESSOR by IrDeclarationOriginImpl.Synthetic
+    }
 
     protected fun createPackage(packageName: String): IrPackageFragment =
         IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(

@@ -58,7 +58,7 @@ internal class FragmentLocalFunctionPatchLowering(
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
                 val localDeclarationsDataKey = when (expression.symbol.owner.origin) {
-                    is IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> context.mapping.defaultArgumentsOriginalFunction[expression.symbol.owner]
+                    IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> context.mapping.defaultArgumentsOriginalFunction[expression.symbol.owner]
                     else -> expression.symbol.owner
                 }
                 val localsData = localDeclarationsData[localDeclarationsDataKey] ?: return expression
