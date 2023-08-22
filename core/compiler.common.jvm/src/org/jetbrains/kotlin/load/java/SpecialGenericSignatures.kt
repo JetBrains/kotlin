@@ -134,7 +134,7 @@ open class SpecialGenericSignatures {
                 signatureAndName.copy(name = jdkName).signature
             }
 
-        val ORIGINAL_SHORT_NAMES: List<Name> = NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.keys.map { it.name }
+        val ORIGINAL_SHORT_NAMES: Set<Name> = NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.keys.mapTo(HashSet()) { it.name }
 
         val JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP: Map<Name, Name> =
             NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.entries
