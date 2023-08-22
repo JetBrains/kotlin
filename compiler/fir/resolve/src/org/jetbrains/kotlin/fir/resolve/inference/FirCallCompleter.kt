@@ -370,7 +370,7 @@ class FirCallCompleter(
 
                 val builderInferenceSession =
                     // TODO: Think of delegation+PCLA combination
-                    runIf(notFixedTypeVariablesInInputTypes.isNotEmpty() && transformer.context.inferenceSession !is FirBuilderInferenceSession2) {
+                    runIf(notFixedTypeVariablesInInputTypes.isNotEmpty() /*&& transformer.context.inferenceSession !is FirBuilderInferenceSession2*/) {
                         FirBuilderInferenceSession2(candidate)
                     }
 
