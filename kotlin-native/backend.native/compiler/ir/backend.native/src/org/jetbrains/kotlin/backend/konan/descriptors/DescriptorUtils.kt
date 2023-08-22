@@ -12,16 +12,18 @@ import org.jetbrains.kotlin.backend.konan.ir.getSuperInterfaces
 import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
 import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.resolve.annotations.argumentValue
-import org.jetbrains.kotlin.resolve.constants.StringValue
 
 /**
  * List of all implemented interfaces (including those which implemented by a super class)
@@ -252,10 +254,6 @@ fun IrConstructorCall.getAnnotationStringValue() = (getValueArgument(0) as? IrCo
 fun IrConstructorCall.getAnnotationStringValue(name: String): String {
     val parameter = symbol.owner.valueParameters.single { it.name.asString() == name }
     return (getValueArgument(parameter.index) as IrConst<*>).value as String
-}
-
-fun AnnotationDescriptor.getAnnotationStringValue(name: String): String {
-    return (argumentValue(name) as? StringValue)?.value ?: error("Expected value $name at annotation $this")
 }
 
 inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? {
