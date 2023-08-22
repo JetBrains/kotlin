@@ -52,10 +52,6 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileL
             /// This function needs to single out those cases where Java accessibility rules differ from Kotlin's.
             val declarationRaw = owner as IrDeclarationWithVisibility
 
-            // If this expression won't actually result in a JVM instruction call, access modifiers don't matter.
-            if (declarationRaw is IrFunction && (declarationRaw.isInline || context.getIntrinsic(declarationRaw.symbol) != null))
-                return true
-
             // Enum entry constructors are generated as package-private and are accessed only from corresponding enum class
             if (declarationRaw is IrConstructor && declarationRaw.constructedClass.isEnumEntry) return true
 
@@ -71,6 +67,10 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileL
             // `$assertionsDisabled` is accessed only from the same class, even in an inline function
             // (the inliner will generate it at the call site if necessary).
             if (declarationRaw is IrField && declarationRaw.isAssertionsDisabledField(context)) return true
+
+            // If this expression won't actually result in a JVM instruction call, access modifiers don't matter.
+            if (declarationRaw is IrFunction && (declarationRaw.isInline || context.getIntrinsic(declarationRaw.symbol) != null))
+                return true
 
             val declaration = when (declarationRaw) {
                 is IrSimpleFunction -> declarationRaw.resolveFakeOverride(allowAbstract = true)!!
