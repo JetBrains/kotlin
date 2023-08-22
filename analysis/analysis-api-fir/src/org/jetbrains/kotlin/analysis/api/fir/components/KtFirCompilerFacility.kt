@@ -375,6 +375,16 @@ internal class KtFirCompilerFacility(
     ) : StubGeneratorExtensions(), JvmGeneratorExtensions by delegate {
         override val rawTypeAnnotationConstructor: IrConstructor?
             get() = delegate.rawTypeAnnotationConstructor
+
+        /**
+         * This method is used from [org.jetbrains.kotlin.backend.jvm.lower.ReflectiveAccessLowering.visitCall]
+         * (via generateReflectiveAccessForGetter) and it is called for the private access member lowered to the getter/setter call.
+         * If a private property has no getter/setter (the typical situation for simple private properties without explicitly defined
+         * getter/setter) then this method is not used at all. Instead
+         * [org.jetbrains.kotlin.backend.jvm.lower.ReflectiveAccessLowering.visitGetField] (or visitSetField) generates the access without
+         * asking.
+         */
+        override fun isAccessorWithExplicitImplementation(accessor: IrSimpleFunction) = true
     }
 
     private class CompilerFacilityFir2IrExtensions(
