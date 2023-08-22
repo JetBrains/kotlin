@@ -94,6 +94,8 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                     // NB: FE 1.0 does not perform this check
                     it.revisedExpectedType == null
                 }
+
+            val currentTypeVariables = getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms).toSet()
             val dependencyProvider =
                 TypeVariableDependencyInformationProvider(notFixedTypeVariables, postponedArguments, topLevelType, this)
 
