@@ -47,13 +47,19 @@ class VariableLivenessFrame(val maxLocals: Int) : VarFrame<VariableLivenessFrame
         (if (controlFlowMerge) "*" else " ") + (0 until maxLocals).map { if (bitSet[it]) '@' else '_' }.joinToString(separator = "")
 }
 
-fun analyzeLiveness(method: MethodNode): List<VariableLivenessFrame> =
-    analyze(method, object : BackwardAnalysisInterpreter<VariableLivenessFrame> {
+fun analyzeLiveness(method: MethodNode): MutableMap<AbstractInsnNode, VariableLivenessFrame> {
+    val livenessByIndex = analyze(method, object : BackwardAnalysisInterpreter<VariableLivenessFrame> {
         override fun newFrame(maxLocals: Int) = VariableLivenessFrame(maxLocals)
         override fun def(frame: VariableLivenessFrame, insn: AbstractInsnNode) = defVar(frame, insn)
         override fun use(frame: VariableLivenessFrame, insn: AbstractInsnNode) =
             useVar(frame, insn)
     })
+    val livenessByInstruction = hashMapOf<AbstractInsnNode, VariableLivenessFrame>()
+    for ((index, frame) in livenessByIndex.withIndex()) {
+        livenessByInstruction.put(method.instructions[index], frame)
+    }
+    return livenessByInstruction
+}
 
 private fun defVar(frame: VariableLivenessFrame, insn: AbstractInsnNode) {
     if (insn is VarInsnNode && insn.isStoreOperation()) {
