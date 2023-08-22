@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.withName
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
@@ -31,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap
 class MemoizedInlineClassReplacements(
     private val mangleReturnTypes: Boolean,
     irFactory: IrFactory,
-    context: JvmBackendContext
+    context: JvmBackendContext,
 ) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("inline-class-replacements")) {
 
     val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
@@ -63,10 +64,11 @@ class MemoizedInlineClassReplacements(
                 // Mangle all functions in the body of an inline class
                 (it.parent as? IrClass)?.isSingleFieldValueClass == true ->
                     when {
-                        it.isValueClassTypedEquals -> createStaticReplacement(it).also {
-                            it.name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
-                            specializedEqualsCache.computeIfAbsent(it.parentAsClass) { it }
-                        }
+                        it.isValueClassTypedEquals -> createStaticReplacement(it)
+                            .withName(InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME)
+                            .also {
+                                specializedEqualsCache.computeIfAbsent(it.parentAsClass) { it }
+                            }
 
                         it.isRemoveAtSpecialBuiltinStub() ->
                             null
@@ -218,7 +220,7 @@ class MemoizedInlineClassReplacements(
         function: IrFunction,
         replacementOrigin: IrDeclarationOrigin,
         noFakeOverride: Boolean = false,
-        body: IrFunction.() -> Unit
+        body: IrFunction.() -> Unit,
     ): IrSimpleFunction {
         val useOldManglingScheme = context.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
         val replacement = buildReplacementInner(function, replacementOrigin, noFakeOverride, useOldManglingScheme, body)

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_ARGUMENTS
+import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.irInlinerIsEnabled
@@ -17,17 +19,16 @@ import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
+import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
+import org.jetbrains.kotlin.ir.builders.declarations.withName
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrComposite
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
-import org.jetbrains.kotlin.ir.util.inlineDeclaration
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
-import org.jetbrains.kotlin.ir.util.isLambdaInlining
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -43,7 +44,7 @@ internal val fakeLocalVariablesForIrInlinerLowering = makeIrFilePhase<JvmBackend
 )
 
 internal class FakeLocalVariablesForIrInlinerLowering(
-    override val context: JvmBackendContext
+    override val context: JvmBackendContext,
 ) : IrElementVisitorVoid, FakeInliningLocalVariables<IrInlinedFunctionBlock>, FileLoweringPass {
     private val inlinedStack = mutableListOf<IrInlinedFunctionBlock>()
     private var container: IrDeclaration? = null
@@ -102,7 +103,7 @@ internal class FakeLocalVariablesForIrInlinerLowering(
     }
 }
 
-private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesProcessor.Data> {
+private class LocalVariablesProcessor : IrElementTransformer<LocalVariablesProcessor.Data> {
     data class Data(val processingOriginalDeclarations: Boolean)
 
     private val inlinedStack = mutableListOf<IrInlinedFunctionBlock>()
@@ -113,19 +114,15 @@ private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesPro
         inlinedStack.removeLast()
     }
 
-    override fun visitElement(element: IrElement, data: Data) {
-        element.acceptChildren(this, data)
-    }
-
-    override fun visitClass(declaration: IrClass, data: Data) {
+    override fun visitClass(declaration: IrClass, data: Data): IrStatement {
         if (declaration.originalBeforeInline != null) {
             // Don't take into account regenerated classes
             return super.visitClass(declaration, data.copy(processingOriginalDeclarations = false))
         }
-        super.visitClass(declaration, data)
+        return super.visitClass(declaration, data)
     }
 
-    override fun visitBlock(expression: IrBlock, data: Data) {
+    override fun visitBlock(expression: IrBlock, data: Data): IrExpression {
         if (expression !is IrInlinedFunctionBlock) {
             return super.visitBlock(expression, data)
         }
@@ -133,19 +130,20 @@ private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesPro
         if (expression.isLambdaInlining()) {
             val argument = expression.inlinedElement as IrAttributeContainer
             val callee = inlinedStack.extractDeclarationWhereGivenElementWasInlined(argument)
-            if (callee == null || callee != inlinedStack.lastOrNull()) return
+            if (callee == null || callee != inlinedStack.lastOrNull()) return expression
         }
 
-        super.visitBlock(expression, data)
-
-        expression.insertInStackAndProcess {
-            getOriginalStatementsFromInlinedBlock().forEach {
-                it.accept(this@LocalVariablesProcessor, data.copy(processingOriginalDeclarations = true))
+        return super.visitBlock(expression, data).also {
+            expression.insertInStackAndProcess {
+                getOriginalStatementsFromInlinedBlock().forEach {
+                    it.accept(this@LocalVariablesProcessor, data.copy(processingOriginalDeclarations = true))
+                }
             }
         }
     }
 
-    override fun visitVariable(declaration: IrVariable, data: Data) {
+
+    override fun visitVariable(declaration: IrVariable, data: Data): IrStatement {
         if (!data.processingOriginalDeclarations) return super.visitVariable(declaration, data)
 
         val varName = declaration.name.asString()
@@ -157,8 +155,9 @@ private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesPro
             varSuffix.isNotEmpty() && varName == SpecialNames.THIS.asStringStripSpecialMarkers() -> "this_"
             else -> varName
         }
-        declaration.name = Name.identifier(newName + varSuffix)
-        super.visitVariable(declaration, data)
+        val transformed = super.visitVariable(declaration, data)
+        require(transformed is IrVariable) { "Expected IrVariable, but got ${transformed.render()}" }
+        return transformed.withName(Name.identifier(newName + varSuffix))
     }
 }
 
@@ -173,14 +172,16 @@ private class FunctionParametersProcessor : IrElementVisitorVoid {
         }
 
         super.visitBlock(expression)
-        expression.getAdditionalStatementsFromInlinedBlock().forEach {
-            it.processFunctionParameter(expression)
-        }
+        expression.statements
+            .filterIsInstance<IrComposite>()
+            .filter { it.origin == INLINED_FUNCTION_ARGUMENTS || it.origin == INLINED_FUNCTION_DEFAULT_ARGUMENTS }
+            .forEach {
+                it.statements.transformInPlace { statement -> statement.processFunctionParameter(expression) }
+            }
     }
 
-    private fun IrStatement.processFunctionParameter(inlinedBlock: IrInlinedFunctionBlock) {
-        if (this !is IrVariable || !this.isTmpForInline) return
-
+    private fun IrStatement.processFunctionParameter(inlinedBlock: IrInlinedFunctionBlock): IrStatement {
+        if (this !is IrVariable || !this.isTmpForInline) return this
         val varName = this.name.asString().substringAfterLast("_")
         val varNewName = when {
             this.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER -> {
@@ -190,7 +191,7 @@ private class FunctionParametersProcessor : IrElementVisitorVoid {
             varName == SpecialNames.THIS.asStringStripSpecialMarkers() -> "this_"
             else -> varName
         }
-        this.name = Name.identifier(varNewName + INLINE_FUN_VAR_SUFFIX)
         this.origin = IrDeclarationOrigin.DEFINED
+        return this.withName(Name.identifier(varNewName + INLINE_FUN_VAR_SUFFIX))
     }
 }

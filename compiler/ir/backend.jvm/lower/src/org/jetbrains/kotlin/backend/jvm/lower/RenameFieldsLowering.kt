@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.ir.builders.declarations.withName
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.util.fields
+import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.name.Name
 
 internal val renameFieldsPhase = makeIrFilePhase<CommonBackendContext>(
@@ -38,13 +41,25 @@ private class RenameFieldsLowering : ClassLoweringPass {
         }
 
         val count = hashMapOf<Name, Int>()
-        for (field in fields) {
+
+        val originalToTransformedField = fields.associateWith { field ->
             val oldName = field.name
             val index = count[oldName] ?: 0
-            if (index != 0 && !field.visibility.isPublicAPI) {
-                field.name = Name.identifier("$oldName$$index")
+            val transformedField = if (index != 0 && !field.visibility.isPublicAPI) {
+                field.withName(Name.identifier("$oldName$$index"))
+            } else {
+                field
             }
             count[oldName] = index + 1
+            transformedField
+        }
+
+        irClass.declarations.transformInPlace {
+            if (it is IrField) {
+                originalToTransformedField[it] ?: it
+            } else {
+                it
+            }
         }
     }
 }

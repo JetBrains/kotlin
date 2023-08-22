@@ -91,7 +91,7 @@ fun IrClass.addField(fieldName: Name, fieldType: IrType, fieldVisibility: Descri
 fun IrClass.addField(
     fieldName: String,
     fieldType: IrType,
-    fieldVisibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE
+    fieldVisibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
 ): IrField =
     addField(Name.identifier(fieldName), fieldType, fieldVisibility)
 
@@ -258,7 +258,7 @@ fun IrClass.addFunction(
     isInline: Boolean = false,
     origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
     startOffset: Int = UNDEFINED_OFFSET,
-    endOffset: Int = UNDEFINED_OFFSET
+    endOffset: Int = UNDEFINED_OFFSET,
 ): IrSimpleFunction =
     addFunction {
         this.startOffset = startOffset
@@ -298,7 +298,7 @@ fun <D> buildReceiverParameter(
     origin: IrDeclarationOrigin,
     type: IrType,
     startOffset: Int = parent.startOffset,
-    endOffset: Int = parent.endOffset
+    endOffset: Int = parent.endOffset,
 ): IrValueParameter
         where D : IrDeclaration, D : IrDeclarationParent =
     parent.factory.createValueParameter(
@@ -408,6 +408,37 @@ fun IrTypeParametersContainer.addTypeParameter(name: String, upperBound: IrType,
         this.variance = variance
         this.superTypes.add(upperBound)
     }
+
+fun IrSimpleFunction.withName(name: Name) = factory.buildFun {
+    updateFrom(this@withName)
+    this.name = name
+    returnType = this@withName.returnType
+}.apply {
+    parent = this@withName.parent
+    metadata = this@withName.metadata
+    valueParameters = this@withName.valueParameters
+    typeParameters = this@withName.typeParameters
+    dispatchReceiverParameter = this@withName.dispatchReceiverParameter
+    extensionReceiverParameter = this@withName.extensionReceiverParameter
+    contextReceiverParametersCount = this@withName.contextReceiverParametersCount
+    body = this@withName.body
+    overriddenSymbols = this@withName.overriddenSymbols
+    attributeOwnerId = this@withName.attributeOwnerId
+    originalBeforeInline = this@withName.originalBeforeInline
+    correspondingPropertySymbol = this@withName.correspondingPropertySymbol
+}
+
+fun IrVariable.withName(name: Name) =
+    buildVariable(parent, startOffset, endOffset, origin, name, type, isVar, isConst, isLateinit).also { it.initializer = initializer }
+
+fun IrField.withName(name: Name) = factory.buildField {
+    this.name = name
+    updateFrom(this@withName)
+}.apply {
+    parent = this@withName.parent
+    initializer = this@withName.initializer
+    correspondingPropertySymbol = this@withName.correspondingPropertySymbol
+}
 
 fun buildVariable(
     parent: IrDeclarationParent?,

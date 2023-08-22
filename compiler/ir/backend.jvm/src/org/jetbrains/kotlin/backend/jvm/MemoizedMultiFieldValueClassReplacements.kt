@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.withName
 import org.jetbrains.kotlin.ir.builders.irComposite
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -35,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class MemoizedMultiFieldValueClassReplacements(
     irFactory: IrFactory,
-    context: JvmBackendContext
+    context: JvmBackendContext,
 ) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("multi-field-value-class-replacements")) {
 
     val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
@@ -262,9 +263,8 @@ class MemoizedMultiFieldValueClassReplacements(
                         function.isMultiFieldValueClassFieldGetter -> null
 
                 (function.parent as? IrClass)?.isMultiFieldValueClass == true -> when {
-                    function.isValueClassTypedEquals -> createStaticReplacement(function).also {
-                        it.name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
-                    }
+                    function.isValueClassTypedEquals -> createStaticReplacement(function)
+                        .withName(InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME)
 
                     function.isRemoveAtSpecialBuiltinStub() ->
                         null
@@ -394,7 +394,7 @@ class MemoizedMultiFieldValueClassReplacements(
         irBuilder: IrBlockBuilder,
         targetFunction: IrFunction,
         sourceFunction: IrFunction,
-        getArgument: (sourceParameter: IrValueParameter, targetParameterType: IrType) -> IrExpression?
+        getArgument: (sourceParameter: IrValueParameter, targetParameterType: IrType) -> IrExpression?,
     ): Map<IrValueParameter, IrExpression?> {
         val targetStructure = bindingNewFunctionToParameterTemplateStructure[targetFunction]
             ?: targetFunction.explicitParameters.map { RegularMapping(it) }
@@ -469,7 +469,7 @@ class MemoizedMultiFieldValueClassReplacements(
     @OptIn(ExperimentalStdlibApi::class)
     private fun verifyStructureCompatibility(
         targetStructure: List<RemappedParameter>,
-        sourceStructure: List<RemappedParameter>
+        sourceStructure: List<RemappedParameter>,
     ) {
         for ((targetParameterStructure, sourceParameterStructure) in targetStructure zip sourceStructure) {
             if (targetParameterStructure is MultiFieldValueClassMapping && sourceParameterStructure is MultiFieldValueClassMapping) {
