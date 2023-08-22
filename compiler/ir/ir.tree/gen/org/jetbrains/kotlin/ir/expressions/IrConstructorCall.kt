@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.ClassId
 
 /**
  * A leaf IR tree element.
@@ -23,6 +24,8 @@ abstract class IrConstructorCall : IrFunctionAccessExpression() {
     abstract var source: SourceElement
 
     abstract var constructorTypeArgumentsCount: Int
+
+    abstract var classId: ClassId
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstructorCall(this, data)

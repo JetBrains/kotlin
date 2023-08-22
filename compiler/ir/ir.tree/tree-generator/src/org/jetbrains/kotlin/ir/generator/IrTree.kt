@@ -802,6 +802,7 @@ object IrTree : AbstractTreeBuilder() {
             useFieldInIrFactory(defaultValue = code("%T.NO_SOURCE", SourceElement::class))
         }
         +field("constructorTypeArgumentsCount", int)
+        +field("classId", classId)
     }
     val getSingletonValue: ElementConfig by element(Expression) {
         visitorParent = declarationReference

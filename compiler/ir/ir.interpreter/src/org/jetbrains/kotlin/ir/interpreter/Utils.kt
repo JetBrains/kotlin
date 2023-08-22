@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
-import org.jetbrains.kotlin.ir.interpreter.state.*
+import org.jetbrains.kotlin.ir.interpreter.state.Common
+import org.jetbrains.kotlin.ir.interpreter.state.Primitive
+import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.interpreter.state.isSubtypeOf
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -54,24 +57,8 @@ internal fun <T> IrConst<T>.toPrimitive(): Primitive<T> = when {
     else -> Primitive(value, type)
 }
 
-fun IrAnnotationContainer?.hasAnnotation(annotation: FqName): Boolean {
-    this ?: return false
-    if (this.annotations.isNotEmpty()) {
-        return this.annotations.any { it.symbol.owner.parentAsClass.fqNameWhenAvailable == annotation }
-    }
-    return false
-}
-
-fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrConstructorCall {
-    return this.annotations.firstOrNull { it.symbol.owner.parentAsClass.fqNameWhenAvailable == annotation }
-        ?: ((this as IrFunction).parent as IrClass).annotations.first { it.symbol.owner.parentAsClass.fqNameWhenAvailable == annotation }
-}
-
-internal fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
-    if (this is IrClass && this.fqName.startsWith("java")) return this.fqName
-    if (!this.hasAnnotation(evaluateIntrinsicAnnotation)) return null
-    return (this.getAnnotation(evaluateIntrinsicAnnotation).getValueArgument(0) as IrConst<*>).value.toString()
-}
+fun IrAnnotationContainer?.hasAnnotation(fqName: FqName): Boolean =
+    this != null && annotations.any { it.classId.isEqualTo(fqName) }
 
 internal fun getPrimitiveClass(irType: IrType, asObject: Boolean = false): Class<*>? =
     when (irType.getPrimitiveType()) {

@@ -73,7 +73,7 @@ val IrTypeAlias.classIdOrFail: ClassId
     get() = classIdOrFailImpl
 
 private val IrDeclarationWithName.classIdOrFailImpl: ClassId
-    get() = classIdImpl ?: error("No classId for $this")
+    get() = classIdImpl ?: error("No classId for ${render()}")
 
 val IrFunction.callableId: CallableId
     get() = callableIdImpl
@@ -156,10 +156,10 @@ fun IrSymbol.hasEqualFqName(fqName: FqName): Boolean {
 }
 
 fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
-    any { it.annotationClass.hasEqualFqName(fqName) }
+    any { it.classId.isEqualTo(fqName) }
 
 fun List<IrConstructorCall>.findAnnotation(fqName: FqName): IrConstructorCall? =
-    firstOrNull { it.annotationClass.hasEqualFqName(fqName) }
+    firstOrNull { it.classId.isEqualTo(fqName) }
 
 val IrDeclaration.fileEntry: IrFileEntry
     get() = parent.let {
