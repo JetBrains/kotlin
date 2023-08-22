@@ -81,11 +81,18 @@ enum class EvaluationMode {
         override fun canEvaluateExpression(expression: IrExpression): Boolean {
             if (expression !is IrCall) return false
 
-            if (expression.getAllArgumentsWithIr().any { it.second?.type?.isUnsigned() == true }) {
+            if (expression.hasUnsignedArgs()) {
                 return expression.symbol.owner.fqNameWhenAvailable?.asString() == "kotlin.String.plus"
             }
 
             return true
+        }
+
+        private fun IrCall.hasUnsignedArgs(): Boolean {
+            fun IrExpression?.hasUnsignedType() = this != null && type.isUnsigned()
+            if (dispatchReceiver.hasUnsignedType() || extensionReceiver.hasUnsignedType()) return true
+            if ((0 until this.valueArgumentsCount).any { getValueArgument(it)?.type?.isUnsigned() == true }) return true
+            return false
         }
     },
 
