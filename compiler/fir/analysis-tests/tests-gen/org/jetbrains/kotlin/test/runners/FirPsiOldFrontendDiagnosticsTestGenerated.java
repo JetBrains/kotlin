@@ -8255,6 +8255,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("desugaredAssignment.kt")
+            public void testDesugaredAssignment() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/dataFlow/desugaredAssignment.kt");
+            }
+
+            @Test
             @TestMetadata("EmptyIf.kt")
             public void testEmptyIf() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/dataFlow/EmptyIf.kt");

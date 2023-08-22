@@ -82,6 +82,6 @@ fun FirElement.unwrapElement(): FirElement = when (this) {
     is FirSafeCallExpression -> selector.unwrapElement()
     is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapElement()
     is FirCheckNotNullCall -> argument.unwrapElement()
+    is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.unwrapElement()
     else -> this
 }
-
