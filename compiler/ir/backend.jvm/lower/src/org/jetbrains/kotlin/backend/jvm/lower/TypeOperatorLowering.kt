@@ -798,7 +798,7 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
     private fun IrElement.extents(): Pair<Int, Int> {
         var startOffset = Int.MAX_VALUE
         var endOffset = 0
-        acceptVoid(object : IrElementVisitorVoid {
+        acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
                 if (element.startOffset in 0 until startOffset)

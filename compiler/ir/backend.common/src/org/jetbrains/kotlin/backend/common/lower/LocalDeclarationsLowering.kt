@@ -990,7 +990,7 @@ class LocalDeclarationsLowering(
                     if (isInline && !isInInlineFunction) Data(currentClass, true) else this
             }
 
-            irElement.accept(object : IrElementVisitor<Unit, Data> {
+            irElement.accept(object : IrElementVisitor<Unit, Data>() {
                 override fun visitElement(element: IrElement, data: Data) {
                     element.acceptChildren(this, data)
                 }

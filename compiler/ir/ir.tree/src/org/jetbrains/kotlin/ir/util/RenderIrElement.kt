@@ -27,7 +27,7 @@ fun IrElement.render(options: DumpIrTreeOptions = DumpIrTreeOptions()) =
     accept(RenderIrElementVisitor(options), null)
 
 class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTreeOptions()) :
-    IrElementVisitor<String, Nothing?> {
+    IrElementVisitor<String, Nothing?>() {
 
     private val variableNameData = VariableNameData(options.normalizeNames)
 
@@ -50,7 +50,7 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
     private class BoundSymbolReferenceRenderer(
         private val variableNameData: VariableNameData,
         private val options: DumpIrTreeOptions,
-    ) : IrElementVisitor<String, Nothing?> {
+    ) : IrElementVisitor<String, Nothing?>() {
 
         override fun visitElement(element: IrElement, data: Nothing?) = buildTrimEnd {
             append('{')

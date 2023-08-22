@@ -185,7 +185,7 @@ fun IrConstructor.delegationKind(irBuiltIns: IrBuiltIns): ConstructorDelegationK
     var callsSuper = false
     var numberOfDelegatingCalls = 0
     var hasPartialLinkageError = false
-    acceptChildrenVoid(object : IrElementVisitorVoid {
+    acceptChildrenVoid(object : IrElementVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

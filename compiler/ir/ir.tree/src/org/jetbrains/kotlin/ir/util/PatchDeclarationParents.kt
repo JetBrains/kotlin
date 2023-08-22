@@ -18,7 +18,7 @@ fun <T : IrElement> T.patchDeclarationParents(initialParent: IrDeclarationParent
         acceptVoid(visitor)
     }
 
-abstract class DeclarationParentsVisitor : IrElementVisitorVoid {
+abstract class DeclarationParentsVisitor : IrElementVisitorVoid() {
     protected val declarationParentsStack = ArrayDeque<IrDeclarationParent>()
 
     override fun visitElement(element: IrElement) {

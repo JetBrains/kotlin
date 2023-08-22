@@ -62,7 +62,7 @@ private class AtomicfuClassLowering(
  * Copy of [runOnFilePostfix], but this implementation first lowers declaration, then its children.
  */
 fun FileLoweringPass.runOnFileInOrder(irFile: IrFile) {
-    irFile.acceptVoid(object : IrElementVisitorVoid {
+    irFile.acceptVoid(object : IrElementVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

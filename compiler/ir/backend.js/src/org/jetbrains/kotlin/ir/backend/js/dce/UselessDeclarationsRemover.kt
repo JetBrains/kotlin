@@ -29,7 +29,7 @@ class UselessDeclarationsRemover(
     private val usefulDeclarations: Set<IrDeclaration>,
     private val context: JsIrBackendContext,
     private val dceRuntimeDiagnostic: RuntimeDiagnostic?,
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     private val savedTypesCache = hashMapOf<IrClassSymbol, Set<IrClassSymbol>>()
 
     override fun visitElement(element: IrElement) {

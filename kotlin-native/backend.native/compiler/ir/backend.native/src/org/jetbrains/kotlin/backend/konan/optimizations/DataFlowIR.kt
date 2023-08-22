@@ -457,7 +457,7 @@ internal object DataFlowIR {
         var privateFunIndex = 0
 
         fun populateWith(irModule: IrModuleFragment) {
-            irModule.accept(object : IrElementVisitorVoid {
+            irModule.accept(object : IrElementVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }

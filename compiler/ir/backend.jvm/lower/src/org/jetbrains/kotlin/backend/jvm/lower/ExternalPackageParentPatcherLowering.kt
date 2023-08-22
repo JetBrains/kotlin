@@ -39,7 +39,7 @@ class ExternalPackageParentPatcherLowering(val context: JvmBackendContext) : Fil
         irFile.acceptVoid(Visitor())
     }
 
-    private inner class Visitor : IrElementVisitorVoid {
+    private inner class Visitor : IrElementVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

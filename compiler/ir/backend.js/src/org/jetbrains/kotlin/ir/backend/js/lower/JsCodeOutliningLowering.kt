@@ -50,7 +50,7 @@ class JsCodeOutliningLowering(val backendContext: JsIrBackendContext) : BodyLowe
 
 private fun IrElement.containsCallsTo(symbol: IrFunctionSymbol): Boolean {
     var result = false
-    acceptChildrenVoid(object : IrElementVisitorVoid {
+    acceptChildrenVoid(object : IrElementVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

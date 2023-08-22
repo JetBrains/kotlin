@@ -33,7 +33,7 @@ internal val tailCallOptimizationPhase = makeIrFilePhase(
 // code which is understandable by old BE's tail-call optimizer.
 private class TailCallOptimizationLowering(private val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.transformChildren(object : IrElementTransformer<TailCallOptimizationData?> {
+        irFile.transformChildren(object : IrElementTransformer<TailCallOptimizationData?>() {
             override fun visitSimpleFunction(declaration: IrSimpleFunction, data: TailCallOptimizationData?) =
                 super.visitSimpleFunction(declaration, if (declaration.isSuspend) TailCallOptimizationData(declaration) else null)
 

@@ -171,7 +171,7 @@ interface CustomKotlinLikeDumpStrategy {
     * wrap/escape invalid identifiers with "`", like "$$delegate"
  */
 
-private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOptions) : IrElementVisitor<Unit, IrDeclaration?> {
+private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOptions) : IrElementVisitor<Unit, IrDeclaration?>() {
     private val IrSymbol.safeName
         get() = if (!isBound) {
             "/* ERROR: unbound symbol $signature */"
@@ -964,7 +964,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             BodyPrintingStrategy.NO_BODIES -> {}
             BodyPrintingStrategy.PRINT_ONLY_LOCAL_CLASSES_AND_FUNCTIONS -> body.acceptChildren(
                 // Don't print bodies, but print local classes and functions declared in those bodies
-                object : IrElementVisitor<Unit, IrDeclaration?> {
+                object : IrElementVisitor<Unit, IrDeclaration?>() {
                     override fun visitElement(element: IrElement, data: IrDeclaration?) {
                         element.acceptChildren(this, data)
                     }

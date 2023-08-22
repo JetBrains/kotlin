@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
-interface IrInterpreterPreprocessor: IrElementTransformer<IrInterpreterPreprocessorData> {
+abstract class IrInterpreterPreprocessor: IrElementTransformer<IrInterpreterPreprocessorData>() {
     fun preprocess(file: IrFile, data: IrInterpreterPreprocessorData): IrFile {
         return file.transform(this, data)
     }

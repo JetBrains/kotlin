@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 
-abstract class IrInlineReferenceLocator(private val context: JvmBackendContext) : IrElementVisitor<Unit, IrDeclaration?> {
+abstract class IrInlineReferenceLocator(private val context: JvmBackendContext) : IrElementVisitor<Unit, IrDeclaration?>() {
     override fun visitElement(element: IrElement, data: IrDeclaration?) =
         element.acceptChildren(this, if (element is IrDeclaration && element !is IrVariable) element else data)
 

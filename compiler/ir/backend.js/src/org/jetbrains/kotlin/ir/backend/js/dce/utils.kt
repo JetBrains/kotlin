@@ -38,7 +38,7 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
     val declarations = linkedSetOf<IrDeclarationDumpInfo>()
 
     allModules.forEach {
-        it.acceptChildrenVoid(object : IrElementVisitorVoid {
+        it.acceptChildrenVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

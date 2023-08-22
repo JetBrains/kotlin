@@ -34,7 +34,7 @@ class WasmModuleFragmentGenerator(
             hierarchyDisjointUnions,
         )
 
-    private val interfaceCollector = object : IrElementVisitorVoid {
+    private val interfaceCollector = object : IrElementVisitorVoid() {
         override fun visitElement(element: IrElement) { }
 
         override fun visitClass(declaration: IrClass) {

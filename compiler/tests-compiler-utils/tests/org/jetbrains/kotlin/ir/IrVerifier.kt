@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.Assertions
 class IrVerifier(
     private val assertions: Assertions,
     private val isFir: Boolean,
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     private val errors = ArrayList<String>()
 
     private val symbolForDeclaration = HashMap<IrElement, IrSymbol>()
@@ -39,7 +39,7 @@ class IrVerifier(
         }
     }
 
-    private val elementsAreUniqueChecker = object : IrElementVisitorVoid {
+    private val elementsAreUniqueChecker = object : IrElementVisitorVoid() {
         private val elements = HashSet<IrElement>()
 
         override fun visitElement(element: IrElement) {

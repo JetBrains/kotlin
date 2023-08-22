@@ -37,7 +37,7 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
         get() = context.irFactory
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildren(object : IrElementTransformer<IrDeclarationParent?> {
+        irBody.transformChildren(object : IrElementTransformer<IrDeclarationParent?>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) =
                 super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
 

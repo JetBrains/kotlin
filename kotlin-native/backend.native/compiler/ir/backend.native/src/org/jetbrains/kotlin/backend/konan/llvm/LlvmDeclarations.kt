@@ -130,7 +130,7 @@ private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutB
 }
 
 private class DeclarationsGeneratorVisitor(override val generationState: NativeGenerationState)
-    : IrElementVisitorVoid, ContextUtils {
+    : IrElementVisitorVoid(), ContextUtils {
 
     val uniques = mutableMapOf<UniqueKind, UniqueLlvmDeclarations>()
 

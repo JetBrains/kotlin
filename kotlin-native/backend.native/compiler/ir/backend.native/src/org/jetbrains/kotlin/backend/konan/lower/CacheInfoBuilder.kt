@@ -33,7 +33,7 @@ internal class CacheInfoBuilder(
         irModule.files.forEach { irFile ->
             var hasEagerlyInitializedProperties = false
 
-            irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+            irFile.acceptChildrenVoid(object : IrElementVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }
@@ -87,7 +87,7 @@ internal class CacheInfoBuilder(
         if (irFunction in visitedInlineFunctions) return
         visitedInlineFunctions += irFunction
 
-        irFunction.acceptChildrenVoid(object : IrElementVisitorVoid {
+        irFunction.acceptChildrenVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

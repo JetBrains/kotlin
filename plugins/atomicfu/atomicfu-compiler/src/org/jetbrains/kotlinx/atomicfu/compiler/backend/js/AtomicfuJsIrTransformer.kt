@@ -101,7 +101,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
         }
     }
 
-    private inner class AtomicTransformer : IrElementTransformer<IrFunction?> {
+    private inner class AtomicTransformer : IrElementTransformer<IrFunction?>() {
 
         override fun visitProperty(declaration: IrProperty, data: IrFunction?): IrStatement {
             // Support transformation for delegated properties:

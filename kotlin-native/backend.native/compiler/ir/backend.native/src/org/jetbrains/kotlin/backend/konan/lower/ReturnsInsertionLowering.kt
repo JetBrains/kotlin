@@ -27,7 +27,7 @@ internal class ReturnsInsertionLowering(val context: Context) : FileLoweringPass
     private val symbols = context.ir.symbols
 
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(object : IrElementVisitorVoid {
+        irFile.acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

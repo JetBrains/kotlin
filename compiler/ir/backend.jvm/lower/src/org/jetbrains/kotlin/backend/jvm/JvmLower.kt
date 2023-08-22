@@ -249,7 +249,7 @@ private val initializersCleanupPhase = makeIrFilePhase(
     name = "InitializersCleanup",
     description = "Remove non-static anonymous initializers and non-constant non-static field init expressions",
     stickyPostconditions = setOf(fun(irFile: IrFile) {
-        irFile.acceptVoid(object : IrElementVisitorVoid {
+        irFile.acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

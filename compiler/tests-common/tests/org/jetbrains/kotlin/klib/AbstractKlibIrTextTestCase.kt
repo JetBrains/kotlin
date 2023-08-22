@@ -255,7 +255,7 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
         if (multiPlatformProjects != LanguageFeature.State.ENABLED)
             return
 
-        acceptVoid(object : IrElementVisitorVoid {
+        acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
 
             override fun visitPackageFragment(declaration: IrPackageFragment) = visitDeclarationContainer(declaration)

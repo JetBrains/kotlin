@@ -415,7 +415,7 @@ internal class NativeSuspendFunctionsLowering(
 
     private fun IrElement.hasSuspendCalls(): Boolean {
         var hasSuspendCalls = false
-        acceptVoid(object : IrElementVisitorVoid {
+        acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

@@ -27,7 +27,7 @@ object LivenessAnalysis {
 
     private fun IrElement.getImmediateChildren(): List<IrElement> {
         val result = mutableListOf<IrElement>()
-        acceptChildrenVoid(object : IrElementVisitorVoid {
+        acceptChildrenVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 result.add(element)
                 // Do not recurse.
@@ -41,7 +41,7 @@ object LivenessAnalysis {
      * this directly translates to the AST traversal from right to left.
      * Each visitXXX takes live variables ~after~ the [element] and returns live variables ~before~ the [element].
      */
-    private class LivenessAnalysisVisitor(val filter: (IrElement) -> Boolean) : IrElementVisitor<BitSet, BitSet> {
+    private class LivenessAnalysisVisitor(val filter: (IrElement) -> Boolean) : IrElementVisitor<BitSet, BitSet>() {
         private val variables = mutableListOf<IrVariable>()
         private val variableIds = mutableMapOf<IrVariable, Int>()
         private val filteredElementEndsLV = mutableMapOf<IrElement, BitSet>()

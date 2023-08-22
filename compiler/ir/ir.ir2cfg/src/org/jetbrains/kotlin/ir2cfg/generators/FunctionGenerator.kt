@@ -32,7 +32,7 @@ class FunctionGenerator(val function: IrFunction) {
         return builder.build()
     }
 
-    inner class FunctionVisitor : IrElementVisitor<IrStatement?, Boolean> {
+    inner class FunctionVisitor : IrElementVisitor<IrStatement?, Boolean>() {
 
         private inline fun <reified IE : IrElement> IE.process(includeSelf: Boolean = true) = this.accept(this@FunctionVisitor, includeSelf)
 

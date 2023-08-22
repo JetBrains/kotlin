@@ -174,7 +174,7 @@ internal class TestProcessor (val context: Context) {
                 functions.registerFunction(function, kind, ignored)
     }
 
-    private inner class AnnotationCollector(val irFile: IrFile) : IrElementVisitorVoid {
+    private inner class AnnotationCollector(val irFile: IrFile) : IrElementVisitorVoid() {
         val testClasses = mutableMapOf<IrClass, TestClass>()
 
         val topLevelFunctions = mutableListOf<TestFunction>()

@@ -35,7 +35,7 @@ internal val assertionPhase = makeIrFilePhase(
 
 private class AssertionLowering(private val context: JvmBackendContext) :
     FileLoweringPass,
-    IrElementTransformer<AssertionLowering.ClassInfo?>
+    IrElementTransformer<AssertionLowering.ClassInfo?>()
 {
     // Keeps track of the $assertionsDisabled field, which we generate lazily for classes containing
     // assertions when compiled with -Xassertions=jvm.

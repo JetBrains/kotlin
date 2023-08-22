@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-class BodyWithDefaultValueReplacer : IrElementVisitorVoid {
+class BodyWithDefaultValueReplacer : IrElementVisitorVoid() {
     companion object {
         val NAME = Name.identifier("replaceMeWithDefault")
     }
@@ -31,7 +31,7 @@ class BodyWithDefaultValueReplacer : IrElementVisitorVoid {
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         if (declaration.name != NAME) return
         val defaultValue = declaration.valueParameters.first().defaultValue ?: return
-        val bodyReplacer = object : IrElementVisitorVoid {
+        val bodyReplacer = object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

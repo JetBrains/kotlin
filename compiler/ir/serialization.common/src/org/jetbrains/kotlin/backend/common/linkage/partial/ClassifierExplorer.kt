@@ -275,7 +275,7 @@ internal class ClassifierExplorer(
     }
 }
 
-private class IrElementExplorer(private val visitType: (IrType) -> Unit) : IrElementVisitorVoid {
+private class IrElementExplorer(private val visitType: (IrType) -> Unit) : IrElementVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }

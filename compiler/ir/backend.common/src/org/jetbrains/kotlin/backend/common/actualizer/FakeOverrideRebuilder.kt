@@ -161,7 +161,7 @@ private class LocalFakeOverridesStorage : FileLocalAwareLinker {
 private class RemoveFakeOverridesVisitor(
     val removedOverrides: MutableMap<IrClassSymbol, List<IrSymbol>>,
     val symbolTable: SymbolTable
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -207,7 +207,7 @@ private class RemoveFakeOverridesVisitor(
 // TODO: KT-61561 it seams, this class is too generic to be here.
 // By some reason, we don't have utility class doing that, but we probably should, as we have DeepCopy util classes
 // Probably, it should also be generated, to avoid missing some plaves, where symbols can happen.
-private class RemapFakeOverridesVisitor(val fakeOverridesMap: Map<IrSymbol, IrSymbol>) : IrElementVisitorVoid {
+private class RemapFakeOverridesVisitor(val fakeOverridesMap: Map<IrSymbol, IrSymbol>) : IrElementVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }

@@ -61,7 +61,7 @@ data class IrValidatorConfig(
     val checkScopes: Boolean = false,
 )
 
-class IrValidator(val context: CommonBackendContext, val config: IrValidatorConfig) : IrElementVisitorVoid {
+class IrValidator(val context: CommonBackendContext, val config: IrValidatorConfig) : IrElementVisitorVoid() {
 
     val irBuiltIns = context.irBuiltIns
     var currentFile: IrFile? = null

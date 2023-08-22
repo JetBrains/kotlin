@@ -63,7 +63,7 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
     }
 
     private fun copyDefaultArgumentsFromExpectToActual(declaration: IrDeclaration) {
-        declaration.acceptVoid(object : IrElementVisitorVoid {
+        declaration.acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

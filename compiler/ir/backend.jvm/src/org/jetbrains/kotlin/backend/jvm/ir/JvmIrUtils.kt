@@ -297,7 +297,7 @@ fun IrFile.getIoFile(): File? =
 
 inline fun IrElement.hasChild(crossinline block: (IrElement) -> Boolean): Boolean {
     var result = false
-    acceptChildren(object : IrElementVisitorVoid {
+    acceptChildren(object : IrElementVisitorVoid() {
         override fun visitElement(element: IrElement) = when {
             result -> Unit
             block(element) -> result = true

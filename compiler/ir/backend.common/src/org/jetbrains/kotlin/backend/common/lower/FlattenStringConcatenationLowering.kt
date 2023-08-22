@@ -137,7 +137,7 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
         /** Recursively collects string concatenation arguments from the given expression. */
         private fun collectStringConcatenationArguments(expression: IrExpression): List<IrExpression> {
             val arguments = mutableListOf<IrExpression>()
-            expression.acceptChildrenVoid(object : IrElementVisitorVoid {
+            expression.acceptChildrenVoid(object : IrElementVisitorVoid() {
 
                 override fun visitElement(element: IrElement) {
                     // Theoretically this is unreachable code since all descendants of IrExpressions are IrExpressions.

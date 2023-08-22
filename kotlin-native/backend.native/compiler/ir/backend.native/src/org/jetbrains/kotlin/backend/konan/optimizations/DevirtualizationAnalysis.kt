@@ -87,7 +87,7 @@ internal object DevirtualizationAnalysis {
         // At this point all function references are lowered except those leaking to the native world.
         // Conservatively assume them belonging of the root set.
         val leakingThroughFunctionReferences = mutableListOf<DataFlowIR.FunctionSymbol>()
-        irModule.acceptChildrenVoid(object : IrElementVisitorVoid {
+        irModule.acceptChildrenVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -1482,7 +1482,7 @@ internal object DevirtualizationAnalysis {
         var callSitesCount = 0
         var devirtualizedCallSitesCount = 0
         var actuallyDevirtualizedCallSitesCount = 0
-        irModule.transformChildren(object : IrElementTransformer<IrDeclarationParent?> {
+        irModule.transformChildren(object : IrElementTransformer<IrDeclarationParent?>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) =
                     super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
 

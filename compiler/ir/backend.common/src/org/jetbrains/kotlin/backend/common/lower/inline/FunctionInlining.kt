@@ -138,7 +138,7 @@ class FunctionInlining(
 
     private fun IrReturnableBlock.markAsRegenerated(): IrReturnableBlock {
         if (!regenerateInlinedAnonymousObjects) return this
-        acceptVoid(object : IrElementVisitorVoid {
+        acceptVoid(object : IrElementVisitorVoid() {
             private fun IrAttributeContainer.setUpCorrectAttributeOwner() {
                 if (this.attributeOwnerId == this) return
                 this.originalBeforeInline = this.attributeOwnerId

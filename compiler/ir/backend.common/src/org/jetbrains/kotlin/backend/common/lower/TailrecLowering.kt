@@ -46,7 +46,7 @@ open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container is IrFunction) {
             // Lower local declarations
-            irBody.acceptChildrenVoid(object : IrElementVisitorVoid {
+            irBody.acceptChildrenVoid(object : IrElementVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }

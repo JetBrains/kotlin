@@ -29,7 +29,7 @@ class CleanupLowering : BodyLoweringPass {
     }
 }
 
-private class BlockRemover : IrElementVisitorVoid {
+private class BlockRemover : IrElementVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -58,7 +58,7 @@ private class BlockRemover : IrElementVisitorVoid {
     }
 }
 
-private class CodeCleaner : IrElementVisitorVoid {
+private class CodeCleaner : IrElementVisitorVoid() {
 
     private fun IrStatementContainer.cleanUpStatements() {
         var unreachable = false
@@ -84,7 +84,7 @@ private class CodeCleaner : IrElementVisitorVoid {
 
         var hasFakeNothingCalls = false
 
-        acceptVoid(object : IrElementVisitorVoid {
+        acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

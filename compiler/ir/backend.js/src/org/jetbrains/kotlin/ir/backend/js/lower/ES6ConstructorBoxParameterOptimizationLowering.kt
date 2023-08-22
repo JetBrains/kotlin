@@ -117,7 +117,7 @@ class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBack
                 var meetCapturing = false
                 val boxParameter = it.boxParameter
 
-                it.body?.acceptChildrenVoid(object : IrElementVisitorVoid {
+                it.body?.acceptChildrenVoid(object : IrElementVisitorVoid() {
                     override fun visitSetField(expression: IrSetField) {
                         val receiver = expression.receiver as? IrGetValue
                         if (receiver != null && receiver.symbol == boxParameter?.symbol) {

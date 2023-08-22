@@ -28,7 +28,7 @@ internal val resolveInlineCallsPhase = makeIrModulePhase(
     description = "Statically resolve calls to inline methods to particular implementations"
 )
 
-class ResolveInlineCalls(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
+class ResolveInlineCalls(val context: JvmBackendContext) : IrElementVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) = irFile.acceptChildren(this, null)
 
     override fun visitElement(element: IrElement) {

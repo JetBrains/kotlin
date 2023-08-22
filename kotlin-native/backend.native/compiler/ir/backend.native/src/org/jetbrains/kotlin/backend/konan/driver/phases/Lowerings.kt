@@ -106,7 +106,7 @@ private val sharedVariablesPhase = createFileLoweringPhase(
 
 private val lowerOuterThisInInlineFunctionsPhase = createFileLoweringPhase(
         { context, irFile ->
-            irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+            irFile.acceptChildrenVoid(object : IrElementVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }
@@ -330,7 +330,7 @@ private val inlinePhase = createFileLoweringPhase(
         lowering = { context: NativeGenerationState ->
             object : FileLoweringPass {
                 override fun lower(irFile: IrFile) {
-                    irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+                    irFile.acceptChildrenVoid(object : IrElementVisitorVoid() {
                         override fun visitElement(element: IrElement) {
                             element.acceptChildrenVoid(this)
                         }

@@ -196,7 +196,7 @@ private fun adjustDefaultArgumentStubs(
 
 private class CrossFileCallAdjuster(
     val remappedFunctions: Map<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildren(this, null)
     }

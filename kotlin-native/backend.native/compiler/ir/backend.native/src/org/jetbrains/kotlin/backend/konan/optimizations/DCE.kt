@@ -52,7 +52,7 @@ internal fun dce(
         }
     }
 
-    irModule.acceptChildrenVoid(object: IrElementVisitorVoid {
+    irModule.acceptChildrenVoid(object: IrElementVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

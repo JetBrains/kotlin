@@ -32,7 +32,7 @@ internal class CoverageRegionCollector(private val fileFilter: (IrFile) -> Boole
                         FileRegionInfo(file, collector.functionRegions)
                     }
 
-    private inner class FunctionsCollector(val file: IrFile) : IrElementVisitorVoid {
+    private inner class FunctionsCollector(val file: IrFile) : IrElementVisitorVoid() {
 
         val functionRegions = mutableListOf<FunctionRegions>()
 
@@ -70,7 +70,7 @@ private val IrFunction.isGeneratedByCompiler: Boolean
 private class IrFunctionRegionsCollector(
         val fileFilter: (IrFile) -> Boolean,
         val irFile: IrFile
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
 
     private data class StatementContext(val current: IrStatement, val next: IrStatement?)
 

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-class ComposableFunctionsTransformer(val pluginContext: IrPluginContext) : IrElementVisitorVoid {
+class ComposableFunctionsTransformer(val pluginContext: IrPluginContext) : IrElementVisitorVoid() {
     companion object {
         private val INVOKE = Name.identifier("invoke")
     }

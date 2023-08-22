@@ -25,7 +25,7 @@ internal val uniqueLoopLabelsPhase = makeIrFilePhase(
 
 private class UniqueLoopLabelsLowering : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(object : IrElementVisitorVoid {
+        irFile.acceptVoid(object : IrElementVisitorVoid() {
             // This counter is intentionally not local to every declaration because their names might clash.
             private var counter = 0
             private val stack = ArrayList<Name>()

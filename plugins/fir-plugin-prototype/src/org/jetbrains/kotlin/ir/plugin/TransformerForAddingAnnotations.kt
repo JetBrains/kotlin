@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class TransformerForAddingAnnotations(val context: IrPluginContext) : IrElementVisitorVoid {
+class TransformerForAddingAnnotations(val context: IrPluginContext) : IrElementVisitorVoid() {
     companion object {
         private val markerAnnotationFqName = FqName("org.jetbrains.kotlin.fir.plugin.AddAnnotations")
         private val annotationToAddId = ClassId(FqName("org.jetbrains.kotlin.fir.plugin"), Name.identifier("AnnotationToAdd"))
@@ -48,7 +48,7 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrElementV
         }
     }
 
-    private inner class AnnotationsAdder : IrElementVisitorVoid {
+    private inner class AnnotationsAdder : IrElementVisitorVoid() {
         val annotationClass = context.referenceClass(annotationToAddId)?.takeIf { it.owner.isAnnotationClass }
 
         override fun visitElement(element: IrElement, data: Nothing?) {}

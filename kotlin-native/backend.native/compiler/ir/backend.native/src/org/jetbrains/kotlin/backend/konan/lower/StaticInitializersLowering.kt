@@ -48,7 +48,7 @@ internal fun ConfigChecks.shouldBeInitializedEagerly(irField: IrField): Boolean 
 // TODO: ExplicitlyExported for IR proto are not longer needed.
 internal class StaticInitializersLowering(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(object : IrElementVisitorVoid {
+        irFile.acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

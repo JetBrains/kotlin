@@ -44,7 +44,7 @@ class AssociatedObjectsLowering(val context: WasmBackendContext) : FileLoweringP
         irFile.acceptChildrenVoid(visitor)
     }
 
-    private val visitor = object : IrElementVisitorVoid {
+    private val visitor = object : IrElementVisitorVoid() {
         val initFunctionStatements = (context.wasmSymbols.initAssociatedObjects.owner.body as IrBlockBody).statements
 
         override fun visitElement(element: IrElement) {

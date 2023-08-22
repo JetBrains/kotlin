@@ -255,7 +255,7 @@ internal val interfaceObjectCallsPhase = makeIrFilePhase(
     description = "Resolve calls to Object methods on interface types to virtual methods"
 )
 
-private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
+private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrElementVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) = irFile.acceptChildren(this, null)
 
     override fun visitElement(element: IrElement) {

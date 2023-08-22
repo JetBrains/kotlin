@@ -164,7 +164,7 @@ private class ExpectActualLinkCollector(
     private val classActualizationInfo: ClassActualizationInfo,
     typeSystemContext: IrTypeSystemContext,
     private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext,
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     private val context = MatchingContext(typeSystemContext)
 
     override fun visitFunction(declaration: IrFunction) {

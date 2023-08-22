@@ -44,7 +44,7 @@ class ModuleIndex(val module: IrModuleFragment) {
         properties = mutableMapOf()
         enumEntries = mutableMapOf()
 
-        module.acceptVoid(object : IrElementVisitorVoid {
+        module.acceptVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

@@ -38,7 +38,7 @@ private class NoArgIrTransformer(
     private val context: IrPluginContext,
     private val annotations: List<String>,
     private val invokeInitializers: Boolean,
-) : AnnotationBasedExtension, IrElementVisitorVoid {
+) : IrElementVisitorVoid(), AnnotationBasedExtension {
     override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String> = annotations
 
     override fun visitElement(element: IrElement) {

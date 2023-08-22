@@ -177,7 +177,7 @@ private fun buildFakeOverridesForLocalClasses(
 ) {
     val builder = makeSimpleFakeOverrideBuilder(symbolTable, typeSystemContext, symbolDeserializer)
     toplevel.acceptChildrenVoid(
-        object : IrElementVisitorVoid {
+        object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

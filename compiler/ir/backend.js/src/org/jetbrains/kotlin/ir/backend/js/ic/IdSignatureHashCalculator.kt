@@ -48,7 +48,7 @@ internal class IdSignatureHashCalculator(private val icHasher: ICHasher) {
         get() = inlineFunctionDepends.getOrPut(this) {
             val usedInlineFunctions = linkedSetOf<IrFunction>()
 
-            acceptVoid(object : IrElementVisitorVoid {
+            acceptVoid(object : IrElementVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }

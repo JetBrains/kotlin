@@ -150,7 +150,7 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
         val root = context.irBuiltIns.anyClass.owner
         val immediateInheritors = mutableMapOf<IrClass, MutableList<IrClass>>()
         val allClasses = mutableListOf<IrClass>()
-        irModule.acceptVoid(object: IrElementVisitorVoid {
+        irModule.acceptVoid(object: IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -222,7 +222,7 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
                 val interfaceIndices = mutableMapOf<IrClass, Int>()
                 val interfaces = mutableListOf<IrClass>()
                 val forbidden = mutableListOf<MutableList<Int>>()
-                irModuleFragment.acceptVoid(object : IrElementVisitorVoid {
+                irModuleFragment.acceptVoid(object : IrElementVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }

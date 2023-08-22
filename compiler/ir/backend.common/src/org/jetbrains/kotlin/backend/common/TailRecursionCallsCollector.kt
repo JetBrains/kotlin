@@ -49,7 +49,7 @@ fun collectTailRecursionCalls(irFunction: IrFunction, followFunctionReference: (
     val isUnitReturn = irFunction.returnType.isUnit()
     val result = mutableSetOf<IrCall>()
     var someCallsAreInOtherFunctions = false
-    val visitor = object : IrElementVisitor<Unit, VisitorState> {
+    val visitor = object : IrElementVisitor<Unit, VisitorState>() {
         override fun visitElement(element: IrElement, data: VisitorState) {
             element.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction))
         }

@@ -736,7 +736,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
             ///    inline fun <T> myAutoreleasepool(block: () -> T) = autoreleasepool(block)
             ///    myAutoreleasepool { suspendHere() }
 
-            expression.acceptVoid(object : IrElementVisitorVoid {
+            expression.acceptVoid(object : IrElementVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }

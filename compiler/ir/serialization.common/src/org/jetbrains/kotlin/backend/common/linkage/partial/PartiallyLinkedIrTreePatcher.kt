@@ -961,7 +961,7 @@ internal class PartiallyLinkedIrTreePatcher(
      * Collects direct children statements up to the first IR p.l. error (everything after the IR p.l. error
      * if effectively dead code and do not need to be kept in the IR tree).
      */
-    private class DirectChildrenStatementsCollector : IrElementVisitorVoid {
+    private class DirectChildrenStatementsCollector : IrElementVisitorVoid() {
         private val children = mutableListOf<IrStatement>()
         private var hasPartialLinkageRuntimeError = false
 

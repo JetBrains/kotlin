@@ -89,7 +89,7 @@ internal fun IrFunction.shouldGenerateBody(): Boolean = when {
     else -> true
 }
 
-internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, referencedFunctions: Set<IrFunction>?) : IrElementVisitorVoid {
+internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, referencedFunctions: Set<IrFunction>?) : IrElementVisitorVoid() {
     val generator = RTTIGenerator(generationState, referencedFunctions)
 
     val kotlinObjCClassInfoGenerator = KotlinObjCClassInfoGenerator(generationState)
@@ -211,7 +211,7 @@ internal class CodeGeneratorVisitor(
         val generationState: NativeGenerationState,
         val irBuiltins: IrBuiltIns,
         val lifetimes: Map<IrElement, Lifetime>
-) : IrElementVisitorVoid {
+) : IrElementVisitorVoid() {
     private val context = generationState.context
     private val llvm = generationState.llvm
     private val debugInfo: DebugInfo

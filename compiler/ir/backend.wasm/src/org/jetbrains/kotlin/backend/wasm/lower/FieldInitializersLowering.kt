@@ -35,7 +35,7 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
         val builder = context.createIrBuilder(context.fieldInitFunction.symbol)
         val startFunctionBody = context.fieldInitFunction.body as IrBlockBody
 
-        irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+        irFile.acceptChildrenVoid(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

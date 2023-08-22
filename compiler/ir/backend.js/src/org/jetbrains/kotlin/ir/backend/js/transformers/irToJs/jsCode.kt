@@ -66,7 +66,7 @@ private fun translateJsCodeIntoStatementList(
 private fun foldString(expression: IrExpression, context: JsIrBackendContext?): String? {
     val builder = StringBuilder()
     var foldingFailed = false
-    expression.acceptVoid(object : IrElementVisitorVoid {
+    expression.acceptVoid(object : IrElementVisitorVoid() {
         override fun visitElement(element: IrElement) {
             foldingFailed = true
         }
@@ -133,7 +133,7 @@ private fun foldString(expression: IrExpression, context: JsIrBackendContext?): 
     return builder.toString()
 }
 
-private class InitFunVisitor(private val context: JsIrBackendContext?) : IrElementVisitorVoid {
+private class InitFunVisitor(private val context: JsIrBackendContext?) : IrElementVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }

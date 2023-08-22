@@ -38,7 +38,7 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
         assertions.assertTrue(declaredInlineFunctionSignatures.isNotEmpty())
     }
 
-    inner class InlineFunctionsCollector : IrElementVisitorVoid {
+    inner class InlineFunctionsCollector : IrElementVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -49,7 +49,7 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
         }
     }
 
-    inner class InlineCallBodiesCheck(val firEnabled: Boolean) : IrElementVisitorVoid {
+    inner class InlineCallBodiesCheck(val firEnabled: Boolean) : IrElementVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

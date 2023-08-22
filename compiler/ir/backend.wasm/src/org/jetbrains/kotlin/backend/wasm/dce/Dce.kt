@@ -41,7 +41,7 @@ fun eliminateDeadDeclarations(modules: List<IrModuleFragment>, context: WasmBack
 }
 
 private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendContext): List<IrDeclaration> = buildList {
-    val declarationsCollector = object : IrElementVisitorVoid {
+    val declarationsCollector = object : IrElementVisitorVoid() {
         override fun visitElement(element: IrElement): Unit = element.acceptChildrenVoid(this)
         override fun visitBody(body: IrBody): Unit = Unit // Skip
 

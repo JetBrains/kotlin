@@ -96,7 +96,7 @@ internal class CachesAbiSupport(mapping: NativeMapping, private val irFactory: I
     }
 }
 
-internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, IrElementVisitor<Unit, MutableList<IrFunction>> {
+internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, IrElementVisitor<Unit, MutableList<IrFunction>>() {
     private val cachesAbiSupport = context.cachesAbiSupport
 
     override fun lower(irFile: IrFile) {

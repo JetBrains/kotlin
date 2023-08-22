@@ -210,7 +210,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
      *
      * ES6 `let` statements don't have this problem.
      */
-    private class ClosureUsageAnalyser : IrElementVisitorVoid {
+    private class ClosureUsageAnalyser : IrElementVisitorVoid() {
 
         private val lambdaConstructorCalls: MutableMap<IrConstructorSymbol, MutableList<IrConstructorCall>> = hashMapOf()
         private val variablesDeclaredInLoops: MutableSet<IrValueDeclaration> = hashSetOf()
@@ -242,7 +242,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         private fun IrElement.referencesVariablesDeclaredInLoops(): Boolean {
             var result = false
-            acceptVoid(object : IrElementVisitorVoid {
+            acceptVoid(object : IrElementVisitorVoid() {
 
                 override fun visitElement(element: IrElement) {
                     if (!result)

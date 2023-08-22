@@ -290,7 +290,7 @@ private class CorrespondingPropertyCache(private val context: JvmBackendContext,
 
 private class UpdateFunctionCallSites(
     private val functionDelegates: MutableMap<IrSimpleFunction, IrSimpleFunction>
-) : FileLoweringPass, IrElementVisitor<Unit, IrFunction?> {
+) : FileLoweringPass, IrElementVisitor<Unit, IrFunction?>() {
     override fun lower(irFile: IrFile) {
         irFile.acceptChildren(this, null)
     }

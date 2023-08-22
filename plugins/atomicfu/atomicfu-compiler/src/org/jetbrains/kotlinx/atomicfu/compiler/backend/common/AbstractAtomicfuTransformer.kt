@@ -131,7 +131,7 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
         }
     }
 
-    protected abstract inner class AtomicPropertiesTransformer : IrElementTransformer<IrFunction?> {
+    protected abstract inner class AtomicPropertiesTransformer : IrElementTransformer<IrFunction?>() {
 
         override fun visitClass(declaration: IrClass, data: IrFunction?): IrStatement {
             val declarationsToBeRemoved = mutableListOf<IrDeclaration>()
@@ -547,7 +547,7 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
         }
     }
 
-    protected abstract inner class AtomicFunctionCallTransformer : IrElementTransformer<IrFunction?> {
+    protected abstract inner class AtomicFunctionCallTransformer : IrElementTransformer<IrFunction?>() {
 
         override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement {
             return super.visitFunction(declaration, declaration)
@@ -974,7 +974,7 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
         }
     }
 
-    private inner class FinalTransformationChecker: IrElementTransformer<IrFunction?> {
+    private inner class FinalTransformationChecker: IrElementTransformer<IrFunction?>() {
         override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement {
             return super.visitFunction(declaration, declaration)
         }
