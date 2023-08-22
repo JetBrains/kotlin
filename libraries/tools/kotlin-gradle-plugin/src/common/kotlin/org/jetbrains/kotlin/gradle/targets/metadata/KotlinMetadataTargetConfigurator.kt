@@ -236,7 +236,7 @@ class KotlinMetadataTargetConfigurator :
         /* Metadata compilation for a single platform is only supported native and common source sets */
         if (platforms.size == 1) {
             val platform = platforms.single()
-            return platform == KotlinPlatformType.native || platform == KotlinPlatformType.common
+            return platform == KotlinPlatformType.native || platform == KotlinPlatformType.common || platform == KotlinPlatformType.wasm
         }
 
         /* Source sets sharing code between multiple backends are supported */
@@ -454,8 +454,7 @@ internal suspend fun getCommonSourceSetsForMetadataCompilation(project: Project)
 
     val sourceSetsUsedInMultipleTargets = compilationsBySourceSet.filterValues { compilations ->
         compilations.map { it.target.platformType }.distinct().run {
-            size > 1 || singleOrNull() == KotlinPlatformType.native && compilations.map { it.target }.distinct().size > 1
-            // TODO: platform-shared source sets other than Kotlin/Native ones are not yet supported; support will be needed for JVM, JS
+            size > 1 || singleOrNull() in listOf(KotlinPlatformType.native, KotlinPlatformType.wasm) && compilations.map { it.target }.distinct().size > 1
         }
     }
 
