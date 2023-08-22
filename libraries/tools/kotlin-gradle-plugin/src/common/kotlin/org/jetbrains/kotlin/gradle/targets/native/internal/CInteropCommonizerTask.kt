@@ -191,7 +191,7 @@ internal abstract class CInteropCommonizerTask
     @TaskAction
     protected fun commonizeCInteropLibraries() {
         val metricReporter = metrics.get()
-        addBuildMetricsForTaskAction(metricsReporter = metricReporter, languageVersion = null) {
+        addBuildMetricsForTaskAction(metricsReporter = metricReporter, languageVersion = parseTryK2(kotlinExperimentalTryK2)) {
             allInteropGroups.getOrThrow().forEach(::commonize)
         }
     }

@@ -23,11 +23,11 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
+import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
 import org.jetbrains.kotlin.compilerRunner.konanDataDir
 import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -52,7 +52,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input val outputKind: CompilerOutputKind,
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations,
-    private val projectLayout: ProjectLayout
+    private val projectLayout: ProjectLayout,
 ) : DefaultTask(),
     UsesBuildMetricsService,
     KotlinToolTask<KotlinCommonCompilerToolOptions> {
@@ -183,7 +183,11 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Internal
     val konanHome: Provider<String> = project.provider { project.konanHome }
 
-    private val runnerSettings = KotlinNativeCompilerRunner.Settings.of(konanHome.get(), konanDataDir.getOrNull(),project)
+    @get:Internal
+    val kotlinExperimentalTryK2: Boolean
+        get() = project.kotlinExperimentalTryK2()
+
+    private val runnerSettings = KotlinNativeCompilerRunner.Settings.of(konanHome.get(), konanDataDir.getOrNull(), project)
 
     init {
         baseName.convention(project.name)
@@ -205,7 +209,8 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     fun link() {
         val metricReporter = metrics.get()
 
-        addBuildMetricsForTaskAction(metricsReporter = metricReporter, languageVersion = null) {
+        //Kotlin Native Link task does not use kotlin compiler so language version is required only for kryK2
+        addBuildMetricsForTaskAction(metricsReporter = metricReporter, languageVersion = parseTryK2(kotlinExperimentalTryK2)) {
 
             val outFile = outputFile.get()
             outFile.ensureParentDirsCreated()

@@ -98,11 +98,15 @@ internal abstract class NativeDistributionCommonizerTask
     val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
 
+    @get:Internal
+    val kotlinExperimentalTryK2: Boolean
+        get() = project.kotlinExperimentalTryK2()
+
     @TaskAction
     protected fun run() {
         val metricsReporter = metrics.get()
 
-        addBuildMetricsForTaskAction(metricsReporter = metricsReporter, languageVersion = null) {
+        addBuildMetricsForTaskAction(metricsReporter = metricsReporter, languageVersion = parseTryK2(kotlinExperimentalTryK2)) {
             val commonizerRunner = KotlinNativeCommonizerToolRunner(
                 context = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
                 settings = runnerSettings.get(),

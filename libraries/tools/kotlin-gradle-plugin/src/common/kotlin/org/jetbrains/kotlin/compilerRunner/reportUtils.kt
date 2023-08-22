@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
@@ -262,6 +263,10 @@ internal fun parseLanguageVersion(args: List<String>): KotlinVersion {
     } else null
     val useK2 = args.indexOf("-Xuse-k2") >= 0
     return parseLanguageVersion(languageVersion, useK2)
+}
+
+internal fun parseTryK2(tryK2: Boolean): KotlinVersion {
+    return parseLanguageVersion(null, tryK2)
 }
 
 internal fun UsesBuildMetricsService.addBuildMetricsForTaskAction(
