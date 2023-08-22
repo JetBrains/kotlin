@@ -508,6 +508,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("inlineConstructorParameter.kt")
+        public void testInlineConstructorParameter() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inlineConstructorParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineConstructorParameter_on.kt")
+        public void testInlineConstructorParameter_on() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inlineConstructorParameter_on.kt");
+        }
+
+        @Test
         @TestMetadata("inlineDeprecationsOnImplicitCalls.kt")
         public void testInlineDeprecationsOnImplicitCalls() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inlineDeprecationsOnImplicitCalls.kt");

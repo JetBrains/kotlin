@@ -4544,6 +4544,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DECLARATION_CANT_BE_INLINED_DEPRECATION.errorFactory) { firDiagnostic ->
+        DeclarationCantBeInlinedDeprecationErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DECLARATION_CANT_BE_INLINED_DEPRECATION.warningFactory) { firDiagnostic ->
+        DeclarationCantBeInlinedDeprecationWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.OVERRIDE_BY_INLINE) { firDiagnostic ->
         OverrideByInlineImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -4578,6 +4590,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD) { firDiagnostic ->
         InlinePropertyWithBackingFieldImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION.errorFactory) { firDiagnostic ->
+        InlinePropertyWithBackingFieldDeprecationErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION.warningFactory) { firDiagnostic ->
+        InlinePropertyWithBackingFieldDeprecationWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

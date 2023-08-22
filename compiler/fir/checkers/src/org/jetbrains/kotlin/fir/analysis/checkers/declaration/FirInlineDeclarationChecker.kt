@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
@@ -443,7 +444,10 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         if (effectiveVisibility == EffectiveVisibility.PrivateInClass) return true
 
         if (!declaration.isEffectivelyFinal(context)) {
-            reporter.reportOn(declaration.source, FirErrors.DECLARATION_CANT_BE_INLINED, context)
+            // For primary constructor parameters there's INLINE_PROPERTY_WITH_BACKING_FIELD already
+            if (declaration.source?.kind != KtFakeSourceElementKind.PropertyFromParameter) {
+                reporter.reportOn(declaration.source, FirErrors.DECLARATION_CANT_BE_INLINED, context)
+            }
             return false
         }
         return true

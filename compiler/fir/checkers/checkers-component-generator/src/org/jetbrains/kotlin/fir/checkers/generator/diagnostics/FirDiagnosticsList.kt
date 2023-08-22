@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -1600,6 +1599,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val DECLARATION_CANT_BE_INLINED by error<KtDeclaration>(PositioningStrategy.INLINE_FUN_MODIFIER)
+        val DECLARATION_CANT_BE_INLINED_DEPRECATION by deprecationError<KtDeclaration>(
+            LanguageFeature.ProhibitInlineModifierOnPrimaryConstructorParameters,
+            PositioningStrategy.INLINE_FUN_MODIFIER,
+        )
 
         val OVERRIDE_BY_INLINE by warning<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
 
@@ -1616,6 +1619,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val REIFIED_TYPE_PARAMETER_IN_OVERRIDE by error<KtElement>(PositioningStrategy.REIFIED_MODIFIER)
 
         val INLINE_PROPERTY_WITH_BACKING_FIELD by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION by deprecationError<KtDeclaration>(
+            LanguageFeature.ProhibitInlineModifierOnPrimaryConstructorParameters,
+            PositioningStrategy.DECLARATION_SIGNATURE,
+        )
 
         val ILLEGAL_INLINE_PARAMETER_MODIFIER by error<KtElement>(PositioningStrategy.INLINE_PARAMETER_MODIFIER)
 

@@ -157,6 +157,7 @@ class ValueParameter(
                 type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 modifiers.getVisibility(),
                 symbol,
+                isInline = modifiers.hasInline(),
             ).also {
                 it.initContainingClassAttr(context)
                 it.replaceAnnotations(modifiers.annotations.filterUseSiteTarget(PROPERTY_GETTER))
@@ -168,7 +169,8 @@ class ValueParameter(
                 type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 modifiers.getVisibility(),
                 symbol,
-                parameterAnnotations = modifiers.annotations.filterUseSiteTarget(SETTER_PARAMETER)
+                parameterAnnotations = modifiers.annotations.filterUseSiteTarget(SETTER_PARAMETER),
+                isInline = modifiers.hasInline(),
             ).also {
                 it.initContainingClassAttr(context)
                 it.replaceAnnotations(modifiers.annotations.filterUseSiteTarget(PROPERTY_SETTER))
