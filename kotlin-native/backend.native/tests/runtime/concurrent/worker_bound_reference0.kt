@@ -8,6 +8,8 @@ package runtime.concurrent.worker_bound_reference0
 
 import kotlin.test.*
 
+import kotlin.concurrent.AtomicInt
+import kotlin.concurrent.AtomicReference
 import kotlin.native.concurrent.*
 import kotlin.native.*
 import kotlin.native.ref.WeakReference
@@ -108,7 +110,7 @@ fun testGlobalAccessOnWorkerFrozenBeforeAccess() {
 
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, { semaphore }) { semaphore ->
-        semaphore.increment()
+        semaphore.incrementAndGet()
         while (semaphore.value < 2) {
         }
 
@@ -118,7 +120,7 @@ fun testGlobalAccessOnWorkerFrozenBeforeAccess() {
     while (semaphore.value < 1) {
     }
     global5.value.freeze()
-    semaphore.increment()
+    semaphore.incrementAndGet()
 
     val value = future.result
     assertEquals(3, value)
@@ -135,7 +137,7 @@ fun testGlobalModification() {
 
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, { semaphore }) { semaphore ->
-        semaphore.increment()
+        semaphore.incrementAndGet()
         while (semaphore.value < 2) {
         }
         global6
@@ -144,7 +146,7 @@ fun testGlobalModification() {
     while (semaphore.value < 1) {
     }
     global6.value.a = 4
-    semaphore.increment()
+    semaphore.incrementAndGet()
 
     val value = future.result
     assertEquals(4, value.value.a)
@@ -262,7 +264,7 @@ fun testLocalAccessOnWorkerFrozenBeforeAccessFrozen() {
 
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, { Pair(local, semaphore) }) { (local, semaphore) ->
-        semaphore.increment()
+        semaphore.incrementAndGet()
         while (semaphore.value < 2) {
         }
 
@@ -272,7 +274,7 @@ fun testLocalAccessOnWorkerFrozenBeforeAccessFrozen() {
     while (semaphore.value < 1) {
     }
     local.value.freeze()
-    semaphore.increment()
+    semaphore.incrementAndGet()
 
     val value = future.result
     assertEquals(3, value)
@@ -321,7 +323,7 @@ fun testLocalModificationFrozen() {
 
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, { Pair(local, semaphore) }) { (local, semaphore) ->
-        semaphore.increment()
+        semaphore.incrementAndGet()
         while (semaphore.value < 2) {
         }
         local
@@ -330,7 +332,7 @@ fun testLocalModificationFrozen() {
     while (semaphore.value < 1) {
     }
     local.value.a = 4
-    semaphore.increment()
+    semaphore.incrementAndGet()
 
     val value = future.result
     assertEquals(4, value.value.a)
@@ -432,9 +434,9 @@ fun testLocalAccessWithWrapperFrozen() {
     worker.requestTermination().result
 }
 
-fun getOwnerAndWeaks(initial: Int): Triple<FreezableAtomicReference<WorkerBoundReference<A>?>, WeakReference<WorkerBoundReference<A>>, WeakReference<A>> {
+fun getOwnerAndWeaks(initial: Int): Triple<AtomicReference<WorkerBoundReference<A>?>, WeakReference<WorkerBoundReference<A>>, WeakReference<A>> {
     val ref = WorkerBoundReference(A(initial))
-    val refOwner: FreezableAtomicReference<WorkerBoundReference<A>?> = FreezableAtomicReference(ref)
+    val refOwner: AtomicReference<WorkerBoundReference<A>?> = AtomicReference(ref)
     val refWeak = WeakReference(ref)
     val refValueWeak = WeakReference(ref.value)
 
@@ -485,7 +487,7 @@ fun collectInWorkerFrozen(worker: Worker, semaphore: AtomicInt): Pair<WeakRefere
     val (refOwner, _, refValueWeak) = getOwnerAndWeaksFrozen(3)
 
     val future = worker.execute(TransferMode.SAFE, { Pair(refOwner, semaphore) }) { (refOwner, semaphore) ->
-        semaphore.increment()
+        semaphore.incrementAndGet()
         while (semaphore.value < 2) {
         }
 
@@ -510,7 +512,7 @@ fun testCollectInWorkerFrozen() {
     val worker = Worker.start()
 
     val (refValueWeak, future) = collectInWorkerFrozen(worker, semaphore)
-    semaphore.increment()
+    semaphore.incrementAndGet()
     future.result
 
     // At this point WorkerBoundReference no longer has a reference, so it's referent is destroyed.
@@ -524,7 +526,7 @@ fun doNotCollectInWorkerFrozen(worker: Worker, semaphore: AtomicInt): Future<Wor
     val ref = WorkerBoundReference(A(3)).freeze()
 
     return worker.execute(TransferMode.SAFE, { Pair(ref, semaphore) }) { (ref, semaphore) ->
-        semaphore.increment()
+        semaphore.incrementAndGet()
         while (semaphore.value < 2) {
         }
 
@@ -543,7 +545,7 @@ fun testDoNotCollectInWorkerFrozen() {
     while (semaphore.value < 1) {
     }
     GC.collect()
-    semaphore.increment()
+    semaphore.incrementAndGet()
 
     val value = future.result
     assertEquals(3, value.value.a)
@@ -556,9 +558,9 @@ class B1 {
 
 data class B2(val b1: WorkerBoundReference<B1>)
 
-fun createCyclicGarbage(): Triple<FreezableAtomicReference<WorkerBoundReference<B1>?>, WeakReference<B1>, WeakReference<B2>> {
+fun createCyclicGarbage(): Triple<AtomicReference<WorkerBoundReference<B1>?>, WeakReference<B1>, WeakReference<B2>> {
     val ref1 = WorkerBoundReference(B1())
-    val ref1Owner: FreezableAtomicReference<WorkerBoundReference<B1>?> = FreezableAtomicReference(ref1)
+    val ref1Owner: AtomicReference<WorkerBoundReference<B1>?> = AtomicReference(ref1)
     val ref1Weak = WeakReference(ref1.value)
 
     val ref2 = WorkerBoundReference(B2(ref1))
@@ -783,7 +785,7 @@ fun concurrentAccessFrozen() {
             }
         }
     }
-    workerUnlocker.increment()
+    workerUnlocker.incrementAndGet()
 
     for (future in futures) {
         val value = future.result

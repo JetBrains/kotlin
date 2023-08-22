@@ -5,7 +5,7 @@
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 import kotlin.test.*
-
+import kotlin.concurrent.AtomicInt
 import kotlin.native.concurrent.*
 import kotlin.native.internal.MemoryUsageInfo
 

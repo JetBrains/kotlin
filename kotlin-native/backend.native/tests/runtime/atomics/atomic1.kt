@@ -8,6 +8,7 @@
 
 import kotlin.test.*
 
+import kotlin.concurrent.AtomicInt
 import kotlin.native.concurrent.*
 import kotlin.native.internal.*
 import kotlin.native.runtime.GC
@@ -37,7 +38,7 @@ fun main() {
             val atomics = Array(atomicsCount) {
                 AtomicReference<Any?>(Any().freeze())
             }
-            createdCount.increment()
+            createdCount.incrementAndGet()
             while (canStartReading.value == 0) {}
             GC.collect()
             atomics.all { it.value != null }

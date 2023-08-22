@@ -7,10 +7,9 @@
 package runtime.workers.worker11
 
 import kotlin.test.*
-
-import kotlin.native.concurrent.*
-import kotlin.concurrent.*
 import kotlin.concurrent.AtomicInt
+import kotlin.concurrent.*
+import kotlin.native.concurrent.*
 import kotlinx.cinterop.convert
 
 data class Job(val index: Int, var input: Int, var counter: Int)
