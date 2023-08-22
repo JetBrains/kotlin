@@ -18,16 +18,16 @@ package org.jetbrains.kotlin.codegen
 
 import com.google.common.collect.Lists
 import com.intellij.openapi.util.Trinity
+import gnu.trove.TObjectIdentityHashingStrategy
 import gnu.trove.TObjectIntHashMap
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.org.objectweb.asm.Type
-import java.util.*
 
 open class FrameMap : FrameMapBase<DeclarationDescriptor>()
 
 open class FrameMapBase<T : Any> {
-    private val myVarIndex = TObjectIntHashMap<T>()
-    private val myVarSizes = TObjectIntHashMap<T>()
+    private val myVarIndex = TObjectIntHashMap<T>(TObjectIdentityHashingStrategy())
+    private val myVarSizes = TObjectIntHashMap<T>(TObjectIdentityHashingStrategy())
     var currentSize = 0
         private set
 
