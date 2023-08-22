@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
@@ -366,19 +367,34 @@ class ClassicExpectActualMatchingContext(
         )
     }
 
-    private class AnnotationCallInfoImpl(
+    private inner class AnnotationCallInfoImpl(
         val annotationDescriptor: AnnotationDescriptor,
     ) : AnnotationCallInfo {
         override val annotationSymbol: AnnotationDescriptor = annotationDescriptor
 
         override val classId: ClassId?
-            get() = annotationDescriptor.annotationClass?.classId
+            get() = getAnnotationClassDescriptor()?.classId
 
         override val isRetentionSource: Boolean
-            get() = annotationDescriptor.isSourceAnnotation
+            get() = getAnnotationClassDescriptor()?.getAnnotationRetention() == KotlinRetention.SOURCE
 
         override val isOptIn: Boolean
-            get() = annotationDescriptor.annotationClass?.annotations?.hasAnnotation(OptInNames.REQUIRES_OPT_IN_FQ_NAME) ?: false
+            get() = getAnnotationClassDescriptor()?.annotations?.hasAnnotation(OptInNames.REQUIRES_OPT_IN_FQ_NAME) ?: false
+
+        private fun getAnnotationClassDescriptor(): ClassDescriptor? {
+            val classDescriptor = annotationDescriptor.annotationClass ?: return null
+            if (!classDescriptor.isExpect) {
+                return classDescriptor
+            }
+            val classId = classDescriptor.classId
+            // For IDE composite module analysis, when actual annotation may differ
+            val platformDescriptor = platformModule.findClassifierAcrossModuleDependencies(classId)
+            return when (platformDescriptor) {
+                is ClassDescriptor -> platformDescriptor
+                is TypeAliasDescriptor -> platformDescriptor.classDescriptor ?: classDescriptor
+                else -> classDescriptor
+            }
+        }
     }
 
     override val DeclarationSymbolMarker.hasSourceAnnotationsErased: Boolean

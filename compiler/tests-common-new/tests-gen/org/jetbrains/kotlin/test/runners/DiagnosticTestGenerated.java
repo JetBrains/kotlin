@@ -24167,6 +24167,34 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                     public void testSealedInheritorsInComplexModuleStructure() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/sealedInheritorsInComplexModuleStructure.kt");
                     }
+
+                    @Nested
+                    @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching")
+                    @TestDataPath("$PROJECT_ROOT")
+                    public class AnnotationMatching {
+                        @Test
+                        public void testAllFilesPresentInAnnotationMatching() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+                        }
+
+                        @Test
+                        @TestMetadata("sourceRetentionAnnotationsWhenTypealias.kt")
+                        public void testSourceRetentionAnnotationsWhenTypealias() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/sourceRetentionAnnotationsWhenTypealias.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("typealiasedAnnotation.kt")
+                        public void testTypealiasedAnnotation() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/typealiasedAnnotation.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("typealiasedAnnotationAsArgument.kt")
+                        public void testTypealiasedAnnotationAsArgument() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/typealiasedAnnotationAsArgument.kt");
+                        }
+                    }
                 }
             }
 

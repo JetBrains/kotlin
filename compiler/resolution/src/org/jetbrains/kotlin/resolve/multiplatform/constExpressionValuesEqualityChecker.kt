@@ -19,8 +19,7 @@ internal fun ExpectActualMatchingContext<*>.areExpressionConstValuesEqual(
         a is AnnotationDescriptor && b is AnnotationDescriptor -> {
             val aArgs = a.allValueArguments
             val bArgs = b.allValueArguments
-            a.fqName == b.fqName &&
-                    aArgs.size == bArgs.size &&
+            aArgs.size == bArgs.size &&
                     areCompatibleExpectActualTypes(a.type, b.type) &&
                     aArgs.keys.all { k -> areExpressionConstValuesEqual(aArgs[k], bArgs[k], collectionArgumentsCompatibilityCheckStrategy) }
         }
