@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
+class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext>() {
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsStatement {
         require(!declaration.isExpect)

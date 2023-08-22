@@ -38,7 +38,7 @@ class InitializersLowering(context: CommonBackendContext) : InitializersLowering
         }
         val block = IrBlockImpl(irClass.startOffset, irClass.endOffset, context.irBuiltIns.unitType, null, instanceInitializerStatements)
         // Check that the initializers contain no local classes. Deep-copying them is a disaster for code size, and liable to break randomly.
-        block.accept(object : IrElementVisitorVoid {
+        block.accept(object : IrElementVisitorVoid() {
             override fun visitElement(element: IrElement) =
                 element.acceptChildren(this, null)
 

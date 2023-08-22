@@ -32,7 +32,7 @@ internal val polymorphicSignaturePhase = makeIrFilePhase(
     description = "Replace polymorphic methods with fake ones according to types at the call site"
 )
 
-private class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrElementTransformer<PolymorphicSignatureLowering.Data>,
+private class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrElementTransformer<PolymorphicSignatureLowering.Data>(),
     FileLoweringPass {
     override fun lower(irFile: IrFile) {
         if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature))

@@ -33,7 +33,7 @@ abstract class UsefulDeclarationProcessor(
     protected abstract fun isExported(declaration: IrDeclaration): Boolean
     protected abstract val bodyVisitor: BodyVisitorBase
 
-    protected abstract inner class BodyVisitorBase : IrElementVisitor<Unit, IrDeclaration> {
+    protected abstract inner class BodyVisitorBase : IrElementVisitor<Unit, IrDeclaration>() {
         override fun visitValueAccess(expression: IrValueAccessExpression, data: IrDeclaration) {
             visitDeclarationReference(expression, data)
             expression.symbol.owner.enqueue(data, "variable access")

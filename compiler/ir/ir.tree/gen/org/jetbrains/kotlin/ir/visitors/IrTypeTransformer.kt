@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.types.IrType
 
-interface IrTypeTransformer<in D> : IrElementTransformer<D> {
-    fun <Type : IrType?> transformType(
+abstract class IrTypeTransformer<in D> : IrElementTransformer<D>() {
+    abstract fun <Type : IrType?> transformType(
         container: IrElement,
         type: Type,
         data: D,
