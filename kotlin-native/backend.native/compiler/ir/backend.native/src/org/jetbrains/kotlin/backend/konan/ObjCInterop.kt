@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
+import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
+import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationValueOrNull
+import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
 import org.jetbrains.kotlin.backend.konan.ir.getAnnotationArgumentValue
 import org.jetbrains.kotlin.backend.konan.ir.parentDeclarationsWithSelf
 import org.jetbrains.kotlin.descriptors.*
@@ -17,12 +20,13 @@ import org.jetbrains.kotlin.ir.descriptors.IrBasedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
+import org.jetbrains.kotlin.resolve.annotations.getAnnotationStringValue
+import org.jetbrains.kotlin.resolve.annotations.getArgumentValueOrNull
 import org.jetbrains.kotlin.resolve.constants.BooleanValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers

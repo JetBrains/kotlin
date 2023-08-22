@@ -33,9 +33,8 @@ fun DeclarationDescriptor.hasJvmStaticAnnotation(): Boolean {
     return annotations.findAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) != null
 }
 
-fun AnnotationDescriptor.argumentValue(parameterName: String): ConstantValue<*>? {
-    return allValueArguments[Name.identifier(parameterName)].takeUnless { it is ErrorValue }
-}
+@Deprecated("Moved to the ':core:descriptors' module", level = DeprecationLevel.HIDDEN)
+fun AnnotationDescriptor.argumentValue(parameterName: String): ConstantValue<*>? = argumentValue(parameterName)
 
 @Deprecated(
     "Use org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME or " +
