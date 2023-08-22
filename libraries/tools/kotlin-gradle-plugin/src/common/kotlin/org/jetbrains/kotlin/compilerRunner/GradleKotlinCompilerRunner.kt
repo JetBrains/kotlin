@@ -209,7 +209,7 @@ internal open class GradleCompilerRunner(
         }
 
         val incrementalCompilationEnvironment = environment.incrementalCompilationEnvironment
-        val modulesInfo = incrementalCompilationEnvironment?.let { incrementalModuleInfoProvider.get().info }
+        val modulesInfo = incrementalCompilationEnvironment?.let { incrementalModuleInfoProvider.orNull?.info }
         val workArgs = GradleKotlinCompilerWorkArguments(
             projectFiles = ProjectFilesForCompilation(
                 loggerProvider,

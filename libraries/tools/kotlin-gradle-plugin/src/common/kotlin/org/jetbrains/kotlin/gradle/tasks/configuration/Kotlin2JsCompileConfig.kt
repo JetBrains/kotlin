@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
+import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
+import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoBuildService
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
@@ -12,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingServi
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
+import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import java.io.File
 
 internal typealias Kotlin2JsCompileConfig = BaseKotlin2JsCompileConfig<Kotlin2JsCompile>
@@ -22,6 +25,11 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
 
     init {
         val libraryFilterCachingService = LibraryFilterCachingService.registerIfAbsent(project)
+
+        val incrementalModuleInfoProvider = IncrementalModuleInfoBuildService.registerIfAbsent(
+            project,
+            objectFactory.providerWithLazyConvention { GradleCompilerRunner.buildModulesInfo(project.gradle) },
+        )
 
         configureTask { task ->
             task.incremental = propertiesProvider.incrementalJs ?: true
@@ -65,6 +73,7 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                 )
 
             task.libraryFilterCacheService.value(libraryFilterCachingService).disallowChanges()
+            task.incrementalModuleInfoProvider.value(incrementalModuleInfoProvider).disallowChanges()
         }
     }
 

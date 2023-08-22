@@ -12,9 +12,11 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.artifacts.transform.TransformSpec
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
+import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoBuildService
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
@@ -50,6 +52,16 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                     project.dependencies.create(objectFactory.fileCollection().from(project.provider { taskProvider.get().libraries }))
                 ).markResolvable()
             } else null
+
+            if (useClasspathSnapshot) {
+                taskProvider.configure { it.incrementalModuleInfoProvider.disallowChanges() }
+            } else {
+                val incrementalModuleInfoProvider = IncrementalModuleInfoBuildService.registerIfAbsent(
+                    project,
+                    objectFactory.providerWithLazyConvention { GradleCompilerRunner.buildModulesInfo(project.gradle) },
+                )
+                taskProvider.configure { it.incrementalModuleInfoProvider.value(incrementalModuleInfoProvider).disallowChanges() }
+            }
 
             taskProvider.configure { task ->
                 task.incremental = propertiesProvider.incrementalJvm ?: true
