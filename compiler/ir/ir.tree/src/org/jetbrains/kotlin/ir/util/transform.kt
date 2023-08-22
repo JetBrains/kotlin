@@ -112,14 +112,17 @@ fun IrDeclarationContainer.transformDeclarationsFlat(transformation: (IrDeclarat
  * Transforms the list of elements with the given transformer. Return the same List instance if no element instances have changed.
  */
 fun <T : IrElement, D> List<T>.transformIfNeeded(transformer: IrElementTransformer<D>, data: D): List<T> {
+    if (isEmpty()) return this
     var result: ArrayList<T>? = null
     for ((i, item) in withIndex()) {
-        @Suppress("UNCHECKED_CAST")
-        val transformed = item.transform(transformer, data) as T
-        if (transformed !== item && result == null) {
-            result = ArrayList(this)
+        val transformed = item.transform(transformer, data)
+        if (transformed !== item) {
+            if (result == null) {
+                result = ArrayList(this)
+            }
+            @Suppress("UNCHECKED_CAST")
+            result[i] = transformed as T
         }
-        result?.set(i, transformed)
     }
     return result ?: this
 }
