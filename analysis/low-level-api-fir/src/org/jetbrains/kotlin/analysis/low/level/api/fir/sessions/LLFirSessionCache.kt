@@ -77,8 +77,8 @@ class LLFirSessionCache(private val project: Project) {
         val sessionFactory = createPlatformAwareSessionFactory(module)
         return when (module) {
             is KtSourceModule -> sessionFactory.createSourcesSession(module)
-            is KtLibraryModule, is KtLibrarySourceModule -> sessionFactory.createLibrarySession(module)
-            is KtSdkModule -> sessionFactory.createBinaryLibrarySession(module)
+            is KtLibrarySourceModule -> sessionFactory.createLibrarySession(module)
+            is KtLibraryModule, is KtSdkModule -> sessionFactory.createBinaryLibrarySession(module as KtBinaryModule)
             is KtScriptModule -> sessionFactory.createScriptSession(module)
             is KtNotUnderContentRootModule -> sessionFactory.createNotUnderContentRootResolvableSession(module)
             else -> error("Unexpected module kind: ${module::class.simpleName}")
