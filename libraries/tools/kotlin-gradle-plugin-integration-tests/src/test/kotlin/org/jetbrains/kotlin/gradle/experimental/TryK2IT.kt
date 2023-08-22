@@ -259,6 +259,50 @@ class TryK2IT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("JS: language version default is changed to 2.0")
+    @JsGradlePluginTests
+    @GradleTest
+    fun jsLanguageVersionK2(gradleVersion: GradleVersion) {
+        project(
+            "kotlin-js-nodejs-project",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            enableTryK2()
+
+            build(":compileKotlinJs") {
+                assertTasksExecuted(":compileKotlinJs")
+
+                assertCompilerArgument(":compileKotlinJs", "-language-version 2.0")
+            }
+        }
+    }
+
+    @DisplayName("JS: tryK2 report is produced")
+    @JsGradlePluginTests
+    @GradleTest
+    fun jsTryReport(gradleVersion: GradleVersion) {
+        project(
+            "kotlin-js-nodejs-project",
+            gradleVersion,
+        ) {
+            enableTryK2()
+
+            build("build") {
+                assertOutputContains(
+                    """
+                    |##### 'kotlin.experimental.tryK2' results #####
+                    |:compileKotlinJs: 2.0 language version
+                    |:compileProductionExecutableKotlinJs: 2.0 language version
+                    |:compileTestKotlinJs: 2.0 language version
+                    |:compileTestDevelopmentExecutableKotlinJs: 2.0 language version
+                    |##### 100% (4/4) tasks have been compiled with Kotlin 2.0 #####
+                    """.trimMargin().normalizeLineEndings()
+                )
+            }
+        }
+    }
+
     private fun TestProject.enableTryK2() = gradleProperties.appendText(
         """
         |
