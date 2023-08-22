@@ -19,9 +19,13 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURES
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES
 import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -52,6 +56,8 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
             +DUMP_KT_IR
             +DUMP_SIGNATURES
             +LINK_VIA_SIGNATURES
+            +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+            DIAGNOSTICS with "-warnings"
         }
 
         useAfterAnalysisCheckers(
@@ -59,6 +65,7 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
         )
 
         applyConfigurators()
+        enableMetaInfoHandler()
 
         useAdditionalSourceProviders(
             ::AdditionalDiagnosticsSourceFilesProvider,
@@ -69,13 +76,15 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
         facadeStep(frontendFacade)
         classicFrontendHandlersStep {
             useHandlers(
-                ::NoCompilationErrorsHandler
+                ::NoCompilationErrorsHandler,
+                ::ClassicDiagnosticsHandler
             )
         }
 
         firHandlersStep {
             useHandlers(
-                ::NoFirCompilationErrorsHandler
+                ::NoFirCompilationErrorsHandler,
+                ::FirDiagnosticsHandler
             )
         }
 

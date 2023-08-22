@@ -4,7 +4,7 @@
 // FILE: nnStringVsTXString.kt
 fun <T> useTX(x: T, fn: () -> T) = fn()
 
-fun testWithNullCheck {
+fun testWithNullCheck() {
     useTX("") { J.notNullString() }
 }
 
