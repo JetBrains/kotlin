@@ -52,7 +52,7 @@ class NewConstraintSystemImpl(
      * @see [org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context.typeVariablesThatAreNotCountedAsProperTypes]
      * @see [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
      */
-    fun withTypeVariablesThatAreNotCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> Unit) {
+    override fun <R> withTypeVariablesThatAreNotCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> R): R {
         // Cleaning cache is necessary because temporarily we change the meaning of what does "proper type" mean
         properTypesCache.clear()
         notProperTypesCache.clear()
@@ -63,11 +63,13 @@ class NewConstraintSystemImpl(
 
         typeVariablesThatAreNotCountedAsProperTypes = typeVariables
 
-        block()
+        val result = block()
 
         typeVariablesThatAreNotCountedAsProperTypes = null
         properTypesCache.clear()
         notProperTypesCache.clear()
+
+        return result
     }
 
     private enum class State {

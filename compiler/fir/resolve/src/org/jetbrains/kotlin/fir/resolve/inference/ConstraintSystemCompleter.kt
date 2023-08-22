@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDependencyInformationProvider
-import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
+import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -80,9 +77,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             if (analyzeArgumentWithFixedParameterTypes(languageVersionSettings, postponedArguments, analyze))
                 continue
 
-            val isThereAnyReadyForFixationVariable = variableFixationFinder.findFirstVariableForFixation(
-                this,
-                getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
+            val isThereAnyReadyForFixationVariable = findFirstVariableForFixation(
+                collectVariablesFromContext,
+                topLevelAtoms,
                 postponedArguments,
                 completionMode,
                 topLevelType
@@ -121,6 +118,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                         postponedArguments,
                         topLevelType,
                         dependencyProvider,
+                        currentTypeVariables,
                     ) {
                         // NB: FE 1.0 calls findResolvedAtomBy here
                         // atom provided here is used only inside constraint positions, omitting right now
@@ -151,7 +149,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                 continue
 
             // Stage 7: try to complete call with the builder inference if there are uninferred type variables
-            val allTypeVariables = getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms)
             val areThereAppearedProperConstraintsForSomeVariable = tryToCompleteWithBuilderInference(
                 completionMode, postponedArguments, analyze
             )
@@ -161,7 +158,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
             // Stage 8: report "not enough information" for uninferred type variables
             reportNotEnoughTypeInformation(
-                completionMode, topLevelAtoms, topLevelType, allTypeVariables, postponedArguments
+                completionMode, topLevelAtoms, topLevelType, postponedArguments
             )
 
             // Stage 9: force analysis of remaining not analyzed postponed arguments and rerun stages if there are
@@ -171,6 +168,39 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             }
 
             break
+        }
+    }
+
+    private fun ConstraintSystemCompletionContext.findFirstVariableForFixation(
+        collectVariablesFromContext: Boolean,
+        topLevelAtoms: List<FirStatement>,
+        postponedArguments: List<PostponedResolvedAtom>,
+        completionMode: ConstraintSystemCompletionMode,
+        topLevelType: ConeKotlinType,
+    ): VariableFixationFinder.VariableForFixation? {
+        val allTypeVariables = getOrderedAllTypeVariables(
+            collectVariablesFromContext,
+            topLevelAtoms
+        )
+
+        return if (allTypeVariables.size != notFixedTypeVariables.size) {
+            withTypeVariablesThatAreNotCountedAsProperTypes(allTypeVariables.toSet()) {
+                variableFixationFinder.findFirstVariableForFixation(
+                    this,
+                    allTypeVariables,
+                    postponedArguments,
+                    completionMode,
+                    topLevelType
+                )
+            }
+        } else {
+            variableFixationFinder.findFirstVariableForFixation(
+                this,
+                allTypeVariables,
+                postponedArguments,
+                completionMode,
+                topLevelType
+            )
         }
     }
 
@@ -228,12 +258,8 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         collectVariablesFromContext: Boolean,
         postponedArguments: List<PostponedResolvedAtom>,
     ): Boolean {
-        val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this,
-            getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
-            postponedArguments,
-            completionMode,
-            topLevelType
+        val variableForFixation = findFirstVariableForFixation(
+            collectVariablesFromContext, topLevelAtoms, postponedArguments, completionMode, topLevelType
         ) ?: return false
 
         val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
@@ -248,14 +274,12 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<FirStatement>,
         topLevelType: ConeKotlinType,
-        allTypeVariables: List<TypeConstructorMarker>,
         postponedArguments: List<PostponedResolvedAtom>,
     ) {
         while (true) {
-            val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-                this, allTypeVariables, postponedArguments, completionMode, topLevelType,
-            ) ?: break
-
+            val variableForFixation =
+                findFirstVariableForFixation(false, topLevelAtoms, postponedArguments, completionMode, topLevelType)
+                    ?: break
             assert(!variableForFixation.hasProperConstraint) {
                 "At this stage there should be no remaining variables with proper constraints"
             }
