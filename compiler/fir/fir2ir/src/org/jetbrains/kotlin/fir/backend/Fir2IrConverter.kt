@@ -568,7 +568,7 @@ class Fir2IrConverter(
                 components, fir2IrConfiguration.languageVersionSettings, moduleDescriptor, irMangler
             )
             components.irBuiltIns = irBuiltIns
-            val conversionScope = Fir2IrConversionScope()
+            val conversionScope = Fir2IrConversionScope(components.configuration)
             val fir2irVisitor = Fir2IrVisitor(components, conversionScope)
             components.builtIns = Fir2IrBuiltIns(components, specialSymbolProvider)
             components.annotationGenerator = AnnotationGenerator(components)

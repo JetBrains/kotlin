@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedConeType
 import org.jetbrains.kotlin.fir.resolve.isIteratorNext
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -44,15 +46,12 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultConstructor
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -652,14 +651,20 @@ class Fir2IrVisitor(
     }
 
     // Note that this mimics psi2ir [StatementGenerator#shouldGenerateReceiverAsSingletonReference].
-    private fun shouldGenerateReceiverAsSingletonReference(irClass: IrClass): Boolean {
+    private fun shouldGenerateReceiverAsSingletonReference(irClassSymbol: IrClassSymbol): Boolean {
         val scopeOwner = conversionScope.parent()
-        return irClass.isObject &&
-                scopeOwner != irClass && // For anonymous initializers
-                !((scopeOwner is IrFunction || scopeOwner is IrProperty || scopeOwner is IrField) && (scopeOwner as IrDeclaration).parent == irClass) // Members of object
+        // For anonymous initializers
+        if ((scopeOwner as? IrDeclaration)?.symbol == irClassSymbol) return false
+        // Members of object
+        return when (scopeOwner) {
+            is IrFunction, is IrProperty, is IrField -> {
+                val parent = (scopeOwner as IrDeclaration).parent as? IrDeclaration
+                parent?.symbol != irClassSymbol
+            }
+            else -> true
+        }
     }
 
-    @OptIn(IrSymbolInternals::class)
     override fun visitThisReceiverExpression(
         thisReceiverExpression: FirThisReceiverExpression,
         data: Any?
@@ -676,20 +681,39 @@ class Fir2IrVisitor(
             is FirClassSymbol -> {
                 // Object case
                 val firClass = boundSymbol.fir as FirClass
-                val irClass = if (firClass.origin == FirDeclarationOrigin.Source) {
+                val irClassSymbol = if (firClass.origin.fromSource || firClass.origin.generated) {
                     // We anyway can use 'else' branch as fallback, but
                     // this is an additional check of FIR2IR invariants
                     // (source classes should be already built when we analyze bodies)
-                    classifierStorage.getCachedIrClass(firClass)!!
+                    classifierStorage.getCachedIrClass(firClass)!!.symbol
                 } else {
-                    classifierStorage.getIrClassSymbol(boundSymbol).owner
+                    /*
+                     * The only case when we can refer to non-source this is resolution to companion object of parent
+                     *   class in some constructor scope:
+                     *
+                     * // MODULE: lib
+                     * abstract class Base {
+                     *     companion object {
+                     *         fun foo(): Int = 1
+                     *     }
+                     * }
+                     *
+                     * // MODULE: app(lib)
+                     * class Derived(
+                     *     val x: Int = foo() // this: Base.Companion
+                     * ) : Base()
+                     */
+                    classifierStorage.getIrClassSymbol(boundSymbol)
                 }
 
-                if (shouldGenerateReceiverAsSingletonReference(irClass)) {
+                if (firClass.classKind.isObject && shouldGenerateReceiverAsSingletonReference(irClassSymbol)) {
                     return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                        IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
+                        val irType = boundSymbol.defaultType().toIrType()
+                        IrGetObjectValueImpl(startOffset, endOffset, irType, irClassSymbol)
                     }
                 }
+
+                val irClass = conversionScope.findDeclarationInParentsStack<IrClass>(irClassSymbol)
 
                 val dispatchReceiver = conversionScope.dispatchReceiverParameter(irClass)
                 if (dispatchReceiver != null) {
@@ -699,7 +723,7 @@ class Fir2IrVisitor(
                         } ?: IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
                         if (calleeReference.contextReceiverNumber != -1) {
                             val constructorForCurrentlyGeneratedDelegatedConstructor =
-                                conversionScope.getConstructorForCurrentlyGeneratedDelegatedConstructor(irClass)
+                                conversionScope.getConstructorForCurrentlyGeneratedDelegatedConstructor(irClass.symbol)
 
                             if (constructorForCurrentlyGeneratedDelegatedConstructor != null) {
                                 val constructorParameter =
@@ -740,7 +764,10 @@ class Fir2IrVisitor(
             }
             is FirCallableSymbol -> {
                 val irFunction = when (boundSymbol) {
-                    is FirFunctionSymbol -> declarationStorage.getIrFunctionSymbol(boundSymbol).owner
+                    is FirFunctionSymbol -> {
+                        val functionSymbol = declarationStorage.getIrFunctionSymbol(boundSymbol)
+                        conversionScope.findDeclarationInParentsStack<IrSimpleFunction>(functionSymbol)
+                    }
                     is FirPropertySymbol -> {
                         val property = declarationStorage.getIrPropertySymbol(boundSymbol) as? IrPropertySymbol
                         property?.let { conversionScope.parentAccessorOfPropertyFromStack(it) }

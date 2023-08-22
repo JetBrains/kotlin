@@ -11,15 +11,18 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.util.isSetter
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.util.PrivateForInline
 
 @OptIn(PrivateForInline::class)
-class Fir2IrConversionScope {
+class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
     @PublishedApi
     @PrivateForInline
     internal val parentStack = mutableListOf<IrDeclarationParent>()
@@ -30,7 +33,7 @@ class Fir2IrConversionScope {
 
     @PublishedApi
     @PrivateForInline
-    internal val currentlyGeneratedDelegatedConstructors = mutableMapOf<IrClass, IrConstructor>()
+    internal val currentlyGeneratedDelegatedConstructors = mutableMapOf<IrClassSymbol, IrConstructor>()
 
     inline fun <T : IrDeclarationParent, R> withParent(parent: T, f: T.() -> R): R {
         parentStack += parent
@@ -42,16 +45,16 @@ class Fir2IrConversionScope {
     }
 
     internal fun <T> forDelegatingConstructorCall(constructor: IrConstructor, irClass: IrClass, f: () -> T): T {
-        currentlyGeneratedDelegatedConstructors[irClass] = constructor
+        currentlyGeneratedDelegatedConstructors[irClass.symbol] = constructor
         try {
             return f()
         } finally {
-            currentlyGeneratedDelegatedConstructors.remove(irClass)
+            currentlyGeneratedDelegatedConstructors.remove(irClass.symbol)
         }
     }
 
-    fun getConstructorForCurrentlyGeneratedDelegatedConstructor(itClass: IrClass): IrConstructor? =
-        currentlyGeneratedDelegatedConstructors[itClass]
+    fun getConstructorForCurrentlyGeneratedDelegatedConstructor(itClassSymbol: IrClassSymbol): IrConstructor? =
+        currentlyGeneratedDelegatedConstructors[itClassSymbol]
 
     fun containingFileIfAny(): IrFile? = parentStack.getOrNull(0) as? IrFile
 
@@ -79,6 +82,27 @@ class Fir2IrConversionScope {
             }
         }
         error("Accessor of property ${property.render()} not found on parent stack")
+    }
+
+    @OptIn(IrSymbolInternals::class)
+    @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+    inline fun <reified D : IrDeclaration> findDeclarationInParentsStack(symbol: IrSymbol): @kotlin.internal.NoInfer D {
+        if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+            return symbol.owner as D
+        }
+        for (parent in parentStack.asReversed()) {
+            if ((parent as? IrDeclaration)?.symbol == symbol) {
+                return parent as D
+            }
+        }
+        /*
+         * In case of IDE (when allowNonCachedDeclarations is set to true) we may be in scope of some already compiled class,
+         *   for which we have Fir2IrLazyClass in symbol
+         */
+        if (configuration.allowNonCachedDeclarations) {
+            return symbol.owner as D
+        }
+        error("Declaration with symbol $symbol is not found in parents stack")
     }
 
     fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T {
