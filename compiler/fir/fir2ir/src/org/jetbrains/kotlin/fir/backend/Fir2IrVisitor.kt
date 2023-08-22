@@ -677,119 +677,139 @@ class Fir2IrVisitor(
             callGenerator.injectGetValueCall(thisReceiverExpression, calleeReference)?.let { return it }
         }
 
-        when (boundSymbol) {
-            is FirClassSymbol -> {
-                // Object case
-                val firClass = boundSymbol.fir as FirClass
-                val irClassSymbol = if (firClass.origin.fromSource || firClass.origin.generated) {
-                    // We anyway can use 'else' branch as fallback, but
-                    // this is an additional check of FIR2IR invariants
-                    // (source classes should be already built when we analyze bodies)
-                    classifierStorage.getCachedIrClass(firClass)!!.symbol
-                } else {
-                    /*
-                     * The only case when we can refer to non-source this is resolution to companion object of parent
-                     *   class in some constructor scope:
-                     *
-                     * // MODULE: lib
-                     * abstract class Base {
-                     *     companion object {
-                     *         fun foo(): Int = 1
-                     *     }
-                     * }
-                     *
-                     * // MODULE: app(lib)
-                     * class Derived(
-                     *     val x: Int = foo() // this: Base.Companion
-                     * ) : Base()
-                     */
-                    classifierStorage.getIrClassSymbol(boundSymbol)
-                }
+        val convertedExpression = when (boundSymbol) {
+            is FirClassSymbol -> generateThisReceiverAccessForClass(thisReceiverExpression, boundSymbol)
+            is FirScriptSymbol -> generateThisReceiverAccessForScript(thisReceiverExpression, boundSymbol)
+            is FirCallableSymbol -> generateThisReceiverAccessForCallable(thisReceiverExpression, boundSymbol)
+            else -> null
+        }
 
-                if (firClass.classKind.isObject && shouldGenerateReceiverAsSingletonReference(irClassSymbol)) {
-                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                        val irType = boundSymbol.defaultType().toIrType()
-                        IrGetObjectValueImpl(startOffset, endOffset, irType, irClassSymbol)
-                    }
-                }
+        if (convertedExpression != null) {
+            convertedExpression
+        } else {
+            visitQualifiedAccessExpression(thisReceiverExpression, data)
+        }
+    }
 
-                val irClass = conversionScope.findDeclarationInParentsStack<IrClass>(irClassSymbol)
+    private fun generateThisReceiverAccessForClass(
+        thisReceiverExpression: FirThisReceiverExpression,
+        firClassSymbol: FirClassSymbol<*>,
+    ): IrElement? {
+        // Object case
+        val calleeReference = thisReceiverExpression.calleeReference
+        val firClass = firClassSymbol.fir
+        val irClassSymbol = if (firClass.origin.fromSource || firClass.origin.generated) {
+            // We anyway can use 'else' branch as fallback, but
+            // this is an additional check of FIR2IR invariants
+            // (source classes should be already built when we analyze bodies)
+            classifierStorage.getCachedIrClass(firClass)!!.symbol
+        } else {
+            /*
+             * The only case when we can refer to non-source this is resolution to companion object of parent
+             *   class in some constructor scope:
+             *
+             * // MODULE: lib
+             * abstract class Base {
+             *     companion object {
+             *         fun foo(): Int = 1
+             *     }
+             * }
+             *
+             * // MODULE: app(lib)
+             * class Derived(
+             *     val x: Int = foo() // this: Base.Companion
+             * ) : Base()
+             */
+            classifierStorage.getIrClassSymbol(firClassSymbol)
+        }
 
-                val dispatchReceiver = conversionScope.dispatchReceiverParameter(irClass)
-                if (dispatchReceiver != null) {
-                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                        val thisRef = callGenerator.findInjectedValue(calleeReference)?.let {
-                            callGenerator.useInjectedValue(it, calleeReference, startOffset, endOffset)
-                        } ?: IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
-                        if (calleeReference.contextReceiverNumber != -1) {
-                            val constructorForCurrentlyGeneratedDelegatedConstructor =
-                                conversionScope.getConstructorForCurrentlyGeneratedDelegatedConstructor(irClass.symbol)
-
-                            if (constructorForCurrentlyGeneratedDelegatedConstructor != null) {
-                                val constructorParameter =
-                                    constructorForCurrentlyGeneratedDelegatedConstructor.valueParameters[calleeReference.contextReceiverNumber]
-                                IrGetValueImpl(startOffset, endOffset, constructorParameter.type, constructorParameter.symbol)
-                            } else {
-                                val contextReceivers =
-                                    components.classifierStorage.getFieldsWithContextReceiversForClass(irClass, firClass)
-                                require(contextReceivers.size > calleeReference.contextReceiverNumber) {
-                                    "Not defined context receiver #${calleeReference.contextReceiverNumber} for $irClass. " +
-                                            "Context receivers found: $contextReceivers"
-                                }
-
-                                IrGetFieldImpl(
-                                    startOffset, endOffset, contextReceivers[calleeReference.contextReceiverNumber].symbol,
-                                    thisReceiverExpression.resolvedType.toIrType(),
-                                    thisRef,
-                                )
-                            }
-                        } else {
-                            thisRef
-                        }
-                    }
-                }
-            }
-            is FirScriptSymbol -> {
-                val firScript = boundSymbol.fir
-                val irScript = declarationStorage.getCachedIrScript(firScript) ?: error("IrScript for ${firScript.name} not found")
-                val receiverParameter =
-                    irScript.implicitReceiversParameters.find { it.index == calleeReference.contextReceiverNumber } ?: irScript.thisReceiver
-                if (receiverParameter != null) {
-                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                        IrGetValueImpl(startOffset, endOffset, receiverParameter.type, receiverParameter.symbol)
-                    }
-                } else {
-                    error("No script receiver found") // TODO: check if any valid situations possible here
-                }
-            }
-            is FirCallableSymbol -> {
-                val irFunction = when (boundSymbol) {
-                    is FirFunctionSymbol -> {
-                        val functionSymbol = declarationStorage.getIrFunctionSymbol(boundSymbol)
-                        conversionScope.findDeclarationInParentsStack<IrSimpleFunction>(functionSymbol)
-                    }
-                    is FirPropertySymbol -> {
-                        val property = declarationStorage.getIrPropertySymbol(boundSymbol) as? IrPropertySymbol
-                        property?.let { conversionScope.parentAccessorOfPropertyFromStack(it) }
-                    }
-                    else -> null
-                }
-
-                val receiver = irFunction?.let { function ->
-                    if (calleeReference.contextReceiverNumber != -1)
-                        function.valueParameters[calleeReference.contextReceiverNumber]
-                    else
-                        function.extensionReceiverParameter
-                }
-
-                if (receiver != null) {
-                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                        IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
-                    }
-                }
+        if (firClass.classKind.isObject && shouldGenerateReceiverAsSingletonReference(irClassSymbol)) {
+            return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                val irType = firClassSymbol.defaultType().toIrType()
+                IrGetObjectValueImpl(startOffset, endOffset, irType, irClassSymbol)
             }
         }
-        return visitQualifiedAccessExpression(thisReceiverExpression, data)
+
+        val irClass = conversionScope.findDeclarationInParentsStack<IrClass>(irClassSymbol)
+
+        val dispatchReceiver = conversionScope.dispatchReceiverParameter(irClass) ?: return null
+        return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+            val thisRef = callGenerator.findInjectedValue(calleeReference)?.let {
+                callGenerator.useInjectedValue(it, calleeReference, startOffset, endOffset)
+            } ?: IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
+
+            if (calleeReference.contextReceiverNumber == -1) {
+                return thisRef
+            }
+
+            val constructorForCurrentlyGeneratedDelegatedConstructor =
+                conversionScope.getConstructorForCurrentlyGeneratedDelegatedConstructor(irClass.symbol)
+
+            if (constructorForCurrentlyGeneratedDelegatedConstructor != null) {
+                val constructorParameter =
+                    constructorForCurrentlyGeneratedDelegatedConstructor.valueParameters[calleeReference.contextReceiverNumber]
+                IrGetValueImpl(startOffset, endOffset, constructorParameter.type, constructorParameter.symbol)
+            } else {
+                val contextReceivers =
+                    components.classifierStorage.getFieldsWithContextReceiversForClass(irClass, firClass)
+                require(contextReceivers.size > calleeReference.contextReceiverNumber) {
+                    "Not defined context receiver #${calleeReference.contextReceiverNumber} for $irClass. " +
+                            "Context receivers found: $contextReceivers"
+                }
+
+                IrGetFieldImpl(
+                    startOffset, endOffset, contextReceivers[calleeReference.contextReceiverNumber].symbol,
+                    thisReceiverExpression.resolvedType.toIrType(),
+                    thisRef,
+                )
+            }
+        }
+    }
+
+    private fun generateThisReceiverAccessForScript(
+        thisReceiverExpression: FirThisReceiverExpression,
+        firScriptSymbol: FirScriptSymbol
+    ): IrElement {
+        val calleeReference = thisReceiverExpression.calleeReference
+        val firScript = firScriptSymbol.fir
+        val irScript = declarationStorage.getCachedIrScript(firScript) ?: error("IrScript for ${firScript.name} not found")
+        val receiverParameter =
+            irScript.implicitReceiversParameters.find { it.index == calleeReference.contextReceiverNumber } ?: irScript.thisReceiver
+        if (receiverParameter != null) {
+            return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                IrGetValueImpl(startOffset, endOffset, receiverParameter.type, receiverParameter.symbol)
+            }
+        } else {
+            error("No script receiver found") // TODO: check if any valid situations possible here
+        }
+    }
+
+    private fun generateThisReceiverAccessForCallable(
+        thisReceiverExpression: FirThisReceiverExpression,
+        firCallableSymbol: FirCallableSymbol<*>
+    ): IrElement? {
+        val calleeReference = thisReceiverExpression.calleeReference
+        val irFunction = when (firCallableSymbol) {
+            is FirFunctionSymbol -> {
+                val functionSymbol = declarationStorage.getIrFunctionSymbol(firCallableSymbol)
+                conversionScope.findDeclarationInParentsStack<IrSimpleFunction>(functionSymbol)
+            }
+            is FirPropertySymbol -> {
+                val property = declarationStorage.getIrPropertySymbol(firCallableSymbol) as? IrPropertySymbol
+                property?.let { conversionScope.parentAccessorOfPropertyFromStack(it) }
+            }
+            else -> null
+        } ?: return null
+
+        val receiver = if (calleeReference.contextReceiverNumber != -1) {
+            irFunction.valueParameters[calleeReference.contextReceiverNumber]
+        } else {
+            irFunction.extensionReceiverParameter
+        } ?: return null
+
+        return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+            IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
+        }
     }
 
     override fun visitInaccessibleReceiverExpression(
