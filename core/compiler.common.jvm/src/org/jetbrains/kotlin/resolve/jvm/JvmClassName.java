@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.jvm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.utils.StringInterner;
 
 public class JvmClassName {
     @NotNull
@@ -57,7 +58,7 @@ public class JvmClassName {
     private FqName fqName;
 
     private JvmClassName(@NotNull String internalName) {
-        this.internalName = internalName;
+        this.internalName = StringInterner.interned(internalName);
     }
 
     /**
@@ -110,7 +111,7 @@ public class JvmClassName {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        return internalName.equals(((JvmClassName) o).internalName);
+        return internalName == ((JvmClassName) o).internalName; // strings are interned
     }
 
     @Override
