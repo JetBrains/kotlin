@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.SpecialMethodWithDefaultInfo
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Type
@@ -118,7 +116,7 @@ internal val bridgePhase = makeIrFilePhase(
     prerequisite = setOf(jvmValueClassPhase, inheritedDefaultMethodsOnClassesPhase)
 )
 
-internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
+internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
     // Represents a synthetic bridge to `overridden` with a precomputed signature
     private class Bridge(
         val overridden: IrSimpleFunction,
@@ -126,27 +124,21 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = mutableListOf()
     )
 
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid()
-    }
+    override fun lower(irClass: IrClass) {
+        // Bridges in DefaultImpls classes are handled in InterfaceLowering.
+        if (irClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS || irClass.isAnnotationClass) return
 
-    override fun visitClass(declaration: IrClass): IrStatement {
-        // Bridges in DefaultImpl classes are handled in InterfaceLowering.
-        if (declaration.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS || declaration.isAnnotationClass)
-            return super.visitClass(declaration)
+        val bridgeTargets = irClass.functions.filterTo(SmartList()) { it.isPotentialBridgeTarget() }
+        if (bridgeTargets.isEmpty()) return
 
-        val bridgeTargets = declaration.functions.filterTo(SmartList()) { it.isPotentialBridgeTarget() }
-        if (bridgeTargets.isEmpty())
-            return super.visitClass(declaration)
+        bridgeTargets.forEach { createBridges(irClass, it) }
 
-        bridgeTargets.forEach { createBridges(declaration, it) }
-
-        if (declaration.isSingleFieldValueClass) {
+        if (irClass.isSingleFieldValueClass) {
             // Inline class (implementing 'MutableCollection<T>', where T is Int or an inline class mapped to Int)
             // can contain a static replacement for a function 'remove', which forces value parameter boxing
             // in order to avoid signature clash with 'remove(int)' method in 'java.util.List'.
             // We should rewrite this static replacement as well ('remove' function itself is handled during special bridge processing).
-            val remove = declaration.functions.find {
+            val remove = irClass.functions.find {
                 val original = context.inlineClassReplacements.originalFunctionForStaticReplacement[it]
                 original != null && context.defaultMethodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(original)
             }
@@ -156,8 +148,6 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                 }
             }
         }
-
-        return super.visitClass(declaration)
     }
 
     private fun IrSimpleFunction.isPotentialBridgeTarget(): Boolean {

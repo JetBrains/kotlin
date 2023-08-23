@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.expressions.putArgument
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal val inheritedDefaultMethodsOnClassesPhase = makeIrFilePhase(
     ::InheritedDefaultMethodsOnClassesLowering,
@@ -123,25 +125,24 @@ internal val replaceDefaultImplsOverriddenSymbolsPhase = makeIrFilePhase(
     description = "Replace overridden symbols for methods inherited from interfaces to classes"
 )
 
-private class ReplaceDefaultImplsOverriddenSymbols(private val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoid {
-    override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(this)
-    }
-
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
+private class ReplaceDefaultImplsOverriddenSymbols(private val context: JvmBackendContext) : ClassLoweringPass {
+    override fun lower(irClass: IrClass) {
+        for (declaration in irClass.declarations) {
+            if (declaration is IrSimpleFunction) {
+                visitSimpleFunction(declaration)
+            }
+        }
     }
 
     // Functions introduced by InheritedDefaultMethodsOnClassesLowering may be inherited lower in the hierarchy.
     // Here we use the same logic as the delegation itself (`getTargetForRedirection`) to determine
     // if the overridden symbol has been, or will be, replaced and patch it accordingly.
-    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+    fun visitSimpleFunction(declaration: IrSimpleFunction) {
         declaration.overriddenSymbols = declaration.overriddenSymbols.map { symbol ->
             if (symbol.owner.findInterfaceImplementation(context.config.jvmDefaultMode) != null)
                 context.cachedDeclarations.getDefaultImplsRedirection(symbol.owner).symbol
             else symbol
         }
-        super.visitSimpleFunction(declaration)
     }
 }
 

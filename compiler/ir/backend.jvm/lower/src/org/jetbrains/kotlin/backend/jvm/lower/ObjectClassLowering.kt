@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGetField
@@ -31,23 +29,17 @@ internal val objectClassPhase = makeIrFilePhase(
     description = "Handle object classes"
 )
 
-private class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
-
-    private var pendingTransformations = mutableListOf<Function0<Unit>>()
+private class ObjectClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
+    private val pendingTransformations = mutableListOf<Function0<Unit>>()
 
     override fun lower(irFile: IrFile) {
-        irFile.accept(this, null)
-
-        pendingTransformations.forEach { it() }
+        super.lower(irFile)
+        for (transformation in pendingTransformations) {
+            transformation.invoke()
+        }
     }
 
-    override fun visitClassNew(declaration: IrClass): IrStatement {
-        process(declaration)
-        return super.visitClassNew(declaration)
-    }
-
-
-    private fun process(irClass: IrClass) {
+    override fun lower(irClass: IrClass) {
         if (!irClass.isObject) return
 
         val publicInstanceField = context.cachedDeclarations.getFieldForObjectInstance(irClass)
