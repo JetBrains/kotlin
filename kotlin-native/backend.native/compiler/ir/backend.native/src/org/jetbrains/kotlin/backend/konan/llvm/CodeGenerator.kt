@@ -203,7 +203,7 @@ private inline fun <T : FunctionGenerationContext> generateFunctionBody(
 
 private fun IrSimpleFunction.findOverriddenMethodOfAny(): IrSimpleFunction? {
     if (modality == Modality.ABSTRACT) return null
-    val resolved = resolveFakeOverride()!!
+    val resolved = resolveFakeOverrideOrFail()
     if ((resolved.parent as IrClass).isAny()) {
         return resolved
     }

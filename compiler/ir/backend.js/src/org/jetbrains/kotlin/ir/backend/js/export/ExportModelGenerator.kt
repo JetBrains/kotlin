@@ -778,7 +778,7 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
 
 fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIrBackendContext): Boolean {
     val firstExportedRealOverride = runIf(isFakeOverride) {
-        resolveFakeOverrideOrNull(allowAbstract = true) { it === this || it.parentClassOrNull?.isExported(context) != true }
+        resolveFakeOverrideMaybeAbstract { it === this || it.parentClassOrNull?.isExported(context) != true }
     }
 
     if (firstExportedRealOverride?.parentClassOrNull.isExportedInterface(context)) {

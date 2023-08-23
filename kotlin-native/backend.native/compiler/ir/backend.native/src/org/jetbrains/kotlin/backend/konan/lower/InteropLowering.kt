@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
-import org.jetbrains.kotlin.backend.konan.serialization.resolveFakeOverrideMaybeAbstract
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -1062,7 +1061,7 @@ private class InteropTransformer(
         builder.at(expression)
         val function = expression.symbol.owner
 
-        if ((function as? IrSimpleFunction)?.resolveFakeOverrideMaybeAbstract()?.symbol
+        if ((function as? IrSimpleFunction)?.resolveFakeOverrideMaybeAbstractOrFail()?.symbol
                 == symbols.interopNativePointedRawPtrGetter) {
 
             // Replace by the intrinsic call to be handled by code generator:
