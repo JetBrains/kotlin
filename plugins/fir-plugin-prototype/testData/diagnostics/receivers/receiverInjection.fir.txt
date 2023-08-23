@@ -10,8 +10,8 @@ FILE: receiverInjection.kt
     public final fun <T> injectAlgebra(): R|kotlin/Unit| {
     }
     public final fun test_1(a1: R|A|, a2: R|A|, b1: R|B|, b2: R|B|): R|kotlin/Unit| {
-        R|<local>/a1|.<Unresolved name: plus>#(R|<local>/a2|)
-        R|<local>/b1|.<Unresolved name: plus>#(R|<local>/b2|)
+        R|<local>/a1|.<Unresolved name: plus (+)>#(R|<local>/a2|)
+        R|<local>/b1|.<Unresolved name: plus (+)>#(R|<local>/b2|)
         R|/injectAlgebra|<R|A|>()
         (this@R|/test_1|, R|<local>/a1|).R|SubstitutionOverride</Algebra.plus: R|A|>|(R|<local>/a2|)
         (this@R|/test_1|, R|<local>/b1|).R|SubstitutionOverride</Algebra.plus: R|A|><None of the following candidates is applicable because of receiver type mismatch: [/Algebra.plus]>#|(R|<local>/b2|)
@@ -20,7 +20,7 @@ FILE: receiverInjection.kt
         (this@R|/test_1|, R|<local>/b1|).R|SubstitutionOverride</Algebra.plus: R|B|>|(R|<local>/b2|)
     }
     public final fun test_2(a1: R|A|, a2: R|A|, cond: R|kotlin/Boolean|): R|kotlin/Unit| {
-        R|<local>/a1|.<Unresolved name: plus>#(R|<local>/a2|)
+        R|<local>/a1|.<Unresolved name: plus (+)>#(R|<local>/a2|)
         when () {
             R|<local>/cond| ->  {
                 R|/injectAlgebra|<R|A|>()
@@ -28,5 +28,5 @@ FILE: receiverInjection.kt
             }
         }
 
-        R|<local>/a1|.<Unresolved name: plus>#(R|<local>/a2|)
+        R|<local>/a1|.<Unresolved name: plus (+)>#(R|<local>/a2|)
     }

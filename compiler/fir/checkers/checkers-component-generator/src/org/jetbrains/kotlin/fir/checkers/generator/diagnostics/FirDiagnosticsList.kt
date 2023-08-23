@@ -118,6 +118,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val UNRESOLVED_REFERENCE by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<String>("reference")
+            parameter<String?>("operator")
         }
         val UNRESOLVED_LABEL by error<PsiElement>(PositioningStrategy.LABEL)
         val DESERIALIZATION_ERROR by error<PsiElement>()

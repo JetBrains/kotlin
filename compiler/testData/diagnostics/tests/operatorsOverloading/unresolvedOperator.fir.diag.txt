@@ -1,0 +1,23 @@
+/unresolvedOperator.fir.kt:(67,69): error: Unresolved reference 'inc' for operator '++'.
+
+/unresolvedOperator.fir.kt:(75,77): error: Unresolved reference 'dec' for operator '--'.
+
+/unresolvedOperator.fir.kt:(82,83): error: Unresolved reference 'unaryPlus' for operator '+'.
+
+/unresolvedOperator.fir.kt:(89,90): error: Unresolved reference 'unaryMinus' for operator '-'.
+
+/unresolvedOperator.fir.kt:(96,97): error: Unresolved reference 'not' for operator '!'.
+
+/unresolvedOperator.fir.kt:(105,106): error: Unresolved reference 'times' for operator '*'.
+
+/unresolvedOperator.fir.kt:(118,119): error: Unresolved reference 'plus' for operator '+'.
+
+/unresolvedOperator.fir.kt:(132,133): error: Unresolved reference 'minus' for operator '-'.
+
+/unresolvedOperator.fir.kt:(142,143): error: Unresolved reference 'div' for operator '/'.
+
+/unresolvedOperator.fir.kt:(152,153): error: Unresolved reference 'rem' for operator '%'.
+
+/unresolvedOperator.fir.kt:(162,164): error: Unresolved reference 'rangeTo' for operator '..'.
+
+/unresolvedOperator.fir.kt:(173,176): error: Unresolved reference 'rangeUntil' for operator '..<'.

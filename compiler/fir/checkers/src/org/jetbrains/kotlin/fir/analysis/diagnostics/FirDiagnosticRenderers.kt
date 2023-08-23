@@ -189,4 +189,8 @@ object FirDiagnosticRenderers {
     val OPTIONAL_SENTENCE = Renderer { it: String? ->
         if (!it.isNullOrBlank()) " $it." else ""
     }
+
+    val FOR_OPTIONAL_OPERATOR = Renderer { it: String? ->
+        if (!it.isNullOrBlank()) " for operator '$it'" else ""
+    }
 }

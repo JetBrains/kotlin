@@ -98,4 +98,19 @@ object OperatorNameConventions {
 
     @JvmField
     val STATEMENT_LIKE_OPERATORS = setOf(SET) + ASSIGNMENT_OPERATIONS
+
+    val TOKENS_BY_OPERATOR_NAME = mapOf(
+        INC to "++",
+        DEC to "--",
+        UNARY_PLUS to "+",
+        UNARY_MINUS to "-",
+        NOT to "!",
+        TIMES to "*",
+        PLUS to "+",
+        MINUS to "-",
+        DIV to "/",
+        REM to "%",
+        RANGE_TO to "..",
+        RANGE_UNTIL to "..<",
+    )
 }

@@ -16,7 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedPartOfQualifiedCallUnresolved.kt
              {
                 [ResolvedTo(BODY_RESOLVE)] lval <receiver>: R|ERROR CLASS: Unresolved name: peek| = <Unresolved name: peek>#()
                 [ResolvedTo(BODY_RESOLVE)] lval <unary>: <ERROR TYPE REF: Unresolved name: braceBalance> = R|<local>/<receiver>|.<Unresolved name: braceBalance>#
-                R|<local>/<receiver>|.<Unresolved name: braceBalance># = R|<local>/<unary>|.<Unresolved name: inc>#()
+                R|<local>/<receiver>|.<Unresolved name: braceBalance># = R|<local>/<unary>|.<Unresolved name: inc (++)>#()
                 R|<local>/<unary>|
             }
 

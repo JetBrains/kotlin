@@ -53,6 +53,8 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.CodeFragmentAdjustment
+import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirCallResolver(
     private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
@@ -700,6 +702,9 @@ class FirCallResolver(
         expectedCandidates: Collection<Candidate>? = null
     ): FirNamedReference {
         val source = reference.source
+        val operatorToken = runIf(callInfo.origin == FirFunctionCallOrigin.Operator) {
+            OperatorNameConventions.TOKENS_BY_OPERATOR_NAME[name]
+        }
 
         val diagnostic = when {
             expectedCallKind != null -> {
@@ -738,7 +743,7 @@ class FirCallResolver(
                                             singleExpectedCandidate
                                         )
                                     }
-                                    else -> ConeUnresolvedNameError(name)
+                                    else -> ConeUnresolvedNameError(name, operatorToken)
                                 }
                             }
                         }
@@ -754,7 +759,7 @@ class FirCallResolver(
                             explicitReceiver.resolvedType,
                         )
                     reference is FirSuperReference && (reference.superTypeRef.firClassLike(session) as? FirClass)?.isInterface == true -> ConeNoConstructorError
-                    else -> ConeUnresolvedNameError(name)
+                    else -> ConeUnresolvedNameError(name, operatorToken)
                 }
             }
 

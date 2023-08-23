@@ -65,9 +65,18 @@ class ConeUnresolvedTypeQualifierError(val qualifiers: List<FirQualifierPart>, o
     override val reason: String get() = "Symbol not found for $qualifier${if (isNullable) "?" else ""}"
 }
 
-class ConeUnresolvedNameError(val name: Name) : ConeUnresolvedError {
+class ConeUnresolvedNameError(
+    val name: Name,
+    val operatorToken: String? = null,
+) : ConeUnresolvedError {
     override val qualifier: String get() = name.asString()
-    override val reason: String get() = "Unresolved name: $name"
+    override val reason: String get() = "Unresolved name: $prettyReference"
+
+    private val prettyReference: String
+        get() = when (val token = operatorToken) {
+            null -> name.toString()
+            else -> "$name ($token)"
+        }
 }
 
 class ConeFunctionCallExpectedError(

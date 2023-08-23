@@ -13,6 +13,6 @@ FILE: [ResolvedTo(IMPORTS)] arrayIndexExpressionWithInc.kt
         [ResolvedTo(BODY_RESOLVE)] lval <array>: <ERROR TYPE REF: Unresolved name: ArrayList> = R|<local>/a|
         [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/Int| = Int(0)
         [ResolvedTo(BODY_RESOLVE)] lval <unary>: <ERROR TYPE REF: Unresolved name: get> = R|<local>/<array>|.<Unresolved name: get>#(R|<local>/<index_0>|)
-        R|<local>/<array>|.<Unresolved name: set>#(R|<local>/<index_0>|, R|<local>/<unary>|.<Unresolved name: inc>#())
+        R|<local>/<array>|.<Unresolved name: set>#(R|<local>/<index_0>|, R|<local>/<unary>|.<Unresolved name: inc (++)>#())
         R|<local>/<unary>|
     }

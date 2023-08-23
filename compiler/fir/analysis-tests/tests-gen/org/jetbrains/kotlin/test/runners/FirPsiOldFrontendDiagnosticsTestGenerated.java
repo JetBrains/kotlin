@@ -23964,6 +23964,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 runTest("compiler/testData/diagnostics/tests/operatorsOverloading/plusAssignOnVarAndCollections.kt");
             }
 
+            @Test
+            @TestMetadata("unresolvedOperator.kt")
+            public void testUnresolvedOperator() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/unresolvedOperator.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/operatorsOverloading/until")
             @TestDataPath("$PROJECT_ROOT")

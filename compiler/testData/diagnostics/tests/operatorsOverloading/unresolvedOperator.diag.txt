@@ -1,0 +1,37 @@
+/unresolvedOperator.kt:6:6: error: unresolved reference: ++
+    a++
+     ^
+/unresolvedOperator.kt:7:6: error: unresolved reference: --
+    a--
+     ^
+/unresolvedOperator.kt:8:5: error: unresolved reference: +
+    +a
+    ^
+/unresolvedOperator.kt:9:5: error: unresolved reference: -
+    -a
+    ^
+/unresolvedOperator.kt:10:5: error: unresolved reference: !
+    !a
+    ^
+/unresolvedOperator.kt:11:7: error: unresolved reference: *
+    a * a
+      ^
+/unresolvedOperator.kt:12:10: error: unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
+public operator fun String?.plus(other: Any?): String defined in kotlin
+    true + false
+         ^
+/unresolvedOperator.kt:13:7: error: unresolved reference: -
+    a - a
+      ^
+/unresolvedOperator.kt:14:7: error: unresolved reference: /
+    a / a
+      ^
+/unresolvedOperator.kt:15:7: error: unresolved reference: %
+    a % a
+      ^
+/unresolvedOperator.kt:16:7: error: unresolved reference: ..
+    a .. a
+      ^
+/unresolvedOperator.kt:17:7: error: unresolved reference: ..<
+    a ..< a
+      ^

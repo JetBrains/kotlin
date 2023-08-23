@@ -50,12 +50,13 @@ private fun ConeDiagnostic.toKtDiagnostic(
 ): KtDiagnostic? = when (this) {
     is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.createOn(
         source,
-        this.name.asString()
+        this.name.asString(),
+        null,
     )
 
-    is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.classId.asString())
-    is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.name.asString())
-    is ConeUnresolvedTypeQualifierError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.qualifier)
+    is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.classId.asString(), null)
+    is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, name.asString(), operatorToken)
+    is ConeUnresolvedTypeQualifierError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.qualifier, null)
     is ConeFunctionCallExpectedError -> FirErrors.FUNCTION_CALL_EXPECTED.createOn(source, this.name.asString(), this.hasValueParameters)
     is ConeFunctionExpectedError -> FirErrors.FUNCTION_EXPECTED.createOn(source, this.expression, this.type)
     is ConeNoConstructorError -> FirErrors.NO_CONSTRUCTOR.createOn(callOrAssignmentSource ?: source)
@@ -73,7 +74,8 @@ private fun ConeDiagnostic.toKtDiagnostic(
         // See: https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deprecated/
         FirErrors.UNRESOLVED_REFERENCE.createOn(
             source,
-            ((this.candidateSymbol as? FirCallableSymbol)?.name ?: SpecialNames.NO_NAME_PROVIDED).asString()
+            ((this.candidateSymbol as? FirCallableSymbol)?.name ?: SpecialNames.NO_NAME_PROVIDED).asString(),
+            null,
         )
     }
 

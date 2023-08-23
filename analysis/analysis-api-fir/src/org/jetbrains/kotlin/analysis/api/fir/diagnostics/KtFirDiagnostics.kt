@@ -251,6 +251,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
     interface UnresolvedReference : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UnresolvedReference::class
         val reference: String
+        val operator: String?
     }
 
     interface UnresolvedLabel : KtFirDiagnostic<PsiElement> {

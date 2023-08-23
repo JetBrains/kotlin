@@ -285,6 +285,7 @@ internal class InvisibleReferenceImpl(
 
 internal class UnresolvedReferenceImpl(
     override val reference: String,
+    override val operator: String?,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.UnresolvedReference
