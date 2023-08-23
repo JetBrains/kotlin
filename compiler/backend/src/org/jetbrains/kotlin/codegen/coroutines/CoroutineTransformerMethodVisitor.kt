@@ -133,9 +133,10 @@ class CoroutineTransformerMethodVisitor(
             )
         }
 
+        val firstStateLabel = LabelNode()
+
         methodNode.instructions.apply {
             val tableSwitchLabel = LabelNode()
-            val firstStateLabel = LabelNode()
             val defaultLabel = LabelNode()
 
             // tableswitch(this.label)
@@ -209,7 +210,7 @@ class CoroutineTransformerMethodVisitor(
         methodNode.removeEmptyCatchBlocks()
 
         if (shouldOptimiseUnusedVariables) {
-            updateLvtAccordingToLiveness(methodNode, isForNamedFunction, stateLabels, livenessFrames)
+            updateLvtAccordingToLiveness(methodNode, isForNamedFunction, stateLabels, livenessFrames, firstStateLabel)
         }
 
         writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
@@ -758,7 +759,7 @@ class CoroutineTransformerMethodVisitor(
         ): SpilledVariableAndField? {
             if (spillableVariable == null) return null
             val name = localVariableName(methodNode, slot, suspension.suspensionCallBegin.index()) ?: return null
-            return SpilledVariableAndField(spillableVariable.fieldName, name)
+            return SpilledVariableAndField(spillableVariable.fieldName, name, slot)
         }
 
         val spilledToVariableMapping = arrayListOf<List<SpilledVariableAndField>>()
@@ -1092,7 +1093,7 @@ class CoroutineTransformerMethodVisitor(
         return
     }
 
-    private data class SpilledVariableAndField(val fieldName: String, val variableName: String)
+    internal data class SpilledVariableAndField(val fieldName: String, val variableName: String, val slot: Int)
 }
 
 private class SpillableVariable(
@@ -1289,7 +1290,8 @@ private fun updateLvtAccordingToLiveness(
     method: MethodNode,
     isForNamedFunction: Boolean,
     suspensionPoints: List<LabelNode>,
-    livenessFrames: MutableMap<AbstractInsnNode, VariableLivenessFrame>
+    livenessFrames: MutableMap<AbstractInsnNode, VariableLivenessFrame>,
+    firstStateLabel: LabelNode
 ) {
     fun List<LocalVariableNode>.findRecord(insnIndex: Int, variableIndex: Int): LocalVariableNode? {
         for (variable in this) {
@@ -1318,6 +1320,8 @@ private fun updateLvtAccordingToLiveness(
 
     propagateLiveness(method, livenessFrames)
 
+    markSpillingStartAndUnspillingEndAsDead(suspensionPoints, firstStateLabel, livenessFrames, method)
+
     val oldLvt = arrayListOf<LocalVariableNode>()
     for (record in method.localVariables) {
         oldLvt += record
@@ -1332,6 +1336,7 @@ private fun updateLvtAccordingToLiveness(
         var startLabel: LabelNode? = null
         for (insnIndex in 0 until (method.instructions.size() - 1)) {
             val insn = method.instructions[insnIndex]
+            if (livenessFrames[insn] == null || livenessFrames[insn.next] == null) continue
             if (!isAlive(insn, variableIndex) && isAlive(insn.next, variableIndex)) {
                 startLabel = insn as? LabelNode ?: insn.findNextOrNull { it is LabelNode } as? LabelNode
             }
@@ -1377,6 +1382,28 @@ private fun updateLvtAccordingToLiveness(
             method.localVariables.add(variable)
             continue
         }
+    }
+}
+
+private fun markSpillingStartAndUnspillingEndAsDead(
+    suspensionPoints: List<LabelNode>,
+    firstStateLabel: LabelNode,
+    livenessFrames: MutableMap<AbstractInsnNode, VariableLivenessFrame>,
+    method: MethodNode,
+) {
+    for (suspensionLabel in suspensionPoints + firstStateLabel) {
+        if (livenessFrames[suspensionLabel] != null) continue
+        var current: AbstractInsnNode? = suspensionLabel
+        while (current != null && livenessFrames[current] == null) {
+            current = current.next
+        }
+        if (current == null) break
+        livenessFrames.put(current.previous, VariableLivenessFrame(method.maxLocals))
+        while (current != null && livenessFrames[current] != null) {
+            current = current.next
+        }
+        if (current == null) break
+        livenessFrames.put(current, VariableLivenessFrame(method.maxLocals))
     }
 }
 
