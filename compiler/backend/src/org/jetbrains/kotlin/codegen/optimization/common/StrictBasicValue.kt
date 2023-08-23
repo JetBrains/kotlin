@@ -56,12 +56,9 @@ open class StrictBasicValue(type: Type?) : BasicValue(type) {
 
         other as StrictBasicValue
 
-        if (this === NULL_VALUE) return other === NULL_VALUE
-        if (other === NULL_VALUE) return this === NULL_VALUE
+        if (this === NULL_VALUE || other === NULL_VALUE) return false
 
-        if (type != other.type) return false
-
-        return true
+        return type == other.type
     }
 
     override fun hashCode() = (type?.hashCode() ?: 0)
