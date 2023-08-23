@@ -154,8 +154,8 @@ private class UnfilteredProcessOutput {
     private val stdErr = ByteArrayOutputStream()
 
     fun toProcessOutput(outputFilter: TestOutputFilter): ProcessOutput = ProcessOutput(
-        stdOut = outputFilter.filter(stdOut.toString(Charsets.UTF_8)),
-        stdErr = stdErr.toString(Charsets.UTF_8)
+        stdOut = outputFilter.filter(stdOut.toString(Charsets.UTF_8.name())),
+        stdErr = stdErr.toString(Charsets.UTF_8.name())
     )
 
     companion object {
