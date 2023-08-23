@@ -67,7 +67,7 @@ internal class JvmValueClassLoweringDispatcher(private val context: JvmBackendCo
 private class NeedsToVisit(private val context: JvmBackendContext) : IrElementVisitorVoid() {
     var result = false
     private val replacements = context.valueClassLoweringDispatcherSharedData
-    private val visitedParameters = mutableSetOf<IrSymbol>()
+    private val visitedTypeParameters = mutableSetOf<IrSymbol>()
 
     override fun visitElement(element: IrElement) {
         if (!result) element.acceptChildrenVoid(this)
@@ -79,7 +79,11 @@ private class NeedsToVisit(private val context: JvmBackendContext) : IrElementVi
     }
 
     private val IrClass.needsHandling: Boolean
-        get() = isValue || typeParameters.any { it.acceptAndGetResult() }
+        get() {
+            visitClassHeader(this)
+            return result
+        }
+
     private val IrType.needsHandling: Boolean
         get() = this is IrSimpleType && (classifier.isBound && erasedUpperBound.needsHandling || arguments.any { it.typeOrNull?.needsHandling == true })
 
@@ -99,8 +103,7 @@ private class NeedsToVisit(private val context: JvmBackendContext) : IrElementVi
     private fun visitClassHeader(declaration: IrClass) {
         if (result) return
         result = replacements.classResults.getOrPut(Header to declaration) {
-            declaration.needsHandling ||
-                    declaration.typeParameters.any { it.acceptAndGetResult() } ||
+            declaration.isValue || declaration.typeParameters.any { it.acceptAndGetResult() } ||
                     declaration.superTypes.mapNotNull { (it.classifierOrNull as? IrClassSymbol)?.owner }.any { visitClassHeader(it); result }
         }
     }
@@ -134,14 +137,14 @@ private class NeedsToVisit(private val context: JvmBackendContext) : IrElementVi
     }
 
     override fun visitValueParameter(declaration: IrValueParameter) {
-        if (result || !visitedParameters.add(declaration.symbol)) return
+        if (result) return
         result = declaration.type.needsHandling
         if (result) return
         super.visitValueParameter(declaration)
     }
 
     override fun visitTypeParameter(declaration: IrTypeParameter) {
-        if (result || !visitedParameters.add(declaration.symbol)) return
+        if (result || !visitedTypeParameters.add(declaration.symbol)) return
         result = declaration.superTypes.any { it.needsHandling }
         if (result) return
         super.visitTypeParameter(declaration)
