@@ -104,6 +104,31 @@ private class LLFirTypeTargetResolver(
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
+            is FirFunction -> resolve(target, TypeStateKeepers.FUNCTION)
+            is FirProperty -> resolve(target, TypeStateKeepers.PROPERTY)
+            is FirCallableDeclaration,
+            is FirDanglingModifierList,
+            is FirFileAnnotationsContainer,
+            is FirTypeAlias,
+            is FirScript,
+            is FirRegularClass,
+            -> rawResolve(target)
+
+            is FirFile, is FirAnonymousInitializer, is FirCodeFragment -> {}
+            else -> errorWithAttachment("Unknown declaration ${target::class.simpleName}") {
+                withFirEntry("declaration", target)
+            }
+        }
+    }
+
+    private fun <T : FirElementWithResolveState> resolve(target: T, keeper: StateKeeper<T, Unit>) {
+        resolveWithKeeper(target, Unit, keeper) {
+            rawResolve(target)
+        }
+    }
+
+    private fun rawResolve(target: FirElementWithResolveState) {
+        when (target) {
             is FirConstructor -> {
                 // ConstructedTypeRef should be resolved only with type parameters, but not with nested classes and classes from supertypes
                 val scopesBeforeContainingClass = transformer.scopesBefore
@@ -128,11 +153,9 @@ private class LLFirTypeTargetResolver(
             is FirDanglingModifierList, is FirFileAnnotationsContainer, is FirCallableDeclaration, is FirTypeAlias -> {
                 target.accept(transformer, null)
             }
-            is FirRegularClass -> {
-                resolveClassTypes(target)
-            }
-            is FirFile, is FirAnonymousInitializer, is FirCodeFragment -> {}
-            else -> errorWithAttachment("Unknown declaration ${target::class}") {
+
+            is FirRegularClass -> resolveClassTypes(target)
+            else -> errorWithAttachment("Unknown declaration ${target::class.simpleName}") {
                 withFirEntry("declaration", target)
             }
         }
@@ -155,5 +178,23 @@ private class LLFirTypeTargetResolver(
                 contextReceiver.transformSingle(transformer, null)
             }
         }
+    }
+}
+
+private object TypeStateKeepers {
+    val FUNCTION: StateKeeper<FirFunction, Unit> = stateKeeper { function, context ->
+        add(CALLABLE_DECLARATION, context)
+        entityList(function.valueParameters, CALLABLE_DECLARATION, context)
+    }
+
+    val PROPERTY: StateKeeper<FirProperty, Unit> = stateKeeper { property, context ->
+        add(CALLABLE_DECLARATION, context)
+        entity(property.getter, FUNCTION, context)
+        entity(property.setter, FUNCTION, context)
+        entity(property.backingField, CALLABLE_DECLARATION, context)
+    }
+
+    private val CALLABLE_DECLARATION: StateKeeper<FirCallableDeclaration, Unit> = stateKeeper { _, _ ->
+        add(FirCallableDeclaration::returnTypeRef, FirCallableDeclaration::replaceReturnTypeRef)
     }
 }
