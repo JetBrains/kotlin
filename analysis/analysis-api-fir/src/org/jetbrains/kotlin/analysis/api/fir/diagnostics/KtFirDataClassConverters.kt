@@ -4785,6 +4785,30 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY) { firDiagnostic ->
+        DeprecatedAccessToEnumEntryCompanionPropertyImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM) { firDiagnostic ->
+        DeprecatedAccessToEntryPropertyFromEnumImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE) { firDiagnostic ->
+        DeprecatedAccessToEnumEntryPropertyAsReferenceImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DEPRECATED_DECLARATION_OF_ENUM_ENTRY) { firDiagnostic ->
+        DeprecatedDeclarationOfEnumEntryImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.CONFLICTING_JVM_DECLARATIONS) { firDiagnostic ->
         ConflictingJvmDeclarationsImpl(
             firDiagnostic as KtPsiDiagnostic,

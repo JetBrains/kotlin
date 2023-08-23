@@ -4028,6 +4028,26 @@ internal class RedundantLabelWarningImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtLabelReferenceExpression>(firDiagnostic, token), KtFirDiagnostic.RedundantLabelWarning
 
+internal class DeprecatedAccessToEnumEntryCompanionPropertyImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DeprecatedAccessToEnumEntryCompanionProperty
+
+internal class DeprecatedAccessToEntryPropertyFromEnumImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DeprecatedAccessToEntryPropertyFromEnum
+
+internal class DeprecatedAccessToEnumEntryPropertyAsReferenceImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DeprecatedAccessToEnumEntryPropertyAsReference
+
+internal class DeprecatedDeclarationOfEnumEntryImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtEnumEntry>(firDiagnostic, token), KtFirDiagnostic.DeprecatedDeclarationOfEnumEntry
+
 internal class ConflictingJvmDeclarationsImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

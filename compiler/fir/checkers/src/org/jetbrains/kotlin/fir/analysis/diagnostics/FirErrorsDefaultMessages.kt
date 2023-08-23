@@ -174,7 +174,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_USES_EXT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_NOT_TO_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_BINARY_MOD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_DECLARATION_OF_ENUM_ENTRY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_IDENTITY_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_MODIFIER_CONTAINING_DECLARATION
@@ -2429,6 +2433,24 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             REDUNDANT_LABEL_WARNING,
             "Label is redundant, because it cannot be referenced in a 'break', 'continue', or 'return' expression."
+        )
+
+        // Enum entries deprecations
+        map.put(
+            DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY,
+            "Ambiguous access to the enum companion's property 'entries' is deprecated. Please, add the explicit 'Companion' qualifier to the class name."
+        )
+        map.put(
+            DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM,
+            "Ambiguous access to the 'entries' property from within the enum is deprecated. Please add the explicit qualifier to the call."
+        )
+        map.put(
+            DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE,
+            "Ambiguous access to the 'entries' property is deprecated. Please specify the type of the referenced expression explicitly."
+        )
+        map.put(
+            DEPRECATED_DECLARATION_OF_ENUM_ENTRY,
+            "Conflicting declarations: the enum entry 'entries' and the property 'Enum.entries' (KT-48872). Please rename the enum entry declaration."
         )
 
         // Extended checkers group

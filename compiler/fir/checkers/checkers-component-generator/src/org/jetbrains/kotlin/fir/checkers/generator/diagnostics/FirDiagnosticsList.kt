@@ -1699,6 +1699,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     val LABEL by object : DiagnosticGroup("label") {
         val REDUNDANT_LABEL_WARNING by warning<KtLabelReferenceExpression>(PositioningStrategy.LABEL)
     }
+
+    val ENUM_ENTRIES_DEPRECATIONS by object : DiagnosticGroup("Enum.entries resolve deprecations") {
+        val DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY by warning<PsiElement>()
+        val DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM by warning<PsiElement>()
+        val DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE by warning<PsiElement>()
+        val DEPRECATED_DECLARATION_OF_ENUM_ENTRY by warning<KtEnumEntry>()
+    }
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {

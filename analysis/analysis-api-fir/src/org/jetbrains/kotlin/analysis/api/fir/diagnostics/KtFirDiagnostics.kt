@@ -3338,6 +3338,22 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RedundantLabelWarning::class
     }
 
+    interface DeprecatedAccessToEnumEntryCompanionProperty : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = DeprecatedAccessToEnumEntryCompanionProperty::class
+    }
+
+    interface DeprecatedAccessToEntryPropertyFromEnum : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = DeprecatedAccessToEntryPropertyFromEnum::class
+    }
+
+    interface DeprecatedAccessToEnumEntryPropertyAsReference : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = DeprecatedAccessToEnumEntryPropertyAsReference::class
+    }
+
+    interface DeprecatedDeclarationOfEnumEntry : KtFirDiagnostic<KtEnumEntry> {
+        override val diagnosticClass get() = DeprecatedDeclarationOfEnumEntry::class
+    }
+
     interface ConflictingJvmDeclarations : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ConflictingJvmDeclarations::class
     }

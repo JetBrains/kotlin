@@ -845,6 +845,12 @@ object FirErrors {
     // label
     val REDUNDANT_LABEL_WARNING by warning0<KtLabelReferenceExpression>(SourceElementPositioningStrategies.LABEL)
 
+    // Enum.entries resolve deprecations
+    val DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY by warning0<PsiElement>()
+    val DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM by warning0<PsiElement>()
+    val DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE by warning0<PsiElement>()
+    val DEPRECATED_DECLARATION_OF_ENUM_ENTRY by warning0<KtEnumEntry>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(FirErrorsDefaultMessages)
     }
