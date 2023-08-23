@@ -83,7 +83,7 @@ dependencies {
     testImplementation(projectTests(":generators:test-generator"))
 
     testImplementation(projectTests(":js:js.tests"))
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
     testApi(project(":kotlin-test:kotlin-test-jvm"))
 
     // Dependencies for Kotlin/Native test infra:

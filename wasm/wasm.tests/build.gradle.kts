@@ -61,10 +61,12 @@ val jsShell by configurations.creating {
 }
 
 dependencies {
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
     testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(intellijCore())
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
 
     jsShell("org.mozilla:jsshell:$jsShellVersion:$jsShellSuffix@zip")
 

@@ -24,6 +24,8 @@ dependencies {
     testImplementation(projectTests(":analysis:analysis-api-fir"))
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":analysis:low-level-api-fir"))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
 }
 
 sourceSets {

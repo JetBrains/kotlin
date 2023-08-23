@@ -18,6 +18,8 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
 }
 
 sourceSets {
@@ -25,7 +27,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir
 }
 

@@ -8,7 +8,7 @@ project.updateJvmTarget("1.8")
 dependencies {
     api(kotlinStdlib())
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
 }
 
 sourceSets {

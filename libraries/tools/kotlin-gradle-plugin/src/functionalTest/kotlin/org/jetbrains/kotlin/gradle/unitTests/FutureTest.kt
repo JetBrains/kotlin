@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForEx
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Test
-import org.junit.jupiter.api.assertThrows
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.*
 

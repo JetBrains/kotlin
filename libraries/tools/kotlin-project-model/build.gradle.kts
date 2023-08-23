@@ -19,6 +19,7 @@ dependencies {
     testFixturesImplementation(project(":core:util.runtime"))
     testFixturesImplementation(projectTests(":generators:test-generator"))
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testFixturesImplementation(libs.junit.jupyter.api)
 }
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {

@@ -21,7 +21,7 @@ dependencies {
     testApi(project(":compiler:cli-common"))
     testApi(project(":daemon-common"))
     testApi(project(":kotlin-daemon-client"))
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
     testApi(project(":kotlin-test:kotlin-test-jvm"))
     testApi(project(":kotlin-test:kotlin-test-junit"))
     testCompilerClasspath(project(":kotlin-compiler"))

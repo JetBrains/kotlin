@@ -18,7 +18,7 @@ dependencies {
     testRuntimeOnly("xerces:xercesImpl:2.12.0")
     testRuntimeOnly(commonDependency("commons-lang:commons-lang"))
 
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testApi(projectTests(":compiler:tests-common"))

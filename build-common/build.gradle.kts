@@ -25,7 +25,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-common"))
     testApiJUnit5()
     testImplementation(libs.junit.jupyter.params)
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
     testApi(protobufFull())
     testApi(kotlinStdlib())
     testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))

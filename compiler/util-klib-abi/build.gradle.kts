@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":compiler:ir.serialization.common"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     testApiJUnit5()
+    testImplementation(libs.junit.jupyter.params)
     testImplementation(intellijCore())
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(projectTests(":compiler:tests-common-new"))

@@ -197,13 +197,13 @@ fun Project.testApiJUnit5() {
     with(dependencies) {
         val libsVersionCatalog = libsVersionCatalog
         testApi(platform(libsVersionCatalog.findLibrary("junit-bom").orElseThrow { GradleException("No version for `junit-bom`") }))
-        testApi(libsVersionCatalog.findLibrary("junit-jupyter-api").orElseThrow { GradleException("No version for `junit-jupyter-api`") })
+        testImplementation(libsVersionCatalog.findLibrary("junit-jupyter-api").orElseThrow { GradleException("No version for `junit-jupyter-api`") })
         testRuntimeOnly(
             libsVersionCatalog.findLibrary("junit-jupyter-engine").orElseThrow { GradleException("No version for `junit-jupyter-engine`") })
-        testApi(
+        testImplementation(
             libsVersionCatalog.findLibrary("junit-platform-commons")
                 .orElseThrow { GradleException("No version for `junit-platform-commons`") })
-        testApi(
+        testImplementation(
             libsVersionCatalog.findLibrary("junit-platform-launcher")
                 .orElseThrow { GradleException("No version for `junit-platform-launcher`") })
     }

@@ -9,14 +9,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
-import org.junit.jupiter.api.DisplayName
 import kotlin.test.Test
 
 class KotlinBuildStatHandlerTest {
 
-    @DisplayName("Checks that all KonanTarget names are presented in MPP_PLATFORMS statistic's report validator")
-    @Test
-    fun mppPlatformsShouldContainsllKonanTargetsTest() {
+    @Test // Checks that all KonanTarget names are presented in MPP_PLATFORMS statistic's report validator
+    fun mppPlatformsShouldContainAllKonanTargetsTest() {
         val regex = Regex(StringMetrics.MPP_PLATFORMS.anonymization.validationRegexp())
 
         val konanTargetsMissedInMppPlatforms = KonanTarget::class.sealedSubclasses
@@ -28,8 +26,7 @@ class KotlinBuildStatHandlerTest {
         }
     }
 
-    @DisplayName("Checks that all KotlinPlatformType names are presented in MPP_PLATFORMS statistic's report validator")
-    @Test
+    @Test // Checks that all KotlinPlatformType names are presented in MPP_PLATFORMS statistic's report validator
     fun mppPlatformsShouldContainAllKotlinPlatformTypeTest() {
         val regex = Regex(StringMetrics.MPP_PLATFORMS.anonymization.validationRegexp())
 
@@ -43,8 +40,7 @@ class KotlinBuildStatHandlerTest {
     }
 
 
-    @DisplayName("Checks that only values listed in KotlinPlatformType and KonanTarget are included in MPP_PLATFORMS")
-    @Test
+    @Test // Checks that only values listed in KotlinPlatformType and KonanTarget are included in MPP_PLATFORMS
     fun mppPlatformsShouldContainOnlyKonanTargetsAndKotlinPlatformTypeTest() {
         val allowedMppValues =
             (StringMetrics.MPP_PLATFORMS.anonymization as StringAnonymizationPolicy.AllowedListAnonymizer)
