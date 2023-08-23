@@ -135,6 +135,7 @@ class TemporaryValsAnalyzer {
     }
 
     private sealed class StoredValue : StoreLoadValue {
+        override fun getSize(): Int = 1
 
         object Unknown : StoredValue()
 
@@ -157,30 +158,26 @@ class TemporaryValsAnalyzer {
 
     private class StoreTrackingInterpreter(
         private val storeInsnToStoreData: Map<AbstractInsnNode, StoreData>
-    ) : StoreLoadInterpreter<StoredValue> {
+    ) : StoreLoadInterpreter<StoredValue>() {
 
-        override fun uninitialized(): StoredValue =
-            StoredValue.Unknown
+        override fun uninitialized(): StoredValue = StoredValue.Unknown
 
-        override fun valueParameter(type: Type): StoredValue =
-            StoredValue.Unknown
+        override fun newValue(type: Type?): StoredValue = StoredValue.Unknown
 
-        override fun store(insn: VarInsnNode): StoredValue {
-            val temporaryValData = storeInsnToStoreData[insn]
-            if (temporaryValData != null) {
-                return temporaryValData.value
-            }
-            return StoredValue.Unknown
-        }
-
-        override fun load(insn: VarInsnNode, value: StoredValue) {
-            if (value is StoredValue.DirtyStore) {
+        override fun copyOperation(insn: AbstractInsnNode, value: StoredValue?): StoredValue {
+            if (value == null) {
+                val temporaryValData = storeInsnToStoreData[insn]
+                if (temporaryValData != null) {
+                    return temporaryValData.value
+                }
+            } else if (value is StoredValue.DirtyStore) {
                 // If we load a dirty value, invalidate all related temporary vals.
                 value.temporaryVals.forEach { it.isDirty = true }
             } else if (value is StoredValue.Store) {
                 // Keep track of a load instruction
                 value.temporaryVal.loads.add(insn)
             }
+            return StoredValue.Unknown
         }
 
         override fun iinc(insn: IincInsnNode, value: StoredValue): StoredValue {
@@ -219,5 +216,34 @@ class TemporaryValsAnalyzer {
                 is StoredValue.DirtyStore -> this.temporaryVals
                 else -> emptySet()
             }
+
+        override fun newOperation(insn: AbstractInsnNode?): StoredValue {
+            TODO("Not yet implemented")
+        }
+
+        override fun unaryOperation(insn: AbstractInsnNode?, value: StoredValue?): StoredValue {
+            TODO("Not yet implemented")
+        }
+
+        override fun binaryOperation(insn: AbstractInsnNode?, value1: StoredValue?, value2: StoredValue?): StoredValue {
+            TODO("Not yet implemented")
+        }
+
+        override fun ternaryOperation(
+            insn: AbstractInsnNode?,
+            value1: StoredValue?,
+            value2: StoredValue?,
+            value3: StoredValue?,
+        ): StoredValue {
+            TODO("Not yet implemented")
+        }
+
+        override fun naryOperation(insn: AbstractInsnNode?, values: MutableList<out StoredValue>?): StoredValue {
+            TODO("Not yet implemented")
+        }
+
+        override fun returnOperation(insn: AbstractInsnNode?, value: StoredValue?, expected: StoredValue?) {
+            TODO("Not yet implemented")
+        }
     }
 }
