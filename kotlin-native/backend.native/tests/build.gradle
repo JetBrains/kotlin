@@ -4683,6 +4683,11 @@ if (PlatformInfo.isAppleTarget(project)) {
         UtilsKt.dependsOnPlatformLibs(it)
     }
 
+    standaloneTest("interop_objc_kt61441") {
+        source = "interop/objc/kt61441.kt"
+        UtilsKt.dependsOnPlatformLibs(it)
+    }
+
 
     interopTest("interop_objc_global_initializer") {
         useGoldenData = true

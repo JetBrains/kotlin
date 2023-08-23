@@ -39648,6 +39648,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("kt61418.kt")
+            public void testKt61418() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/kt61418.kt");
+            }
+
+            @Test
             @TestMetadata("literalEqualsNullableUnsigned.kt")
             public void testLiteralEqualsNullableUnsigned() throws Exception {
                 runTest("compiler/testData/codegen/box/unsignedTypes/literalEqualsNullableUnsigned.kt");
