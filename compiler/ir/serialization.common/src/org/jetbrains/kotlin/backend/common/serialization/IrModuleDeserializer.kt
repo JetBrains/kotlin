@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.name
+import org.jetbrains.kotlin.ir.util.nameOrFail
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
@@ -176,7 +176,7 @@ class IrModuleDeserializerWithBuiltIns(
             1 -> functionClass.symbol.also { assert(symbolKind == BinarySymbolData.SymbolKind.CLASS_SYMBOL) }
             2 -> {
                 val memberName = fqnParts[1]
-                functionClass.declarations.single { it is IrDeclarationBase && it.nameOrNull != null && it.name.asString() == memberName }.let {
+                functionClass.declarations.single { it is IrDeclarationBase && it.nameOrNull != null && it.nameOrFail.asString() == memberName }.let {
                     (it as IrSymbolOwner).symbol
                 }
             }

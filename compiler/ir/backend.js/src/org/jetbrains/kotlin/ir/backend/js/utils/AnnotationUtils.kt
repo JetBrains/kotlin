@@ -96,7 +96,7 @@ fun IrDeclarationBase.getJsNameForOverriddenDeclaration(): String? {
 
 fun IrDeclarationBase.getJsNameOrKotlinName(): Name =
     when (val jsName = getJsNameForOverriddenDeclaration()) {
-        null -> name
+        null -> nameOrFail
         else -> Name.identifier(jsName)
     }
 

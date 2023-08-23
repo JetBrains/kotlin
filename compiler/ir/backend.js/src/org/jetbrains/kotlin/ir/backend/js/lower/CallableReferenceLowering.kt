@@ -142,7 +142,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             val parent = d.parent
 
             if (parent is IrPackageFragment) {
-                append(d.name.asString())
+                append(d.nameOrFail.asString())
                 return
             }
 
@@ -158,10 +158,10 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                     if (d is IrSimpleFunction && d.isSuspend) append('s')
                     append("lambda")
                 }
-                d.name == SpecialNames.NO_NAME_PROVIDED -> append("\$o")
+                d.nameOrFail == SpecialNames.NO_NAME_PROVIDED -> append("\$o")
                 else -> {
                     append('$')
-                    append(d.name.asString())
+                    append(d.nameOrFail.asString())
                 }
             }
         }

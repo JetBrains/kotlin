@@ -96,7 +96,7 @@ class IrInlineIntrinsicsSupport(
             v.iconst(function.allParametersCount)
         }
         putClassInstance(v, declaration.parent.getCallableReferenceOwnerKClassType(classCodegen.context))
-        v.aconst(declaration.name.asString())
+        v.aconst(declaration.nameOrFail.asString())
         // TODO: generate correct signature for functions and property accessors which have inline class types in the signature.
         SignatureString.generateSignatureString(v, function, classCodegen)
         v.iconst(declaration.getCallableReferenceTopLevelFlag())

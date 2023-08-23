@@ -58,7 +58,7 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
             append('}')
             if (element is IrDeclaration) {
                 if (element is IrDeclarationBase && element.nameOrNull != null) {
-                    append(element.name)
+                    append(element.nameOrFail)
                     append(' ')
                 }
                 renderDeclaredIn(element)
@@ -591,7 +591,7 @@ private inline fun StringBuilder.appendDeclarationNameToFqName(
     if (!declaration.isFileClass || options.printFacadeClassInFqNames) {
         append('.')
         if (declaration is IrDeclarationBase && declaration.nameOrNull != null) {
-            append(declaration.name)
+            append(declaration.nameOrFail)
         } else {
             fallback()
         }

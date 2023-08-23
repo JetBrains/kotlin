@@ -41,12 +41,12 @@ fun IrClassifierSymbol.isKSuspendFunction(): Boolean = this.isClassWithNamePrefi
 
 private fun IrClassifierSymbol.isClassWithName(name: String, packageFqName: FqName): Boolean {
     val declaration = owner.asDeclarationWithName()
-    return name == declaration.name.asString() && (declaration.parent as? IrPackageFragment)?.packageFqName == packageFqName
+    return name == declaration.nameOrFail.asString() && (declaration.parent as? IrPackageFragment)?.packageFqName == packageFqName
 }
 
 private fun IrClassifierSymbol.isClassWithNamePrefix(prefix: String, packageFqName: FqName): Boolean {
     val declaration = owner.asDeclarationWithName()
-    return declaration.name.asString().startsWith(prefix) && (declaration.parent as? IrPackageFragment)?.packageFqName == packageFqName
+    return declaration.nameOrFail.asString().startsWith(prefix) && (declaration.parent as? IrPackageFragment)?.packageFqName == packageFqName
 }
 
 fun IrType.superTypes(): List<IrType> = classifierOrNull?.superTypes() ?: emptyList()

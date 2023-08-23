@@ -153,7 +153,7 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
                                         context.ktDiagnosticReporter.at(declaration).report(
                                             JvmBackendErrors.SCRIPT_CAPTURING_NESTED_CLASS,
                                             declaration.name.asString(),
-                                            ((declaration.parent.asDeclarationWithNameSafe())?.name
+                                            ((declaration.parent.asDeclarationWithNameSafe())?.nameOrFail
                                                 ?: SpecialNames.NO_NAME_PROVIDED).asString()
                                         )
                                     }

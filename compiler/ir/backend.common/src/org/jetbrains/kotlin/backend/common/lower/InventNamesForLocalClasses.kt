@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
-import org.jetbrains.kotlin.ir.util.name
+import org.jetbrains.kotlin.ir.util.nameOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
@@ -115,7 +115,7 @@ abstract class InventNamesForLocalClasses(
             }
 
             val enclosingName = data.enclosingName
-            val simpleName = declaration.name.asString()
+            val simpleName = declaration.nameOrFail.asString()
 
             val internalName = when {
                 declaration is IrFunction && !NameUtils.hasName(declaration.name) -> {

@@ -640,7 +640,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     private fun IrDeclarationBase.getExportedIdentifier(): String =
         with(getJsNameOrKotlinName()) {
             if (isSpecial)
-                error("Cannot export special name: ${name.asString()} for declaration $fqNameWhenAvailable")
+                error("Cannot export special name: ${nameOrFail.asString()} for declaration $fqNameWhenAvailable")
             else identifier
         }
 

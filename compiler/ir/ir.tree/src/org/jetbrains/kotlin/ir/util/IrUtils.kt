@@ -318,8 +318,8 @@ val IrClass.isAnonymousObject get() = isClass && name == SpecialNames.NO_NAME_PR
 val IrClass.isNonCompanionObject: Boolean get() = isObject && !isCompanion
 val IrDeclarationBase.fqNameWhenAvailable: FqName?
     get() = when (val parent = parent) {
-        is IrDeclarationBase -> if (parent.hasName()) parent.fqNameWhenAvailable?.child(name) else null
-        is IrPackageFragment -> parent.packageFqName.child(name)
+        is IrDeclarationBase -> if (parent.hasName()) parent.fqNameWhenAvailable?.child(nameOrFail) else null
+        is IrPackageFragment -> parent.packageFqName.child(nameOrFail)
         else -> null
     }
 
@@ -1505,12 +1505,18 @@ fun Any?.toIrConst(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffse
         ?: throw UnsupportedOperationException("Unsupported const element type ${irType.makeNotNull().render()}")
 
 fun IrElement.isDeclarationWithName() = (this is IrDeclarationBase && nameOrNull != null)
-fun IrElement.asDeclarationWithNameSafe() = (this as? IrDeclarationBase)?.takeIf { nameOrNull != null }
+fun IrElement.asDeclarationWithNameSafe(): IrDeclarationBase? {
+    val declarationBase = this as? IrDeclarationBase ?: return null
+    return if (declarationBase.nameOrNull != null) declarationBase else null
+}
 
-fun IrElement.asDeclarationWithName() =
-    (this as IrDeclarationBase).takeIf { nameOrNull != null } ?: error("Named declaration expected, got ${render()}")
+fun IrElement.asDeclarationWithName(): IrDeclarationBase {
+    val declarationBase = this as IrDeclarationBase
+    if (declarationBase.nameOrNull == null) error("Named declaration expected, got ${render()}")
+    return declarationBase
+}
 
-val IrDeclarationBase.name get() = this.nameOrNull ?: error("Named declaration expected, got ${render()}")
+val IrDeclarationBase.nameOrFail get() = this.nameOrNull!!
 
 fun IrDeclarationBase.hasName() = nameOrNull != null
 

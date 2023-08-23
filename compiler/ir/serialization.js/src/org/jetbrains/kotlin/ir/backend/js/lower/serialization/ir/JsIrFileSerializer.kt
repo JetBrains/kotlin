@@ -50,7 +50,7 @@ class JsIrFileSerializer(
     }
 
     private val IrDeclarationBase.exportedName: String
-        get() = getAnnotation(JS_NAME_FQN)?.getSingleConstStringArgument() ?: name.toString()
+        get() = getAnnotation(JS_NAME_FQN)?.getSingleConstStringArgument() ?: nameOrFail.toString()
 
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer) = node.isExportedDeclaration()
     override fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer) = node.isExportIgnoreDeclaration()

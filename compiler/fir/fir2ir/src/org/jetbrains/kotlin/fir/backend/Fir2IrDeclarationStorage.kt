@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugi
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.*
@@ -865,7 +864,7 @@ class Fir2IrDeclarationStorage(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
-                name = Name.special("<$prefix-${correspondingProperty.name}>"),
+                name = Name.special("<$prefix-${correspondingProperty.nameOrFail}>"),
                 visibility = visibility ?: (correspondingProperty as IrDeclarationWithVisibility).visibility,
                 isInline = propertyAccessor?.isInline == true,
                 isExpect = false,

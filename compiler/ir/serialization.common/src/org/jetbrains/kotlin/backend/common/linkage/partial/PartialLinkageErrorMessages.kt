@@ -219,7 +219,7 @@ private fun IrSymbol.guessName(): String? {
                         }
                     }
                     is IrEnumEntry -> listOfNotNull(owner.parentClassOrNull?.name, owner.name)
-                    else -> listOf(owner.name)
+                    else -> listOf(owner.nameOrFail)
                 }.joinToString(".")
             }
 }

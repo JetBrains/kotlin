@@ -138,8 +138,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression {
         val owner = expression.symbol.owner
         if (owner.isThisReceiver()) return JsThisRef().withSource(expression, context)
-        require(owner is IrDeclarationBase)
-        return context.getNameForValueDeclaration(owner).makeRef().withSource(expression, context)
+        return context.getNameForValueDeclaration(owner, owner.name).makeRef().withSource(expression, context)
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext): JsExpression {
@@ -161,8 +160,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitSetValue(expression: IrSetValue, context: JsGenerationContext): JsExpression {
         val field = expression.symbol.owner
-        require(field is IrDeclarationBase)
-        val ref = JsNameRef(context.getNameForValueDeclaration(field))
+        val ref = JsNameRef(context.getNameForValueDeclaration(field, field.name))
         val value = expression.value.accept(this, context)
         return JsBinaryOperation(JsBinaryOperator.ASG, ref, value).withSource(expression, context)
     }
@@ -171,8 +169,9 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val classNameRef = expression.symbol.owner.getConstructorRef(context.staticContext)
         val callFuncRef = JsNameRef(Namer.CALL_FUNCTION, classNameRef)
         val fromPrimary = context.currentFunction is IrConstructor
+        val lastParam = context.currentFunction!!.valueParameters.last()
         val thisRef =
-            if (fromPrimary) JsThisRef() else context.getNameForValueDeclaration(context.currentFunction!!.valueParameters.last()).makeRef()
+            if (fromPrimary) JsThisRef() else context.getNameForValueDeclaration(lastParam, lastParam.name).makeRef()
         val arguments = translateCallArguments(expression, context, this)
 
         val constructor = expression.symbol.owner

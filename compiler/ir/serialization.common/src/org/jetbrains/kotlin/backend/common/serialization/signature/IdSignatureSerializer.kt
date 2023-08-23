@@ -73,7 +73,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
         private fun collectParents(declaration: IrDeclarationBase) {
             declaration.parent.acceptVoid(this)
             if (declaration !is IrClass || !declaration.isFacadeClass) {
-                classFqnSegments.add(declaration.name.asString())
+                classFqnSegments.add(declaration.nameOrFail.asString())
             }
         }
 

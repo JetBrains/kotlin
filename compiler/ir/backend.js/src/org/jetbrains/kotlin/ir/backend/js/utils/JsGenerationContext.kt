@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.getSourceLocation
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.getStartSourceLocation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.name
+import org.jetbrains.kotlin.ir.util.nameOrFail
 import org.jetbrains.kotlin.js.backend.ast.JsLocation
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsScope
+import org.jetbrains.kotlin.name.Name
 
 val emptyScope: JsScope = object : JsScope("nil") {
     override fun doCreateName(ident: String): JsName {
@@ -60,13 +60,13 @@ class JsGenerationContext(
         )
     }
 
-    fun getNameForValueDeclaration(declaration: IrDeclarationBase): JsName {
+    fun getNameForValueDeclaration(declaration: IrElement, elementName: Name): JsName {
         return nameCache.getOrPut(declaration) {
             if (useBareParameterNames) {
-                JsName(sanitizeName(declaration.name.asString()), true)
+                JsName(sanitizeName(elementName.asString()), true)
             } else {
                 val name = localNames!!.variableNames.names[declaration]
-                    ?: error("Variable name is not found ${declaration.name}")
+                    ?: error("Variable name is not found $elementName")
                 JsName(name, true)
             }
         }

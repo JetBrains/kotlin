@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
@@ -58,7 +57,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         val inlineFunction = expression.inlineFunction ?: return this
         val correspondingProperty = (inlineFunction as? IrSimpleFunction)?.correspondingPropertySymbol
         val owner = correspondingProperty?.owner ?: inlineFunction
-        val funName = owner.fqNameWhenAvailable ?: owner.name
+        val funName = owner.fqNameWhenAvailable ?: owner.nameOrFail
         return listOf(JsSingleLineComment(" Inline function '$funName' call")) + this
     }
 
@@ -115,8 +114,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
 
     override fun visitSetValue(expression: IrSetValue, context: JsGenerationContext): JsStatement {
         val owner = expression.symbol.owner
-        require(owner is IrDeclarationBase)
-        val ref = JsNameRef(context.getNameForValueDeclaration(owner))
+        val ref = JsNameRef(context.getNameForValueDeclaration(owner, owner.name))
         return expression.value.maybeOptimizeIntoSwitch(context) { jsAssignment(ref, it()).withSource(expression, context).makeStmt() }
     }
 
@@ -144,7 +142,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitVariable(declaration: IrVariable, context: JsGenerationContext): JsStatement {
-        val varName = context.getNameForValueDeclaration(declaration)
+        val varName = context.getNameForValueDeclaration(declaration, declaration.name)
         val value = declaration.initializer
 
         if (value is IrWhen) {
@@ -203,7 +201,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         val jsTryBlock = aTry.tryResult.accept(this, context).asBlock()
 
         val jsCatch = aTry.catches.singleOrNull()?.let {
-            val name = context.getNameForValueDeclaration(it.catchParameter)
+            val name = context.getNameForValueDeclaration(it.catchParameter, it.catchParameter.name)
             val jsCatchBlock = it.result.accept(this, context)
             JsCatch(emptyScope, name.ident, jsCatchBlock).withSource(it, context)
         }

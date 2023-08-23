@@ -209,7 +209,7 @@ class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElemen
     override fun visitDeclaration(declaration: IrDeclarationBase) {
         super.visitDeclaration(declaration)
         if (declaration.nameOrNull != null) {
-            variableNames.declareFreshName(declaration, declaration.name.asString())
+            variableNames.declareFreshName(declaration, declaration.nameOrFail.asString())
         }
     }
 

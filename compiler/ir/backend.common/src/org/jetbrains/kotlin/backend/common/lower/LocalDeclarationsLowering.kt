@@ -644,9 +644,9 @@ class LocalDeclarationsLowering(
         }
 
         private fun suggestLocalName(declaration: IrDeclarationBase): String {
-            val declarationName = localNameSanitizer(declaration.name.asString())
+            val declarationName = localNameSanitizer(declaration.nameOrFail.asString())
             localFunctions[declaration]?.let {
-                val baseName = if (declaration.name.isSpecial) "lambda" else declarationName
+                val baseName = if (declaration.nameOrFail.isSpecial) "lambda" else declarationName
                 if (it.index >= 0) {
                     if (!suggestUniqueNames) return baseName
 

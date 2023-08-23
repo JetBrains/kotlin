@@ -206,7 +206,7 @@ internal fun IrFunction.getArgsForMethodInvocation(
 
 internal fun IrType.fqNameWithNullability(): String {
     val fqName = classFqName?.toString()
-        ?: (this.classifierOrNull?.owner?.asDeclarationWithNameSafe())?.name?.asString()
+        ?: (this.classifierOrNull?.owner?.asDeclarationWithNameSafe())?.nameOrFail?.asString()
         ?: render()
     val nullability = if (this is IrSimpleType && this.nullability == SimpleTypeNullability.MARKED_NULLABLE) "?" else ""
     return fqName + nullability
@@ -214,7 +214,7 @@ internal fun IrType.fqNameWithNullability(): String {
 
 internal fun IrType.getOnlyName(): String {
     if (this !is IrSimpleType) return this.render()
-    return (this.classifierOrFail.owner.asDeclarationWithName()).name.asString() + when (nullability) {
+    return (this.classifierOrFail.owner.asDeclarationWithName()).nameOrFail.asString() + when (nullability) {
         SimpleTypeNullability.MARKED_NULLABLE -> "?"
         SimpleTypeNullability.NOT_SPECIFIED -> ""
         SimpleTypeNullability.DEFINITELY_NOT_NULL -> if (this.classifierOrNull is IrTypeParameterSymbol) " & Any" else ""

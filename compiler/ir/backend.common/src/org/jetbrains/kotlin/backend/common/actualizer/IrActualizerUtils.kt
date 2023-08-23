@@ -104,7 +104,7 @@ internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(
 internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(irDeclaration: IrDeclaration) {
     at(irDeclaration).report(
         CommonBackendErrors.NO_ACTUAL_FOR_EXPECT,
-        (irDeclaration.asDeclarationWithNameSafe())?.name?.asString().orEmpty(),
+        (irDeclaration.asDeclarationWithNameSafe())?.nameOrFail?.asString().orEmpty(),
         irDeclaration.module
     )
 }

@@ -669,7 +669,7 @@ class BodyGenerator(
             val inlineFunction = expression.symbol.owner.inlineFunction
             val correspondingProperty = (inlineFunction as? IrSimpleFunction)?.correspondingPropertySymbol
             val owner = correspondingProperty?.owner ?: inlineFunction
-            val name = owner?.fqNameWhenAvailable?.asString() ?: owner?.name?.asString() ?: "<UNKNOWN>"
+            val name = owner?.fqNameWhenAvailable?.asString() ?: owner?.nameOrFail?.asString() ?: "<UNKNOWN>"
 
             body.commentGroupStart { "Inlined call of `$name`" }
             functionContext.defineNonLocalReturnLevel(

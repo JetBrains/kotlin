@@ -40,8 +40,8 @@ internal object PartialLinkageUtils {
             val IrDeclarationBase.declarationId: DeclarationId?
                 get() {
                     return when (val parent = parent) {
-                        is IrPackageFragment -> DeclarationId(parent.packageFqName.asString(), name.asString())
-                        is IrDeclarationBase -> if (parent.nameOrNull != null) parent.declarationId?.createNested(name.asString()) else null
+                        is IrPackageFragment -> DeclarationId(parent.packageFqName.asString(), nameOrFail.asString())
+                        is IrDeclarationBase -> if (parent.nameOrNull != null) parent.declarationId?.createNested(nameOrFail.asString()) else null
                         else -> null
                     }
                 }

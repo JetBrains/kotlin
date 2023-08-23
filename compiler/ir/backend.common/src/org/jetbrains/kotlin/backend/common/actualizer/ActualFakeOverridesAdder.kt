@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.actualizer
 import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.asDeclarationWithName
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.name
+import org.jetbrains.kotlin.ir.util.nameOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
@@ -108,7 +108,7 @@ internal class ActualFakeOverridesAdder(
                 diagnosticsReporter.at(klass).report(
                     errorFactory,
                     klass.name.asString(),
-                    (memberFromSupertype.asDeclarationWithName()).name.asString()
+                    (memberFromSupertype.asDeclarationWithName()).nameOrFail.asString()
                 )
             }
         }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.name
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class SwitchOptimizer(
@@ -136,9 +137,7 @@ class SwitchOptimizer(
 
         val exprTransformer = IrElementToJsExpressionTransformer()
         val stmtTransformer = IrElementToJsStatementTransformer()
-        val owner = switch.subject.owner
-        require(owner is IrDeclarationBase)
-        val jsExpr = context.getNameForValueDeclaration(owner).makeRef()
+        val jsExpr = context.getNameForValueDeclaration(switch.subject.owner, switch.subject.owner.name).makeRef()
 
         val jsCases = mutableListOf<JsSwitchMember>()
 

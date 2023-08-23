@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.name
+import org.jetbrains.kotlin.ir.util.nameOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -147,7 +148,7 @@ private class JsCodeOutlineTransformer(
 
         // Building outlined IR function skeleton
         val outlinedFunction = backendContext.irFactory.buildFun {
-            name = Name.identifier(container.safeAs<IrDeclarationBase>()?.name?.asString()?.let { "$it\$outlinedJsCode\$" }
+            name = Name.identifier(container.safeAs<IrDeclarationBase>()?.nameOrFail?.asString()?.let { "$it\$outlinedJsCode\$" }
                                        ?: "outlinedJsCode\$")
             returnType = backendContext.dynamicType
             isExternal = true

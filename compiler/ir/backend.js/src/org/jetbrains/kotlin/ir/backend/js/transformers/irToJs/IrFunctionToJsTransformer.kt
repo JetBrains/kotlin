@@ -20,7 +20,7 @@ class IrFunctionToJsTransformer : BaseIrElementToJsNodeTransformer<JsFunction, J
         val isInterfaceDefaultImpl = parentClass?.isInterface ?: false
         val funcName = if (declaration.dispatchReceiverParameter == null || isInterfaceDefaultImpl) {
             if (declaration.parent is IrFunction) {
-                context.getNameForValueDeclaration(declaration)
+                context.getNameForValueDeclaration(declaration, declaration.name)
             } else {
                 context.getNameForStaticFunction(declaration)
             }
