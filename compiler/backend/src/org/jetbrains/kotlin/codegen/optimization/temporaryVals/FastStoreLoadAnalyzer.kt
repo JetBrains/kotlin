@@ -115,7 +115,7 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
         if (nInsns == 0) return frames
 
         checkAssertions()
-        computeExceptionHandlersForEachInsn(method)
+        computeExceptionHandlers(method)
         initMergeNodes()
 
         val current = newFrame(method.maxLocals)
