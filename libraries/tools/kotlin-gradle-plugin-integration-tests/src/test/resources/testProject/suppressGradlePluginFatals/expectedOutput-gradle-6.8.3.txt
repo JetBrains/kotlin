@@ -1,6 +1,0 @@
-> Configure project :
-[CircularDependsOnEdges | FATAL] Circular dependsOn hierarchy found in the Kotlin source sets: intermediate -> jvmMain -> intermediate
-#diagnostic-end
-
-org.gradle.api.InvalidUserCodeException: [CircularDependsOnEdges | FATAL] Circular dependsOn hierarchy found in the Kotlin source sets: intermediate -> jvmMain -> intermediate
-#diagnostic-end

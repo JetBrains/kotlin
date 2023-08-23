@@ -295,7 +295,8 @@ private fun Project.setupDiagnosticsChecksAndReporting() {
     launch {
         configurationResult.await()
         renderReportedDiagnostics(
-            collectorProvider.get().getDiagnosticsForProject(project),
+            // FATALs are reported straight away, no need to duplicate the report
+            collectorProvider.get().getDiagnosticsForProject(project).filter { it.severity < ToolingDiagnostic.Severity.FATAL },
             logger,
             diagnosticRenderingOptions
         )
