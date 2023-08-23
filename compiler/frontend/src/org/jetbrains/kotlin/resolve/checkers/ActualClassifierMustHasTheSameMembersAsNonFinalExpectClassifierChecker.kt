@@ -31,14 +31,14 @@ object ActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker : 
         declaration as KtClassLikeDeclaration
         descriptor as ClassifierDescriptorWithTypeParameters
 
-        checkSupertypes(actual, expect, context, declaration, descriptor)
+        checkSupertypes(expect, actual, context, declaration, descriptor)
         checkExpectActualScopeDiff(expect, actual, context, declaration, descriptor)
     }
 }
 
 private fun checkSupertypes(
-    actual: ClassDescriptor,
     expect: ClassDescriptor,
+    actual: ClassDescriptor,
     context: DeclarationCheckerContext,
     declaration: KtClassLikeDeclaration,
     descriptor: ClassifierDescriptorWithTypeParameters,
