@@ -34,6 +34,7 @@
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
 import org.jetbrains.kotlin.codegen.inline.insnText
+import org.jetbrains.kotlin.codegen.optimization.common.toType
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -88,7 +89,7 @@ internal open class FastStackAnalyzer<V : Value>(
 
             val insnNode = method.instructions[insn]
             val insnOpcode = insnNode.opcode
-            val insnType = insnNode.type
+            val insnType = insnNode.toType
 
             try {
                 if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {

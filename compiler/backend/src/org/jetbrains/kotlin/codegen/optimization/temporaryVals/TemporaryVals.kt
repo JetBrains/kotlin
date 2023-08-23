@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.isStoreOperation
+import org.jetbrains.kotlin.codegen.optimization.common.toType
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -51,7 +52,7 @@ class TemporaryValsAnalyzer {
                     potentiallyTemporaryStores.remove(p)
                     break
                 } else if (
-                    p.type == AbstractInsnNode.LABEL ||
+                    p.toType == AbstractInsnNode.LABEL ||
                     p.opcode in Opcodes.IRETURN..Opcodes.RETURN ||
                     p.opcode == Opcodes.GOTO ||
                     p.opcode == Opcodes.ATHROW

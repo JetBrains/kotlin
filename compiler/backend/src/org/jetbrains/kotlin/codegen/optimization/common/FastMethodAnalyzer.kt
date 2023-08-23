@@ -92,7 +92,7 @@ open class FastMethodAnalyzer<V : Value>
             val insnNode = method.instructions[insn]
             try {
                 val insnOpcode = insnNode.opcode
-                val insnType = insnNode.type
+                val insnType = insnNode.toType
 
                 if (insnType == AbstractInsnNode.LABEL ||
                     insnType == AbstractInsnNode.LINE ||
@@ -300,7 +300,7 @@ open class FastMethodAnalyzer<V : Value>
         fun findMergeNodes(method: MethodNode): BooleanArray {
             val isMergeNode = BooleanArray(method.instructions.size())
             for (insn in method.instructions) {
-                when (insn.type) {
+                when (insn.toType) {
                     AbstractInsnNode.JUMP_INSN -> {
                         val jumpInsn = insn as JumpInsnNode
                         isMergeNode[method.instructions.indexOf(jumpInsn.label)] = true
