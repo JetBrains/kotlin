@@ -58,6 +58,12 @@ public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("canInspectStrings.kt")
+    public void testCanInspectStrings() throws Exception {
+        runTest("native/native.tests/testData/lldb/canInspectStrings.kt");
+    }
+
+    @Test
     @TestMetadata("canInspectValuesOfPrimitiveTypes.kt")
     public void testCanInspectValuesOfPrimitiveTypes() throws Exception {
         runTest("native/native.tests/testData/lldb/canInspectValuesOfPrimitiveTypes.kt");
