@@ -1419,6 +1419,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
                 public void testTypealiasedAnnotationAsArgument() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/typealiasedAnnotationAsArgument.kt");
                 }
+
+                @Test
+                @TestMetadata("typealiasedAsKClassArg.kt")
+                public void testTypealiasedAsKClassArg() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/typealiasedAsKClassArg.kt");
+                }
             }
         }
     }
