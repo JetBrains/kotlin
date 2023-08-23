@@ -135,6 +135,9 @@ public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtFile.getFileSymbol(): KtFileSymbol =
         withValidityAssertion { analysisSession.symbolProvider.getFileSymbol(this) }
 
+    public fun KtScript.getScriptSymbol(): KtScriptSymbol =
+        withValidityAssertion { analysisSession.symbolProvider.getScriptSymbol(this) }
+
     /**
      * Returns [KtPackageSymbol] corresponding to [packageFqName] if corresponding package is exists and visible from current uses-site scope,
      * `null` otherwise
