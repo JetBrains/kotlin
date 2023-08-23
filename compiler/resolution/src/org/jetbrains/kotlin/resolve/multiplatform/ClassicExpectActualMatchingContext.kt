@@ -354,15 +354,15 @@ class ClassicExpectActualMatchingContext(
         get() = asDescriptor().annotations.map(::AnnotationCallInfoImpl)
 
     override fun areAnnotationArgumentsEqual(
-        annotation1: AnnotationCallInfo,
-        annotation2: AnnotationCallInfo,
+        expectAnnotation: AnnotationCallInfo,
+        actualAnnotation: AnnotationCallInfo,
         collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
     ): Boolean {
         fun AnnotationCallInfo.getDescriptor(): AnnotationDescriptor = (this as AnnotationCallInfoImpl).annotationDescriptor
 
         return areExpressionConstValuesEqual(
-            annotation1.getDescriptor(),
-            annotation2.getDescriptor(),
+            expectAnnotation.getDescriptor(),
+            actualAnnotation.getDescriptor(),
             collectionArgumentsCompatibilityCheckStrategy,
         )
     }
