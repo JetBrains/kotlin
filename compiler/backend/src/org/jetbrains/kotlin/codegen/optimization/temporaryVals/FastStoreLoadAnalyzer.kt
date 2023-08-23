@@ -107,7 +107,6 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
     private val method: MethodNode,
     private val interpreter: StoreLoadInterpreter<V>
 ) {
-    private val insnsArray = method.instructions.toArray()
     private val nInsns = method.instructions.size()
 
     private val isMergeNode = BooleanArray(nInsns)
@@ -182,7 +181,7 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
         method.instructions.indexOf(this)
 
     private fun checkAssertions() {
-        if (insnsArray.any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })
+        if (method.instructions.any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })
             throw AssertionError("Subroutines are deprecated since Java 6")
     }
 
@@ -209,22 +208,26 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
 
     private fun computeExceptionHandlersForEachInsn(m: MethodNode) {
         for (tcb in m.tryCatchBlocks) {
-            val begin = tcb.start.indexOf()
-            val end = tcb.end.indexOf()
-            for (j in begin until end) {
-                if (!insnsArray[j].isMeaningful) continue
-                var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[j]
-                if (insnHandlers == null) {
-                    insnHandlers = SmartList()
-                    handlers[j] = insnHandlers
+            var current: AbstractInsnNode = tcb.start
+            val end = tcb.end
+
+            while (current != end) {
+                if (current.isMeaningful) {
+                    val currentIndex = current.indexOf()
+                    var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[currentIndex]
+                    if (insnHandlers == null) {
+                        insnHandlers = SmartList()
+                        handlers[currentIndex] = insnHandlers
+                    }
+                    insnHandlers.add(tcb)
                 }
-                insnHandlers.add(tcb)
+                current = current.next
             }
         }
     }
 
     private fun initMergeNodes() {
-        for (insn in insnsArray) {
+        for (insn in method.instructions) {
             when (insn.type) {
                 AbstractInsnNode.JUMP_INSN -> {
                     val jumpInsn = insn as JumpInsnNode

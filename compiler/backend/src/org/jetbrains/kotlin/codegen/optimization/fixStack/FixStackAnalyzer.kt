@@ -95,9 +95,8 @@ internal class FixStackAnalyzer(
         val spilledStacks = hashMapOf<AbstractInsnNode, List<FixStackValue>>()
         var maxExtraStackSize = 0; private set
 
-        override fun visitControlFlowEdge(insn: Int, successor: Int): Boolean {
+        override fun visitControlFlowEdge(insnNode: AbstractInsnNode, successor: Int): Boolean {
             if (!skipBreakContinueGotoEdges) return true
-            val insnNode = insnsArray[insn]
             return !(insnNode is JumpInsnNode && context.breakContinueGotoNodes.contains(insnNode))
         }
 
