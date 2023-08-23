@@ -25,6 +25,7 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.cpp.*
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.SanitizerKind
 import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
@@ -617,6 +618,13 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
 
             owner.allTestsTasks[target.name]!!.configure {
                 dependsOn(runTask)
+            }
+
+            // TODO: Support tsan natively on macOS arm64.
+            if (target == KonanTarget.MACOS_X64 && sanitizer == SanitizerKind.THREAD) {
+                owner.allTestsTasks[KonanTarget.MACOS_ARM64.name]!!.configure {
+                    dependsOn(runTask)
+                }
             }
         }
     }
