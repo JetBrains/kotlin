@@ -316,12 +316,26 @@ val IrClass.isClass get() = kind == ClassKind.CLASS
 val IrClass.isObject get() = kind == ClassKind.OBJECT
 val IrClass.isAnonymousObject get() = isClass && name == SpecialNames.NO_NAME_PROVIDED
 val IrClass.isNonCompanionObject: Boolean get() = isObject && !isCompanion
+
 val IrDeclarationWithName.fqNameWhenAvailable: FqName?
-    get() = when (val parent = parent) {
-        is IrDeclarationWithName -> parent.fqNameWhenAvailable?.child(name)
-        is IrPackageFragment -> parent.packageFqName.child(name)
-        else -> null
+    get() {
+        val sb = StringBuilder()
+        return if (computeFqNameString(this, sb)) FqName(sb.toString()) else null
     }
+
+private fun computeFqNameString(declaration: IrDeclarationWithName, result: StringBuilder): Boolean {
+    when (val parent = declaration.parent) {
+        is IrDeclarationWithName -> computeFqNameString(parent, result)
+        is IrPackageFragment -> {
+            val packageFqName = parent.packageFqName
+            if (!packageFqName.isRoot) result.append(packageFqName)
+        }
+        else -> return false
+    }
+    if (result.isNotEmpty()) result.append(".")
+    result.append(declaration.name.asString())
+    return true
+}
 
 val IrDeclaration.parentAsClass: IrClass
     get() = parent as? IrClass
