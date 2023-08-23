@@ -51,6 +51,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirFunctionParameterChecker,
             FirFunctionReturnChecker,
             FirInlineDeclarationChecker,
+            FirNonMemberFunctionsChecker,
             FirSuspendLimitationsChecker,
         )
 
@@ -63,7 +64,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirMemberFunctionsChecker,
             FirDataObjectContentChecker,
             ContractSyntaxV2FunctionChecker,
-            FirTopLevelFunctionsChecker,
         )
 
     override val propertyCheckers: Set<FirPropertyChecker>
