@@ -337,7 +337,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
          */
         int max = 0;
         Stack<LabelWrapper> stack = new Stack<>();
-        Set<LabelWrapper> pushed = SmartSet.create();
+        Set<LabelWrapper> pushed = new HashSet<>();
 
         stack.push(firstLabel);
         pushed.add(firstLabel);
@@ -418,15 +418,30 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
         private LabelWrapper nextLabel = null;
         private final Collection<ControlFlowEdge> successors = new LinkedList<>();
 
+        private final int index;
         private int outputStackMax = 0;
         private int inputStackSize = 0;
 
-        public LabelWrapper(Label label) {
+        public LabelWrapper(Label label, int index) {
             this.label = label;
+            this.index = index;
         }
 
         private void addSuccessor(LabelWrapper successor, int outputStackSize, boolean isExceptional) {
             successors.add(new ControlFlowEdge(successor, outputStackSize, isExceptional));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            LabelWrapper wrapper = (LabelWrapper) o;
+            return index == wrapper.index;
+        }
+
+        @Override
+        public int hashCode() {
+            return index;
         }
     }
 
@@ -435,7 +450,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     // ------------------------------------------------------------------------
 
     private LabelWrapper getLabelWrapper(Label label) {
-        return labelWrappersTable.getOrCreate(label, () -> new LabelWrapper(label));
+        return labelWrappersTable.getOrCreate(label, () -> new LabelWrapper(label, labelWrappersTable.getSize()));
     }
 
     private void increaseStackSize(int variation) {
