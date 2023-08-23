@@ -96,9 +96,9 @@ class NullabilityInterpreter(private val generationState: GenerationState) : Opt
 
     override fun merge(v: BasicValue, w: BasicValue): BasicValue =
         when {
-            v is NullBasicValue && w is NullBasicValue ->
+            v === NullBasicValue && w === NullBasicValue ->
                 NullBasicValue
-            v is NullBasicValue || w is NullBasicValue ->
+            v === NullBasicValue || w === NullBasicValue ->
                 StrictBasicValue.REFERENCE_VALUE
             v is ProgressionIteratorBasicValue && w is ProgressionIteratorBasicValue ->
                 mergeNotNullValuesOfSameKind(v, w)
