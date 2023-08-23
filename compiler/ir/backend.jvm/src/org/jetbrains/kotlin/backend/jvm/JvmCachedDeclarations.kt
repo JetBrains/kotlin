@@ -201,7 +201,7 @@ class JvmCachedDeclarations(
             // The classes are not actually related and `I2.DefaultImpls.f` is not a fake override but a bridge.
             val defaultImplsOrigin =
                 if (!forCompatibilityMode && !interfaceFun.isFakeOverride) interfaceFun.origin
-                else interfaceFun.resolveFakeOverride()!!.origin
+                else interfaceFun.resolveFakeOverrideOrFail().origin
 
             // Interface functions are public or private, with one exception: clone in Cloneable, which is protected.
             // However, Cloneable has no DefaultImpls, so this merely replicates the incorrect behavior of the old backend.
@@ -225,7 +225,7 @@ class JvmCachedDeclarations(
             ).also {
                 it.copyCorrespondingPropertyFrom(interfaceFun)
 
-                if (forCompatibilityMode && !interfaceFun.resolveFakeOverride()!!.origin.isSynthetic) {
+                if (forCompatibilityMode && !interfaceFun.resolveFakeOverrideOrFail().origin.isSynthetic) {
                     context.createJvmIrBuilder(it.symbol).run {
                         it.annotations = it.annotations
                             .filterNot { it.symbol.owner.constructedClass.hasEqualFqName(DeprecationResolver.JAVA_DEPRECATED) }

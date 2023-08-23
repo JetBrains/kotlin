@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.AbstractIrLazyFunction
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.resolveFakeOverride
+import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -59,7 +59,7 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
             assertions.assertTrue(symbol.isBound)
             val callee = symbol.owner
             if (callee.symbol.signature in declaredInlineFunctionSignatures) {
-                val trueCallee = (callee as IrSimpleFunction).resolveFakeOverride()!!
+                val trueCallee = (callee as IrSimpleFunction).resolveFakeOverrideOrFail()
                 assertions.assertTrue(trueCallee.hasBody()) {
                     "IrInlineBodiesHandler: function with body expected"
                 }
