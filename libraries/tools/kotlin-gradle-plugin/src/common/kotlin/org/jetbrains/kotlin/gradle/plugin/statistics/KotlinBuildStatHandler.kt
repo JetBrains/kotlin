@@ -105,7 +105,8 @@ class KotlinBuildStatHandler {
             gradle.allprojects { project ->
                 collectAppliedPluginsStatistics(project, configurationTimeMetrics)
 
-                for (configuration in project.configurations) {
+                val configurations = project.configurations.asMap.values
+                for (configuration in configurations) {
                     try {
                         val configurationName = configuration.name
                         val dependencies = configuration.dependencies
@@ -144,7 +145,7 @@ class KotlinBuildStatHandler {
                         // log?
                     }
                 }
-                val taskNames = project.tasks.names
+                val taskNames = project.tasks.names.toList()
 
                 configurationTimeMetrics.put(NumericalMetrics.NUMBER_OF_SUBPROJECTS, 1)
                 configurationTimeMetrics.put(
