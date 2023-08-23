@@ -268,11 +268,10 @@ private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrE
         if (expression.superQualifierSymbol != null && !expression.isSuperToAny()) return
 
         val callee = expression.symbol.owner
+        if (!callee.isMethodOfAny()) return
         if (!callee.hasInterfaceParent() && expression.dispatchReceiver?.run { type.erasedUpperBound.isJvmInterface } != true) return
 
-        val resolved = callee.resolveFakeOverride()
-        if (resolved?.isMethodOfAny() != true) return
-
+        val resolved = callee.resolveFakeOverride() ?: return
         expression.symbol = resolved.symbol
         if (expression.superQualifierSymbol != null) {
             expression.superQualifierSymbol = context.irBuiltIns.anyClass
@@ -293,6 +292,14 @@ internal fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDef
 
     val implementation = resolveFakeOverride(toSkip = ::isDefaultImplsBridge) ?: return null
 
+    if (!implementation.hasInterfaceParent()
+        || DescriptorVisibilities.isPrivate(implementation.visibility)
+        || implementation.isDefinitelyNotDefaultImplsMethod(jvmDefaultMode, implementation)
+        || implementation.isMethodOfAny()
+    ) {
+        return null
+    }
+
     // Only generate interface delegation for functions immediately inherited from an interface.
     // (Otherwise, delegation will be present in the parent class)
     if (overriddenSymbols.any {
@@ -300,14 +307,6 @@ internal fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDef
                     it.owner.modality != Modality.ABSTRACT &&
                     it.owner.resolveFakeOverride(toSkip = ::isDefaultImplsBridge) == implementation
         }) {
-        return null
-    }
-
-    if (!implementation.hasInterfaceParent()
-        || DescriptorVisibilities.isPrivate(implementation.visibility)
-        || implementation.isDefinitelyNotDefaultImplsMethod(jvmDefaultMode)
-        || implementation.isMethodOfAny()
-    ) {
         return null
     }
 
