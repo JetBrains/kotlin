@@ -329,37 +329,13 @@ internal class KtFirScopeProvider(
 private class FirTypeScopeWithSyntheticProperties(
     val typeScope: FirTypeScope,
     val syntheticPropertiesScope: FirSyntheticPropertiesScope,
-) : FirTypeScope() {
+) : FirDelegatingTypeScope(typeScope) {
     override fun getCallableNames(): Set<Name> = typeScope.getCallableNames() + syntheticPropertiesScope.getCallableNames()
-    override fun getClassifierNames(): Set<Name> = typeScope.getClassifierNames()
     override fun mayContainName(name: Name): Boolean = typeScope.mayContainName(name) || syntheticPropertiesScope.mayContainName(name)
-    override val scopeOwnerLookupNames: List<String> get() = typeScope.scopeOwnerLookupNames
-
-    override fun processDirectOverriddenFunctionsWithBaseScope(
-        functionSymbol: FirNamedFunctionSymbol,
-        processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction,
-    ): ProcessorAction = typeScope.processDirectOverriddenFunctionsWithBaseScope(functionSymbol, processor)
-
-    override fun processDirectOverriddenPropertiesWithBaseScope(
-        propertySymbol: FirPropertySymbol,
-        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction,
-    ): ProcessorAction = typeScope.processDirectOverriddenPropertiesWithBaseScope(propertySymbol, processor)
-
-    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        typeScope.processClassifiersByNameWithSubstitution(name, processor)
-    }
-
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        typeScope.processFunctionsByName(name, processor)
-    }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         typeScope.processPropertiesByName(name, processor)
         syntheticPropertiesScope.processPropertiesByName(name, processor)
-    }
-
-    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        typeScope.processDeclaredConstructors(processor)
     }
 }
 

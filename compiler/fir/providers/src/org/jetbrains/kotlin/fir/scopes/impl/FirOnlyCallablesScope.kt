@@ -25,6 +25,9 @@ class FirOnlyCallablesScope(val delegate: FirScope) : FirScope() {
 }
 
 class FirNameAwareOnlyCallablesScope(val delegate: FirContainingNamesAwareScope) : FirContainingNamesAwareScope() {
+    // We want to *avoid* delegation to certain scope functions, so we delegate explicitly instead of using
+    // `FirDelegatingContainingNamesAwareScope`.
+
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         return delegate.processFunctionsByName(name, processor)
     }

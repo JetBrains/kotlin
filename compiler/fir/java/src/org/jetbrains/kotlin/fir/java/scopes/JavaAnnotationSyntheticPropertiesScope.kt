@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.nullableModuleData
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -21,23 +20,20 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.declarations.resolvePhase
+import org.jetbrains.kotlin.fir.scopes.FirDelegatingTypeScope
 
 class JavaAnnotationSyntheticPropertiesScope(
     private val session: FirSession,
     owner: FirRegularClassSymbol,
     private val delegateScope: JavaClassMembersEnhancementScope
-) : FirTypeScope() {
+) : FirDelegatingTypeScope(delegateScope) {
     private val classId: ClassId = owner.classId
     private val names: Set<Name> = owner.fir.declarations.mapNotNullTo(mutableSetOf()) { (it as? FirSimpleFunction)?.name }
     private val syntheticPropertiesCache = mutableMapOf<FirNamedFunctionSymbol, FirVariableSymbol<*>>()
 
-    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        delegateScope.processDeclaredConstructors(processor)
-    }
-
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (name in names) return
-        delegateScope.processFunctionsByName(name, processor)
+        super.processFunctionsByName(name, processor)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
@@ -63,10 +59,6 @@ class JavaAnnotationSyntheticPropertiesScope(
         }
     }
 
-    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        delegateScope.processClassifiersByNameWithSubstitution(name, processor)
-    }
-
     override fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirNamedFunctionSymbol,
         processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
@@ -79,14 +71,6 @@ class JavaAnnotationSyntheticPropertiesScope(
         processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction {
         return ProcessorAction.NONE
-    }
-
-    override fun getCallableNames(): Set<Name> {
-        return delegateScope.getCallableNames()
-    }
-
-    override fun getClassifierNames(): Set<Name> {
-        return delegateScope.getClassifierNames()
     }
 
     override fun toString(): String {

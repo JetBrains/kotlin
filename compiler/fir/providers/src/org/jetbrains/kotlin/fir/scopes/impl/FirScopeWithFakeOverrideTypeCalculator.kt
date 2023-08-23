@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.isSubstitutionOverride
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.FirDelegatingTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -18,11 +18,7 @@ import org.jetbrains.kotlin.name.Name
 class FirScopeWithFakeOverrideTypeCalculator(
     private val delegate: FirTypeScope,
     private val fakeOverrideTypeCalculator: FakeOverrideTypeCalculator
-) : FirTypeScope() {
-    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        delegate.processClassifiersByNameWithSubstitution(name, processor)
-    }
-
+) : FirDelegatingTypeScope(delegate) {
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         delegate.processFunctionsByName(name) {
             updateReturnType(it.fir)
@@ -35,14 +31,6 @@ class FirScopeWithFakeOverrideTypeCalculator(
             updateReturnType(it.fir)
             processor(it)
         }
-    }
-
-    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        delegate.processDeclaredConstructors(processor)
-    }
-
-    override fun mayContainName(name: Name): Boolean {
-        return delegate.mayContainName(name)
     }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(
@@ -65,22 +53,11 @@ class FirScopeWithFakeOverrideTypeCalculator(
         }
     }
 
-    override fun getCallableNames(): Set<Name> {
-        return delegate.getCallableNames()
-    }
-
-    override fun getClassifierNames(): Set<Name> {
-        return delegate.getClassifierNames()
-    }
-
     private fun updateReturnType(declaration: FirCallableDeclaration) {
         if (declaration.isSubstitutionOverride || declaration.isIntersectionOverride) {
             fakeOverrideTypeCalculator.computeReturnType(declaration)
         }
     }
-
-    override val scopeOwnerLookupNames: List<String>
-        get() = delegate.scopeOwnerLookupNames
 
     override fun toString(): String {
         return delegate.toString()

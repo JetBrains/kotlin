@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.FirDelegatingTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembers
@@ -23,7 +23,7 @@ class JavaClassMembersEnhancementScope(
     session: FirSession,
     private val owner: FirRegularClassSymbol,
     private val useSiteMemberScope: JavaClassUseSiteMemberScope,
-) : FirTypeScope() {
+) : FirDelegatingTypeScope(useSiteMemberScope) {
     private val enhancedToOriginalFunctions = mutableMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
     private val enhancedToOriginalProperties = mutableMapOf<FirPropertySymbol, FirPropertySymbol>()
 
@@ -40,8 +40,6 @@ class JavaClassMembersEnhancementScope(
 
             processor(enhancedPropertySymbol)
         }
-
-        return super.processPropertiesByName(name, processor)
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
@@ -55,8 +53,6 @@ class JavaClassMembersEnhancementScope(
                 processor(enhancedFunctionSymbol)
             }
         }
-
-        return super.processFunctionsByName(name, processor)
     }
 
     private fun FirCallableDeclaration.overriddenMembers(): List<FirCallableDeclaration> {
@@ -65,10 +61,6 @@ class JavaClassMembersEnhancementScope(
             is FirPropertySymbol -> useSiteMemberScope.getDirectOverriddenProperties(symbol)
             else -> emptyList()
         }.map { it.fir }
-    }
-
-    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        useSiteMemberScope.processClassifiersByNameWithSubstitution(name, processor)
     }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
@@ -107,18 +99,6 @@ class JavaClassMembersEnhancementScope(
         }
         val original = enhancedToOriginalMap[unwrappedSymbol] ?: return ProcessorAction.NONE
         return useSiteMemberScope.processDirectOverriddenCallables(original, processor)
-    }
-
-    override fun getCallableNames(): Set<Name> {
-        return useSiteMemberScope.getCallableNames()
-    }
-
-    override fun getClassifierNames(): Set<Name> {
-        return useSiteMemberScope.getClassifierNames()
-    }
-
-    override fun mayContainName(name: Name): Boolean {
-        return useSiteMemberScope.mayContainName(name)
     }
 
     override fun toString(): String {

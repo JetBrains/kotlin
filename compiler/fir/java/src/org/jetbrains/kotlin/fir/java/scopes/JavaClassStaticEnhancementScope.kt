@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.FirDelegatingContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
@@ -16,7 +15,7 @@ class JavaClassStaticEnhancementScope(
     session: FirSession,
     owner: FirRegularClassSymbol,
     private val useSiteStaticScope: JavaClassStaticUseSiteScope,
-) : FirContainingNamesAwareScope() {
+) : FirDelegatingContainingNamesAwareScope(useSiteStaticScope) {
     private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
         emptyList()
     }
@@ -25,8 +24,6 @@ class JavaClassStaticEnhancementScope(
         useSiteStaticScope.processPropertiesByName(name) process@{ original ->
             processor(signatureEnhancement.enhancedProperty(original, name))
         }
-
-        return super.processPropertiesByName(name, processor)
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
@@ -36,12 +33,6 @@ class JavaClassStaticEnhancementScope(
                 processor(enhancedFunction)
             }
         }
-
-        return super.processFunctionsByName(name, processor)
-    }
-
-    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        useSiteStaticScope.processClassifiersByNameWithSubstitution(name, processor)
     }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
@@ -49,18 +40,5 @@ class JavaClassStaticEnhancementScope(
             val function = signatureEnhancement.enhancedFunction(original, name = null)
             processor(function as FirConstructorSymbol)
         }
-    }
-
-    override fun getCallableNames(): Set<Name> {
-        return useSiteStaticScope.getCallableNames()
-    }
-
-    override fun getClassifierNames(): Set<Name> {
-        return useSiteStaticScope.getClassifierNames()
-    }
-
-
-    override fun mayContainName(name: Name): Boolean {
-        return useSiteStaticScope.mayContainName(name)
     }
 }
