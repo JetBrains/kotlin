@@ -66,6 +66,7 @@ fun updateCompilerXml() {
         "libraries/tools/maven-archetypes",
         "libraries/tools/mutability-annotations-compat",
         "libraries/tools/script-runtime",
+        "libraries/scripting/dependencies-maven-all",
         "native/commonizer-api",
         "libraries/examples",
         "libraries/tools/kotlin-gradle-plugin-idea-proto",
