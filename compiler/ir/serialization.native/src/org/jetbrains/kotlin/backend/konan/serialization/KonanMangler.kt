@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
@@ -9,13 +14,25 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Descr
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrBasedKotlinManglerImpl
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrExportCheckerVisitor
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
-import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.name.NativeRuntimeNames
+import org.jetbrains.kotlin.name.NativeStandardInteropNames
+
+private val annotationsToTreatAsExported = listOf(
+    NativeRuntimeNames.Annotations.symbolNameClassId,
+    NativeRuntimeNames.Annotations.gcUnsafeCallClassId,
+    NativeRuntimeNames.Annotations.exportForCppRuntimeClassId,
+    NativeRuntimeNames.Annotations.cNameClassId,
+    NativeRuntimeNames.Annotations.exportForCompilerClassId,
+)
+
+private val IrConstructor.isObjCConstructor: Boolean
+    get() = hasAnnotation(NativeStandardInteropNames.objCConstructorClassId)
 
 abstract class AbstractKonanIrMangler(
         private val withReturnType: Boolean,
@@ -29,28 +46,7 @@ abstract class AbstractKonanIrMangler(
     override fun IrDeclaration.isPlatformSpecificExport(): Boolean {
         if (this is IrSimpleFunction) if (isFakeOverride) return false
 
-        // TODO: revise
-        if (annotations.hasAnnotation(RuntimeNames.symbolNameAnnotation)) {
-            // Treat any `@SymbolName` declaration as exported.
-            return true
-        }
-        if (annotations.hasAnnotation(KonanFqNames.gcUnsafeCall)) {
-                // Treat any `@GCUnsafeCall` declaration as exported.
-                return true
-            }
-            if (annotations.hasAnnotation(RuntimeNames.exportForCppRuntime)) {
-            // Treat any `@ExportForCppRuntime` declaration as exported.
-            return true
-        }
-        if (annotations.hasAnnotation(RuntimeNames.cnameAnnotation)) {
-            // Treat `@CName` declaration as exported.
-            return true
-        }
-        if (annotations.hasAnnotation(RuntimeNames.exportForCompilerAnnotation)) {
-            return true
-        }
-
-        return false
+        return annotationsToTreatAsExported.any(this::hasAnnotation)
     }
 
     private inner class KonanIrExportChecker(compatibleMode: Boolean) : IrExportCheckerVisitor(compatibleMode) {
@@ -125,28 +121,8 @@ abstract class AbstractKonanDescriptorMangler : DescriptorBasedKotlinManglerImpl
         if (this is SimpleFunctionDescriptor) {
             if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) return false
         }
-        // TODO: revise
-        if (annotations.hasAnnotation(RuntimeNames.symbolNameAnnotation)) {
-            // Treat any `@SymbolName` declaration as exported.
-            return true
-        }
-        if (annotations.hasAnnotation(KonanFqNames.gcUnsafeCall)) {
-            // Treat any `@GCUnsafeCall` declaration as exported.
-            return true
-        }
-        if (annotations.hasAnnotation(RuntimeNames.exportForCppRuntime)) {
-            // Treat any `@ExportForCppRuntime` declaration as exported.
-            return true
-        }
-        if (annotations.hasAnnotation(RuntimeNames.cnameAnnotation)) {
-            // Treat `@CName` declaration as exported.
-            return true
-        }
-        if (annotations.hasAnnotation(RuntimeNames.exportForCompilerAnnotation)) {
-            return true
-        }
 
-        return false
+        return annotationsToTreatAsExported.any { annotations.hasAnnotation(it.asSingleFqName()) }
     }
 
 

@@ -108,6 +108,7 @@ val irCompilerModules = arrayOf(
     ":compiler:ir.serialization.common",
     ":compiler:ir.serialization.js",
     ":compiler:ir.serialization.jvm",
+    ":compiler:ir.serialization.native",
     ":compiler:ir.objcinterop",
     ":compiler:ir.backend.common",
     ":compiler:ir.interpreter",
