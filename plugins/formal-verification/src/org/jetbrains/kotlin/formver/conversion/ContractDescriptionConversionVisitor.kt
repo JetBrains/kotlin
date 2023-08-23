@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.formver.domains.NullableDomain
 import org.jetbrains.kotlin.formver.embeddings.NullableTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
-import org.jetbrains.kotlin.formver.scala.MangledName
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.*
+import org.jetbrains.kotlin.formver.scala.toScalaBigInt
 
 class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, MethodConversionContext, ConeKotlinType, ConeDiagnostic>() {
     private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.embeddedVar(data: MethodConversionContext): VariableEmbedding {
@@ -33,10 +33,6 @@ class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, M
         } else {
             BoolLit(isNegated)
         }
-    }
-
-    private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.embeddedName(data: MethodConversionContext): MangledName {
-        return data.signature.params[parameterIndex].name
     }
 
     override fun visitBooleanConstantDescriptor(
@@ -111,5 +107,38 @@ class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, M
         val effect = conditionalEffect.effect.accept(this, data)
         val cond = conditionalEffect.condition.accept(this, data)
         return Implies(effect, cond)
+    }
+
+    override fun visitCallsEffectDeclaration(
+        callsEffect: KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
+        data: MethodConversionContext
+    ): Exp {
+        val param = callsEffect.valueParameterReference.accept(this, data)
+        val callsFieldAccess = FieldAccess(param, SpecialFields.FunctionObjectCallCounterField)
+        return when (callsEffect.kind) {
+            // NOTE: case not supported for contracts
+            EventOccurrencesRange.ZERO -> EqCmp(
+                callsFieldAccess,
+                Old(callsFieldAccess)
+            )
+            EventOccurrencesRange.AT_MOST_ONCE -> LeCmp(
+                callsFieldAccess,
+                Add(Old(callsFieldAccess), IntLit(1.toScalaBigInt()))
+            )
+            EventOccurrencesRange.EXACTLY_ONCE -> EqCmp(
+                callsFieldAccess,
+                Add(Old(callsFieldAccess), IntLit(1.toScalaBigInt()))
+            )
+            EventOccurrencesRange.AT_LEAST_ONCE -> GtCmp(
+                callsFieldAccess,
+                Old(callsFieldAccess)
+            )
+            // NOTE: case not supported for contracts
+            EventOccurrencesRange.MORE_THAN_ONCE -> GtCmp(
+                callsFieldAccess,
+                Add(Old(callsFieldAccess), IntLit(1.toScalaBigInt()))
+            )
+            EventOccurrencesRange.UNKNOWN -> BoolLit(true)
+        }
     }
 }

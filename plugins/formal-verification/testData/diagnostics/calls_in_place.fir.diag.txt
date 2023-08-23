@@ -1,0 +1,148 @@
+/calls_in_place.kt:(162,169): info: Generated Viper text for unknown:
+method global$pkg_$unknown(local$f: Ref) returns (ret$: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures true
+{
+  var anonymous$1: Int
+  special$invoke_function_object(local$f)
+  ret$ := anonymous$1
+}
+
+/calls_in_place.kt:(309,321): info: Generated Viper text for at_most_once:
+method global$pkg_$at_most_once(local$f: Ref) returns (ret$: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter <=
+    old(local$f.special$function_object_call_counter) + 1
+{
+  var anonymous$1: Int
+  special$invoke_function_object(local$f)
+  ret$ := anonymous$1
+}
+
+/calls_in_place.kt:(466,488): info: Generated Viper text for incorrect_at_most_once:
+method global$pkg_$at_most_once(local$f: Ref) returns (ret$: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter <=
+    old(local$f.special$function_object_call_counter) + 1
+
+
+method global$pkg_$incorrect_at_most_once(local$f: Ref) returns (ret$: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter <=
+    old(local$f.special$function_object_call_counter) + 1
+{
+  var anonymous$1: Int
+  var anonymous$2: Int
+  anonymous$1 := global$pkg_$at_most_once(local$f)
+  special$invoke_function_object(local$f)
+  ret$ := anonymous$2
+}
+
+/calls_in_place.kt:(466,488): warning: Viper verification error: Postcondition of global$pkg_$incorrect_at_most_once might not hold. Assertion local$f.special$function_object_call_counter <= old(local$f.special$function_object_call_counter) + 1 might not hold. (<no position>)
+
+
+/calls_in_place.kt:(466,488): warning: Function incorrect_at_most_once may not satisfy its contract.
+
+/calls_in_place.kt:(518,572): warning: f: (Int) -> Int has wrong invocation kind: given AT_MOST_ONCE case, but AT_LEAST_ONCE case is possible
+
+/calls_in_place.kt:(647,659): info: Generated Viper text for exactly_once:
+method global$pkg_$exactly_once(local$f: Ref) returns (ret$: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter ==
+    old(local$f.special$function_object_call_counter) + 1
+{
+  var anonymous$1: Int
+  special$invoke_function_object(local$f)
+  ret$ := anonymous$1
+}
+
+/calls_in_place.kt:(804,826): info: Generated Viper text for incorrect_exactly_once:
+method global$pkg_$incorrect_exactly_once(local$f: Ref) returns (ret$: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter ==
+    old(local$f.special$function_object_call_counter) + 1
+{
+  var anonymous$1: Int
+  var anonymous$2: Int
+  special$invoke_function_object(local$f)
+  special$invoke_function_object(local$f)
+  ret$ := anonymous$2
+}
+
+/calls_in_place.kt:(804,826): warning: Viper verification error: Postcondition of global$pkg_$incorrect_exactly_once might not hold. Assertion local$f.special$function_object_call_counter == old(local$f.special$function_object_call_counter) + 1 might not hold. (<no position>)
+
+
+/calls_in_place.kt:(804,826): warning: Function incorrect_exactly_once may not satisfy its contract.
+
+/calls_in_place.kt:(856,910): warning: f: (Int) -> Int has wrong invocation kind: given EXACTLY_ONCE case, but MORE_THAN_ONCE case is possible
+
+/calls_in_place.kt:(974,987): info: Generated Viper text for at_least_once:
+method global$pkg_$exactly_once(local$f: Ref) returns (ret$: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter ==
+    old(local$f.special$function_object_call_counter) + 1
+
+
+method global$pkg_$at_least_once(local$f: Ref) returns (ret$: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter >
+    old(local$f.special$function_object_call_counter)
+{
+  var anonymous$1: Int
+  anonymous$1 := global$pkg_$exactly_once(local$f)
+  ret$ := anonymous$1
+}
+
+/calls_in_place.kt:(1144,1167): info: Generated Viper text for incorrect_at_least_once:
+method global$pkg_$unknown(local$f: Ref) returns (ret$: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures true
+
+
+method global$pkg_$incorrect_at_least_once(local$f: Ref)
+  returns (ret$: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter >
+    old(local$f.special$function_object_call_counter)
+{
+  var anonymous$1: Int
+  anonymous$1 := global$pkg_$unknown(local$f)
+  ret$ := anonymous$1
+}
+
+/calls_in_place.kt:(1144,1167): warning: Viper verification error: Postcondition of global$pkg_$incorrect_at_least_once might not hold. Assertion local$f.special$function_object_call_counter > old(local$f.special$function_object_call_counter) might not hold. (<no position>)
+
+
+/calls_in_place.kt:(1144,1167): warning: Function incorrect_at_least_once may not satisfy its contract.
+
+/calls_in_place.kt:(1197,1252): warning: f: (Int) -> Int has wrong invocation kind: given AT_LEAST_ONCE case, but UNKNOWN case is possible
