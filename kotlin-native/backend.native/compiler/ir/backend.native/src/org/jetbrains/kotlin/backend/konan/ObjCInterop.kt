@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationValueOrNull
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
