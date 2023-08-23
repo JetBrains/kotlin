@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/noReflect.kt:4:19: error: unresolved reference: primaryConstructor
+compiler/testData/cli/jvm/noReflect.kt:4:19: error: unresolved reference 'primaryConstructor'.
     String::class.primaryConstructor
                   ^
 COMPILATION_ERROR

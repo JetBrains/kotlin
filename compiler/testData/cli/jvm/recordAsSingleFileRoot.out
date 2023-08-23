@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/recordAsSingleFileRoot.kt:5:14: error: unresolved reference: Unresolved
+compiler/testData/cli/jvm/recordAsSingleFileRoot.kt:5:14: error: unresolved reference 'Unresolved'.
 fun error(): Unresolved? = null
              ^
 COMPILATION_ERROR

@@ -1,7 +1,7 @@
-compiler/testData/cli/jvm/progressive/tailrecOnVirtualMember.kt:2:5: error: tailrec is not allowed on open members
+compiler/testData/cli/jvm/progressive/tailrecOnVirtualMember.kt:2:5: error: tailrec is prohibited on open members.
     tailrec open fun foo(x: Int) {}
     ^
-compiler/testData/cli/jvm/progressive/typeParametersInAnonymousObjects.kt:2:19: error: type parameters are not allowed for objects
+compiler/testData/cli/jvm/progressive/typeParametersInAnonymousObjects.kt:2:19: error: type parameters are prohibited for objects.
     val x = object<T> { }
                   ^
 COMPILATION_ERROR

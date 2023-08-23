@@ -19,7 +19,7 @@ build:
   [kotlinc] compiler or generated code. Use it at your own risk!
   [kotlinc]
   [kotlinc] error: warnings found and -Werror specified
-  [kotlinc] [TestData]/test.kt:4:15: warning: this cast can never succeed
+  [kotlinc] [TestData]/test.kt:4:15: warning: this cast can never succeed.
   [kotlinc]     println(0 as String)
   [kotlinc]               ^
 

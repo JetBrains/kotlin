@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/returnAsWhenKey.kt:4:5: error: 'when' expression must be exhaustive, add necessary 'true', 'false' branches or 'else' branch instead
+compiler/testData/cli/jvm/returnAsWhenKey.kt:4:5: error: 'when' expression must be exhaustive. Add the necessary 'true', 'false' branches or 'else' branch instead
     when (true) {
     ^
 COMPILATION_ERROR

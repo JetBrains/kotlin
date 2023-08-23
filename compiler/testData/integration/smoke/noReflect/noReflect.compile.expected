@@ -1,5 +1,5 @@
 ERR:
-noReflect.kt:5:23: warning: call uses reflection API which is not found in compilation classpath. Make sure you have kotlin-reflect.jar in the classpath
+noReflect.kt:5:23: warning: call uses reflection API which is not found in compilation classpath. Make sure you have kotlin-reflect.jar in the classpath.
         String::class.annotations
                       ^
 

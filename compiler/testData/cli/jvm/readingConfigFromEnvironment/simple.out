@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.kt:2:15: error: [NONE_APPLICABLE] None of the following functions are applicable: [@IntrinsicConstEvaluation() fun plus(other: Int): Int, @IntrinsicConstEvaluation() fun plus(other: Byte): Int, @IntrinsicConstEvaluation() fun plus(other: Double): Double, ...]
+compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.kt:2:15: error: [NONE_APPLICABLE] None of the following functions is applicable: [@IntrinsicConstEvaluation() fun plus(other: Int): Int, @IntrinsicConstEvaluation() fun plus(other: Byte): Int, @IntrinsicConstEvaluation() fun plus(other: Double): Double, ...]
     val x = 1 + ""
               ^
 COMPILATION_ERROR

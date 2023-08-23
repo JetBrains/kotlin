@@ -4,7 +4,7 @@ compiler/testData/cli/jvm/wrongAbiVersion.kt:3:12: error: class 'ClassWithWrongA
 The class is loaded from $TESTDATA_DIR$/wrongAbiVersionLib/bin/ClassWithWrongAbiVersion.class
 fun foo(x: ClassWithWrongAbiVersion) {
            ^
-compiler/testData/cli/jvm/wrongAbiVersion.kt:4:5: error: unresolved reference: bar
+compiler/testData/cli/jvm/wrongAbiVersion.kt:4:5: error: unresolved reference 'bar'.
     bar()
     ^
 compiler/testData/cli/jvm/wrongAbiVersion.kt:6:7: error: unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
