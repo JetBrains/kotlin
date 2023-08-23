@@ -17,7 +17,8 @@ dependencies {
     testCompileOnly(project(":kotlin-compiler"))
     testImplementation(project(":kotlin-scripting-jvm-host-unshaded"))
 
-    testApiJUnit5(vintageEngine = true)
+    testApiJUnit5()
+    testRuntimeOnly(libs.junit.vintage.engine)
 
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:test-infrastructure"))

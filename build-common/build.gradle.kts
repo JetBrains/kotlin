@@ -23,7 +23,8 @@ dependencies {
 
     testCompileOnly(project(":compiler:cli-common"))
     testApi(projectTests(":compiler:tests-common"))
-    testApiJUnit5(jupiterParams = true)
+    testApiJUnit5()
+    testImplementation(libs.junit.jupyter.params)
     testApi(libs.junit4)
     testApi(protobufFull())
     testApi(kotlinStdlib())

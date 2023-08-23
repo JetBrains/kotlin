@@ -33,7 +33,8 @@ val testJsRuntime by configurations.creating {
 }
 
 dependencies {
-    testApiJUnit5(vintageEngine = true)
+    testApiJUnit5()
+    testRuntimeOnly(libs.junit.vintage.engine)
 
     testApi(protobufFull())
     testApi(projectTests(":compiler:tests-common"))

@@ -193,45 +193,19 @@ fun DependencyHandler.jpsLikeModuleDependency(moduleName: String, scope: JpsDepS
 }
 
 
-fun Project.testApiJUnit5(
-    vintageEngine: Boolean = false,
-    runner: Boolean = false,
-    suiteApi: Boolean = false,
-    jupiterParams: Boolean = false
-) {
+fun Project.testApiJUnit5() {
     with(dependencies) {
         val libsVersionCatalog = libsVersionCatalog
         testApi(platform(libsVersionCatalog.findLibrary("junit-bom").orElseThrow { GradleException("No version for `junit-bom`") }))
         testApi(libsVersionCatalog.findLibrary("junit-jupyter-api").orElseThrow { GradleException("No version for `junit-jupyter-api`") })
-        testRuntimeOnly(libsVersionCatalog.findLibrary("junit-jupyter-engine").orElseThrow { GradleException("No version for `junit-jupyter-engine`") })
-        if (vintageEngine) {
-            testRuntimeOnly(
-                libsVersionCatalog.findLibrary("junit-vintage-engine")
-                    .orElseThrow { GradleException("No version for `junit-vintage-engine`") })
-        }
-
-        if (jupiterParams) {
-            testApi(
-                libsVersionCatalog.findLibrary("junit-jupyter-params")
-                    .orElseThrow { GradleException("No version for `junit-jupyter-params`") })
-        }
-
+        testRuntimeOnly(
+            libsVersionCatalog.findLibrary("junit-jupyter-engine").orElseThrow { GradleException("No version for `junit-jupyter-engine`") })
         testApi(
             libsVersionCatalog.findLibrary("junit-platform-commons")
                 .orElseThrow { GradleException("No version for `junit-platform-commons`") })
         testApi(
             libsVersionCatalog.findLibrary("junit-platform-launcher")
                 .orElseThrow { GradleException("No version for `junit-platform-launcher`") })
-        if (runner) {
-            testApi(
-                libsVersionCatalog.findLibrary("junit-platform-runner")
-                    .orElseThrow { GradleException("No version for `junit-platform-runner`") })
-        }
-        if (suiteApi) {
-            testApi(
-                libsVersionCatalog.findLibrary("junit-platform-suite-api")
-                    .orElseThrow { GradleException("No version for `junit-platform-suite-api`") })
-        }
     }
 }
 
