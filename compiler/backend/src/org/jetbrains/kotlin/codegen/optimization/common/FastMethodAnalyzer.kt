@@ -34,7 +34,6 @@
 package org.jetbrains.kotlin.codegen.optimization.common
 
 import org.jetbrains.kotlin.codegen.inline.insnText
-import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -46,21 +45,16 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 /**
  * @see org.jetbrains.kotlin.codegen.optimization.fixStack.FastStackAnalyzer
  */
-@Suppress("DuplicatedCode")
 open class FastMethodAnalyzer<V : Value>
 @JvmOverloads constructor(
-    private val owner: String,
-    private val method: MethodNode,
-    private val interpreter: Interpreter<V>,
+    owner: String,
+    method: MethodNode,
+    interpreter: Interpreter<V>,
     private val pruneExceptionEdges: Boolean = false
-) {
-    private val nInsns = method.instructions.size()
-
+) : FastAnalyzer<V, Interpreter<V>, Frame<V>>(owner, method, interpreter) {
     private val isMergeNode = findMergeNodes(method)
-
     private val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
 
-    private val handlers: Array<MutableList<TryCatchBlockNode>?> = arrayOfNulls(nInsns)
     private val queued = BooleanArray(nInsns)
     private val queue = IntArray(nInsns)
     private var top = 0
@@ -102,18 +96,7 @@ open class FastMethodAnalyzer<V : Value>
                     mergeControlFlowEdge(insn + 1, f, canReuse = true)
                 } else {
                     current.init(f).execute(insnNode, interpreter)
-                    when {
-                        insnType == AbstractInsnNode.JUMP_INSN ->
-                            visitJumpInsnNode(insnNode as JumpInsnNode, current, insn, insnOpcode)
-                        insnType == AbstractInsnNode.LOOKUPSWITCH_INSN ->
-                            visitLookupSwitchInsnNode(insnNode as LookupSwitchInsnNode, current)
-                        insnType == AbstractInsnNode.TABLESWITCH_INSN ->
-                            visitTableSwitchInsnNode(insnNode as TableSwitchInsnNode, current)
-                        insnOpcode != Opcodes.ATHROW && (insnOpcode < Opcodes.IRETURN || insnOpcode > Opcodes.RETURN) ->
-                            visitOpInsn(current, insn)
-                        else -> {
-                        }
-                    }
+                    visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insn)
                 }
 
                 // Jump by an exception edge clears the stack, putting exception on top.
@@ -155,7 +138,7 @@ open class FastMethodAnalyzer<V : Value>
         return frames
     }
 
-    internal fun initLocals(current: Frame<V>) {
+    private fun initLocals(current: Frame<V>) {
         current.setReturn(interpreter.newReturnTypeValue(Type.getReturnType(method.desc)))
         val args = Type.getArgumentTypes(method.desc)
         var local = 0
@@ -178,22 +161,14 @@ open class FastMethodAnalyzer<V : Value>
         }
     }
 
-    private fun AbstractInsnNode.indexOf() =
-        method.instructions.indexOf(this)
-
     fun getFrame(insn: AbstractInsnNode): Frame<V>? =
         frames[insn.indexOf()]
 
-    private fun checkAssertions() {
-        if (method.instructions.any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })
-            throw AssertionError("Subroutines are deprecated since Java 6")
-    }
-
-    private fun visitOpInsn(current: Frame<V>, insn: Int) {
+    override fun visitOpInsn(insnNode: AbstractInsnNode, current: Frame<V>, insn: Int) {
         mergeControlFlowEdge(insn + 1, current)
     }
 
-    private fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: Frame<V>) {
+    override fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: Frame<V>) {
         mergeControlFlowEdge(insnNode.dflt.indexOf(), current)
         // In most cases order of visiting switch labels should not matter
         // The only one is a tableswitch being added in the beginning of coroutine method, these switch' labels may lead
@@ -205,37 +180,17 @@ open class FastMethodAnalyzer<V : Value>
         }
     }
 
-    private fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: Frame<V>) {
+    override fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: Frame<V>) {
         mergeControlFlowEdge(insnNode.dflt.indexOf(), current)
         for (label in insnNode.labels) {
             mergeControlFlowEdge(label.indexOf(), current)
         }
     }
 
-    private fun visitJumpInsnNode(insnNode: JumpInsnNode, current: Frame<V>, insn: Int, insnOpcode: Int) {
+    override fun visitJumpInsnNode(insnNode: JumpInsnNode, current: Frame<V>, insn: Int, insnOpcode: Int) {
         mergeControlFlowEdge(insnNode.label.indexOf(), current)
         if (insnOpcode != Opcodes.GOTO) {
             mergeControlFlowEdge(insn + 1, current)
-        }
-    }
-
-    private fun computeExceptionHandlersForEachInsn(m: MethodNode) {
-        for (tcb in m.tryCatchBlocks) {
-            var current: AbstractInsnNode = tcb.start
-            val end = tcb.end
-
-            while (current != end) {
-                if (current.isMeaningful) {
-                    val currentIndex = current.indexOf()
-                    var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[currentIndex]
-                    if (insnHandlers == null) {
-                        insnHandlers = SmartList()
-                        handlers[currentIndex] = insnHandlers
-                    }
-                    insnHandlers.add(tcb)
-                }
-                current = current.next
-            }
         }
     }
 
