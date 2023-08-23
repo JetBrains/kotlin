@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
@@ -14,7 +15,6 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 private typealias ToolingDiagnosticId = String
-private typealias GradleProjectPath = String
 
 internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildServiceParameters.None> {
     /**
@@ -24,52 +24,65 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
     @Volatile
     private var isTransparent: Boolean = false
 
-    private val rawDiagnosticsFromProject: MutableMap<GradleProjectPath, MutableList<ToolingDiagnostic>> = ConcurrentHashMap()
+    private val rawDiagnosticsFromProject: MutableMap<ToolingDiagnostic.Location, MutableList<ToolingDiagnostic>> = ConcurrentHashMap()
     private val reportedIds: MutableSet<ToolingDiagnosticId> = Collections.newSetFromMap(ConcurrentHashMap())
 
     fun getDiagnosticsForProject(project: Project): Collection<ToolingDiagnostic> {
-        return rawDiagnosticsFromProject[project.path] ?: return emptyList()
+        return rawDiagnosticsFromProject[project.toLocation()] ?: return emptyList()
     }
 
     fun report(project: Project, diagnostic: ToolingDiagnostic) {
-        diagnostic.attachLocation(project.toLocation())
-        handleDiagnostic(project, diagnostic)
+        val location = project.toLocation()
+        diagnostic.attachLocation(location)
+        handleDiagnostic(diagnostic, location, ToolingDiagnosticRenderingOptions.forProject(project), project.logger)
     }
 
     fun report(task: UsesKotlinToolingDiagnostics, diagnostic: ToolingDiagnostic) {
-        diagnostic.attachLocation(task.toLocation())
+        val location = task.toLocation()
+        diagnostic.attachLocation(location)
         val options = task.diagnosticRenderingOptions.get()
-        if (!diagnostic.isSuppressed(options)) {
-            renderReportedDiagnostic(diagnostic, task.logger, options)
-        }
+        handleDiagnostic(diagnostic, location, options, task.logger)
     }
 
     fun reportOncePerGradleBuild(fromProject: Project, diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.factoryId) {
-        diagnostic.attachLocation(fromProject.toLocation())
-        if (reportedIds.add(":#$key")) {
-            handleDiagnostic(fromProject, diagnostic)
-        }
+        val location = fromProject.toLocation()
+        diagnostic.attachLocation(location)
+        handleDiagnostic(
+            diagnostic,
+            location,
+            ToolingDiagnosticRenderingOptions.forProject(fromProject),
+            fromProject.logger,
+            deduplicationKey = key
+        )
     }
 
     fun switchToTransparentMode() {
         isTransparent = true
     }
 
-    private fun handleDiagnostic(project: Project, diagnostic: ToolingDiagnostic) {
-        val options = ToolingDiagnosticRenderingOptions.forProject(project)
-        if (diagnostic.isSuppressed(options)) return
+    private fun handleDiagnostic(
+        diagnostic: ToolingDiagnostic,
+        location: ToolingDiagnostic.Location,
+        options: ToolingDiagnosticRenderingOptions,
+        logger: Logger,
+        deduplicationKey: String? = null
+    ) {
+        // 1. Check suppression or duplicated reporting. Reporting a suppressed or duplicated diagnostic shouldn't cause any side-effects,
+        // so we're returning right away if it is suppressed
+        if (diagnostic.isSuppressed(options) || deduplicationKey != null && !reportedIds.add(deduplicationKey)) return
 
-        if (isTransparent) {
-            renderReportedDiagnostic(diagnostic, project.logger, options)
-            return
-        }
-
-        rawDiagnosticsFromProject.compute(project.path) { _, previousListIfAny ->
+        // 2. Store diagnostic. Note that we don't care about any external user-visible effects this diagnostic causes.
+        // As a specific consequence, stored diagnostics can be FATAL. This shouldn't make any difference on production, but is convenient
+        // for tests
+        rawDiagnosticsFromProject.compute(location) { _, previousListIfAny ->
             previousListIfAny?.apply { add(diagnostic) } ?: mutableListOf(diagnostic)
         }
 
-        if (diagnostic.severity == ToolingDiagnostic.Severity.FATAL) {
-            throw diagnostic.createAnExceptionForFatalDiagnostic(options)
+        // 3. Produce user-visible effects if necessary
+        when {
+            diagnostic.severity == ToolingDiagnostic.Severity.FATAL -> throw diagnostic.createAnExceptionForFatalDiagnostic(options)
+
+            isTransparent -> renderReportedDiagnostic(diagnostic, logger, options)
         }
     }
 }
