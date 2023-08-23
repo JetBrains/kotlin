@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformDiagnosticSuppresso
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
@@ -22,10 +24,11 @@ import org.jetbrains.kotlin.lexer.KtTokens
 val FirSession.platformDiagnosticSuppressor: FirPlatformDiagnosticSuppressor? by FirSession.nullableSessionComponentAccessor()
 
 // See old FE's [DeclarationsChecker]
-object FirTopLevelFunctionsChecker : FirSimpleFunctionChecker() {
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        // Only report on top level callable declarations
-        if (context.containingDeclarations.size > 1) return
+object FirNonMemberFunctionsChecker : FirFunctionChecker() {
+    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declaration.containingClassLookupTag() != null || declaration is FirPropertyAccessor) {
+            return
+        }
 
         val source = declaration.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
