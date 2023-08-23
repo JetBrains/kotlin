@@ -454,6 +454,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
         }
 
         @Test
+        @TestMetadata("varargParameterWithoutType.kt")
+        public void testVarargParameterWithoutType() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/varargParameterWithoutType.kt");
+        }
+
+        @Test
         @TestMetadata("wildcardOptimization.kt")
         public void testWildcardOptimization() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/wildcardOptimization.kt");

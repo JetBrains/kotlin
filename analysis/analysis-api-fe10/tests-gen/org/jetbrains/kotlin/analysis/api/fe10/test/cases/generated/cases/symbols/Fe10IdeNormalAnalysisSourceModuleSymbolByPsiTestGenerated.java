@@ -364,5 +364,17 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
         public void testParameterNotFunctionalType() throws Exception {
             runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/parameterNotFunctionalType.kt");
         }
+
+        @Test
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/vararg.kt");
+        }
+
+        @Test
+        @TestMetadata("varargWithoutType.kt")
+        public void testVarargWithoutType() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/varargWithoutType.kt");
+        }
     }
 }
