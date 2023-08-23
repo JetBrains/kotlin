@@ -40,7 +40,9 @@ dependencies {
     testApi(project(":compiler:fir:plugin-utils"))
     testImplementation(projectTests(":generators:test-generator"))
     testImplementation(projectTests(":js:js.tests"))
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
 
     testImplementation(project(":kotlinx-serialization-compiler-plugin.common"))
     testImplementation(project(":kotlinx-serialization-compiler-plugin.k1"))

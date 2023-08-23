@@ -16,6 +16,8 @@ dependencies {
 
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(intellijCore())
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit4)
 }
 
 sourceSets {

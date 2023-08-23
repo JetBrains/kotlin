@@ -94,7 +94,9 @@ dependencies {
     testImplementation(gradleApi())
     testImplementation(gradleTestKit())
     testImplementation(commonDependency("com.google.code.gson:gson"))
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
     testImplementation(libs.junit.jupyter.params)
 

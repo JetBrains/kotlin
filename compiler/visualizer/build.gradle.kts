@@ -11,7 +11,9 @@ dependencies {
     testImplementation(project(":compiler:visualizer:render-psi"))
     testImplementation(project(":compiler:visualizer:render-fir"))
 
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
 
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))

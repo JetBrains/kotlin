@@ -10,7 +10,9 @@ configureKotlinCompileTasksGradleCompatibility()
 
 dependencies {
     compileOnly(kotlinStdlib())
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
     testImplementation(kotlinStdlib())
 }
 

@@ -33,7 +33,9 @@ dependencies {
     embedded(project(":analysis:low-level-api-fir")) { isTransitive = false }
     embedded(project(":analysis:symbol-light-classes")) { isTransitive = false }
 
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
     testApi(projectTests(":kotlin-annotation-processing-compiler"))
     testImplementation(project(":analysis:analysis-api-standalone"))
     testRuntimeOnly(toolsJar())

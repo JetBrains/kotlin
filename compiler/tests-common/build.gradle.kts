@@ -81,7 +81,9 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.intellij.deps:log4j"))
     testImplementation(commonDependency("org.jetbrains.intellij.deps:jdom"))
 
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
 }
 
 optInToExperimentalCompilerApi()

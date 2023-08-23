@@ -18,7 +18,9 @@ dependencies {
     testImplementation(project(":native:executors"))
     testImplementation(project(":kotlin-util-klib-abi"))
     testImplementation(projectTests(":kotlin-util-klib-abi"))
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-metadata-klib"))
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 

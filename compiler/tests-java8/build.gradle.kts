@@ -9,6 +9,8 @@ dependencies {
     testApi(project(":kotlin-scripting-compiler"))
     testApi(projectTests(":compiler:tests-common"))
     testImplementation(intellijCore())
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit4)
     testApi(projectTests(":generators:test-generator"))
     testRuntimeOnly(toolsJar())
 }

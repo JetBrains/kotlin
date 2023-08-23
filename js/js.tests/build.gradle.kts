@@ -33,7 +33,9 @@ val testJsRuntime by configurations.creating {
 }
 
 dependencies {
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
 
     testApi(protobufFull())
