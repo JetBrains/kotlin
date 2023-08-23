@@ -343,14 +343,14 @@ class FirExpectActualMatchingContextImpl private constructor(
         get() = asSymbol().resolvedAnnotationsWithArguments.map(::AnnotationCallInfoImpl)
 
     override fun areAnnotationArgumentsEqual(
-        annotation1: AnnotationCallInfo,
-        annotation2: AnnotationCallInfo,
+        expectAnnotation: AnnotationCallInfo,
+        actualAnnotation: AnnotationCallInfo,
         collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
     ): Boolean {
         fun AnnotationCallInfo.getFirAnnotation(): FirAnnotation {
             return (this as AnnotationCallInfoImpl).annotation
         }
-        return areFirAnnotationsEqual(annotation1.getFirAnnotation(), annotation2.getFirAnnotation())
+        return areFirAnnotationsEqual(expectAnnotation.getFirAnnotation(), actualAnnotation.getFirAnnotation())
     }
 
     private fun areFirAnnotationsEqual(annotation1: FirAnnotation, annotation2: FirAnnotation): Boolean {

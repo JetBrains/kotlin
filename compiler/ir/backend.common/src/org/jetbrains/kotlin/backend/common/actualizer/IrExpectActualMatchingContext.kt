@@ -472,14 +472,14 @@ internal abstract class IrExpectActualMatchingContext(
         get() = asIr().annotations.map(::AnnotationCallInfoImpl)
 
     override fun areAnnotationArgumentsEqual(
-        annotation1: AnnotationCallInfo, annotation2: AnnotationCallInfo,
+        expectAnnotation: AnnotationCallInfo, actualAnnotation: AnnotationCallInfo,
         collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
     ): Boolean {
         fun AnnotationCallInfo.getIrElement(): IrConstructorCall = (this as AnnotationCallInfoImpl).irElement
 
         return areIrExpressionConstValuesEqual(
-            annotation1.getIrElement(),
-            annotation2.getIrElement(),
+            expectAnnotation.getIrElement(),
+            actualAnnotation.getIrElement(),
             collectionArgumentsCompatibilityCheckStrategy,
         )
     }
