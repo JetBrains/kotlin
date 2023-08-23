@@ -41,8 +41,7 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
     }
 
     private fun MethodNode.hasOptimizableConditions(): Boolean {
-        val insns = instructions.toArray()
-        return insns.any { it.isIntJump() } && insns.any { it.isIntConst() }
+        return instructions.any { it.isIntJump() } && instructions.any { it.isIntConst() }
     }
 
     private fun AbstractInsnNode.isIntConst() =
