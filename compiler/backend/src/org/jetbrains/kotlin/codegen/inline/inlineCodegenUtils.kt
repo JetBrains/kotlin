@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspend
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
@@ -375,7 +376,7 @@ fun MethodNode.dumpBody(): String {
     }
 
     for ((i, insn) in this.instructions.toArray().withIndex()) {
-        when (insn.type) {
+        when (insn.nodeType) {
             AbstractInsnNode.INSN ->
                 pw.println("$i\t${Printer.OPCODES[insn.opcode]}")
             AbstractInsnNode.INT_INSN ->

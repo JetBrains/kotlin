@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization
 
+import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
@@ -23,7 +24,7 @@ class NegatedJumpsMethodTransformer : MethodTransformer() {
         //      IF_ICMPGE L2            = negatedJumpInsn
         //    L1:                       = next2
         for (insn in insnList.toArray()) {
-            if (insn.type != AbstractInsnNode.JUMP_INSN || insn.opcode == Opcodes.GOTO) continue
+            if (insn.nodeType != AbstractInsnNode.JUMP_INSN || insn.opcode == Opcodes.GOTO) continue
             val next1 = insn.next ?: continue
             if (next1.opcode != Opcodes.GOTO) continue
             val next2 = next1.next ?: continue

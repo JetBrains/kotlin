@@ -647,7 +647,7 @@ class MethodInliner(
             } else {
                 //given frame is <tt>null</tt> if and only if the corresponding instruction cannot be reached (dead code).
                 //clean dead code otherwise there is problems in unreachable finally block, don't touch label it cause try/catch/finally problems
-                if (cur.type == AbstractInsnNode.LABEL) {
+                if (cur.nodeType == AbstractInsnNode.LABEL) {
                     //NB: Cause we generate exception table for default handler using gaps (see ExpressionCodegen.visitTryExpression)
                     //it may occurs that interval for default handler starts before catch start label, so this label seems as dead,
                     //but as result all this labels will be merged into one (see KT-5863)
@@ -856,9 +856,9 @@ class MethodInliner(
         //  - there's a local variable table entry for this variable
         val usedIntegerVar = BooleanArray(node.maxLocals)
         for (insn in insnArray) {
-            if (insn.type == AbstractInsnNode.VAR_INSN && insn.opcode == Opcodes.ILOAD) {
+            if (insn.nodeType == AbstractInsnNode.VAR_INSN && insn.opcode == Opcodes.ILOAD) {
                 usedIntegerVar[(insn as VarInsnNode).`var`] = true
-            } else if (insn.type == AbstractInsnNode.IINC_INSN) {
+            } else if (insn.nodeType == AbstractInsnNode.IINC_INSN) {
                 usedIntegerVar[(insn as IincInsnNode).`var`] = true
             }
         }
@@ -883,7 +883,7 @@ class MethodInliner(
             if (p1.opcode != Opcodes.ISTORE) continue
 
             val p2 = p1.next ?: break
-            if (p2.type != AbstractInsnNode.LABEL) continue
+            if (p2.nodeType != AbstractInsnNode.LABEL) continue
 
             val varIndex = (p1 as VarInsnNode).`var`
             if (!usedIntegerVar[varIndex]) {

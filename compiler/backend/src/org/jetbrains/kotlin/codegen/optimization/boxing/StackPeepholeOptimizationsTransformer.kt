@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import org.jetbrains.kotlin.codegen.optimization.common.FastAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
+import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
@@ -40,8 +41,8 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
 
         fun AbstractInsnNode.previousMeaningful() =
             findPreviousOrNull {
-                it.opcode != Opcodes.NOP && it.type != AbstractInsnNode.LINE &&
-                        (it.type != AbstractInsnNode.LABEL || isMergeNode[instructions.indexOf(it)])
+                it.opcode != Opcodes.NOP && it.nodeType != AbstractInsnNode.LINE &&
+                        (it.nodeType != AbstractInsnNode.LABEL || isMergeNode[instructions.indexOf(it)])
             }
 
         var insn: AbstractInsnNode?
