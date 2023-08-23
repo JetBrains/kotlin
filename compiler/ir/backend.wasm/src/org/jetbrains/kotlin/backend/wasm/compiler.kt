@@ -49,7 +49,8 @@ class WasmCompilerResult(
     val wasm: ByteArray,
     val sourceMap: String?,
     val watSourceMap: String?,
-    val functionsWatPositions: Map<IrDeclaration, SourceLocation>?
+    val functionsWatPositions: Map<IrDeclaration, SourceLocation>?,
+    val symbolOffsets: Map<IrDeclaration, Int>?
 )
 
 fun compileToLoweredIr(
@@ -107,7 +108,7 @@ fun compileWasm(
     generateWat: Boolean = false,
     generateSourceMaps: Boolean = false,
     generateWatSourceMap: Boolean = false,
-    irDeclarationWasmSizes: MutableMap<IrDeclaration, Int>? = null,
+    generateWasmSizes: Boolean = false,
 ): WasmCompilerResult {
     val compiledWasmModule = WasmCompiledModuleFragment(
         backendContext.irBuiltIns,
@@ -128,11 +129,8 @@ fun compileWasm(
     } else {
         null
     }
-    val wasmInstructionOffsets = if (irDeclarationWasmSizes != null) {
-        hashMapOf<WasmInstr, Pair<Int, Int>>()
-    } else {
-        null
-    }
+    val irDeclarationWasmSizes = if (generateWasmSizes) mutableMapOf<IrDeclaration, Int>() else null
+    val wasmInstructionOffsets = if (generateWasmSizes) hashMapOf<WasmInstr, Pair<Int, Int>>() else null
 
     val os = ByteArrayOutputStream()
 
@@ -190,6 +188,7 @@ fun compileWasm(
         wasm = byteArray,
         sourceMap = generateSourceMap(backendContext.configuration, sourceLocationMappings),
         watSourceMap = generateSourceMap(backendContext.configuration, watSourceLocationMappings, relative = false),
+        symbolOffsets = irDeclarationWasmSizes,
         functionsWatPositions = watWasmInstructionLocation?.let { transformIrWasmMapToLocationMap(compiledWasmModule.functions.defined, it) }
     )
 }
