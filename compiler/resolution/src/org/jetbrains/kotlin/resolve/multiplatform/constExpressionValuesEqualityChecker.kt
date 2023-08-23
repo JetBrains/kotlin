@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
-import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.KClassValue
 
-internal fun ExpectActualMatchingContext<*>.areExpressionConstValuesEqual(
+internal fun ClassicExpectActualMatchingContext.areExpressionConstValuesEqual(
     expectValue: Any?,
     actualValue: Any?,
     collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
@@ -35,6 +35,16 @@ internal fun ExpectActualMatchingContext<*>.areExpressionConstValuesEqual(
             collectionArgumentsCompatibilityCheckStrategy.areCompatible(expectValue.toList(), actualValue.toList()) { f, s ->
                 areExpressionConstValuesEqual(f, s, collectionArgumentsCompatibilityCheckStrategy)
             }
+        }
+        expectValue is KClassValue.Value.NormalClass && actualValue is KClassValue.Value.NormalClass -> {
+            val expectClassIdOriginal = expectValue.classId
+            val expectClassIdPlatform = findExpandedExpectClassInPlatformModule(expectClassIdOriginal)?.classId
+            val expectValueCopy = expectValue.copy(
+                value = expectValue.value.copy(
+                    classId = expectClassIdPlatform ?: expectClassIdOriginal
+                )
+            )
+            expectValueCopy == actualValue
         }
         else -> expectValue == actualValue
     }

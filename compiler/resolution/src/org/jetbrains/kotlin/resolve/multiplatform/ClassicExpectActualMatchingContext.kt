@@ -387,13 +387,17 @@ class ClassicExpectActualMatchingContext(
                 return classDescriptor
             }
             val classId = classDescriptor.classId
-            // For IDE composite module analysis, when actual annotation may differ
-            val platformDescriptor = platformModule.findClassifierAcrossModuleDependencies(classId)
-            return when (platformDescriptor) {
-                is ClassDescriptor -> platformDescriptor
-                is TypeAliasDescriptor -> platformDescriptor.classDescriptor ?: classDescriptor
-                else -> classDescriptor
-            }
+            return findExpandedExpectClassInPlatformModule(classId) ?: classDescriptor
+        }
+    }
+
+    // For IDE composite module analysis, when actual class may differ
+    internal fun findExpandedExpectClassInPlatformModule(originalClassId: ClassId): ClassDescriptor? {
+        val classifier = platformModule.findClassifierAcrossModuleDependencies(originalClassId)
+        return when (classifier) {
+            is TypeAliasDescriptor -> classifier.classDescriptor
+            is ClassDescriptor -> classifier
+            else -> null
         }
     }
 
