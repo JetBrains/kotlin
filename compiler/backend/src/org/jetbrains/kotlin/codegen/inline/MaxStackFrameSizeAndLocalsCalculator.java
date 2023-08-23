@@ -337,7 +337,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
          */
         int max = 0;
         Stack<LabelWrapper> stack = new Stack<>();
-        Set<LabelWrapper> pushed = SmartSet.create();
+        Set<LabelWrapper> pushed = new HashSet<>();
 
         stack.push(firstLabel);
         pushed.add(firstLabel);
