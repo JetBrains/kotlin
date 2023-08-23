@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.utils.atMostOne
-import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
+import org.jetbrains.kotlin.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor

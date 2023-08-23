@@ -81,11 +81,6 @@ fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.moda
 internal val FunctionDescriptor.target: FunctionDescriptor
     get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride()).original
 
-tailrec internal fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
-    return if (this is PackageFragmentDescriptor) this
-    else this.containingDeclaration!!.findPackage()
-}
-
 internal fun DeclarationDescriptor.findPackageView(): PackageViewDescriptor {
     val packageFragment = this.findPackage()
     return packageFragment.module.getPackage(packageFragment.fqName)
