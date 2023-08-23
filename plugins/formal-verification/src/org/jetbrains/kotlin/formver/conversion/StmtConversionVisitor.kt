@@ -200,12 +200,17 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
     }
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: StmtConversionContext): Exp {
+        val condVar = data.newAnonVar(BooleanTypeEmbedding)
+        data.addDeclaration(condVar.toLocalVarDecl())
         val cond = whileLoop.condition.accept(this, data)
-        val invariants: List<Exp> = emptyList()
+        data.addStatement(Stmt.LocalVarAssign(condVar.toLocalVar(), cond))
+
         val bodyStmtConversionContext = StmtConverter(data)
         bodyStmtConversionContext.convertAndAppend(whileLoop.block)
-        val body = bodyStmtConversionContext.block
-        data.addStatement(Stmt.While(cond, invariants, body))
+        val updatedCond = whileLoop.condition.accept(this, bodyStmtConversionContext)
+        bodyStmtConversionContext.addStatement(Stmt.LocalVarAssign(condVar.toLocalVar(), updatedCond))
+
+        data.addStatement(Stmt.While(condVar.toLocalVar(), invariants = emptyList(), bodyStmtConversionContext.block))
         return UnitDomain.element
     }
 

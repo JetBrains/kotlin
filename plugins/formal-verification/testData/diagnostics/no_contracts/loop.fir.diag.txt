@@ -1,11 +1,31 @@
 /loop.kt:(4,14): info: Generated Viper text for while_loop:
-method global$pkg_$while_loop(local$b: Bool) returns (ret$: Int)
+method global$pkg_$while_loop(local$b: Bool) returns (ret$: Bool)
 {
-  while (local$b) {
+  var anonymous$1: Bool
+  anonymous$1 := local$b
+  while (anonymous$1) {
     var local$a: Int
     var local$c: Int
     local$a := 1
     local$c := 2
+    anonymous$1 := local$b
   }
-  ret$ := 0
+  ret$ := false
+}
+
+/loop.kt:(120,144): info: Generated Viper text for while_function_condition:
+method global$pkg_$while_loop(local$b: Bool) returns (ret$: Bool)
+
+
+method global$pkg_$while_function_condition() returns (ret$: dom$Unit)
+{
+  var anonymous$1: Bool
+  var anonymous$2: Bool
+  anonymous$2 := global$pkg_$while_loop(true)
+  anonymous$1 := anonymous$2
+  while (anonymous$1) {
+    var anonymous$3: Bool
+    anonymous$3 := global$pkg_$while_loop(true)
+    anonymous$1 := anonymous$3
+  }
 }

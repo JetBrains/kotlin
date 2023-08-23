@@ -1,9 +1,14 @@
 FILE: loop.kt
-    public final fun while_loop(b: R|kotlin/Boolean|): R|kotlin/Int| {
+    public final fun while_loop(b: R|kotlin/Boolean|): R|kotlin/Boolean| {
         while(R|<local>/b|) {
             lval a: R|kotlin/Int| = Int(1)
             lval c: R|kotlin/Int| = Int(2)
         }
 
-        ^while_loop Int(0)
+        ^while_loop Boolean(false)
+    }
+    public final fun while_function_condition(): R|kotlin/Unit| {
+        while(R|/while_loop|(Boolean(true))) {
+        }
+
     }
