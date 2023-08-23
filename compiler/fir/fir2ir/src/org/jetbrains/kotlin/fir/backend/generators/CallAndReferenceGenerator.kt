@@ -21,14 +21,12 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.isMarkedWithImplicitIntegerCoercion
+import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
-import org.jetbrains.kotlin.fir.resolve.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -1041,10 +1039,10 @@ class CallAndReferenceGenerator(
         if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ImplicitSignedToUnsignedIntegerConversion)) return this
 
         if (parameter == null || !parameter.isMarkedWithImplicitIntegerCoercion) return this
+        if (!argument.getExpectedType(parameter).fullyExpandedType(session).isUnsignedTypeOrNullableUnsignedType) return this
 
         fun IrExpression.applyToElement(argument: FirExpression, conversionFunction: IrSimpleFunctionSymbol): IrExpression =
-            if (argument is FirConstExpression<*> ||
-                argument is FirNamedArgumentExpression ||
+            if (argument.isIntegerLiteralOrOperatorCall() ||
                 argument.calleeReference?.toResolvedCallableSymbol()?.let {
                     it.resolvedStatus.isConst && it.isMarkedWithImplicitIntegerCoercion
                 } == true
