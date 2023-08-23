@@ -50,7 +50,9 @@ internal class TaskOutputsBackup(
                 )
             } else if (!outputPath.exists()) {
                 logger.debug("Ignoring $outputPath in making a backup as it does not exist")
-                File(snapshotsDir.get().asFile, index.asNotExistsMarkerFile).createNewFile()
+                val markerFile = File(snapshotsDir.get().asFile, index.asNotExistsMarkerFile)
+                markerFile.parentFile.mkdirs()
+                markerFile.createNewFile()
             } else {
                 val snapshotFile = snapshotsDir.map { it.file(index.asSnapshotDirectoryName).asFile }
                 logger.debug("Copying $outputPath as $snapshotFile to make a backup")
