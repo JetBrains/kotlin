@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.konan.target.KonanTarget

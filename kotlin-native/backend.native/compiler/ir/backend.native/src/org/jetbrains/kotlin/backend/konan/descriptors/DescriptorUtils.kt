@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
-import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.ir.getSuperInterfaces
@@ -17,8 +16,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -247,18 +244,6 @@ internal fun IrClass.isFrozen(context: Context): Boolean {
         !this.defaultType.binaryTypeIsReference() -> true
         else -> false
     }
-}
-
-fun IrConstructorCall.getAnnotationStringValue() = (getValueArgument(0) as? IrConst<*>)?.value as String?
-
-fun IrConstructorCall.getAnnotationStringValue(name: String): String {
-    val parameter = symbol.owner.valueParameters.single { it.name.asString() == name }
-    return (getValueArgument(parameter.index) as IrConst<*>).value as String
-}
-
-inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? {
-    val parameter = symbol.owner.valueParameters.atMostOne { it.name.asString() == name }
-    return parameter?.let { getValueArgument(it.index)?.let { (it as IrConst<*>).value as T } }
 }
 
 fun IrFunction.externalSymbolOrThrow(): String? {

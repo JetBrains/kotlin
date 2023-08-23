@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
-import org.jetbrains.kotlin.backend.konan.isObjCClass
+import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.IrElement

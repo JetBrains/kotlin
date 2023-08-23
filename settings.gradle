@@ -64,6 +64,7 @@ include ":benchmarks",
         ":compiler:ir.tree:tree-generator",
         ":compiler:ir.psi2ir",
         ":compiler:ir.ir2cfg",
+        ":compiler:ir.objcinterop",
         ":compiler:ir.backend.common",
         ":compiler:ir.serialization.common",
         ":compiler:ir.serialization.jvm",
@@ -672,6 +673,7 @@ project(':compiler:ir.tree').projectDir = "$rootDir/compiler/ir/ir.tree" as File
 project(':compiler:ir.tree:tree-generator').projectDir = "$rootDir/compiler/ir/ir.tree/tree-generator" as File
 project(':compiler:ir.psi2ir').projectDir = "$rootDir/compiler/ir/ir.psi2ir" as File
 project(':compiler:ir.ir2cfg').projectDir = "$rootDir/compiler/ir/ir.ir2cfg" as File
+project(':compiler:ir.objcinterop').projectDir = "$rootDir/compiler/ir/ir.objcinterop" as File
 project(':compiler:ir.backend.common').projectDir = "$rootDir/compiler/ir/backend.common" as File
 project(':compiler:backend.js').projectDir = "$rootDir/compiler/ir/backend.js" as File
 project(':compiler:backend.wasm').projectDir = "$rootDir/compiler/ir/backend.wasm" as File

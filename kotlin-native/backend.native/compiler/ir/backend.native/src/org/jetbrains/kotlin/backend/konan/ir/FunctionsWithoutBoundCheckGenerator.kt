@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.computeBinaryType
-import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET

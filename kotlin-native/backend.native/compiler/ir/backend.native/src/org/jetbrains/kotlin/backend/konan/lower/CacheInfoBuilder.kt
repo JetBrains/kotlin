@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerpri
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_FUNCTION_CLASS
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
-import org.jetbrains.kotlin.backend.konan.isExternalObjCClass
+import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.backend.konan.isFunctionInterfaceFile
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer

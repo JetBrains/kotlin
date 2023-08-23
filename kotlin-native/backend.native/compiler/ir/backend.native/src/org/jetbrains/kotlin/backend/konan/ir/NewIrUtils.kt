@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 private fun IrClass.isClassTypeWithSignature(signature: IdSignature.CommonSignature): Boolean {
     return signature == symbol.signature
@@ -48,23 +46,8 @@ fun IrClass.getSuperInterfaces() = this.superClasses.map { it.owner }.filter { i
 
 fun IrClass.isSpecialClassWithNoSupertypes() = this.isAny() || this.isNothing()
 
-inline fun <reified T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? {
-    val annotation = this.annotations.findAnnotation(fqName) ?: return null
-    for (index in 0 until annotation.valueArgumentsCount) {
-        val parameter = annotation.symbol.owner.valueParameters[index]
-        if (parameter.name == Name.identifier(argumentName)) {
-            val actual = annotation.getValueArgument(index) as? IrConst<*> ?: return null
-            return actual.value as T
-        }
-    }
-    return null
-}
-
 fun IrValueParameter.isInlineParameter(): Boolean =
     !this.isNoinline && (this.type.isFunction() || this.type.isSuspendFunction()) && !this.type.isMarkedNullable()
-
-val IrDeclaration.parentDeclarationsWithSelf: Sequence<IrDeclaration>
-    get() = generateSequence(this, { it.parent as? IrDeclaration })
 
 fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: Int,
                           annotationClass: IrClass, vararg args: String): IrConstructorCall {
