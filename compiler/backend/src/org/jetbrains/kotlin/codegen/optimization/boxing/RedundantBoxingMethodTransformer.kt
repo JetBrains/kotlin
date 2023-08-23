@@ -37,8 +37,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 class RedundantBoxingMethodTransformer(private val generationState: GenerationState) : MethodTransformer() {
 
     override fun transform(internalClassName: String, node: MethodNode) {
-        val insns = node.instructions.toArray()
-        if (insns.none { it.isBoxing(generationState) || it.isMethodInsnWith(Opcodes.INVOKEINTERFACE) { name == "next" } })
+        if (node.instructions.none { it.isBoxing(generationState) || it.isMethodInsnWith(Opcodes.INVOKEINTERFACE) { name == "next" } })
             return
 
         val interpreter = RedundantBoxingInterpreter(node, generationState)
