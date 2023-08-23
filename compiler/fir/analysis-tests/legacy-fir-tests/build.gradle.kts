@@ -13,7 +13,7 @@ plugins {
 dependencies {
     compileOnly(intellijCore())
 
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testApi(projectTests(":compiler:tests-common"))

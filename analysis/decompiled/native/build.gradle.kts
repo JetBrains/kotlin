@@ -23,6 +23,9 @@ dependencies {
     api(project(":kotlin-util-klib-metadata"))
     compileOnly(intellijCore())
 
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit4)
+    testCompileOnly(libs.junit.jupiter.api) // the annotations are misused and have no effect
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))

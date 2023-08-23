@@ -28,6 +28,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testImplementation(libs.junit.jupyter.api)
 
     // FIR dependencies
     testApi(project(":compiler:fir:checkers"))
@@ -35,8 +36,9 @@ dependencies {
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
+    testRuntimeOnly(libs.junit.jupyter.engine)
 
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
 
     testRuntimeOnly(libs.guava)
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))

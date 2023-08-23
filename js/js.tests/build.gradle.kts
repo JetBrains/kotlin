@@ -55,7 +55,7 @@ dependencies {
     testApi(project(":js:js.dce"))
     testApi(project(":js:js.engines"))
     testApi(project(":compiler:incremental-compilation-impl"))
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
     testApi(projectTests(":kotlin-build-common"))
     testApi(projectTests(":generators:test-generator"))
 

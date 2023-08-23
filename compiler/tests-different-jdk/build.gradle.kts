@@ -11,8 +11,8 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
 
     testApiJUnit5()
-    testApi(libs.junit.platform.runner)
-    testApi(libs.junit.platform.suite.api)
+    testImplementation(libs.junit.platform.runner)
+    testImplementation(libs.junit.platform.suite.api)
     runtimeOnly(libs.junit.vintage.engine)
 
     testImplementation(intellijCore())

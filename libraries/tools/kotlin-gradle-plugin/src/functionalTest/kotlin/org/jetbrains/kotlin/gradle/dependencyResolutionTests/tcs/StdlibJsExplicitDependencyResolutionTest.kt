@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.resolveMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.util.*
-import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
+import org.jetbrains.kotlin.util.assertDoesNotThrow
+import org.jetbrains.kotlin.util.assertThrows
 import kotlin.test.Test
 
 class StdlibJsExplicitDependencyResolutionTest {

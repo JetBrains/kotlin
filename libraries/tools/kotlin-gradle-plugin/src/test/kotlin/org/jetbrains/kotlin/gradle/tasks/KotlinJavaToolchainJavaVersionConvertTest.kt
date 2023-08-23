@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.testhelpers.StubLogger
+import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Before
-import org.junit.jupiter.api.assertThrows
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals

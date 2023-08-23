@@ -17,7 +17,7 @@ dependencies {
     api(project(":kotlin-daemon-client"))
     testCompileOnly(project(":compiler:cli"))
     testApi(project(":kotlin-test:kotlin-test-junit"))
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
     testApi(project(":kotlin-scripting-compiler"))
     testRuntimeOnly(project(":kotlin-compiler"))
     testApi(intellijCore())

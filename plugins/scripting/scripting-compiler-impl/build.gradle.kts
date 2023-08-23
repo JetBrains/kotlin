@@ -32,7 +32,7 @@ dependencies {
     testApi(project(":compiler:cli-common"))
     testApi(project(":compiler:frontend.java"))
     testApi(projectTests(":compiler:tests-common"))
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
 }
 
 sourceSets {

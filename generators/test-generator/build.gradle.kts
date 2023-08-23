@@ -8,7 +8,7 @@ dependencies {
     testApi(project(":core:util.runtime"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(kotlinStdlib())
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
     testApiJUnit5()
     testApi(project(":generators"))
 

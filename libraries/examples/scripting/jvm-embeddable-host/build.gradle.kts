@@ -10,7 +10,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     testRuntimeOnly(project(":kotlin-scripting-jvm-host"))
     testRuntimeOnly(libs.guava)
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
 }
 
 sourceSets {

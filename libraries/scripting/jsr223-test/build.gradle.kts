@@ -17,7 +17,7 @@ val testJsr223Runtime by configurations.creating {
 val testCompilationClasspath by configurations.creating
 
 dependencies {
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
     testCompileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":core:util.runtime"))

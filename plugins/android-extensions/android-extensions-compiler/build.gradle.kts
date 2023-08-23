@@ -37,7 +37,7 @@ dependencies {
     testApi(project(":kotlin-android-extensions-runtime"))
     testApi(projectTests(":compiler:tests-common"))
     testApi(project(":kotlin-test:kotlin-test-jvm"))
-    testApi(libs.junit4)
+    testImplementation(libs.junit4)
 
     robolectricDependency("org.robolectric:android-all:5.0.2_r3-robolectric-r0")
 
