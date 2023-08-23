@@ -17,7 +17,7 @@ abstract class AbstractDelegateMemberScopeTest : AbstractSymbolByFqNameTest() {
 
     override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
-        val symbols = with(symbolData) { toSymbols() }
+        val symbols = with(symbolData) { toSymbols(ktFile) }
         val classSymbol = symbols.singleOrNull() as? KtClassOrObjectSymbol
             ?: error("Should be a single class symbol, but $symbols found")
         return SymbolsData(classSymbol.getDelegatedMemberScope().getCallableSymbols().toList())

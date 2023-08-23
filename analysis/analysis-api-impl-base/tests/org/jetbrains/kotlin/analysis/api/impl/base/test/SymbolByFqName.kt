@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import java.nio.file.Path
 
@@ -41,24 +41,31 @@ object SymbolByFqName {
 }
 
 sealed class SymbolData {
-    abstract fun KtAnalysisSession.toSymbols(): List<KtSymbol>
+    abstract fun KtAnalysisSession.toSymbols(ktFile: KtFile): List<KtSymbol>
 
     data class ClassData(val classId: ClassId) : SymbolData() {
-        override fun KtAnalysisSession.toSymbols(): List<KtSymbol> {
+        override fun KtAnalysisSession.toSymbols(ktFile: KtFile): List<KtSymbol> {
             val symbol = getClassOrObjectSymbolByClassId(classId) ?: error("Class $classId is not found")
             return listOf(symbol)
         }
     }
 
+    object ScriptData : SymbolData() {
+        override fun KtAnalysisSession.toSymbols(ktFile: KtFile): List<KtSymbol> {
+            val script = ktFile.script ?: error("KtScript is not found")
+            return listOf(script.getScriptSymbol())
+        }
+    }
+
     data class TypeAliasData(val classId: ClassId) : SymbolData() {
-        override fun KtAnalysisSession.toSymbols(): List<KtSymbol> {
+        override fun KtAnalysisSession.toSymbols(ktFile: KtFile): List<KtSymbol> {
             val symbol = getTypeAliasByClassId(classId) ?: error("Type alias $classId is not found")
             return listOf(symbol)
         }
     }
 
     data class CallableData(val callableId: CallableId) : SymbolData() {
-        override fun KtAnalysisSession.toSymbols(): List<KtSymbol> {
+        override fun KtAnalysisSession.toSymbols(ktFile: KtFile): List<KtSymbol> {
             val classId = callableId.classId
             val symbols = if (classId == null) {
                 getTopLevelCallableSymbols(callableId.packageName, callableId.callableName).toList()
@@ -77,9 +84,10 @@ sealed class SymbolData {
     }
 
     companion object {
-        val identifiers = arrayOf("callable:", "class:", "typealias:")
+        val identifiers: List<String> = listOf("callable:", "class:", "typealias:", "script")
 
         fun create(data: String): SymbolData = when {
+            data == "script" -> ScriptData
             data.startsWith("class:") -> ClassData(ClassId.fromString(data.removePrefix("class:").trim()))
             data.startsWith("typealias:") -> TypeAliasData(ClassId.fromString(data.removePrefix("typealias:").trim()))
             data.startsWith("callable:") -> {
