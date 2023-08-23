@@ -769,7 +769,6 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
-    @Disabled
     @DisplayName("KT-61273: task output backup works correctly if the first output is absent")
     @GradleTest
     fun taskOutputBackupWorksIfFirstOutputIsAbsent(gradleVersion: GradleVersion) {
