@@ -72,5 +72,5 @@ abstract class AbstractOutOfContentRootGetOrBuildFirTest : AbstractGetOrBuildFir
 }
 
 abstract class AbstractScriptGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
-    override val configurator get() = AnalysisApiFirScriptTestConfigurator
+    override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
 }

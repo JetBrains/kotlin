@@ -70,5 +70,5 @@ abstract class AbstractSourceNonLocalDeclarationAnchorTest : AbstractNonLocalDec
 }
 
 abstract class AbstractScriptNonLocalDeclarationAnchorTest : AbstractNonLocalDeclarationAnchorTest() {
-    override val configurator: AnalysisApiTestConfigurator get() = AnalysisApiFirScriptTestConfigurator
+    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
 }

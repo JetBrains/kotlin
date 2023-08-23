@@ -37,5 +37,5 @@ abstract class AbstractOutOfContentRootWholeFileResolvePhaseTest : AbstractWhole
 }
 
 abstract class AbstractScriptWholeFileResolvePhaseTest : AbstractWholeFileResolvePhaseTest() {
-    override val configurator get() = AnalysisApiFirScriptTestConfigurator
+    override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
 }

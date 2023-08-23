@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtScriptMo
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
-object AnalysisApiFirScriptTestConfigurator : AnalysisApiFirSourceLikeTestConfigurator(analyseInDependentSession = false) {
+class AnalysisApiFirScriptTestConfigurator(analyseInDependentSession: Boolean) :
+    AnalysisApiFirSourceLikeTestConfigurator(analyseInDependentSession) {
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         super.configureTest(builder, disposable)
 

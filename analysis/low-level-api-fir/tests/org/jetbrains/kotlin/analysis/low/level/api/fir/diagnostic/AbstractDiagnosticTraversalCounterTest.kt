@@ -158,5 +158,5 @@ abstract class AbstractSourceDiagnosticTraversalCounterTest : AbstractDiagnostic
 }
 
 abstract class AbstractScriptDiagnosticTraversalCounterTest : AbstractDiagnosticTraversalCounterTest() {
-    override val configurator get() = AnalysisApiFirScriptTestConfigurator
+    override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
 }

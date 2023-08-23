@@ -129,5 +129,5 @@ abstract class AbstractOutOfContentRootFileStructureTest : AbstractFileStructure
 }
 
 abstract class AbstractScriptFileStructureTest : AbstractFileStructureTest() {
-    override val configurator get() = AnalysisApiFirScriptTestConfigurator
+    override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
 }

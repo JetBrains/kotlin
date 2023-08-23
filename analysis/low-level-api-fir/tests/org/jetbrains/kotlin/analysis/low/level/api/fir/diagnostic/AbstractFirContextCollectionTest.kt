@@ -118,5 +118,5 @@ abstract class AbstractFirOutOfContentRootContextCollectionTest : AbstractFirCon
 }
 
 abstract class AbstractScriptContextCollectionTest : AbstractFirContextCollectionTest() {
-    override val configurator get() = AnalysisApiFirScriptTestConfigurator
+    override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
 }

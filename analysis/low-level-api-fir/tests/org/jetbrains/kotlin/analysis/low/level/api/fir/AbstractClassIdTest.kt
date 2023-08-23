@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLeve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -49,5 +48,5 @@ abstract class AbstractSourceClassIdTest : AbstractClassIdTest() {
 }
 
 abstract class AbstractScriptClassIdTest : AbstractClassIdTest() {
-    override val configurator: AnalysisApiTestConfigurator get() = AnalysisApiFirScriptTestConfigurator
+    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
 }

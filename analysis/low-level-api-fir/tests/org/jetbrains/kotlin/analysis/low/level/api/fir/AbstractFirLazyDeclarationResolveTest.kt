@@ -110,5 +110,5 @@ abstract class AbstractFirOutOfContentRootLazyDeclarationResolveTest : AbstractF
 }
 
 abstract class AbstractFirScriptLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTest() {
-    override val configurator get() = AnalysisApiFirScriptTestConfigurator
+    override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
 }

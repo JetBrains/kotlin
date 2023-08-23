@@ -28,5 +28,5 @@ abstract class AbstractSourceDependentCopyFirTest : AbstractDependentCopyFirTest
 }
 
 abstract class AbstractScriptDependentCopyFirTest : AbstractDependentCopyFirTest() {
-    override val configurator: AnalysisApiTestConfigurator get() = AnalysisApiFirScriptTestConfigurator
+    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
 }

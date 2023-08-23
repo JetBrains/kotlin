@@ -157,5 +157,5 @@ abstract class AbstractSourceFileBasedKotlinDeclarationProviderTest : AbstractFi
 }
 
 abstract class AbstractScriptFileBasedKotlinDeclarationProviderTest : AbstractFileBasedKotlinDeclarationProviderTest() {
-    override val configurator get() = AnalysisApiFirScriptTestConfigurator
+    override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
 }
