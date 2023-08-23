@@ -227,30 +227,6 @@ open class FastMethodAnalyzer<V : Value>
         }
     }
 
-    private fun Frame<V>.dump(): String {
-        return buildString {
-            append("{\n")
-            append("  locals: [\n")
-            for (i in 0 until method.maxLocals) {
-                append("    #$i: ${this@dump.getLocal(i)}\n")
-            }
-            append("  ]\n")
-            val stackSize = this@dump.stackSize
-            append("  stack: size=")
-            append(stackSize)
-            if (stackSize == 0) {
-                append(" []\n")
-            } else {
-                append(" [\n")
-                for (i in 0 until stackSize) {
-                    append("    #$i: ${this@dump.getStack(i)}\n")
-                }
-                append("  ]\n")
-            }
-            append("}\n")
-        }
-    }
-
     companion object {
         fun findMergeNodes(method: MethodNode): BooleanArray {
             val isMergeNode = BooleanArray(method.instructions.size())

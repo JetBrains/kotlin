@@ -59,8 +59,8 @@ class StoreLoadFrame<V : StoreLoadValue>(val maxLocals: Int) : Frame<V>(maxLocal
     operator fun get(index: Int): V =
         locals[index] as V
 
-    operator fun set(index: Int, newValue: V) {
-        locals[index] = newValue
+    override fun setLocal(index: Int, value: V) {
+        locals[index] = value
     }
 
     fun init(other: StoreLoadFrame<V>): StoreLoadFrame<V> {
@@ -92,7 +92,7 @@ class StoreLoadFrame<V : StoreLoadValue>(val maxLocals: Int) : Frame<V>(maxLocal
             val newValue = interpreter.merge(oldValue, other[i])
             if (newValue != oldValue) {
                 changes = true
-                this[i] = newValue
+                this.setLocal(i, newValue)
             }
         }
         return changes
@@ -217,16 +217,20 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
         var local = 0
         if ((method.access and Opcodes.ACC_STATIC) == 0) {
             val ctype = Type.getObjectType(owner)
-            current[local++] = interpreter.newValue(ctype)
+            current.setLocal(local, interpreter.newValue(ctype))
+            local++
         }
         for (arg in args) {
-            current[local++] = interpreter.newValue(arg)
+            current.setLocal(local, interpreter.newValue(arg))
+            local++
             if (arg.size == 2) {
-                current[local++] = interpreter.uninitialized()
+                current.setLocal(local, interpreter.uninitialized())
+                local++
             }
         }
         while (local < method.maxLocals) {
-            current[local++] = interpreter.uninitialized()
+            current.setLocal(local, interpreter.uninitialized())
+            local++
         }
     }
 
