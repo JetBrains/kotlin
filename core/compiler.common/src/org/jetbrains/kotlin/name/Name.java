@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.name;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.utils.StringInterner;
 
 public final class Name implements Comparable<Name> {
     @NotNull
@@ -26,7 +25,7 @@ public final class Name implements Comparable<Name> {
     private final boolean special;
 
     private Name(@NotNull String name, boolean special) {
-        this.name = StringInterner.interned(name);
+        this.name = name;
         this.special = special;
     }
 
@@ -117,7 +116,7 @@ public final class Name implements Comparable<Name> {
         Name name1 = (Name) o;
 
         if (special != name1.special) return false;
-        if (name != name1.name) return false; // strings are interned
+        if (!name.equals(name1.name)) return false;
 
         return true;
     }

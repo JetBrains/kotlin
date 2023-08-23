@@ -7,9 +7,13 @@ import java.util.concurrent.ConcurrentHashMap
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-object StringInterner {
-    private val cache = ConcurrentHashMap<String, String>()
+class UniqueString private constructor(val value: String) {
+    override fun toString(): String = value
 
-    @JvmStatic
-    fun interned(string: String): String = cache.getOrPut(string) { string }
+    companion object {
+        private val cache = ConcurrentHashMap<String, UniqueString>()
+        fun uniqueString(value: String): UniqueString {
+            return cache.getOrPut(value) { UniqueString(value) }
+        }
+    }
 }
