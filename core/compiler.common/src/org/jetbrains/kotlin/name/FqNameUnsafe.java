@@ -197,7 +197,7 @@ public final class FqNameUnsafe {
 
         FqNameUnsafe that = (FqNameUnsafe) o;
 
-        if (!fqName.equals(that.fqName)) return false;
+        if (fqName != that.fqName) return false; // strings are interned
 
         return true;
     }
