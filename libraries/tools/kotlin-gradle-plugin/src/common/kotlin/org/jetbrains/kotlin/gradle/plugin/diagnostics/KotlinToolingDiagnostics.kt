@@ -241,7 +241,7 @@ object KotlinToolingDiagnostics {
     }
 
     object AndroidGradlePluginIsMissing : ToolingDiagnosticFactory(FATAL) {
-        operator fun invoke(trace: Throwable? = null) = build(
+        operator fun invoke(trace: Throwable) = build(
             """
                 The Android target requires a 'Android Gradle Plugin' to be applied to the project. 
                 
@@ -256,9 +256,8 @@ object KotlinToolingDiagnostics {
                 kotlin {
                     androidTarget() /* <- requires Android Gradle Plugin to be applied */
                 }
-            """.trimIndent(),
-            throwable = trace
-        )
+            """.trimIndent()
+        ).attachStacktrace(trace)
     }
 
     object NoKotlinTargetsDeclared : ToolingDiagnosticFactory(ERROR) {
@@ -399,9 +398,8 @@ object KotlinToolingDiagnostics {
                 |   kotlin {
                 |       $expectedTargetName()
                 |   }
-            """.trimMargin(),
-            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
-        )
+            """.trimMargin()
+        ).attachStacktrace(sourceSet.isRegisteredByKotlinSourceSetConventionAt)
     }
 
     object PlatformSourceSetConventionUsedWithoutCorrespondingTarget : ToolingDiagnosticFactory(WARNING) {
@@ -415,9 +413,8 @@ object KotlinToolingDiagnostics {
                  |
                  |      }
                  |  }
-                """.trimMargin(),
-            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
-        )
+                """.trimMargin()
+        ).attachStacktrace(sourceSet.isRegisteredByKotlinSourceSetConventionAt)
     }
 
     object AndroidMainSourceSetConventionUsedWithoutAndroidTarget : ToolingDiagnosticFactory(ERROR) {
@@ -440,9 +437,8 @@ object KotlinToolingDiagnostics {
                 |    kotlin {
                 |        androidTarget() /* <- register the androidTarget */
                 |    }
-            """.trimMargin(),
-            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
-        )
+            """.trimMargin()
+        ).attachStacktrace(sourceSet.isRegisteredByKotlinSourceSetConventionAt)
     }
 
     object IosSourceSetConventionUsedWithoutIosTarget : ToolingDiagnosticFactory(WARNING) {
@@ -460,9 +456,8 @@ object KotlinToolingDiagnostics {
                 |
                 |     }
                 |  }
-            """.trimMargin(),
-            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
-        )
+            """.trimMargin()
+        ).attachStacktrace(sourceSet.isRegisteredByKotlinSourceSetConventionAt)
     }
 
     object KotlinDefaultHierarchyFallbackDependsOnUsageDetected : ToolingDiagnosticFactory(WARNING) {
@@ -505,9 +500,8 @@ object KotlinToolingDiagnostics {
                 to your gradle.properties
                 
                 Learn more about hierarchy templates: https://kotl.in/hierarchy-template
-            """.trimIndent(),
-            throwable = trace
-        )
+            """.trimIndent()
+        ).attachStacktrace(trace)
     }
 
     object KotlinDefaultHierarchyFallbackIllegalTargetNames : ToolingDiagnosticFactory(WARNING) {
@@ -588,9 +582,8 @@ object KotlinToolingDiagnostics {
                           withJava() /* <- cannot be used when the Android Plugin is present */
                       }
                   }
-            """.trimIndent(),
-            throwable = trace
-        )
+            """.trimIndent()
+        ).attachStacktrace(trace)
     }
 
     object KotlinTargetAlreadyDeclared : ToolingDiagnosticFactory(WARNING) {
@@ -613,9 +606,8 @@ object KotlinToolingDiagnostics {
                 and will be removed in upcoming Kotlin releases.
 
                 See https://kotl.in/compilation-source-deprecation for details.
-            """.trimIndent(),
-            throwable = trace,
-        )
+            """.trimIndent()
+        ).attachStacktrace(trace)
     }
 
     object CircularDependsOnEdges : ToolingDiagnosticFactory(FATAL) {

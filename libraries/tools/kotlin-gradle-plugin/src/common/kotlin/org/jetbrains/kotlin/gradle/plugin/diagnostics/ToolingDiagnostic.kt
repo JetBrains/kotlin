@@ -7,10 +7,31 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
+/**
+ * Represents a reported instance of a diagnostic.
+ *
+ * Each diagnostic has mandatory properties and optional "attachable"  properties.
+ * Mandatory properties are enumerated in the constructor, and participate in equality comparisons (affects tests)
+ *
+ * "Attachable" properties are not part of the constructor, and do not participate in equality comparison by default. Then can be
+ * initialized later after diagnostic creation, or even never initialized at all.
+ * By convention, [ToolingDiagnostic] exposes `attachX` methods for configuring attachable properties, e.g. [attachStacktrace]
+ *
+ * IMPORTANT. All fields referenced from the diagnostic should be serializable.
+ */
 @InternalKotlinGradlePluginApi // used in integration tests
 data class ToolingDiagnostic(
-    val factoryId: String, val message: String, val severity: Severity, val throwable: Throwable? = null,
+    val factoryId: String, val message: String, val severity: Severity
 ) {
+    var throwable: Throwable? = null
+        private set
+
+    fun attachStacktrace(throwable: Throwable?): ToolingDiagnostic {
+        require(this.throwable == null) { "throwable has already been initialized" }
+        this.throwable = throwable
+        return this
+    }
+
     enum class Severity {
         /**
          * More visible than most of the output (intuition: yellow-highlighting).

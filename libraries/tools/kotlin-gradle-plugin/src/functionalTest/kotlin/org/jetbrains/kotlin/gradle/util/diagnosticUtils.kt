@@ -23,12 +23,6 @@ internal fun checkDiagnosticsWithMppProject(projectName: String, projectConfigur
     project.checkDiagnostics(projectName)
 }
 
-internal fun ToolingDiagnostic.equals(that: ToolingDiagnostic, ignoreThrowable: Boolean) = if (ignoreThrowable) {
-    this.factoryId == that.factoryId && this.message == that.message && this.severity == that.severity
-} else {
-    this == that
-}
-
 /**
  * [compactRendering] == true will omit projects with no diagnostics from the report, as well as
  * name of the project if it's a single one with diagnostics (useful for small one-project tests)
@@ -81,19 +75,18 @@ internal fun Project.assertContainsDiagnostic(factory: ToolingDiagnosticFactory)
     kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertContainsDiagnostic(factory)
 }
 
-internal fun Project.assertContainsDiagnostic(diagnostic: ToolingDiagnostic, ignoreThrowable: Boolean = false) {
-    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
-        .assertContainsDiagnostic(diagnostic, ignoreThrowable)
+internal fun Project.assertContainsDiagnostic(diagnostic: ToolingDiagnostic) {
+    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertContainsDiagnostic(diagnostic)
 }
 
 private fun Any.withIndent() = this.toString().prependIndent("    ")
 
 internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(factory: ToolingDiagnosticFactory) {
-    if (!any { it.factoryId == factory.id }) failDiagnosticNotFound("diagnostic with id ${factory.id} ", this)
+    if (none { it.factoryId == factory.id }) failDiagnosticNotFound("diagnostic with id ${factory.id} ", this)
 }
 
 internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(diagnostic: ToolingDiagnostic, ignoreThrowable: Boolean = false) {
-    if (none { it.equals(diagnostic, ignoreThrowable) }) failDiagnosticNotFound("diagnostic $diagnostic\n", this)
+    if (none { it == diagnostic }) failDiagnosticNotFound("diagnostic $diagnostic\n", this)
 }
 
 private fun failDiagnosticNotFound(diagnosticDescription: String, notFoundInCollection: Collection<ToolingDiagnostic>) {

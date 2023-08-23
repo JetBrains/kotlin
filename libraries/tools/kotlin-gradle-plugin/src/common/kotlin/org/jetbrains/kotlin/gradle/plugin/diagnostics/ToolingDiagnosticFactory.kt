@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 abstract class ToolingDiagnosticFactory(val severity: ToolingDiagnostic.Severity) {
     open val id: String = this::class.simpleName!!
 
-    protected fun build(message: String, throwable: Throwable? = null): ToolingDiagnostic {
-        return ToolingDiagnostic(id, message, severity, throwable)
+    protected fun build(message: String): ToolingDiagnostic {
+        return ToolingDiagnostic(id, message, severity)
     }
 
     protected fun String.onlyIf(condition: Boolean) = if (condition) this else ""
