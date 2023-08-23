@@ -1,1 +1,1 @@
-org.jetbrains.kotlin.backend.konan.ObjCOverridabilityCondition
+org.jetbrains.kotlin.ir.objcinterop.ObjCOverridabilityCondition

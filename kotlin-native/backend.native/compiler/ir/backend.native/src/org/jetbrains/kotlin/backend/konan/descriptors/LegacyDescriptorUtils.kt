@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
-import org.jetbrains.kotlin.utils.atMostOne
-import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -95,15 +91,6 @@ internal fun DeclarationDescriptor.allContainingDeclarations(): List<Declaration
     }
     return list
 }
-
-fun AnnotationDescriptor.getStringValueOrNull(name: String): String? {
-    val constantValue = this.allValueArguments.entries.atMostOne {
-        it.key.asString() == name
-    }?.value
-    return constantValue?.value as String?
-}
-
-fun AnnotationDescriptor.getStringValue(name: String): String = this.getStringValueOrNull(name)!!
 
 private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
     val result = mutableSetOf<FqName>()

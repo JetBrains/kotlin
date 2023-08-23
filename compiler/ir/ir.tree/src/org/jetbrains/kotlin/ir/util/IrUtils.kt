@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -365,10 +366,37 @@ fun IrAnnotationContainer.hasAnnotation(name: FqName) =
         it.symbol.owner.parentAsClass.hasEqualFqName(name)
     }
 
+fun IrAnnotationContainer.hasAnnotation(classId: ClassId) =
+    annotations.any { it.symbol.owner.parentAsClass.classId == classId }
+
 fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
     annotations.any {
         it.symbol.owner.parentAsClass.symbol == symbol
     }
+
+fun IrConstructorCall.getAnnotationStringValue() = (getValueArgument(0) as? IrConst<*>)?.value as String?
+
+fun IrConstructorCall.getAnnotationStringValue(name: String): String {
+    val parameter = symbol.owner.valueParameters.single { it.name.asString() == name }
+    return (getValueArgument(parameter.index) as IrConst<*>).value as String
+}
+
+inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? {
+    val parameter = symbol.owner.valueParameters.atMostOne { it.name.asString() == name }
+    return parameter?.let { getValueArgument(it.index)?.let { (it as IrConst<*>).value as T } }
+}
+
+inline fun <reified T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? {
+    val annotation = this.annotations.findAnnotation(fqName) ?: return null
+    for (index in 0 until annotation.valueArgumentsCount) {
+        val parameter = annotation.symbol.owner.valueParameters[index]
+        if (parameter.name == Name.identifier(argumentName)) {
+            val actual = annotation.getValueArgument(index) as? IrConst<*> ?: return null
+            return actual.value as T
+        }
+    }
+    return null
+}
 
 fun IrClass.getAnnotationRetention(): KotlinRetention? {
     val retentionArgument =
@@ -589,6 +617,9 @@ val IrDeclaration.parentClassOrNull: IrClass?
             else -> null
         }
     }
+
+val IrDeclaration.parentDeclarationsWithSelf: Sequence<IrDeclaration>
+    get() = generateSequence(this) { it.parent as? IrDeclaration }
 
 val IrFunction.allTypeParameters: List<IrTypeParameter>
     get() = if (this is IrConstructor)
