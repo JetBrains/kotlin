@@ -1,0 +1,6 @@
+> b main.kt:9
+> r
+> fr var
+(ObjHeader *) a = string literal
+(ObjHeader *) b = dynamic string
+> q
