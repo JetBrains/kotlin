@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
 /**
@@ -23,12 +25,28 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 data class ToolingDiagnostic(
     val factoryId: String, val message: String, val severity: Severity
 ) {
+    /**
+     * Stacktrace pointing where the original cause of the diagnostic happened. Note that it is not necessarily
+     * the stacktrace of where the diagnostic has been reported
+     */
     var throwable: Throwable? = null
         private set
 
     fun attachStacktrace(throwable: Throwable?): ToolingDiagnostic {
         require(this.throwable == null) { "throwable has already been initialized" }
         this.throwable = throwable
+        return this
+    }
+
+    /**
+     * Gradle-location (project or task) that is the source of a diagnostic
+     */
+    var location: Location? = null
+        private set
+
+    fun attachLocation(location: Location): ToolingDiagnostic {
+        require(this.location == null) { "location has already been initialized" }
+        this.location = location
         return this
     }
 
@@ -71,7 +89,18 @@ data class ToolingDiagnostic(
         FATAL,
     }
 
+    /**
+     * [path] is a standard fully qualified Gradle path
+     */
+    sealed class Location {
+        data class GradleProject(val path: String) : Location()
+        data class GradleTask(val path: String) : Location()
+    }
+
     override fun toString(): String {
         return "[$factoryId | $severity] $message"
     }
 }
+
+internal fun Project.toLocation() = ToolingDiagnostic.Location.GradleProject(path)
+internal fun Task.toLocation() = ToolingDiagnostic.Location.GradleTask(path)

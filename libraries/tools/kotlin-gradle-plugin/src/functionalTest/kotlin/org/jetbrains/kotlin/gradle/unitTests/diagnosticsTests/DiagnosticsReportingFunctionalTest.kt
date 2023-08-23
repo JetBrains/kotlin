@@ -9,15 +9,16 @@ import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
-import org.jetbrains.kotlin.gradle.util.applyKotlinJvmPlugin
-import org.jetbrains.kotlin.gradle.util.buildProject
-import org.jetbrains.kotlin.gradle.util.checkDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.util.applyKotlinJvmPlugin
+import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class DiagnosticsReportingFunctionalTest {
 
@@ -113,6 +114,21 @@ class DiagnosticsReportingFunctionalTest {
             checkDiagnostics("suppressForWarningsDoesntWorkForErrors")
         }
     }
+
+    @Test
+    fun testLocationsAttaching() {
+        buildProject().run {
+            applyKotlinJvmPlugin()
+            reportTestDiagnostic()
+            evaluate()
+
+            val diagnostics = project!!.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(rootProject)
+
+            val projectDiagnostic = diagnostics.single()
+            assertNotNull(projectDiagnostic, "Project diagnostic hasn't been reported")
+            assertEquals(project!!.toLocation(), projectDiagnostic.location)
+        }
+    }
 }
 
 private fun buildProjectWithMockedCheckers(
@@ -138,11 +154,12 @@ private fun buildProjectWithMockedCheckers(
     return project
 }
 
-
+private val testDiagnosticId = "TEST_DIAGNOSTIC"
 private fun Project.reportTestDiagnostic(severity: Severity = WARNING) {
+    val TEST_DIAGNOSTIC = ToolingDiagnostic(testDiagnosticId, "This is a test diagnostic\n\nIt has multiple lines of text", severity)
     kotlinToolingDiagnosticsCollector.report(
         project,
-        ToolingDiagnostic("TEST_DIAGNOSTIC", "This is a test diagnostic\n\nIt has multiple lines of text", severity)
+        TEST_DIAGNOSTIC
     )
 }
 

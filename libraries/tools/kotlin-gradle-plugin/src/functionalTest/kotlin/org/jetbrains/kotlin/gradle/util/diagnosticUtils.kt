@@ -85,7 +85,7 @@ internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(factory: Too
     if (none { it.factoryId == factory.id }) failDiagnosticNotFound("diagnostic with id ${factory.id} ", this)
 }
 
-internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(diagnostic: ToolingDiagnostic, ignoreThrowable: Boolean = false) {
+internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(diagnostic: ToolingDiagnostic) {
     if (none { it == diagnostic }) failDiagnosticNotFound("diagnostic $diagnostic\n", this)
 }
 

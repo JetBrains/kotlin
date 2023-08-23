@@ -32,10 +32,12 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
     }
 
     fun report(project: Project, diagnostic: ToolingDiagnostic) {
+        diagnostic.attachLocation(project.toLocation())
         handleDiagnostic(project, diagnostic)
     }
 
     fun report(task: UsesKotlinToolingDiagnostics, diagnostic: ToolingDiagnostic) {
+        diagnostic.attachLocation(task.toLocation())
         val options = task.diagnosticRenderingOptions.get()
         if (!diagnostic.isSuppressed(options)) {
             renderReportedDiagnostic(diagnostic, task.logger, options)
@@ -43,6 +45,7 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
     }
 
     fun reportOncePerGradleBuild(fromProject: Project, diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.factoryId) {
+        diagnostic.attachLocation(fromProject.toLocation())
         if (reportedIds.add(":#$key")) {
             handleDiagnostic(fromProject, diagnostic)
         }
