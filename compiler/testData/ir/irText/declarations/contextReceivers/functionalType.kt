@@ -1,6 +1,6 @@
 // !LANGUAGE: +ContextReceivers
 // KT-61141: Kotlin/Native does not support context receivers
-// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND_K1: NATIVE
 
 class Param
 class C {

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.native.FirNativeKotlinMangler
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
@@ -83,13 +84,13 @@ class Fir2IrNativeResultsConverter(
         val classLoader = CastCompatibleKotlinNativeClassLoader.kotlinNativeClassLoader.classLoader
         val konanManglerIrClass = Class.forName("org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr", true, classLoader)
         val konanManglerDescClass = Class.forName("org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc", true, classLoader)
-        val konanManglerFirClass = Class.forName("org.jetbrains.kotlin.backend.konan.FirNativeKotlinMangler", true, classLoader)
+//        val konanManglerFirClass = Class.forName("org.jetbrains.kotlin.fir.backend.native.FirNativeKotlinMangler", true, classLoader)
 
         val irMangler = konanManglerIrClass.kotlin.objectInstance as KotlinMangler.IrMangler
         val descMangler = konanManglerDescClass.kotlin.objectInstance as KotlinMangler.DescriptorMangler
-        val firMangler = konanManglerFirClass.kotlin.objectInstance as FirMangler
+//        val firMangler = konanManglerFirClass.kotlin.objectInstance as FirMangler
 
-        val commonMemberStorage = Fir2IrCommonMemberStorage(IdSignatureDescriptor(descMangler), firMangler)
+        val commonMemberStorage = Fir2IrCommonMemberStorage(IdSignatureDescriptor(descMangler), FirNativeKotlinMangler)
 
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
 
