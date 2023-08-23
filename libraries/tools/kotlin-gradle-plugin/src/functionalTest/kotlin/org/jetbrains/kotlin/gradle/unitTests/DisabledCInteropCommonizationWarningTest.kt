@@ -116,7 +116,7 @@ private fun Project.setupNativeTargetsWithCInterops(): List<KotlinNativeTarget> 
 
 private fun Project.getWarningMessage(): String? {
     val diagnostics = project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filter {
-        it.id == KotlinToolingDiagnostics.DisabledCinteropsCommonizationInHmppProject.id
+        it.factoryId == KotlinToolingDiagnostics.DisabledCinteropsCommonizationInHmppProject.id
     }
 
     if (diagnostics.size > 1) fail("Unexpected multiple diagnostics reported:\n\n" + diagnostics.joinToString(separator = "\n\n"))

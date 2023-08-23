@@ -42,7 +42,7 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
         }
     }
 
-    fun reportOncePerGradleBuild(fromProject: Project, diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {
+    fun reportOncePerGradleBuild(fromProject: Project, diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.factoryId) {
         if (reportedIds.add(":#$key")) {
             handleDiagnostic(fromProject, diagnostic)
         }
@@ -82,6 +82,6 @@ internal fun Project.reportDiagnostic(diagnostic: ToolingDiagnostic) {
     kotlinToolingDiagnosticsCollector.report(this, diagnostic)
 }
 
-internal fun Project.reportDiagnosticOncePerBuild(diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {
+internal fun Project.reportDiagnosticOncePerBuild(diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.factoryId) {
     kotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(this, diagnostic, key)
 }

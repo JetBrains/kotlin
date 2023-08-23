@@ -34,7 +34,7 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
         )
         return project.kotlinToolingDiagnosticsCollector
             .getDiagnosticsForProject(project)
-            .filter { it.id in expectedDiagnosticsIds } // ignore other diagnostics that can appear as well
+            .filter { it.factoryId in expectedDiagnosticsIds } // ignore other diagnostics that can appear as well
     }
 
     private fun checkSingleBadSourceSetDependency(

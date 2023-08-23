@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
 @InternalKotlinGradlePluginApi // used in integration tests
 data class ToolingDiagnostic(
-    val id: String, val message: String, val severity: Severity, val throwable: Throwable? = null,
+    val factoryId: String, val message: String, val severity: Severity, val throwable: Throwable? = null,
 ) {
     enum class Severity {
         /**
@@ -51,6 +51,6 @@ data class ToolingDiagnostic(
     }
 
     override fun toString(): String {
-        return "[$id | $severity] $message"
+        return "[$factoryId | $severity] $message"
     }
 }

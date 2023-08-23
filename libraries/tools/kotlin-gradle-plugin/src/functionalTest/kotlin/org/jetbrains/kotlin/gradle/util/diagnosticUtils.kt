@@ -24,7 +24,7 @@ internal fun checkDiagnosticsWithMppProject(projectName: String, projectConfigur
 }
 
 internal fun ToolingDiagnostic.equals(that: ToolingDiagnostic, ignoreThrowable: Boolean) = if (ignoreThrowable) {
-    this.id == that.id && this.message == that.message && this.severity == that.severity
+    this.factoryId == that.factoryId && this.message == that.message && this.severity == that.severity
 } else {
     this == that
 }
@@ -89,7 +89,7 @@ internal fun Project.assertContainsDiagnostic(diagnostic: ToolingDiagnostic, ign
 private fun Any.withIndent() = this.toString().prependIndent("    ")
 
 internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(factory: ToolingDiagnosticFactory) {
-    if (!any { it.id == factory.id }) failDiagnosticNotFound("diagnostic with id ${factory.id} ", this)
+    if (!any { it.factoryId == factory.id }) failDiagnosticNotFound("diagnostic with id ${factory.id} ", this)
 }
 
 internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(diagnostic: ToolingDiagnostic, ignoreThrowable: Boolean = false) {
@@ -126,7 +126,7 @@ internal fun Project.assertNoDiagnostics(factory: ToolingDiagnosticFactory) {
 }
 
 internal fun Collection<ToolingDiagnostic>.assertNoDiagnostics(id: String) {
-    val unexpectedDiagnostics = filter { it.id == id }
+    val unexpectedDiagnostics = filter { it.factoryId == id }
     if (unexpectedDiagnostics.isNotEmpty()) {
         fail("Expected to have no diagnostics with id '$id', but some were reported:\n${unexpectedDiagnostics.render()}")
     }
