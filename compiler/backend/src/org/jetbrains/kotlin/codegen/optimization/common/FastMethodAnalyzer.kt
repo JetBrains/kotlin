@@ -84,41 +84,11 @@ open class FastMethodAnalyzer<V : Value>
             queued[insn] = false
 
             val insnNode = method.instructions[insn]
+            val insnOpcode = insnNode.opcode
+            val insnType = insnNode.toType
+
             try {
-                val insnOpcode = insnNode.opcode
-                val insnType = insnNode.toType
-
-                if (insnType == AbstractInsnNode.LABEL ||
-                    insnType == AbstractInsnNode.LINE ||
-                    insnType == AbstractInsnNode.FRAME ||
-                    insnOpcode == Opcodes.NOP
-                ) {
-                    mergeControlFlowEdge(insn + 1, f, canReuse = true)
-                } else {
-                    current.init(f).execute(insnNode, interpreter)
-                    visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insn)
-                }
-
-                // Jump by an exception edge clears the stack, putting exception on top.
-                // So, unless we have a store operation, anything we change on stack would be lost,
-                // and there's no need to analyze exception handler again.
-                // Add an exception edge from TCB start to make sure handler itself is still visited.
-                if (!pruneExceptionEdges ||
-                    insnOpcode in Opcodes.ISTORE..Opcodes.ASTORE ||
-                    insnOpcode == Opcodes.IINC ||
-                    isTcbStart[insn]
-                ) {
-                    handlers[insn]?.forEach { tcb ->
-                        val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
-                        val jump = tcb.handler.indexOf()
-
-                        handler.init(f)
-                        handler.clearStack()
-                        handler.push(interpreter.newExceptionValue(tcb, handler, exnType))
-                        mergeControlFlowEdge(jump, handler)
-                    }
-                }
-
+                privateAnalyze(insnType, insnOpcode, insn, f, current, insnNode, isTcbStart, handler)
             } catch (e: AnalyzerException) {
                 throw AnalyzerException(
                     e.node,
@@ -132,10 +102,51 @@ open class FastMethodAnalyzer<V : Value>
                     e
                 )
             }
-
         }
 
         return frames
+    }
+
+    private fun privateAnalyze(
+        insnType: Int,
+        insnOpcode: Int,
+        insn: Int,
+        f: Frame<V>,
+        current: Frame<V>,
+        insnNode: AbstractInsnNode,
+        isTcbStart: BooleanArray,
+        handler: Frame<V>,
+    ) {
+        if (insnType == AbstractInsnNode.LABEL ||
+            insnType == AbstractInsnNode.LINE ||
+            insnType == AbstractInsnNode.FRAME ||
+            insnOpcode == Opcodes.NOP
+        ) {
+            mergeControlFlowEdge(insn + 1, f, canReuse = true)
+        } else {
+            current.init(f).execute(insnNode, interpreter)
+            visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insn)
+        }
+
+        // Jump by an exception edge clears the stack, putting exception on top.
+        // So, unless we have a store operation, anything we change on stack would be lost,
+        // and there's no need to analyze exception handler again.
+        // Add an exception edge from TCB start to make sure handler itself is still visited.
+        if (!pruneExceptionEdges ||
+            insnOpcode in Opcodes.ISTORE..Opcodes.ASTORE ||
+            insnOpcode == Opcodes.IINC ||
+            isTcbStart[insn]
+        ) {
+            handlers[insn]?.forEach { tcb ->
+                val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
+                val jump = tcb.handler.indexOf()
+
+                handler.init(f)
+                handler.clearStack()
+                handler.push(interpreter.newExceptionValue(tcb, handler, exnType))
+                mergeControlFlowEdge(jump, handler)
+            }
+        }
     }
 
     private fun initLocals(current: Frame<V>) {
