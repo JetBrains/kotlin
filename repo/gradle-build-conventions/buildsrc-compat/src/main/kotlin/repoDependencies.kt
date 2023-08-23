@@ -50,36 +50,6 @@ fun Project.commonDependencyVersion(group: String, artifact: String): String =
         else -> throw GradleException("Neither versions.$artifact nor versions.$group is defined in the root project's extra")
     } as String
 
-fun Project.preloadedDeps(
-    vararg artifactBaseNames: String,
-    baseDir: File = File(rootDir, "dependencies"),
-    subDir: String? = null,
-    optional: Boolean = false
-): ConfigurableFileCollection {
-    val dir = if (subDir != null) File(baseDir, subDir) else baseDir
-    if (!dir.exists() || !dir.isDirectory) {
-        if (optional) return files()
-        throw GradleException("Invalid base directory $dir")
-    }
-    val matchingFiles = dir.listFiles { file -> artifactBaseNames.any { file.matchMaybeVersionedArtifact(it) } }
-    if (matchingFiles == null || matchingFiles.size < artifactBaseNames.size) {
-        throw GradleException(
-            "Not all matching artifacts '${artifactBaseNames.joinToString()}' found in the '$dir' " +
-                    "(missing: ${
-                        artifactBaseNames.filterNot { request ->
-                            matchingFiles?.any {
-                                it.matchMaybeVersionedArtifact(
-                                    request
-                                )
-                            } ?: false
-                        }.joinToString()
-                    };" +
-                    " found: ${matchingFiles?.joinToString { it.name }})"
-        )
-    }
-    return files(*matchingFiles.map { it.canonicalPath }.toTypedArray())
-}
-
 fun kotlinDep(artifactBaseName: String, version: String, classifier: String? = null): String =
     listOfNotNull("org.jetbrains.kotlin:kotlin-$artifactBaseName:$version", classifier).joinToString(":")
 
