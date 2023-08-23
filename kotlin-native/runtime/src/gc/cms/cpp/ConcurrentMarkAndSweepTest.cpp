@@ -1146,9 +1146,6 @@ TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
 }
 
 TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
-#if __has_feature(thread_sanitizer)
-    GTEST_SKIP() << "Broken with TSAN";
-#endif
     std_support::vector<Mutator> mutators(2);
     std::atomic<test_support::Object<Payload>*> object1 = nullptr;
     std::atomic<test_support::RegularWeakReferenceImpl*> weak = nullptr;
@@ -1194,12 +1191,14 @@ INSTANTIATE_TEST_SUITE_P(,
     ConcurrentMarkAndSweepTest,
     testing::Values(
             ParallelismOptions{kDefaultThreadCount * 3, false, 0},
-            ParallelismOptions{kDefaultThreadCount * 3, true, 0},
-            ParallelismOptions{kDefaultThreadCount * 3, false, kDefaultThreadCount},
+            ParallelismOptions{kDefaultThreadCount * 3, true, 0}
+#if !__has_feature(thread_sanitizer) // TODO: Fix auxilary threads with tsan.
+            , ParallelismOptions{kDefaultThreadCount * 3, false, kDefaultThreadCount},
             ParallelismOptions{kDefaultThreadCount * 3, true, kDefaultThreadCount},
 
             ParallelismOptions{kDefaultThreadCount / 2, true, kDefaultThreadCount},
             ParallelismOptions{kDefaultThreadCount / 2 * 3, true, kDefaultThreadCount}
+#endif
     ),
     [] (const testing::TestParamInfo<ParallelismOptions>& paramInfo) {
         using namespace std::string_literals;
