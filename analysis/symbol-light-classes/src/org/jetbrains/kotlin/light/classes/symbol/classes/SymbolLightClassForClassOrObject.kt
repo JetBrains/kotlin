@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiModifierList
-import com.intellij.psi.PsiReferenceList
+import com.intellij.openapi.util.Pair
+import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -296,4 +294,20 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
     override fun copy(): SymbolLightClassForClassOrObject =
         SymbolLightClassForClassOrObject(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
+
+    override fun findMethodBySignature(p0: PsiMethod, p1: Boolean): PsiMethod? {
+        TODO("Not yet implemented")
+    }
+
+    override fun findMethodsBySignature(p0: PsiMethod, p1: Boolean): Array<PsiMethod> {
+        TODO("Not yet implemented")
+    }
+
+    override fun findMethodsAndTheirSubstitutorsByName(p0: String, p1: Boolean): MutableList<Pair<PsiMethod, PsiSubstitutor>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun isInheritorDeep(p0: PsiClass, p1: PsiClass?): Boolean {
+        TODO("Not yet implemented")
+    }
 }

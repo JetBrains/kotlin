@@ -97,45 +97,45 @@ public class KotlinJavaPsiFacade implements Disposable {
         // drop entire cache when it is low free memory
         LowMemoryWatcher.register(this::clearPackageCaches, this);
 
-        MessageBusConnection connection = project.getMessageBus().connect(this);
-
-        // VFS changes like create/delete/copy/move directory are subject to clean up short term caches
-        connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
-            @Override
-            public void after(@NotNull List<? extends VFileEvent> events) {
-                boolean relevant = false;
-                for (VFileEvent event : events) {
-                    VirtualFile file = event.getFile();
-                    relevant = ((event instanceof VFileCreateEvent && ((VFileCreateEvent) event).isDirectory()) ||
-                                (file != null && file.isDirectory() &&
-                                 (event instanceof VFileDeleteEvent ||
-                                  event instanceof VFileMoveEvent ||
-                                  event instanceof VFileCopyEvent)));
-
-                    if (relevant) break;
-                }
-                if (relevant) {
-                    clearPackageCaches(false);
-                }
-            }
-        });
-
-        // PSI changes (like in R files) could lead to creating virtual packages
-        // therefore it has to clean up short term caches
-        PsiModificationTracker modificationTracker = PsiManager.getInstance(project).getModificationTracker();
-        connection.subscribe(PsiModificationTracker.TOPIC, new PsiModificationTracker.Listener() {
-            private long lastTimeSeen = -1L;
-
-            @Override
-            public void modificationCountChanged() {
-                long now = modificationTracker.getModificationCount();
-                if (lastTimeSeen != now) {
-                    lastTimeSeen = now;
-
-                    clearPackageCaches(false);
-                }
-            }
-        });
+        //MessageBusConnection connection = project.getMessageBus().connect(this);
+        //
+        //// VFS changes like create/delete/copy/move directory are subject to clean up short term caches
+        //connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
+        //    @Override
+        //    public void after(@NotNull List<? extends VFileEvent> events) {
+        //        boolean relevant = false;
+        //        for (VFileEvent event : events) {
+        //            VirtualFile file = event.getFile();
+        //            relevant = ((event instanceof VFileCreateEvent && ((VFileCreateEvent) event).isDirectory()) ||
+        //                        (file != null && file.isDirectory() &&
+        //                         (event instanceof VFileDeleteEvent ||
+        //                          event instanceof VFileMoveEvent ||
+        //                          event instanceof VFileCopyEvent)));
+        //
+        //            if (relevant) break;
+        //        }
+        //        if (relevant) {
+        //            clearPackageCaches(false);
+        //        }
+        //    }
+        //});
+        //
+        //// PSI changes (like in R files) could lead to creating virtual packages
+        //// therefore it has to clean up short term caches
+        //PsiModificationTracker modificationTracker = PsiManager.getInstance(project).getModificationTracker();
+        //connection.subscribe(PsiModificationTracker.TOPIC, new PsiModificationTracker.Listener() {
+        //    private long lastTimeSeen = -1L;
+        //
+        //    @Override
+        //    public void modificationCountChanged() {
+        //        long now = modificationTracker.getModificationCount();
+        //        if (lastTimeSeen != now) {
+        //            lastTimeSeen = now;
+        //
+        //            clearPackageCaches(false);
+        //        }
+        //    }
+        //});
     }
 
     @Override

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.openapi.util.Pair
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -97,6 +98,17 @@ internal class SymbolLightClassForEnumEntry(
     override fun getInterfaces(): Array<PsiClass> = PsiClass.EMPTY_ARRAY
     override fun getSupers(): Array<PsiClass> = arrayOf(enumClass)
     override fun getSuperTypes(): Array<PsiClassType> = arrayOf(baseClassType)
+    override fun findMethodBySignature(p0: PsiMethod, p1: Boolean): PsiMethod? {
+        TODO("Not yet implemented")
+    }
+
+    override fun findMethodsBySignature(p0: PsiMethod, p1: Boolean): Array<PsiMethod> {
+        TODO("Not yet implemented")
+    }
+
+    override fun findMethodsAndTheirSubstitutorsByName(p0: String, p1: Boolean): MutableList<Pair<PsiMethod, PsiSubstitutor>> {
+        TODO("Not yet implemented")
+    }
 
     override fun getParent(): PsiElement = containingClass
 
@@ -135,6 +147,10 @@ internal class SymbolLightClassForEnumEntry(
         return super.isInheritor(baseClass, checkDeep = true)
     }
 
+    override fun isInheritorDeep(p0: PsiClass, p1: PsiClass?): Boolean {
+        TODO("Not yet implemented")
+    }
+
     // probably should be dropped after KT-54798
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, kotlinOrigin)
     override fun getName(): String? = kotlinOrigin.name
@@ -142,7 +158,7 @@ internal class SymbolLightClassForEnumEntry(
     override fun isDeprecated(): Boolean = false
     override fun isInterface(): Boolean = false
     override fun isAnnotationType(): Boolean = false
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+//    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
     override val kotlinOrigin: KtEnumEntry get() = enumConstant.kotlinOrigin
     override val originKind: LightClassOriginKind = LightClassOriginKind.SOURCE
     override fun isValid(): Boolean = enumConstant.isValid

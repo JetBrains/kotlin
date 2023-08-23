@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.openapi.util.Pair
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.symbols.KtScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -168,8 +169,23 @@ internal class SymbolLightClassForScript private constructor(
         return arrayOf(PsiType.getJavaLangObject(manager, resolveScope))
     }
 
-    override fun getScope(): PsiElement = parent
+    override fun findMethodBySignature(p0: PsiMethod, p1: Boolean): PsiMethod? {
+        TODO("Not yet implemented")
+    }
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+    override fun findMethodsBySignature(p0: PsiMethod, p1: Boolean): Array<PsiMethod> {
+        TODO("Not yet implemented")
+    }
+
+    override fun findMethodsAndTheirSubstitutorsByName(p0: String, p1: Boolean): MutableList<Pair<PsiMethod, PsiSubstitutor>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getScope(): PsiElement = parent
+    override fun isInheritorDeep(p0: PsiClass, p1: PsiClass?): Boolean {
+        TODO("Not yet implemented")
+    }
+
+//    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
 
 }

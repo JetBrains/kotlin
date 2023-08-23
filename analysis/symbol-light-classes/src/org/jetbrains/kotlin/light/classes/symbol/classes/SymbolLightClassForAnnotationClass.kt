@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.openapi.util.Pair
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
@@ -51,6 +52,9 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
     )
 
     override fun classKind(): KtClassKind = KtClassKind.ANNOTATION_CLASS
+    override fun isInheritorDeep(p0: PsiClass, p1: PsiClass?): Boolean {
+        TODO("Not yet implemented")
+    }
 
     protected open fun computeOwnMethods(): List<PsiMethod> = withClassOrObjectSymbol { classOrObjectSymbol ->
         val result = mutableListOf<KtLightMethod>()
@@ -71,6 +75,18 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
     final override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
         val qualifiedName = baseClass.qualifiedName
         return qualifiedName == CommonClassNames.JAVA_LANG_ANNOTATION_ANNOTATION || qualifiedName == CommonClassNames.JAVA_LANG_OBJECT
+    }
+
+    override fun findMethodBySignature(p0: PsiMethod, p1: Boolean): PsiMethod? {
+        TODO("Not yet implemented")
+    }
+
+    override fun findMethodsBySignature(p0: PsiMethod, p1: Boolean): Array<PsiMethod> {
+        TODO("Not yet implemented")
+    }
+
+    override fun findMethodsAndTheirSubstitutorsByName(p0: String, p1: Boolean): MutableList<Pair<PsiMethod, PsiSubstitutor>> {
+        TODO("Not yet implemented")
     }
 
     override fun copy(): SymbolLightClassForAnnotationClass = SymbolLightClassForAnnotationClass(

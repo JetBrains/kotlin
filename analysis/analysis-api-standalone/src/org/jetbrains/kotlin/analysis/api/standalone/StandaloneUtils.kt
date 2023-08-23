@@ -198,7 +198,7 @@ private fun reRegisterJavaElementFinder(project: Project) {
             KtAnalysisSessionProvider::class.java,
             KtFirAnalysisSessionProvider(this)
         )
-        picoContainer.unregisterComponent(KotlinAsJavaSupport::class.qualifiedName)
+        KotlinAsJavaSupport::class.qualifiedName?.let { picoContainer.unregisterComponent(it) }
         registerService(
             KotlinAsJavaSupport::class.java,
             SymbolKotlinAsJavaSupport(project)

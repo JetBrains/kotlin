@@ -53,19 +53,31 @@ open class KtLightClassForDecompiledDeclaration(
     override fun getConstructors(): Array<PsiMethod> = myInnersCache.constructors
     override fun getInnerClasses(): Array<PsiClass> = myInnersCache.innerClasses
     override fun findFieldByName(name: String, checkBases: Boolean): PsiField? = myInnersCache.findFieldByName(name, checkBases)
+    override fun findMethodBySignature(p0: PsiMethod, p1: Boolean): PsiMethod? {
+        TODO("Fix me")
+    }
+
+    override fun findMethodsBySignature(p0: PsiMethod, p1: Boolean): Array<PsiMethod> {
+        TODO("Fix me")
+    }
+
+    override fun findMethodsAndTheirSubstitutorsByName(p0: String, p1: Boolean): MutableList<Pair<PsiMethod, PsiSubstitutor>> {
+        TODO("Fix me")
+    }
+
     override fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> = myInnersCache.findMethodsByName(name, checkBases)
     override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? = myInnersCache.findInnerClassByName(name, checkBases)
     override fun hasModifierProperty(name: String): Boolean = clsDelegate.hasModifierProperty(name)
 
-    override fun findMethodBySignature(patternMethod: PsiMethod?, checkBases: Boolean): PsiMethod? =
-        patternMethod?.let { PsiClassImplUtil.findMethodBySignature(this, it, checkBases) }
-
-    override fun findMethodsBySignature(patternMethod: PsiMethod?, checkBases: Boolean): Array<PsiMethod> = patternMethod?.let {
-        PsiClassImplUtil.findMethodsBySignature(this, it, checkBases)
-    } ?: PsiMethod.EMPTY_ARRAY
-
-    override fun findMethodsAndTheirSubstitutorsByName(@NonNls name: String?, checkBases: Boolean): List<Pair<PsiMethod, PsiSubstitutor>> =
-        PsiClassImplUtil.findMethodsAndTheirSubstitutorsByName(this, name, checkBases)
+//    override fun findMethodBySignature(patternMethod: PsiMethod?, checkBases: Boolean): PsiMethod? =
+//        patternMethod?.let { PsiClassImplUtil.findMethodBySignature(this, it, checkBases) }
+//
+//    override fun findMethodsBySignature(patternMethod: PsiMethod?, checkBases: Boolean): Array<PsiMethod> = patternMethod?.let {
+//        PsiClassImplUtil.findMethodsBySignature(this, it, checkBases)
+//    } ?: PsiMethod.EMPTY_ARRAY
+//
+//    override fun findMethodsAndTheirSubstitutorsByName(@NonNls name: String?, checkBases: Boolean): List<Pair<PsiMethod, PsiSubstitutor>> =
+//        PsiClassImplUtil.findMethodsAndTheirSubstitutorsByName(this, name, checkBases)
 
     override fun getImplementsList(): PsiReferenceList? = clsDelegate.implementsList
 
@@ -77,8 +89,8 @@ open class KtLightClassForDecompiledDeclaration(
 
     override fun getContainingClass(): PsiClass? = parent as? PsiClass
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =
-        clsDelegate.isInheritorDeep(baseClass, classToByPass)
+//    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =
+//        clsDelegate.isInheritorDeep(baseClass, classToByPass)
 
     override fun getAllMethodsAndTheirSubstitutors(): List<Pair<PsiMethod?, PsiSubstitutor?>?> =
         PsiClassImplUtil.getAllWithSubstitutorsByMap<PsiMethod>(this, PsiClassImplUtil.MemberType.METHOD)
@@ -86,6 +98,9 @@ open class KtLightClassForDecompiledDeclaration(
     override fun isInterface(): Boolean = clsDelegate.isInterface
     override fun getTypeParameters(): Array<PsiTypeParameter> = clsDelegate.typeParameters
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean = clsDelegate.isInheritor(baseClass, checkDeep)
+    override fun isInheritorDeep(p0: PsiClass, p1: PsiClass?): Boolean {
+        TODO("Not yet implemented")
+    }
 
     override fun processDeclarations(
         processor: PsiScopeProcessor,

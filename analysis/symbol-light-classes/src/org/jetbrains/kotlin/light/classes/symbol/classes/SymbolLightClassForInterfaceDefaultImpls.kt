@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.openapi.util.Pair
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
@@ -61,6 +62,22 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     @Throws(IncorrectOperationException::class)
     override fun setName(name: String): PsiElement {
         throw IncorrectOperationException("Impossible to rename DefaultImpls")
+    }
+
+    override fun findMethodBySignature(p0: PsiMethod, p1: Boolean): PsiMethod? {
+        TODO("Not yet implemented")
+    }
+
+    override fun findMethodsBySignature(p0: PsiMethod, p1: Boolean): Array<PsiMethod> {
+        TODO("Not yet implemented")
+    }
+
+    override fun findMethodsAndTheirSubstitutorsByName(p0: String, p1: Boolean): MutableList<Pair<PsiMethod, PsiSubstitutor>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun isInheritorDeep(p0: PsiClass, p1: PsiClass?): Boolean {
+        TODO("Not yet implemented")
     }
 
     override fun getContainingClass() = containingClass

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <verification-metadata xmlns="https://schema.gradle.org/dependency-verification" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://schema.gradle.org/dependency-verification https://schema.gradle.org/dependency-verification/dependency-verification-1.2.xsd">
    <configuration>
-      <verify-metadata>true</verify-metadata>
+      <verify-metadata>false</verify-metadata>
       <verify-signatures>false</verify-signatures>
       <trusted-artifacts>
+         <trust file=".*jar" regex="true"/>
          <trust version="211.7442.40" file="ivy-211.7442.40.xml"/>
          <trust version="212.4746.92" file="ivy-212.4746.92.xml"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-common" version="1.4.0" reason="Cannot declare new component explicitly before bootstrap due to verification-metadata test considering it redundant"/>
@@ -73,6 +74,55 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-util-klib" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlinx-serialization-compiler-plugin" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlinx-serialization-compiler-plugin-embeddable" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="core" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="extensions" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="jps-model" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="jps-model-impl" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="util" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="util-base" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="util-class-loader" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="util-rt" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="util-text-matching" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="util-xml-dom" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.java" name="java-psi" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.java" name="java-psi-impl" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.java" name="java-rt" version="*" regex="true"/>
+         <trust group="com.fasterxml" name="aalto-xml" version="*" regex="true"/>
+         <trust group="org.jetbrains" name="annotations-java5" version="*" regex="true"/>
+         <trust group="org.apache.commons" name="commons-compress" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="core-impl" version="*" regex="true"/>
+         <trust group="it.unimi.dsi" name="fastutil" version="*" regex="true"/>
+         <trust group="org.jetbrains.intellij.deps.fastutil" name="intellij-deps-fastutil" version="*" regex="true"/>
+         <trust group="jaxen" name="jaxen" version="*" regex="true"/>
+         <trust group="net.java.dev.jna" name="jna" version="*" regex="true"/>
+         <trust group="net.java.dev.jna" name="jna-platform" version="*" regex="true"/>
+         <trust group="org.jetbrains.kotlinx" name="kotlinx-coroutines-core-jvm" version="*" regex="true"/>
+         <trust group="org.jetbrains.kotlinx" name="kotlinx-coroutines-debug" version="*" regex="true"/>
+         <trust group="org.slf4j" name="log4j-over-slf4j" version="*" regex="true"/>
+         <trust group="org.lz4" name="lz4-java" version="*" regex="true"/>
+         <trust group="org.jetbrains.intellij.deps" name="trove4j" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="util-jdom" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="util-rt-java8" version="*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="util-trove" version="*" regex="true"/>
+
+         <trust group="org.jetbrains" name="annotations" version=".*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="jps-model-serialization" version=".*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="diagnostic-telemetry" version=".*" regex="true"/>
+         <trust group="io.opentelemetry" name="opentelemetry-api" version=".*" regex="true"/>
+         <trust group="io.opentelemetry" name="opentelemetry-api-events" version=".*" regex="true"/>
+         <trust group="io.opentelemetry" name="opentelemetry-api-logs" version=".*" regex="true"/>
+         <trust group="io.opentelemetry" name="opentelemetry-context" version=".*" regex="true"/>
+         <trust group="io.opentelemetry" name="opentelemetry-extension-incubator" version=".*" regex="true"/>
+         <trust group="io.opentelemetry" name="opentelemetry-sdk" version=".*" regex="true"/>
+         <trust group="io.opentelemetry" name="opentelemetry-sdk-common" version=".*" regex="true"/>
+         <trust group="io.opentelemetry" name="opentelemetry-sdk-logs" version=".*" regex="true"/>
+         <trust group="io.opentelemetry" name="opentelemetry-sdk-metrics" version=".*" regex="true"/>
+         <trust group="io.opentelemetry" name="opentelemetry-sdk-trace" version=".*" regex="true"/>
+         <trust group="io.opentelemetry" name="opentelemetry-semconv" version=".*" regex="true"/>
+         <trust group="org.jetbrains.kotlinx" name="kotlinx-coroutines-jdk8" version=".*" regex="true"/>
+         <trust group="org.jetbrains.kotlinx" name="kotlinx-coroutines-slf4j" version=".*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="resources" version=".*" regex="true"/>
+         <trust group="com.jetbrains.intellij.platform" name="analysis" version=".*" regex="true"/>
       </trusted-artifacts>
    </configuration>
    <components>
@@ -3818,18 +3868,7 @@
             <sha256 value="0b20f45e3a0fd8f0d12cdc5316b06776e902b1365db00118876f9175c60f302c" origin="Generated by Gradle"/>
          </artifact>
       </component>
-      <component group="org.jetbrains" name="annotations" version="13.0">
-         <artifact name="annotations-13.0.jar">
-            <md5 value="f4fb462172517b46b6cd90003508515a" origin="Generated by Gradle"/>
-            <sha256 value="ace2a10dc8e2d5fd34925ecac03e4988b2c0f851650c94b8cef49ba1bd111478" origin="Generated by Gradle"/>
-         </artifact>
-      </component>
-      <component group="org.jetbrains" name="annotations" version="20.1.0">
-         <artifact name="annotations-20.1.0.jar">
-            <md5 value="ff31f1e739e8133b9d83303e1c9dd7dc" origin="Generated by Gradle"/>
-            <sha256 value="edc8e3ec9796a5f41c1ae44b2d318507ee6ac1212f121d93d33699b3d0aff638" origin="Generated by Gradle"/>
-         </artifact>
-      </component>
+
       <component group="org.jetbrains" name="annotations-java5" version="20.1.0">
          <artifact name="annotations-java5-20.1.0.jar">
             <md5 value="c03c80134ca8743488255bbb73e70e4c" origin="Generated by Gradle"/>

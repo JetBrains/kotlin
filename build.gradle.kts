@@ -498,7 +498,7 @@ allprojects {
         maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
             content {
                 includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
-                includeVersion("org.jetbrains.jps", "jps-javac-extension", "1")
+                includeVersion("org.jetbrains.jps", "jps-javac-extension", "7")
             }
         }
 

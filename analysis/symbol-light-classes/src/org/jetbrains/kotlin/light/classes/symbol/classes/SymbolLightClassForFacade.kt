@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightEmptyImplementsList
@@ -170,8 +171,20 @@ internal class SymbolLightClassForFacade(
     override fun getInnerClasses(): Array<out PsiClass> = PsiClass.EMPTY_ARRAY
     override fun getOwnInnerClasses(): List<PsiClass> = listOf()
     override fun getAllInnerClasses(): Array<PsiClass> = PsiClass.EMPTY_ARRAY
+    override fun findMethodBySignature(p0: PsiMethod, p1: Boolean): PsiMethod? {
+        TODO("Not yet implemented")
+    }
+
+    override fun findMethodsBySignature(p0: PsiMethod, p1: Boolean): Array<PsiMethod> {
+        TODO("Not yet implemented")
+    }
+
+    override fun findMethodsAndTheirSubstitutorsByName(p0: String, p1: Boolean): MutableList<Pair<PsiMethod, PsiSubstitutor>> {
+        TODO("Not yet implemented")
+    }
+
     override fun findInnerClassByName(@NonNls name: String, checkBases: Boolean): PsiClass? = null
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+//    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
     override fun getName(): String = super<KtLightClassForFacade>.getName()
     override fun getQualifiedName(): String = facadeClassFqName.asString()
     override fun getNameIdentifier(): PsiIdentifier? = null
@@ -189,6 +202,10 @@ internal class SymbolLightClassForFacade(
 
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
         return baseClass.qualifiedName == CommonClassNames.JAVA_LANG_OBJECT
+    }
+
+    override fun isInheritorDeep(p0: PsiClass, p1: PsiClass?): Boolean {
+        TODO("Not yet implemented")
     }
 
     override fun getSuperClass(): PsiClass? {
