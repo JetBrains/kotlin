@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.formver.plugin.services
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
-import org.jetbrains.kotlin.formver.plugin.FormalVerificationPluginExtensionRegistrar
-import org.jetbrains.kotlin.formver.plugin.LogLevel
+import org.jetbrains.kotlin.formver.FormalVerificationPluginExtensionRegistrar
+import org.jetbrains.kotlin.formver.LogLevel
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices

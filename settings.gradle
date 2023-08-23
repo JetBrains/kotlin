@@ -170,6 +170,13 @@ include ":kotlin-allopen-compiler-plugin",
         ":kotlin-allopen-compiler-plugin.k2",
         ":kotlin-allopen-compiler-plugin.cli"
 
+include ":kotlin-formver-compiler-plugin",
+        ":kotlin-formver-compiler-plugin.cli",
+        ":kotlin-formver-compiler-plugin.common",
+        ":kotlin-formver-compiler-plugin.core",
+        ":kotlin-formver-compiler-plugin.plugin",
+        ":kotlin-formver-compiler-plugin.viper"
+
 include ":kotlin-noarg-compiler-plugin",
         ":kotlin-noarg-compiler-plugin.embeddable",
         ":kotlin-noarg-compiler-plugin.common",
@@ -189,8 +196,6 @@ include ":kotlin-sam-with-receiver-compiler-plugin",
         ":kotlin-sam-with-receiver-compiler-plugin.k1",
         ":kotlin-sam-with-receiver-compiler-plugin.k2",
         ":kotlin-sam-with-receiver-compiler-plugin.cli"
-
-include ":kotlin-formver-compiler-plugin"
 
 include ":kotlin-assignment-compiler-plugin",
         ":kotlin-assignment-compiler-plugin.common",
@@ -776,6 +781,13 @@ project(':kotlin-allopen-compiler-plugin.k1').projectDir = "$rootDir/plugins/all
 project(':kotlin-allopen-compiler-plugin.k2').projectDir = "$rootDir/plugins/allopen/allopen.k2" as File
 project(':kotlin-allopen-compiler-plugin.cli').projectDir = "$rootDir/plugins/allopen/allopen.cli" as File
 
+project(':kotlin-formver-compiler-plugin').projectDir = "$rootDir/plugins/formal-verification" as File
+project(':kotlin-formver-compiler-plugin.cli').projectDir = "$rootDir/plugins/formal-verification/formver.cli" as File
+project(':kotlin-formver-compiler-plugin.common').projectDir = "$rootDir/plugins/formal-verification/formver.common" as File
+project(':kotlin-formver-compiler-plugin.core').projectDir = "$rootDir/plugins/formal-verification/formver.core" as File
+project(':kotlin-formver-compiler-plugin.plugin').projectDir = "$rootDir/plugins/formal-verification/formver.plugin" as File
+project(':kotlin-formver-compiler-plugin.viper').projectDir = "$rootDir/plugins/formal-verification/formver.viper" as File
+
 project(':kotlin-lombok-compiler-plugin').projectDir = "$rootDir/plugins/lombok" as File
 project(':kotlin-lombok-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/lombok/lombok.embeddable" as File
 project(':kotlin-lombok-compiler-plugin.cli').projectDir = "$rootDir/plugins/lombok/lombok.cli" as File
@@ -809,8 +821,6 @@ project(':kotlin-assignment-compiler-plugin.k1').projectDir = "$rootDir/plugins/
 project(':kotlin-assignment-compiler-plugin.k2').projectDir = "$rootDir/plugins/assign-plugin/assign-plugin.k2" as File
 project(':kotlin-assignment-compiler-plugin.cli').projectDir = "$rootDir/plugins/assign-plugin/assign-plugin.cli" as File
 project(':kotlin-assignment-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/assign-plugin/assign-plugin.embeddable" as File
-
-project(':kotlin-formver-compiler-plugin').projectDir = "$rootDir/plugins/formal-verification" as File
 
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
 project(':tools:kotlinp-jvm').projectDir = "$rootDir/libraries/tools/kotlinp/jvm" as File
