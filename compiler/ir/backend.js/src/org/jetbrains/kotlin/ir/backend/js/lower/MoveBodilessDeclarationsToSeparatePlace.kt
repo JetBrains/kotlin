@@ -87,7 +87,7 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
 
             return emptyList()
         } else {
-            val d = declaration as? IrDeclarationWithName ?: return null
+            val d = declaration.asDeclarationWithNameSafe() ?: return null
 
             if (isBuiltInClass(d) || isIntrinsic(d)) {
                 context.bodilessBuiltInsPackageFragment.addChild(d)

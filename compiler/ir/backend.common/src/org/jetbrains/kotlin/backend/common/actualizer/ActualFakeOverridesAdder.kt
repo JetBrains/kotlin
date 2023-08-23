@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.asDeclarationWithName
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.name
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
@@ -106,7 +108,7 @@ internal class ActualFakeOverridesAdder(
                 diagnosticsReporter.at(klass).report(
                     errorFactory,
                     klass.name.asString(),
-                    (memberFromSupertype as IrDeclarationWithName).name.asString()
+                    (memberFromSupertype.asDeclarationWithName()).name.asString()
                 )
             }
         }

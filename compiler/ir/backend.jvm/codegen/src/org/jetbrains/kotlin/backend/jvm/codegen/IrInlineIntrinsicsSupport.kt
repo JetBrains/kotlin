@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.allParametersCount
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
@@ -91,7 +88,7 @@ class IrInlineIntrinsicsSupport(
     }
 
     private fun generateCallableReference(
-        v: InstructionAdapter, declaration: IrDeclarationWithName, function: IrFunction, implClass: Type, withArity: Boolean
+        v: InstructionAdapter, declaration: IrDeclarationBase, function: IrFunction, implClass: Type, withArity: Boolean
     ) {
         v.anew(implClass)
         v.dup()

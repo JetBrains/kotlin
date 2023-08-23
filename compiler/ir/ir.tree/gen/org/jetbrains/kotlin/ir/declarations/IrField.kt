@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 
 /**
  * A leaf IR tree element.
@@ -24,6 +25,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  */
 abstract class IrField : IrDeclarationBase(), IrPossiblyExternalDeclaration,
         IrDeclarationWithVisibility, IrDeclarationParent, IrMetadataSourceOwner {
+    abstract var name: Name
+
+    override val nameOrNull: Name
+        get() = name
+
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: PropertyDescriptor
 

@@ -57,7 +57,7 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
             append(element.javaClass.simpleName)
             append('}')
             if (element is IrDeclaration) {
-                if (element is IrDeclarationWithName) {
+                if (element is IrDeclarationBase && element.nameOrNull != null) {
                     append(element.name)
                     append(' ')
                 }
@@ -547,7 +547,7 @@ internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescript
     else
         render(descriptor)
 
-private fun IrDeclarationWithName.renderSignatureIfEnabled(printSignatures: Boolean): String =
+private fun IrDeclarationBase.renderSignatureIfEnabled(printSignatures: Boolean): String =
     if (printSignatures) symbol.signature?.let { "signature:${it.render()} " }.orEmpty() else ""
 
 internal fun IrDeclaration.renderOriginIfNonTrivial(): String =
@@ -590,7 +590,7 @@ private inline fun StringBuilder.appendDeclarationNameToFqName(
 ) {
     if (!declaration.isFileClass || options.printFacadeClassInFqNames) {
         append('.')
-        if (declaration is IrDeclarationWithName) {
+        if (declaration is IrDeclarationBase && declaration.nameOrNull != null) {
             append(declaration.name)
         } else {
             fallback()

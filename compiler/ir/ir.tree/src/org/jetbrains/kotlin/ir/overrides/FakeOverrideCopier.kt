@@ -74,9 +74,9 @@ class FakeOverrideCopier(
         return declaration.factory.createPropertyWithLateBinding(
             declaration.startOffset, declaration.endOffset,
             customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE,
-            declaration.name,
             declaration.visibility,
             customization.modality ?: declaration.modality,
+            declaration.name,
             isVar = declaration.isVar,
             isConst = declaration.isConst,
             isLateinit = declaration.isLateinit,

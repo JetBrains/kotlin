@@ -125,7 +125,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
             return intrinsicFunctionToHandler[this.getSignature()]
         }
 
-        fun mustBeHandledWithWrapper(declaration: IrDeclarationWithName): Boolean {
+        fun mustBeHandledWithWrapper(declaration: IrDeclarationBase): Boolean {
             val fqName = declaration.fqName
             return when {
                 declaration is IrFunction -> declaration.getSignature(fqName) in intrinsicFunctionToHandler

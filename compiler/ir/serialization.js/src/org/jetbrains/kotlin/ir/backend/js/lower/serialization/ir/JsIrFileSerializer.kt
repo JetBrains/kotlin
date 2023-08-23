@@ -11,14 +11,11 @@ import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.ir.util.getAnnotation
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 
 class JsIrFileSerializer(
@@ -52,7 +49,7 @@ class JsIrFileSerializer(
         return annotations.hasAnnotation(JS_EXPORT_IGNORE_FQN)
     }
 
-    private val IrDeclarationWithName.exportedName: String
+    private val IrDeclarationBase.exportedName: String
         get() = getAnnotation(JS_NAME_FQN)?.getSingleConstStringArgument() ?: name.toString()
 
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer) = node.isExportedDeclaration()
@@ -61,7 +58,7 @@ class JsIrFileSerializer(
         val isFileExported = irFile.annotations.hasAnnotation(JS_EXPORT_FQN)
 
         val exportedNames = irFile.declarations.asSequence()
-            .filterIsInstance<IrDeclarationWithName>()
+            .filterIsInstance<IrDeclarationBase>()
             .filter { if (isFileExported) !it.isExportIgnoreDeclaration() else it.isExportedDeclaration() }
             .filter { !it.isEffectivelyExternal() && !it.isExpect }
             .map { it.exportedName }

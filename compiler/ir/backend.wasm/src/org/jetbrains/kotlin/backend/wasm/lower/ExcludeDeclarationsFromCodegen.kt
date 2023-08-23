@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.backend.wasm.lower
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.utils.hasExcludedFromCodegenAnnotation
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.asDeclarationWithNameSafe
 
 /**
  * Move intrinsics marked with @ExcludedFromCodegen to special excluded files.
@@ -34,7 +34,7 @@ fun excludeDeclarationsFromCodegen(context: WasmBackendContext, module: IrModule
     for (file in module.files) {
         val it = file.declarations.iterator()
         while (it.hasNext()) {
-            val d = it.next() as? IrDeclarationWithName ?: continue
+            val d = it.next().asDeclarationWithNameSafe() ?: continue
             if (isExcluded(d)) {
                 it.remove()
                 // Move to "excluded" package fragment preserving fq-name

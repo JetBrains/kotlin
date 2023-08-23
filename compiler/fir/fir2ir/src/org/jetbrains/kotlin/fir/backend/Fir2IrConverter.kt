@@ -253,8 +253,8 @@ class Fir2IrConverter(
             irFactory.createConstructor(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.DEFINED,
-                Name.special("<init>"),
                 irClass.visibility,
+                Name.special("<init>"),
                 isInline = false,
                 isExpect = false,
                 irClass.defaultType,
@@ -280,8 +280,8 @@ class Fir2IrConverter(
             irFactory.createSimpleFunction(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.DEFINED,
-                conversionData.methodName,
                 DescriptorVisibilities.PUBLIC,
+                conversionData.methodName,
                 isInline = false,
                 isExpect = false,
                 returnType,
@@ -302,9 +302,9 @@ class Fir2IrConverter(
                     irFactory.createValueParameter(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         if (isMutated) IrDeclarationOrigin.SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT else IrDeclarationOrigin.DEFINED,
-                        Name.identifier("p$index"),
                         injectedValue.typeRef.toIrType(typeConverter),
                         isAssignable = isMutated,
+                        Name.identifier("p$index"),
                         injectedValue.irParameterSymbol,
                         index,
                         varargElementType = null,

@@ -386,7 +386,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         return res
     }
 
-    private fun referenceTopLevelExternalDeclaration(declaration: IrDeclarationWithName): String {
+    private fun referenceTopLevelExternalDeclaration(declaration: IrDeclarationBase): String {
         var name: String? = declaration.getJsNameOrKotlinName().identifier
 
         val qualifier = currentFile.getJsQualifier()

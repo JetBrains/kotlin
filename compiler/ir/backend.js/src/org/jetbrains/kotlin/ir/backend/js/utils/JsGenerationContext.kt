@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.name
 import org.jetbrains.kotlin.js.backend.ast.JsLocation
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsScope
@@ -59,7 +60,7 @@ class JsGenerationContext(
         )
     }
 
-    fun getNameForValueDeclaration(declaration: IrDeclarationWithName): JsName {
+    fun getNameForValueDeclaration(declaration: IrDeclarationBase): JsName {
         return nameCache.getOrPut(declaration) {
             if (useBareParameterNames) {
                 JsName(sanitizeName(declaration.name.asString()), true)

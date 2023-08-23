@@ -231,7 +231,7 @@ class Fir2IrVisitor(
                 val irReceiver =
                     receiver.convertWithOffsets { startOffset, endOffset ->
                         irFactory.createValueParameter(
-                            startOffset, endOffset, origin, name, receiver.typeRef.toIrType(), isAssignable = false,
+                            startOffset, endOffset, origin, receiver.typeRef.toIrType(), isAssignable = false, name,
                             IrValueParameterSymbolImpl(),
                             if (isSelf) UNDEFINED_PARAMETER_INDEX else index,
                             varargElementType = null, isCrossinline = false, isNoinline = false, isHidden = false

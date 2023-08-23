@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 
 /**
  * A leaf IR tree element.
@@ -30,6 +31,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration,
         IrDeclarationWithVisibility, IrTypeParametersContainer, IrDeclarationContainer,
         IrAttributeContainer, IrMetadataSourceOwner {
+    abstract var name: Name
+
+    override val nameOrNull: Name
+        get() = name
+
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ClassDescriptor
 

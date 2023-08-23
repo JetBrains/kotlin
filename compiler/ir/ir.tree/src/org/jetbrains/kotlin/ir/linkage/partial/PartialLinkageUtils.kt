@@ -9,14 +9,15 @@ import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.PARTIAL_LINKAGE_RUNTIME_ERROR
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.asDeclarationWithNameSafe
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.name
 import org.jetbrains.kotlin.name.Name
 
 fun IrStatement.isPartialLinkageRuntimeError(): Boolean {
@@ -53,7 +54,7 @@ object PartialLinkageUtils {
                 onSyntheticBuiltInFunction = SyntheticBuiltInFunctions,
                 onIrBased = { Real(it.module.name) },
                 onLazyIrBased = { Real(it.containingDeclaration.name) },
-                onError = { error("Can't determine module for $declaration, name=${(declaration as? IrDeclarationWithName)?.name}") }
+                onError = { error("Can't determine module for $declaration, name=${(declaration.asDeclarationWithNameSafe())?.name}") }
             )
         }
     }
@@ -104,7 +105,7 @@ object PartialLinkageUtils {
                 onSyntheticBuiltInFunction = SyntheticBuiltInFunctions,
                 onIrBased = ::IrBased,
                 onLazyIrBased = ::LazyIrBased,
-                onError = { error("Can't determine file for $declaration, name=${(declaration as? IrDeclarationWithName)?.name}") }
+                onError = { error("Can't determine file for $declaration, name=${(declaration.asDeclarationWithNameSafe())?.name}") }
             )
         }
     }

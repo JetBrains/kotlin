@@ -37,11 +37,11 @@ internal object PartialLinkageUtils {
         override fun toString() = "$packageFqName/$declarationRelativeFqName"
 
         companion object {
-            val IrDeclarationWithName.declarationId: DeclarationId?
+            val IrDeclarationBase.declarationId: DeclarationId?
                 get() {
                     return when (val parent = parent) {
                         is IrPackageFragment -> DeclarationId(parent.packageFqName.asString(), name.asString())
-                        is IrDeclarationWithName -> parent.declarationId?.createNested(name.asString())
+                        is IrDeclarationBase -> if (parent.nameOrNull != null) parent.declarationId?.createNested(name.asString()) else null
                         else -> null
                     }
                 }

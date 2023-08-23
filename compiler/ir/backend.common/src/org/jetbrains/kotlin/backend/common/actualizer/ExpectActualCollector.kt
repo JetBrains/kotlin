@@ -74,7 +74,7 @@ internal data class ClassActualizationInfo(
     val actualClasses: Map<ClassId, IrClassSymbol>,
     // mapping from classId to actual typealias
     val actualTypeAliases: Map<ClassId, IrTypeAliasSymbol>,
-    val actualTopLevels: Map<CallableId, List<IrDeclarationWithName>>,
+    val actualTopLevels: Map<CallableId, List<IrDeclarationBase>>,
 ) {
     fun getActualWithoutExpansion(classId: ClassId): IrSymbol? {
         return actualTypeAliases[classId] ?: actualClasses[classId]
@@ -100,7 +100,7 @@ private class ActualDeclarationsCollector {
 
     private val actualClasses: MutableMap<ClassId, IrClassSymbol> = mutableMapOf()
     private val actualTypeAliasesWithoutExpansion: MutableMap<ClassId, IrTypeAliasSymbol> = mutableMapOf()
-    private val actualTopLevels: MutableMap<CallableId, MutableList<IrDeclarationWithName>> = mutableMapOf()
+    private val actualTopLevels: MutableMap<CallableId, MutableList<IrDeclarationBase>> = mutableMapOf()
 
     private val visitedActualClasses = mutableSetOf<IrClass>()
 
@@ -149,7 +149,7 @@ private class ActualDeclarationsCollector {
         }
     }
 
-    private fun recordActualCallable(callableDeclaration: IrDeclarationWithName, callableId: CallableId) {
+    private fun recordActualCallable(callableDeclaration: IrDeclarationBase, callableId: CallableId) {
         if (callableId.classId == null) {
             actualTopLevels
                 .getOrPut(callableId) { mutableListOf() }
@@ -178,7 +178,7 @@ private class ExpectActualLinkCollector(
         }
     }
 
-    private fun matchExpectCallable(declaration: IrDeclarationWithName, callableId: CallableId) {
+    private fun matchExpectCallable(declaration: IrDeclarationBase, callableId: CallableId) {
         val actualSymbols = classActualizationInfo.actualTopLevels[callableId]?.map { it.symbol }.orEmpty()
         matchExpectDeclaration(declaration.symbol, actualSymbols)
     }

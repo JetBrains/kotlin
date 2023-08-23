@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
-import org.jetbrains.kotlin.ir.util.inlineDeclaration
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
-import org.jetbrains.kotlin.ir.util.isLambdaInlining
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -184,7 +182,7 @@ private class FunctionParametersProcessor : IrElementVisitorVoid {
         val varName = this.name.asString().substringAfterLast("_")
         val varNewName = when {
             this.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER -> {
-                val functionName = (inlinedBlock.inlineDeclaration as? IrDeclarationWithName)?.name
+                val functionName = (inlinedBlock.inlineDeclaration.asDeclarationWithNameSafe())?.name
                 functionName?.let { name -> "\$this$$name" } ?: AsmUtil.RECEIVER_PARAMETER_NAME
             }
             varName == SpecialNames.THIS.asStringStripSpecialMarkers() -> "this_"

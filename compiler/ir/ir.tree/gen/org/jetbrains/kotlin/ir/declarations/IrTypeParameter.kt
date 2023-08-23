@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 /**
@@ -21,7 +22,12 @@ import org.jetbrains.kotlin.types.Variance
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeParameter]
  */
-abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
+abstract class IrTypeParameter : IrDeclarationBase() {
+    abstract var name: Name
+
+    override val nameOrNull: Name
+        get() = name
+
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: TypeParameterDescriptor
 

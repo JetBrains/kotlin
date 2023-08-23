@@ -24,7 +24,7 @@ class JsNameLinkingNamer(
 
     val nameMap = mutableMapOf<IrDeclaration, JsName>()
 
-    private fun IrDeclarationWithName.getName(prefix: String = ""): JsName {
+    private fun IrDeclarationBase.getName(prefix: String = ""): JsName {
         return nameMap.getOrPut(this) {
             val name = (this as? IrClass)?.let { context.localClassNames[this] } ?: let {
                 this.nameIfPropertyAccessor() ?: getJsNameOrKotlinName().asString()
@@ -36,7 +36,7 @@ class JsNameLinkingNamer(
     val importedModules = mutableListOf<JsImportedModule>()
     val imports = mutableMapOf<IrDeclaration, JsStatement>()
 
-    override fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): JsName {
+    override fun getNameForStaticDeclaration(declaration: IrDeclarationBase): JsName {
         if (declaration.isEffectivelyExternal()) {
             val jsModule: String? = declaration.getJsModule()
             val maybeParentFile: IrFile? = declaration.parent as? IrFile
@@ -74,7 +74,7 @@ class JsNameLinkingNamer(
         return JsName(field.parentAsClass.fieldData()[field]!!, false)
     }
 
-    private fun IrDeclarationWithName.generateImportForDeclarationWithJsModule(jsModule: String): JsName {
+    private fun IrDeclarationBase.generateImportForDeclarationWithJsModule(jsModule: String): JsName {
         val nameString = if (isJsNonModule()) {
             getJsNameOrKotlinName().asString()
         } else {
@@ -96,7 +96,7 @@ class JsNameLinkingNamer(
         return name
     }
 
-    private fun IrDeclarationWithName.generateImportForDeclarationInFileWithJsModule(
+    private fun IrDeclarationBase.generateImportForDeclarationInFileWithJsModule(
         fileJsModule: String,
         jsQualifier: List<JsName>?
     ): JsName {
@@ -131,7 +131,7 @@ class JsNameLinkingNamer(
         return getName()
     }
 
-    private fun IrDeclarationWithName.generateRegularQualifiedImport(jsQualifier: List<JsName>?): JsName {
+    private fun IrDeclarationBase.generateRegularQualifiedImport(jsQualifier: List<JsName>?): JsName {
         val name = getJsNameOrKotlinName().identifier
 
         if (jsQualifier != null) {

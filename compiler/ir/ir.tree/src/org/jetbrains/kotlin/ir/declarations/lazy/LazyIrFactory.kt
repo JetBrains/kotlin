@@ -24,8 +24,8 @@ class LazyIrFactory(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        name: Name,
         visibility: DescriptorVisibility,
+        name: Name,
         symbol: IrClassSymbol,
         kind: ClassKind,
         modality: Modality,
@@ -44,8 +44,8 @@ class LazyIrFactory(
             startOffset,
             endOffset,
             origin,
-            name,
             visibility,
+            name,
             symbol,
             kind,
             modality,
@@ -63,8 +63,8 @@ class LazyIrFactory(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        name: Name,
         visibility: DescriptorVisibility,
+        name: Name,
         isInline: Boolean,
         isExpect: Boolean,
         returnType: IrType,
@@ -79,8 +79,8 @@ class LazyIrFactory(
             startOffset,
             endOffset,
             origin,
-            name,
             visibility,
+            name,
             isInline,
             isExpect,
             returnType,
@@ -105,8 +105,8 @@ class LazyIrFactory(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        name: Name,
         visibility: DescriptorVisibility,
+        name: Name,
         symbol: IrFieldSymbol,
         type: IrType,
         isFinal: Boolean,
@@ -115,14 +115,14 @@ class LazyIrFactory(
     ): IrField = if (symbol.isBound)
         symbol.owner
     else
-        delegate.createField(startOffset, endOffset, origin, name, visibility, symbol, type, isFinal, isStatic, isExternal)
+        delegate.createField(startOffset, endOffset, origin, visibility, name, symbol, type, isFinal, isStatic, isExternal)
 
     override fun createSimpleFunction(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        name: Name,
         visibility: DescriptorVisibility,
+        name: Name,
         isInline: Boolean,
         isExpect: Boolean,
         returnType: IrType,
@@ -139,7 +139,7 @@ class LazyIrFactory(
         symbol.owner
     else
         delegate.createSimpleFunction(
-            startOffset, endOffset, origin, name, visibility, isInline, isExpect, returnType,
+            startOffset, endOffset, origin, visibility, name, isInline, isExpect, returnType,
             modality, symbol, isTailrec, isSuspend, isOperator, isInfix, isExternal, containerSource, isFakeOverride
         )
 
@@ -147,9 +147,9 @@ class LazyIrFactory(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        name: Name,
         visibility: DescriptorVisibility,
         modality: Modality,
+        name: Name,
         symbol: IrPropertySymbol,
         isVar: Boolean,
         isConst: Boolean,
@@ -166,9 +166,9 @@ class LazyIrFactory(
             startOffset,
             endOffset,
             origin,
-            name,
             visibility,
             modality,
+            name,
             symbol,
             isVar,
             isConst,
@@ -184,15 +184,15 @@ class LazyIrFactory(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        name: Name,
         visibility: DescriptorVisibility,
+        name: Name,
         symbol: IrTypeAliasSymbol,
         isActual: Boolean,
         expandedType: IrType
     ): IrTypeAlias = if (symbol.isBound)
         symbol.owner
     else
-        delegate.createTypeAlias(startOffset, endOffset, origin, name, visibility, symbol, isActual, expandedType)
+        delegate.createTypeAlias(startOffset, endOffset, origin, visibility, name, symbol, isActual, expandedType)
 
     override fun createTypeParameter(
         startOffset: Int,

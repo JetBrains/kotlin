@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.asDeclarationWithName
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -74,7 +74,7 @@ class WasmCompiledModuleFragment(
     open class ReferencableElements<Ir, Wasm : Any> {
         val unbound = mutableMapOf<Ir, WasmSymbol<Wasm>>()
         fun reference(ir: Ir): WasmSymbol<Wasm> {
-            val declaration = (ir as? IrSymbol)?.owner as? IrDeclarationWithName
+            val declaration = (ir as? IrSymbol)?.owner?.asDeclarationWithName()
             if (declaration != null) {
                 val packageFragment = declaration.getPackageFragment()
                 if (packageFragment is IrExternalPackageFragment) {

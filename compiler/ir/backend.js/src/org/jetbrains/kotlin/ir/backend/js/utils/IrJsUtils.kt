@@ -60,10 +60,11 @@ fun IrReturn.isTheLastReturnStatementIn(target: IrReturnableBlockSymbol): Boolea
     return target.owner.statements.lastOrNull() === this
 }
 
-fun IrDeclarationWithName.getFqNameWithJsNameWhenAvailable(shouldIncludePackage: Boolean): FqName {
+fun IrDeclarationBase.getFqNameWithJsNameWhenAvailable(shouldIncludePackage: Boolean): FqName {
     val name = getJsNameOrKotlinName()
     return when (val parent = parent) {
-        is IrDeclarationWithName -> parent.getFqNameWithJsNameWhenAvailable(shouldIncludePackage).child(name)
+        is IrDeclarationBase -> if (parent.nameOrNull != null) parent.getFqNameWithJsNameWhenAvailable(shouldIncludePackage)
+            .child(name) else FqName(name.identifier)
         is IrPackageFragment -> getKotlinOrJsQualifier(parent, shouldIncludePackage)?.child(name) ?: FqName(name.identifier)
         else -> FqName(name.identifier)
     }

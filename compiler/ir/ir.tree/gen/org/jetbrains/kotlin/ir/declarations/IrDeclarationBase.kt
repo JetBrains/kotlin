@@ -9,10 +9,14 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.name.Name
 
 /**
  * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declarationBase]
  */
-abstract class IrDeclarationBase : IrElementBase(), IrDeclaration
+abstract class IrDeclarationBase : IrElementBase(), IrDeclaration {
+    override val nameOrNull: Name?
+        get() = null
+}

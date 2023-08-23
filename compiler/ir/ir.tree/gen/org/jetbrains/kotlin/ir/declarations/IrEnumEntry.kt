@@ -14,13 +14,19 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 
 /**
  * A leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.enumEntry]
  */
-abstract class IrEnumEntry : IrDeclarationBase(), IrDeclarationWithName {
+abstract class IrEnumEntry : IrDeclarationBase() {
+    abstract var name: Name
+
+    override val nameOrNull: Name
+        get() = name
+
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ClassDescriptor
 

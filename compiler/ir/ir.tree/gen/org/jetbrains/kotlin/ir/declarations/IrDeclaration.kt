@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.name.Name
 
 /**
  * A non-leaf IR tree element.
@@ -18,6 +19,8 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declaration]
  */
 interface IrDeclaration : IrStatement, IrSymbolOwner, IrMutableAnnotationContainer {
+    val nameOrNull: Name?
+
     @ObsoleteDescriptorBasedAPI
     val descriptor: DeclarationDescriptor
 

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 interface IrNamer {
     fun getNameForMemberFunction(function: IrSimpleFunction): JsName
     fun getNameForMemberField(field: IrField): JsName
-    fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): JsName
+    fun getNameForStaticDeclaration(declaration: IrDeclarationBase): JsName
     fun getNameForStaticFunction(function: IrSimpleFunction): JsName
     fun getNameForField(field: IrField): JsName
     fun getNameForConstructor(constructor: IrConstructor): JsName
@@ -26,7 +26,7 @@ interface IrNamer {
 abstract class IrNamerBase : IrNamer {
     abstract override fun getNameForMemberFunction(function: IrSimpleFunction): JsName
     abstract override fun getNameForMemberField(field: IrField): JsName
-    abstract override fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): JsName
+    abstract override fun getNameForStaticDeclaration(declaration: IrDeclarationBase): JsName
 
     protected fun String.toJsName(temporary: Boolean = true) = JsName(this, temporary)
 

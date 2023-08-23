@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
+import org.jetbrains.kotlin.ir.util.name
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
@@ -101,7 +102,7 @@ abstract class InventNamesForLocalClasses(
         }
 
         override fun visitDeclaration(declaration: IrDeclarationBase, data: Data) {
-            if (declaration !is IrDeclarationWithName ||
+            if (declaration.nameOrNull == null ||
                 // Skip temporary variables because they are not present in source code, and their names are not particularly
                 // meaningful (e.g. `tmp$1`) in any case.
                 declaration.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR ||

@@ -21,11 +21,8 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IdSignature.*
-import org.jetbrains.kotlin.ir.util.isAnonymousObject
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.Module as PLModule
 
@@ -208,7 +205,7 @@ private fun IrSymbol.guessName(): String? {
             }
             signature.guessName(nameSegmentsToPickUp)
         }
-        ?: (owner as? IrDeclarationWithName)
+        ?: (owner.asDeclarationWithNameSafe())
             // Lazy IR may not have signatures. Let's try to extract name from the declaration itself.
             ?.let { owner ->
                 when (owner) {
@@ -247,7 +244,7 @@ private fun Appendable.signature(symbol: IrSymbol): Appendable {
                 else -> it.render()
             }
         }
-        ?: (symbol.owner as? IrDeclarationWithName)?.let { lazyIrDeclaration ->
+        ?: (symbol.owner.asDeclarationWithNameSafe())?.let { lazyIrDeclaration ->
             // Lazy IR declaration might not have any signature at all. So let's print anything helpful at least.
             lazyIrDeclaration.declarationId?.let { "$it|?" /* We don't know the exact hash and mask to print them here. */ }
         }

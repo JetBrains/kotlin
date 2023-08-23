@@ -836,7 +836,7 @@ class Fir2IrDeclarationStorage(
     private fun createIrPropertyAccessor(
         propertyAccessor: FirPropertyAccessor?,
         property: FirProperty,
-        correspondingProperty: IrDeclarationWithName,
+        correspondingProperty: IrDeclarationBase,
         propertyType: IrType,
         irParent: IrDeclarationParent?,
         thisReceiverOwner: IrClass? = computeThisReceiverOwner(irParent),

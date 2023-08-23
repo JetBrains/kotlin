@@ -14,14 +14,20 @@ import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 
 /**
  * A leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedProperty]
  */
-abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWithName,
-        IrSymbolOwner, IrMetadataSourceOwner {
+abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrSymbolOwner,
+        IrMetadataSourceOwner {
+    abstract var name: Name
+
+    override val nameOrNull: Name
+        get() = name
+
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: VariableDescriptorWithAccessors
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.asDeclarationWithNameSafe
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -17,7 +18,7 @@ import java.io.File
 
 internal fun IrDeclaration.fqNameForDceDump(): String {
     // TODO: sanitize names
-    val fqn = (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "<unknown>"
+    val fqn = (this.asDeclarationWithNameSafe())?.fqNameWhenAvailable?.asString() ?: "<unknown>"
     val signature = when (this is IrFunction) {
         true -> this.valueParameters.joinToString(prefix = "(", postfix = ")") { it.type.dumpKotlinLike() }
         else -> ""

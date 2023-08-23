@@ -72,7 +72,7 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
 
         override fun visitGetValue(expression: IrGetValue): IrExpression {
             val owner = expression.symbol.owner
-
+            require(owner is IrDeclarationBase)
             return if (
                 !owner.isEffectivelyExternal() ||
                 owner.isThisReceiver() ||
@@ -86,7 +86,7 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
 
         override fun visitSetValue(expression: IrSetValue): IrExpression {
             val field = expression.symbol.owner
-
+            require(field is IrDeclarationBase)
             return if (
                 !field.isEffectivelyExternal() ||
                 !field.needToBeWrappedWithGlobalThis()
@@ -142,10 +142,10 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
             return super.visitCall(updatedCall)
         }
 
-        private fun IrDeclarationWithName.needToBeWrappedWithGlobalThis(): Boolean =
+        private fun IrDeclarationBase.needToBeWrappedWithGlobalThis(): Boolean =
             !getJsNameOrKotlinName().toString().isValidES5Identifier()
 
-        private fun IrDeclarationWithName.wrapInGlobalThis(expression: IrExpression): IrDynamicMemberExpression =
+        private fun IrDeclarationBase.wrapInGlobalThis(expression: IrExpression): IrDynamicMemberExpression =
             IrDynamicMemberExpressionImpl(
                 startOffset = expression.startOffset,
                 endOffset = expression.endOffset,

@@ -32,7 +32,7 @@ fun IrFunction.isInlineArrayConstructor(builtIns: IrBuiltIns): Boolean =
 val IrDeclarationParent.fqNameForIrSerialization: FqName
     get() = when (this) {
         is IrPackageFragment -> this.packageFqName
-        is IrDeclarationWithName -> this.parent.fqNameForIrSerialization.child(this.name)
+        is IrDeclarationBase -> this.parent.fqNameForIrSerialization.child(this.name)
         else -> error(this)
     }
 
@@ -49,7 +49,7 @@ val IrDeclarationParent.kotlinFqName: FqName
                 parent.kotlinFqName.child(name)
             }
         }
-        is IrDeclarationWithName -> this.parent.kotlinFqName.child(name)
+        is IrDeclarationBase -> this.parent.kotlinFqName.child(name)
         else -> error(this)
     }
 
@@ -59,7 +59,7 @@ val IrClass.classId: ClassId?
 val IrTypeAlias.classId: ClassId?
     get() = classIdImpl
 
-private val IrDeclarationWithName.classIdImpl: ClassId?
+private val IrDeclarationBase.classIdImpl: ClassId?
     get() = when (val parent = this.parent) {
         is IrClass -> parent.classId?.createNestedClassId(this.name)
         is IrPackageFragment -> ClassId.topLevel(parent.packageFqName.child(this.name))
@@ -72,7 +72,7 @@ val IrClass.classIdOrFail: ClassId
 val IrTypeAlias.classIdOrFail: ClassId
     get() = classIdOrFailImpl
 
-private val IrDeclarationWithName.classIdOrFailImpl: ClassId
+private val IrDeclarationBase.classIdOrFailImpl: ClassId
     get() = classIdImpl ?: error("No classId for $this")
 
 val IrFunction.callableId: CallableId
@@ -87,7 +87,7 @@ val IrField.callableId: CallableId
 val IrEnumEntry.callableId: CallableId
     get() = callableIdImpl
 
-private val IrDeclarationWithName.callableIdImpl: CallableId
+private val IrDeclarationBase.callableIdImpl: CallableId
     get() {
         if (this.symbol is IrClassifierSymbol) error("Classifiers can not have callableId. Got $this")
         return when (val parent = this.parent) {
@@ -106,13 +106,13 @@ private val IrDeclarationWithName.callableIdImpl: CallableId
 )
 val IrDeclaration.nameForIrSerialization: Name
     get() = when (this) {
-        is IrDeclarationWithName -> this.name
+        is IrDeclarationBase -> this.name
         is IrConstructor -> SpecialNames.INIT
         else -> error(this)
     }
 
 fun IrDeclaration.getNameWithAssert(): Name =
-    if (this is IrDeclarationWithName) name else error(this)
+    if (this is IrDeclarationBase && nameOrNull != null) name else error(this)
 
 val IrValueParameter.isVararg get() = this.varargElementType != null
 
@@ -142,10 +142,10 @@ fun IrConstructorCall.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
 val IrClass.packageFqName: FqName?
     get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.packageFqName
 
-fun IrDeclarationWithName.hasEqualFqName(fqName: FqName): Boolean =
+fun IrDeclarationBase.hasEqualFqName(fqName: FqName): Boolean =
     symbol.hasEqualFqName(fqName) || name == fqName.shortName() && when (val parent = parent) {
         is IrPackageFragment -> parent.packageFqName == fqName.parent()
-        is IrDeclarationWithName -> parent.hasEqualFqName(fqName.parent())
+        is IrDeclarationBase -> if (parent.hasName()) parent.hasEqualFqName(fqName.parent()) else false
         else -> false
     }
 

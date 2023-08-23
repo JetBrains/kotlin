@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.isKFunction
 import org.jetbrains.kotlin.ir.util.isSubclassOf
+import org.jetbrains.kotlin.ir.util.name
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.name.SpecialNames
 

@@ -541,7 +541,7 @@ object JsAstUtils {
 internal fun <T : JsNode> T.withSource(
     node: IrElement,
     context: JsGenerationContext,
-    useNameOf: IrDeclarationWithName? = null,
+    useNameOf: IrDeclarationBase? = null,
     container: IrDeclaration? = null
 ): T {
     addSourceInfoIfNeed(node, context, useNameOf, container)
@@ -552,7 +552,7 @@ internal fun <T : JsNode> T.withSource(
 private inline fun <T : JsNode> T.addSourceInfoIfNeed(
     node: IrElement,
     context: JsGenerationContext,
-    useNameOf: IrDeclarationWithName?,
+    useNameOf: IrDeclarationBase?,
     container: IrDeclaration?
 ) {
     val sourceMapsInfo = context.staticContext.backendContext.sourceMapsInfo ?: return
@@ -626,7 +626,7 @@ inline fun IrElement.getSourceLocation(fileEntry: IrFileEntry, offsetSelector: I
 /**
  * Returns a name of the original Kotlin declaration, or null, if it is a compiler generated declaration.
  */
-private fun IrDeclarationWithName.originalNameForUseInSourceMap(policy: SourceMapNamesPolicy): String? {
+private fun IrDeclarationBase.originalNameForUseInSourceMap(policy: SourceMapNamesPolicy): String? {
     if (policy == SourceMapNamesPolicy.NO) return null
     when (this) {
         is IrField -> correspondingPropertySymbol?.let {

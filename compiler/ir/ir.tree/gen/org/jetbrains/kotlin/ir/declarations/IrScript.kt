@@ -17,14 +17,20 @@ import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 
 /**
  * A leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.script]
  */
-abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarationParent,
-        IrStatementContainer, IrMetadataSourceOwner {
+abstract class IrScript : IrDeclarationBase(), IrDeclarationParent, IrStatementContainer,
+        IrMetadataSourceOwner {
+    abstract var name: Name
+
+    override val nameOrNull: Name
+        get() = name
+
     abstract override val symbol: IrScriptSymbol
 
     abstract var thisReceiver: IrValueParameter?

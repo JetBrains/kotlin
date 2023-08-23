@@ -100,6 +100,8 @@ object IrTree : AbstractTreeBuilder() {
         parent(symbolOwner)
         parent(mutableAnnotationContainerType)
 
+        +field("nameOrNull", type<Name>(), nullable = true, mutable = false)
+
         +descriptor("DeclarationDescriptor")
         +field("origin", type(Packages.declarations, "IrDeclarationOrigin"))
         +field("parent", declarationParent) {
@@ -114,6 +116,11 @@ object IrTree : AbstractTreeBuilder() {
         visitorParent = rootElement
         visitorName = "declaration"
 
+        +field("nameOrNull", type<Name>(), nullable = true, mutable = false) {
+            skipInIrFactory()
+            baseGetter = code("null")
+        }
+
         parent(declaration)
     }
     val declarationParent: ElementConfig by element(Declaration)
@@ -122,13 +129,9 @@ object IrTree : AbstractTreeBuilder() {
 
         +field("visibility", type(Packages.descriptors, "DescriptorVisibility"))
     }
-    val declarationWithName: ElementConfig by element(Declaration) {
-        parent(declaration)
-
-        +field("name", type<Name>())
-    }
     val possiblyExternalDeclaration: ElementConfig by element(Declaration) {
-        parent(declarationWithName)
+
+        parent(declaration)
 
         +field("isExternal", boolean) {
             useFieldInIrFactory(false)
@@ -162,7 +165,6 @@ object IrTree : AbstractTreeBuilder() {
     val overridableMember: ElementConfig by element(Declaration) {
         parent(declaration)
         parent(declarationWithVisibility)
-        parent(declarationWithName)
         parent(symbolOwner)
 
         +field("modality", type<Modality>())
@@ -179,14 +181,14 @@ object IrTree : AbstractTreeBuilder() {
         }
     }
     val memberWithContainerSource: ElementConfig by element(Declaration) {
-        parent(declarationWithName)
+        parent(declaration)
 
         +field("containerSource", type<DeserializedContainerSource>(), nullable = true, mutable = false) {
             useFieldInIrFactory(defaultValue = code("null"))
         }
     }
     val valueDeclaration: ElementConfig by element(Declaration) {
-        parent(declarationWithName)
+        parent(declaration)
         parent(symbolOwner)
 
         +descriptor("ValueDescriptor")
@@ -200,6 +202,13 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(declarationBase)
         parent(valueDeclaration)
+
+        +field("name", type<Name>())
+
+        +field("nameOrNull", type<Name>(), mutable = false) {
+            skipInIrFactory()
+            baseGetter = code("name")
+        }
 
         +descriptor("ParameterDescriptor")
         +symbol(valueParameterSymbolType)
@@ -249,6 +258,13 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationContainer)
         parent(attributeContainer)
         parent(metadataSourceOwner)
+
+        +field("name", type<Name>())
+
+        +field("nameOrNull", type<Name>(), mutable = false) {
+            skipInIrFactory()
+            baseGetter = code("name")
+        }
 
         +descriptor("ClassDescriptor")
         +symbol(classSymbolType)
@@ -348,7 +364,13 @@ object IrTree : AbstractTreeBuilder() {
         transform = true
 
         parent(declarationBase)
-        parent(declarationWithName)
+
+        +field("name", type<Name>())
+
+        +field("nameOrNull", type<Name>(), mutable = false) {
+            skipInIrFactory()
+            baseGetter = code("name")
+        }
 
         +descriptor("TypeParameterDescriptor")
         +symbol(typeParameterSymbolType)
@@ -378,6 +400,13 @@ object IrTree : AbstractTreeBuilder() {
         parent(memberWithContainerSource)
         parent(metadataSourceOwner)
 
+        +field("name", type<Name>())
+
+        +field("nameOrNull", type<Name>(), mutable = false) {
+            skipInIrFactory()
+            baseGetter = code("name")
+        }
+
         +descriptor("FunctionDescriptor")
         +symbol(functionSymbolType)
         // NB: there's an inline constructor for Array and each primitive array class.
@@ -406,7 +435,13 @@ object IrTree : AbstractTreeBuilder() {
         visitorParent = declarationBase
 
         parent(declarationBase)
-        parent(declarationWithName)
+
+        +field("name", type<Name>())
+
+        +field("nameOrNull", type<Name>(), mutable = false) {
+            skipInIrFactory()
+            baseGetter = code("name")
+        }
 
         +descriptor("ClassDescriptor")
         +symbol(enumEntrySymbolType)
@@ -446,6 +481,13 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationParent)
         parent(metadataSourceOwner)
 
+        +field("name", type<Name>())
+
+        +field("nameOrNull", type<Name>(), mutable = false) {
+            skipInIrFactory()
+            baseGetter = code("name")
+        }
+
         +descriptor("PropertyDescriptor")
         +symbol(fieldSymbolType)
         +field("type", irTypeType)
@@ -460,9 +502,15 @@ object IrTree : AbstractTreeBuilder() {
         visitorParent = declarationBase
 
         parent(declarationBase)
-        parent(declarationWithName)
         parent(symbolOwner)
         parent(metadataSourceOwner)
+
+        +field("name", type<Name>())
+
+        +field("nameOrNull", type<Name>(), mutable = false) {
+            skipInIrFactory()
+            baseGetter = code("name")
+        }
 
         +descriptor("VariableDescriptorWithAccessors")
         +symbol(localDelegatedPropertySymbolType)
@@ -501,6 +549,13 @@ object IrTree : AbstractTreeBuilder() {
         parent(attributeContainer)
         parent(memberWithContainerSource)
 
+        +field("name", type<Name>())
+
+        +field("nameOrNull", type<Name>(), mutable = false) {
+            skipInIrFactory()
+            baseGetter = code("name")
+        }
+
         +descriptor("PropertyDescriptor")
         +symbol(propertySymbolType)
         +field("isVar", boolean)
@@ -532,10 +587,16 @@ object IrTree : AbstractTreeBuilder() {
         generateIrFactoryMethod = false
 
         parent(declarationBase)
-        parent(declarationWithName)
         parent(declarationParent)
         parent(statementContainer)
         parent(metadataSourceOwner)
+
+        +field("name", type<Name>())
+
+        +field("nameOrNull", type<Name>(), mutable = false) {
+            skipInIrFactory()
+            baseGetter = code("name")
+        }
 
         +symbol(scriptSymbolType)
         // NOTE: is the result of the FE conversion, because there script interpreted as a class and has receiver
@@ -575,9 +636,15 @@ object IrTree : AbstractTreeBuilder() {
         visitorParent = declarationBase
 
         parent(declarationBase)
-        parent(declarationWithName)
         parent(declarationWithVisibility)
         parent(typeParametersContainer)
+
+        +field("name", type<Name>())
+
+        +field("nameOrNull", type<Name>(), mutable = false) {
+            skipInIrFactory()
+            baseGetter = code("name")
+        }
 
         +descriptor("TypeAliasDescriptor")
         +symbol(typeAliasSymbolType)
@@ -591,6 +658,13 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(declarationBase)
         parent(valueDeclaration)
+
+        +field("name", type<Name>())
+
+        +field("nameOrNull", type<Name>(), mutable = false) {
+            skipInIrFactory()
+            baseGetter = code("name")
+        }
 
         +descriptor("VariableDescriptor")
         +symbol(variableSymbolType)

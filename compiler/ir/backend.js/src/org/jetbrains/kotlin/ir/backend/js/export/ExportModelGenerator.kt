@@ -295,7 +295,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     private fun exportClassDeclarations(
         klass: IrClass,
         superTypes: Iterable<IrType>,
-        specialProcessing: (IrDeclarationWithName) -> ExportedDeclaration? = { null }
+        specialProcessing: (IrDeclarationBase) -> ExportedDeclaration? = { null }
     ): ExportedClassDeclarationsInfo {
         val members = mutableListOf<ExportedDeclaration>()
         val nestedClasses = mutableListOf<ExportedClass>()
@@ -471,7 +471,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     }
 
     private fun exportAsEnumMember(
-        candidate: IrDeclarationWithName,
+        candidate: IrDeclarationBase,
         enumEntriesToOrdinal: Map<IrEnumEntry, Int>
     ): ExportedDeclaration? {
         val enumEntries = enumEntriesToOrdinal.keys
@@ -637,7 +637,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             .also { currentlyProcessedTypes.remove(type) }
     }
 
-    private fun IrDeclarationWithName.getExportedIdentifier(): String =
+    private fun IrDeclarationBase.getExportedIdentifier(): String =
         with(getJsNameOrKotlinName()) {
             if (isSpecial)
                 error("Cannot export special name: ${name.asString()} for declaration $fqNameWhenAvailable")
@@ -708,10 +708,10 @@ private val IrClassifierSymbol.isInterface
 private val IrFunction.isStaticMethod: Boolean
     get() = isEs6ConstructorReplacement || isStaticMethodOfClass
 
-private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithName? {
+private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationBase? {
     // Only actual public declarations with name can be exported
     if (declaration !is IrDeclarationWithVisibility ||
-        declaration !is IrDeclarationWithName ||
+        (declaration !is IrDeclarationBase || declaration.nameOrNull == null) ||
         !declaration.visibility.isPublicAPI ||
         declaration.isExpect
     ) {
@@ -734,11 +734,11 @@ private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNam
     return declaration
 }
 
-private fun shouldDeclarationBeExportedImplicitlyOrExplicitly(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
+private fun shouldDeclarationBeExportedImplicitlyOrExplicitly(declaration: IrDeclarationBase, context: JsIrBackendContext): Boolean {
    return declaration.isJsImplicitExport() || shouldDeclarationBeExported(declaration, context)
 }
 
-private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
+private fun shouldDeclarationBeExported(declaration: IrDeclarationBase, context: JsIrBackendContext): Boolean {
     // Formally, user have no ability to annotate EnumEntry as exported, without Enum Class
     // But, when we add @file:JsExport, the annotation appears on the all of enum entries
     // what make a wrong behaviour on non-exported members inside Enum Entry (check exportEnumClass and exportFileWithEnumClass tests)
@@ -770,7 +770,7 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
         return true
 
     return when (val parent = declaration.parent) {
-        is IrDeclarationWithName -> shouldDeclarationBeExported(parent, context)
+        is IrDeclarationBase -> if (parent.nameOrNull != null) shouldDeclarationBeExported(parent, context) else false
         is IrAnnotationContainer -> parent.isJsExport()
         else -> false
     }
@@ -797,7 +797,7 @@ fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIr
 
 fun IrOverridableDeclaration<*>.isOverriddenExported(context: JsIrBackendContext): Boolean =
     overriddenSymbols
-        .any { shouldDeclarationBeExported(it.owner as IrDeclarationWithName, context) }
+        .any { shouldDeclarationBeExported(it.owner.asDeclarationWithName(), context) }
 
 fun IrDeclaration.isExported(context: JsIrBackendContext): Boolean {
     val candidate = getExportCandidate(this) ?: return false

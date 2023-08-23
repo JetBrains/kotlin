@@ -138,7 +138,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 context.ir.symbols.functionN(arity).owner
         } else null
 
-        private fun StringBuilder.collectNamesForLambda(d: IrDeclarationWithName) {
+        private fun StringBuilder.collectNamesForLambda(d: IrDeclarationBase) {
             val parent = d.parent
 
             if (parent is IrPackageFragment) {
@@ -146,7 +146,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 return
             }
 
-            collectNamesForLambda(parent as IrDeclarationWithName)
+            collectNamesForLambda(parent.asDeclarationWithName())
 
             if (d is IrAnonymousInitializer) return
 

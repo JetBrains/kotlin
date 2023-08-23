@@ -115,7 +115,7 @@ class JsIrBackendContext(
     )
 
     val packageLevelJsModules = hashSetOf<IrFile>()
-    val declarationLevelJsModules = mutableListOf<IrDeclarationWithName>()
+    val declarationLevelJsModules = mutableListOf<IrDeclarationBase>()
 
     val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isDeclarationWithName
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class Keeper(private val keep: Set<String>) : IrElementVisitor<Unit, Keeper.KeepData> {
@@ -52,14 +53,14 @@ class Keeper(private val keep: Set<String>) : IrElementVisitor<Unit, Keeper.Keep
         if (declaration in keptDeclarations) {
             return
         }
-        if (declaration is IrDeclarationWithName && isInKeep(declaration) || data.classInKeep) {
+        if (declaration.isDeclarationWithName() && isInKeep(declaration) || data.classInKeep) {
             keptDeclarations.add(declaration)
             data.classShouldBeKept = true
             return
         }
     }
 
-    private fun isInKeep(declaration: IrDeclarationWithName): Boolean {
+    private fun isInKeep(declaration: IrDeclarationBase): Boolean {
         return declaration.fqNameWhenAvailable?.asString() in keep
     }
 

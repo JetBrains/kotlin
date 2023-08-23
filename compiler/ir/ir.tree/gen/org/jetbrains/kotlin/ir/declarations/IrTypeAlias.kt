@@ -15,14 +15,20 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 
 /**
  * A leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeAlias]
  */
-abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName,
-        IrDeclarationWithVisibility, IrTypeParametersContainer {
+abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithVisibility,
+        IrTypeParametersContainer {
+    abstract var name: Name
+
+    override val nameOrNull: Name
+        get() = name
+
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: TypeAliasDescriptor
 

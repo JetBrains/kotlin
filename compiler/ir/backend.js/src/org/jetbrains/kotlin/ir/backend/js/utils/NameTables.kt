@@ -99,7 +99,7 @@ class NameTable<T>(
 
 fun NameTable<IrDeclaration>.dump(): String =
     "Names: \n" + names.toList().joinToString("\n") { (declaration, name) ->
-        val decl: FqName? = (declaration as IrDeclarationWithName).fqNameWhenAvailable
+        val decl: FqName? = (declaration.asDeclarationWithName()).fqNameWhenAvailable
         val declRef = decl ?: declaration
         "---  $declRef => $name"
     }
@@ -208,7 +208,7 @@ class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElemen
 
     override fun visitDeclaration(declaration: IrDeclarationBase) {
         super.visitDeclaration(declaration)
-        if (declaration is IrDeclarationWithName) {
+        if (declaration.nameOrNull != null) {
             variableNames.declareFreshName(declaration, declaration.name.asString())
         }
     }
@@ -294,7 +294,7 @@ fun sanitizeName(name: String, withHash: Boolean = true): String {
     }
 }
 
-fun IrDeclarationWithName.nameIfPropertyAccessor(): String? {
+fun IrDeclarationBase.nameIfPropertyAccessor(): String? {
     if (this is IrSimpleFunction) {
         return when {
             this.correspondingPropertySymbol != null -> {

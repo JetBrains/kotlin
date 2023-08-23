@@ -782,7 +782,7 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
             sourceView.subSequence(startOffset, endOffset).toString()
         } else {
             // Fallback for inconsistent line numbers
-            (declarationParent as? IrDeclarationWithName)?.name?.asString() ?: "Unknown Declaration"
+            (declarationParent?.asDeclarationWithNameSafe())?.name?.asString() ?: "Unknown Declaration"
         }
     }
 

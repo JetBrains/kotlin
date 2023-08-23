@@ -176,7 +176,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         get() = if (!isBound) {
             "/* ERROR: unbound symbol $signature */"
         } else {
-            (owner as? IrDeclarationWithName)?.name?.toString() ?: "/* ERROR: unnamed symbol $signature */"
+            (owner.asDeclarationWithNameSafe())?.name?.toString() ?: "/* ERROR: unnamed symbol $signature */"
         }
 
     private val IrFunctionSymbol.safeValueParameters
@@ -1501,7 +1501,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
 
         printMemberAccessExpressionWithNoIndent(
-            (symbol.owner as IrDeclarationWithName).name.asString(),
+            (symbol.owner.asDeclarationWithName()).name.asString(),
             valueParameters,
             superQualifierSymbol = null,
             omitAllBracketsIfNoArguments = true,

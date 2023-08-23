@@ -153,7 +153,7 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
                                         context.ktDiagnosticReporter.at(declaration).report(
                                             JvmBackendErrors.SCRIPT_CAPTURING_NESTED_CLASS,
                                             declaration.name.asString(),
-                                            ((declaration.parent as? IrDeclarationWithName)?.name
+                                            ((declaration.parent.asDeclarationWithNameSafe())?.name
                                                 ?: SpecialNames.NO_NAME_PROVIDED).asString()
                                         )
                                     }
@@ -230,7 +230,7 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
                 val type = importedScriptClass.defaultType
                 val name = Name.identifier("\$\$importedScript_${type.classFqName?.shortName()?.asString()!!}")
                 val param = irScriptClass.factory.createValueParameter(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER, name, type, isAssignable = false,
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER, type, isAssignable = false, name,
                     IrValueParameterSymbolImpl(), UNDEFINED_PARAMETER_INDEX, varargElementType = null,
                     isCrossinline = false, isNoinline = false, isHidden = false,
                 )

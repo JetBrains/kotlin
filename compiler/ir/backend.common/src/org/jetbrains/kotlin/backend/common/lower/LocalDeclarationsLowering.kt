@@ -643,7 +643,7 @@ class LocalDeclarationsLowering(
             }
         }
 
-        private fun suggestLocalName(declaration: IrDeclarationWithName): String {
+        private fun suggestLocalName(declaration: IrDeclarationBase): String {
             val declarationName = localNameSanitizer(declaration.name.asString())
             localFunctions[declaration]?.let {
                 val baseName = if (declaration.name.isSpecial) "lambda" else declarationName
@@ -667,7 +667,7 @@ class LocalDeclarationsLowering(
             newOwner: IrDeclarationParent
         ): Name {
             val parents = declaration.parentsWithSelf.takeWhile { it != newOwner }.toList().reversed()
-            val nameFromParents = parents.joinToString(separator = "$") { suggestLocalName(it as IrDeclarationWithName) }
+            val nameFromParents = parents.joinToString(separator = "$") { suggestLocalName(it.asDeclarationWithName()) }
             // Local functions declared in anonymous initializers have classes as their parents.
             // Such anonymous initializers, however, are inlined into the constructors delegating to super class constructor.
             // There can be local functions declared in local function in init blocks (and further),

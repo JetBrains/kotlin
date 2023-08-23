@@ -84,7 +84,7 @@ private fun IrOverridableDeclaration<*>.dfsOverridableJsNameOrNull(): String? {
     return null
 }
 
-fun IrDeclarationWithName.getJsNameForOverriddenDeclaration(): String? {
+fun IrDeclarationBase.getJsNameForOverriddenDeclaration(): String? {
     val jsName = getJsName()
 
     return when {
@@ -94,7 +94,7 @@ fun IrDeclarationWithName.getJsNameForOverriddenDeclaration(): String? {
     }
 }
 
-fun IrDeclarationWithName.getJsNameOrKotlinName(): Name =
+fun IrDeclarationBase.getJsNameOrKotlinName(): Name =
     when (val jsName = getJsNameForOverriddenDeclaration()) {
         null -> name
         else -> Name.identifier(jsName)
