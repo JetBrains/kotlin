@@ -73,8 +73,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileL
                 return true
 
             val declaration = when (declarationRaw) {
-                is IrSimpleFunction -> declarationRaw.resolveFakeOverride(allowAbstract = true)!!
-                is IrField -> declarationRaw.resolveFakeOverride()
+                is IrSimpleFunction -> declarationRaw.resolveFakeOverrideMaybeAbstractOrFail()
+                is IrField -> declarationRaw.resolveFieldFakeOverride()
                 else -> declarationRaw
             }
 
@@ -376,15 +376,13 @@ private class SyntheticAccessorTransformer(
     }
 }
 
-private fun IrField.resolveFakeOverride(): IrField {
+private fun IrField.resolveFieldFakeOverride(): IrField {
     val correspondingProperty = correspondingPropertySymbol?.owner
     if (correspondingProperty == null || !correspondingProperty.isFakeOverride)
         return this
-    val realProperty = correspondingProperty.resolveFakeOverride()
-        ?: throw AssertionError("No real override for ${correspondingProperty.render()}")
-    return realProperty.backingField
+    return correspondingProperty.resolveFakeOverrideOrFail().backingField
         ?: throw AssertionError(
             "Fake override property ${correspondingProperty.render()} with backing field " +
-                    "overrides a real property with no backing field: ${realProperty.render()}"
+                    "overrides a real property with no backing field: ${correspondingProperty.resolveFakeOverrideOrFail().render()}"
         )
 }

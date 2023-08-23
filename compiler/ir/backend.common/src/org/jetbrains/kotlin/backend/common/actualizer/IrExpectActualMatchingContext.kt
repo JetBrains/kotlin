@@ -469,7 +469,7 @@ internal abstract class IrExpectActualMatchingContext(
             var ir = asIr()
 
             if (ir.isFakeOverride && ir is IrOverridableDeclaration<*>) {
-                ir.resolveFakeOverrideOrNull()?.let { ir = it }
+                ir.resolveFakeOverride()?.let { ir = it }
             }
 
             return when (ir.origin) {

@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isMethodOfAny
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -101,7 +104,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                     if (function.name.asString().endsWith("\$default")) {
                         continue
                     }
-                    val implementation = function.resolveFakeOverride() ?: error("No single implementation found for: ${function.render()}")
+                    val implementation = function.resolveFakeOverrideOrFail()
 
                     when {
                         DescriptorVisibilities.isPrivate(implementation.visibility) || implementation.isMethodOfAny() ->

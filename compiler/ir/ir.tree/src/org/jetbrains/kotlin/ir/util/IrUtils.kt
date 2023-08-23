@@ -306,12 +306,6 @@ fun IrClass.isSubclassOf(ancestor: IrClass): Boolean {
     return this.hasAncestorInSuperTypes()
 }
 
-fun IrSimpleFunction.findInterfaceImplementation(): IrSimpleFunction? {
-    if (isReal) return null
-
-    return resolveFakeOverride()?.run { if (parentAsClass.isInterface) this else null }
-}
-
 val IrClass.isAnnotationClass get() = kind == ClassKind.ANNOTATION_CLASS
 val IrClass.isEnumClass get() = kind == ClassKind.ENUM_CLASS
 val IrClass.isEnumEntry get() = kind == ClassKind.ENUM_ENTRY

@@ -6,14 +6,16 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.isFakeOverride
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.resolveFakeOverride
+import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -35,12 +37,8 @@ internal class IdSignatureHashCalculator(private val icHasher: ICHasher) {
 
     private val IrFunction.inlineFunctionFlatHash: ICHash
         get() = inlineFunctionFlatHashes.getOrPut(this) {
-            val flatHash = if (isFakeOverride && this is IrSimpleFunction) {
-                resolveFakeOverride()?.let { icHasher.calculateIrFunctionHash(it) }
-                    ?: icError("can not resolve fake override for ${render()}")
-            } else {
-                icHasher.calculateIrFunctionHash(this)
-            }
+            val function = if (isFakeOverride && this is IrSimpleFunction) resolveFakeOverrideOrFail() else this
+            val flatHash = icHasher.calculateIrFunctionHash(function)
             ICHash(symbol.calculateSymbolHash().hash.combineWith(flatHash.hash))
         }
 

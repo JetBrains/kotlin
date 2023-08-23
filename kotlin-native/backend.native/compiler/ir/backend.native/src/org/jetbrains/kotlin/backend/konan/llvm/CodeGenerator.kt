@@ -306,7 +306,7 @@ internal object VirtualTablesLookup {
 }
 
 internal fun IrSimpleFunction.findOverriddenMethodOfAny() =
-    resolveFakeOverride(allowAbstract = false).takeIf { it?.parentClassOrNull?.isAny() == true }
+    resolveFakeOverride().takeIf { it?.parentClassOrNull?.isAny() == true }
 
 /*
  * Special trampoline function to call actual virtual implementation. This helps with reducing

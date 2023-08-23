@@ -165,7 +165,8 @@ private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrEl
         }
 
         val superCallee = expression.symbol.owner
-        if (superCallee.isDefinitelyNotDefaultImplsMethod(context.config.jvmDefaultMode)) return super.visitCall(expression)
+        if (superCallee.isDefinitelyNotDefaultImplsMethod(context.config.jvmDefaultMode, superCallee.resolveFakeOverride()))
+            return super.visitCall(expression)
 
         val redirectTarget = context.cachedDeclarations.getDefaultImplsFunction(superCallee)
         val newCall = createDelegatingCallWithPlaceholderTypeArguments(expression, redirectTarget, context.irBuiltIns)
@@ -235,7 +236,7 @@ private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : Ir
 
 internal fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod(
     jvmDefaultMode: JvmDefaultMode,
-    implementation: IrSimpleFunction? = resolveFakeOverride()
+    implementation: IrSimpleFunction?,
 ): Boolean =
     implementation == null ||
             implementation.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||

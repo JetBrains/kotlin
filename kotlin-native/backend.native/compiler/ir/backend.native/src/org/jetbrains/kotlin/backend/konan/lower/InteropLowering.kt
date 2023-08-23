@@ -1088,7 +1088,7 @@ private class InteropTransformer(
         builder.at(expression)
         val function = expression.symbol.owner
 
-        if ((function as? IrSimpleFunction)?.resolveFakeOverride(allowAbstract = true)?.symbol
+        if ((function as? IrSimpleFunction)?.resolveFakeOverrideMaybeAbstract()?.symbol
                 == symbols.interopNativePointedRawPtrGetter) {
 
             // Replace by the intrinsic call to be handled by code generator:

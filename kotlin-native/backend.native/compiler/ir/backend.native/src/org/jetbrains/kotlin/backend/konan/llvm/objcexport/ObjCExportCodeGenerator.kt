@@ -1533,7 +1533,7 @@ private fun ObjCExportCodeGenerator.itablePlace(irFunction: IrSimpleFunction): C
     assert(irFunction.isOverridable)
     val irClass = irFunction.parentAsClass
     return if (irClass.isInterface
-            && (irFunction.isReal || irFunction.resolveFakeOverride(allowAbstract = true)?.parent != context.irBuiltIns.anyClass.owner)
+            && (irFunction.isReal || irFunction.resolveFakeOverrideMaybeAbstract()?.parent != context.irBuiltIns.anyClass.owner)
     ) {
         context.getLayoutBuilder(irClass).itablePlace(irFunction)
     } else {

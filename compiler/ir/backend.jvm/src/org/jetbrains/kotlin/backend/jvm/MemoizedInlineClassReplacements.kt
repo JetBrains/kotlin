@@ -225,7 +225,7 @@ class MemoizedInlineClassReplacements(
         // When using the new mangling scheme we might run into dependencies using the old scheme
         // for which we will fall back to the old mangling scheme as well.
         if (!useOldManglingScheme && replacement.name.asString().contains('-') && function.parentClassId != null) {
-            val resolved = (function as? IrSimpleFunction)?.resolveFakeOverride(true)
+            val resolved = (function as? IrSimpleFunction)?.resolveFakeOverrideMaybeAbstractOrFail()
             if (resolved?.parentClassId?.let { classFileContainsMethod(it, replacement, context) } == false) {
                 return buildReplacementInner(function, replacementOrigin, noFakeOverride, true, body)
             }

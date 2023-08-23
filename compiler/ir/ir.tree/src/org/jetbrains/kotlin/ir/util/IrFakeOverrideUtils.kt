@@ -19,20 +19,18 @@ val IrDeclaration.isFakeOverride: Boolean
     }
 
 val IrSimpleFunction.target: IrSimpleFunction
-    get() = if (modality == Modality.ABSTRACT)
-        this
-    else
-        resolveFakeOverride() ?: error("Could not resolveFakeOverride() for ${this.render()}")
+    get() = if (modality == Modality.ABSTRACT) this else resolveFakeOverrideOrFail()
 
-val IrFunction.target: IrFunction get() = when (this) {
-    is IrSimpleFunction -> this.target
-    is IrConstructor -> this
-    else -> error(this)
-}
+val IrFunction.target: IrFunction
+    get() = when (this) {
+        is IrSimpleFunction -> this.target
+        is IrConstructor -> this
+        else -> error(this)
+    }
 
 fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.collectRealOverrides(
     toSkip: (T) -> Boolean = { false },
-    filter: (T) -> Boolean = { false }
+    filter: (T) -> Boolean = { false },
 ): Set<T> {
     if (isReal && !toSkip(this)) return setOf(this)
 
@@ -92,31 +90,29 @@ fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(): Set<IrOverr
     else -> error("all members should be of the same kind, got ${map { it.render() }}")
 }
 
-fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverride(
-    allowAbstract: Boolean = false,
-    toSkip: (T) -> Boolean = { false }
-): T? =
-    resolveFakeOverrideOrNull(allowAbstract, toSkip).also {
-        if (allowAbstract && it == null) {
-            error("No real overrides for ${this.render()}")
-        }
-    }
+fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverrideMaybeAbstractOrFail(): T =
+    resolveFakeOverrideMaybeAbstract() ?: error("No real overrides for ${this.render()}")
 
-// TODO: use this implementation instead of any other
-fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverrideOrNull(
-    allowAbstract: Boolean = false,
-    toSkip: (T) -> Boolean = { false }
+fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverrideMaybeAbstract(
+    toSkip: (T) -> Boolean = { false },
 ): T? {
     if (!isFakeOverride && !toSkip(this)) return this
-    return if (allowAbstract) {
-        collectRealOverrides(toSkip).firstOrNull()
-    } else {
-        collectRealOverrides(toSkip, { it.modality == Modality.ABSTRACT })
-            .let { realOverrides ->
-                // Kotlin forbids conflicts between overrides, but they may trickle down from Java.
-                realOverrides.singleOrNull { (it.parent as? IrClass)?.isInterface != true }
-                // TODO: We take firstOrNull instead of singleOrNull here because of KT-36188.
-                    ?: realOverrides.firstOrNull()
-            }
-    }
+    return collectRealOverrides(toSkip).firstOrNull()
+}
+
+fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverrideOrFail(): T =
+    resolveFakeOverride() ?: error("No real overrides for ${this.render()}")
+
+// TODO: use this implementation instead of any other
+fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverride(
+    toSkip: (T) -> Boolean = { false },
+): T? {
+    if (!isFakeOverride && !toSkip(this)) return this
+    return collectRealOverrides(toSkip) { it.modality == Modality.ABSTRACT }
+        .let { realOverrides ->
+            // Kotlin forbids conflicts between overrides, but they may trickle down from Java.
+            realOverrides.singleOrNull { (it.parent as? IrClass)?.isInterface != true }
+            // TODO: We take firstOrNull instead of singleOrNull here because of KT-36188.
+                ?: realOverrides.firstOrNull()
+        }
 }

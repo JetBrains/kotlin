@@ -248,3 +248,9 @@ data class IrBasedFunctionHandle(val function: IrSimpleFunction) : FunctionHandl
     override fun getOverridden() =
         function.overriddenSymbols.map { IrBasedFunctionHandle(it.owner) }
 }
+
+private fun IrSimpleFunction.findInterfaceImplementation(): IrSimpleFunction? {
+    if (isReal) return null
+
+    return resolveFakeOverride()?.run { if (parentAsClass.isInterface) this else null }
+}

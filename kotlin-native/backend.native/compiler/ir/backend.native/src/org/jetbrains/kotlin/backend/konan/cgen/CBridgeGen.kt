@@ -307,7 +307,7 @@ internal fun KotlinStubs.generateObjCCall(
         receiver: ObjCCallReceiver,
         arguments: List<IrExpression?>
 ) = builder.irBlock {
-    val resolved = method.resolveFakeOverride(allowAbstract = true)?: method
+    val resolved = method.resolveFakeOverrideMaybeAbstract() ?: method
     val isDirect = directSymbolName != null
 
     val exceptionMode = ForeignExceptionMode.byValue(

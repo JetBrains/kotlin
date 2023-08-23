@@ -195,7 +195,7 @@ fun translateCall(
 
     expression.superQualifierSymbol?.let { superQualifier ->
         val (target: IrSimpleFunction, klass: IrClass) = if (superQualifier.owner.isInterface) {
-            val impl = function.resolveFakeOverride()!!
+            val impl = function.resolveFakeOverrideOrFail()
             Pair(impl, impl.parentAsClass)
         } else {
             Pair(function, superQualifier.owner)

@@ -83,13 +83,13 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
         // to get the backing field which would no longer exist.
         val inInlineFunctionScope = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
         if (inInlineFunctionScope) return false
-        val backingField = property.resolveFakeOverride()!!.backingField
+        val backingField = property.resolveFakeOverrideOrFail().backingField
         return backingField?.parent == currentClass?.irElement &&
                 backingField?.origin == JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD
     }
 
     private fun IrBuilderWithScope.substituteSetter(irProperty: IrProperty, expression: IrCall): IrExpression {
-        val backingField = irProperty.resolveFakeOverride()!!.backingField!!
+        val backingField = irProperty.resolveFakeOverrideOrFail().backingField!!
         return patchReceiver(
             irSetField(
                 patchFieldAccessReceiver(expression, irProperty),
@@ -100,7 +100,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
     }
 
     private fun IrBuilderWithScope.substituteGetter(irProperty: IrProperty, expression: IrCall): IrExpression {
-        val backingField = irProperty.resolveFakeOverride()!!.backingField!!
+        val backingField = irProperty.resolveFakeOverrideOrFail().backingField!!
         val patchedReceiver = patchFieldAccessReceiver(expression, irProperty)
         return if (irProperty.isLateinit) {
             irBlock {
