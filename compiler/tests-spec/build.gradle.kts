@@ -16,7 +16,9 @@ dependencies {
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
-    testApiJUnit5(vintageEngine = true, jupiterParams = true)
+    testApiJUnit5()
+    testImplementation(libs.junit.jupyter.params)
+    runtimeOnly(libs.junit.vintage.engine)
 }
 
 sourceSets {
