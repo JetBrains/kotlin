@@ -89,37 +89,47 @@ internal open class FastStackAnalyzer<V : Value>(
             val insnType = insnNode.toType
 
             try {
-                if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
-                    visitNopInsn(insnNode, f, insn)
-                } else {
-                    current.init(f)
-                    if (insnOpcode != Opcodes.RETURN) {
-                        // Don't care about possibly incompatible return type
-                        current.execute(insnNode, interpreter)
-                    }
-                    visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insn)
-                }
-
-                handlers[insn]?.forEach { tcb ->
-                    val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
-                    val jump = tcb.handler.indexOf()
-                    if (visitControlFlowExceptionEdge(insn, tcb.handler.indexOf())) {
-                        handler.init(f)
-                        handler.clearStack()
-                        handler.push(interpreter.newValue(exnType))
-                        mergeControlFlowEdge(jump, handler)
-                    }
-                }
-
+                privateAnalyze(insnType, insnNode, f, insn, current, insnOpcode, handler)
             } catch (e: AnalyzerException) {
                 throw AnalyzerException(e.node, "Error at instruction #$insn ${insnNode.insnText}: ${e.message}", e)
             } catch (e: Exception) {
                 throw AnalyzerException(insnNode, "Error at instruction #$insn ${insnNode.insnText}: ${e.message}", e)
             }
-
         }
 
         return frames
+    }
+
+    private fun privateAnalyze(
+        insnType: Int,
+        insnNode: AbstractInsnNode,
+        f: Frame<V>,
+        insn: Int,
+        current: Frame<V>,
+        insnOpcode: Int,
+        handler: Frame<V>,
+    ) {
+        if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
+            visitNopInsn(insnNode, f, insn)
+        } else {
+            current.init(f)
+            if (insnOpcode != Opcodes.RETURN) {
+                // Don't care about possibly incompatible return type
+                current.execute(insnNode, interpreter)
+            }
+            visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insn)
+        }
+
+        handlers[insn]?.forEach { tcb ->
+            val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
+            val jump = tcb.handler.indexOf()
+            if (visitControlFlowExceptionEdge(insn, tcb.handler.indexOf())) {
+                handler.init(f)
+                handler.clearStack()
+                handler.push(interpreter.newValue(exnType))
+                mergeControlFlowEdge(jump, handler)
+            }
+        }
     }
 
     fun getFrame(insn: AbstractInsnNode): Frame<V>? =

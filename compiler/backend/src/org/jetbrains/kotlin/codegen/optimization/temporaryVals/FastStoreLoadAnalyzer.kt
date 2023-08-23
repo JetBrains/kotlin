@@ -129,31 +129,42 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
             queued[insn] = false
 
             val insnNode = method.instructions[insn]
+            val insnOpcode = insnNode.opcode
+            val insnType = insnNode.toType
+
             try {
-                val insnOpcode = insnNode.opcode
-                val insnType = insnNode.toType
-
-                if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
-                    mergeControlFlowEdge(insn + 1, f)
-                } else {
-                    current.init(f).execute(insnNode, interpreter)
-                    visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insn)
-                }
-
-                handlers[insn]?.forEach { tcb ->
-                    val jump = tcb.handler.indexOf()
-                    handler.init(f)
-                    mergeControlFlowEdge(jump, handler)
-                }
+                privateAnalyze(insnType, insn, f, current, insnNode, insnOpcode, handler)
             } catch (e: AnalyzerException) {
                 throw AnalyzerException(e.node, "Error at instruction #$insn ${insnNode.insnText(method.instructions)}: ${e.message}", e)
             } catch (e: Exception) {
                 throw AnalyzerException(insnNode, "Error at instruction #$insn ${insnNode.insnText(method.instructions)}: ${e.message}", e)
             }
-
         }
 
         return frames
+    }
+
+    private fun privateAnalyze(
+        insnType: Int,
+        insn: Int,
+        f: StoreLoadFrame<V>,
+        current: StoreLoadFrame<V>,
+        insnNode: AbstractInsnNode,
+        insnOpcode: Int,
+        handler: StoreLoadFrame<V>,
+    ) {
+        if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
+            mergeControlFlowEdge(insn + 1, f)
+        } else {
+            current.init(f).execute(insnNode, interpreter)
+            visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insn)
+        }
+
+        handlers[insn]?.forEach { tcb ->
+            val jump = tcb.handler.indexOf()
+            handler.init(f)
+            mergeControlFlowEdge(jump, handler)
+        }
     }
 
     private fun newFrame(maxLocals: Int) =
