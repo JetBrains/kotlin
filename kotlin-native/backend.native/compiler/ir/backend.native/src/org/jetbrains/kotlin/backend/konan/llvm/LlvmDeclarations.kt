@@ -219,31 +219,35 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         if (declaration.typeInfoHasVtableAttached) {
             // Create the special global consisting of TypeInfo and vtable.
 
-            val typeInfoGlobalName = "ktypeglobal:$internalName"
-
             val typeInfoWithVtableType = llvm.structType(
                     runtime.typeInfoType,
                     LLVMArrayType(llvm.int8PtrType, context.getLayoutBuilder(declaration).vtableEntries.size)!!
             )
 
-            typeInfoGlobal = staticData.createGlobal(typeInfoWithVtableType, typeInfoGlobalName, isExported = false)
+            typeInfoGlobal = staticData.createGlobal(typeInfoWithVtableType, typeInfoSymbolName, declaration.isExported())
 
-            val llvmTypeInfoPtr = LLVMAddAlias(llvm.module,
-                    kTypeInfoPtr,
-                    typeInfoGlobal.pointer.getElementPtr(llvm, 0).llvm,
-                    typeInfoSymbolName)!!
+            // Other LLVM modules might import this global as a TypeInfo global.
+            // This works only if there is no gap between the beginning of the global and the TypeInfo part,
+            // which should always be the case, since it is the zeroth element.
+            // Still, better be safe than sorry, checking this explicitly:
+            val typeInfoOffsetInGlobal = LLVMOffsetOfElement(llvmTargetData, typeInfoWithVtableType, 0)
+            check(typeInfoOffsetInGlobal == 0L) { "Offset for $typeInfoSymbolName TypeInfo is $typeInfoOffsetInGlobal" }
 
-            if (declaration.isExported()) {
-                if (llvmTypeInfoPtr.name != typeInfoSymbolName) {
-                    // So alias name has been mangled by LLVM to avoid name clash.
-                    throw IllegalArgumentException("Global '$typeInfoSymbolName' already exists")
-                }
-            } else {
-                if (!context.config.producePerFileCache || declaration !in generationState.constructedFromExportedInlineFunctions)
-                    LLVMSetLinkage(llvmTypeInfoPtr, LLVMLinkage.LLVMInternalLinkage)
+            if (context.config.producePerFileCache && declaration in generationState.constructedFromExportedInlineFunctions) {
+                // This is required because internal inline functions can access private classes.
+                // So, in the generated code, the class type info can be accessed outside the file.
+                // With per-file caches involved, this can mean accessing from a different object file.
+                // Therefore, the class type info has to have external linkage in that case.
+                // Check e.g. `nestedInPrivateClass2.kt` test (it should fail if you remove setting linkage to external).
+                //
+                // This case should be reflected in the `isExported` parameter of `createGlobal` above, instead of
+                // patching the linkage ad hoc.
+                // The problem is: such globals in fact can have clashing names, which makes createGlobal fail.
+                // See https://youtrack.jetbrains.com/issue/KT-61428.
+                typeInfoGlobal.setLinkage(LLVMLinkage.LLVMExternalLinkage)
             }
 
-            typeInfoPtr = constPointer(llvmTypeInfoPtr)
+            typeInfoPtr = typeInfoGlobal.pointer.getElementPtr(llvm, 0)
 
         } else {
             typeInfoGlobal = staticData.createGlobal(runtime.typeInfoType,
