@@ -35,6 +35,7 @@ package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
+import org.jetbrains.kotlin.codegen.optimization.common.toType
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -139,7 +140,7 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
             val insnNode = method.instructions[insn]
             try {
                 val insnOpcode = insnNode.opcode
-                val insnType = insnNode.type
+                val insnType = insnNode.toType
 
                 if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
                     mergeControlFlowEdge(insn + 1, f)
@@ -225,7 +226,7 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
 
     private fun initMergeNodes() {
         for (insn in insnsArray) {
-            when (insn.type) {
+            when (insn.toType) {
                 AbstractInsnNode.JUMP_INSN -> {
                     val jumpInsn = insn as JumpInsnNode
                     isMergeNode[jumpInsn.label.indexOf()] = true

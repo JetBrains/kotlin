@@ -27,19 +27,42 @@ import org.jetbrains.org.objectweb.asm.tree.*
 
 val AbstractInsnNode.isMeaningful: Boolean
     get() =
-        when (this.type) {
+        when (this.toType) {
             AbstractInsnNode.LABEL, AbstractInsnNode.LINE, AbstractInsnNode.FRAME -> false
             else -> true
         }
 
 val AbstractInsnNode.isBranchOrCall: Boolean
     get() =
-        when (this.type) {
+        when (this.toType) {
             AbstractInsnNode.JUMP_INSN,
             AbstractInsnNode.TABLESWITCH_INSN,
             AbstractInsnNode.LOOKUPSWITCH_INSN,
             AbstractInsnNode.METHOD_INSN -> true
             else -> false
+        }
+
+// Faster version of `AbstractInsnNode.getType`
+val AbstractInsnNode.toType: Int
+    get() =
+        when (this) {
+            is InsnNode -> AbstractInsnNode.INSN
+            is IntInsnNode -> AbstractInsnNode.INT_INSN
+            is VarInsnNode -> AbstractInsnNode.VAR_INSN
+            is TypeInsnNode -> AbstractInsnNode.TYPE_INSN
+            is FieldInsnNode -> AbstractInsnNode.FIELD_INSN
+            is MethodInsnNode -> AbstractInsnNode.METHOD_INSN
+            is InvokeDynamicInsnNode -> AbstractInsnNode.INVOKE_DYNAMIC_INSN
+            is JumpInsnNode -> AbstractInsnNode.JUMP_INSN
+            is LabelNode -> AbstractInsnNode.LABEL
+            is LdcInsnNode -> AbstractInsnNode.LDC_INSN
+            is IincInsnNode -> AbstractInsnNode.IINC_INSN
+            is TableSwitchInsnNode -> AbstractInsnNode.TABLESWITCH_INSN
+            is LookupSwitchInsnNode -> AbstractInsnNode.LOOKUPSWITCH_INSN
+            is MultiANewArrayInsnNode -> AbstractInsnNode.MULTIANEWARRAY_INSN
+            is FrameNode -> AbstractInsnNode.FRAME
+            is LineNumberNode -> AbstractInsnNode.LINE
+            else -> -1
         }
 
 class InsnSequence(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Sequence<AbstractInsnNode> {
