@@ -71,15 +71,17 @@ abstract class AbstractKonanIrMangler(
                         return buildString {
                             if (extensionReceiverParameter != null) {
                                 append(extensionReceiverParameter!!.type.getClass()!!.name)
-                                append(".")
+                                append(MangleConstant.FQN_SEPARATOR)
                             }
 
-                            append("objc:")
+                            append(MangleConstant.OBJC_MARK)
                             append(it.selector)
-                            if (this@platformSpecificFunctionName is IrConstructor && this@platformSpecificFunctionName.isObjCConstructor) append("#Constructor")
+                            if (this@platformSpecificFunctionName is IrConstructor && this@platformSpecificFunctionName.isObjCConstructor) {
+                                append(MangleConstant.OBJC_CONSTRUCTOR_MARK)
+                            }
 
                             if ((this@platformSpecificFunctionName as? IrSimpleFunction)?.correspondingPropertySymbol != null) {
-                                append("#Accessor")
+                                append(MangleConstant.OBJC_PROPERTY_ACCESSOR_MARK)
                             }
                         }
                     }
@@ -136,15 +138,17 @@ abstract class AbstractKonanDescriptorMangler : DescriptorBasedKotlinManglerImpl
                         return buildString {
                             if (extensionReceiverParameter != null) {
                                 append(extensionReceiverParameter!!.type.constructor.declarationDescriptor!!.name)
-                                append(".")
+                                append(MangleConstant.FQN_SEPARATOR)
                             }
 
-                            append("objc:")
+                            append(MangleConstant.OBJC_MARK)
                             append(it.selector)
-                            if (this@platformSpecificFunctionName is ConstructorDescriptor && this@platformSpecificFunctionName.isObjCConstructor) append("#Constructor")
+                            if (this@platformSpecificFunctionName is ConstructorDescriptor && this@platformSpecificFunctionName.isObjCConstructor) {
+                                append(MangleConstant.OBJC_CONSTRUCTOR_MARK)
+                            }
 
                             if (this@platformSpecificFunctionName is PropertyAccessorDescriptor) {
-                                append("#Accessor")
+                                append(MangleConstant.OBJC_PROPERTY_ACCESSOR_MARK)
                             }
                         }
                     }

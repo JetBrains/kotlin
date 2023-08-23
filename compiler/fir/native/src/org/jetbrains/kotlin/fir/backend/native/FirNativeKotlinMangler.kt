@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.native
 
-import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
-import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
-import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
+import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.backend.FirExportCheckerVisitor
@@ -88,15 +85,17 @@ class FirNativeKotlinMangleComputer(
                     return buildString {
                         receiverParameter?.let {
                             append(it.getTypeName(session))
-                            append(".")
+                            append(MangleConstant.FQN_SEPARATOR)
                         }
 
-                        append("objc:")
+                        append(MangleConstant.OBJC_MARK)
                         append(it.selector)
-                        if ((this@platformSpecificFunctionName is FirConstructor) && isObjCConstructor(session)) append("#Constructor")
+                        if ((this@platformSpecificFunctionName is FirConstructor) && isObjCConstructor(session)) {
+                            append(MangleConstant.OBJC_CONSTRUCTOR_MARK)
+                        }
 
                         if (this@platformSpecificFunctionName is FirPropertyAccessor) {
-                            append("#Accessor")
+                            append(MangleConstant.OBJC_PROPERTY_ACCESSOR_MARK)
                         }
                     }
                 }
