@@ -52,8 +52,7 @@ internal open class FastStackAnalyzer<V : Value>(
     val method: MethodNode,
     protected val interpreter: Interpreter<V>
 ) {
-    protected val insnsArray: Array<AbstractInsnNode> = method.instructions.toArray()
-    private val nInsns = insnsArray.size
+    private val nInsns = method.instructions.size()
 
     private val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
 
@@ -64,7 +63,7 @@ internal open class FastStackAnalyzer<V : Value>(
 
     protected open fun newFrame(nLocals: Int, nStack: Int): Frame<V> = Frame(nLocals, nStack)
 
-    protected open fun visitControlFlowEdge(insn: Int, successor: Int): Boolean = true
+    protected open fun visitControlFlowEdge(insnNode: AbstractInsnNode, successor: Int): Boolean = true
 
     protected open fun visitControlFlowExceptionEdge(insn: Int, successor: Int): Boolean = true
 
@@ -93,7 +92,7 @@ internal open class FastStackAnalyzer<V : Value>(
 
             try {
                 if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
-                    visitNopInsn(f, insn)
+                    visitNopInsn(insnNode, f, insn)
                 } else {
                     current.init(f)
                     if (insnOpcode != Opcodes.RETURN) {
@@ -105,11 +104,11 @@ internal open class FastStackAnalyzer<V : Value>(
                         insnType == AbstractInsnNode.JUMP_INSN ->
                             visitJumpInsnNode(insnNode as JumpInsnNode, current, insn, insnOpcode)
                         insnType == AbstractInsnNode.LOOKUPSWITCH_INSN ->
-                            visitLookupSwitchInsnNode(insnNode as LookupSwitchInsnNode, current, insn)
+                            visitLookupSwitchInsnNode(insnNode as LookupSwitchInsnNode, current)
                         insnType == AbstractInsnNode.TABLESWITCH_INSN ->
-                            visitTableSwitchInsnNode(insnNode as TableSwitchInsnNode, current, insn)
+                            visitTableSwitchInsnNode(insnNode as TableSwitchInsnNode, current)
                         insnOpcode != Opcodes.ATHROW && (insnOpcode < Opcodes.IRETURN || insnOpcode > Opcodes.RETURN) ->
-                            visitOpInsn(current, insn)
+                            visitOpInsn(insnNode, current, insn)
                         else -> {
                         }
                     }
@@ -143,17 +142,21 @@ internal open class FastStackAnalyzer<V : Value>(
         frames[insn.indexOf()]
 
     private fun checkAssertions() {
-        if (insnsArray.any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })
+        if (method.instructions.any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })
             throw AssertionError("Subroutines are deprecated since Java 6")
     }
 
-    private fun visitOpInsn(current: Frame<V>, insn: Int) {
-        processControlFlowEdge(current, insn, insn + 1)
+    private fun visitOpInsn(insnNode: AbstractInsnNode, current: Frame<V>, insn: Int) {
+        processControlFlowEdge(current, insnNode, insn + 1)
     }
 
-    private fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: Frame<V>, insn: Int) {
+    private fun visitNopInsn(insnNode: AbstractInsnNode, f: Frame<V>, insn: Int) {
+        processControlFlowEdge(f, insnNode, insn + 1)
+    }
+
+    private fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: Frame<V>) {
         var jump = insnNode.dflt.indexOf()
-        processControlFlowEdge(current, insn, jump)
+        processControlFlowEdge(current, insnNode, jump)
         // In most cases order of visiting switch labels should not matter
         // The only one is a tableswitch being added in the beginning of coroutine method, these switch' labels may lead
         // in the middle of try/catch block, and FixStackAnalyzer is not ready for this (trying to restore stack before it was saved)
@@ -161,33 +164,29 @@ internal open class FastStackAnalyzer<V : Value>(
         // Using 'reversed' is because nodes are processed in LIFO order
         for (label in insnNode.labels.reversed()) {
             jump = label.indexOf()
-            processControlFlowEdge(current, insn, jump)
+            processControlFlowEdge(current, insnNode, jump)
         }
     }
 
-    private fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: Frame<V>, insn: Int) {
+    private fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: Frame<V>) {
         var jump = insnNode.dflt.indexOf()
-        processControlFlowEdge(current, insn, jump)
+        processControlFlowEdge(current, insnNode, jump)
         for (label in insnNode.labels) {
             jump = label.indexOf()
-            processControlFlowEdge(current, insn, jump)
+            processControlFlowEdge(current, insnNode, jump)
         }
     }
 
     private fun visitJumpInsnNode(insnNode: JumpInsnNode, current: Frame<V>, insn: Int, insnOpcode: Int) {
         if (insnOpcode != Opcodes.GOTO) {
-            processControlFlowEdge(current, insn, insn + 1)
+            processControlFlowEdge(current, insnNode, insn + 1)
         }
         val jump = insnNode.label.indexOf()
-        processControlFlowEdge(current, insn, jump)
+        processControlFlowEdge(current, insnNode, jump)
     }
 
-    private fun visitNopInsn(f: Frame<V>, insn: Int) {
-        processControlFlowEdge(f, insn, insn + 1)
-    }
-
-    private fun processControlFlowEdge(current: Frame<V>, insn: Int, jump: Int) {
-        if (visitControlFlowEdge(insn, jump)) {
+    private fun processControlFlowEdge(current: Frame<V>, insnNode: AbstractInsnNode, jump: Int) {
+        if (visitControlFlowEdge(insnNode, jump)) {
             mergeControlFlowEdge(jump, current)
         }
     }
