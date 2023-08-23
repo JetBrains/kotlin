@@ -48,24 +48,38 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F: Frame<V>>(
     protected fun AbstractInsnNode.indexOf() =
         method.instructions.indexOf(this)
 
-    protected fun computeExceptionHandlersForEachInsn(m: MethodNode) {
+    protected fun computeExceptionHandlers(m: MethodNode, forEachInsn: Boolean = true) {
         for (tcb in m.tryCatchBlocks) {
-            var current: AbstractInsnNode = tcb.start
-            val end = tcb.end
-
-            while (current != end) {
-                if (current.isMeaningful) {
-                    val currentIndex = current.indexOf()
-                    var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[currentIndex]
-                    if (insnHandlers == null) {
-                        insnHandlers = SmartList()
-                        handlers[currentIndex] = insnHandlers
-                    }
-                    insnHandlers.add(tcb)
-                }
-                current = current.next
-            }
+            if (forEachInsn) computeExceptionHandlersForEachInsn(tcb) else computeExceptionHandlerFast(tcb)
         }
+    }
+
+    private fun computeExceptionHandlersForEachInsn(tcb: TryCatchBlockNode) {
+        var current: AbstractInsnNode = tcb.start
+        val end = tcb.end
+
+        while (current != end) {
+            if (current.isMeaningful) {
+                val currentIndex = current.indexOf()
+                var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[currentIndex]
+                if (insnHandlers == null) {
+                    insnHandlers = SmartList()
+                    handlers[currentIndex] = insnHandlers
+                }
+                insnHandlers.add(tcb)
+            }
+            current = current.next
+        }
+    }
+
+    private fun computeExceptionHandlerFast(tcb: TryCatchBlockNode) {
+        val start = tcb.start.indexOf()
+        var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[start]
+        if (insnHandlers == null) {
+            insnHandlers = ArrayList()
+            handlers[start] = insnHandlers
+        }
+        insnHandlers.add(tcb)
     }
 
     protected fun F.dump(): String {

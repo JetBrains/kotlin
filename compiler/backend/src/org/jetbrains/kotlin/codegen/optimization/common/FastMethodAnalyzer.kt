@@ -66,7 +66,7 @@ open class FastMethodAnalyzer<V : Value>
         if (nInsns == 0) return frames
 
         checkAssertions()
-        computeExceptionHandlersForEachInsn(method)
+        computeExceptionHandlers(method)
 
         val isTcbStart = BooleanArray(nInsns)
         for (tcb in method.tryCatchBlocks) {

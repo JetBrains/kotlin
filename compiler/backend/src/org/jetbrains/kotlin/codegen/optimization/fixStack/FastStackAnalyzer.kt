@@ -72,7 +72,8 @@ internal open class FastStackAnalyzer<V : Value>(
 
         checkAssertions()
 
-        computeExceptionEdges()
+        // Don't have to visit same exception handler multiple times - we care only about stack state at TCB start.
+        computeExceptionHandlers(method, forEachInsn = false)
 
         val current = newFrame(method.maxLocals, method.maxStack)
         val handler = newFrame(method.maxLocals, method.maxStack)
@@ -187,19 +188,6 @@ internal open class FastStackAnalyzer<V : Value>(
             current.setLocal(local++, interpreter.newValue(null))
         }
         mergeControlFlowEdge(0, current)
-    }
-
-    private fun computeExceptionEdges() {
-        for (tcb in method.tryCatchBlocks) {
-            // Don't have to visit same exception handler multiple times - we care only about stack state at TCB start.
-            val start = tcb.start.indexOf()
-            var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[start]
-            if (insnHandlers == null) {
-                insnHandlers = ArrayList()
-                handlers[start] = insnHandlers
-            }
-            insnHandlers.add(tcb)
-        }
     }
 
     private fun mergeControlFlowEdge(dest: Int, frame: Frame<V>) {
