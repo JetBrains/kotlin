@@ -89,8 +89,7 @@ class ClassicFrontend2NativeIrConverter(
             unboundSymbolGeneration = true
         }
         val irDeserializer = object : IrDeserializer {
-            override fun getDeclaration(symbol: IrSymbol) = //functionIrClassFactory.getDeclaration(symbol)  ?:
-                stubGenerator.getDeclaration(symbol)
+            override fun getDeclaration(symbol: IrSymbol) = stubGenerator.getDeclaration(symbol)
 
             override fun resolveBySignatureInModule(
                 signature: IdSignature,
