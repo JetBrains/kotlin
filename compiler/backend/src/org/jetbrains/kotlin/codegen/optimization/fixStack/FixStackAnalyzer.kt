@@ -103,8 +103,6 @@ internal class FixStackAnalyzer(
         override fun newFrame(nLocals: Int, nStack: Int): Frame<FixStackValue> =
             FixStackFrame(nLocals, nStack)
 
-        private fun indexOf(node: AbstractInsnNode) = method.instructions.indexOf(node)
-
         inner class FixStackFrame(nLocals: Int, nStack: Int) : Frame<FixStackValue>(nLocals, nStack) {
             val extraStack = Stack<FixStackValue>()
 
@@ -207,7 +205,7 @@ internal class FixStackAnalyzer(
         private fun FixStackFrame.executeRestoreStackInTryCatch(insn: AbstractInsnNode) {
             val saveNode = context.saveStackMarkerForRestoreMarker[insn]
             val savedValues = spilledStacks.getOrElse(saveNode!!) {
-                throw AssertionError("${indexOf(insn)}: Restore stack is unavailable for ${indexOf(saveNode)}")
+                throw AssertionError("${insn.indexOf()}: Restore stack is unavailable for ${saveNode.indexOf()}")
             }
             pushAll(savedValues)
         }

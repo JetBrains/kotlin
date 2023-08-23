@@ -34,28 +34,30 @@
 package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
 import org.jetbrains.kotlin.codegen.inline.insnText
+import org.jetbrains.kotlin.codegen.optimization.common.FastAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
+import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
+import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
+import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
-interface StoreLoadValue
+interface StoreLoadValue : Value
 
-
-interface StoreLoadInterpreter<V : StoreLoadValue> {
-    fun uninitialized(): V
-    fun valueParameter(type: Type): V
-    fun store(insn: VarInsnNode): V
-    fun load(insn: VarInsnNode, value: V)
-    fun iinc(insn: IincInsnNode, value: V): V
-    fun merge(a: V, b: V): V
+abstract class StoreLoadInterpreter<V : StoreLoadValue> : Interpreter<V>(API_VERSION) {
+    abstract fun uninitialized(): V
+    abstract fun valueParameter(type: Type): V
+    abstract fun store(insn: VarInsnNode): V
+    abstract fun load(insn: VarInsnNode, value: V)
+    abstract fun iinc(insn: IincInsnNode, value: V): V
 }
 
-
 @Suppress("UNCHECKED_CAST")
-class StoreLoadFrame<V : StoreLoadValue>(val maxLocals: Int) {
+class StoreLoadFrame<V : StoreLoadValue>(val maxLocals: Int) : Frame<V>(maxLocals, 0) {
     private val locals = arrayOfNulls<StoreLoadValue>(maxLocals)
 
     operator fun get(index: Int): V =
@@ -101,19 +103,14 @@ class StoreLoadFrame<V : StoreLoadValue>(val maxLocals: Int) {
     }
 }
 
-@Suppress("DuplicatedCode")
 class FastStoreLoadAnalyzer<V : StoreLoadValue>(
-    private val owner: String,
-    private val method: MethodNode,
-    private val interpreter: StoreLoadInterpreter<V>
-) {
-    private val nInsns = method.instructions.size()
-
+    owner: String,
+    method: MethodNode,
+    interpreter: StoreLoadInterpreter<V>
+) : FastAnalyzer<V, StoreLoadInterpreter<V>, StoreLoadFrame<V>>(owner, method, interpreter) {
     private val isMergeNode = BooleanArray(nInsns)
-
     private val frames: Array<StoreLoadFrame<V>?> = arrayOfNulls(nInsns)
 
-    private val handlers: Array<MutableList<TryCatchBlockNode>?> = arrayOfNulls(nInsns)
     private val queued = BooleanArray(nInsns)
     private val queue = IntArray(nInsns)
     private var top = 0
@@ -144,18 +141,7 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
                     mergeControlFlowEdge(insn + 1, f)
                 } else {
                     current.init(f).execute(insnNode, interpreter)
-                    when {
-                        insnType == AbstractInsnNode.JUMP_INSN ->
-                            visitJumpInsnNode(insnNode as JumpInsnNode, current, insn, insnOpcode)
-                        insnType == AbstractInsnNode.LOOKUPSWITCH_INSN ->
-                            visitLookupSwitchInsnNode(insnNode as LookupSwitchInsnNode, current)
-                        insnType == AbstractInsnNode.TABLESWITCH_INSN ->
-                            visitTableSwitchInsnNode(insnNode as TableSwitchInsnNode, current)
-                        insnOpcode != Opcodes.ATHROW && (insnOpcode < Opcodes.IRETURN || insnOpcode > Opcodes.RETURN) ->
-                            mergeControlFlowEdge(insn + 1, current)
-                        else -> {
-                        }
-                    }
+                    visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insn)
                 }
 
                 handlers[insn]?.forEach { tcb ->
@@ -177,29 +163,25 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
     private fun newFrame(maxLocals: Int) =
         StoreLoadFrame<V>(maxLocals)
 
-    private fun AbstractInsnNode.indexOf() =
-        method.instructions.indexOf(this)
-
-    private fun checkAssertions() {
-        if (method.instructions.any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })
-            throw AssertionError("Subroutines are deprecated since Java 6")
+    override fun visitOpInsn(insnNode: AbstractInsnNode, current: StoreLoadFrame<V>, insn: Int) {
+        mergeControlFlowEdge(insn + 1, current)
     }
 
-    private fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: StoreLoadFrame<V>) {
+    override fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: StoreLoadFrame<V>) {
         mergeControlFlowEdge(insnNode.dflt.indexOf(), current)
         for (label in insnNode.labels) {
             mergeControlFlowEdge(label.indexOf(), current)
         }
     }
 
-    private fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: StoreLoadFrame<V>) {
+    override fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: StoreLoadFrame<V>) {
         mergeControlFlowEdge(insnNode.dflt.indexOf(), current)
         for (label in insnNode.labels) {
             mergeControlFlowEdge(label.indexOf(), current)
         }
     }
 
-    private fun visitJumpInsnNode(insnNode: JumpInsnNode, current: StoreLoadFrame<V>, insn: Int, insnOpcode: Int) {
+    override fun visitJumpInsnNode(insnNode: JumpInsnNode, current: StoreLoadFrame<V>, insn: Int, insnOpcode: Int) {
         if (insnOpcode != Opcodes.GOTO) {
             mergeControlFlowEdge(insn + 1, current)
         }
@@ -254,21 +236,25 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
         }
     }
 
-    internal fun initLocals(current: StoreLoadFrame<V>) {
+    private fun initLocals(current: StoreLoadFrame<V>) {
         val args = Type.getArgumentTypes(method.desc)
         var local = 0
         if ((method.access and Opcodes.ACC_STATIC) == 0) {
             val ctype = Type.getObjectType(owner)
-            current[local++] = interpreter.valueParameter(ctype)
+            current.setLocal(local, interpreter.newValue(ctype))
+            local++
         }
         for (arg in args) {
-            current[local++] = interpreter.valueParameter(arg)
+            current.setLocal(local, interpreter.newValue(arg))
+            local++
             if (arg.size == 2) {
-                current[local++] = interpreter.uninitialized()
+                current.setLocal(local, interpreter.uninitialized())
+                local++
             }
         }
         while (local < method.maxLocals) {
-            current[local++] = interpreter.uninitialized()
+            current.setLocal(local, interpreter.uninitialized())
+            local++
         }
     }
 

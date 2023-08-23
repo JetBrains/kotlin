@@ -134,6 +134,9 @@ class TemporaryValsAnalyzer {
     }
 
     private sealed class StoredValue : StoreLoadValue {
+        // `StoredValue` represent some abstract value that doesn't really have a definition of size.
+        // `getSize` can return either 1 or 2, so we use 1 here.
+        override fun getSize(): Int = 1
 
         object Unknown : StoredValue()
 
@@ -156,13 +159,13 @@ class TemporaryValsAnalyzer {
 
     private class StoreTrackingInterpreter(
         private val storeInsnToStoreData: Map<AbstractInsnNode, StoreData>
-    ) : StoreLoadInterpreter<StoredValue> {
+    ) : StoreLoadInterpreter<StoredValue>() {
 
-        override fun uninitialized(): StoredValue =
-            StoredValue.Unknown
+        override fun uninitialized(): StoredValue = StoredValue.Unknown
 
-        override fun valueParameter(type: Type): StoredValue =
-            StoredValue.Unknown
+        override fun newValue(type: Type?): StoredValue = StoredValue.Unknown
+
+        override fun valueParameter(type: Type): StoredValue = StoredValue.Unknown
 
         override fun store(insn: VarInsnNode): StoredValue {
             val temporaryValData = storeInsnToStoreData[insn]
@@ -218,5 +221,38 @@ class TemporaryValsAnalyzer {
                 is StoredValue.DirtyStore -> this.temporaryVals
                 else -> emptySet()
             }
+
+        override fun copyOperation(insn: AbstractInsnNode?, value: StoredValue?): StoredValue {
+            TODO("Not yet implemented")
+        }
+
+        override fun newOperation(insn: AbstractInsnNode?): StoredValue {
+            TODO("Not yet implemented")
+        }
+
+        override fun unaryOperation(insn: AbstractInsnNode?, value: StoredValue?): StoredValue {
+            TODO("Not yet implemented")
+        }
+
+        override fun binaryOperation(insn: AbstractInsnNode?, value1: StoredValue?, value2: StoredValue?): StoredValue {
+            TODO("Not yet implemented")
+        }
+
+        override fun ternaryOperation(
+            insn: AbstractInsnNode?,
+            value1: StoredValue?,
+            value2: StoredValue?,
+            value3: StoredValue?,
+        ): StoredValue {
+            TODO("Not yet implemented")
+        }
+
+        override fun naryOperation(insn: AbstractInsnNode?, values: MutableList<out StoredValue>?): StoredValue {
+            TODO("Not yet implemented")
+        }
+
+        override fun returnOperation(insn: AbstractInsnNode?, value: StoredValue?, expected: StoredValue?) {
+            TODO("Not yet implemented")
+        }
     }
 }

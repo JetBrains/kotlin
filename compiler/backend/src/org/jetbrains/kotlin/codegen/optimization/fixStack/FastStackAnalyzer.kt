@@ -34,6 +34,7 @@
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
 import org.jetbrains.kotlin.codegen.inline.insnText
+import org.jetbrains.kotlin.codegen.optimization.common.FastAnalyzer
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -45,17 +46,13 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 /**
  * @see org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
  */
-@Suppress("DuplicatedCode")
 internal open class FastStackAnalyzer<V : Value>(
-    private val owner: String,
-    val method: MethodNode,
-    protected val interpreter: Interpreter<V>
-) {
-    private val nInsns = method.instructions.size()
-
+    owner: String,
+    method: MethodNode,
+    interpreter: Interpreter<V>
+) : FastAnalyzer<V, Interpreter<V>, Frame<V>>(owner, method, interpreter) {
     private val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
 
-    private val handlers: Array<MutableList<TryCatchBlockNode>?> = arrayOfNulls(nInsns)
     private val queued = BooleanArray(nInsns)
     private val queue = IntArray(nInsns)
     private var top = 0
@@ -98,19 +95,7 @@ internal open class FastStackAnalyzer<V : Value>(
                         // Don't care about possibly incompatible return type
                         current.execute(insnNode, interpreter)
                     }
-
-                    when {
-                        insnType == AbstractInsnNode.JUMP_INSN ->
-                            visitJumpInsnNode(insnNode as JumpInsnNode, current, insn, insnOpcode)
-                        insnType == AbstractInsnNode.LOOKUPSWITCH_INSN ->
-                            visitLookupSwitchInsnNode(insnNode as LookupSwitchInsnNode, current)
-                        insnType == AbstractInsnNode.TABLESWITCH_INSN ->
-                            visitTableSwitchInsnNode(insnNode as TableSwitchInsnNode, current)
-                        insnOpcode != Opcodes.ATHROW && (insnOpcode < Opcodes.IRETURN || insnOpcode > Opcodes.RETURN) ->
-                            visitOpInsn(insnNode, current, insn)
-                        else -> {
-                        }
-                    }
+                    visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insn)
                 }
 
                 handlers[insn]?.forEach { tcb ->
@@ -135,17 +120,10 @@ internal open class FastStackAnalyzer<V : Value>(
         return frames
     }
 
-    private fun AbstractInsnNode.indexOf() = method.instructions.indexOf(this)
-
     fun getFrame(insn: AbstractInsnNode): Frame<V>? =
         frames[insn.indexOf()]
 
-    private fun checkAssertions() {
-        if (method.instructions.any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })
-            throw AssertionError("Subroutines are deprecated since Java 6")
-    }
-
-    private fun visitOpInsn(insnNode: AbstractInsnNode, current: Frame<V>, insn: Int) {
+    override fun visitOpInsn(insnNode: AbstractInsnNode, current: Frame<V>, insn: Int) {
         processControlFlowEdge(current, insnNode, insn + 1)
     }
 
@@ -153,7 +131,7 @@ internal open class FastStackAnalyzer<V : Value>(
         processControlFlowEdge(f, insnNode, insn + 1)
     }
 
-    private fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: Frame<V>) {
+    override fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: Frame<V>) {
         var jump = insnNode.dflt.indexOf()
         processControlFlowEdge(current, insnNode, jump)
         // In most cases order of visiting switch labels should not matter
@@ -167,7 +145,7 @@ internal open class FastStackAnalyzer<V : Value>(
         }
     }
 
-    private fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: Frame<V>) {
+    override fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: Frame<V>) {
         var jump = insnNode.dflt.indexOf()
         processControlFlowEdge(current, insnNode, jump)
         for (label in insnNode.labels) {
@@ -176,7 +154,7 @@ internal open class FastStackAnalyzer<V : Value>(
         }
     }
 
-    private fun visitJumpInsnNode(insnNode: JumpInsnNode, current: Frame<V>, insn: Int, insnOpcode: Int) {
+    override fun visitJumpInsnNode(insnNode: JumpInsnNode, current: Frame<V>, insn: Int, insnOpcode: Int) {
         if (insnOpcode != Opcodes.GOTO) {
             processControlFlowEdge(current, insnNode, insn + 1)
         }
