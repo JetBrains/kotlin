@@ -14,14 +14,11 @@ import org.gradle.api.file.FileCollection
 import org.gradle.internal.jvm.Jvm
 import org.gradle.kotlin.dsl.closureOf
 import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.project
 import java.io.File
 
 private val Project.isEAPIntellij get() = rootProject.extra["versions.intellijSdk"].toString().contains("-EAP-")
 private val Project.isNightlyIntellij get() = rootProject.extra["versions.intellijSdk"].toString().endsWith("SNAPSHOT") && !isEAPIntellij
-
-private val Project.libsVersionCatalog get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 val Project.intellijRepo
     get() =
@@ -190,35 +187,6 @@ fun DependencyHandler.jpsLikeModuleDependency(moduleName: String, scope: JpsDepS
             }
         }
     }
-}
-
-
-fun Project.testApiJUnit5() {
-    with(dependencies) {
-        val libsVersionCatalog = libsVersionCatalog
-        testApi(platform(libsVersionCatalog.findLibrary("junit-bom").orElseThrow { GradleException("No version for `junit-bom`") }))
-        testImplementation(libsVersionCatalog.findLibrary("junit-jupyter-api").orElseThrow { GradleException("No version for `junit-jupyter-api`") })
-        testRuntimeOnly(
-            libsVersionCatalog.findLibrary("junit-jupyter-engine").orElseThrow { GradleException("No version for `junit-jupyter-engine`") })
-        testImplementation(
-            libsVersionCatalog.findLibrary("junit-platform-commons")
-                .orElseThrow { GradleException("No version for `junit-platform-commons`") })
-        testImplementation(
-            libsVersionCatalog.findLibrary("junit-platform-launcher")
-                .orElseThrow { GradleException("No version for `junit-platform-launcher`") })
-    }
-}
-
-private fun DependencyHandler.testApi(dependencyNotation: Any) {
-    add("testApi", dependencyNotation)
-}
-
-private fun DependencyHandler.testImplementation(dependencyNotation: Any) {
-    add("testImplementation", dependencyNotation)
-}
-
-private fun DependencyHandler.testRuntimeOnly(dependencyNotation: Any) {
-    add("testRuntimeOnly", dependencyNotation)
 }
 
 val Project.protobufRelocatedVersion: String get() = findProperty("versions.protobuf-relocated") as String

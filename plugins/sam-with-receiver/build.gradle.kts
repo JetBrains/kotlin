@@ -17,7 +17,9 @@ dependencies {
     testCompileOnly(project(":kotlin-compiler"))
     testImplementation(project(":kotlin-scripting-jvm-host-unshaded"))
 
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
 
     testApi(projectTests(":compiler:tests-common-new"))

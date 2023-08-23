@@ -16,6 +16,8 @@ dependencies {
     testApi(projectTests(":generators:test-generator"))
 
     testApi(intellijCore())
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit4)
 }
 
 sourceSets {

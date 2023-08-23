@@ -9,7 +9,9 @@ dependencies {
     api(project(":analysis:project-structure"))
     api(intellijCore())
 
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))

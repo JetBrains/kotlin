@@ -22,7 +22,9 @@ dependencies {
 
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(toolsJar())
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
 }
 
 kotlin {

@@ -6,7 +6,9 @@ plugins {
 dependencies {
     testImplementation(kotlinStdlib())
     testImplementation(intellijCore())
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
 
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(project(":analysis:analysis-internal-utils"))

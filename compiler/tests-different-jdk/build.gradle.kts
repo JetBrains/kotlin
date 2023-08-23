@@ -10,7 +10,9 @@ dependencies {
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
 
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
     testImplementation(libs.junit.platform.runner)
     testImplementation(libs.junit.platform.suite.api)
     runtimeOnly(libs.junit.vintage.engine)

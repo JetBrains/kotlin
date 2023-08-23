@@ -23,7 +23,9 @@ dependencies {
 
     testCompileOnly(project(":compiler:cli-common"))
     testApi(projectTests(":compiler:tests-common"))
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
     testImplementation(libs.junit.jupyter.params)
     testImplementation(libs.junit4)
     testApi(protobufFull())

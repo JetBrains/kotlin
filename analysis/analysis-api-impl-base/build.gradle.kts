@@ -13,7 +13,9 @@ dependencies {
     api(intellijCore())
     implementation(project(":analysis:analysis-internal-utils"))
 
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(project(":analysis:analysis-api"))
     testImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))

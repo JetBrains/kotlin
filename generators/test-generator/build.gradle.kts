@@ -9,7 +9,9 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(kotlinStdlib())
     testImplementation(libs.junit4)
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupyter.api)
+    testRuntimeOnly(libs.junit.jupyter.engine)
     testApi(project(":generators"))
 
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
