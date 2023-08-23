@@ -47,5 +47,6 @@ enum class FrontendKind(val suffix: String) {
 enum class TestModuleKind(val suffix: String) {
     Source("Source"),
     LibraryBinary("LibraryBinary"),
-    LibrarySource("LibrarySource");
+    LibrarySource("LibrarySource"),
+    ScriptSource("ScriptSource"),
 }

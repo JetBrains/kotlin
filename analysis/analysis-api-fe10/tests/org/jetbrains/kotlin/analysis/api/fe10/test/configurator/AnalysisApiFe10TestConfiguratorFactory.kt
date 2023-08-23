@@ -30,8 +30,10 @@ object AnalysisApiFe10TestConfiguratorFactory : AnalysisApiTestConfiguratorFacto
             data.analysisApiMode != AnalysisApiMode.Ide -> false
             else -> when (data.moduleKind) {
                 TestModuleKind.Source -> true
+                TestModuleKind.ScriptSource,
                 TestModuleKind.LibraryBinary,
-                TestModuleKind.LibrarySource -> false
+                TestModuleKind.LibrarySource,
+                -> false
             }
         }
     }

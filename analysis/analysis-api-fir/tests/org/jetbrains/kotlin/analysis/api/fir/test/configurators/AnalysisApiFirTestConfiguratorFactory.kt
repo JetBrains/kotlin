@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.test.configurators
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryTestConfigurator
 import org.jetbrains.kotlin.analysis.api.fir.test.configurators.library.AnalysisApiFirLibrarySourceTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 
@@ -15,6 +16,11 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
         require(supportMode(data))
 
         return when (data.moduleKind) {
+            TestModuleKind.ScriptSource -> when (data.analysisSessionMode) {
+                AnalysisSessionMode.Normal -> AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
+                AnalysisSessionMode.Dependent -> AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = true)
+            }
+
             TestModuleKind.Source -> when (data.analysisSessionMode) {
                 AnalysisSessionMode.Normal -> AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
                 AnalysisSessionMode.Dependent -> AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = true)
@@ -37,7 +43,7 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
             data.frontend != FrontendKind.Fir -> false
             data.analysisApiMode != AnalysisApiMode.Ide -> false
             else -> when (data.moduleKind) {
-                TestModuleKind.Source -> true
+                TestModuleKind.Source, TestModuleKind.ScriptSource -> true
                 TestModuleKind.LibraryBinary,
                 TestModuleKind.LibrarySource ->
                     data.analysisSessionMode == AnalysisSessionMode.Normal
