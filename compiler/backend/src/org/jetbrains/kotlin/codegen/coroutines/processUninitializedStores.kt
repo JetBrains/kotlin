@@ -82,7 +82,7 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode) {
     private val isInSpecialMethod = methodNode.name == "<init>" || methodNode.name == "<clinit>"
 
     fun run() {
-        if (methodNode.instructions.toArray().none { it.opcode == Opcodes.NEW })
+        if (methodNode.instructions.none { it.opcode == Opcodes.NEW })
             return
 
         val interpreter = UninitializedNewValueMarkerInterpreter(methodNode.instructions)
