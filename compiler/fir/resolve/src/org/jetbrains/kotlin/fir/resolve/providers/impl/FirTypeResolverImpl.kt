@@ -228,7 +228,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
         }
 
-        if (symbol is FirRegularClassSymbol) {
+        if (symbol is FirClassLikeSymbol<*>) {
             val isPossibleBareType = areBareTypesAllowed && allTypeArguments.isEmpty()
             if (!isPossibleBareType) {
                 val actualSubstitutor = substitutor ?: ConeSubstitutor.Empty
