@@ -44,18 +44,18 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 /**
  * @see org.jetbrains.kotlin.codegen.optimization.fixStack.FastStackAnalyzer
  */
-open class FastMethodAnalyzer<V : Value>
+class FastMethodAnalyzer<V : Value>
 @JvmOverloads constructor(
     owner: String,
     method: MethodNode,
     interpreter: Interpreter<V>,
-    private val pruneExceptionEdges: Boolean = false
+    private val pruneExceptionEdges: Boolean = false,
+    private val createFrame: (Int, Int) -> Frame<V> = { nLocals, nStack -> Frame<V>(nLocals, nStack) }
 ) : FastAnalyzer<V, Interpreter<V>, Frame<V>>(owner, method, interpreter) {
     private val isMergeNode = findMergeNodes(method)
     private val isTcbStart = BooleanArray(nInsns)
 
-    override fun newFrame(nLocals: Int, nStack: Int): Frame<V> =
-        Frame(nLocals, nStack)
+    override fun newFrame(nLocals: Int, nStack: Int): Frame<V> = createFrame(nLocals, nStack)
 
     override fun beforeAnalyze() {
         for (tcb in method.tryCatchBlocks) {

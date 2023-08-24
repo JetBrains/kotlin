@@ -86,10 +86,9 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode) {
             return
 
         val interpreter = UninitializedNewValueMarkerInterpreter(methodNode.instructions)
-        val analyzer = object : FastMethodAnalyzer<BasicValue>("fake", methodNode, interpreter, pruneExceptionEdges = true) {
-            override fun newFrame(nLocals: Int, nStack: Int): Frame<BasicValue> =
-                UninitializedNewValueFrame(nLocals, nStack)
-        }
+        val analyzer = FastMethodAnalyzer<BasicValue>(
+            "fake", methodNode, interpreter, pruneExceptionEdges = true
+        ) { nLocals, nStack -> UninitializedNewValueFrame(nLocals, nStack) }
         val frames = analyzer.analyze()
         interpreter.analyzePopInstructions(frames)
 
