@@ -86,7 +86,6 @@ private fun ExpectActualCompatibility.Incompatible<*>.toDiffKind(): ExpectActual
     ExpectActualCompatibility.Incompatible.TypeParameterNames -> ExpectActualMemberDiff.Kind.TypeParameterNamesChangedInOverride
     ExpectActualCompatibility.Incompatible.TypeParameterReified -> null // inline fun can't be overridden
     ExpectActualCompatibility.Incompatible.TypeParameterVariance -> null // Members are not allowed to have variance
-    ExpectActualCompatibility.Incompatible.Unknown -> null // Unknown incompatibility is never reported
     ExpectActualCompatibility.Incompatible.ValueParameterCrossinline -> null // inline fun can't be overridden
     ExpectActualCompatibility.Incompatible.ValueParameterNoinline -> null // inline fun can't be overridden
     ExpectActualCompatibility.Incompatible.ValueParameterVararg -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded

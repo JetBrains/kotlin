@@ -49,7 +49,7 @@ object ClassicPositioningStrategies {
                 val callableDeclaration = element as? KtCallableDeclaration
                 val incompatibility = diagnostic.firstIncompatibility
                 return when (incompatibility) {
-                    null, ExpectActualCompatibility.Incompatible.Unknown, is ExpectActualCompatibility.Incompatible.ClassScopes,
+                    null, is ExpectActualCompatibility.Incompatible.ClassScopes,
                     ExpectActualCompatibility.Incompatible.EnumEntries -> null
                     ExpectActualCompatibility.Incompatible.ClassKind -> {
                         val startElement =

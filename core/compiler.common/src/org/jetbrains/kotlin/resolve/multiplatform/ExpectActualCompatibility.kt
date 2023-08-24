@@ -94,8 +94,6 @@ sealed class ExpectActualCompatibility<out D> {
         object TypeParameterReified : WeakIncompatible<Nothing>(
             "some type parameter is reified in one declaration and non-reified in the other"
         )
-
-        object Unknown : WeakIncompatible<Nothing>(null)
     }
 
     object Compatible : ExpectActualCompatibility<Nothing>()
