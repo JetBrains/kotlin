@@ -382,6 +382,12 @@ private class ElementsToShortenCollector(
         }
     }
 
+    override fun visitScript(script: FirScript) {
+        script.statements.forEach {
+            it.accept(this)
+        }
+    }
+
     override fun visitElement(element: FirElement) {
         element.acceptChildren(this)
     }
