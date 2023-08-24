@@ -902,7 +902,7 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) :
         owner.getter?.extensionReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
 
     override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> {
-        TODO("Not yet implemented")
+        return getter?.contextReceiverParameters ?: emptyList()
     }
 
     override fun isExternal() = owner.isExternal
@@ -1098,7 +1098,7 @@ open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedD
         owner.correspondingPropertySymbol?.owner?.toIrBasedDescriptor()?.extensionReceiverParameter
 
     override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> {
-        TODO("Not yet implemented")
+        return owner.correspondingPropertySymbol?.owner?.toIrBasedDescriptor()?.contextReceiverParameters ?: emptyList()
     }
 
     override fun isExternal() = owner.isExternal

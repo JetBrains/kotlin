@@ -79,6 +79,28 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/contextReceivers")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ContextReceivers {
+        @Test
+        public void testAllFilesPresentInContextReceivers() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("kt59590.kt")
+        public void testKt59590() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextReceivers/kt59590.kt");
+        }
+
+        @Test
+        @TestMetadata("kt59590WithContextReceiver.kt")
+        public void testKt59590WithContextReceiver() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextReceivers/kt59590WithContextReceiver.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature")
     @TestDataPath("$PROJECT_ROOT")
     public class DuplicateJvmSignature {
