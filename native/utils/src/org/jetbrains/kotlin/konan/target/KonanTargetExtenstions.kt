@@ -99,14 +99,6 @@ fun KonanTarget.supportsExceptions(): Boolean = when(this) {
     else -> true
 }
 
-fun KonanTarget.suportsMemMem(): Boolean = when (this) {
-    is KonanTarget.WASM32 -> false
-    is KonanTarget.MINGW_X86 -> false
-    is KonanTarget.MINGW_X64 -> false
-    is KonanTarget.ZEPHYR -> false
-    else -> true
-}
-
 fun KonanTarget.supportsObjcInterop(): Boolean = family.isAppleFamily
 fun KonanTarget.hasFoundationFramework(): Boolean = family.isAppleFamily
 fun KonanTarget.hasUIKitFramework(): Boolean = family == Family.IOS || family == Family.TVOS

@@ -111,6 +111,16 @@ int threeWayCompare(T a, T b) {
     return (a == b) ? 0 : (a < b ? -1 : 1);
 }
 
+#if KONAN_WINDOWS
+void* memmem(const void *big, size_t bigLen, const void *little, size_t littleLen) {
+  for (size_t i = 0; i + littleLen <= bigLen; ++i) {
+    void* pos = ((char*)big) + i;
+    if (memcmp(little, pos, littleLen) == 0) return pos;
+  }
+  return nullptr;
+}
+#endif
+
 } // namespace
 
 extern "C" {
@@ -388,7 +398,9 @@ KInt Kotlin_String_lastIndexOfChar(KString thiz, KChar ch, KInt fromIndex) {
   return -1;
 }
 
-// TODO: or code up Knuth-Moris-Pratt.
+// TODO: or code up Knuth-Moris-Pratt,
+//       or use std::search with std::boyer_moore_searcher:
+//       https://en.cppreference.com/w/cpp/algorithm/search
 KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
   if (fromIndex < 0) {
     fromIndex = 0;
@@ -407,7 +419,7 @@ KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
   const KChar* otherRaw = CharArrayAddressOfElementAt(other, 0);
   const auto otherSize = other->count_ * sizeof(KChar);
   while (true) {
-    void* result = konan::memmem(thizRaw + fromIndex, (thiz->count_ - fromIndex) * sizeof(KChar),
+    void* result = memmem(thizRaw + fromIndex, (thiz->count_ - fromIndex) * sizeof(KChar),
                                  otherRaw, otherSize);
     if (result == nullptr) return -1;
     auto byteIndex = reinterpret_cast<intptr_t>(result) - reinterpret_cast<intptr_t>(thizRaw);
