@@ -2,7 +2,7 @@
 // LANGUAGE: -ProhibitInlineModifierOnPrimaryConstructorParameters
 // WITH_STDLIB
 
-enum class Foo(<!INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION_WARNING!>open <!DECLARATION_CANT_BE_INLINED_DEPRECATION_WARNING!>inline<!> /* no effect */ val bar: String<!>) {
+enum class Foo(<!INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION_WARNING!>open inline /* no effect */ val bar: String<!>) {
     A("super") {
         override val bar: String
             get() = super.bar + " overridden"

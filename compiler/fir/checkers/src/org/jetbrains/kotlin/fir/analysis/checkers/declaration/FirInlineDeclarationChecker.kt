@@ -444,9 +444,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         if (effectiveVisibility == EffectiveVisibility.PrivateInClass) return true
 
         if (!declaration.isEffectivelyFinal(context)) {
-            if (declaration.source?.kind == KtFakeSourceElementKind.PropertyFromParameter) {
-                reporter.reportOn(declaration.source, FirErrors.DECLARATION_CANT_BE_INLINED_DEPRECATION, context)
-            } else {
+            // For primary constructor parameters there's INLINE_PROPERTY_WITH_BACKING_FIELD already
+            if (declaration.source?.kind != KtFakeSourceElementKind.PropertyFromParameter) {
                 reporter.reportOn(declaration.source, FirErrors.DECLARATION_CANT_BE_INLINED, context)
             }
             return false
