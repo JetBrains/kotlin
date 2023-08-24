@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,10 +21,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -34,6 +37,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtFile
 
 internal class KtFirKotlinPropertySymbol(
     override val firSymbol: FirPropertySymbol,
@@ -130,10 +134,25 @@ internal class KtFirKotlinPropertySymbol(
         }
 
         return when (val kind = symbolKind) {
-            KtSymbolKind.TOP_LEVEL -> KtFirTopLevelPropertySymbolPointer(
-                firSymbol.callableId,
-                FirCallableSignature.createSignature(firSymbol),
-            )
+            KtSymbolKind.TOP_LEVEL -> {
+                if (firSymbol.fir.origin is FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
+                    val file = psi?.containingFile as? KtFile
+                    if (file == null) {
+                        errorWithFirSpecificEntries(
+                            "ResultProperty restoring supported only for psi-based symbols yet",
+                            fir = firSymbol.fir,
+                            psi = psi,
+                        )
+                    }
+
+                    KtFirResultPropertySymbolPointer(file.symbolPointerOfType<KtFirFileSymbol>())
+                } else {
+                    KtFirTopLevelPropertySymbolPointer(
+                        firSymbol.callableId,
+                        FirCallableSignature.createSignature(firSymbol),
+                    )
+                }
+            }
 
             KtSymbolKind.CLASS_MEMBER ->
                 KtFirMemberPropertySymbolPointer(
