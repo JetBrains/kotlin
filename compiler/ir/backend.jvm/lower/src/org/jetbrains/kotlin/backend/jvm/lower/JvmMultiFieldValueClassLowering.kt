@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.irCatch
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.BlockOrBody.Block
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -39,10 +41,18 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal class JvmMultiFieldValueClassLowering(
-    context: JvmBackendContext,
-    scopeStack: MutableList<ScopeWithIr>,
-) : JvmValueClassAbstractLowering(context, scopeStack) {
+val jvmMultiFieldValueClassPhase = makeIrFilePhase(
+    { c: JvmBackendContext ->
+        if (c.config.supportMultiFieldValueClasses)
+            JvmMultiFieldValueClassLowering(c)
+        else
+            FileLoweringPass.Empty
+    },
+    name = "MultiFieldValueClasses",
+    description = "Lower multi-field value classes",
+)
+
+internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmValueClassAbstractLowering(context) {
 
     private sealed class MfvcNodeInstanceAccessor {
         abstract val instance: MfvcNodeInstance

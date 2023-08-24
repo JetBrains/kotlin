@@ -176,7 +176,9 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
         }
 
         if (check(actualTargets.defaultTargets) || check(actualTargets.canBeSubstituted) || checkWithUseSiteTargets()) {
-            checkMultiFieldValueClassAnnotationRestrictions(declaration, annotation, context, reporter)
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) {
+                checkMultiFieldValueClassAnnotationRestrictions(declaration, annotation, context, reporter)
+            }
             return
         }
 

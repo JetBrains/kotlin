@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.name.Name
 
 internal abstract class JvmValueClassAbstractLowering(
     val context: JvmBackendContext,
-    override val scopeStack: MutableList<ScopeWithIr>,
 ) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     abstract val replacements: MemoizedValueClassAbstractReplacements
 

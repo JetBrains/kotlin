@@ -30,7 +30,7 @@ open class ScopeWithIr(val scope: Scope, val irElement: IrElement)
 
 abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() {
 
-    protected open val scopeStack = mutableListOf<ScopeWithIr>()
+    private val scopeStack = mutableListOf<ScopeWithIr>()
 
     protected open fun createScope(declaration: IrSymbolOwner): ScopeWithIr =
         ScopeWithIr(Scope(declaration.symbol), declaration)
