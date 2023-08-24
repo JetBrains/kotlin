@@ -18,8 +18,8 @@ abstract class AbstractMemberScopeByFqNameTest : AbstractSymbolByFqNameTest() {
     override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
         val symbols = with(symbolData) { toSymbols(ktFile) }
-        val classSymbol = symbols.singleOrNull() as? KtSymbolWithMembers
-            ?: error("Should be a single class symbol, but $symbols found")
-        return SymbolsData(classSymbol.getMemberScope().getAllSymbols().toList())
+        val symbolWithMembers = symbols.singleOrNull() as? KtSymbolWithMembers
+            ?: error("Should be a single `${KtSymbolWithMembers::class.simpleName}`, but $symbols found.")
+        return SymbolsData(symbolWithMembers.getMemberScope().getAllSymbols().toList())
     }
 }

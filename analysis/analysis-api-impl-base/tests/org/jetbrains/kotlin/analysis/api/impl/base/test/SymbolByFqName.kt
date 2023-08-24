@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -83,28 +85,46 @@ sealed class SymbolData {
         }
     }
 
+    data class EnumEntryInitializerData(val enumEntryId: CallableId) : SymbolData() {
+        override fun KtAnalysisSession.toSymbols(ktFile: KtFile): List<KtSymbol> {
+            val classSymbol = enumEntryId.classId?.let { getClassOrObjectSymbolByClassId(it) }
+                ?: error("Cannot find enum class `${enumEntryId.classId}`.")
+
+            require(classSymbol is KtNamedClassOrObjectSymbol) { "`${enumEntryId.classId}` must be a named class." }
+            require(classSymbol.classKind == KtClassKind.ENUM_CLASS) { "`${enumEntryId.classId}` must be an enum class." }
+
+            val enumEntrySymbol = classSymbol.getEnumEntries().find { it.name == enumEntryId.callableName }
+                ?: error("Cannot find enum entry symbol `$enumEntryId`.")
+
+            val initializerSymbol = enumEntrySymbol.enumEntryInitializer ?: error("`${enumEntryId.callableName}` must have an initializer.")
+            return listOf(initializerSymbol)
+        }
+    }
+
     companion object {
-        val identifiers: List<String> = listOf("callable:", "class:", "typealias:", "script")
+        val identifiers = arrayOf("callable:", "class:", "typealias:", "enum_entry_initializer:", "script")
 
         fun create(data: String): SymbolData = when {
             data == "script" -> ScriptData
             data.startsWith("class:") -> ClassData(ClassId.fromString(data.removePrefix("class:").trim()))
             data.startsWith("typealias:") -> TypeAliasData(ClassId.fromString(data.removePrefix("typealias:").trim()))
-            data.startsWith("callable:") -> {
-                val fullName = data.removePrefix("callable:").trim()
-                val name = if ('.' in fullName) fullName.substringAfterLast(".") else fullName.substringAfterLast('/')
-                val (packageName, className) = run {
-                    val packageNameWithClassName = fullName.dropLast(name.length + 1)
-                    when {
-                        '.' in fullName ->
-                            packageNameWithClassName.substringBeforeLast('/') to packageNameWithClassName.substringAfterLast('/')
-                        else -> packageNameWithClassName to null
-                    }
-                }
-                CallableData(CallableId(FqName(packageName.replace('/', '.')), className?.let { FqName(it) }, Name.identifier(name)))
-            }
-            else -> error("Invalid symbol")
+            data.startsWith("callable:") -> CallableData(extractCallableId(data, "callable:"))
+            data.startsWith("enum_entry_initializer") -> EnumEntryInitializerData(extractCallableId(data, "enum_entry_initializer:"))
+            else -> error("Invalid symbol kind, expected one of: $identifiers")
         }
     }
 }
 
+private fun extractCallableId(data: String, prefix: String): CallableId {
+    val fullName = data.removePrefix(prefix).trim()
+    val name = if ('.' in fullName) fullName.substringAfterLast(".") else fullName.substringAfterLast('/')
+    val (packageName, className) = run {
+        val packageNameWithClassName = fullName.dropLast(name.length + 1)
+        when {
+            '.' in fullName ->
+                packageNameWithClassName.substringBeforeLast('/') to packageNameWithClassName.substringAfterLast('/')
+            else -> packageNameWithClassName to null
+        }
+    }
+    return CallableId(FqName(packageName.replace('/', '.')), className?.let { FqName(it) }, Name.identifier(name))
+}
