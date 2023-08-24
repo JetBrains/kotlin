@@ -76,7 +76,7 @@ object RangeOps : TemplateGroupBase() {
             return TProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
             """
         }
-        sample("samples.ranges.Ranges.step${primitive!!}")
+        sample("samples.ranges.Ranges.step${primitive!!.name}")
     }
 
     val f_downTo = fn("downTo(to: Primitive)").byTwoPrimitives {
