@@ -33,13 +33,11 @@
 
 package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
-import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.optimization.common.FastAnalyzer
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
-import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
@@ -107,70 +105,43 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
     interpreter: StoreLoadInterpreter<V>
 ) : FastAnalyzer<V, StoreLoadInterpreter<V>, StoreLoadFrame<V>>(owner, method, interpreter) {
     private val isMergeNode = BooleanArray(nInsns)
-    private val frames: Array<StoreLoadFrame<V>?> = arrayOfNulls(nInsns)
 
-    private val queued = BooleanArray(nInsns)
-    private val queue = IntArray(nInsns)
-    private var top = 0
-
-    fun analyze(): Array<StoreLoadFrame<V>?> {
-        if (nInsns == 0) return frames
+    fun analyze(): Array<Frame<V>?> {
+        if (nInsns == 0) return getFrames()
 
         checkAssertions()
         computeExceptionHandlers(method)
         initMergeNodes()
 
-        val current = newFrame(method.maxLocals)
-        val handler = newFrame(method.maxLocals)
-        initLocals(current)
-        mergeControlFlowEdge(0, current)
+        analyzeInner()
 
-        while (top > 0) {
-            val insn = queue[--top]
-            val f = frames[insn]!!
-            queued[insn] = false
-
-            val insnNode = method.instructions[insn]
-            val insnOpcode = insnNode.opcode
-                val insnType = insnNode.type
-
-            try {
-                analyzeInstruction(insnType, insn, f, current, insnNode, insnOpcode, handler)
-            } catch (e: AnalyzerException) {
-                throw AnalyzerException(e.node, "Error at instruction #$insn ${insnNode.insnText(method.instructions)}: ${e.message}", e)
-            } catch (e: Exception) {
-                throw AnalyzerException(insnNode, "Error at instruction #$insn ${insnNode.insnText(method.instructions)}: ${e.message}", e)
-            }
-        }
-
-        return frames
+        return getFrames()
     }
 
-    private fun analyzeInstruction(
-        insnType: Int,
-        insn: Int,
-        f: StoreLoadFrame<V>,
-        current: StoreLoadFrame<V>,
+    override fun analyzeInstruction(
         insnNode: AbstractInsnNode,
+        insnIndex: Int,
+        insnType: Int,
         insnOpcode: Int,
+        currentlyAnalyzing: StoreLoadFrame<V>,
+        current: StoreLoadFrame<V>,
         handler: StoreLoadFrame<V>,
     ) {
         if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
-            mergeControlFlowEdge(insn + 1, f)
+            mergeControlFlowEdge(insnIndex + 1, currentlyAnalyzing)
         } else {
-            current.init(f).execute(insnNode, interpreter)
-            visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insn)
+            current.init(currentlyAnalyzing).execute(insnNode, interpreter)
+            visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insnIndex)
         }
 
-        handlers[insn]?.forEach { tcb ->
+        handlers[insnIndex]?.forEach { tcb ->
             val jump = tcb.handler.indexOf()
-            handler.init(f)
+            handler.init(currentlyAnalyzing)
             mergeControlFlowEdge(jump, handler)
         }
     }
 
-    private fun newFrame(maxLocals: Int) =
-        StoreLoadFrame<V>(maxLocals)
+    override fun newFrame(nLocals: Int, nStack: Int): StoreLoadFrame<V> = StoreLoadFrame<V>(nLocals)
 
     override fun visitOpInsn(insnNode: AbstractInsnNode, current: StoreLoadFrame<V>, insn: Int) {
         mergeControlFlowEdge(insn + 1, current)
@@ -225,7 +196,7 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
         }
     }
 
-    private fun initLocals(current: StoreLoadFrame<V>) {
+    override fun initLocals(current: StoreLoadFrame<V>) {
         val args = Type.getArgumentTypes(method.desc)
         var local = 0
         if ((method.access and Opcodes.ACC_STATIC) == 0) {
@@ -247,11 +218,11 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
         }
     }
 
-    private fun mergeControlFlowEdge(dest: Int, frame: StoreLoadFrame<V>) {
-        val oldFrame = frames[dest]
+    override fun mergeControlFlowEdge(dest: Int, frame: StoreLoadFrame<V>, canReuse: Boolean) {
+        val oldFrame = getFrame(dest)
         val changes = when {
             oldFrame == null -> {
-                frames[dest] = newFrame(frame.maxLocals).init(frame)
+                setFrame(dest, newFrame(frame.maxLocals, 0).init(frame))
                 true
             }
             !isMergeNode[dest] -> {
@@ -261,10 +232,6 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
             else ->
                 oldFrame.merge(frame, interpreter)
         }
-        if (changes && !queued[dest]) {
-            queued[dest] = true
-            queue[top++] = dest
-        }
+        updateQueue(changes, dest)
     }
-
 }
