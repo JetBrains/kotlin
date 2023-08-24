@@ -91,13 +91,16 @@ val IrTypeParameter.erasedUpperBound: IrClass
     }
 
 val IrType.erasedUpperBound: IrClass
-    get() =
-        when (val classifier = classifierOrNull) {
-            is IrClassSymbol -> classifier.owner
-            is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
-            is IrScriptSymbol -> classifier.owner.targetClass!!.owner
-            null -> if (this is IrErrorType) symbol.owner else error(render())
+    get() = when (this) {
+        is IrSimpleType -> when (val classifier = classifier.owner) {
+            is IrClass -> classifier
+            is IrTypeParameter -> classifier.erasedUpperBound
+            is IrScript -> classifier.targetClass!!.owner
+            else -> error(render())
         }
+        is IrErrorType -> symbol.owner
+        else -> error(render())
+    }
 
 /**
  * Get the default null/0 value for the type.
