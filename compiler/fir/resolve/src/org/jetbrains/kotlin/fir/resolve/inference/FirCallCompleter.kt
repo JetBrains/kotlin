@@ -89,7 +89,7 @@ class FirCallCompleter(
             //
             // Ideally, we should get rid of `shouldRunCompletion` once Builder inference is rewritten (see KT-61041 for tracking)
             if (it == ConstraintSystemCompletionMode.FULL && inferenceSession.shouldAvoidFullCompletion(call))
-                ConstraintSystemCompletionMode.PARTIAL
+                if (resolutionMode.forceFullCompletion) ConstraintSystemCompletionMode.PARTIAL_BI else ConstraintSystemCompletionMode.PARTIAL
             else
                 it
         }
@@ -127,8 +127,11 @@ class FirCallCompleter(
                 }
             }
 
-            ConstraintSystemCompletionMode.PARTIAL -> {
-                runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
+            ConstraintSystemCompletionMode.PARTIAL, ConstraintSystemCompletionMode.PARTIAL_BI -> {
+                if (inferenceSession !is FirBuilderInferenceSession2 || (inferenceSession as FirBuilderInferenceSession2).shouldRunCompletion2(call)) {
+                    runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
+                }
+
                 if (inferenceSession is FirDelegatedPropertyInferenceSession || inferenceSession is FirBuilderInferenceSession2) {
                     inferenceSession.processPartiallyResolvedCall(call, resolutionMode)
                 }

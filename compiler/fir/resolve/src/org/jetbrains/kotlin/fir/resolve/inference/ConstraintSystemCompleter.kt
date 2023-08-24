@@ -47,7 +47,20 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         context: ResolutionContext,
         collectVariablesFromContext: Boolean = false,
         analyze: (PostponedResolvedAtom) -> Unit
-    ) = c.runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, collectVariablesFromContext, analyze)
+    ) = with(c) {
+        val allTypeVariables = getOrderedAllTypeVariables(
+            collectVariablesFromContext,
+            topLevelAtoms
+        )
+
+        if ("".hashCode() == 1 && allTypeVariables.size != notFixedTypeVariables.size) {
+            withTypeVariablesFromOuter(notFixedTypeVariables.keys - allTypeVariables.toSet()) {
+                runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, collectVariablesFromContext, analyze)
+            }
+        } else {
+            runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, collectVariablesFromContext, analyze)
+        }
+    }
 
     private fun ConstraintSystemCompletionContext.runCompletion(
         completionMode: ConstraintSystemCompletionMode,
@@ -95,7 +108,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                     it.revisedExpectedType == null
                 }
 
-            val currentTypeVariables = getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms).toSet()
             val dependencyProvider =
                 TypeVariableDependencyInformationProvider(notFixedTypeVariables, postponedArguments, topLevelType, this)
 
@@ -120,7 +132,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                         postponedArguments,
                         topLevelType,
                         dependencyProvider,
-                        currentTypeVariables,
+                        typeVariablesFromOuter,
                     ) {
                         // NB: FE 1.0 calls findResolvedAtomBy here
                         // atom provided here is used only inside constraint positions, omitting right now
@@ -185,25 +197,13 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             topLevelAtoms
         )
 
-        return if (allTypeVariables.size != notFixedTypeVariables.size) {
-            withTypeVariablesThatAreNotCountedAsProperTypes(allTypeVariables.toSet()) {
-                variableFixationFinder.findFirstVariableForFixation(
-                    this,
-                    allTypeVariables,
-                    postponedArguments,
-                    completionMode,
-                    topLevelType
-                )
-            }
-        } else {
-            variableFixationFinder.findFirstVariableForFixation(
-                this,
-                allTypeVariables,
-                postponedArguments,
-                completionMode,
-                topLevelType
-            )
-        }
+        return variableFixationFinder.findFirstVariableForFixation(
+            this,
+            allTypeVariables,
+            postponedArguments,
+            completionMode,
+            topLevelType
+        )
     }
 
     /**
@@ -286,7 +286,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                 "At this stage there should be no remaining variables with proper constraints"
             }
 
-            if (completionMode == ConstraintSystemCompletionMode.PARTIAL) break
+            if (completionMode != ConstraintSystemCompletionMode.FULL) break
 
             val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
             processVariableWhenNotEnoughInformation(variableWithConstraints, topLevelAtoms)

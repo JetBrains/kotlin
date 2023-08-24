@@ -43,6 +43,7 @@ class NewConstraintSystemImpl(
     private val notProperTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val intersectionTypesCache: MutableMap<Collection<KotlinTypeMarker>, EmptyIntersectionTypeInfo?> = mutableMapOf()
     override var typeVariablesThatAreNotCountedAsProperTypes: Set<TypeConstructorMarker>? = null
+    override var typeVariablesFromOuter: Set<TypeConstructorMarker>? = null
 
     private var couldBeResolvedWithUnrestrictedBuilderInference: Boolean = false
 
@@ -67,6 +68,26 @@ class NewConstraintSystemImpl(
         val result = block()
 
         typeVariablesThatAreNotCountedAsProperTypes = null
+        properTypesCache.clear()
+        notProperTypesCache.clear()
+
+        return result
+    }
+
+    override fun <R> withTypeVariablesFromOuter(typeVariables: Set<TypeConstructorMarker>, block: () -> R): R {
+        // Cleaning cache is necessary because temporarily we change the meaning of what does "proper type" mean
+        properTypesCache.clear()
+        notProperTypesCache.clear()
+
+        require(typeVariablesFromOuter == null) {
+            "Currently there should be no nested withDisallowingOnlyThisTypeVariablesForProperTypes calls"
+        }
+
+        typeVariablesFromOuter = typeVariables
+
+        val result = block()
+
+        typeVariablesFromOuter = null
         properTypesCache.clear()
         notProperTypesCache.clear()
 
@@ -371,7 +392,13 @@ class NewConstraintSystemImpl(
                 return@contains typeVariablesThatAreNotCountedAsProperTypes!!.contains(typeToCheck.typeConstructor())
             }
 
-            storage.allTypeVariables.containsKey(typeToCheck.typeConstructor())
+            if (!storage.allTypeVariables.containsKey(typeToCheck.typeConstructor())) return@contains false
+
+            if (typeVariablesFromOuter != null && typeVariablesFromOuter!!.contains(typeToCheck.typeConstructor())) {
+                return@contains false
+            }
+
+            return@contains true
         }
 
     override fun isTypeVariable(type: KotlinTypeMarker): Boolean {
