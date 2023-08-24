@@ -53,12 +53,6 @@ public class FirStandaloneNormalAnalysisSourceModuleMemberScopeByFqNameTestGener
     }
 
     @Test
-    @TestMetadata("emumEntryWithoutMembers.kt")
-    public void testEmumEntryWithoutMembers() throws Exception {
-        runTest("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/emumEntryWithoutMembers.kt");
-    }
-
-    @Test
     @TestMetadata("enumEntry.kt")
     public void testEnumEntry() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/enumEntry.kt");

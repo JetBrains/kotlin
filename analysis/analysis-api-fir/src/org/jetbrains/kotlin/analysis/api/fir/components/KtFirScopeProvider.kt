@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtEmptyScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclarations
@@ -25,32 +24,26 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -64,45 +57,29 @@ internal class KtFirScopeProvider(
         return analysisSession.getScopeSessionFor(analysisSession.useSiteSession)
     }
 
-    private inline fun <T> KtSymbolWithMembers.withFirForScope(crossinline body: (FirClass) -> T): T? {
-        return when (this) {
-            is KtFirNamedClassOrObjectSymbol -> body(firSymbol.fir)
-            is KtFirPsiJavaClassSymbol -> body(firSymbol.fir)
-            is KtFirAnonymousObjectSymbol -> body(firSymbol.fir)
-            is KtFirEnumEntrySymbol -> {
-                firSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-                val initializer = firSymbol.fir.initializer ?: return null
-                check(initializer is FirAnonymousObjectExpression) { "Unexpected enum entry initializer: ${initializer.javaClass}" }
-                body(initializer.anonymousObject)
-            }
-
-            else -> error("Unknown ${KtSymbolWithDeclarations::class.simpleName} implementation ${this::class.qualifiedName}")
-        }
+    private fun KtSymbolWithMembers.getFirForScope(): FirClass = when (this) {
+        is KtFirNamedClassOrObjectSymbol -> firSymbol.fir
+        is KtFirPsiJavaClassSymbol -> firSymbol.fir
+        is KtFirAnonymousObjectSymbol -> firSymbol.fir
+        else -> error(
+            "`${this::class.qualifiedName}` needs to be specially handled by the scope provider or is an unknown" +
+                    " ${KtSymbolWithDeclarations::class.simpleName} implementation."
+        )
     }
 
     override fun getMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
-        val firScope = classSymbol.withFirForScope { fir ->
-            val firSession = analysisSession.useSiteSession
-            fir.unsubstitutedScope(
-                firSession,
-                getScopeSession(),
-                withForcedTypeCalculator = false,
-                memberRequiredPhase = FirResolvePhase.STATUS,
-            )
-        }?.applyIf(classSymbol is KtEnumEntrySymbol, ::EnumEntryContainingNamesAwareScope) ?: return getEmptyScope()
-
+        val firScope = classSymbol.getFirForScope().unsubstitutedScope(
+            analysisSession.useSiteSession,
+            getScopeSession(),
+            withForcedTypeCalculator = false,
+            memberRequiredPhase = FirResolvePhase.STATUS,
+        )
         return KtFirDelegatingNamesAwareScope(firScope, builder)
     }
 
     override fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope {
-        val firScope = symbol.withFirForScope { fir ->
-            val firSession = analysisSession.useSiteSession
-            fir.scopeProvider.getStaticScope(
-                fir,
-                firSession,
-                getScopeSession(),
-            )
-        } ?: return getEmptyScope()
+        val fir = symbol.getFirForScope()
+        val firScope = fir.scopeProvider.getStaticScope(fir, analysisSession.useSiteSession, getScopeSession()) ?: return getEmptyScope()
         return KtFirDelegatingNamesAwareScope(firScope, builder)
     }
 
@@ -115,33 +92,33 @@ internal class KtFirScopeProvider(
             )
         }
 
-        val firScope = classSymbol.withFirForScope {
-            when (val regularClass = classSymbol.firSymbol.fir) {
-                is FirJavaClass -> buildJavaEnhancementDeclaredMemberScope(useSiteSession, regularClass.symbol, getScopeSession())
-                else -> useSiteSession.declaredMemberScope(it, memberRequiredPhase = null)
-            }
-        } ?: return getEmptyScope()
-
+        val fir = classSymbol.getFirForScope()
+        val firScope = when (val regularClass = classSymbol.firSymbol.fir) {
+            is FirJavaClass -> buildJavaEnhancementDeclaredMemberScope(useSiteSession, regularClass.symbol, getScopeSession())
+            else -> useSiteSession.declaredMemberScope(fir, memberRequiredPhase = null)
+        }
         return KtFirDelegatingNamesAwareScope(firScope, builder)
     }
 
     override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
         val declaredScope = (getDeclaredMemberScope(classSymbol) as? KtFirDelegatingNamesAwareScope)?.firScope ?: return getEmptyScope()
-        val firScope = classSymbol.withFirForScope { fir ->
-            val delegateFields = fir.delegateFields
-            if (delegateFields.isNotEmpty()) {
-                fir.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
-                val firSession = analysisSession.useSiteSession
-                FirDelegatedMemberScope(
-                    firSession,
-                    getScopeSession(),
-                    fir,
-                    declaredScope,
-                    delegateFields
-                )
-            } else null
-        } ?: return getEmptyScope()
 
+        val fir = classSymbol.getFirForScope()
+        val delegateFields = fir.delegateFields
+
+        if (delegateFields.isEmpty()) {
+            return getEmptyScope()
+        }
+
+        fir.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
+
+        val firScope = FirDelegatedMemberScope(
+            analysisSession.useSiteSession,
+            getScopeSession(),
+            fir,
+            declaredScope,
+            delegateFields
+        )
         return KtFirDelegatedMemberScope(firScope, builder)
     }
 
@@ -157,7 +134,6 @@ internal class KtFirScopeProvider(
     override fun getPackageScope(packageSymbol: KtPackageSymbol): KtScope {
         return createPackageScope(packageSymbol.fqName)
     }
-
 
     override fun getCompositeScope(subScopes: List<KtScope>): KtScope {
         return KtCompositeScope.create(subScopes, token)
@@ -336,36 +312,6 @@ private class FirTypeScopeWithSyntheticProperties(
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         typeScope.processPropertiesByName(name, processor)
         syntheticPropertiesScope.processPropertiesByName(name, processor)
-    }
-}
-
-private class EnumEntryContainingNamesAwareScope(private val originalScope: FirContainingNamesAwareScope) : FirContainingNamesAwareScope() {
-    override fun getCallableNames(): Set<Name> = originalScope.getCallableNames()
-    override fun getClassifierNames(): Set<Name> = originalScope.getClassifierNames()
-    override fun mayContainName(name: Name): Boolean = originalScope.mayContainName(name)
-    override val scopeOwnerLookupNames: List<String> get() = super.scopeOwnerLookupNames
-
-    override fun processClassifiersByNameWithSubstitution(
-        name: Name,
-        processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
-    ) {
-        originalScope.processClassifiersByNameWithSubstitution(name) { classifier, substitutor ->
-            if ((classifier as? FirRegularClassSymbol)?.isCompanion != true) {
-                processor(classifier, substitutor)
-            }
-        }
-    }
-
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        originalScope.processFunctionsByName(name, processor)
-    }
-
-    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        originalScope.processPropertiesByName(name, processor)
-    }
-
-    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        // enum entries does not have constructors
     }
 }
 

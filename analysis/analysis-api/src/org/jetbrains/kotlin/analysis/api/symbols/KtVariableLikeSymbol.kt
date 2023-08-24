@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
-import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
@@ -18,7 +16,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtExpression
 
 public sealed class KtVariableLikeSymbol : KtCallableSymbol(), KtNamedSymbol, KtSymbolWithKind, KtPossibleMemberSymbol {
     context(KtAnalysisSession)
@@ -59,8 +56,30 @@ public abstract class KtBackingFieldSymbol : KtVariableLikeSymbol() {
     }
 }
 
-
-public abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithMembers, KtSymbolWithKind {
+/**
+ * An entry of an enum class.
+ *
+ * The type of the enum entry is the enum class itself. The members declared in an enum entry's body are local to the body and cannot be
+ * accessed from the outside. Hence, while it might look like enum entries can declare their own members (see the example below), they do
+ * not have a (declared) member scope.
+ *
+ * Members declared by the enum class and overridden in the enum entry's body will be accessible, of course, but only the base version
+ * declared in the enum class. For example, a narrowed return type of an overridden member in an enum entry's body will not be visible
+ * outside the body.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * enum class E {
+ *     A {
+ *         val x: Int = 5
+ *     }
+ * }
+ * ```
+ *
+ * `A` is an enum entry of enum class `E`. `x` is a property of `A`'s initializer and thus not accessible outside the initializer.
+ */
+public abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithKind {
     final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.CLASS_MEMBER }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KtReceiverParameterSymbol? get() = withValidityAssertion { null }
