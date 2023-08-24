@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="kotlin-stdlib-js-1.9.255-SNAPSHOT">
+    <output-path>$PROJECT_DIR$/libraries/stdlib/build/libs</output-path>
+    <root id="archive" name="kotlin-stdlib-js-1.9.255-SNAPSHOT.jar">
+      <element id="module-output" name="kotlin.kotlin-stdlib.jsMain" />
+    </root>
+  </artifact>
+</component>
