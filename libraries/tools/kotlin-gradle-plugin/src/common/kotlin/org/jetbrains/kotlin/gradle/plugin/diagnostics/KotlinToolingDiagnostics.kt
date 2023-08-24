@@ -98,9 +98,9 @@ object KotlinToolingDiagnostics {
     object AndroidSourceSetLayoutV1Deprecation : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke() = build(
             """
-                The version 1 of Android source set layout is deprecated. Please remove kotlin.mpp.androidSourceSetLayoutVersion=1 from the gradle.properties file.
-                
-                Learn how to migrate to the version 2 source set layout at: https://kotl.in/android-source-set-layout-v2
+                This version of the Android source set layout is deprecated. Please remove kotlin.mpp.androidSourceSetLayoutVersion=1 from your gradle.properties file.
+
+                Learn how to migrate to the new Android source set layout at: https://kotl.in/android-source-set-layout-v2
             """.trimIndent()
         )
     }
