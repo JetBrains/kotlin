@@ -46,12 +46,13 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Value
  */
 // This is a very specific version of method bytecode analyzer that doesn't perform any DFA,
 // but infers stack types for reachable instructions instead.
-internal open class FastStackAnalyzer<V : Value>(
+internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
     owner: String,
     method: MethodNode,
     interpreter: Interpreter<V>
-) : FastAnalyzer<V, Interpreter<V>, Frame<V>>(owner, method, interpreter) {
-    override fun newFrame(nLocals: Int, nStack: Int): Frame<V> = Frame(nLocals, nStack)
+) : FastAnalyzer<V, Interpreter<V>, F>(owner, method, interpreter) {
+    @Suppress("UNCHECKED_CAST")
+    override fun newFrame(nLocals: Int, nStack: Int): F = Frame<V>(nLocals, nStack) as F
 
     protected open fun visitControlFlowEdge(insnNode: AbstractInsnNode, successor: Int): Boolean = true
 
@@ -65,9 +66,9 @@ internal open class FastStackAnalyzer<V : Value>(
         insnIndex: Int,
         insnType: Int,
         insnOpcode: Int,
-        currentlyAnalyzing: Frame<V>,
-        current: Frame<V>,
-        handler: Frame<V>,
+        currentlyAnalyzing: F,
+        current: F,
+        handler: F,
     ) {
         if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
             visitNopInsn(insnNode, currentlyAnalyzing, insnIndex)
@@ -92,15 +93,15 @@ internal open class FastStackAnalyzer<V : Value>(
         }
     }
 
-    override fun visitOpInsn(insnNode: AbstractInsnNode, current: Frame<V>, insn: Int) {
+    override fun visitOpInsn(insnNode: AbstractInsnNode, current: F, insn: Int) {
         processControlFlowEdge(current, insnNode, insn + 1)
     }
 
-    private fun visitNopInsn(insnNode: AbstractInsnNode, f: Frame<V>, insn: Int) {
+    private fun visitNopInsn(insnNode: AbstractInsnNode, f: F, insn: Int) {
         processControlFlowEdge(f, insnNode, insn + 1)
     }
 
-    override fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: Frame<V>) {
+    override fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: F) {
         var jump = insnNode.dflt.indexOf()
         processControlFlowEdge(current, insnNode, jump)
         // In most cases order of visiting switch labels should not matter
@@ -114,7 +115,7 @@ internal open class FastStackAnalyzer<V : Value>(
         }
     }
 
-    override fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: Frame<V>) {
+    override fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: F) {
         var jump = insnNode.dflt.indexOf()
         processControlFlowEdge(current, insnNode, jump)
         for (label in insnNode.labels) {
@@ -123,7 +124,7 @@ internal open class FastStackAnalyzer<V : Value>(
         }
     }
 
-    override fun visitJumpInsnNode(insnNode: JumpInsnNode, current: Frame<V>, insn: Int, insnOpcode: Int) {
+    override fun visitJumpInsnNode(insnNode: JumpInsnNode, current: F, insn: Int, insnOpcode: Int) {
         if (insnOpcode != Opcodes.GOTO) {
             processControlFlowEdge(current, insnNode, insn + 1)
         }
@@ -131,13 +132,13 @@ internal open class FastStackAnalyzer<V : Value>(
         processControlFlowEdge(current, insnNode, jump)
     }
 
-    private fun processControlFlowEdge(current: Frame<V>, insnNode: AbstractInsnNode, jump: Int) {
+    private fun processControlFlowEdge(current: F, insnNode: AbstractInsnNode, jump: Int) {
         if (visitControlFlowEdge(insnNode, jump)) {
             mergeControlFlowEdge(jump, current)
         }
     }
 
-    override fun initLocals(current: Frame<V>) {
+    override fun initLocals(current: F) {
         current.setReturn(interpreter.newValue(Type.getReturnType(method.desc)))
         val args = Type.getArgumentTypes(method.desc)
         var local = 0
@@ -161,7 +162,7 @@ internal open class FastStackAnalyzer<V : Value>(
         }
     }
 
-    override fun mergeControlFlowEdge(dest: Int, frame: Frame<V>, canReuse: Boolean) {
+    override fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean) {
         val destFrame = getFrame(dest)
         if (destFrame == null) {
             // Don't have to visit same instruction multiple times - we care only about "initial" stack state.
