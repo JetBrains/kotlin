@@ -185,8 +185,6 @@ class JvmBackendContext(
 
     val multiFieldValueClassReplacements = MemoizedMultiFieldValueClassReplacements(irFactory, this)
 
-    val valueClassLoweringDispatcherSharedData = MemoizedValueClassLoweringDispatcherSharedData()
-
     val continuationClassesVarsCountByType: MutableMap<IrAttributeContainer, Map<Type, Int>> = hashMapOf()
 
     val inlineMethodGenerationLock = Any()
