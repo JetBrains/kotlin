@@ -32,7 +32,4 @@ abstract class FirExpression : FirPureAbstractElement(), FirStatement {
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpression
-
-    /** DO NOT USE! Only for temporary compatibility with Compose. Will be removed soon. KT-61312*/
-    val typeRef: org.jetbrains.kotlin.fir.types.FirTypeRef get() = coneTypeOrNull?.let { org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef { type = it } } ?: org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 }

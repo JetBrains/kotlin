@@ -92,7 +92,6 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         }
         for (property in this::class.memberProperties) {
             if (hasNoAcceptAndTransform(this::class.simpleName, property.name)) continue
-            if (this is FirExpression && property.name == "typeRef") continue
 
             when (val childElement = property.getter.apply { isAccessible = true }.call(this)) {
                 is FirNoReceiverExpression -> continue

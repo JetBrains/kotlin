@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
-import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
@@ -148,14 +147,7 @@ fun SmartPrinter.printElement(element: Element) {
                 println()
                 println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement")
             }
-
-            if (element == FirTreeBuilder.expression) {
-                println()
-                println("/** DO NOT USE! Only for temporary compatibility with Compose. Will be removed soon. KT-61312*/")
-                println("val typeRef: org.jetbrains.kotlin.fir.types.FirTypeRef get() = coneTypeOrNull?.let { org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef { type = it } } ?: org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource")
-            }
         }
-
         println("}")
     }
 }
