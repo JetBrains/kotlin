@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.irtext
 
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
@@ -57,7 +56,7 @@ class ClassicFrontend2NativeIrConverter(
      * so it's plausible to have a reduced copy here in test pipeline
      */
     private fun transformToNativeIr(module: TestModule, inputArtifact: ClassicFrontendOutputArtifact): IrBackendInput {
-        val (psiFiles, analysisResult, project, _) = inputArtifact
+        val (psiFiles, analysisResult, _, _) = inputArtifact
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
@@ -101,13 +100,12 @@ class ClassicFrontend2NativeIrConverter(
 
             override fun postProcess(inOrAfterLinkageStep: Boolean) = Unit
         }
-        val pluginExtensions = IrGenerationExtension.getInstances(project)
 
         val moduleFragment = translator.generateModuleFragment(
             generatorContext,
             sourceFiles,
             irProviders = listOf(irDeserializer),
-            linkerExtensions = pluginExtensions,
+            linkerExtensions = emptyList(),
         ).toKonanModule()
 
         val pluginContext = IrPluginContextImpl(
