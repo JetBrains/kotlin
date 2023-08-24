@@ -282,12 +282,6 @@ private fun createInitialCompilerConfiguration(
             ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS,
             ScriptingCompilerConfigurationComponentRegistrar()
         )
-        if (getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            add(
-                CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS,
-                ScriptingK2CompilerPluginRegistrar()
-            )
-        }
 
         configureJavaModulesContentRoots(baseArguments)
         configureContentRootsFromClassPath(baseArguments)
