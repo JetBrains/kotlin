@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:project-structure"))
 
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 }
 
 sourceSets {

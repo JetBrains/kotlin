@@ -38,7 +38,7 @@ dependencies {
 
     testApi(commonDependency("junit:junit"))
 
-    testRuntimeOnly(commonDependency("com.google.guava:guava"))
+    testRuntimeOnly(libs.guava)
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly(toolsJar())

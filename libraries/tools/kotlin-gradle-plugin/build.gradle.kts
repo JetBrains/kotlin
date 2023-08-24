@@ -121,7 +121,7 @@ dependencies {
     embedded(project(":kotlin-gradle-statistics"))
     embedded(commonDependency("org.jetbrains.intellij.deps:asm-all")) { isTransitive = false }
     embedded(commonDependency("com.google.code.gson:gson")) { isTransitive = false }
-    embedded(commonDependency("com.google.guava:guava")) { isTransitive = false }
+    embedded(libs.guava) { isTransitive = false }
     embedded(commonDependency("org.jetbrains.teamcity:serviceMessages")) { isTransitive = false }
     embedded(project(":kotlin-tooling-metadata")) { isTransitive = false }
     embedded("de.undercouch:gradle-download-task:4.1.1")

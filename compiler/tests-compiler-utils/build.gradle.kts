@@ -30,7 +30,7 @@ dependencies {
     testApi(commonDependency("com.android.tools:r8"))
     testCompileOnly(intellijCore())
 
-    testApi(commonDependency("com.google.guava:guava"))
+    testApi(libs.guava)
     testApi(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     testApi(commonDependency("org.jetbrains.intellij.deps:asm-all"))
     testApi(commonDependency("org.jetbrains.intellij.deps:log4j"))

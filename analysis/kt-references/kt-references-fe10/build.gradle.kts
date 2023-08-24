@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":compiler:frontend.java"))
     implementation(intellijCore())
 
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 }
 
 sourceSets {

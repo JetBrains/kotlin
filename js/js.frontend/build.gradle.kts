@@ -13,7 +13,7 @@ dependencies {
     api(project(":js:js.serializer"))
     api(project(":js:js.config"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 }
 
 sourceSets {

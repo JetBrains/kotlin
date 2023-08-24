@@ -20,7 +20,7 @@ dependencies {
     implementation(kotlinxCollectionsImmutable())
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 
     testImplementation(commonDependency("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))

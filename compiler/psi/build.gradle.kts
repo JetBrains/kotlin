@@ -16,7 +16,7 @@ dependencies {
     api(project(":kotlin-script-runtime"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 
     jflexPath(commonDependency("org.jetbrains.intellij.deps.jflex", "jflex"))

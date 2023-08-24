@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":compiler:psi"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 
     testCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())

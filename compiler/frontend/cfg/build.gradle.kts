@@ -6,7 +6,7 @@ plugins {
 dependencies {
     api(project(":compiler:frontend"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 }
 
 sourceSets {

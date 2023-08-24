@@ -9,7 +9,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-compiler-embeddable"))
     testRuntimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     testRuntimeOnly(project(":kotlin-scripting-jvm-host"))
-    testRuntimeOnly(commonDependency("com.google.guava:guava"))
+    testRuntimeOnly(libs.guava)
     testApi(commonDependency("junit"))
 }
 

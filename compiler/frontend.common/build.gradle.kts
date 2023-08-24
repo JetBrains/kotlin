@@ -7,7 +7,7 @@ dependencies {
     api(project(":compiler:config"))
     api(project(":compiler:container"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 }
 
 sourceSets {

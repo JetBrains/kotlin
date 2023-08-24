@@ -75,7 +75,7 @@ dependencies {
     testApi(jpsModelImpl()) { isTransitive = false }
     testApi(intellijJavaRt())
 
-    testImplementation(commonDependency("com.google.guava:guava"))
+    testImplementation(libs.guava)
     testImplementation(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     testImplementation(commonDependency("org.jetbrains.intellij.deps:asm-all"))
     testImplementation(commonDependency("org.jetbrains.intellij.deps:log4j"))
