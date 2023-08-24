@@ -2563,17 +2563,18 @@ open class PsiRawFirBuilder(
             val rangeExpression = expression.loopRange.toFirExpression("No range in for loop")
             val ktParameter = expression.loopParameter
             val fakeSource = expression.toKtPsiSourceElement(KtFakeSourceElementKind.DesugaredForLoop)
+            val rangeSource = expression.loopRange?.toFirSourceElement(KtFakeSourceElementKind.DesugaredForLoop)
+
             val target: FirLoopTarget
             // NB: FirForLoopChecker relies on this block existence and structure
             return buildBlock {
                 source = fakeSource
-                val rangeSource = expression.loopRange?.toFirSourceElement(KtFakeSourceElementKind.DesugaredForLoop)
                 val iteratorVal = generateTemporaryVariable(
                     baseModuleData, rangeSource, SpecialNames.ITERATOR,
                     buildFunctionCall {
-                        source = fakeSource
+                        source = rangeSource
                         calleeReference = buildSimpleNamedReference {
-                            source = fakeSource
+                            source = rangeSource ?: fakeSource
                             name = OperatorNameConventions.ITERATOR
                         }
                         explicitReceiver = rangeExpression
@@ -2583,12 +2584,12 @@ open class PsiRawFirBuilder(
                 statements += FirWhileLoopBuilder().apply {
                     source = expression.toFirSourceElement()
                     condition = buildFunctionCall {
-                        source = fakeSource
+                        source = rangeSource
                         calleeReference = buildSimpleNamedReference {
-                            source = fakeSource
+                            source = rangeSource ?: fakeSource
                             name = OperatorNameConventions.HAS_NEXT
                         }
-                        explicitReceiver = generateResolvedAccessExpression(fakeSource, iteratorVal)
+                        explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)
                     }
                     // break/continue in the for loop condition will refer to an outer loop if any.
                     // So, prepare the loop target after building the condition.
@@ -2604,12 +2605,12 @@ open class PsiRawFirBuilder(
                             source = expression.loopParameter?.toFirSourceElement(),
                             name = if (multiDeclaration != null) SpecialNames.DESTRUCT else ktParameter.nameAsSafeName,
                             initializer = buildFunctionCall {
-                                source = fakeSource
+                                source = rangeSource ?: fakeSource
                                 calleeReference = buildSimpleNamedReference {
-                                    source = fakeSource
+                                    source = rangeSource
                                     name = OperatorNameConventions.NEXT
                                 }
-                                explicitReceiver = generateResolvedAccessExpression(fakeSource, iteratorVal)
+                                explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)
                             },
                             typeRef = ktParameter.typeReference.toFirOrImplicitType(),
                         )

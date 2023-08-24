@@ -477,13 +477,13 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
             symbol.callableId.isInvoke() ->
                 IrStatementOrigin.INVOKE
 
-            source?.elementType == KtNodeTypes.FOR && symbol.callableId.isIteratorNext() ->
+            source?.kind == KtFakeSourceElementKind.DesugaredForLoop && symbol.callableId.isIteratorNext() ->
                 IrStatementOrigin.FOR_LOOP_NEXT
 
-            source?.elementType == KtNodeTypes.FOR && symbol.callableId.isIteratorHasNext() ->
+            source?.kind == KtFakeSourceElementKind.DesugaredForLoop && symbol.callableId.isIteratorHasNext() ->
                 IrStatementOrigin.FOR_LOOP_HAS_NEXT
 
-            source?.elementType == KtNodeTypes.FOR && symbol.callableId.isIterator() ->
+            source?.kind == KtFakeSourceElementKind.DesugaredForLoop && symbol.callableId.isIterator() ->
                 IrStatementOrigin.FOR_LOOP_ITERATOR
 
             source?.elementType == KtNodeTypes.OPERATION_REFERENCE ->

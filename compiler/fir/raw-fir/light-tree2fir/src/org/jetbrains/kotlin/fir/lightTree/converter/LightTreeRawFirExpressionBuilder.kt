@@ -1123,18 +1123,19 @@ class LightTreeRawFirExpressionBuilder(
         val calculatedRangeExpression =
             rangeExpression ?: buildErrorExpression(null, ConeSyntaxDiagnostic("No range in for loop"))
         val fakeSource = forLoop.toFirSourceElement(KtFakeSourceElementKind.DesugaredForLoop)
+        val rangeSource = calculatedRangeExpression.source?.fakeElement(KtFakeSourceElementKind.DesugaredForLoop)
         val target: FirLoopTarget
         // NB: FirForLoopChecker relies on this block existence and structure
         return buildBlock {
             source = fakeSource
             val iteratorVal = generateTemporaryVariable(
                 baseModuleData,
-                calculatedRangeExpression.source?.fakeElement(KtFakeSourceElementKind.DesugaredForLoop),
+                rangeSource,
                 SpecialNames.ITERATOR,
                 buildFunctionCall {
-                    source = fakeSource
+                    source = rangeSource
                     calleeReference = buildSimpleNamedReference {
-                        source = fakeSource
+                        source = rangeSource ?: fakeSource
                         name = OperatorNameConventions.ITERATOR
                     }
                     explicitReceiver = calculatedRangeExpression
@@ -1144,12 +1145,12 @@ class LightTreeRawFirExpressionBuilder(
             statements += FirWhileLoopBuilder().apply {
                 source = fakeSource
                 condition = buildFunctionCall {
-                    source = fakeSource
+                    source = rangeSource
                     calleeReference = buildSimpleNamedReference {
-                        source = fakeSource
+                        source = rangeSource ?: fakeSource
                         name = OperatorNameConventions.HAS_NEXT
                     }
-                    explicitReceiver = generateResolvedAccessExpression(fakeSource, iteratorVal)
+                    explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)
                 }
                 // break/continue in the for loop condition will refer to an outer loop if any.
                 // So, prepare the loop target after building the condition.
@@ -1164,12 +1165,12 @@ class LightTreeRawFirExpressionBuilder(
                         valueParameter.source,
                         if (multiDeclaration != null) SpecialNames.DESTRUCT else valueParameter.name,
                         buildFunctionCall {
-                            source = fakeSource
+                            source = rangeSource
                             calleeReference = buildSimpleNamedReference {
-                                source = fakeSource
+                                source = rangeSource ?: fakeSource
                                 name = OperatorNameConventions.NEXT
                             }
-                            explicitReceiver = generateResolvedAccessExpression(fakeSource, iteratorVal)
+                            explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)
                         },
                         valueParameter.returnTypeRef
                     )
