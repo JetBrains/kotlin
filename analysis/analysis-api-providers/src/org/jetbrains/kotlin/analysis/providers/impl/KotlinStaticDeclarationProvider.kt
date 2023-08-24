@@ -19,7 +19,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.FileContentImpl
-import com.intellij.util.io.URLUtil
+import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProvider
 import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
@@ -137,24 +137,9 @@ public class KotlinStaticDeclarationProviderFactory(
     private val createdFakeKtFiles = mutableListOf<KtFile>()
 
     private fun loadBuiltIns(): Collection<KotlinFileStubImpl> {
-        val classLoader = this::class.java.classLoader
-        return buildList {
-            StandardClassIds.builtInsPackages.forEach { builtInPackageFqName ->
-                val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(builtInPackageFqName)
-                classLoader.getResource(resourcePath)?.let { resourceUrl ->
-                    // "file:///path/to/stdlib.jar!/builtin/package/.kotlin_builtins
-                    //   -> ("path/to/stdlib.jar", "builtin/package/.kotlin_builtins")
-                    URLUtil.splitJarUrl(resourceUrl.path)?.let {
-                        val jarPath = it.first
-                        val builtInFile = it.second
-                        val pathToQuery = jarPath + URLUtil.JAR_SEPARATOR + builtInFile
-                        jarFileSystem.findFileByPath(pathToQuery)?.let { vf ->
-                            val fileContent = FileContentImpl.createByFile(vf, project)
-                            createKtFileStub(psiManager, builtInDecompiler, fileContent)?.let { file -> add(file) }
-                        }
-                    }
-                }
-            }
+        return BuiltInsVirtualFileProvider.getInstance().getBuiltInVirtualFiles().mapNotNull { virtualFile ->
+            val fileContent = FileContentImpl.createByFile(virtualFile, project)
+            createKtFileStub(psiManager, builtInDecompiler, fileContent)
         }
     }
 

@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":compiler:psi"))
     implementation(project(":analysis:analysis-api-impl-base"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    implementation(project(":analysis:decompiled:decompiler-to-psi"))
     api(project(":compiler:cli-base"))
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-impl-base"))

@@ -20,6 +20,7 @@ import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.impl.smartPointers.PsiClassReferenceTypePointerFactory
@@ -32,6 +33,7 @@ import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.analysis.api.impl.base.java.source.JavaElementSourceWithSmartPointerFactory
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
+import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.DummyFileAttributeService
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
@@ -67,7 +69,7 @@ object StandaloneProjectFactory {
         applicationDisposable: Disposable,
         unitTestMode: Boolean = false,
         compilerConfiguration: CompilerConfiguration = CompilerConfiguration(),
-        classLoader: ClassLoader = MockProject::class.java.classLoader
+        classLoader: ClassLoader = MockProject::class.java.classLoader,
     ): KotlinCoreProjectEnvironment {
         val applicationEnvironment = if (unitTestMode)
             KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(applicationDisposable, compilerConfiguration)
@@ -76,7 +78,7 @@ object StandaloneProjectFactory {
 
         registerApplicationExtensionPoints(applicationEnvironment, applicationDisposable)
 
-        registerApplicationServices(applicationEnvironment.application)
+        registerApplicationServices(applicationEnvironment)
 
         return object : KotlinCoreProjectEnvironment(projectDisposable, applicationEnvironment) {
             init {
@@ -96,7 +98,8 @@ object StandaloneProjectFactory {
         }
     }
 
-    private fun registerApplicationServices(application: MockApplication) {
+    private fun registerApplicationServices(applicationEnvironment: KotlinCoreApplicationEnvironment) {
+        val application = applicationEnvironment.application
         if (application.getServiceIfCreated(KotlinFakeClsStubsCache::class.java) != null) {
             // application services already registered by som other threads, tests
             return
@@ -109,6 +112,10 @@ object StandaloneProjectFactory {
             application.apply {
                 registerService(KotlinFakeClsStubsCache::class.java, KotlinFakeClsStubsCache::class.java)
                 registerService(ClsKotlinBinaryClassCache::class.java)
+                registerService(
+                    BuiltInsVirtualFileProvider::class.java,
+                    BuiltInsVirtualFileProviderImp(applicationEnvironment.jarFileSystem as CoreJarFileSystem)
+                )
                 registerService(FileAttributeService::class.java, DummyFileAttributeService::class.java)
             }
         }
