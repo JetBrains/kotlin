@@ -31,11 +31,11 @@ dependencies {
     for (dependency in compilerModules) {
         embedded(project(dependency)) { isTransitive = false }
     }
-    embedded(intellijUtilRt()) { isTransitive = false }
-    embedded(intellijPlatformUtil()) { isTransitive = false }
-    embedded(intellijPlatformUtilBase()) { isTransitive = false }
-    embedded(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil")) { isTransitive = false }
-    embedded(jpsModelImpl()) { isTransitive = false }
+//    embedded(intellijUtilRt()) { isTransitive = false }
+//    embedded(intellijPlatformUtil()) { isTransitive = false }
+//    embedded(intellijPlatformUtilBase()) { isTransitive = false }
+//    embedded(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil")) { isTransitive = false }
+//    embedded(jpsModelImpl()) { isTransitive = false }
     embedded(protobufLite()) { isTransitive = false } // for kotlinx-benchmark
     embedded(commonDependency("org.jetbrains.intellij.deps:trove4j")) { isTransitive = false } // for k/js task
 }
