@@ -52,7 +52,7 @@ class IrDispatchPoint(val target: SuspendState) : IrExpression() {
             target.entryBlock.type = value
         }
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) = visitor.visitExpression(this, data)
+    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D) = visitor.visitExpression(this, data)
 }
 
 class DispatchPointTransformer(val action: (SuspendState) -> IrExpression) : IrElementTransformerVoid() {

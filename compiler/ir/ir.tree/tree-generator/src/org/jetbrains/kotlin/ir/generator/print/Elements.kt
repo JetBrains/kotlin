@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.elementTransformerType
 import org.jetbrains.kotlin.ir.generator.elementVisitorType
 import org.jetbrains.kotlin.ir.generator.model.*
-import org.jetbrains.kotlin.ir.generator.util.TypeKind
-import org.jetbrains.kotlin.ir.generator.util.TypeRefWithNullability
-import org.jetbrains.kotlin.ir.generator.util.tryParameterizedBy
+import org.jetbrains.kotlin.ir.generator.util.*
 import java.io.File
 
 fun printElements(generationPath: File, model: Model) = sequence {
@@ -86,7 +84,12 @@ fun printElements(generationPath: File, model: Model) = sequence {
                     val d = TypeVariableName("D")
                     addTypeVariable(r)
                     addTypeVariable(d)
-                    val visitorParam = ParameterSpec.builder("visitor", elementVisitorType.toPoet().tryParameterizedBy(r, d))
+                    val paramType: ClassRef<PositionTypeParameterRef> = ClassRef(
+                        elementVisitorType.kind,
+                        elementVisitorType.packageName,
+                        elementVisitorType.simpleName + "Shallow"
+                    )
+                    val visitorParam = ParameterSpec.builder("visitor", paramType.toPoet().tryParameterizedBy(r, d))
                         .build()
                         .also(::addParameter)
                     val dataParam = ParameterSpec.builder("data", d)
@@ -117,7 +120,12 @@ fun printElements(generationPath: File, model: Model) = sequence {
                     addModifiers(if (isRootElement) KModifier.ABSTRACT else KModifier.OVERRIDE)
                     val d = TypeVariableName("D")
                     addTypeVariable(d)
-                    val transformerParam = ParameterSpec.builder("transformer", elementTransformerType.toPoet().tryParameterizedBy(d))
+                    val paramType: ClassRef<PositionTypeParameterRef> = ClassRef(
+                        elementTransformerType.kind,
+                        elementTransformerType.packageName,
+                        elementTransformerType.simpleName + "Shallow"
+                    )
+                    val transformerParam = ParameterSpec.builder("transformer", paramType.toPoet().tryParameterizedBy(d))
                         .build()
                         .also(::addParameter)
                     val dataParam = ParameterSpec.builder("data", d)
@@ -149,8 +157,13 @@ fun printElements(generationPath: File, model: Model) = sequence {
                     val d = TypeVariableName("D")
                     addTypeVariable(d)
 
+                    val paramType: ClassRef<PositionTypeParameterRef> = ClassRef(
+                        elementVisitorType.kind,
+                        elementVisitorType.packageName,
+                        elementVisitorType.simpleName + "Shallow"
+                    )
                     val visitorParam = ParameterSpec
-                        .builder("visitor", elementVisitorType.toPoet().tryParameterizedBy(UNIT, d)).build()
+                        .builder("visitor", paramType.toPoet().tryParameterizedBy(UNIT, d)).build()
                         .also(::addParameter)
                     val dataParam = ParameterSpec
                         .builder("data", d).build()
@@ -196,8 +209,12 @@ fun printElements(generationPath: File, model: Model) = sequence {
                     addModifiers(if (isRootElement) KModifier.ABSTRACT else KModifier.OVERRIDE)
                     val d = TypeVariableName("D")
                     addTypeVariable(d)
+                    val paramType: ClassRef<PositionTypeParameterRef> = ClassRef(
+                        elementTransformerType.kind,
+                        elementTransformerType.packageName, elementTransformerType.simpleName + "Shallow"
+                    )
                     val transformerParam =
-                        ParameterSpec.builder("transformer", elementTransformerType.toPoet().tryParameterizedBy(d)).build()
+                        ParameterSpec.builder("transformer", paramType.toPoet().tryParameterizedBy(d)).build()
                             .also(::addParameter)
                     val dataParam = ParameterSpec.builder("data", d).build().also(::addParameter)
 

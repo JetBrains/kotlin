@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.types.isNumber
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoidShallow
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 internal val replaceNumberToCharCallSitesPhase = makeIrFilePhase(
@@ -31,7 +32,7 @@ internal val replaceNumberToCharCallSitesPhase = makeIrFilePhase(
 // This allows us to migrate usages of deprecated `Number.toChar` less painfully in order to remove it in the future (KT-56822).
 // Also, this allows to invoke `toChar` on `Number` subclasses declared in Java, which do not have it declared, even though the
 // compiler sees it there because `java.lang.Number` is mapped to `kotlin.Number`.
-class ReplaceNumberToCharCallSitesLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoid() {
+class ReplaceNumberToCharCallSitesLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoidShallow() {
     override fun lower(irFile: IrFile) {
         irFile.acceptChildren(this, null)
     }
