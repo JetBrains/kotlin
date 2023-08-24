@@ -73,7 +73,8 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
     fun findBaseFunctionWithDefaultArgumentsFor(
         declaration: IrFunction,
         skipInlineMethods: Boolean,
-        skipExternalMethods: Boolean
+        skipExternalMethods: Boolean,
+        ignoreSelf: Boolean,
     ): IrFunction? {
         val visited = mutableSetOf<IrFunction>()
 
@@ -83,6 +84,8 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
             if (isInline && skipInlineMethods) return null
             if (skipExternalMethods && isExternalOrInheritedFromExternal()) return null
 
+            if ((!ignoreSelf || this != declaration) && valueParameters.any { it.defaultValue != null }) return this
+
             if (this is IrSimpleFunction) {
                 overriddenSymbols.forEach { overridden ->
                     val base = overridden.owner
@@ -90,7 +93,6 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
                 }
             }
 
-            if (valueParameters.any { it.defaultValue != null }) return this
 
             return null
         }
@@ -113,13 +115,11 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
         context.mapping.defaultArgumentsDispatchFunction[declaration]?.let { return it }
         if (declaration is IrSimpleFunction) {
             // If this is an override of a function with default arguments, produce a fake override of a default stub.
-            if (declaration.overriddenSymbols.any {
-                    findBaseFunctionWithDefaultArgumentsFor(
-                        it.owner,
+            if (findBaseFunctionWithDefaultArgumentsFor(
+                        declaration,
                         skipInlineMethods,
-                        skipExternalMethods
-                    ) != null
-                })
+                        skipExternalMethods,
+                        true) != null)
                 return generateDefaultsFunctionImpl(
                     declaration,
                     IrDeclarationOrigin.FAKE_OVERRIDE,

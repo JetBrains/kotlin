@@ -381,7 +381,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         // in an interface does not leave an abstract method after being moved to DefaultImpls (see InterfaceLowering).
         // Calling the fake override on an implementation of that interface would then result in a call to a method
         // that does not actually exist as DefaultImpls is not part of the inheritance hierarchy.
-        val baseFunction = factory.findBaseFunctionWithDefaultArgumentsFor(declaration, skipInline, skipExternalMethods)
+        val baseFunction = factory.findBaseFunctionWithDefaultArgumentsFor(declaration, skipInline, skipExternalMethods, false)
         val stubFunction = baseFunction?.let {
             factory.generateDefaultsFunction(
                 it,
