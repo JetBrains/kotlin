@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.jetbrains.org.objectweb.asm.tree.analysis.*;
 
-import java.util.ArrayList;
-
 public abstract class MethodTransformer {
     @NotNull
     private static <V extends Value> Frame<V>[] runAnalyzer(
@@ -41,7 +39,7 @@ public abstract class MethodTransformer {
     }
 
     @NotNull
-    public static <V extends Value> ArrayList<Frame<V>> analyze(
+    public static <V extends Value> Frame<V>[] analyze(
             @NotNull String internalClassName,
             @NotNull MethodNode node,
             @NotNull Interpreter<V> interpreter

@@ -85,7 +85,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
     private fun interpretPopInstructionsForBoxedValues(
         interpreter: RedundantBoxingInterpreter,
         node: MethodNode,
-        frames: ArrayList<out Frame<BasicValue>?>
+        frames: Array<out Frame<BasicValue>?>
     ) {
         for (i in frames.indices) {
             val insn = node.instructions[i]
@@ -107,7 +107,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
     private fun removeValuesClashingWithVariables(
         values: RedundantBoxedValuesCollection,
         node: MethodNode,
-        frames: ArrayList<Frame<BasicValue>?>
+        frames: Array<Frame<BasicValue>?>
     ) {
         while (removeValuesClashingWithVariablesPass(values, node, frames)) {
             // do nothing
@@ -117,7 +117,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
     private fun removeValuesClashingWithVariablesPass(
         values: RedundantBoxedValuesCollection,
         node: MethodNode,
-        frames: ArrayList<out Frame<BasicValue>?>
+        frames: Array<out Frame<BasicValue>?>
     ): Boolean {
         var needToRepeat = false
 
@@ -166,7 +166,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
         }
 
     private fun adaptLocalSingleVariableTableForBoxedValuesAndPrepareMultiVariables(
-        node: MethodNode, frames: ArrayList<Frame<BasicValue>?>
+        node: MethodNode, frames: Array<Frame<BasicValue>?>
     ): Map<LocalVariableNode, List<LocalVariableNode>> {
         val localVariablesReplacement = mutableMapOf<LocalVariableNode, List<LocalVariableNode>>()
         for (localVariableNode in node.localVariables) {
@@ -202,7 +202,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
     private fun getValuesStoredOrLoadedToVariable(
         localVariableNode: LocalVariableNode,
         node: MethodNode,
-        frames: ArrayList<out Frame<BasicValue>?>
+        frames: Array<out Frame<BasicValue>?>
     ): List<BasicValue> {
         val values = ArrayList<BasicValue>()
         val insnList = node.instructions
