@@ -106,8 +106,15 @@ public final class Exception1 : kotlin.Throwable {
     public constructor Exception1()
     public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
     public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+    @get:kotlin.native.internal.ExportForCppRuntime(name = "Kotlin_Throwable_getStackTrace") invisible_fake final override /*1*/ /*fake_override*/ val stackTrace: kotlin.native.internal.NativePtrArray
+    invisible_fake final override /*1*/ /*fake_override*/ val stackTraceStrings: kotlin.Array<kotlin.String>
+    invisible_fake final override /*1*/ /*fake_override*/ var suppressedExceptionsList: kotlin.collections.MutableList<kotlin.Throwable>?
+    invisible_fake final override /*1*/ /*fake_override*/ fun dumpStackTrace(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.experimental.ExperimentalNativeApi public final override /*1*/ /*fake_override*/ fun getStackTrace(): kotlin.Array<kotlin.String>
+    invisible_fake final override /*1*/ /*fake_override*/ fun getStackTraceAddressesInternal(): kotlin.collections.List<kotlin.Long>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -115,8 +122,15 @@ public final class Exception2 : kotlin.Throwable {
     public constructor Exception2()
     public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
     public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+    @get:kotlin.native.internal.ExportForCppRuntime(name = "Kotlin_Throwable_getStackTrace") invisible_fake final override /*1*/ /*fake_override*/ val stackTrace: kotlin.native.internal.NativePtrArray
+    invisible_fake final override /*1*/ /*fake_override*/ val stackTraceStrings: kotlin.Array<kotlin.String>
+    invisible_fake final override /*1*/ /*fake_override*/ var suppressedExceptionsList: kotlin.collections.MutableList<kotlin.Throwable>?
+    invisible_fake final override /*1*/ /*fake_override*/ fun dumpStackTrace(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.experimental.ExperimentalNativeApi public final override /*1*/ /*fake_override*/ fun getStackTrace(): kotlin.Array<kotlin.String>
+    invisible_fake final override /*1*/ /*fake_override*/ fun getStackTraceAddressesInternal(): kotlin.collections.List<kotlin.Long>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -124,8 +138,15 @@ public final class Exception3 : kotlin.Throwable {
     public constructor Exception3()
     public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
     public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+    @get:kotlin.native.internal.ExportForCppRuntime(name = "Kotlin_Throwable_getStackTrace") invisible_fake final override /*1*/ /*fake_override*/ val stackTrace: kotlin.native.internal.NativePtrArray
+    invisible_fake final override /*1*/ /*fake_override*/ val stackTraceStrings: kotlin.Array<kotlin.String>
+    invisible_fake final override /*1*/ /*fake_override*/ var suppressedExceptionsList: kotlin.collections.MutableList<kotlin.Throwable>?
+    invisible_fake final override /*1*/ /*fake_override*/ fun dumpStackTrace(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.experimental.ExperimentalNativeApi public final override /*1*/ /*fake_override*/ fun getStackTrace(): kotlin.Array<kotlin.String>
+    invisible_fake final override /*1*/ /*fake_override*/ fun getStackTraceAddressesInternal(): kotlin.collections.List<kotlin.Long>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -441,8 +462,15 @@ package kotlin {
         public constructor Exception()
         public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
         public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+        @get:kotlin.native.internal.ExportForCppRuntime(name = "Kotlin_Throwable_getStackTrace") invisible_fake final override /*1*/ /*fake_override*/ val stackTrace: kotlin.native.internal.NativePtrArray
+        invisible_fake final override /*1*/ /*fake_override*/ val stackTraceStrings: kotlin.Array<kotlin.String>
+        invisible_fake final override /*1*/ /*fake_override*/ var suppressedExceptionsList: kotlin.collections.MutableList<kotlin.Throwable>?
+        invisible_fake final override /*1*/ /*fake_override*/ fun dumpStackTrace(): kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @kotlin.experimental.ExperimentalNativeApi public final override /*1*/ /*fake_override*/ fun getStackTrace(): kotlin.Array<kotlin.String>
+        invisible_fake final override /*1*/ /*fake_override*/ fun getStackTraceAddressesInternal(): kotlin.collections.List<kotlin.Long>
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
@@ -450,8 +478,15 @@ package kotlin {
         public constructor IllegalStateException()
         public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
         public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+        @get:kotlin.native.internal.ExportForCppRuntime(name = "Kotlin_Throwable_getStackTrace") invisible_fake final override /*1*/ /*fake_override*/ val stackTrace: kotlin.native.internal.NativePtrArray
+        invisible_fake final override /*1*/ /*fake_override*/ val stackTraceStrings: kotlin.Array<kotlin.String>
+        invisible_fake final override /*1*/ /*fake_override*/ var suppressedExceptionsList: kotlin.collections.MutableList<kotlin.Throwable>?
+        invisible_fake final override /*1*/ /*fake_override*/ fun dumpStackTrace(): kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @kotlin.experimental.ExperimentalNativeApi public final override /*1*/ /*fake_override*/ fun getStackTrace(): kotlin.Array<kotlin.String>
+        invisible_fake final override /*1*/ /*fake_override*/ fun getStackTraceAddressesInternal(): kotlin.collections.List<kotlin.Long>
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
@@ -459,8 +494,15 @@ package kotlin {
         public constructor RuntimeException()
         public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
         public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+        @get:kotlin.native.internal.ExportForCppRuntime(name = "Kotlin_Throwable_getStackTrace") invisible_fake final override /*1*/ /*fake_override*/ val stackTrace: kotlin.native.internal.NativePtrArray
+        invisible_fake final override /*1*/ /*fake_override*/ val stackTraceStrings: kotlin.Array<kotlin.String>
+        invisible_fake final override /*1*/ /*fake_override*/ var suppressedExceptionsList: kotlin.collections.MutableList<kotlin.Throwable>?
+        invisible_fake final override /*1*/ /*fake_override*/ fun dumpStackTrace(): kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @kotlin.experimental.ExperimentalNativeApi public final override /*1*/ /*fake_override*/ fun getStackTrace(): kotlin.Array<kotlin.String>
+        invisible_fake final override /*1*/ /*fake_override*/ fun getStackTraceAddressesInternal(): kotlin.collections.List<kotlin.Long>
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
@@ -480,8 +522,15 @@ package kotlin {
                 public constructor CancellationException()
                 public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
                 public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+                @get:kotlin.native.internal.ExportForCppRuntime(name = "Kotlin_Throwable_getStackTrace") invisible_fake final override /*1*/ /*fake_override*/ val stackTrace: kotlin.native.internal.NativePtrArray
+                invisible_fake final override /*1*/ /*fake_override*/ val stackTraceStrings: kotlin.Array<kotlin.String>
+                invisible_fake final override /*1*/ /*fake_override*/ var suppressedExceptionsList: kotlin.collections.MutableList<kotlin.Throwable>?
+                invisible_fake final override /*1*/ /*fake_override*/ fun dumpStackTrace(): kotlin.String
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                @kotlin.experimental.ExperimentalNativeApi public final override /*1*/ /*fake_override*/ fun getStackTrace(): kotlin.Array<kotlin.String>
+                invisible_fake final override /*1*/ /*fake_override*/ fun getStackTraceAddressesInternal(): kotlin.collections.List<kotlin.Long>
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
         }
@@ -491,3 +540,4 @@ package kotlin {
         @kotlin.Deprecated(message = "") public typealias Throws = kotlin.Throws
     }
 }
+
