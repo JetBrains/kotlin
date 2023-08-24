@@ -117,7 +117,7 @@ public final class Name implements Comparable<Name> {
         Name name1 = (Name) o;
 
         if (special != name1.special) return false;
-        if (name != name1.name) return false; // strings are interned
+        if (!name.equals(name1.name)) return false;
 
         return true;
     }
