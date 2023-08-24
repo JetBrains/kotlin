@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.interpreter.transformer
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
@@ -29,15 +28,14 @@ internal class IrConstTypeAnnotationTransformer(
     onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit,
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     suppressExceptions: Boolean,
-) : IrTypeTransformer<IrConstTransformer.Data>() {
-    private val constTransformer = object : IrConstAnnotationTransformer(
-        interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-    ) {}
+) : IrConstAnnotationTransformer(
+    interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+), IrTypeTransformer<IrConstTransformer.Data> {
 
-    override fun <Type : IrType?> transformType(container: IrElement, type: Type, data: IrConstTransformer.Data): Type {
+    override fun <Type : IrType?> transformType(container: IrElement, type: Type, data: Data): Type {
         if (type == null) return type
 
-        constTransformer.transformAnnotations(type)
+        transformAnnotations(type)
         if (type is IrSimpleType) {
             type.arguments.mapNotNull { it.typeOrNull }.forEach { transformType(container, it, data) }
         }
