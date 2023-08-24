@@ -121,7 +121,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     // Fails on K2, see KT-60452
-    fun testScriptWithoutParams() = expectTestToFailOnK2 {
+    fun testScriptWithoutParams() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("without_params.kts", ScriptWithoutParams::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
