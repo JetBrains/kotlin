@@ -28,9 +28,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.execution.KotlinAggregateExecutionSource
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
@@ -93,29 +90,28 @@ private fun KotlinTarget.configureKotlinTestDependency(
         if (platformType in jvmPlatforms) {
             // Checking dependencies which were added via dependsOn(KotlinSourceSet) call
             // Compilation has own configurations for these that are different from KotlinSourceSet configurations
-
-            val configurationsToAddTestDependencyTo = linkedSetOf<Configuration>()
-
-            configurationsToAddTestDependencyTo.addAll(
-                KotlinDependencyScope.values()
-                    .map { configurations.sourceSetDependencyConfigurationByScope(compilation, it) }
-            )
-
-            configurationsToAddTestDependencyTo.addAll(
-                compilation.kotlinSourceSets.flatMap { sourceSet ->
-                    KotlinDependencyScope.values().map {
-                        configurations.sourceSetDependencyConfigurationByScope(sourceSet, it)
-                    }
+            KotlinDependencyScope.values()
+                .map { configurations.sourceSetDependencyConfigurationByScope(compilation, it) }
+                .forEach {
+                    it.maybeAddTestDependencyCapability(
+                        compilation,
+                        coreLibrariesVersion,
+                        dependencyHandler,
+                        tasks
+                    )
                 }
-            )
 
-            configurationsToAddTestDependencyTo.forEach {
-                it.maybeAddTestDependencyCapability(
-                    compilation,
-                    coreLibrariesVersion,
-                    dependencyHandler,
-                    tasks
-                )
+            compilation.kotlinSourceSets.forEach { sourceSet ->
+                KotlinDependencyScope.values()
+                    .map { configurations.sourceSetDependencyConfigurationByScope(sourceSet, it) }
+                    .forEach {
+                        it.maybeAddTestDependencyCapability(
+                            compilation,
+                            coreLibrariesVersion,
+                            dependencyHandler,
+                            tasks
+                        )
+                    }
             }
         }
     }
@@ -147,10 +143,6 @@ private fun Configuration.maybeAddTestDependencyCapability(
                                 }
                             }
                     }
-                )
-            } else {
-                compilation.project.reportDiagnostic(
-                    KotlinToolingDiagnostics.KotlinTestFrameworkInferenceFailed(name)
                 )
             }
         }
