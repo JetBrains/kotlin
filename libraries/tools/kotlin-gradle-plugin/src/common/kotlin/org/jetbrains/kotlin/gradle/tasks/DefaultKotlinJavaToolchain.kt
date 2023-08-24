@@ -10,6 +10,8 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
@@ -32,6 +34,8 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     projectLayout: ProjectLayout,
     jvmCompilerOptions: () -> KotlinJvmCompilerOptions?
 ) : KotlinJavaToolchain {
+
+    private val logger = Logging.getLogger("KotlinJavaToolchain")
 
     @get:Internal
     internal val gradleJvm: Provider<Jvm> = objects
@@ -117,18 +121,21 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     final override val jdk: KotlinJavaToolchain.JdkSetter = DefaultJdkSetter(
         providedJvm,
         objects,
+        logger,
         jvmCompilerOptions
     )
 
     final override val toolchain: KotlinJavaToolchain.JavaToolchainSetter =
         DefaultJavaToolchainSetter(
             providedJvm,
+            logger,
             jvmCompilerOptions
         )
 
     private class DefaultJdkSetter(
         private val providedJvm: Property<Jvm>,
         private val objects: ObjectFactory,
+        private val logger: Logger,
         private val jvmCompilerOptions: () -> KotlinJvmCompilerOptions?
     ) : KotlinJavaToolchain.JdkSetter {
 
@@ -150,13 +157,14 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
             )
 
             jvmCompilerOptions()?.let {
-                wireJvmTargetToJvm(it, providedJvm)
+                wireJvmTargetToJvm(it, providedJvm, logger)
             }
         }
     }
 
     internal class DefaultJavaToolchainSetter(
         private val providedJvm: Property<Jvm>,
+        private val logger: Logger,
         private val jvmCompilerOptions: () -> KotlinJvmCompilerOptions?
     ) : KotlinJavaToolchain.JavaToolchainSetter {
 
@@ -172,7 +180,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
             providedJvm.set(javaLauncher.map(::mapToJvm))
 
             jvmCompilerOptions()?.let {
-                wireJvmTargetToJvm(it, providedJvm)
+                wireJvmTargetToJvm(it, providedJvm, logger)
             }
         }
     }
@@ -181,28 +189,52 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
 
         internal fun wireJvmTargetToJvm(
             jvmCompilerOptions: KotlinJvmCompilerOptions,
-            toolchainJvm: Provider<Jvm>
+            toolchainJvm: Provider<Jvm>,
+            logger: Logger
         ) {
             jvmCompilerOptions.jvmTarget.convention(
                 toolchainJvm.map { jvm ->
-                    // For Java 9 and Java 10 JavaVersion returns "1.9" or "1.10" accordingly
-                    // that is not accepted by Kotlin compiler
-                    val normalizedVersion = when (jvm.javaVersion) {
-                        JavaVersion.VERSION_1_9 -> "9"
-                        JavaVersion.VERSION_1_10 -> "10"
-                        else -> jvm.javaVersion.toString()
-                    }
-                    JvmTarget.fromTarget(normalizedVersion)
+                    convertJavaVersionToJvmTarget(requireNotNull(jvm.javaVersion), logger)
                 }.orElse(JvmTarget.DEFAULT)
             )
         }
 
+        private fun convertJavaVersionToJvmTarget(
+            javaVersion: JavaVersion,
+            logger: Logger
+        ): JvmTarget {
+            // For Java 9 and Java 10 JavaVersion returns "1.9" or "1.10" accordingly
+            // that is not accepted by the Kotlin compiler
+            val normalizedVersion = when (javaVersion) {
+                JavaVersion.VERSION_1_9 -> "9"
+                JavaVersion.VERSION_1_10 -> "10"
+                else -> javaVersion.toString()
+            }
+
+            // Update to the latest JDK LTS once it is released and Kotlin has JVM target with this version
+            return if (javaVersion > JavaVersion.VERSION_17) {
+                try {
+                    JvmTarget.fromTarget(normalizedVersion)
+                } catch (_: IllegalArgumentException) {
+                    val fallbackTarget = JvmTarget.values().last()
+                    logger.warn(
+                        "Kotlin does not yet support $normalizedVersion JDK target, falling back to Kotlin $fallbackTarget JVM target"
+                    )
+                    fallbackTarget
+                }
+            } else {
+                JvmTarget.fromTarget(normalizedVersion)
+            }
+        }
+
         private fun wireJvmTargetToToolchain(
             jvmCompilerOptions: KotlinJvmCompilerOptions,
-            javaLauncher: Provider<JavaLauncher>
+            javaLauncher: Provider<JavaLauncher>,
+            logger: Logger
         ): Unit = wireJvmTargetToJvm(
             jvmCompilerOptions,
-            javaLauncher.map(::mapToJvm)
+            javaLauncher.map(::mapToJvm),
+            logger
         )
 
         internal fun wireJvmTargetToToolchain(
@@ -216,7 +248,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                     .getByType(JavaPluginExtension::class.java)
                     .toolchain
                 val javaLauncher = toolchainService.launcherFor(toolchainSpec)
-                wireJvmTargetToToolchain(compilerOptions, javaLauncher)
+                wireJvmTargetToToolchain(compilerOptions, javaLauncher, project.logger)
             }
         }
 
