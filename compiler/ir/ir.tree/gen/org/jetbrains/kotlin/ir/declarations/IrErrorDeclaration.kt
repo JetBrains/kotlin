@@ -9,7 +9,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
 
 /**
  * A leaf IR tree element.
@@ -20,6 +20,6 @@ abstract class IrErrorDeclaration : IrDeclarationBase() {
     override val symbol: IrSymbol
         get() = error("Should never be called")
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D): R =
         visitor.visitErrorDeclaration(this, data)
 }

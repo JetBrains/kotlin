@@ -897,7 +897,7 @@ class FunctionInlining(
                 symbol.owner.type = value
             }
 
-        override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) =
+        override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D) =
             visitor.visitGetValue(this, data)
 
         fun withLocation(startOffset: Int, endOffset: Int) =

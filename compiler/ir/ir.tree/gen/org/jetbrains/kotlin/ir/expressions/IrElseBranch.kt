@@ -8,8 +8,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerShallow
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
 
 /**
  * A leaf IR tree element.
@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.elseBranch]
  */
 abstract class IrElseBranch : IrBranch() {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D): R =
         visitor.visitElseBranch(this, data)
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElseBranch
-            = accept(transformer, data) as IrElseBranch
+    override fun <D> transform(transformer: IrElementTransformerShallow<D>, data: D):
+            IrElseBranch = accept(transformer, data) as IrElseBranch
 }

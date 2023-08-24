@@ -8,7 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
 
 /**
  * A non-leaf IR tree element.
@@ -18,6 +18,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 abstract class IrErrorExpression : IrExpression() {
     abstract var description: String
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D): R =
         visitor.visitErrorExpression(this, data)
 }

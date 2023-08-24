@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerShallow
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
 
 /**
  * A leaf IR tree element.
@@ -51,10 +51,10 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
 
     abstract var constructor: IrConstructor?
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D): R =
         visitor.visitScript(this, data)
 
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrElementVisitorShallow<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }
         thisReceiver?.accept(visitor, data)
         explicitCallParameters.forEach { it.accept(visitor, data) }
@@ -63,7 +63,8 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
         earlierScriptsParameter?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrElementTransformerShallow<D>,
+            data: D) {
         statements.transformInPlace(transformer, data)
         thisReceiver = thisReceiver?.transform(transformer, data)
         explicitCallParameters = explicitCallParameters.transformIfNeeded(transformer, data)
