@@ -118,9 +118,7 @@ class CoroutineTransformerMethodVisitor(
 
         UninitializedStoresProcessor(methodNode).run()
 
-        val livenessFrames = analyzeLiveness(methodNode)
-
-        val spilledToVariableMapping = spillVariables(suspensionPoints, methodNode, livenessFrames)
+        val spilledToVariableMapping = spillVariables(suspensionPoints, methodNode)
 
         val suspendMarkerVarIndex = methodNode.maxLocals++
 
@@ -209,7 +207,7 @@ class CoroutineTransformerMethodVisitor(
         methodNode.removeEmptyCatchBlocks()
 
         if (shouldOptimiseUnusedVariables) {
-            updateLvtAccordingToLiveness(methodNode, isForNamedFunction, stateLabels, livenessFrames)
+            updateLvtAccordingToLiveness(methodNode, isForNamedFunction, stateLabels)
         }
 
         writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
@@ -610,11 +608,7 @@ class CoroutineTransformerMethodVisitor(
         }
     }
 
-    private fun spillVariables(
-        suspensionPoints: List<SuspensionPoint>,
-        methodNode: MethodNode,
-        livenessFrames: Map<AbstractInsnNode, VariableLivenessFrame>
-    ): List<List<SpilledVariableAndField>> {
+    private fun spillVariables(suspensionPoints: List<SuspensionPoint>, methodNode: MethodNode): List<List<SpilledVariableAndField>> {
         val instructions = methodNode.instructions
         val frames = performSpilledVariableFieldTypesAnalysis(methodNode, containingClassInternalName)
 
@@ -628,6 +622,8 @@ class CoroutineTransformerMethodVisitor(
             }
             maxVarsCountByType[type] = count
         }
+
+        val livenessFrames = analyzeLiveness(methodNode)
 
         // References shall be cleaned up after unspill (during spill in next suspension point) to prevent memory leaks,
         val referencesToSpillBySuspensionPointIndex = arrayListOf<List<ReferenceToSpill>>()
@@ -659,7 +655,7 @@ class CoroutineTransformerMethodVisitor(
             // While after RETURN introduction these variables become uninitialized (at the same time they can't be used further).
             // So we only spill variables that are alive at the begin of suspension point.
             // NB: it's also rather useful for sake of optimization
-            val livenessFrame = livenessFrames[suspensionCallBegin]
+            val livenessFrame = livenessFrames[suspensionCallBegin.index()]
 
             val referencesToSpill = arrayListOf<ReferenceToSpill>()
             val primitivesToSpill = arrayListOf<PrimitiveToSpill>()
@@ -673,7 +669,7 @@ class CoroutineTransformerMethodVisitor(
             for (slot in 0 until localsCount) {
                 if (slot == continuationIndex || slot == dataIndex) continue
                 val value = frame.getLocal(slot)
-                if (value.type == null || (shouldOptimiseUnusedVariables && livenessFrame?.isAlive(slot) != true)) continue
+                if (value.type == null || (shouldOptimiseUnusedVariables && !livenessFrame.isAlive(slot))) continue
 
                 if (value == StrictBasicValue.NULL_VALUE) {
                     referencesToSpill += slot to null
@@ -1239,45 +1235,9 @@ internal fun replaceFakeContinuationsWithRealOnes(methodNode: MethodNode, contin
     }
 }
 
-private fun MethodNode.nodeTextWithoutHeader(): List<String> {
-    val result = arrayListOf<String>()
-    var insideTableSwitch = false // TABLESWITCH is multiline instruction
-    val tableswitch = StringBuilder()
-    for (line in nodeText.split('\n').drop(1).dropWhile { line -> line.trim().let { it.startsWith("/") || it.startsWith("@") } }) {
-        if (line.contains("TABLESWITCH")) {
-            tableswitch.clear()
-            tableswitch.append("$line\n")
-            insideTableSwitch = true
-        } else if (insideTableSwitch) {
-            if (line.contains("default")) {
-                tableswitch.append(line)
-                result += tableswitch.toString()
-                insideTableSwitch = false
-            } else {
-                tableswitch.append("$line\n")
-            }
-        } else {
-            result += line
-        }
-    }
-    return result
-}
-
 @Suppress("unused")
-private fun MethodNode.nodeTextWithLiveness(liveness: Map<AbstractInsnNode, VariableLivenessFrame>): String {
-    val linesWithoutHeader = nodeTextWithoutHeader()
-    val livenessByIndex = instructions.map { liveness[it] }
-    val linesWithLiveness = livenessByIndex.zip(linesWithoutHeader)
-    val result = StringBuilder()
-    for (line in linesWithLiveness) {
-        result.append("${line.first}|${line.second}\n")
-    }
-    // print local variables as well
-    for (line in linesWithoutHeader.dropWhile { !it.trim().startsWith("LOCALVARIABLE") }) {
-        result.append("$line\n")
-    }
-    return result.toString()
-}
+private fun MethodNode.nodeTextWithLiveness(liveness: List<VariableLivenessFrame>): String =
+    liveness.zip(this.instructions.asSequence().toList()).joinToString("\n") { (a, b) -> "$a|${b.insnText}" }
 
 /* We do not want to spill dead variables, thus, we shrink its LVT record to region, where the variable is alive,
  * so, the variable will not be visible in debugger. User can still prolong life span of the variable by using it.
@@ -1285,12 +1245,9 @@ private fun MethodNode.nodeTextWithLiveness(liveness: Map<AbstractInsnNode, Vari
  * This means, that function parameters do not longer span the whole function, including `this`.
  * This might and will break some bytecode processors, including old versions of R8. See KT-24510.
  */
-private fun updateLvtAccordingToLiveness(
-    method: MethodNode,
-    isForNamedFunction: Boolean,
-    suspensionPoints: List<LabelNode>,
-    livenessFrames: MutableMap<AbstractInsnNode, VariableLivenessFrame>
-) {
+private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction: Boolean, suspensionPoints: List<LabelNode>) {
+    val liveness = analyzeLiveness(method)
+
     fun List<LocalVariableNode>.findRecord(insnIndex: Int, variableIndex: Int): LocalVariableNode? {
         for (variable in this) {
             if (variable.index == variableIndex &&
@@ -1301,8 +1258,8 @@ private fun updateLvtAccordingToLiveness(
         return null
     }
 
-    fun isAlive(insn: AbstractInsnNode, variableIndex: Int): Boolean =
-        livenessFrames[insn]?.isAlive(variableIndex) == true
+    fun isAlive(insnIndex: Int, variableIndex: Int): Boolean =
+        liveness[insnIndex].isAlive(variableIndex)
 
     fun nextLabel(node: AbstractInsnNode?): LabelNode? {
         var current = node
@@ -1315,8 +1272,6 @@ private fun updateLvtAccordingToLiveness(
 
     fun min(a: LabelNode, b: LabelNode): LabelNode =
         if (method.instructions.indexOf(a) < method.instructions.indexOf(b)) a else b
-
-    propagateLiveness(method, livenessFrames)
 
     val oldLvt = arrayListOf<LocalVariableNode>()
     for (record in method.localVariables) {
@@ -1332,10 +1287,10 @@ private fun updateLvtAccordingToLiveness(
         var startLabel: LabelNode? = null
         for (insnIndex in 0 until (method.instructions.size() - 1)) {
             val insn = method.instructions[insnIndex]
-            if (!isAlive(insn, variableIndex) && isAlive(insn.next, variableIndex)) {
+            if (!isAlive(insnIndex, variableIndex) && isAlive(insnIndex + 1, variableIndex)) {
                 startLabel = insn as? LabelNode ?: insn.findNextOrNull { it is LabelNode } as? LabelNode
             }
-            if (isAlive(insn, variableIndex) && !isAlive(insn.next, variableIndex)) {
+            if (isAlive(insnIndex, variableIndex) && !isAlive(insnIndex + 1, variableIndex)) {
                 // No variable in LVT -> do not add one
                 val lvtRecord = oldLvt.findRecord(insnIndex, variableIndex) ?: continue
                 if (lvtRecord.name == CONTINUATION_VARIABLE_NAME || lvtRecord.name == SUSPEND_CALL_RESULT_NAME) continue
@@ -1350,13 +1305,13 @@ private fun updateLvtAccordingToLiveness(
                 // If we can extend the previous range to where the local variable dies, we do not need a
                 // new entry, we know we cannot extend it to the lvt.endOffset, if we could we would have
                 // done so when we added it below.
-                val extended = latest?.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, livenessFrames) ?: false
+                val extended = latest?.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, liveness) ?: false
                 if (!extended) {
                     val new = LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
                     oldLvtNodeToLatestNewLvtNode[lvtRecord] = new
                     method.localVariables.add(new)
                     // See if we can extend it all the way to the old end.
-                    new.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, livenessFrames)
+                    new.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, liveness)
                 }
             }
         }
@@ -1376,46 +1331,6 @@ private fun updateLvtAccordingToLiveness(
         if (variable.name == "this" && !isForNamedFunction) {
             method.localVariables.add(variable)
             continue
-        }
-    }
-}
-
-/*
- * For inserted instructions, there is no information about liveness.
- * So, if there is no load or store instructions of particular alive at the start and alive at the end of this interval with unknown
- * liveness, the interval is not a spilling, thus, it is safe to propagate liveness if the following is true
- * the inserted interval is merely a resumeWithExceptionCheck sequence.
- *
- * We need to propagate the liveness for intervals like, which are safe, because of LINENUMBER instructions
- *  NOP
- *  ALOAD 6
- *  INVOKESTATIC kotlin/ResultKt.throwOnFailure (Ljava/lang/Object;)V
- *  ALOAD 6
- * L11
- *  LINENUMBER 9 L11
- */
-private fun propagateLiveness(method: MethodNode, livenessFrames: MutableMap<AbstractInsnNode, VariableLivenessFrame>) {
-    fun AbstractInsnNode.isResumeWithExceptionCheck(): Boolean {
-        if (opcode != Opcodes.NOP) return false
-        if (next.opcode != Opcodes.ALOAD) return false
-        if (next.next.opcode != Opcodes.INVOKESTATIC ||
-            (next.next as MethodInsnNode).let { it.owner != "kotlin/ResultKt" || it.name != "throwOnFailure" }
-        ) return false
-        if (next.next.next.opcode != Opcodes.ALOAD) return false
-        if (next.next.next.next !is LabelNode) return false
-        if (next.next.next.next.next !is LineNumberNode) return false
-        return true
-    }
-
-    for (insn in method.instructions) {
-        if (insn.isResumeWithExceptionCheck()) {
-            val liveness = livenessFrames[insn.previous] ?: continue
-            livenessFrames.put(insn, liveness)                          //  NOP
-            livenessFrames.put(insn.next, liveness)                     //  ALOAD 6
-            livenessFrames.put(insn.next.next, liveness)                //  INVOKESTATIC kotlin/ResultKt.throwOnFailure (Ljava/lang/Object;)V
-            livenessFrames.put(insn.next.next.next, liveness)           //  ALOAD 6
-            livenessFrames.put(insn.next.next.next.next, liveness)      // L11
-            livenessFrames.put(insn.next.next.next.next.next, liveness) //  LINENUMBER 9 L11
         }
     }
 }
@@ -1477,14 +1392,14 @@ private fun LocalVariableNode.extendRecordIfPossible(
     method: MethodNode,
     suspensionPoints: List<LabelNode>,
     endLabel: LabelNode,
-    liveness: Map<AbstractInsnNode, VariableLivenessFrame>
+    liveness: List<VariableLivenessFrame>
 ): Boolean {
     val nextSuspensionPointLabel = suspensionPoints.find { it in InsnSequence(end, endLabel) } ?: endLabel
 
     var current: AbstractInsnNode? = end
     var index = method.instructions.indexOf(current)
     while (current != null && current != nextSuspensionPointLabel) {
-        if (liveness[current]?.isControlFlowMerge() == true) return false
+        if (liveness[index].isControlFlowMerge()) return false
         // TODO: HACK
         // TODO: Find correct label, which is OK to be used as end label.
         if (current.opcode == Opcodes.ARETURN && nextSuspensionPointLabel != endLabel) return false
