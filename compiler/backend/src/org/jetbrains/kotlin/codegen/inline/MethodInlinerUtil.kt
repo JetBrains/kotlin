@@ -112,7 +112,7 @@ internal fun AbstractInsnNode.isAload0() = opcode == Opcodes.ALOAD && (this as V
 internal fun analyzeMethodNodeWithInterpreter(
     node: MethodNode,
     interpreter: BasicInterpreter
-): ArrayList<out Frame<BasicValue>?> {
+): Array<out Frame<BasicValue>?> {
     val analyzer = object : FastMethodAnalyzer<BasicValue>("fake", node, interpreter, pruneExceptionEdges = true) {
         override fun newFrame(nLocals: Int, nStack: Int): Frame<BasicValue> {
             return object : Frame<BasicValue>(nLocals, nStack) {

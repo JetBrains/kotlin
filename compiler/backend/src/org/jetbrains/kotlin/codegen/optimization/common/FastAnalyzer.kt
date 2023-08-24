@@ -22,13 +22,13 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
     protected val nInsns = method.instructions.size()
     protected val handlers: Array<MutableList<TryCatchBlockNode>?> = arrayOfNulls(nInsns)
 
-    private val frames: ArrayList<F?> = ArrayList(MutableList(nInsns) { null })
+    private val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
 
     private val queued = BooleanArray(nInsns)
     private val queue = IntArray(nInsns)
     private var top = 0
 
-    fun analyze(): ArrayList<F?> {
+    fun analyze(): Array<Frame<V>?> {
         if (nInsns == 0) return frames
 
         checkAssertions()
@@ -49,7 +49,7 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
         while (top > 0) {
             val insn = queue[--top]
 
-            val f = frames[insn]!!
+            val f = getFrame(insn)!!
             queued[insn] = false
 
             val insnNode = method.instructions[insn]
@@ -92,9 +92,11 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
 
     protected abstract fun newFrame(nLocals: Int, nStack: Int): F
 
-    fun getFrame(insn: AbstractInsnNode): F? = frames[insn.indexOf()]
+    @Suppress("UNCHECKED_CAST")
+    fun getFrame(insn: AbstractInsnNode): F? = frames[insn.indexOf()] as? F
 
-    protected fun getFrame(index: Int): F? = frames[index]
+    @Suppress("UNCHECKED_CAST")
+    protected fun getFrame(index: Int): F? = frames[index] as? F
 
     protected fun setFrame(index: Int, newFrame: F) {
         frames[index] = newFrame

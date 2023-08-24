@@ -128,7 +128,7 @@ private class IntLikeCoerceInterpreter : OptimizationBasicInterpreter() {
 internal fun performSpilledVariableFieldTypesAnalysis(
     methodNode: MethodNode,
     thisName: String
-): ArrayList<out Frame<BasicValue>?> {
+): Array<out Frame<BasicValue>?> {
     val interpreter = IntLikeCoerceInterpreter()
     FastMethodAnalyzer(thisName, methodNode, interpreter).analyze()
     for ((insn, type) in interpreter.needsToBeCoerced) {
