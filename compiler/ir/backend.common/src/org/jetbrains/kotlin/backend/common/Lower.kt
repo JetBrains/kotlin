@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.util.transformSubsetFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 interface FileLoweringPass {
@@ -245,7 +242,7 @@ interface DeclarationTransformer : FileLoweringPass {
         }
     }
 
-    private class Visitor(private val transformer: DeclarationTransformer) : IrElementVisitorVoid() {
+    private class Visitor(private val transformer: DeclarationTransformer) : IrElementVisitorVoidShallow() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -258,6 +255,10 @@ interface DeclarationTransformer : FileLoweringPass {
                 if (result != null) error("Don't know how to add value parameters")
             }
         }
+
+        override fun visitSimpleFunction(declaration: IrSimpleFunction) = visitFunction(declaration)
+
+        override fun visitConstructor(declaration: IrConstructor) = visitFunction(declaration)
 
         override fun visitProperty(declaration: IrProperty) {
             // TODO This is a hack to allow lowering a getter separately from the enclosing property
