@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Pair
 import org.jetbrains.kotlin.codegen.inline.insnOpcodeText
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
+import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.optimization.common.remapLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
@@ -41,7 +42,10 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
             return
 
         val interpreter = RedundantBoxingInterpreter(node, generationState)
-        val frames = BoxingAnalyzer(internalClassName, node, interpreter).analyze()
+        val analyzer = FastMethodAnalyzer<BasicValue>(
+            internalClassName, node, interpreter, pruneExceptionEdges = false
+        ) { nLocals, nStack -> BoxingFrame(nLocals, nStack, interpreter) }
+        val frames = analyzer.analyze()
 
         interpretPopInstructionsForBoxedValues(interpreter, node, frames)
 
