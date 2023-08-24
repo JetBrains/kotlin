@@ -87,7 +87,7 @@ dependencies {
         exclude("com.android.tools.build", "aaptcompiler")
         exclude("com.android.tools.build", "aapt2-proto")
     }
-    commonCompileOnly(intellijCore())
+    commonCompileOnly(intellijPlatformUtil())
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     commonCompileOnly(libs.gradle.enterprise.gradlePlugin)
     commonCompileOnly(commonDependency("com.google.code.gson:gson"))
