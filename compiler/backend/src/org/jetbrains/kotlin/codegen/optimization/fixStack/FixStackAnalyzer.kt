@@ -176,42 +176,42 @@ internal class FixStackAnalyzer(
             override fun merge(frame: Frame<out FixStackValue>, interpreter: Interpreter<FixStackValue>): Boolean {
                 throw UnsupportedOperationException("Stack normalization should not merge frames")
             }
-        }
 
-        private fun FixStackFrame.executeBeforeInlineCallMarker(insn: AbstractInsnNode) {
-            saveStackAndClear(insn)
-        }
+            private fun executeBeforeInlineCallMarker(insn: AbstractInsnNode) {
+                saveStackAndClear(insn)
+            }
 
-        private fun FixStackFrame.saveStackAndClear(insn: AbstractInsnNode) {
-            val savedValues = getStackContent()
-            spilledStacks[insn] = savedValues
-            clearStack()
-        }
-
-        private fun FixStackFrame.executeAfterInlineCallMarker(insn: AbstractInsnNode) {
-            val beforeInlineMarker = context.openingInlineMethodMarker[insn]
-            if (stackSize > 0) {
-                val returnValue = pop()
+            private fun saveStackAndClear(insn: AbstractInsnNode) {
+                val savedValues = getStackContent()
+                spilledStacks[insn] = savedValues
                 clearStack()
-                val savedValues = spilledStacks[beforeInlineMarker]
-                pushAll(savedValues!!)
-                push(returnValue)
-            } else {
-                val savedValues = spilledStacks[beforeInlineMarker]
-                pushAll(savedValues!!)
             }
-        }
 
-        private fun FixStackFrame.executeRestoreStackInTryCatch(insn: AbstractInsnNode) {
-            val saveNode = context.saveStackMarkerForRestoreMarker[insn]
-            val savedValues = spilledStacks.getOrElse(saveNode!!) {
-                throw AssertionError("${insn.indexOf()}: Restore stack is unavailable for ${saveNode.indexOf()}")
+            private fun executeAfterInlineCallMarker(insn: AbstractInsnNode) {
+                val beforeInlineMarker = context.openingInlineMethodMarker[insn]
+                if (stackSize > 0) {
+                    val returnValue = pop()
+                    clearStack()
+                    val savedValues = spilledStacks[beforeInlineMarker]
+                    pushAll(savedValues!!)
+                    push(returnValue)
+                } else {
+                    val savedValues = spilledStacks[beforeInlineMarker]
+                    pushAll(savedValues!!)
+                }
             }
-            pushAll(savedValues)
-        }
 
-        private fun FixStackFrame.executeSaveStackBeforeTry(insn: AbstractInsnNode) {
-            saveStackAndClear(insn)
+            private fun executeRestoreStackInTryCatch(insn: AbstractInsnNode) {
+                val saveNode = context.saveStackMarkerForRestoreMarker[insn]
+                val savedValues = spilledStacks.getOrElse(saveNode!!) {
+                    throw AssertionError("${insn.indexOf()}: Restore stack is unavailable for ${saveNode.indexOf()}")
+                }
+                pushAll(savedValues)
+            }
+
+            private fun executeSaveStackBeforeTry(insn: AbstractInsnNode) {
+                saveStackAndClear(insn)
+            }
         }
     }
 
