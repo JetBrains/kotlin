@@ -5,36 +5,34 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
-import org.jetbrains.kotlin.gradle.utils.XcodeUtils
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
-import kotlin.test.assertEquals
+import java.util.UUID
 
 @DisplayName("tests for the K/N XCode simulator test infrastructure")
 @NativeGradlePluginTests
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 class NativeXcodeSimulatorTestsIT : KGPBaseTest() {
-    private val defaultIosSimulator by lazy {
-        XcodeUtils.getDefaultTestDeviceId(KonanTarget.IOS_SIMULATOR_ARM64) ?: error("No simulator found for iOS ARM64")
-    }
-
     @DisplayName("A user-friendly error message is produced when the standalone mode is disabled and no simulator has booted")
     @GradleTest
     fun checkNoSimulatorErrorMessage(gradleVersion: GradleVersion) {
-        shutDownSimulators() // based on the tests order there no simulator should be booted, but anyway to be sure
-        // Note the test still may fail if you have booted the required simulator manually before running the test
-        // We don't shut down such simulators in the tests
+        val unbootedSimulator = createSimulator()
         project("native-test-ios-https-request", gradleVersion) {
             buildGradleKts.append(
                 """
                 tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest> {
-                    device.set("$defaultIosSimulator")
+                    device.set("${unbootedSimulator.udid}")
                     standalone.set(false)
                 }
                 """.trimIndent()
@@ -60,47 +58,81 @@ class NativeXcodeSimulatorTestsIT : KGPBaseTest() {
     @GradleTest
     fun checkSimulatorTestDoesNotFailInNonStandaloneMode(gradleVersion: GradleVersion) {
         project("native-test-ios-https-request", gradleVersion) {
-            bootXcodeSimulator(defaultIosSimulator)
+            val simulator = createSimulator()
+            simulator.boot()
             buildGradleKts.append(
                 """
                 tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest> {
-                    device.set("$defaultIosSimulator")
+                    device.set("${simulator.udid}")
                     standalone.set(false)
                 }
                 """.trimIndent()
             )
-            build("check")
+            build("check") {
+                when (HostManager.host) {
+                    KonanTarget.MACOS_ARM64 -> assertTasksExecuted(":iosSimulatorArm64Test")
+                    KonanTarget.MACOS_X64 -> assertTasksExecuted(":iosX64Test")
+                    else -> error("Unexpected host")
+                }
+            }
         }
     }
+
+    @Serializable
+    private data class Device(val name: String, val udid: String)
+    @Serializable
+    private data class Simulators(val devices: Map<String, List<Device>>)
+
+    private val deviceIdentifier = "com.apple.CoreSimulator.SimDeviceType.iPhone-12-Pro-Max"
+    private val uuid = UUID.randomUUID()
+    private val testSimulatorName = "NativeXcodeSimulatorTestsIT_${uuid}_simulator"
 
     @AfterAll
-    fun shutDownSimulators() {
-        synchronized(bootedXcodeSimulators) {
-            for (device in bootedXcodeSimulators) {
-                val command = listOf("/usr/bin/xcrun", "simctl", "shutdown", device)
-                val processResult = runProcess(command, File("."))
-                assertEquals(0, processResult.exitCode)
-                bootedXcodeSimulators.remove(device)
-            }
-            bootedXcodeSimulators.clear()
+    fun removeSimulatorsCreatedForTests() {
+        simulators().devices.values.toList().flatMap { it }.filter {
+            it.name == testSimulatorName
+        }.forEach {
+            processOutput(
+                listOf("/usr/bin/xcrun", "simctl", "delete", it.udid)
+            )
         }
     }
 
-    private val bootedXcodeSimulators: MutableSet<String> = HashSet()
+    private fun simulators(): Simulators {
+        return Json {
+            ignoreUnknownKeys = true
+        }.decodeFromString<Simulators>(
+            processOutput(
+                listOf("/usr/bin/xcrun", "simctl", "list", "devices", "-j")
+            )
+        )
+    }
 
-    private fun bootXcodeSimulator(device: String) {
-        synchronized(bootedXcodeSimulators) {
-            if (device !in bootedXcodeSimulators) {
-                val command = listOf("/usr/bin/xcrun", "simctl", "boot", device)
-                val processResult = runProcess(command, File("."))
-                assert(processResult.exitCode == 0 || "current state: Booted" in processResult.output) {
-                    "Failed to boot a simulator $device and it wasn't started before, exit code = ${processResult.exitCode}"
-                }
-                if (processResult.exitCode == 0) {
-                    // if the simulator was booted not by us, we should not shut it down
-                    bootedXcodeSimulators.add(device)
-                }
-            }
+    private fun createSimulator(): Device {
+        return Device(
+            testSimulatorName,
+            processOutput(
+                listOf("/usr/bin/xcrun", "simctl", "create", testSimulatorName, deviceIdentifier)
+            ).dropLast(1)
+        )
+    }
+
+    private fun Device.boot() {
+        processOutput(
+            listOf("/usr/bin/xcrun", "simctl", "bootstatus", udid, "-bd")
+        )
+    }
+
+    private fun processOutput(arguments: List<String>): String {
+        val result = runProcess(
+            arguments, File("."),
+            redirectErrorStream = false,
+        )
+        assertProcessRunResult(
+            result
+        ) {
+            assert(isSuccessful)
         }
+        return result.output
     }
 }
