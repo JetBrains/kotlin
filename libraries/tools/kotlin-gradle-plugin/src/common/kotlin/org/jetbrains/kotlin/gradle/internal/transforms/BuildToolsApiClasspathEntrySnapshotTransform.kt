@@ -12,6 +12,7 @@ import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.buildtools.api.CompilationService
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
@@ -19,13 +20,16 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_LE
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.compilerRunner.btapi.SharedApiClassesClassLoaderProvider
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.TransformActionUsingKotlinToolingDiagnostics
 import java.io.File
 
 /** Transform to create a snapshot of a classpath entry (directory or jar). */
 @CacheableTransform
-abstract class BuildToolsApiClasspathEntrySnapshotTransform : TransformAction<BuildToolsApiClasspathEntrySnapshotTransform.Parameters> {
+abstract class BuildToolsApiClasspathEntrySnapshotTransform : TransformAction<BuildToolsApiClasspathEntrySnapshotTransform.Parameters>,
+    TransformActionUsingKotlinToolingDiagnostics<BuildToolsApiClasspathEntrySnapshotTransform.Parameters> {
 
-    abstract class Parameters : TransformParameters {
+    abstract class Parameters : TransformParameters, TransformActionUsingKotlinToolingDiagnostics.Parameters {
         @get:Internal
         abstract val gradleUserHomeDir: DirectoryProperty
 
@@ -34,13 +38,38 @@ abstract class BuildToolsApiClasspathEntrySnapshotTransform : TransformAction<Bu
 
         @get:Classpath
         internal abstract val classpath: ConfigurableFileCollection
+
+        @get:Input
+        internal abstract val compilationViaBuildToolsApi: Property<Boolean>
+
+        @get:Internal
+        internal abstract val buildToolsImplVersion: Property<String>
+
+        @get:Internal
+        internal abstract val kgpVersion: Property<String>
+
+        @get:Internal
+        internal abstract val suppressVersionInconsistencyChecks: Property<Boolean>
     }
 
     @get:Classpath
     @get:InputArtifact
     abstract val inputArtifact: Provider<FileSystemLocation>
 
+    private fun checkVersionConsistency() {
+        if (parameters.suppressVersionInconsistencyChecks.get()) return
+        val kgpVersion = parameters.kgpVersion.get()
+        val buildToolsImplVersion = parameters.buildToolsImplVersion.orNull
+            .takeIf { it != "null" } // workaround for incorrect nullability of `map`
+        if (kgpVersion != buildToolsImplVersion) {
+            reportDiagnostic(KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency(kgpVersion, buildToolsImplVersion))
+        }
+    }
+
     override fun transform(outputs: TransformOutputs) {
+        if (!parameters.compilationViaBuildToolsApi.get()) {
+            checkVersionConsistency()
+        }
         val classpathEntryInputDirOrJar = inputArtifact.get().asFile
         val snapshotOutputFile = outputs.file(classpathEntryInputDirOrJar.name.replace('.', '_') + "-snapshot.bin")
 

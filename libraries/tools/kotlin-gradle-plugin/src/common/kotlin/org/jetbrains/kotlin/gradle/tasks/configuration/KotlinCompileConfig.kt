@@ -6,17 +6,24 @@
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.artifacts.transform.TransformSpec
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.transforms.BuildToolsApiClasspathEntrySnapshotTransform
 import org.jetbrains.kotlin.gradle.plugin.BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.setupTransformActionToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
@@ -35,7 +42,8 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
             val useClasspathSnapshot = propertiesProvider.useClasspathSnapshot
             val classpathConfiguration = if (useClasspathSnapshot) {
                 val jvmToolchain = taskProvider.flatMap { it.defaultKotlinJavaToolchain }
-                registerTransformsOnce(project, jvmToolchain)
+                val runKotlinCompilerViaBuildToolsApi = propertiesProvider.runKotlinCompilerViaBuildToolsApi
+                registerTransformsOnce(project, jvmToolchain, runKotlinCompilerViaBuildToolsApi)
                 // Note: Creating configurations should be done during build configuration, not task configuration, to avoid issues with
                 // composite builds (e.g., https://issuetracker.google.com/183952598).
                 project.configurations.detachedConfiguration(
@@ -117,19 +125,23 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
     private fun registerTransformsOnce(
         project: Project,
         jvmToolchain: Provider<DefaultKotlinJavaToolchain>,
+        runKotlinCompilerViaBuildToolsApi: Boolean,
     ) {
         if (project.extensions.extraProperties.has(TRANSFORMS_REGISTERED)) {
             return
         }
         project.extensions.extraProperties[TRANSFORMS_REGISTERED] = true
 
-        registerBuildToolsApiTransformations(project, jvmToolchain)
+        registerBuildToolsApiTransformations(project, jvmToolchain, runKotlinCompilerViaBuildToolsApi)
     }
 
     private fun TransformSpec<BuildToolsApiClasspathEntrySnapshotTransform.Parameters>.configureCommonParameters(
+        kgpVersion: String,
         classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
-        classpath: Provider<out FileCollection>,
+        classpath: Provider<out Configuration>,
         jvmToolchain: Provider<DefaultKotlinJavaToolchain>,
+        runKotlinCompilerViaBuildToolsApi: Boolean,
+        suppressVersionInconsistencyChecks: Boolean,
     ) {
         parameters.gradleUserHomeDir.set(project.gradle.gradleUserHomeDir)
         parameters.classLoadersCachingService.set(classLoadersCachingService)
@@ -142,20 +154,41 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 emptySet()
             }
         })
+        parameters.compilationViaBuildToolsApi.set(runKotlinCompilerViaBuildToolsApi)
+        if (!suppressVersionInconsistencyChecks) {
+            parameters.buildToolsImplVersion.set(classpath.map { configuration -> configuration.findBuildToolsApiImplVersion() })
+        }
+        parameters.kgpVersion.set(kgpVersion)
+        parameters.suppressVersionInconsistencyChecks.set(suppressVersionInconsistencyChecks)
     }
 
-    private fun registerBuildToolsApiTransformations(project: Project, jvmToolchain: Provider<DefaultKotlinJavaToolchain>) {
+    private fun Configuration.findBuildToolsApiImplVersion() = incoming.resolutionResult.allDependencies
+        .filterIsInstance<ResolvedDependencyResult>()
+        .map { it.selected.id }
+        .filterIsInstance<ModuleComponentIdentifier>()
+        .find { it.group == KOTLIN_MODULE_GROUP && it.module == KOTLIN_BUILD_TOOLS_API_IMPL }
+        ?.version ?: "null" // workaround for incorrect nullability of `map`
+
+    private fun registerBuildToolsApiTransformations(
+        project: Project,
+        jvmToolchain: Provider<DefaultKotlinJavaToolchain>,
+        runKotlinCompilerViaBuildToolsApi: Boolean
+    ) {
         val classLoadersCachingService = ClassLoadersCachingBuildService.registerIfAbsent(project)
         val classpath = project.configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
+        val kgpVersion = project.getKotlinPluginVersion()
+        val suppressVersionInconsistencyChecks = project.kotlinPropertiesProvider.suppressBuildToolsApiVersionConsistencyChecks
         project.dependencies.registerTransform(BuildToolsApiClasspathEntrySnapshotTransform::class.java) {
             it.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, JAR_ARTIFACT_TYPE)
             it.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
-            it.configureCommonParameters(classLoadersCachingService, classpath, jvmToolchain)
+            it.configureCommonParameters(kgpVersion, classLoadersCachingService, classpath, jvmToolchain, runKotlinCompilerViaBuildToolsApi, suppressVersionInconsistencyChecks)
+            it.setupTransformActionToolingDiagnostics(project)
         }
         project.dependencies.registerTransform(BuildToolsApiClasspathEntrySnapshotTransform::class.java) {
             it.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_ARTIFACT_TYPE)
             it.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
-            it.configureCommonParameters(classLoadersCachingService, classpath, jvmToolchain)
+            it.configureCommonParameters(kgpVersion, classLoadersCachingService, classpath, jvmToolchain, runKotlinCompilerViaBuildToolsApi, suppressVersionInconsistencyChecks)
+            it.setupTransformActionToolingDiagnostics(project)
         }
     }
 

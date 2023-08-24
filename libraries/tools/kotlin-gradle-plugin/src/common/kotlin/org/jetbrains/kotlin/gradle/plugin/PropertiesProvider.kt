@@ -550,6 +550,13 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property(PropertyNames.KONAN_DATA_DIR)
 
     /**
+     * Allows suppressing the diagnostic [KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency].
+     * Required only for Kotlin repo bootstrapping.
+     */
+    val suppressBuildToolsApiVersionConsistencyChecks: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_SUPPRESS_BUILD_TOOLS_API_VERSION_CONSISTENCY_CHECKS) ?: false
+
+    /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
      * @see KOTLIN_JS_KARMA_BROWSERS
      */
@@ -648,6 +655,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS = property("kotlin.native.ignoreDisabledTargets")
         val KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING = property("kotlin.native.suppressExperimentalArtifactsDslWarning")
         val KONAN_DATA_DIR = property("konan.data.dir")
+        val KOTLIN_SUPPRESS_BUILD_TOOLS_API_VERSION_CONSISTENCY_CHECKS = property("kotlin.internal.suppress.buildToolsApiVersionConsistencyChecks")
 
         /**
          * Internal properties: builds get big non-suppressible warning when such properties are used

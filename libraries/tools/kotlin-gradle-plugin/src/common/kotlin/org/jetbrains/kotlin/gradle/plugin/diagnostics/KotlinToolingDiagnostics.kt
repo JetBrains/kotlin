@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isRegisteredByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.dsl.NativeTargetShortcutTrace
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -637,6 +639,17 @@ object KotlinToolingDiagnostics {
                 |Internal properties are not recommended for production use. 
                 |Stability and future compatibility of the build is not guaranteed.
             """.trimMargin()
+        )
+    }
+
+    object BuildToolsApiVersionInconsistency : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke(expectedVersion: String, actualVersion: String?) = build(
+            """
+                Artifact $KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL must have version aligned with the version of KGP when compilation via the Build Tools API is disabled.
+
+                Expected version: $expectedVersion
+                Actual resolved version: ${actualVersion ?: "not found"}
+            """.trimIndent(),
         )
     }
 }
