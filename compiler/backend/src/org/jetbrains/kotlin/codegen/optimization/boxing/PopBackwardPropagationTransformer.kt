@@ -145,7 +145,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
             }
         } > 0
 
-        private fun AbstractInsnNode.combineWithPop(frames: Array<out Frame<SourceValue>?>, resultSize: Int): Transformation =
+        private fun AbstractInsnNode.combineWithPop(frames: ArrayList<out Frame<SourceValue>?>, resultSize: Int): Transformation =
             when {
                 isPurePush() -> REPLACE_WITH_NOP
                 isPrimitiveBoxing() || isPrimitiveTypeConversion() -> {
