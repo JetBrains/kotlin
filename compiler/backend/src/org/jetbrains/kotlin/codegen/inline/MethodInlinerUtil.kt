@@ -63,7 +63,7 @@ internal class FunctionalArgumentValue(
 val BasicValue?.functionalArgument
     get() = (this as? FunctionalArgumentValue)?.functionalArgument
 
-internal class FunctionalArgumentInterpreter(private val inliner: MethodInliner) : BasicInterpreter(Opcodes.API_VERSION) {
+internal class FunctionalArgumentInterpreter(private val inliner: MethodInliner) : BasicInterpreter(API_VERSION) {
     override fun newParameterValue(isInstanceMethod: Boolean, local: Int, type: Type): BasicValue =
         inliner.getFunctionalArgumentIfExists(local)?.let { FunctionalArgumentValue(it, newValue(type)) } ?: newValue(type)
 
@@ -95,11 +95,11 @@ internal class Aload0BasicValue private constructor(val indices: Set<Int>) : Bas
     operator fun plus(other: Aload0BasicValue) = Aload0BasicValue(indices + other.indices)
 }
 
-internal class Aload0Interpreter(private val node: MethodNode) : BasicInterpreter(Opcodes.API_VERSION) {
+internal class Aload0Interpreter(private val node: MethodNode) : BasicInterpreter(API_VERSION) {
     override fun copyOperation(insn: AbstractInsnNode, value: BasicValue?): BasicValue? =
         when {
             insn.isAload0() -> Aload0BasicValue(node.instructions.indexOf(insn))
-            insn.opcode == Opcodes.ALOAD -> if (value == null) null else BasicValue(value.type)
+            insn.opcode == ALOAD -> if (value == null) null else BasicValue(value.type)
             else -> super.copyOperation(insn, value)
         }
 
@@ -113,18 +113,18 @@ internal fun analyzeMethodNodeWithInterpreter(
     node: MethodNode,
     interpreter: BasicInterpreter
 ): Array<out Frame<BasicValue>?> {
-    val analyzer = object : FastMethodAnalyzer<BasicValue>("fake", node, interpreter, pruneExceptionEdges = true) {
-        override fun newFrame(nLocals: Int, nStack: Int): Frame<BasicValue> {
-            return object : Frame<BasicValue>(nLocals, nStack) {
-                @Throws(AnalyzerException::class)
-                override fun execute(insn: AbstractInsnNode, interpreter: Interpreter<BasicValue>) {
-                    // This can be a void non-local return from a non-void method; Frame#execute would throw and do nothing else.
-                    if (insn.opcode == Opcodes.RETURN) return
-                    super.execute(insn, interpreter)
-                }
-            }
+    class BasicValueFrame(nLocals: Int, nStack: Int) : Frame<BasicValue>(nLocals, nStack) {
+        @Throws(AnalyzerException::class)
+        override fun execute(insn: AbstractInsnNode, interpreter: Interpreter<BasicValue>) {
+            // This can be a void non-local return from a non-void method; Frame#execute would throw and do nothing else.
+            if (insn.opcode == Opcodes.RETURN) return
+            super.execute(insn, interpreter)
         }
     }
+
+    val analyzer = FastMethodAnalyzer<BasicValue>(
+        "fake", node, interpreter, pruneExceptionEdges = true
+    ) { nLocals, nStack -> BasicValueFrame(nLocals, nStack) }
 
     try {
         return analyzer.analyze()
