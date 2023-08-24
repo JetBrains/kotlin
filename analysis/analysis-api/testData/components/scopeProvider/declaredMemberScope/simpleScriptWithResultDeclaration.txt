@@ -1,0 +1,120 @@
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /foo
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: action
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KtFunctionalType:
+        annotationsList: []
+        ownTypeArguments: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Int
+        ]
+        type: kotlin/Function0<kotlin/Int>
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
+      deprecationStatus: null
+  ]
+  visibility: Public
+  getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
+  deprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotationsList: []
+  backingFieldSymbol: null
+  callableIdIfNonLocal: null
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: PLUGIN
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Unit
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+    getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
+    deprecationStatus: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: KtNonConstantInitializerValue(foo { ...)
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: $$result
+  origin: PLUGIN
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
+  setter: null
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: get$$result
+  javaSetterName: null
+  setterDeprecationStatus: null
