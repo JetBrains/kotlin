@@ -107,7 +107,17 @@ internal class SymbolLightClassForEnumEntry(
             val result = mutableListOf<KtLightField>()
 
             // Then, add instance fields: properties from parameters, and then member properties
-            addPropertyBackingFields(result, enumEntrySymbol)
+            enumEntrySymbol.enumEntryInitializer?.let { initializer ->
+                addPropertyBackingFields(
+                    result,
+                    initializer,
+
+                    // `addPropertyBackingFields` detects that property fields should be static when the given symbol with members is an
+                    // object. Unfortunately, the enum entry's initializer is an anonymous object, yet we want the enum entry's light class
+                    // to have non-static properties.
+                    forceIsStaticTo = false,
+                )
+            }
 
             result
         }
@@ -117,11 +127,13 @@ internal class SymbolLightClassForEnumEntry(
         enumConstant.withEnumEntrySymbol { enumEntrySymbol ->
             val result = mutableListOf<KtLightMethod>()
 
-            val declaredMemberScope = enumEntrySymbol.getDeclaredMemberScope()
-            val visibleDeclarations = declaredMemberScope.getCallableSymbols()
+            enumEntrySymbol.enumEntryInitializer?.let { initializer ->
+                val declaredMemberScope = initializer.getDeclaredMemberScope()
+                val visibleDeclarations = declaredMemberScope.getCallableSymbols()
 
-            createMethods(visibleDeclarations, result)
-            createConstructors(declaredMemberScope.getConstructors(), result)
+                createMethods(visibleDeclarations, result)
+                createConstructors(declaredMemberScope.getConstructors(), result)
+            }
 
             result
         }

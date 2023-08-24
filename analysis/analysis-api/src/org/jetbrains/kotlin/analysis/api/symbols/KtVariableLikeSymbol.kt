@@ -91,10 +91,37 @@ public abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithKi
     //todo reduntant, remove
     public abstract val containingEnumClassIdIfNonLocal: ClassId?
 
+    /**
+     * Returns the enum entry's initializer, or `null` if the enum entry doesn't have a body.
+     */
+    public abstract val enumEntryInitializer: KtEnumEntryInitializerSymbol?
+
     context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol>
 }
 
+/**
+ * An initializer for enum entries with a body. The initializer may contain its own declarations (especially overrides of members declared
+ * by the enum class), and is [similar to an object declaration](https://kotlinlang.org/spec/declarations.html#enum-class-declaration).
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * enum class E {
+ *     // `A` is declared with an initializer.
+ *     A {
+ *         val x: Int = 5
+ *     },
+ *
+ *     // `B` has no initializer.
+ *     B
+ * }
+ * ```
+ *
+ * The initializer of `A` declares a member `x: Int`, which is inaccessible outside the initializer. Still, the corresponding
+ * [KtEnumEntryInitializerSymbol] can be used to get a declared member scope that contains `x`.
+ */
+public interface KtEnumEntryInitializerSymbol : KtSymbolWithMembers
 
 public sealed class KtVariableSymbol : KtVariableLikeSymbol() {
     public abstract val isVal: Boolean

@@ -519,6 +519,7 @@ scopes:
         callableIdIfNonLocal: /E.A
         containingEnumClassIdIfNonLocal: E
         contextReceivers: []
+        enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
         isExtension: false
         name: A
         origin: SOURCE

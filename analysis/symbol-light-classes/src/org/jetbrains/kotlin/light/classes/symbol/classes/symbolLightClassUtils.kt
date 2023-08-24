@@ -619,6 +619,7 @@ context(KtAnalysisSession)
 internal fun SymbolLightClassBase.addPropertyBackingFields(
     result: MutableList<KtLightField>,
     symbolWithMembers: KtSymbolWithMembers,
+    forceIsStaticTo: Boolean? = null,
 ) {
     val propertySymbols = symbolWithMembers.getDeclaredMemberScope().getCallableSymbols()
         .filterIsInstance<KtPropertySymbol>()
@@ -633,7 +634,7 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
 
     val nameGenerator = SymbolLightField.FieldNameGenerator()
 
-    val isStatic = symbolWithMembers is KtClassOrObjectSymbol && symbolWithMembers.classKind.isObject
+    val isStatic = forceIsStaticTo ?: (symbolWithMembers is KtClassOrObjectSymbol && symbolWithMembers.classKind.isObject)
     fun addPropertyBackingField(propertySymbol: KtPropertySymbol) {
         createField(
             declaration = propertySymbol,

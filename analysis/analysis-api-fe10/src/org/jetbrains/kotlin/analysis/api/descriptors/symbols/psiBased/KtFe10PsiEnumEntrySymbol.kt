@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.calla
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.createErrorType
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntryInitializerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 internal class KtFe10PsiEnumEntrySymbol(
     override val psi: KtEnumEntry,
     override val analysisContext: Fe10AnalysisContext
-) : KtEnumEntrySymbol(), KtFe10PsiSymbol<KtEnumEntry, ClassDescriptor> {
+) : KtEnumEntrySymbol(), KtEnumEntryInitializerSymbol, KtFe10PsiSymbol<KtEnumEntry, ClassDescriptor> {
     override val descriptor: ClassDescriptor? by cached {
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.CLASS, psi]
@@ -60,6 +61,9 @@ internal class KtFe10PsiEnumEntrySymbol(
 
     override val name: Name
         get() = withValidityAssertion { psi.nameAsSafeName }
+
+    override val enumEntryInitializer: KtEnumEntryInitializerSymbol?
+        get() = this.takeIf { psi.body != null }
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol> = withValidityAssertion {

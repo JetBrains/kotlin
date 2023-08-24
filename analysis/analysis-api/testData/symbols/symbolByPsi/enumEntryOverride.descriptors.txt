@@ -75,6 +75,7 @@ KtEnumEntrySymbol:
   callableIdIfNonLocal: /MyEnumClass.FirstEntry
   containingEnumClassIdIfNonLocal: MyEnumClass
   contextReceivers: []
+  enumEntryInitializer: KtEnumEntrySymbol(/MyEnumClass.FirstEntry)
   isExtension: false
   name: FirstEntry
   origin: SOURCE
@@ -214,6 +215,7 @@ KtEnumEntrySymbol:
   callableIdIfNonLocal: /MyEnumClass.SecondEntry
   containingEnumClassIdIfNonLocal: MyEnumClass
   contextReceivers: []
+  enumEntryInitializer: KtEnumEntrySymbol(/MyEnumClass.SecondEntry)
   isExtension: false
   name: SecondEntry
   origin: SOURCE
@@ -327,6 +329,7 @@ KtEnumEntrySymbol:
   callableIdIfNonLocal: /MyEnumClass.ThirdEntry
   containingEnumClassIdIfNonLocal: MyEnumClass
   contextReceivers: []
+  enumEntryInitializer: KtEnumEntrySymbol(/MyEnumClass.ThirdEntry)
   isExtension: false
   name: ThirdEntry
   origin: SOURCE

@@ -3,6 +3,7 @@ KtEnumEntrySymbol:
   callableIdIfNonLocal: /X.Y
   containingEnumClassIdIfNonLocal: X
   contextReceivers: []
+  enumEntryInitializer: null
   isExtension: false
   name: Y
   origin: SOURCE
@@ -21,6 +22,7 @@ KtEnumEntrySymbol:
   callableIdIfNonLocal: /X.Z
   containingEnumClassIdIfNonLocal: X
   contextReceivers: []
+  enumEntryInitializer: null
   isExtension: false
   name: Z
   origin: SOURCE

@@ -75,6 +75,7 @@ KtEnumEntrySymbol:
   callableIdIfNonLocal: /MyEnumClass.FirstEntry
   containingEnumClassIdIfNonLocal: MyEnumClass
   contextReceivers: []
+  enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false
   name: FirstEntry
   origin: SOURCE
@@ -210,6 +211,7 @@ KtEnumEntrySymbol:
   callableIdIfNonLocal: /MyEnumClass.SecondEntry
   containingEnumClassIdIfNonLocal: MyEnumClass
   contextReceivers: []
+  enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false
   name: SecondEntry
   origin: SOURCE
@@ -323,6 +325,7 @@ KtEnumEntrySymbol:
   callableIdIfNonLocal: /MyEnumClass.ThirdEntry
   containingEnumClassIdIfNonLocal: MyEnumClass
   contextReceivers: []
+  enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false
   name: ThirdEntry
   origin: SOURCE

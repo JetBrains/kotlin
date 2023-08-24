@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointe
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntryInitializerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 internal class KtFirAnonymousObjectSymbol(
     override val firSymbol: FirAnonymousObjectSymbol,
     override val analysisSession: KtFirAnalysisSession,
-) : KtAnonymousObjectSymbol(), KtFirSymbol<FirAnonymousObjectSymbol> {
+) : KtAnonymousObjectSymbol(), KtEnumEntryInitializerSymbol, KtFirSymbol<FirAnonymousObjectSymbol> {
     override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.getAllowedPsi() }
 
     override val annotationsList by cached {

@@ -21,7 +21,7 @@ public interface KtEnumEntrySymbolRenderer {
             " ".separated(
                 { renderAnnotationsModifiersAndContextReceivers(symbol, printer) },
                 { nameRenderer.renderName(symbol, printer) },
-                { classifierBodyRenderer.renderBody(symbol, printer) },
+                { symbol.enumEntryInitializer?.let { classifierBodyRenderer.renderBody(it, printer) } },
             )
         }
     }

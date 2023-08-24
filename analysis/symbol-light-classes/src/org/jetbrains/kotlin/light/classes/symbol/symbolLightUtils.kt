@@ -96,7 +96,8 @@ internal fun KtClassOrObjectSymbol.enumClassModality(): String? {
 
 context(KtAnalysisSession)
 private fun KtEnumEntrySymbol.requiresSubClass(): Boolean {
-    return getDeclaredMemberScope().getAllSymbols().any { it !is KtConstructorSymbol }
+    val initializer = enumEntryInitializer ?: return false
+    return initializer.getDeclaredMemberScope().getAllSymbols().any { it !is KtConstructorSymbol }
 }
 
 internal fun KtSymbolWithVisibility.toPsiVisibilityForMember(): String = visibility.toPsiVisibilityForMember()
