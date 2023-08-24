@@ -12,6 +12,8 @@ expect open class Foo {
 actual open class Foo {
     actual fun foo() {}
 
+    // Expected: NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION.
+    // But it doesn't work because context receivers are not yet supported in expect actual matcher KT-61447
     context(Int)
-    fun foo() {} // accidential override can happen with this injected fun. That's why it's prohibited
+    fun foo() {}
 }
