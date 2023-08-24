@@ -50,49 +50,21 @@ abstract class StoreLoadInterpreter<V : StoreLoadValue> : Interpreter<V>(API_VER
 }
 
 class StoreLoadFrame<V : StoreLoadValue>(val maxLocals: Int) : Frame<V>(maxLocals, 0) {
-    private val locals = arrayOfNulls<StoreLoadValue>(maxLocals)
-
-    @Suppress("UNCHECKED_CAST")
-    operator fun get(index: Int): V =
-        locals[index] as V
-
-    override fun setLocal(index: Int, value: V) {
-        locals[index] = value
-    }
-
-    fun init(other: StoreLoadFrame<V>): StoreLoadFrame<V> {
-        System.arraycopy(other.locals, 0, this.locals, 0, locals.size)
-        return this
-    }
-
     fun execute(insn: AbstractInsnNode, interpreter: StoreLoadInterpreter<V>) {
         when (insn.opcode) {
             in Opcodes.ISTORE..Opcodes.ASTORE -> {
                 val varInsn = insn as VarInsnNode
-                locals[varInsn.`var`] = interpreter.copyOperation(varInsn, null)
+                setLocal(varInsn.`var`, interpreter.copyOperation(varInsn, null))
             }
             in Opcodes.ILOAD..Opcodes.ALOAD -> {
                 val varInsn = insn as VarInsnNode
-                interpreter.copyOperation(varInsn, this[varInsn.`var`])
+                interpreter.copyOperation(varInsn, this.getLocal(varInsn.`var`))
             }
             Opcodes.IINC -> {
                 val iincInsn = insn as IincInsnNode
-                interpreter.iinc(iincInsn, this[iincInsn.`var`])
+                interpreter.iinc(iincInsn, this.getLocal(iincInsn.`var`))
             }
         }
-    }
-
-    fun merge(other: StoreLoadFrame<V>, interpreter: StoreLoadInterpreter<V>): Boolean {
-        var changes = false
-        for (i in locals.indices) {
-            val oldValue = this[i]
-            val newValue = interpreter.merge(oldValue, other[i])
-            if (newValue != oldValue) {
-                changes = true
-                this.setLocal(i, newValue)
-            }
-        }
-        return changes
     }
 }
 
@@ -212,7 +184,7 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
         val oldFrame = getFrame(dest)
         val changes = when {
             oldFrame == null -> {
-                setFrame(dest, newFrame(frame.maxLocals, 0).init(frame))
+                setFrame(dest, newFrame(frame.maxLocals, 0).init(frame) as StoreLoadFrame<V>)
                 true
             }
             !isMergeNode[dest] -> {
