@@ -10,7 +10,7 @@ data class ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember
     /**
      * Diff kinds that are legal for fake-overrides in final `expect class`, but illegal for non-final `expect class`
      *
-     * Also see: [toDiffKind]
+     * Also see: [toMemberDiffKind]
      */
     enum class Kind(val rawMessage: String) {
         NonPrivateCallableAdded(
@@ -52,37 +52,31 @@ data class ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember
     }
 }
 
-/**
- * This function serves a purpose of type-safe documentation. A mapping can be established between [ExpectActualCompatibility.Incompatible]
- * and [ExpectActualMemberDiff.Kind]. This exhaustive when fixates this mapping, ensuring that we won't forget to add new
- * [ExpectActualMemberDiff.Kind] when [ExpectActualCompatibility.Incompatible] is updated.
- */
-@Suppress("unused") // The function is a documentation. That's why it's unused
-private fun ExpectActualCompatibility.Incompatible<*>.toDiffKind(): ExpectActualMemberDiff.Kind? = when (this) {
+fun ExpectActualCompatibility.Incompatible<*>.toMemberDiffKind(): ExpectActualMemberDiff.Kind? = when (this) {
     ExpectActualCompatibility.Incompatible.CallableKind -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
     ExpectActualCompatibility.Incompatible.ParameterCount -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
     ExpectActualCompatibility.Incompatible.ParameterShape -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
     ExpectActualCompatibility.Incompatible.ParameterTypes -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
     ExpectActualCompatibility.Incompatible.ReturnType -> ExpectActualMemberDiff.Kind.ReturnTypeChangedInOverride
     ExpectActualCompatibility.Incompatible.FunctionTypeParameterCount -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-    ExpectActualCompatibility.Incompatible.ClassTypeParameterCount -> null // Not applicable because ExpectActualMemberDiff is about members
+    ExpectActualCompatibility.Incompatible.ClassTypeParameterCount -> error("Not applicable because ExpectActualMemberDiff is about members")
     ExpectActualCompatibility.Incompatible.FunctionTypeParameterUpperBounds -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-    ExpectActualCompatibility.Incompatible.ClassTypeParameterUpperBounds -> null // Not applicable because ExpectActualMemberDiff is about members
+    ExpectActualCompatibility.Incompatible.ClassTypeParameterUpperBounds -> error("Not applicable because ExpectActualMemberDiff is about members")
     ExpectActualCompatibility.Incompatible.ActualFunctionWithDefaultParameters -> null // It's not possible to add default parameters in override
-    ExpectActualCompatibility.Incompatible.ClassKind -> null // Not applicable because ExpectActualMemberDiff is about members
-    ExpectActualCompatibility.Incompatible.ClassModifiers -> null // Not applicable because ExpectActualMemberDiff is about members
-    is ExpectActualCompatibility.Incompatible.ClassScopes -> null // Not applicable because ExpectActualMemberDiff is about members
-    ExpectActualCompatibility.Incompatible.EnumEntries -> null // Not applicable because ExpectActualMemberDiff is about members
-    ExpectActualCompatibility.Incompatible.FunInterfaceModifier -> null // Not applicable because ExpectActualMemberDiff is about members
-    ExpectActualCompatibility.Incompatible.FunctionModifiersDifferent -> null // It's not possible to override with different function modifier
-    ExpectActualCompatibility.Incompatible.FunctionModifiersNotSubset -> null // It's not possible to override with different function modifier
+    ExpectActualCompatibility.Incompatible.ClassKind -> error("Not applicable because ExpectActualMemberDiff is about members")
+    ExpectActualCompatibility.Incompatible.ClassModifiers -> error("Not applicable because ExpectActualMemberDiff is about members")
+    is ExpectActualCompatibility.Incompatible.ClassScopes -> error("Not applicable because ExpectActualMemberDiff is about members")
+    ExpectActualCompatibility.Incompatible.EnumEntries -> error("Not applicable because ExpectActualMemberDiff is about members")
+    ExpectActualCompatibility.Incompatible.FunInterfaceModifier -> error("Not applicable because ExpectActualMemberDiff is about members")
+    ExpectActualCompatibility.Incompatible.FunctionModifiersDifferent -> null // It's not possible to override with different function modifier (suspend)
+    ExpectActualCompatibility.Incompatible.FunctionModifiersNotSubset -> null // It's not possible to override with different function modifier (infix, inline, operator)
     ExpectActualCompatibility.Incompatible.Modality -> ExpectActualMemberDiff.Kind.ModalityChangedInOverride
     ExpectActualCompatibility.Incompatible.ParameterNames -> ExpectActualMemberDiff.Kind.ParameterNameChangedInOverride
     ExpectActualCompatibility.Incompatible.PropertyConstModifier -> null // const fun can't be overridden
     ExpectActualCompatibility.Incompatible.PropertyKind -> ExpectActualMemberDiff.Kind.PropertyKindChangedInOverride
     ExpectActualCompatibility.Incompatible.PropertyLateinitModifier -> ExpectActualMemberDiff.Kind.LateinitChangedInOverride
     ExpectActualCompatibility.Incompatible.PropertySetterVisibility -> ExpectActualMemberDiff.Kind.SetterVisibilityChangedInOverride
-    ExpectActualCompatibility.Incompatible.Supertypes -> null // Not applicable because ExpectActualMemberDiff is about members. But related: ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER
+    ExpectActualCompatibility.Incompatible.Supertypes -> error("Not applicable because ExpectActualMemberDiff is about members")
     ExpectActualCompatibility.Incompatible.TypeParameterNames -> ExpectActualMemberDiff.Kind.TypeParameterNamesChangedInOverride
     ExpectActualCompatibility.Incompatible.TypeParameterReified -> null // inline fun can't be overridden
     ExpectActualCompatibility.Incompatible.TypeParameterVariance -> null // Members are not allowed to have variance

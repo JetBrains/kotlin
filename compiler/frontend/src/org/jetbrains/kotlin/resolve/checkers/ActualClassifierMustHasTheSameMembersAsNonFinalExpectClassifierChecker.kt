@@ -10,16 +10,16 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
-import java.util.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -142,197 +142,70 @@ private fun calculateExpectActualScopeDiff(
         parentSubstitutor = null
     )
 
-    val expectClassCallables = expect.unsubstitutedMemberScope
-        .extractNonPrivateCallables(classTypeSubstitutor, ExpectActual.EXPECT, matchingContext)
-    val actualClassCallables = actual.unsubstitutedMemberScope
-        .extractNonPrivateCallables(classTypeSubstitutor, ExpectActual.ACTUAL, matchingContext)
-        .filter { it.descriptor.kind.isReal } // Filter out fake-overrides from actual because we compare list of supertypes separately anyway
+    val expectClassCallables = expect.unsubstitutedMemberScope.extractNonPrivateCallables()
+    val actualClassCallables = actual.unsubstitutedMemberScope.extractNonPrivateCallables()
+        .filter { it.kind.isReal } // Filter out fake-overrides from actual because we compare list of supertypes separately anyway
 
-    val nameAndKindToExpectCallable = expectClassCallables.groupBy { it.name to it.kind }
+    val nameAndKindToExpectCallables = expectClassCallables.groupBy { it.name to it.functionVsPropertyKind }
 
-    return (actualClassCallables - expectClassCallables).asSequence()
-        .flatMap { unmatchedActualCallable ->
-            when (val expectCallablesWithTheSameNameAndKind =
-                nameAndKindToExpectCallable[unmatchedActualCallable.name to unmatchedActualCallable.kind]) {
-                null -> listOf(ExpectActualMemberDiff.Kind.NonPrivateCallableAdded)
-                else -> expectCallablesWithTheSameNameAndKind.map {
-                    calculateExpectActualMemberDiffKind(
-                        expect = it,
-                        actual = unmatchedActualCallable,
-                        checkParameterNames = unmatchedActualCallable.descriptor.hasStableParameterNames()
+    return actualClassCallables.flatMap { actualMember ->
+        val potentialExpects = nameAndKindToExpectCallables[actualMember.name to actualMember.functionVsPropertyKind]
+        if (potentialExpects.isNullOrEmpty()) {
+            listOf(ExpectActualMemberDiff.Kind.NonPrivateCallableAdded)
+        } else {
+            potentialExpects
+                .map { expectMember ->
+                    val substitutor = matchingContext.createExpectActualTypeParameterSubstitutor(
+                        expectMember.typeParameters,
+                        actualMember.typeParameters,
+                        classTypeSubstitutor
+                    )
+                    AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
+                        expectMember,
+                        actualMember,
+                        substitutor,
+                        expect,
+                        actual,
+                        matchingContext
                     )
                 }
-            }.filterNotNull().map { kind -> ExpectActualMemberDiff(kind, unmatchedActualCallable.descriptor, expect) }
+                .takeIf { kinds -> kinds.all { it != ExpectActualCompatibility.Compatible } }
+                .orEmpty()
+                .map {
+                    when (it) {
+                        is ExpectActualCompatibility.Compatible -> error("Compatible was filtered out by takeIf")
+                        is ExpectActualCompatibility.Incompatible -> it.toMemberDiffKind()
+                        // If toMemberDiffKind returns null then some Kotlin invariants described in toMemberDiffKind no longer hold.
+                        // We can't throw exception here because it would crash the compilation.
+                        // Those broken invariants just needs to be reported by other checkers.
+                        // But it's better to report some error (ExpectActualMemberDiff.Kind.NonPrivateCallableAdded in our case) to
+                        // make sure that we don't have missed compilation errors if the invariants change
+                            ?: ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+                    }
+                }
         }
-        .toSet()
+            .map { kind -> ExpectActualMemberDiff(kind, actualMember, expect) }
+    }.toSet()
 }
 
-private fun MemberScope.extractNonPrivateCallables(
-    classTypeSubstitutor: TypeSubstitutorMarker,
-    expectActual: ExpectActual,
-    matchingContext: ClassicExpectActualMatchingContext,
-): Set<Callable> {
+private fun MemberScope.extractNonPrivateCallables(): Sequence<CallableMemberDescriptor> {
     val functions =
         getFunctionNames().asSequence().flatMap { getContributedFunctions(it, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS) }
     val properties =
         getVariableNames().asSequence().flatMap { getContributedVariables(it, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS) }
     return (functions + properties).filter { !Visibilities.isPrivate(it.visibility.delegate) }
-        .map { descriptor -> Callable(descriptor, expectActual, classTypeSubstitutor, matchingContext) }
-        .toSet()
 }
 
-private data class Parameter(val name: Name, val type: KotlinType)
 private enum class Kind { FUNCTION, PROPERTY }
-private enum class ExpectActual { EXPECT, ACTUAL }
-private data class TypeParameter(val name: Name, val upperBounds: List<KotlinType>)
-private class Callable(
-    val descriptor: CallableMemberDescriptor,
-    val expectActual: ExpectActual,
-    val classTypeSubstitutor: TypeSubstitutorMarker,
-    val matchingContext: ClassicExpectActualMatchingContext,
-) {
-    val name: Name = descriptor.name
-    val kind: Kind = when (descriptor) {
+private val CallableMemberDescriptor.functionVsPropertyKind: Kind
+    get() = when (this) {
         is PropertyDescriptor -> Kind.PROPERTY
         is FunctionDescriptor -> Kind.FUNCTION
-        else -> error("Unknown kind $descriptor")
+        else -> error("Unknown kind $this")
     }
-    val isVarProperty: Boolean = descriptor is PropertyDescriptor && descriptor.isVar
-    val isLateinitProperty: Boolean = descriptor is PropertyDescriptor && descriptor.isLateInit
-    val modality: Modality = descriptor.modality
-    val visibility: Visibility = descriptor.visibility.delegate
-    val setterVisibility: Visibility? = (descriptor as? PropertyDescriptor)?.setter?.visibility?.delegate
-    val parameters: List<Parameter> = descriptor.valueParameters.map { Parameter(it.name, it.type) }
-    val returnType: KotlinType = descriptor.returnType ?: error("Can't get return type")
-    val extensionReceiverType: KotlinType? = descriptor.extensionReceiverParameter?.type
-    val typeParameters: List<TypeParameter> = descriptor.typeParameters.map { TypeParameter(it.name, it.upperBounds) }
-    val contextReceiverTypes: List<KotlinType> = descriptor.contextReceiverParameters.map(ValueDescriptor::getType)
-
-    override fun equals(other: Any?): Boolean {
-        if (other !is Callable) return false
-        check(classTypeSubstitutor === other.classTypeSubstitutor)
-        check(matchingContext === other.matchingContext)
-        return if (expectActual == other.expectActual) {
-            name == other.name &&
-                    kind == other.kind &&
-                    isVarProperty == other.isVarProperty &&
-                    isLateinitProperty == other.isLateinitProperty &&
-                    modality == other.modality &&
-                    visibility == other.visibility &&
-                    setterVisibility == other.setterVisibility &&
-                    parameters == other.parameters &&
-                    returnType == other.returnType &&
-                    extensionReceiverType == other.extensionReceiverType &&
-                    typeParameters == other.typeParameters &&
-                    contextReceiverTypes == other.contextReceiverTypes
-        } else {
-            val (expect, actual) = if (expectActual == ExpectActual.EXPECT) this to other else other to this
-            calculateExpectActualMemberDiffKind(expect, actual) == null
-        }
-    }
-
-    override fun hashCode(): Int = // Don't hash the types because type comparison is complicated
-        Objects.hash(
-            name,
-            kind,
-            isVarProperty,
-            isLateinitProperty,
-            modality,
-            visibility,
-            setterVisibility,
-            parameters.map(Parameter::name),
-            extensionReceiverType != null,
-            typeParameters.map(TypeParameter::name),
-            contextReceiverTypes.size,
-        )
-}
 
 private val CallableMemberDescriptor.psiIfReal: KtCallableDeclaration?
     get() = takeIf { it.kind.isReal }?.source?.let { it as? KotlinSourceElement }?.psi as? KtCallableDeclaration
-
-private fun ClassicExpectActualMatchingContext.areCompatibleWithSubstitution(
-    expect: KotlinType?,
-    actual: KotlinType?,
-    substitutor: TypeSubstitutorMarker,
-): Boolean = areCompatibleExpectActualTypes(expect?.let { substitutor.safeSubstitute(it) }, actual)
-
-private fun ClassicExpectActualMatchingContext.areCompatibleListWithSubstitution(
-    expect: List<KotlinType>,
-    actual: List<KotlinType>,
-    substitutor: TypeSubstitutorMarker,
-): Boolean = expect.size == actual.size && expect.asSequence().zip(actual.asSequence())
-    .all { (a, b) -> areCompatibleWithSubstitution(a, b, substitutor) }
-
-private fun ClassicExpectActualMatchingContext.areCompatibleUpperBoundsWithSubstitution(
-    expect: List<List<KotlinType>>,
-    actual: List<List<KotlinType>>,
-    substitutor: TypeSubstitutorMarker,
-): Boolean = expect.size == actual.size && expect.asSequence().zip(actual.asSequence())
-    .all { (a, b) -> areCompatibleListWithSubstitution(a, b, substitutor) }
-
-private fun calculateExpectActualMemberDiffKind(
-    expect: Callable,
-    actual: Callable,
-    checkParameterNames: Boolean = true,
-): ExpectActualMemberDiff.Kind? {
-    check(expect.expectActual == ExpectActual.EXPECT)
-    check(actual.expectActual == ExpectActual.ACTUAL)
-    check(expect.classTypeSubstitutor === actual.classTypeSubstitutor)
-    check(expect.matchingContext === actual.matchingContext)
-    val substitutor = actual.matchingContext.createExpectActualTypeParameterSubstitutor(
-        expect.descriptor.typeParameters,
-        actual.descriptor.typeParameters,
-        actual.classTypeSubstitutor
-    )
-    with(actual.matchingContext) {
-        return when {
-            expect.name != actual.name ||
-                    expect.kind != actual.kind ||
-                    !areCompatibleListWithSubstitution(
-                        expect.parameters.map(Parameter::type),
-                        actual.parameters.map(Parameter::type),
-                        substitutor
-                    ) ||
-                    !areCompatibleUpperBoundsWithSubstitution(
-                        expect.typeParameters.map(TypeParameter::upperBounds),
-                        actual.typeParameters.map(TypeParameter::upperBounds),
-                        substitutor
-                    ) ||
-                    !areCompatibleWithSubstitution(
-                        expect.extensionReceiverType,
-                        actual.extensionReceiverType,
-                        substitutor
-                    ) ||
-                    !areCompatibleListWithSubstitution(
-                        expect.contextReceiverTypes,
-                        actual.contextReceiverTypes,
-                        substitutor
-                    ) ->
-                ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-
-            expect.isVarProperty != actual.isVarProperty -> ExpectActualMemberDiff.Kind.PropertyKindChangedInOverride
-
-            expect.isLateinitProperty != actual.isLateinitProperty -> ExpectActualMemberDiff.Kind.LateinitChangedInOverride
-
-            expect.modality != actual.modality -> ExpectActualMemberDiff.Kind.ModalityChangedInOverride
-
-            expect.visibility != actual.visibility -> ExpectActualMemberDiff.Kind.VisibilityChangedInOverride
-
-            expect.setterVisibility != actual.setterVisibility -> ExpectActualMemberDiff.Kind.SetterVisibilityChangedInOverride
-
-            checkParameterNames && expect.parameters.map(Parameter::name) != actual.parameters.map(Parameter::name) ->
-                ExpectActualMemberDiff.Kind.ParameterNameChangedInOverride
-
-            expect.typeParameters.map(TypeParameter::name) != actual.typeParameters.map(TypeParameter::name) ->
-                ExpectActualMemberDiff.Kind.TypeParameterNamesChangedInOverride
-
-            !areCompatibleWithSubstitution(expect.returnType, actual.returnType, substitutor) ->
-                ExpectActualMemberDiff.Kind.ReturnTypeChangedInOverride
-
-            else -> null
-        }
-    }
-}
 
 private fun BindingTrace.reportIfPossible(diff: ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>) {
     val psi = diff.actualMember.psiIfReal ?: return

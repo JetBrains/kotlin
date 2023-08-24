@@ -3,7 +3,7 @@
 // FILE: common.kt
 
 expect open class Container {
-    internal fun internalFun()
+    internal open fun internalFun()
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -13,9 +13,9 @@ expect open class Container {
 package foo;
 
 public class Foo {
-    public final void internalFun() {}
+    public void internalFun() {}
 }
 
 // FILE: jvm.kt
 
-actual typealias <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER!>Container<!> = foo.Foo
+actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Container<!> = foo.Foo

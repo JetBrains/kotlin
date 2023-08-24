@@ -23988,9 +23988,15 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
-                @TestMetadata("morePermissiveVisibilityOnActualViaTypeAlias.kt")
-                public void testMorePermissiveVisibilityOnActualViaTypeAlias() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/morePermissiveVisibilityOnActualViaTypeAlias.kt");
+                @TestMetadata("morePermissiveVisibilityOnActualViaTypeAlias_finalMember.kt")
+                public void testMorePermissiveVisibilityOnActualViaTypeAlias_finalMember() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/morePermissiveVisibilityOnActualViaTypeAlias_finalMember.kt");
+                }
+
+                @Test
+                @TestMetadata("morePermissiveVisibilityOnActualViaTypeAlias_openMember.kt")
+                public void testMorePermissiveVisibilityOnActualViaTypeAlias_openMember() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/morePermissiveVisibilityOnActualViaTypeAlias_openMember.kt");
                 }
 
                 @Test
