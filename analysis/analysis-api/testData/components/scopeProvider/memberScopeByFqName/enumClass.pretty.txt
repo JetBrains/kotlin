@@ -1,5 +1,3 @@
-val x: kotlin.String
-
 protected fun clone(): kotlin.Any
 
 operator fun compareTo(other: test.E): kotlin.Int
@@ -18,3 +16,7 @@ val ordinal: kotlin.Int
 fun getDeclaringClass(): (java.lang.Class<test.E!>..java.lang.Class<test.E!>?)
 
 fun finalize()
+
+companion object
+
+constructor()

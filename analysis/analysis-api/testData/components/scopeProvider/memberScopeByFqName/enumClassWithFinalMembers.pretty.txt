@@ -1,0 +1,26 @@
+val foo: kotlin.Int
+
+fun bar()
+
+protected fun clone(): kotlin.Any
+
+operator fun compareTo(other: test.E): kotlin.Int
+
+operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String
+
+@kotlin.internal.IntrinsicConstEvaluation
+val name: kotlin.String
+
+val ordinal: kotlin.Int
+
+fun getDeclaringClass(): (java.lang.Class<test.E!>..java.lang.Class<test.E!>?)
+
+fun finalize()
+
+companion object
+
+constructor()

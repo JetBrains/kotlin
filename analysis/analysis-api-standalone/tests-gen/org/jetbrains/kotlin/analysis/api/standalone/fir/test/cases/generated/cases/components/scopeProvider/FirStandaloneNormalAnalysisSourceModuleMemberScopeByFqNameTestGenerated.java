@@ -53,6 +53,24 @@ public class FirStandaloneNormalAnalysisSourceModuleMemberScopeByFqNameTestGener
     }
 
     @Test
+    @TestMetadata("enumClass.kt")
+    public void testEnumClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/enumClass.kt");
+    }
+
+    @Test
+    @TestMetadata("enumClassWithAbstractMembers.kt")
+    public void testEnumClassWithAbstractMembers() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/enumClassWithAbstractMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("enumClassWithFinalMembers.kt")
+    public void testEnumClassWithFinalMembers() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/enumClassWithFinalMembers.kt");
+    }
+
+    @Test
     @TestMetadata("enumEntryInitializer.kt")
     public void testEnumEntryInitializer() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/enumEntryInitializer.kt");
