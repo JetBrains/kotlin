@@ -126,4 +126,5 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
      * @see [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
      */
     abstract fun <R> withTypeVariablesThatAreNotCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> R): R
+    abstract fun <R> withTypeVariablesFromOuter(typeVariables: Set<TypeConstructorMarker>, block: () -> R): R
 }

@@ -19,5 +19,6 @@ enum class ConstraintSystemCompletionMode {
      * ```
      */
     PARTIAL,
+    PARTIAL_BI,
     UNTIL_FIRST_LAMBDA
 }

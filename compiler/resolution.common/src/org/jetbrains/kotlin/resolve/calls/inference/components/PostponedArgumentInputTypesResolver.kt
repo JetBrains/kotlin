@@ -568,7 +568,7 @@ class PostponedArgumentInputTypesResolver(
     ): Boolean = with(resolutionTypeSystemContext) {
         val relatedVariables = type.extractArgumentsForFunctionTypeOrSubtype()
             .flatMap { getAllDeeplyRelatedTypeVariables(it, dependencyProvider) }
-            .filter { filteredTypeVariables == null || it in filteredTypeVariables }
+            .filter { filteredTypeVariables == null || it !in filteredTypeVariables }
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
             this@fixNextReadyVariableForParameterType,
             relatedVariables,

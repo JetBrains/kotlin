@@ -39,6 +39,8 @@ class VariableFixationFinder(
          */
         val typeVariablesThatAreNotCountedAsProperTypes: Set<TypeConstructorMarker>?
 
+        val typeVariablesFromOuter: Set<TypeConstructorMarker>?
+
         fun isReified(variable: TypeVariableMarker): Boolean
     }
 
@@ -197,7 +199,8 @@ class VariableFixationFinder(
 
     private fun Context.isNotFixedRelevantVariable(it: KotlinTypeMarker): Boolean {
         if (!notFixedTypeVariables.containsKey(it.typeConstructor())) return false
-        if (typeVariablesThatAreNotCountedAsProperTypes == null) return true
+        if (typeVariablesThatAreNotCountedAsProperTypes == null && typeVariablesFromOuter == null) return true
+        if (typeVariablesFromOuter != null) return !typeVariablesFromOuter!!.contains(it.typeConstructor())
         return typeVariablesThatAreNotCountedAsProperTypes!!.contains(it.typeConstructor())
     }
 
