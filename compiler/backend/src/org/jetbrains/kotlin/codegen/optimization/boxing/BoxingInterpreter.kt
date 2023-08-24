@@ -174,17 +174,20 @@ open class BoxingInterpreter(
         when {
             v == StrictBasicValue.UNINITIALIZED_VALUE || w == StrictBasicValue.UNINITIALIZED_VALUE ->
                 StrictBasicValue.UNINITIALIZED_VALUE
-            v is BoxedBasicValue && w is BoxedBasicValue -> {
-                onMergeSuccess(v, w)
-                when {
-                    v is TaintedBoxedValue -> v
-                    w is TaintedBoxedValue -> w
-                    v.type != w.type -> mergeBoxedHazardous(v, w, isLocalVariable)
-                    else -> v // two clean boxed values with the same type are equal
+            v is BoxedBasicValue -> {
+                if (w is BoxedBasicValue) {
+                    onMergeSuccess(v, w)
+                    when {
+                        v is TaintedBoxedValue -> v
+                        w is TaintedBoxedValue -> w
+                        v.type != w.type -> mergeBoxedHazardous(v, w, isLocalVariable)
+                        else -> v // two clean boxed values with the same type are equal
+                    }
+                } else {
+                    mergeBoxedHazardous(v, w, isLocalVariable)
                 }
             }
-            v is BoxedBasicValue ->
-                mergeBoxedHazardous(v, w, isLocalVariable)
+
             w is BoxedBasicValue ->
                 mergeBoxedHazardous(w, v, isLocalVariable)
             else ->
