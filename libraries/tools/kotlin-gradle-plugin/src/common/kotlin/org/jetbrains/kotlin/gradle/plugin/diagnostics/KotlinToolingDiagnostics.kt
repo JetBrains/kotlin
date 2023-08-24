@@ -529,16 +529,6 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object KotlinTestFrameworkInferenceFailed : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke(configurationName: String) = build(
-            """
-                kotlin-test was added to a non-testing configuration "$configurationName" where test framework couldn't be inferred.
-                
-                Learn how to configure kotlin-test at: https://kotl.in/kotlin-test-frameworks
-            """.trimIndent()
-        )
-    }
-
     object XCFrameworkDifferentInnerFrameworksName : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(xcFramework: String, innerFrameworks: String) = build(
             "Name of XCFramework '$xcFramework' differs from inner frameworks name '$innerFrameworks'! Framework renaming is not supported yet"
