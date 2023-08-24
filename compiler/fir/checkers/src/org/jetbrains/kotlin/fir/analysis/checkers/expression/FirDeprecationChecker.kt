@@ -38,30 +38,32 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 object FirDeprecationChecker : FirBasicExpressionChecker() {
 
-    private val allowedSourceKinds = setOf(
-        KtRealSourceElementKind,
-        KtFakeSourceElementKind.DesugaredIncrementOrDecrement
+    private val filteredSourceKinds: Set<KtFakeSourceElementKind> = setOf(
+        KtFakeSourceElementKind.PropertyFromParameter,
+        KtFakeSourceElementKind.DataClassGeneratedMembers
     )
 
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!allowedSourceKinds.contains(expression.source?.kind)) return
+        if (expression.source?.kind in filteredSourceKinds) return
         if (expression is FirAnnotation) return // checked by FirDeprecatedTypeChecker
         if (expression.isLhsOfAssignment(context)) return
 
         val calleeReference = expression.calleeReference ?: return
         val resolvedReference = calleeReference.resolved ?: return
         val referencedSymbol = resolvedReference.resolvedSymbol
+        val source = resolvedReference.source ?: expression.source
 
         if (expression is FirDelegatedConstructorCall) {
             // Report deprecations on the constructor itself, not on the declaring class as that will be handled by FirDeprecatedTypeChecker
             val constructorOnlyDeprecation = referencedSymbol.getDeprecation(context.session, expression) ?: return
             val isTypealiasExpansion = expression.constructedTypeRef.firClassLike(context.session)?.symbol is FirTypeAliasSymbol
+
             reportApiStatus(
-                resolvedReference.source, referencedSymbol, isTypealiasExpansion,
+                source, referencedSymbol, isTypealiasExpansion,
                 constructorOnlyDeprecation, reporter, context
             )
         } else {
-            reportApiStatusIfNeeded(resolvedReference.source, referencedSymbol, context, reporter, callSite = expression)
+            reportApiStatusIfNeeded(source, referencedSymbol, context, reporter, callSite = expression)
         }
     }
 

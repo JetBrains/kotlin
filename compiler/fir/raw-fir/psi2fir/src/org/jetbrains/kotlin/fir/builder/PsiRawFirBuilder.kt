@@ -2025,7 +2025,7 @@ open class PsiRawFirBuilder(
 
                         if (hasDelegate()) {
                             fun extractDelegateExpression() =
-                                buildOrLazyExpression(this@toFirProperty.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)) {
+                                buildOrLazyExpression(this@toFirProperty.delegate?.expression?.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)) {
                                     this@toFirProperty.delegate?.expression?.let { expression ->
                                         expression.toFirExpression("Should have delegate")
                                     } ?: buildErrorExpression {

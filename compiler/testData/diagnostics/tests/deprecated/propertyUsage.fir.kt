@@ -1,4 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
+// IGNORE_DIAGNOSTIC_API
+// IGNORE_REVERSED_RESOLVE
+// ^KT-61491
 
 import kotlin.reflect.KProperty
 
@@ -17,8 +20,8 @@ class PropertyHolder {
     @Deprecated("text")
     var name = "String"
 
-    val valDelegate by Delegate()
-    var varDelegate by Delegate()
+    val valDelegate by <!DEPRECATION!>Delegate<!>()
+    var varDelegate by <!DEPRECATION, DEPRECATION!>Delegate<!>()
 
     public val test1: String = ""
         @Deprecated("val-getter") get

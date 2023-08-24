@@ -14,3 +14,5 @@ fun use() {
     A("").<!DEPRECATION!>s<!>
     A(42).<!DEPRECATION!>s<!>
 }
+
+data class DC(@Deprecated("") val a: String)

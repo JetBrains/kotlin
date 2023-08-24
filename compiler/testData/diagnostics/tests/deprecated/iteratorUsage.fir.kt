@@ -19,6 +19,6 @@ class Iter2 {
 }
 
 fun use() {
-    for (x in Iter()) {}
-    for (x in Iter2()) {}
+    <!DEPRECATION!>for (x in Iter()) {}<!>
+    <!DEPRECATION, DEPRECATION!>for (x in Iter2()) {}<!>
 }

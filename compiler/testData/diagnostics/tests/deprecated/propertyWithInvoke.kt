@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Deprecated("No")
 val f: () -> Unit = {}
 
