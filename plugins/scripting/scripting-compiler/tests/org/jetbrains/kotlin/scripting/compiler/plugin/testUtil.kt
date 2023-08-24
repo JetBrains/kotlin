@@ -283,8 +283,8 @@ fun CompilerConfiguration.updateWithBaseCompilerArguments() {
 }
 
 fun expectTestToFailOnK2(test: () -> Unit) {
-    val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 2.0") == true ||
-            System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 2.0") == true
+    val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true &&
+            System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
     var testFailure: Throwable? = null
     try {
         test()
