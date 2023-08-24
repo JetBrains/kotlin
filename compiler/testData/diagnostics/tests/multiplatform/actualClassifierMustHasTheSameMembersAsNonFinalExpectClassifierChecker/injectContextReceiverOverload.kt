@@ -9,9 +9,11 @@ expect open class Foo {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER!>class Foo<!> {
+actual open class Foo {
     actual fun foo() {}
 
+    // Expected: NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION.
+    // But it doesn't work because context receivers are not yet supported in expect actual matcher KT-61447
     context(Int)
-    fun <!ACTUAL_MISSING, NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION!>foo<!>() {} // accidential override can happen with this injected fun. That's why it's prohibited
+    fun <!ACTUAL_MISSING!>foo<!>() {}
 }
