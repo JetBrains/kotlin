@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.inlineClassFieldName
-import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -23,14 +25,27 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
+
 // A value that may not have been fully constructed yet. The ability to "roll back" code generation
 // is useful for certain optimizations.
 abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val irType: IrType) {
     // If this value is immaterial, construct an object on the top of the stack. This
     // must always be done before generating other values or emitting raw bytecode.
     open fun materializeAt(target: Type, irTarget: IrType, castForReified: Boolean) {
-        val erasedSourceType = irType.eraseTypeParameters()
-        val erasedTargetType = irTarget.eraseTypeParameters()
+
+        fun IrType.eraseIfTypeParameter(): IrType {
+            val owner = (this as? IrSimpleType)?.classifier?.owner as? IrTypeParameter ?: return this
+            val upperBound = owner.erasedUpperBound
+            return IrSimpleTypeImpl(
+                upperBound.symbol,
+                isNullable(),
+                List(upperBound.typeParameters.size) { IrStarProjectionImpl },
+                owner.annotations
+            )
+        }
+
+        val erasedSourceType = irType.eraseIfTypeParameter()
+        val erasedTargetType = irTarget.eraseIfTypeParameter()
 
         // Coerce inline classes
         val isFromTypeUnboxed = InlineClassAbi.unboxType(erasedSourceType)?.let(typeMapper::mapType) == type
