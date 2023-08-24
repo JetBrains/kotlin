@@ -57,19 +57,10 @@ open class FastMethodAnalyzer<V : Value>
     override fun newFrame(nLocals: Int, nStack: Int): Frame<V> =
         Frame(nLocals, nStack)
 
-    fun analyze(): Array<Frame<V>?> {
-        if (nInsns == 0) return getFrames()
-
-        checkAssertions()
-        computeExceptionHandlers(method)
-
+    override fun beforeAnalyze() {
         for (tcb in method.tryCatchBlocks) {
             isTcbStart[tcb.start.indexOf() + 1] = true
         }
-
-        analyzeInner()
-
-        return getFrames()
     }
 
     override fun privateAnalyze(

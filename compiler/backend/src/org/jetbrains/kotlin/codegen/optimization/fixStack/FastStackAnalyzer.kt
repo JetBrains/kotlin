@@ -44,6 +44,8 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 /**
  * @see org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
  */
+// This is a very specific version of method bytecode analyzer that doesn't perform any DFA,
+// but infers stack types for reachable instructions instead.
 internal open class FastStackAnalyzer<V : Value>(
     owner: String,
     method: MethodNode,
@@ -55,21 +57,8 @@ internal open class FastStackAnalyzer<V : Value>(
 
     protected open fun visitControlFlowExceptionEdge(insn: Int, successor: Int): Boolean = true
 
-    fun analyze(): Array<Frame<V>?> {
-        if (nInsns == 0) return getFrames()
-
-        // This is a very specific version of method bytecode analyzer that doesn't perform any DFA,
-        // but infers stack types for reachable instructions instead.
-
-        checkAssertions()
-
-        // Don't have to visit same exception handler multiple times - we care only about stack state at TCB start.
-        computeExceptionHandlers(method, forEachInsn = false)
-
-        analyzeInner()
-
-        return getFrames()
-    }
+    // Don't have to visit the same exception handler multiple times - we care only about stack state at TCB start.
+    override fun useFastComputeExceptionHandlers(): Boolean = true
 
     override fun privateAnalyze(
         insnNode: AbstractInsnNode,
