@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -28,6 +29,7 @@ abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
     abstract override val source: KtSourceElement?
+    abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
     abstract override val calleeReference: FirThisReference
     abstract val isImplicit: Boolean
 
@@ -53,6 +55,8 @@ abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
 
     @FirImplementationDetail
     abstract override fun replaceSource(newSource: KtSourceElement?)
+
+    abstract override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>)
 
     abstract fun replaceCalleeReference(newCalleeReference: FirThisReference)
 

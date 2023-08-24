@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
@@ -32,6 +33,7 @@ internal class FirThisReceiverExpressionImpl(
     override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var source: KtSourceElement?,
+    override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var calleeReference: FirThisReference,
     override val isImplicit: Boolean,
 ) : FirThisReceiverExpression() {
@@ -119,6 +121,10 @@ internal class FirThisReceiverExpressionImpl(
     @FirImplementationDetail
     override fun replaceSource(newSource: KtSourceElement?) {
         source = newSource
+    }
+
+    override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
+        nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirThisReference) {

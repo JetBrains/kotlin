@@ -41,6 +41,12 @@ open class CandidateCollector(
                 candidates.clear()
             }
 
+            if (currentApplicability == CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY &&
+                applicability > currentApplicability
+            ) {
+                candidate.addDiagnostic(ResolutionResultOverridesOtherToPreserveCompatibility)
+            }
+
             currentApplicability = applicability
             bestGroup = group
         }

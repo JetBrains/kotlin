@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.resolve.transformers.doesResolutionResultOverrideOtherToPreserveCompatibility
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -327,6 +328,15 @@ class FirCallResolver(
 
         when {
             referencedSymbol is FirClassLikeSymbol<*> -> {
+                val extraDiagnostic =
+                    runIf(reducedCandidates.singleOrNull()?.doesResolutionResultOverrideOtherToPreserveCompatibility() == true) {
+                        ConeResolutionResultOverridesOtherToPreserveCompatibility
+                    }
+                val nonFatalDiagnosticFromExpressionWithExtra = when {
+                    nonFatalDiagnosticFromExpression != null -> nonFatalDiagnosticFromExpression + listOfNotNull(extraDiagnostic)
+                    extraDiagnostic == null -> null
+                    else -> listOf(extraDiagnostic)
+                }
                 return components.buildResolvedQualifierForClass(
                     referencedSymbol,
                     qualifiedAccess.source,
@@ -336,7 +346,7 @@ class FirCallResolver(
                         nameReference.source,
                         qualifiedAccess.explicitReceiver,
                         referencedSymbol,
-                        nonFatalDiagnosticFromExpression,
+                        nonFatalDiagnosticFromExpressionWithExtra,
                         session
                     ),
                     annotations = qualifiedAccess.annotations
@@ -817,7 +827,8 @@ class FirCallResolver(
             createResolvedReferenceWithoutCandidateForLocalVariables &&
             explicitReceiver?.coneTypeSafe<ConeIntegerLiteralType>() == null &&
             coneSymbol is FirVariableSymbol &&
-            (coneSymbol !is FirPropertySymbol || (coneSymbol.fir as FirMemberDeclaration).typeParameters.isEmpty())
+            (coneSymbol !is FirPropertySymbol || (coneSymbol.fir as FirMemberDeclaration).typeParameters.isEmpty()) &&
+            !candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()
         ) {
             return buildResolvedNamedReference {
                 this.source = source

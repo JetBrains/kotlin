@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -36,6 +37,7 @@ internal class FirImplicitInvokeCallImpl(
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override var source: KtSourceElement?,
+    override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
 ) : FirImplicitInvokeCall() {
@@ -123,6 +125,10 @@ internal class FirImplicitInvokeCallImpl(
     @FirImplementationDetail
     override fun replaceSource(newSource: KtSourceElement?) {
         source = newSource
+    }
+
+    override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
+        nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

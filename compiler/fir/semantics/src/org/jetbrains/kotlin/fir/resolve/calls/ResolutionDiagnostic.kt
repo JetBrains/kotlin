@@ -142,3 +142,5 @@ object UnsupportedContextualDeclarationCall : ResolutionDiagnostic(INAPPLICABLE)
 class AmbiguousValuesForContextReceiverParameter(
     val expectedContextReceiverType: ConeKotlinType,
 ) : ResolutionDiagnostic(INAPPLICABLE)
+
+object ResolutionResultOverridesOtherToPreserveCompatibility : ResolutionDiagnostic(RESOLVED)

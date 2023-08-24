@@ -1,0 +1,112 @@
+FILE: toBeShadowedPrioritized.kt
+    public final enum class E05 : R|kotlin/Enum<E05>| {
+        private constructor(): R|E05| {
+            super<R|kotlin/Enum<E05>|>()
+        }
+
+        public final object entries : R|kotlin/Any| {
+            private constructor(): R|E05.entries| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<E05>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E05| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<E05>|
+            public get(): R|kotlin/enums/EnumEntries<E05>|
+
+    }
+    public final fun test05(): R|kotlin/Unit| {
+        R|kotlin/io/println|(Q|E05|.R|/E05.entries*s|)
+    }
+    public final enum class E07 : R|kotlin/Enum<E07>| {
+        private constructor(entries: R|kotlin/String|): R|E07| {
+            super<R|kotlin/Enum<E07>|>()
+        }
+
+        public final val entries: R|kotlin/String| = R|<local>/entries|
+            public get(): R|kotlin/String|
+
+        public final fun test(): R|kotlin/Unit| {
+            R|kotlin/io/println|(this@R|/E07|.R|/E07.entries|)
+        }
+
+        public final static fun values(): R|kotlin/Array<E07>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E07| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<E07>|
+            public get(): R|kotlin/enums/EnumEntries<E07>|
+
+    }
+    public final enum class E071 : R|kotlin/Enum<E071>| {
+        private constructor(entries: R|kotlin/String|): R|E071| {
+            super<R|kotlin/Enum<E071>|>()
+            R|kotlin/io/println|(R|<local>/entries|)
+        }
+
+        public final static fun values(): R|kotlin/Array<E071>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E071| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<E071>|
+            public get(): R|kotlin/enums/EnumEntries<E071>|
+
+    }
+    public final enum class E09 : R|kotlin/Enum<E09>| {
+        private constructor(): R|E09| {
+            super<R|kotlin/Enum<E09>|>()
+        }
+
+        public final val entries: R|kotlin/String| = String(entries)
+            public get(): R|kotlin/String|
+
+        public final fun test(): R|kotlin/Unit| {
+            R|kotlin/io/println|(this@R|/E09|.R|/E09.entries|)
+        }
+
+        public final static fun values(): R|kotlin/Array<E09>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E09| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<E09>|
+            public get(): R|kotlin/enums/EnumEntries<E09>|
+
+    }
+    public abstract interface I01 : R|kotlin/Any| {
+        public open val entries: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(entries)
+            }
+
+    }
+    public final enum class E10 : R|I01|, R|kotlin/Enum<E10>| {
+        private constructor(): R|E10| {
+            super<R|kotlin/Enum<E10>|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            R|kotlin/io/println|(this@R|/E10|.R|/I01.entries|)
+        }
+
+        public final static fun values(): R|kotlin/Array<E10>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E10| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<E10>|
+            public get(): R|kotlin/enums/EnumEntries<E10>|
+
+    }

@@ -366,3 +366,9 @@ class ConeAmbiguouslyResolvedAnnotationArgument(
               - compiler arguments stage: $symbolFromAnnotationArgumentsPhase
         """
 }
+
+object ConeResolutionResultOverridesOtherToPreserveCompatibility : ConeDiagnostic {
+    override val reason: String
+        get() = "Resolution result overrides another result to preserve compatibility, result maybe changed in future versions"
+
+}

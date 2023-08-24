@@ -1,0 +1,5 @@
+FILE: Main.kt
+    public final fun main(): R|kotlin/Unit| {
+        R|kotlin/io/println|(Q|JavaEnum|.R|/JavaEnum.entries*s|)
+        R|kotlin/io/println|(Q|JavaEnum01|.R|/JavaEnum01.entries*s|)
+    }

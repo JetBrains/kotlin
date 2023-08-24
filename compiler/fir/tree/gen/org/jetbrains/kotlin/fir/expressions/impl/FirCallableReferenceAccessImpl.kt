@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -34,6 +35,7 @@ internal class FirCallableReferenceAccessImpl(
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override var source: KtSourceElement?,
+    override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var calleeReference: FirNamedReference,
     override var hasQuestionMarkAtLHS: Boolean,
 ) : FirCallableReferenceAccess() {
@@ -117,6 +119,10 @@ internal class FirCallableReferenceAccessImpl(
     @FirImplementationDetail
     override fun replaceSource(newSource: KtSourceElement?) {
         source = newSource
+    }
+
+    override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
+        nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirNamedReference) {

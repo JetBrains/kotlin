@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
@@ -38,6 +39,7 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessExpressionBuilder, Fi
     override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var source: KtSourceElement? = null
+    override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     lateinit var calleeReference: FirThisReference
     var isImplicit: Boolean = false
 
@@ -48,6 +50,7 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessExpressionBuilder, Fi
             contextReceiverArguments.toMutableOrEmpty(),
             typeArguments.toMutableOrEmpty(),
             source,
+            nonFatalDiagnostics.toMutableOrEmpty(),
             calleeReference,
             isImplicit,
         )
@@ -95,6 +98,7 @@ inline fun buildThisReceiverExpressionCopy(original: FirThisReceiverExpression, 
     copyBuilder.contextReceiverArguments.addAll(original.contextReceiverArguments)
     copyBuilder.typeArguments.addAll(original.typeArguments)
     copyBuilder.source = original.source
+    copyBuilder.nonFatalDiagnostics.addAll(original.nonFatalDiagnostics)
     copyBuilder.calleeReference = original.calleeReference
     copyBuilder.isImplicit = original.isImplicit
     return copyBuilder.apply(init).build()

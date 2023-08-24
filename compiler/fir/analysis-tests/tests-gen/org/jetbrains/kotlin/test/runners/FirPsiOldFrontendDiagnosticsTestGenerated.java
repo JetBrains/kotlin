@@ -11588,6 +11588,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("javaEnumAdditionalCases.kt")
+                public void testJavaEnumAdditionalCases() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/javaEnumAdditionalCases.kt");
+                }
+
+                @Test
                 @TestMetadata("javaEnumEntriesAmbiguity.kt")
                 public void testJavaEnumEntriesAmbiguity() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/javaEnumEntriesAmbiguity.kt");
@@ -11624,6 +11630,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("primitiveReference.kt")
+                public void testPrimitiveReference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/primitiveReference.kt");
+                }
+
+                @Test
                 @TestMetadata("redeclarationOfEnumEntriesNameWithIntrinsic.kt")
                 public void testRedeclarationOfEnumEntriesNameWithIntrinsic() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/redeclarationOfEnumEntriesNameWithIntrinsic.kt");
@@ -11633,6 +11645,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 @TestMetadata("redeclarationOfEnumEntriesNameWithIntrinsicOn.kt")
                 public void testRedeclarationOfEnumEntriesNameWithIntrinsicOn() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/redeclarationOfEnumEntriesNameWithIntrinsicOn.kt");
+                }
+
+                @Test
+                @TestMetadata("toBeShadowed.kt")
+                public void testToBeShadowed() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/toBeShadowed.kt");
+                }
+
+                @Test
+                @TestMetadata("toBeShadowedPrioritized.kt")
+                public void testToBeShadowedPrioritized() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/toBeShadowedPrioritized.kt");
                 }
             }
 

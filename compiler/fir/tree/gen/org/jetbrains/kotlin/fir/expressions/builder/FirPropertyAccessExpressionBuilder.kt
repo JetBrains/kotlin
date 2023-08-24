@@ -42,7 +42,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessExpressionBuilder, 
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     override var source: KtSourceElement? = null
-    val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirPropertyAccessExpression {

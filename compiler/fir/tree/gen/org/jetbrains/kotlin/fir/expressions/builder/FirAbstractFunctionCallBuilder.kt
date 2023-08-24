@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -36,6 +37,7 @@ interface FirAbstractFunctionCallBuilder : FirQualifiedAccessExpressionBuilder, 
     abstract override var dispatchReceiver: FirExpression
     abstract override var extensionReceiver: FirExpression
     abstract override var source: KtSourceElement?
+    abstract override val nonFatalDiagnostics: MutableList<ConeDiagnostic>
     abstract override var argumentList: FirArgumentList
     abstract var calleeReference: FirNamedReference
     abstract var origin: FirFunctionCallOrigin

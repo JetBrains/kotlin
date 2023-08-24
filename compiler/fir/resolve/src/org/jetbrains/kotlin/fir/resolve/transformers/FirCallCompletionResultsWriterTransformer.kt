@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
@@ -19,13 +18,11 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReferenc
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionResultOverridesOtherToPreserveCompatibility
 import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeConstraintSystemHasContradiction
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterInQualifiedAccess
+import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
@@ -180,6 +177,9 @@ class FirCallCompletionResultsWriterTransformer(
             result.transformExplicitReceiver(typeUpdater, null)
         }
 
+        if (calleeReference.candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
+            result.addNonFatalDiagnostic(ConeResolutionResultOverridesOtherToPreserveCompatibility)
+        }
         return result
     }
 
@@ -235,6 +235,9 @@ class FirCallCompletionResultsWriterTransformer(
             return arrayOfCallTransformer.transformFunctionCall(result, session)
         }
 
+        if (calleeReference.candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
+            result.addNonFatalDiagnostic(ConeResolutionResultOverridesOtherToPreserveCompatibility)
+        }
         return result
     }
 
@@ -378,6 +381,9 @@ class FirCallCompletionResultsWriterTransformer(
             replaceCalleeReference(resolvedReference)
             replaceDispatchReceiver(subCandidate.dispatchReceiverExpression())
             replaceExtensionReceiver(subCandidate.chosenExtensionReceiverExpression())
+            if (calleeReference.candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
+                addNonFatalDiagnostic(ConeResolutionResultOverridesOtherToPreserveCompatibility)
+            }
         }
     }
 
@@ -815,3 +821,10 @@ private fun ExpectedArgumentType.getExpectedType(argument: FirElement): ConeKotl
 }
 
 fun ConeKotlinType.toExpectedType(): ExpectedArgumentType = ExpectedArgumentType.ExpectedType(this)
+
+internal fun Candidate.doesResolutionResultOverrideOtherToPreserveCompatibility(): Boolean =
+    ResolutionResultOverridesOtherToPreserveCompatibility in diagnostics
+
+internal fun FirQualifiedAccessExpression.addNonFatalDiagnostic(diagnostic: ConeDiagnostic) {
+    replaceNonFatalDiagnostics(nonFatalDiagnostics + listOf(diagnostic))
+}

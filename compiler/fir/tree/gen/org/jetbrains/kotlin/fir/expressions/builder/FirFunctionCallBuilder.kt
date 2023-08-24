@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
@@ -44,6 +45,7 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     override var source: KtSourceElement? = null
+    override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     override lateinit var calleeReference: FirNamedReference
     override var origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular
@@ -59,6 +61,7 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
             dispatchReceiver,
             extensionReceiver,
             source,
+            nonFatalDiagnostics.toMutableOrEmpty(),
             argumentList,
             calleeReference,
             origin,

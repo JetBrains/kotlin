@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -27,6 +28,7 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
     abstract override val source: KtSourceElement?
+    abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirNamedReference
     abstract override val origin: FirFunctionCallOrigin
@@ -53,6 +55,8 @@ abstract class FirComponentCall : FirFunctionCall() {
 
     @FirImplementationDetail
     abstract override fun replaceSource(newSource: KtSourceElement?)
+
+    abstract override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>)
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 

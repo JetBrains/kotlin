@@ -1,4 +1,4 @@
-FILE: conflictingPropertyEntriesAndReferenceOn.fir.kt
+FILE: conflictingPropertyEntriesAndReferenceOn.kt
     public final enum class E : R|kotlin/Enum<E>| {
         private constructor(): R|E| {
             super<R|kotlin/Enum<E>|>()
