@@ -56,7 +56,7 @@ val generateTree by tasks.registering(NoDebugJavaExec::class) {
 
 val compileKotlin by tasks
 
-//compileKotlin.dependsOn(generateTree)
+compileKotlin.dependsOn(generateTree)
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
