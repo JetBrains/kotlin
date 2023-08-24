@@ -8,14 +8,11 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
-import org.jetbrains.kotlin.utils.UniqueString
-import org.jetbrains.kotlin.utils.UniqueString.Companion.uniqueString
 
 // The purpose of this class is to hold a unique signature of either a method or a field, so that annotations on a member can be put
 // into a map indexed by these signatures
 @Suppress("DataClassPrivateConstructor")
-data class MemberSignature private constructor(private val signatureImpl: UniqueString) {
-    val signature get() = signatureImpl.value
+data class MemberSignature private constructor(val signature: String) {
     companion object {
         @JvmStatic
         fun fromMethod(nameResolver: NameResolver, signature: JvmProtoBuf.JvmMethodSignature): MemberSignature {
@@ -24,12 +21,12 @@ data class MemberSignature private constructor(private val signatureImpl: Unique
 
         @JvmStatic
         fun fromMethodNameAndDesc(name: String, desc: String): MemberSignature {
-            return MemberSignature(uniqueString(name + desc))
+            return MemberSignature(name + desc)
         }
 
         @JvmStatic
         fun fromFieldNameAndDesc(name: String, desc: String): MemberSignature {
-            return MemberSignature(uniqueString("$name#$desc"))
+            return MemberSignature("$name#$desc")
         }
 
         @JvmStatic
@@ -40,7 +37,7 @@ data class MemberSignature private constructor(private val signatureImpl: Unique
 
         @JvmStatic
         fun fromMethodSignatureAndParameterIndex(signature: MemberSignature, index: Int): MemberSignature {
-            return MemberSignature(uniqueString("${signature.signature}@$index"))
+            return MemberSignature("${signature.signature}@$index")
         }
     }
 }
