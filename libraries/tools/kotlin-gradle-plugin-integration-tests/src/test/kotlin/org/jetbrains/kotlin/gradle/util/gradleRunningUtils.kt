@@ -31,13 +31,14 @@ fun runProcess(
     cmd: List<String>,
     workingDir: File,
     environmentVariables: Map<String, String> = mapOf(),
-    options: BaseGradleIT.BuildOptions? = null
+    options: BaseGradleIT.BuildOptions? = null,
+    redirectErrorStream: Boolean = true,
 ): ProcessRunResult {
     val builder = ProcessBuilder(cmd)
     builder.environment().putAll(environmentVariables)
     builder.directory(workingDir)
     // redirectErrorStream merges stdout and stderr, so it can be get from process.inputStream
-    builder.redirectErrorStream(true)
+    builder.redirectErrorStream(redirectErrorStream)
 
     val process = builder.start()
     // important to read inputStream, otherwise the process may hang on some systems

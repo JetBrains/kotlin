@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.pill.PillExtension
 
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization")
     id("jps-compatible")
 }
 
@@ -90,6 +91,7 @@ dependencies {
     testImplementation(commonDependency("io.ktor", "ktor-client-cio"))
     testImplementation(commonDependency("io.ktor", "ktor-server-netty"))
     testImplementation(commonDependency("io.ktor", "ktor-client-mock"))
+    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-serialization-json"))
 
     testImplementation(gradleApi())
     testImplementation(gradleTestKit())
