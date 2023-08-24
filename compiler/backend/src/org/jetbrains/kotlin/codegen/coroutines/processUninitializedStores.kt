@@ -226,7 +226,7 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode) {
         private val AbstractInsnNode.debugText
             get() = "${instructions.indexOf(this)}: $insnText"
 
-        fun analyzePopInstructions(frames: Array<Frame<BasicValue>?>) {
+        fun analyzePopInstructions(frames: ArrayList<Frame<BasicValue>?>) {
             val insns = instructions.toArray()
             for (i in frames.indices) {
                 val frame = frames[i] ?: continue

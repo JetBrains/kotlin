@@ -84,7 +84,7 @@ private class UnitSourceInterpreter(private val localVariables: Set<Int>) : Basi
         }
     }
 
-    fun run(internalClassName: String, methodNode: MethodNode): Array<Frame<BasicValue>?> {
+    fun run(internalClassName: String, methodNode: MethodNode): ArrayList<Frame<BasicValue>?> {
         val frames = FastMethodAnalyzer<BasicValue>(internalClassName, methodNode, this).analyze()
         // The ASM analyzer does not visit POP instructions, so we do so here.
         for ((insn, frame) in methodNode.instructions.asSequence().zip(frames.asSequence())) {

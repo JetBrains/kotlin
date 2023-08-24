@@ -124,7 +124,7 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
             }
         }
 
-        private fun trackPops(frames: Array<out Frame<BasicValue>?>) {
+        private fun trackPops(frames: ArrayList<out Frame<BasicValue>?>) {
             for ((i, insn) in methodNode.instructions.asSequence().withIndex()) {
                 val frame = frames[i] ?: continue
                 when (insn.opcode) {
@@ -145,7 +145,7 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
         private fun BasicValue.getCapturedVarOrNull(): CapturedVarDescriptor? =
             (this as? ProperTrackedReferenceValue)?.descriptor as? CapturedVarDescriptor
 
-        private fun assignLocalVars(frames: Array<out Frame<BasicValue>?>) {
+        private fun assignLocalVars(frames: ArrayList<out Frame<BasicValue>?>) {
             for (localVar in methodNode.localVariables) {
                 val type = Type.getType(localVar.desc)
                 if (!AsmTypes.isSharedVarType(type)) continue

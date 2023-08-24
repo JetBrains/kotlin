@@ -665,7 +665,7 @@ class MethodInliner(
         return processingNode
     }
 
-    private fun markObsoleteInstruction(instructions: InsnList, sources: Array<out Frame<BasicValue>?>): SmartSet<AbstractInsnNode> {
+    private fun markObsoleteInstruction(instructions: InsnList, sources: ArrayList<out Frame<BasicValue>?>): SmartSet<AbstractInsnNode> {
         return instructions.filterIndexedTo(SmartSet.create()) { index, insn ->
             // Parameter checks are processed separately
             !insn.isAloadBeforeCheckParameterIsNotNull() && when (insn.opcode) {

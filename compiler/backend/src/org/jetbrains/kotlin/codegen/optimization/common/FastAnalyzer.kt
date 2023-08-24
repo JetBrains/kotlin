@@ -22,14 +22,14 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
     protected val nInsns = method.instructions.size()
     protected val handlers: Array<MutableList<TryCatchBlockNode>?> = arrayOfNulls(nInsns)
 
-    private val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
+    private val frames: ArrayList<F?> = ArrayList(MutableList(nInsns) { null })
 
     private val queued = BooleanArray(nInsns)
     private val queue = IntArray(nInsns)
     private var top = 0
 
-    fun analyze(): Array<F?> {
-        if (nInsns == 0) return getFrames()
+    fun analyze(): ArrayList<F?> {
+        if (nInsns == 0) return frames
 
         checkAssertions()
         computeExceptionHandlers(method)
@@ -37,7 +37,7 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
 
         analyzeMainLoop()
 
-        return getFrames()
+        return frames
     }
 
     private fun analyzeMainLoop() {
@@ -49,8 +49,7 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
         while (top > 0) {
             val insn = queue[--top]
 
-            @Suppress("UNCHECKED_CAST")
-            val f = frames[insn]!! as F
+            val f = frames[insn]!!
             queued[insn] = false
 
             val insnNode = method.instructions[insn]
@@ -93,18 +92,13 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
 
     protected abstract fun newFrame(nLocals: Int, nStack: Int): F
 
-    @Suppress("UNCHECKED_CAST")
-    fun getFrame(insn: AbstractInsnNode): F? = frames[insn.indexOf()] as? F
+    fun getFrame(insn: AbstractInsnNode): F? = frames[insn.indexOf()]
 
-    @Suppress("UNCHECKED_CAST")
-    protected fun getFrame(index: Int): F? = frames[index] as? F
+    protected fun getFrame(index: Int): F? = frames[index]
 
     protected fun setFrame(index: Int, newFrame: F) {
         frames[index] = newFrame
     }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun getFrames(): Array<F?> = frames as Array<F?>
 
     protected fun visitMeaningfulInstruction(insnNode: AbstractInsnNode, insnType: Int, insnOpcode: Int, current: F, insn: Int) {
         when {
