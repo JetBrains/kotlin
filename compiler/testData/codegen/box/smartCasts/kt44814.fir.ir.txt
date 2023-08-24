@@ -418,19 +418,19 @@ FILE fqName:<root> fileName:/kt44814.kt
       PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final node: Node of <root>.FirModifier
-        FUN FAKE_OVERRIDE name:<get-node> visibility:public modality:FINAL <> ($this:<root>.FirModifier<Node of <root>.FirModifier>) returnType:<root>.ASTNode [fake_override]
+        FUN FAKE_OVERRIDE name:<get-node> visibility:public modality:FINAL <> ($this:<root>.FirModifier<<root>.ASTNode>) returnType:<root>.ASTNode [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
           overridden:
             public final fun <get-node> (): Node of <root>.FirModifier declared in <root>.FirModifier
-          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<Node of <root>.FirModifier>
+          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<<root>.ASTNode>
       PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final token: <root>.KtModifierKeywordToken
-        FUN FAKE_OVERRIDE name:<get-token> visibility:public modality:FINAL <> ($this:<root>.FirModifier<Node of <root>.FirModifier>) returnType:<root>.KtModifierKeywordToken [fake_override]
+        FUN FAKE_OVERRIDE name:<get-token> visibility:public modality:FINAL <> ($this:<root>.FirModifier<<root>.ASTNode>) returnType:<root>.KtModifierKeywordToken [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
           overridden:
             public final fun <get-token> (): <root>.KtModifierKeywordToken declared in <root>.FirModifier
-          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<Node of <root>.FirModifier>
+          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<<root>.ASTNode>
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirModifier
@@ -470,19 +470,19 @@ FILE fqName:<root> fileName:/kt44814.kt
       PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final node: Node of <root>.FirModifier
-        FUN FAKE_OVERRIDE name:<get-node> visibility:public modality:FINAL <> ($this:<root>.FirModifier<Node of <root>.FirModifier>) returnType:<root>.LighterASTNode [fake_override]
+        FUN FAKE_OVERRIDE name:<get-node> visibility:public modality:FINAL <> ($this:<root>.FirModifier<<root>.LighterASTNode>) returnType:<root>.LighterASTNode [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
           overridden:
             public final fun <get-node> (): Node of <root>.FirModifier declared in <root>.FirModifier
-          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<Node of <root>.FirModifier>
+          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<<root>.LighterASTNode>
       PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final token: <root>.KtModifierKeywordToken
-        FUN FAKE_OVERRIDE name:<get-token> visibility:public modality:FINAL <> ($this:<root>.FirModifier<Node of <root>.FirModifier>) returnType:<root>.KtModifierKeywordToken [fake_override]
+        FUN FAKE_OVERRIDE name:<get-token> visibility:public modality:FINAL <> ($this:<root>.FirModifier<<root>.LighterASTNode>) returnType:<root>.KtModifierKeywordToken [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
           overridden:
             public final fun <get-token> (): <root>.KtModifierKeywordToken declared in <root>.FirModifier
-          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<Node of <root>.FirModifier>
+          $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<<root>.LighterASTNode>
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirModifier

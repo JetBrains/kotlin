@@ -94,11 +94,11 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
           PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
             overridden:
               public final ll: LL of <root>.L
-            FUN FAKE_OVERRIDE name:<get-ll> visibility:public modality:FINAL <> ($this:<root>.L<LL of <root>.L>) returnType:LT of <root>.<get-p>.PLocal [fake_override]
+            FUN FAKE_OVERRIDE name:<get-ll> visibility:public modality:FINAL <> ($this:<root>.L<LT of <root>.<get-p>.PLocal>) returnType:LT of <root>.<get-p>.PLocal [fake_override]
               correspondingProperty: PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
               overridden:
                 public final fun <get-ll> (): LL of <root>.L declared in <root>.L
-              $this: VALUE_PARAMETER name:<this> type:<root>.L<LL of <root>.L>
+              $this: VALUE_PARAMETER name:<this> type:<root>.L<LT of <root>.<get-p>.PLocal>
           FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
             overridden:
               public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.L
@@ -152,11 +152,11 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
         PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
           overridden:
             public final ll: LL of <root>.L
-          FUN FAKE_OVERRIDE name:<get-ll> visibility:public modality:FINAL <> ($this:<root>.L<LL of <root>.L>) returnType:LT of <root>.fn.FLocal [fake_override]
+          FUN FAKE_OVERRIDE name:<get-ll> visibility:public modality:FINAL <> ($this:<root>.L<LT of <root>.fn.FLocal>) returnType:LT of <root>.fn.FLocal [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
             overridden:
               public final fun <get-ll> (): LL of <root>.L declared in <root>.L
-            $this: VALUE_PARAMETER name:<this> type:<root>.L<LL of <root>.L>
+            $this: VALUE_PARAMETER name:<this> type:<root>.L<LT of <root>.fn.FLocal>
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
           overridden:
             public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.L

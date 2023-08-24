@@ -1,0 +1,78 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open class A<A_T : Any?> {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+open class B<B_T : Any?> : A<B_T> {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#hashCode(){}kotlin.Int
+  //   Public signature: /B.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: B#hashCode(){}
+  //   Public signature: /B.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
+  override fun hashCode(): Int
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+open class C<C_T : Any?> : B<C_T> {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#hashCode(){}kotlin.Int
+  //   Public signature: /C.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#hashCode(){}
+  //   Public signature: /C.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
+  /* fake */ override fun hashCode(): Int
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+open class D<D_T : Any?> : C<D_T> {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#hashCode(){}kotlin.Int
+  //   Public signature: /D.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: D#hashCode(){}
+  //   Public signature: /D.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
+  /* fake */ override fun hashCode(): Int
+
+}
+

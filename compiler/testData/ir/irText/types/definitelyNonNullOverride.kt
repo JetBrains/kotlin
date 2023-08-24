@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //!LANGUAGE: +DefinitelyNonNullableTypes
 // SKIP_KT_DUMP
 

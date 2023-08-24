@@ -179,7 +179,7 @@ class FakeOverrideGenerator(
                     createFakeOverriddenIfNeeded(
                         firClass, irClass, isLocal, propertyOrFieldSymbol,
                         { field, _, _ -> declarationStorage.getCachedIrFieldStaticFakeOverrideByDeclaration(field) },
-                        { field, irParent, _, _, _ ->
+                        { field, irParent, _, _ ->
                             declarationStorage.createIrField(field, irParent)
                         },
                         createFakeOverrideSymbol = { firField, _ ->
@@ -230,7 +230,7 @@ class FakeOverrideGenerator(
         isLocal: Boolean,
         originalSymbol: FirCallableSymbol<*>,
         cachedIrDeclaration: (firDeclaration: D, dispatchReceiverLookupTag: ConeClassLikeLookupTag?, () -> IdSignature?) -> I?,
-        createIrDeclaration: (firDeclaration: D, irParent: IrClass, thisReceiverOwner: IrClass?, origin: IrDeclarationOrigin, isLocal: Boolean) -> I,
+        createIrDeclaration: (firDeclaration: D, irParent: IrClass, origin: IrDeclarationOrigin, isLocal: Boolean) -> I,
         createFakeOverrideSymbol: (firDeclaration: D, baseSymbol: S) -> S,
         baseSymbols: MutableMap<I, List<S>>,
         result: MutableList<in I>?,
@@ -281,7 +281,6 @@ class FakeOverrideGenerator(
             ?: createIrDeclaration(
                 fakeOverrideFirDeclaration,
                 irClass,
-                /* thisReceiverOwner = */ declarationStorage.findIrParent(baseSymbol.fir) as? IrClass,
                 origin,
                 isLocal
             )

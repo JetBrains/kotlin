@@ -149,6 +149,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
         }
 
         @Test
+        @TestMetadata("fakeOverridesForAnyMembers.kt")
+        public void testFakeOverridesForAnyMembers() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/fakeOverridesForAnyMembers.kt");
+        }
+
+        @Test
         @TestMetadata("initBlock.kt")
         public void testInitBlock() throws Exception {
             runTest("compiler/testData/ir/irText/classes/initBlock.kt");

@@ -30,12 +30,12 @@ FILE fqName:<root> fileName:/kt43217.kt
                   public open fun isEqualTo (value: kotlin.Double): @[EnhancedNullability] kotlin.Any declared in <root>.DoubleExpression
                 $this: VALUE_PARAMETER name:<this> type:<root>.DoubleExpression
                 VALUE_PARAMETER name:value index:0 type:kotlin.Double
-              FUN FAKE_OVERRIDE name:isEqualTo visibility:public modality:OPEN <> ($this:<root>.ObservableValue<T of <root>.ObservableValue>, value:@[EnhancedNullability] kotlin.Double) returnType:@[EnhancedNullability] kotlin.Any [fake_override]
+              FUN FAKE_OVERRIDE name:isEqualTo visibility:public modality:OPEN <> ($this:<root>.ObservableValue<@[FlexibleNullability] kotlin.Double?>, value:@[EnhancedNullability] kotlin.Double) returnType:@[EnhancedNullability] kotlin.Any [fake_override]
                 annotations:
                   NotNull(value = <null>)
                 overridden:
                   public open fun isEqualTo (value: @[EnhancedNullability] kotlin.Double): @[EnhancedNullability] kotlin.Any declared in <root>.DoubleExpression
-                $this: VALUE_PARAMETER name:<this> type:<root>.ObservableValue<T of <root>.ObservableValue>
+                $this: VALUE_PARAMETER name:<this> type:<root>.ObservableValue<@[FlexibleNullability] kotlin.Double?>
                 VALUE_PARAMETER name:value index:0 type:@[EnhancedNullability] kotlin.Double
                   annotations:
                     NotNull(value = <null>)
@@ -94,12 +94,12 @@ FILE fqName:<root> fileName:/kt43217.kt
         public open fun isEqualTo (value: kotlin.Double): @[EnhancedNullability] kotlin.Any declared in <root>.DoubleExpression
       $this: VALUE_PARAMETER name:<this> type:<root>.DoubleExpression
       VALUE_PARAMETER name:value index:0 type:kotlin.Double
-    FUN FAKE_OVERRIDE name:isEqualTo visibility:public modality:OPEN <> ($this:<root>.ObservableValue<T of <root>.ObservableValue>, value:@[EnhancedNullability] kotlin.Double) returnType:@[EnhancedNullability] kotlin.Any [fake_override]
+    FUN FAKE_OVERRIDE name:isEqualTo visibility:public modality:OPEN <> ($this:<root>.ObservableValue<@[FlexibleNullability] kotlin.Double?>, value:@[EnhancedNullability] kotlin.Double) returnType:@[EnhancedNullability] kotlin.Any [fake_override]
       annotations:
         NotNull(value = <null>)
       overridden:
         public open fun isEqualTo (value: @[EnhancedNullability] kotlin.Double): @[EnhancedNullability] kotlin.Any declared in <root>.DoubleExpression
-      $this: VALUE_PARAMETER name:<this> type:<root>.ObservableValue<T of <root>.ObservableValue>
+      $this: VALUE_PARAMETER name:<this> type:<root>.ObservableValue<@[FlexibleNullability] kotlin.Double?>
       VALUE_PARAMETER name:value index:0 type:@[EnhancedNullability] kotlin.Double
         annotations:
           NotNull(value = <null>)

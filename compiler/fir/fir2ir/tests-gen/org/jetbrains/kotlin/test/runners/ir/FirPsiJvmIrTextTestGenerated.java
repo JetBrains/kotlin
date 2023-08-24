@@ -161,6 +161,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         }
 
         @Test
+        @TestMetadata("fakeOverridesForAnyMembers.kt")
+        public void testFakeOverridesForAnyMembers() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/fakeOverridesForAnyMembers.kt");
+        }
+
+        @Test
         @TestMetadata("fakeOverridesForJavaNonStaticMembers.kt")
         public void testFakeOverridesForJavaNonStaticMembers() throws Exception {
             runTest("compiler/testData/ir/irText/classes/fakeOverridesForJavaNonStaticMembers.kt");

@@ -52,18 +52,18 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_generics.k
   CLASS INTERFACE name:MyMutableCollection modality:ABSTRACT visibility:public superTypes:[<root>.MyCollection<E3 of <root>.MyMutableCollection>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyMutableCollection<E3 of <root>.MyMutableCollection>
     TYPE_PARAMETER name:E3 index:0 variance: superTypes:[kotlin.Any?] reified:false
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.MyCollection<E1 of <root>.MyCollection>) returnType:E3 of <root>.MyMutableCollection [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.MyCollection<E3 of <root>.MyMutableCollection>) returnType:E3 of <root>.MyMutableCollection [fake_override]
       overridden:
         public abstract fun foo (): E1 of <root>.MyCollection declared in <root>.MyCollection
-      $this: VALUE_PARAMETER name:<this> type:<root>.MyCollection<E1 of <root>.MyCollection>
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyCollection<E3 of <root>.MyMutableCollection>
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
         public abstract bar: E1 of <root>.MyCollection
-      FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.MyCollection<E1 of <root>.MyCollection>) returnType:E3 of <root>.MyMutableCollection [fake_override]
+      FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.MyCollection<E3 of <root>.MyMutableCollection>) returnType:E3 of <root>.MyMutableCollection [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-bar> (): E1 of <root>.MyCollection declared in <root>.MyCollection
-        $this: VALUE_PARAMETER name:<this> type:<root>.MyCollection<E1 of <root>.MyCollection>
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyCollection<E3 of <root>.MyMutableCollection>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyCollection
@@ -80,18 +80,18 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_generics.k
   CLASS INTERFACE name:MyMutableList modality:ABSTRACT visibility:public superTypes:[<root>.MyList<E4 of <root>.MyMutableList>; <root>.MyMutableCollection<E4 of <root>.MyMutableList>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyMutableList<E4 of <root>.MyMutableList>
     TYPE_PARAMETER name:E4 index:0 variance: superTypes:[kotlin.Any?] reified:false
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.MyList<E2 of <root>.MyList>) returnType:E4 of <root>.MyMutableList [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.MyList<E4 of <root>.MyMutableList>) returnType:E4 of <root>.MyMutableList [fake_override]
       overridden:
         public abstract fun foo (): E2 of <root>.MyList declared in <root>.MyList
-      $this: VALUE_PARAMETER name:<this> type:<root>.MyList<E2 of <root>.MyList>
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyList<E4 of <root>.MyMutableList>
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
         public abstract bar: E2 of <root>.MyList
-      FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.MyList<E2 of <root>.MyList>) returnType:E4 of <root>.MyMutableList [fake_override]
+      FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.MyList<E4 of <root>.MyMutableList>) returnType:E4 of <root>.MyMutableList [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-bar> (): E2 of <root>.MyList declared in <root>.MyList
-        $this: VALUE_PARAMETER name:<this> type:<root>.MyList<E2 of <root>.MyList>
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyList<E4 of <root>.MyMutableList>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyList

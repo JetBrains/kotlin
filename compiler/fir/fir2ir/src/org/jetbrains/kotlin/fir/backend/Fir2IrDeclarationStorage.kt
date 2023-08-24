@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.threadLocal
@@ -402,15 +403,52 @@ class Fir2IrDeclarationStorage(
         override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
     }
 
-    private fun computeThisReceiverOwner(parent: IrDeclarationParent?): IrClass? {
-        if (parent is IrClass && parent !is NonCachedSourceFileFacadeClass) {
-            return parent
-        }
+    /**
+     * [firCallable] is function or property (if [irFunction] is a property accessor) for
+     *   which [irFunction] was build
+     *
+     * It is needed to determine proper dispatch receiver type if this declaration is fake-override
+     */
+    private fun computeDispatchReceiverType(
+        irFunction: IrSimpleFunction,
+        firCallable: FirCallableDeclaration?,
+        parent: IrDeclarationParent?,
+    ): IrType? {
+        /*
+         * If some function is not fake-override, then its type should be just
+         *   default type of containing class
+         * For fake overrides the default type calculated in the following way:
+         * 1. Find first overridden function, which is not fake override
+         * 2. Take its containing class
+         * 3. Find supertype of current containing class with type constructor of
+          *   class from step 2
+         */
+        if (firCallable is FirProperty && firCallable.isLocal) return null
+        val containingClass = computeContainingClass(parent) ?: return null
+        val defaultType = containingClass.defaultType
+        if (firCallable == null) return defaultType
+        if (irFunction.origin != IrDeclarationOrigin.FAKE_OVERRIDE) return defaultType
 
-        return null
+        val originalCallable = firCallable.unwrapFakeOverrides()
+        val containerOfOriginalCallable = originalCallable.containingClassLookupTag() ?: return defaultType
+        val containerOfFakeOverride = firCallable.dispatchReceiverType ?: return defaultType
+        val correspondingSupertype = AbstractTypeChecker.findCorrespondingSupertypes(
+            session.typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false),
+            containerOfFakeOverride,
+            containerOfOriginalCallable
+        ).firstOrNull() as ConeKotlinType? ?: return defaultType
+        return correspondingSupertype.toIrType()
     }
 
-    internal fun findIrParent(callableDeclaration: FirCallableDeclaration): IrDeclarationParent? {
+    private fun computeContainingClass(parent: IrDeclarationParent?): IrClass? {
+        return if (parent is IrClass && parent !is NonCachedSourceFileFacadeClass) {
+            parent
+        } else {
+            null
+        }
+    }
+
+    private fun findIrParent(callableDeclaration: FirCallableDeclaration): IrDeclarationParent? {
         val firBasedSymbol = callableDeclaration.symbol
         val callableId = firBasedSymbol.callableId
         val callableOrigin = callableDeclaration.origin
@@ -464,9 +502,14 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    /*
+     * In perfect world dispatchReceiverType should always be the default type of containing class
+     * But fake-overrides for members from Any have special rules for type of dispatch receiver
+     */
     private fun <T : IrFunction> T.declareParameters(
         function: FirFunction?,
         containingClass: IrClass?,
+        dispatchReceiverType: IrType?, // has no sense for constructors
         isStatic: Boolean,
         forSetter: Boolean,
         // Can be not-null only for property accessors
@@ -526,9 +569,9 @@ class Fir2IrDeclarationStorage(
             }
             // See [LocalDeclarationsLowering]: "local function must not have dispatch receiver."
             val isLocal = function is FirSimpleFunction && function.isLocal
-            if (function !is FirAnonymousFunction && containingClass != null && !isStatic && !isLocal) {
+            if (function !is FirAnonymousFunction && dispatchReceiverType != null && !isStatic && !isLocal) {
                 dispatchReceiverParameter = declareThisReceiverParameter(
-                    thisType = containingClass.thisReceiver?.type ?: error("No this receiver"),
+                    thisType = dispatchReceiverType,
                     thisOrigin = thisOrigin
                 )
             }
@@ -558,12 +601,14 @@ class Fir2IrDeclarationStorage(
 
     private fun <T : IrFunction> T.bindAndDeclareParameters(
         function: FirFunction?,
-        thisReceiverOwner: IrClass?,
+        irParent: IrDeclarationParent?,
+        dispatchReceiverType: IrType?, // has no sense for constructors
         isStatic: Boolean,
         forSetter: Boolean,
         parentPropertyReceiver: FirReceiverParameter? = null
     ): T {
-        declareParameters(function, thisReceiverOwner, isStatic, forSetter, parentPropertyReceiver)
+        val containingClass = computeContainingClass(irParent)
+        declareParameters(function, containingClass, dispatchReceiverType, isStatic, forSetter, parentPropertyReceiver)
         return this
     }
 
@@ -639,7 +684,6 @@ class Fir2IrDeclarationStorage(
     fun createIrFunction(
         function: FirFunction,
         irParent: IrDeclarationParent?,
-        thisReceiverOwner: IrClass? = computeThisReceiverOwner(irParent),
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
@@ -709,8 +753,10 @@ class Fir2IrDeclarationStorage(
                     enterScope(this.symbol)
                     setAndModifyParent(irParent)
                     bindAndDeclareParameters(
-                        function, thisReceiverOwner,
-                        isStatic = simpleFunction?.isStatic == true, forSetter = false,
+                        function, irParent,
+                        dispatchReceiverType = computeDispatchReceiverType(this, simpleFunction, irParent),
+                        isStatic = simpleFunction?.isStatic == true,
+                        forSetter = false,
                     )
                     convertAnnotationsForNonDeclaredMembers(function, origin)
                     leaveScope(this.symbol)
@@ -817,7 +863,7 @@ class Fir2IrDeclarationStorage(
                     constructorCache[constructor] = this
                     enterScope(this.symbol)
                     setAndModifyParent(irParent)
-                    bindAndDeclareParameters(constructor, irParent, isStatic = false, forSetter = false)
+                    bindAndDeclareParameters(constructor, irParent, dispatchReceiverType = null, isStatic = false, forSetter = false)
                     leaveScope(this.symbol)
                 }
             }
@@ -849,7 +895,6 @@ class Fir2IrDeclarationStorage(
         correspondingProperty: IrDeclarationWithName,
         propertyType: IrType,
         irParent: IrDeclarationParent?,
-        thisReceiverOwner: IrClass? = computeThisReceiverOwner(irParent),
         isSetter: Boolean,
         origin: IrDeclarationOrigin,
         startOffset: Int,
@@ -914,13 +959,14 @@ class Fir2IrDeclarationStorage(
                     )
                 }
                 setAndModifyParent(irParent)
+                val dispatchReceiverType = computeDispatchReceiverType(this, property, irParent)
                 bindAndDeclareParameters(
-                    propertyAccessor, thisReceiverOwner,
+                    propertyAccessor, irParent, dispatchReceiverType,
                     isStatic = irParent !is IrClass || propertyAccessor?.isStatic == true, forSetter = isSetter,
                     parentPropertyReceiver = property.receiverParameter,
                 )
                 leaveScope(this.symbol)
-                if (correspondingProperty is Fir2IrLazyProperty && correspondingProperty.containingClass != null && !isFakeOverride && thisReceiverOwner != null) {
+                if (correspondingProperty is Fir2IrLazyProperty && correspondingProperty.containingClass != null && !isFakeOverride && dispatchReceiverType != null) {
                     this.overriddenSymbols = correspondingProperty.fir.generateOverriddenAccessorSymbols(
                         correspondingProperty.containingClass, !isSetter
                     )
@@ -1059,7 +1105,6 @@ class Fir2IrDeclarationStorage(
     fun createIrProperty(
         property: FirProperty,
         irParent: IrDeclarationParent?,
-        thisReceiverOwner: IrClass? = computeThisReceiverOwner(irParent),
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
@@ -1149,7 +1194,7 @@ class Fir2IrDeclarationStorage(
                         backingField?.parent = irParent
                     }
                     this.getter = createIrPropertyAccessor(
-                        getter, property, this, type, irParent, thisReceiverOwner, false,
+                        getter, property, this, type, irParent, false,
                         when {
                             origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
                             origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> origin
@@ -1167,7 +1212,7 @@ class Fir2IrDeclarationStorage(
                     }
                     if (property.isVar) {
                         this.setter = createIrPropertyAccessor(
-                            setter, property, this, type, irParent, thisReceiverOwner, true,
+                            setter, property, this, type, irParent, true,
                             when {
                                 delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
                                 origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
@@ -1570,14 +1615,14 @@ class Fir2IrDeclarationStorage(
             }
             delegate.parent = irParent
             getter = createIrPropertyAccessor(
-                property.getter, property, this, type, irParent, null, false,
+                property.getter, property, this, type, irParent, false,
                 IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR, startOffset, endOffset, dontUseSignature = true
             ).also {
                 getterForPropertyCache[symbol] = it.symbol
             }
             if (property.isVar) {
                 setter = createIrPropertyAccessor(
-                    property.setter, property, this, type, irParent, null, true,
+                    property.setter, property, this, type, irParent, true,
                     IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR, startOffset, endOffset, dontUseSignature = true
                 ).also {
                     setterForPropertyCache[symbol] = it.symbol

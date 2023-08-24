@@ -137,6 +137,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/enumWithSecondaryCtor.kt");
         }
 
+        @TestMetadata("fakeOverridesForAnyMembers.kt")
+        public void testFakeOverridesForAnyMembers() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/fakeOverridesForAnyMembers.kt");
+        }
+
         @TestMetadata("initBlock.kt")
         public void testInitBlock() throws Exception {
             runTest("compiler/testData/ir/irText/classes/initBlock.kt");

@@ -333,10 +333,10 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
         public open fun toString (): kotlin.String declared in <root>.CoroutineScope
         public open fun toString (): kotlin.String declared in <root>.SendChannel
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:send visibility:public modality:ABSTRACT <> ($this:<root>.SendChannel<E of <root>.SendChannel>, e:E of <root>.ProducerScope) returnType:kotlin.Unit [suspend,fake_override]
+    FUN FAKE_OVERRIDE name:send visibility:public modality:ABSTRACT <> ($this:<root>.SendChannel<E of <root>.ProducerScope>, e:E of <root>.ProducerScope) returnType:kotlin.Unit [suspend,fake_override]
       overridden:
         public abstract fun send (e: E of <root>.SendChannel): kotlin.Unit declared in <root>.SendChannel
-      $this: VALUE_PARAMETER name:<this> type:<root>.SendChannel<E of <root>.SendChannel>
+      $this: VALUE_PARAMETER name:<this> type:<root>.SendChannel<E of <root>.ProducerScope>
       VALUE_PARAMETER name:e index:0 type:E of <root>.ProducerScope
   CLASS INTERFACE name:SendChannel modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SendChannel<E of <root>.SendChannel>

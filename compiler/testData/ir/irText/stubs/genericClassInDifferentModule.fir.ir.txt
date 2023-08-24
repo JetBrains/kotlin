@@ -129,11 +129,11 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       overridden:
         public final x: T of <root>.Base
-      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base<T of <root>.Base>) returnType:T of <root>.Derived1 [fake_override]
+      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base<T of <root>.Derived1>) returnType:T of <root>.Derived1 [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-x> (): T of <root>.Base declared in <root>.Base
-        $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Derived1>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base

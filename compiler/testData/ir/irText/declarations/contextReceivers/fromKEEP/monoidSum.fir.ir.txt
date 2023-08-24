@@ -26,10 +26,10 @@ FILE fqName:<root> fileName:/monoidSum.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-unit> visibility:public modality:ABSTRACT <> ($this:<root>.Monoid<T of <root>.Monoid>) returnType:T of <root>.Monoid
         correspondingProperty: PROPERTY name:unit visibility:public modality:ABSTRACT [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.Monoid<T of <root>.Monoid>
-    FUN FAKE_OVERRIDE name:combine visibility:public modality:ABSTRACT <> ($this:<root>.Semigroup<T of <root>.Semigroup>, $receiver:T of <root>.Monoid, other:T of <root>.Monoid) returnType:T of <root>.Monoid [fake_override,infix]
+    FUN FAKE_OVERRIDE name:combine visibility:public modality:ABSTRACT <> ($this:<root>.Semigroup<T of <root>.Monoid>, $receiver:T of <root>.Monoid, other:T of <root>.Monoid) returnType:T of <root>.Monoid [fake_override,infix]
       overridden:
         public abstract fun combine (other: T of <root>.Semigroup): T of <root>.Semigroup declared in <root>.Semigroup
-      $this: VALUE_PARAMETER name:<this> type:<root>.Semigroup<T of <root>.Semigroup>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Semigroup<T of <root>.Monoid>
       $receiver: VALUE_PARAMETER name:<this> type:T of <root>.Monoid
       VALUE_PARAMETER name:other index:0 type:T of <root>.Monoid
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
