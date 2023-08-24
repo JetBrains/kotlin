@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
 
 internal val recordEnclosingMethodsPhase = makeIrFilePhase(
     ::RecordEnclosingMethodsLowering,
@@ -30,7 +30,7 @@ internal val recordEnclosingMethodsPhase = makeIrFilePhase(
 
 private class RecordEnclosingMethodsLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) =
-        irFile.accept(object : IrElementVisitor<Unit, IrFunction?>() {
+        irFile.accept(object : IrElementVisitorShallow<Unit, IrFunction?>() {
             override fun visitElement(element: IrElement, data: IrFunction?) =
                 element.acceptChildren(this, element as? IrFunction ?: data)
 
@@ -50,8 +50,16 @@ private class RecordEnclosingMethodsLowering(val context: JvmBackendContext) : F
                         }
                     }
                 }
-                return super.visitFunctionAccess(expression, data)
+                return visitElement(expression, data)
             }
+
+            override fun visitCall(expression: IrCall, data: IrFunction?) = visitFunctionAccess(expression, data)
+
+            override fun visitConstructorCall(expression: IrConstructorCall, data: IrFunction?) = visitFunctionAccess(expression, data)
+
+            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: IrFunction?) = visitFunctionAccess(expression, data)
+
+            override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: IrFunction?) = visitFunctionAccess(expression, data)
 
             private fun recordEnclosingMethodOverride(from: IrFunction, to: IrFunction) =
                 context.enclosingMethodOverride.merge(from, to) { old, new ->

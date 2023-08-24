@@ -8,8 +8,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerShallow
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
 
 /**
  * A leaf IR tree element.
@@ -19,15 +19,16 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 abstract class IrSetField : IrFieldAccessExpression() {
     abstract var value: IrExpression
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D): R =
         visitor.visitSetField(this, data)
 
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrElementVisitorShallow<Unit, D>, data: D) {
         receiver?.accept(visitor, data)
         value.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrElementTransformerShallow<D>,
+            data: D) {
         receiver = receiver?.transform(transformer, data)
         value = value.transform(transformer, data)
     }

@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.ir.visitors
 
 import org.jetbrains.kotlin.ir.IrElement
 
-fun IrElement.acceptVoid(visitor: IrElementVisitorVoid) {
+fun IrElement.acceptVoid(visitor: IrElementVisitorVoidShallow) {
     accept(visitor, null)
 }
 
-fun IrElement.acceptChildrenVoid(visitor: IrElementVisitorVoid) {
+fun IrElement.acceptChildrenVoid(visitor: IrElementVisitorVoidShallow) {
     acceptChildren(visitor, null)
 }

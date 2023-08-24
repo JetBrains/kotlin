@@ -9,8 +9,8 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerShallow
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
 
 /**
  * A leaf IR tree element.
@@ -24,15 +24,16 @@ abstract class IrDynamicOperatorExpression : IrDynamicExpression() {
 
     abstract val arguments: MutableList<IrExpression>
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D): R =
         visitor.visitDynamicOperatorExpression(this, data)
 
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrElementVisitorShallow<Unit, D>, data: D) {
         receiver.accept(visitor, data)
         arguments.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrElementTransformerShallow<D>,
+            data: D) {
         receiver = receiver.transform(transformer, data)
         arguments.transformInPlace(transformer, data)
     }

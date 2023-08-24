@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
 import org.jetbrains.kotlin.load.java.JvmAbi
 
 // This phase is needed to support correct generation of synthetic `$delegate` methods for optimized delegated properties, in the case
@@ -37,7 +38,7 @@ internal val makePropertyDelegateMethodsStaticPhase = makeIrFilePhase(
     prerequisite = setOf(propertyReferenceDelegationPhase, localDeclarationsPhase)
 )
 
-private class MakePropertyDelegateMethodsStaticLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+private class MakePropertyDelegateMethodsStaticLowering(val context: JvmBackendContext) : IrElementTransformerVoidShallow(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transform(this, null)
     }
@@ -65,7 +66,8 @@ private class MakePropertyDelegateMethodsStaticLowering(val context: JvmBackendC
                         "in MakePropertyDelegateMethodsStaticLowering: ${expression.symbol.owner.render()}"
             )
         }
-        return super.visitCall(expression)
+        expression.transformChildren(this, null)
+        return expression
     }
 
     private fun IrSimpleFunction.isSyntheticDelegateMethod(): Boolean =

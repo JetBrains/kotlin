@@ -11,7 +11,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
 
 /**
  * A leaf IR tree element.
@@ -26,6 +26,6 @@ abstract class IrLocalDelegatedPropertyReference :
 
     abstract var setter: IrSimpleFunctionSymbol?
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D): R =
         visitor.visitLocalDelegatedPropertyReference(this, data)
 }

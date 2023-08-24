@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
 
 internal val staticCallableReferencePhase = makeIrFilePhase(
     ::StaticCallableReferenceLowering,
@@ -28,7 +29,7 @@ internal val staticCallableReferencePhase = makeIrFilePhase(
     description = "Turn static callable references into singletons"
 )
 
-class StaticCallableReferenceLowering(val backendContext: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
+class StaticCallableReferenceLowering(val backendContext: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidShallow() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     override fun visitClass(declaration: IrClass): IrStatement {

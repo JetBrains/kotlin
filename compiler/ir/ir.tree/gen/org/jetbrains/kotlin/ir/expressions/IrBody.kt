@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerShallow
 
 /**
  * A non-leaf IR tree element.
@@ -18,6 +18,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.body]
  */
 abstract class IrBody : IrElementBase(), IrElement {
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBody =
-        accept(transformer, data) as IrBody
+    override fun <D> transform(transformer: IrElementTransformerShallow<D>, data: D):
+            IrBody = accept(transformer, data) as IrBody
 }

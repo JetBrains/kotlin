@@ -10,8 +10,8 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerShallow
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
 
 /**
  * A leaf IR tree element.
@@ -21,14 +21,15 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 abstract class IrBlockBody : IrBody(), IrStatementContainer {
     abstract val factory: IrFactory
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D): R =
         visitor.visitBlockBody(this, data)
 
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrElementVisitorShallow<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrElementTransformerShallow<D>,
+            data: D) {
         statements.transformInPlace(transformer, data)
     }
 }
