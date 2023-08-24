@@ -28,6 +28,11 @@ data class AnalysisApiTestConfiguratorFactoryData(
     val analysisApiMode: AnalysisApiMode,
 )
 
+fun AnalysisApiTestConfiguratorFactoryData.defaultExtension(): String = when (this.moduleKind) {
+    TestModuleKind.ScriptSource -> "kts"
+    else -> "kt"
+}
+
 enum class AnalysisSessionMode(val suffix: String) {
     Normal("Normal"),
 
