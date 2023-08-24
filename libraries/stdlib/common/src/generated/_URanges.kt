@@ -346,7 +346,7 @@ public fun ULongProgression.reversed(): ULongProgression {
 /**
  * Returns a progression that goes over the same range with the given step.
  * 
- * @sample samples.ranges.Ranges.stepInt
+ * @sample samples.ranges.Ranges.stepUInt
  */
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalUnsignedTypes::class)
@@ -358,7 +358,7 @@ public infix fun UIntProgression.step(step: Int): UIntProgression {
 /**
  * Returns a progression that goes over the same range with the given step.
  * 
- * @sample samples.ranges.Ranges.stepLong
+ * @sample samples.ranges.Ranges.stepULong
  */
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalUnsignedTypes::class)

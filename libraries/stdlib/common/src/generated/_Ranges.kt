@@ -982,7 +982,7 @@ public infix fun LongProgression.step(step: Long): LongProgression {
 /**
  * Returns a progression that goes over the same range with the given step.
  * 
- * @sample samples.ranges.Ranges.stepInt
+ * @sample samples.ranges.Ranges.stepChar
  */
 public infix fun CharProgression.step(step: Int): CharProgression {
     checkStepIsPositive(step > 0, step)
