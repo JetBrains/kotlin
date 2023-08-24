@@ -17,22 +17,17 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleCompu
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.objcinterop.*
-import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 
-private val annotationsToTreatAsExported = listOf(
+val ANNOTATIONS_TO_TREAT_AS_EXPORTED = listOf(
     NativeRuntimeNames.Annotations.symbolNameClassId,
     NativeRuntimeNames.Annotations.gcUnsafeCallClassId,
     NativeRuntimeNames.Annotations.exportForCppRuntimeClassId,
     NativeRuntimeNames.Annotations.cNameClassId,
     NativeRuntimeNames.Annotations.exportForCompilerClassId,
 )
-
-private val IrConstructor.isObjCConstructor: Boolean
-    get() = hasAnnotation(NativeStandardInteropNames.objCConstructorClassId)
 
 abstract class AbstractKonanIrMangler(
         private val withReturnType: Boolean,
@@ -46,7 +41,7 @@ abstract class AbstractKonanIrMangler(
     override fun IrDeclaration.isPlatformSpecificExport(): Boolean {
         if (this is IrSimpleFunction) if (isFakeOverride) return false
 
-        return annotationsToTreatAsExported.any(this::hasAnnotation)
+        return ANNOTATIONS_TO_TREAT_AS_EXPORTED.any(this::hasAnnotation)
     }
 
     private inner class KonanIrExportChecker(compatibleMode: Boolean) : IrExportCheckerVisitor(compatibleMode) {
@@ -65,41 +60,11 @@ abstract class AbstractKonanIrMangler(
 
         override fun addReturnType(): Boolean = withReturnType
 
-        override fun IrFunction.platformSpecificFunctionName(): String? {
-            (if (this is IrConstructor && this.isObjCConstructor) this.getObjCInitMethod() else this)?.getObjCMethodInfo()
-                    ?.let {
-                        return buildString {
-                            if (extensionReceiverParameter != null) {
-                                append(extensionReceiverParameter!!.type.getClass()!!.name)
-                                append(MangleConstant.FQN_SEPARATOR)
-                            }
-
-                            append(MangleConstant.OBJC_MARK)
-                            append(it.selector)
-                            if (this@platformSpecificFunctionName is IrConstructor && this@platformSpecificFunctionName.isObjCConstructor) {
-                                append(MangleConstant.OBJC_CONSTRUCTOR_MARK)
-                            }
-
-                            if ((this@platformSpecificFunctionName as? IrSimpleFunction)?.correspondingPropertySymbol != null) {
-                                append(MangleConstant.OBJC_PROPERTY_ACCESSOR_MARK)
-                            }
-                        }
-                    }
-            return null
-        }
+        override fun makePlatformSpecificFunctionNameMangleComputer(function: IrFunction) = IrObjCFunctionNameMangleComputer(function)
 
         override fun IrFunction.platformSpecificFunctionMarks(): List<String> = when (origin) {
             IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION -> listOfSuspendFunctionMark
             else -> emptyList()
-        }
-
-        override fun IrFunction.specialValueParamPrefix(param: IrValueParameter): String {
-            // TODO: there are clashes originating from ObjectiveC interop.
-            // kotlinx.cinterop.ObjCClassOf<T>.create(format: kotlin.String): T defined in platform.Foundation in file Foundation.kt
-            // and
-            // kotlinx.cinterop.ObjCClassOf<T>.create(string: kotlin.String): T defined in platform.Foundation in file Foundation.kt
-
-            return if (this.hasObjCMethodAnnotation || this.hasObjCFactoryAnnotation || this.isObjCClassMethod()) "${param.name}:" else ""
         }
 
         companion object {
@@ -124,7 +89,7 @@ abstract class AbstractKonanDescriptorMangler : DescriptorBasedKotlinManglerImpl
             if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) return false
         }
 
-        return annotationsToTreatAsExported.any { annotations.hasAnnotation(it.asSingleFqName()) }
+        return ANNOTATIONS_TO_TREAT_AS_EXPORTED.any { annotations.hasAnnotation(it.asSingleFqName()) }
     }
 
 
@@ -132,32 +97,8 @@ abstract class AbstractKonanDescriptorMangler : DescriptorBasedKotlinManglerImpl
     private class KonanDescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) : DescriptorMangleComputer(builder, mode) {
         override fun copy(newMode: MangleMode): DescriptorMangleComputer = KonanDescriptorMangleComputer(builder, newMode)
 
-        override fun FunctionDescriptor.platformSpecificFunctionName(): String? {
-            (if (this is ConstructorDescriptor && this.isObjCConstructor) this.getObjCInitMethod() else this)?.getObjCMethodInfo()
-                    ?.let {
-                        return buildString {
-                            if (extensionReceiverParameter != null) {
-                                append(extensionReceiverParameter!!.type.constructor.declarationDescriptor!!.name)
-                                append(MangleConstant.FQN_SEPARATOR)
-                            }
-
-                            append(MangleConstant.OBJC_MARK)
-                            append(it.selector)
-                            if (this@platformSpecificFunctionName is ConstructorDescriptor && this@platformSpecificFunctionName.isObjCConstructor) {
-                                append(MangleConstant.OBJC_CONSTRUCTOR_MARK)
-                            }
-
-                            if (this@platformSpecificFunctionName is PropertyAccessorDescriptor) {
-                                append(MangleConstant.OBJC_PROPERTY_ACCESSOR_MARK)
-                            }
-                        }
-                    }
-            return null
-        }
-
-        override fun FunctionDescriptor.specialValueParamPrefix(param: ValueParameterDescriptor): String {
-            return if (this.hasObjCMethodAnnotation || this.hasObjCFactoryAnnotation || this.isObjCClassMethod()) "${param.name}:" else ""
-        }
+        override fun makePlatformSpecificFunctionNameMangleComputer(function: FunctionDescriptor) =
+            DescriptorObjCFunctionNameMangleComputer(function)
     }
 }
 
