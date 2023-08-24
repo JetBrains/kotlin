@@ -57,7 +57,7 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
             val insnType = insnNode.toType
 
             try {
-                privateAnalyze(insnNode, insn, insnType, insnOpcode, f, current, handler)
+                analyzeInstruction(insnNode, insn, insnType, insnOpcode, f, current, handler)
             } catch (e: AnalyzerException) {
                 throw AnalyzerException(
                     e.node,
@@ -80,7 +80,7 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
 
     abstract fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean = false)
 
-    abstract fun privateAnalyze(
+    abstract fun analyzeInstruction(
         insnNode: AbstractInsnNode,
         insnIndex: Int,
         insnType: Int,

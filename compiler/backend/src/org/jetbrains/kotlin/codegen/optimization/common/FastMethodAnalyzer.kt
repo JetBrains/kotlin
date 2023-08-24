@@ -63,7 +63,7 @@ open class FastMethodAnalyzer<V : Value>
         }
     }
 
-    override fun privateAnalyze(
+    override fun analyzeInstruction(
         insnNode: AbstractInsnNode,
         insnIndex: Int,
         insnType: Int,

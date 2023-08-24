@@ -61,7 +61,7 @@ internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
     // Don't have to visit the same exception handler multiple times - we care only about stack state at TCB start.
     override fun useFastComputeExceptionHandlers(): Boolean = true
 
-    override fun privateAnalyze(
+    override fun analyzeInstruction(
         insnNode: AbstractInsnNode,
         insnIndex: Int,
         insnType: Int,
