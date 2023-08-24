@@ -33,7 +33,6 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
-import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -53,68 +52,33 @@ open class FastMethodAnalyzer<V : Value>
     private val pruneExceptionEdges: Boolean = false
 ) : FastAnalyzer<V, Interpreter<V>, Frame<V>>(owner, method, interpreter) {
     private val isMergeNode = findMergeNodes(method)
-    private val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
+    private val isTcbStart = BooleanArray(nInsns)
 
-    private val queued = BooleanArray(nInsns)
-    private val queue = IntArray(nInsns)
-    private var top = 0
-
-    protected open fun newFrame(nLocals: Int, nStack: Int): Frame<V> =
+    override fun newFrame(nLocals: Int, nStack: Int): Frame<V> =
         Frame(nLocals, nStack)
 
     fun analyze(): Array<Frame<V>?> {
-        if (nInsns == 0) return frames
+        if (nInsns == 0) return getFrames()
 
         checkAssertions()
         computeExceptionHandlers(method)
 
-        val isTcbStart = BooleanArray(nInsns)
         for (tcb in method.tryCatchBlocks) {
             isTcbStart[tcb.start.indexOf() + 1] = true
         }
 
-        val current = newFrame(method.maxLocals, method.maxStack)
-        val handler = newFrame(method.maxLocals, method.maxStack)
-        initLocals(current)
-        mergeControlFlowEdge(0, current)
+        analyzeInner()
 
-        while (top > 0) {
-            val insn = queue[--top]
-            val f = frames[insn]!!
-            queued[insn] = false
-
-            val insnNode = method.instructions[insn]
-            val insnOpcode = insnNode.opcode
-            val insnType = insnNode.toType
-
-            try {
-                privateAnalyze(insnType, insnOpcode, insn, f, current, insnNode, isTcbStart, handler)
-            } catch (e: AnalyzerException) {
-                throw AnalyzerException(
-                    e.node,
-                    "Error at instruction #$insn ${insnNode.insnText(method.instructions)}: ${e.message}\ncurrent: ${current.dump()}",
-                    e
-                )
-            } catch (e: Exception) {
-                throw AnalyzerException(
-                    insnNode,
-                    "Error at instruction #$insn ${insnNode.insnText(method.instructions)}: ${e.message}\ncurrent: ${current.dump()}",
-                    e
-                )
-            }
-        }
-
-        return frames
+        return getFrames()
     }
 
-    private fun privateAnalyze(
+    override fun privateAnalyze(
+        insnNode: AbstractInsnNode,
+        insnIndex: Int,
         insnType: Int,
         insnOpcode: Int,
-        insn: Int,
-        f: Frame<V>,
+        currentlyAnalyzing: Frame<V>,
         current: Frame<V>,
-        insnNode: AbstractInsnNode,
-        isTcbStart: BooleanArray,
         handler: Frame<V>,
     ) {
         if (insnType == AbstractInsnNode.LABEL ||
@@ -122,10 +86,10 @@ open class FastMethodAnalyzer<V : Value>
             insnType == AbstractInsnNode.FRAME ||
             insnOpcode == Opcodes.NOP
         ) {
-            mergeControlFlowEdge(insn + 1, f, canReuse = true)
+            mergeControlFlowEdge(insnIndex + 1, currentlyAnalyzing, canReuse = true)
         } else {
-            current.init(f).execute(insnNode, interpreter)
-            visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insn)
+            current.init(currentlyAnalyzing).execute(insnNode, interpreter)
+            visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insnIndex)
         }
 
         // Jump by an exception edge clears the stack, putting exception on top.
@@ -135,13 +99,13 @@ open class FastMethodAnalyzer<V : Value>
         if (!pruneExceptionEdges ||
             insnOpcode in Opcodes.ISTORE..Opcodes.ASTORE ||
             insnOpcode == Opcodes.IINC ||
-            isTcbStart[insn]
+            isTcbStart[insnIndex]
         ) {
-            handlers[insn]?.forEach { tcb ->
+            handlers[insnIndex]?.forEach { tcb ->
                 val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
                 val jump = tcb.handler.indexOf()
 
-                handler.init(f)
+                handler.init(currentlyAnalyzing)
                 handler.clearStack()
                 handler.push(interpreter.newExceptionValue(tcb, handler, exnType))
                 mergeControlFlowEdge(jump, handler)
@@ -149,13 +113,14 @@ open class FastMethodAnalyzer<V : Value>
         }
     }
 
-    private fun initLocals(current: Frame<V>) {
+    override fun initLocals(current: Frame<V>) {
         current.setReturn(interpreter.newReturnTypeValue(Type.getReturnType(method.desc)))
         val args = Type.getArgumentTypes(method.desc)
         var local = 0
         val isInstanceMethod = (method.access and Opcodes.ACC_STATIC) == 0
         if (isInstanceMethod) {
-            current.setLocal(local, interpreter.newParameterValue(true, local, Type.getObjectType(owner)))
+            val ctype = Type.getObjectType(owner)
+            current.setLocal(local, interpreter.newParameterValue(true, local, ctype))
             local++
         }
         for (arg in args) {
@@ -171,9 +136,6 @@ open class FastMethodAnalyzer<V : Value>
             local++
         }
     }
-
-    fun getFrame(insn: AbstractInsnNode): Frame<V>? =
-        frames[insn.indexOf()]
 
     override fun visitOpInsn(insnNode: AbstractInsnNode, current: Frame<V>, insn: Int) {
         mergeControlFlowEdge(insn + 1, current)
@@ -210,15 +172,15 @@ open class FastMethodAnalyzer<V : Value>
      * Reuses old frame when possible and when [canReuse] is true.
      * If updated, adds the frame to the queue
      */
-    private fun mergeControlFlowEdge(dest: Int, frame: Frame<V>, canReuse: Boolean = false) {
-        val oldFrame = frames[dest]
+    override fun mergeControlFlowEdge(dest: Int, frame: Frame<V>, canReuse: Boolean) {
+        val oldFrame = getFrame(dest)
         val changes = when {
             canReuse && !isMergeNode[dest] -> {
-                frames[dest] = frame
+                setFrame(dest, frame)
                 true
             }
             oldFrame == null -> {
-                frames[dest] = newFrame(frame.locals, frame.maxStackSize).apply { init(frame) }
+                setFrame(dest, newFrame(frame.locals, frame.maxStackSize).apply { init(frame) })
                 true
             }
             !isMergeNode[dest] -> {
@@ -232,10 +194,7 @@ open class FastMethodAnalyzer<V : Value>
                     throw AnalyzerException(null, "${e.message}\nframe: ${frame.dump()}\noldFrame: ${oldFrame.dump()}")
                 }
         }
-        if (changes && !queued[dest]) {
-            queued[dest] = true
-            queue[top++] = dest
-        }
+        updateQueue(changes, dest)
     }
 
     companion object {
