@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
@@ -39,6 +40,13 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
         val options = task.diagnosticRenderingOptions.get()
         if (!diagnostic.isSuppressed(options)) {
             renderReportedDiagnostic(diagnostic, task.logger, options)
+        }
+    }
+
+    fun report(transform: TransformActionUsingKotlinToolingDiagnostics<*>, logger: Logger, diagnostic: ToolingDiagnostic) {
+        val options = transform.parameters.diagnosticRenderingOptions.get()
+        if (!diagnostic.isSuppressed(options)) {
+            renderReportedDiagnostic(diagnostic, logger, options)
         }
     }
 

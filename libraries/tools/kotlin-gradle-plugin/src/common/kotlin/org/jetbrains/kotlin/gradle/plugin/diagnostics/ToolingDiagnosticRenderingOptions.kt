@@ -9,13 +9,14 @@ import org.gradle.api.Project
 import org.gradle.api.logging.configuration.ShowStacktrace
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import java.io.Serializable
 
 internal class ToolingDiagnosticRenderingOptions(
     val useParsableFormat: Boolean,
     val suppressedWarningIds: List<String>,
     val suppressedErrorIds: List<String>,
     val showStacktrace: Boolean,
-) {
+) : Serializable {
     companion object {
         fun forProject(project: Project): ToolingDiagnosticRenderingOptions {
             return with(project.kotlinPropertiesProvider) {
