@@ -107,7 +107,7 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
         initMergeNodes()
     }
 
-    override fun privateAnalyze(
+    override fun analyzeInstruction(
         insnNode: AbstractInsnNode,
         insnIndex: Int,
         insnType: Int,
