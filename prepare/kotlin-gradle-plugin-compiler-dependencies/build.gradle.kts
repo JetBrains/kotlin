@@ -6,15 +6,14 @@ plugins {
 
 // avoid adding new dependencies here
 val compilerModules = listOf(
-    ":compiler:cli",
+    ":compiler:cli", // for MessageRenderer, related to MessageCollector usage
     ":compiler:cli-base", // for kotlinx-benchmark
-    ":compiler:cli-common",
-    ":compiler:config.jvm",
+    ":compiler:cli-common", // for compiler arguments setup, for logging via MessageCollector, CompilerSystemProperties, ExitCode
+    ":compiler:config.jvm", // for K2JVMCompilerArguments initialization
     ":compiler:config", // for kotlinx-benchmark
-    ":compiler:frontend.common",
     ":compiler:frontend", // for kotlinx-benchmark
-    ":compiler:ir.tree",
-    ":compiler:util",
+    ":compiler:ir.tree", // for PartialLinkageMode (K/N)
+    ":compiler:util", // for CommonCompilerArguments initialization, K/N
     ":compiler:compiler.version", // for user projects buildscripts
     ":core:compiler.common", // for kotlinx-benchmark
     ":core:compiler.common.jvm", // for FUS statistics parsing all the compiler arguments, otherwise it fails silently
@@ -23,8 +22,8 @@ val compilerModules = listOf(
     ":core:deserialization.common", // for kotlinx-benchmark
     ":core:deserialization", // for kotlinx-benchmark
     ":core:metadata", // for kotlinx-benchmark
-    ":core:util.runtime",
-    ":kotlin-build-common",
+    ":core:util.runtime", // for stdlib extensions
+    ":kotlin-build-common", // for incremental compilation setup
     ":js:js.config", // for k/js task
 )
 
