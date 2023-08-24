@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":compiler:fir:resolve"))
     implementation(project(":compiler:fir:fir2ir"))
     implementation(project(":compiler:ir.serialization.common"))
+    implementation(project(":compiler:ir.serialization.native"))
 }
 
 

@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.fir.backend.native
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.*
+import org.jetbrains.kotlin.backend.konan.serialization.ANNOTATIONS_TO_TREAT_AS_EXPORTED
+import org.jetbrains.kotlin.backend.konan.serialization.ObjCFunctionNameMangleComputer
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.backend.FirExportCheckerVisitor
 import org.jetbrains.kotlin.fir.backend.FirMangleComputer
+import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.backend.native.interop.*
-import org.jetbrains.kotlin.fir.backend.native.interop.hasObjCFactoryAnnotation
-import org.jetbrains.kotlin.fir.backend.native.interop.hasObjCMethodAnnotation
-import org.jetbrains.kotlin.fir.backend.native.interop.isObjCClassMethod
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -21,7 +20,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
-import org.jetbrains.kotlin.name.NativeRuntimeNames
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 
 class FirNativeKotlinMangler : FirMangler() {
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<FirDeclaration> {
@@ -41,29 +41,35 @@ class FirNativeExportCheckerVisitor : FirExportCheckerVisitor() {
     override fun FirDeclaration.isPlatformSpecificExported(): Boolean {
         if (this is FirCallableDeclaration && isSubstitutionOrIntersectionOverride)
             return false
-
-        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.symbolNameClassId, moduleData.session)) {
-            // Treat any `@SymbolName` declaration as exported.
-            return true
-        }
-        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.gcUnsafeCallClassId, moduleData.session)) {
-            // Treat any `@GCUnsafeCall` declaration as exported.
-            return true
-        }
-        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.exportForCppRuntimeClassId, moduleData.session)) {
-            // Treat any `@ExportForCppRuntime` declaration as exported.
-            return true
-        }
-        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.cNameClassId, moduleData.session)) {
-            // Treat `@CName` declaration as exported.
-            return true
-        }
-        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.exportForCompilerClassId, moduleData.session)) {
-            return true
-        }
-
-        return false
+        return ANNOTATIONS_TO_TREAT_AS_EXPORTED.any { hasAnnotation(it, moduleData.session) }
     }
+}
+
+private class FirObjCFunctionNameMangleComputer(
+    private val function: FirFunction
+) : ObjCFunctionNameMangleComputer<FirValueParameter>() {
+
+    private val session = function.moduleData.session
+
+    override fun getObjCMethodInfo(): ObjCMethodInfo? {
+        val scopeSession = ScopeSession()
+        return function.getInitMethodIfObjCConstructor(session, scopeSession)
+            ?.getObjCMethodInfoFromOverriddenFunctions(session, scopeSession)
+    }
+
+    override fun getExtensionReceiverClassName(): Name? = function.receiverParameter?.getTypeName(session)?.let(Name::identifier)
+
+    override fun isObjCConstructor(): Boolean = function is FirConstructor && function.isObjCConstructor(session)
+
+    override fun isPropertyAccessor(): Boolean = function is FirPropertyAccessor
+
+    override fun hasObjCMethodAnnotation(): Boolean = function.hasObjCMethodAnnotation(session)
+
+    override fun hasObjCFactoryAnnotation(): Boolean = function.hasObjCFactoryAnnotation(session)
+
+    override fun isObjCClassMethod(): Boolean = function.isObjCClassMethod(session)
+
+    override fun getValueParameterName(valueParameter: FirValueParameter): Name = valueParameter.name
 }
 
 class FirNativeKotlinMangleComputer(
@@ -73,42 +79,9 @@ class FirNativeKotlinMangleComputer(
     override fun copy(newMode: MangleMode): FirNativeKotlinMangleComputer =
             FirNativeKotlinMangleComputer(builder, newMode)
 
-    /**
-     *  mimics FunctionDescriptor.platformSpecificFunctionName()
-     */
-    override fun FirFunction.platformSpecificFunctionName(): String? {
-        val session = moduleData.session
-        val scopeSession = ScopeSession()
-        getInitMethodIfObjCConstructor(session, scopeSession)
-                ?.getObjCMethodInfoFromOverriddenFunctions(session, scopeSession)
-                ?.let {
-                    return buildString {
-                        receiverParameter?.let {
-                            append(it.getTypeName(session))
-                            append(MangleConstant.FQN_SEPARATOR)
-                        }
-
-                        append(MangleConstant.OBJC_MARK)
-                        append(it.selector)
-                        if ((this@platformSpecificFunctionName is FirConstructor) && isObjCConstructor(session)) {
-                            append(MangleConstant.OBJC_CONSTRUCTOR_MARK)
-                        }
-
-                        if (this@platformSpecificFunctionName is FirPropertyAccessor) {
-                            append(MangleConstant.OBJC_PROPERTY_ACCESSOR_MARK)
-                        }
-                    }
-                }
-        return null
-    }
-
-    override fun FirFunction.specialValueParamPrefix(param: FirValueParameter): String {
-        val session = moduleData.session
-        return if (this.hasObjCMethodAnnotation(session) || this.hasObjCFactoryAnnotation(session) || this.isObjCClassMethod(session))
-            "${param.name}:"
-        else
-            ""
-    }
+    override fun makePlatformSpecificFunctionNameMangleComputer(
+        function: FirFunction
+    ): PlatformSpecificFunctionNameMangleComputer<FirValueParameter> = FirObjCFunctionNameMangleComputer(function)
 }
 
 private fun FirReceiverParameter.getTypeName(session: FirSession): String {

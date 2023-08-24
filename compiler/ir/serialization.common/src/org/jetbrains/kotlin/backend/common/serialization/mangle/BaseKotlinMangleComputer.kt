@@ -42,11 +42,11 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
 
     protected val typeParameterContainers = ArrayList<TypeParameterContainer>(4)
 
-    protected open fun FunctionDeclaration.platformSpecificFunctionName(): String? = null
+    protected open fun makePlatformSpecificFunctionNameMangleComputer(
+        function: FunctionDeclaration
+    ): PlatformSpecificFunctionNameMangleComputer<ValueParameter> = PlatformSpecificFunctionNameMangleComputer.Default
 
     protected open fun FunctionDeclaration.platformSpecificSuffix(): String? = null
-
-    protected open fun FunctionDeclaration.specialValueParamPrefix(param: ValueParameter): String = ""
 
     protected open fun addReturnType(): Boolean = false
 
@@ -145,7 +145,7 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
 
         builder.appendName(MangleConstant.FUNCTION_NAME_PREFIX)
 
-        platformSpecificFunctionName()?.let {
+        makePlatformSpecificFunctionNameMangleComputer(this).computePlatformSpecificFunctionName()?.let {
             builder.append(it)
             return
         }
@@ -180,7 +180,10 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
         }
 
         getValueParameters(this).collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
-            appendSignature(specialValueParamPrefix(it))
+            appendSignature(
+                makePlatformSpecificFunctionNameMangleComputer(this@mangleSignature)
+                    .computePlatformSpecificValueParameterPrefix(it)
+            )
             mangleValueParameter(this, it, session)
         }
 
