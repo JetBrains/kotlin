@@ -28,7 +28,19 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
     private val queue = IntArray(nInsns)
     private var top = 0
 
-    protected fun analyzeInner() {
+    fun analyze(): Array<F?> {
+        if (nInsns == 0) return getFrames()
+
+        checkAssertions()
+        computeExceptionHandlers(method)
+        beforeAnalyze()
+
+        analyzeMainLoop()
+
+        return getFrames()
+    }
+
+    private fun analyzeMainLoop() {
         val current = newFrame(method.maxLocals, method.maxStack)
         val handler = newFrame(method.maxLocals, method.maxStack)
         initLocals(current)
@@ -63,6 +75,8 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
         }
     }
 
+    open fun beforeAnalyze() {}
+
     abstract fun initLocals(current: F)
 
     abstract fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean = false)
@@ -80,7 +94,7 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
     protected abstract fun newFrame(nLocals: Int, nStack: Int): F
 
     @Suppress("UNCHECKED_CAST")
-    protected fun getFrame(insn: AbstractInsnNode): F? = frames[insn.indexOf()] as? F
+    fun getFrame(insn: AbstractInsnNode): F? = frames[insn.indexOf()] as? F
 
     @Suppress("UNCHECKED_CAST")
     protected fun getFrame(index: Int): F? = frames[index] as? F
@@ -90,7 +104,7 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
     }
 
     @Suppress("UNCHECKED_CAST")
-    protected fun getFrames(): Array<F?> = frames as Array<F?>
+    private fun getFrames(): Array<F?> = frames as Array<F?>
 
     protected fun visitMeaningfulInstruction(insnNode: AbstractInsnNode, insnType: Int, insnOpcode: Int, current: F, insn: Int) {
         when {
@@ -112,7 +126,7 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
     protected abstract fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: F)
     protected abstract fun visitOpInsn(insnNode: AbstractInsnNode, current: F, insn: Int)
 
-    protected fun checkAssertions() {
+    private fun checkAssertions() {
         if (method.instructions.any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })
             throw AssertionError("Subroutines are deprecated since Java 6")
     }
@@ -120,9 +134,11 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
     protected fun AbstractInsnNode.indexOf() =
         method.instructions.indexOf(this)
 
-    protected fun computeExceptionHandlers(m: MethodNode, forEachInsn: Boolean = true) {
+    protected open fun useFastComputeExceptionHandlers(): Boolean = false
+
+    private fun computeExceptionHandlers(m: MethodNode) {
         for (tcb in m.tryCatchBlocks) {
-            if (forEachInsn) computeExceptionHandlersForEachInsn(tcb) else computeExceptionHandlerFast(tcb)
+            if (useFastComputeExceptionHandlers()) computeExceptionHandlerFast(tcb) else computeExceptionHandlersForEachInsn(tcb)
         }
     }
 
