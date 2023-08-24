@@ -558,13 +558,11 @@ class Fir2IrDeclarationStorage(
 
     private fun <T : IrFunction> T.bindAndDeclareParameters(
         function: FirFunction?,
-        irParent: IrDeclarationParent?,
         thisReceiverOwner: IrClass?,
         isStatic: Boolean,
         forSetter: Boolean,
         parentPropertyReceiver: FirReceiverParameter? = null
     ): T {
-        setAndModifyParent(irParent)
         declareParameters(function, thisReceiverOwner, isStatic, forSetter, parentPropertyReceiver)
         return this
     }
@@ -709,10 +707,10 @@ class Fir2IrDeclarationStorage(
                 ).apply {
                     metadata = FirMetadataSource.Function(function)
                     enterScope(this.symbol)
+                    setAndModifyParent(irParent)
                     bindAndDeclareParameters(
-                        function, irParent,
-                        thisReceiverOwner, isStatic = simpleFunction?.isStatic == true,
-                        forSetter = false,
+                        function, thisReceiverOwner,
+                        isStatic = simpleFunction?.isStatic == true, forSetter = false,
                     )
                     convertAnnotationsForNonDeclaredMembers(function, origin)
                     leaveScope(this.symbol)
@@ -818,7 +816,8 @@ class Fir2IrDeclarationStorage(
                     // with the annotation itself.
                     constructorCache[constructor] = this
                     enterScope(this.symbol)
-                    bindAndDeclareParameters(constructor, irParent, irParent, isStatic = false, forSetter = false)
+                    setAndModifyParent(irParent)
+                    bindAndDeclareParameters(constructor, irParent, isStatic = false, forSetter = false)
                     leaveScope(this.symbol)
                 }
             }
@@ -914,16 +913,13 @@ class Fir2IrDeclarationStorage(
                         firValueParameter = null
                     )
                 }
+                setAndModifyParent(irParent)
                 bindAndDeclareParameters(
-                    propertyAccessor, irParent,
-                    thisReceiverOwner, isStatic = irParent !is IrClass || propertyAccessor?.isStatic == true,
-                    forSetter = isSetter,
+                    propertyAccessor, thisReceiverOwner,
+                    isStatic = irParent !is IrClass || propertyAccessor?.isStatic == true, forSetter = isSetter,
                     parentPropertyReceiver = property.receiverParameter,
                 )
                 leaveScope(this.symbol)
-                if (irParent != null) {
-                    parent = irParent
-                }
                 if (correspondingProperty is Fir2IrLazyProperty && correspondingProperty.containingClass != null && !isFakeOverride && thisReceiverOwner != null) {
                     this.overriddenSymbols = correspondingProperty.fir.generateOverriddenAccessorSymbols(
                         correspondingProperty.containingClass, !isSetter
