@@ -5,7 +5,7 @@ interface Base {
     fun foo()
 }
 
-expect <!ABSTRACT_MEMBER_NOT_IMPLEMENTED, ABSTRACT_MEMBER_NOT_IMPLEMENTED{JVM}!>object Implementation<!> : Base
+expect object Implementation : Base
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
