@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirInaccessibleReceiverExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -29,14 +29,14 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirInaccessibleReceiverExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
-    override lateinit var typeRef: FirTypeRef
+    override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var calleeReference: FirThisReference
 
     override fun build(): FirInaccessibleReceiverExpression {
         return FirInaccessibleReceiverExpressionImpl(
             source,
-            typeRef,
+            coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             calleeReference,
         )

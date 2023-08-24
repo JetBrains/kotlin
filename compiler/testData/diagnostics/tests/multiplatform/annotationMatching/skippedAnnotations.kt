@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
@@ -18,6 +17,7 @@ annotation class MyOptIn
 @MyOptIn
 @WasExperimental(MyOptIn::class)
 @kotlin.internal.RequireKotlin(version = "1.8")
+@OptIn(MyOptIn::class)
 expect fun skippedAnnotationsOnExpectOnly()
 
 // MODULE: m1-jvm()()(m1-common)

@@ -34,4 +34,9 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Specify the prefix directory for output directory that will contains artifacts",
         applicability = DirectiveApplicability.Global
     )
+
+    val GENERATE_SOURCE_MAP by directive(
+        description = "Enables generation of source map",
+        applicability = DirectiveApplicability.Global
+    )
 }

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
@@ -86,8 +85,8 @@ class MemberScopeTowerLevel(
         val scope = dispatchReceiverValue.scope(session, scopeSession) ?: return ProcessResult.SCOPE_EMPTY
         var (empty, candidates) = scope.collectCandidates(processScopeMembers)
 
-        val scopeWithoutSmartcast = getOriginalReceiverExpressionIfStableSmartCast()?.typeRef
-            ?.coneType
+        val scopeWithoutSmartcast = getOriginalReceiverExpressionIfStableSmartCast()
+            ?.resolvedType
             ?.scope(
                 session,
                 scopeSession,
@@ -337,7 +336,7 @@ class ScopeTowerLevel(
             this.symbol = this@toResolvedQualifierExpressionReceiver
             this.source = source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
         }.apply {
-            resultType = bodyResolveComponents.typeForQualifier(this)
+            setTypeOfQualifier(bodyResolveComponents.session)
         }
         return ExpressionReceiverValue(resolvedQualifier)
     }
@@ -384,7 +383,7 @@ class ScopeTowerLevel(
         )
 
         return givenExtensionReceiverOptions.none { extensionReceiver ->
-            val extensionReceiverType = extensionReceiver.resultType.coneType
+            val extensionReceiverType = extensionReceiver.resolvedType
             // If some receiver is non class like, we should not skip it
             if (extensionReceiverType !is ConeClassLikeType) return@none true
 

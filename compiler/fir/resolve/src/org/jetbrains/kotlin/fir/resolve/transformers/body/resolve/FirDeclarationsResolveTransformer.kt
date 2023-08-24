@@ -228,29 +228,29 @@ open class FirDeclarationsResolveTransformer(
         //     get() = delegate.getValue(thisRef, kProperty: KProperty0/1/2<..., SomeType>)
         //     set() = delegate.getValue(thisRef, kProperty: KProperty0/1/2<..., SomeType>, value)
         val propertyReferenceAccess = resolvedArgumentMapping?.keys?.toList()?.getOrNull(1) as? FirCallableReferenceAccess ?: return
-        val typeRef = propertyReferenceAccess.typeRef
-        if (typeRef is FirResolvedTypeRef && property.returnTypeRef is FirResolvedTypeRef) {
-            val typeArguments = (typeRef.type as ConeClassLikeType).typeArguments
+        val type = propertyReferenceAccess.coneTypeOrNull
+        if (type != null && property.returnTypeRef is FirResolvedTypeRef) {
+            val typeArguments = (type.type as ConeClassLikeType).typeArguments
             val extensionType = property.receiverParameter?.typeRef?.coneType
             val dispatchType = context.containingClass?.let { containingClass ->
                 containingClass.symbol.constructStarProjectedType(containingClass.typeParameters.size)
             }
-            propertyReferenceAccess.replaceTypeRef(
-                buildResolvedTypeRef {
-                    source = typeRef.source
-                    annotations.addAll(typeRef.annotations)
-                    type = (typeRef.type as ConeClassLikeType).lookupTag.constructClassType(
-                        typeArguments.mapIndexed { index, argument ->
-                            when (index) {
-                                typeArguments.lastIndex -> property.returnTypeRef.coneType
-                                0 -> extensionType ?: dispatchType
-                                else -> dispatchType
-                            } ?: argument
-                        }.toTypedArray(),
-                        isNullable = false
+            propertyReferenceAccess.replaceConeTypeOrNull(
+                (type.type as ConeClassLikeType).lookupTag.constructClassType(
+                    typeArguments.mapIndexed { index, argument ->
+                        when (index) {
+                            typeArguments.lastIndex -> property.returnTypeRef.coneType
+                            0 -> extensionType ?: dispatchType
+                            else -> dispatchType
+                        } ?: argument
+                    }.toTypedArray(),
+                    isNullable = false
+                ).also {
+                    session.lookupTracker?.recordTypeResolveAsLookup(
+                        it,
+                        propertyReferenceAccess.source ?: source,
+                        components.file.source
                     )
-                }.also {
-                    session.lookupTracker?.recordTypeResolveAsLookup(it, propertyReferenceAccess.source ?: source, components.file.source)
                 }
             )
         }
@@ -343,9 +343,9 @@ open class FirDeclarationsResolveTransformer(
                 val substitutor = createTypeSubstitutorByTypeConstructor(
                     typeVariableTypeToStubType, session.typeContext, approximateIntegerLiterals = true
                 )
-                val delegateExpressionTypeRef = delegateExpression.typeRef
-                val stubTypeSubstituted = substitutor.substituteOrNull(delegateExpressionTypeRef.coneType)
-                delegateExpression.replaceTypeRef(delegateExpressionTypeRef.withReplacedConeType(stubTypeSubstituted))
+                val delegateExpressionType = delegateExpression.resolvedType
+                val stubTypeSubstituted = substitutor.substituteOrNull(delegateExpressionType)
+                delegateExpression.replaceConeTypeOrNull(stubTypeSubstituted)
             }
         }
 
@@ -377,7 +377,7 @@ open class FirDeclarationsResolveTransformer(
                 )
             )
 
-            provideDelegateCall.replaceTypeRef(provideDelegateCall.typeRef.resolvedTypeFromPrototype(stubTypeSubstituted))
+            provideDelegateCall.replaceConeTypeOrNull(stubTypeSubstituted)
             return provideDelegateCall
         }
 
@@ -643,19 +643,19 @@ open class FirDeclarationsResolveTransformer(
         if (result.returnTypeRef is FirImplicitTypeRef) {
             val simpleFunction = function as? FirSimpleFunction
             val returnExpression = (body?.statements?.singleOrNull() as? FirReturnExpression)?.result
-            val returnTypeRef = if (returnExpression?.typeRef is FirResolvedTypeRef) {
-                returnExpression.resultType.approximateDeclarationType(
+            val expressionType = returnExpression?.coneTypeOrNull
+            val returnTypeRef = expressionType
+                ?.toFirResolvedTypeRef(result.returnTypeRef.source)
+                ?.approximateDeclarationType(
                     session,
                     simpleFunction?.visibilityForApproximation(),
                     isLocal = simpleFunction?.isLocal == true,
                     isInlineFunction = simpleFunction?.isInline == true
-                ).copyWithNewSource(result.returnTypeRef.source)
-            } else {
-                buildErrorTypeRef {
+                )
+                ?: buildErrorTypeRef {
                     source = result.returnTypeRef.source
                     diagnostic = ConeSimpleDiagnostic("empty body", DiagnosticKind.Other)
                 }
-            }
             result.transformReturnTypeRef(transformer, withExpectedType(returnTypeRef))
         }
 
@@ -688,6 +688,9 @@ open class FirDeclarationsResolveTransformer(
 
             return doTransformConstructor(constructor, data)
         }
+
+    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: ResolutionMode) =
+        transformConstructor(errorPrimaryConstructor, data)
 
     private fun doTransformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
         val owningClass = context.containerIfAny as? FirRegularClass
@@ -877,7 +880,7 @@ open class FirDeclarationsResolveTransformer(
         // In correct code this doesn't matter, as all return expression types should be subtypes of the expected type.
         // In incorrect code, this would change diagnostics: we can get errors either on the entire lambda, or only on its
         // return statements. The former kind of makes more sense, but the latter is more readable.
-        val inferredFromReturnExpressions = session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.expression.resultType.coneType })
+        val inferredFromReturnExpressions = session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.expression.resolvedType })
         return inferredFromReturnExpressions?.let { returnTypeRef.resolvedTypeFromPrototype(it) }
             ?: session.builtinTypes.unitType // Empty lambda returns Unit
     }
@@ -979,7 +982,7 @@ open class FirDeclarationsResolveTransformer(
         val inferredType = if (backingField is FirDefaultPropertyBackingField) {
             propertyType
         } else {
-            backingField.initializer?.unwrapSmartcastExpression()?.typeRef
+            backingField.initializer?.unwrapSmartcastExpression()?.coneTypeOrNull?.toFirResolvedTypeRef()
         }
         val resultType = inferredType
             ?: return backingField.transformReturnTypeRef(
@@ -1008,7 +1011,7 @@ open class FirDeclarationsResolveTransformer(
             val resultType = when {
                 initializer != null -> {
                     val unwrappedInitializer = initializer.unwrapSmartcastExpression()
-                    unwrappedInitializer.resultType
+                    unwrappedInitializer.resultType?.toFirResolvedTypeRef()
                 }
                 variable.getter != null && variable.getter !is FirDefaultPropertyAccessor -> variable.getter?.returnTypeRef
                 else -> null
@@ -1091,10 +1094,10 @@ open class FirDeclarationsResolveTransformer(
     private val FirVariable.initializerResolved: Boolean
         get() {
             val initializer = initializer ?: return false
-            return initializer.typeRef is FirResolvedTypeRef && initializer !is FirErrorExpression
+            return initializer.coneTypeOrNull != null && initializer !is FirErrorExpression
         }
 
     protected val FirFunction.bodyResolved: Boolean
-        get() = body !is FirLazyBlock && body?.typeRef is FirResolvedTypeRef
+        get() = body !is FirLazyBlock && body?.coneTypeOrNull != null
 
 }

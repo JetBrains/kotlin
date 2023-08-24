@@ -25,9 +25,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirImplicitInvokeCallImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
+    override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
@@ -49,6 +49,7 @@ open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnn
 
     override fun build(): FirImplicitInvokeCall {
         return FirImplicitInvokeCallImpl(
+            coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             contextReceiverArguments.toMutableOrEmpty(),
             typeArguments.toMutableOrEmpty(),
@@ -61,13 +62,6 @@ open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnn
         )
     }
 
-
-    @Deprecated("Modification of 'typeRef' has no impact for FirImplicitInvokeCallBuilder", level = DeprecationLevel.HIDDEN)
-    override var typeRef: FirTypeRef
-        get() = throw IllegalStateException()
-        set(_) {
-            throw IllegalStateException()
-        }
 
     @Deprecated("Modification of 'origin' has no impact for FirImplicitInvokeCallBuilder", level = DeprecationLevel.HIDDEN)
     override var origin: FirFunctionCallOrigin

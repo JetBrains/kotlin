@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.nameWithPackage
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -44,6 +44,7 @@ class Fir2IrAnnotationsFromPluginRegistrar(private val components: Fir2IrCompone
         return true
     }
 
+    @OptIn(IrSymbolInternals::class)
     override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrConstructorCall>) {
         require(annotations.all { it.typeArgumentsCount == 0 && it.hasOnlySupportedAnnotationArgumentTypes() }) {
             "Saving annotations with arguments from IR to metadata is only supported for basic constants. See KT-58968"
@@ -105,6 +106,7 @@ class Fir2IrAnnotationsFromPluginRegistrar(private val components: Fir2IrCompone
         private val ClassId.topmostParentClassId: ClassId
             get() = parentClassId?.topmostParentClassId ?: this
 
+        @OptIn(IrSymbolInternals::class)
         private fun IrConstructorCall.toFirAnnotation(): FirAnnotation {
             val annotationClassId = this.symbol.owner.constructedClass.classId!!
             return buildAnnotation {

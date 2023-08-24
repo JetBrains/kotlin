@@ -469,7 +469,7 @@ KtFunctionSymbol:
         annotationsList: []
         type: T
     ]
-    type: X.U.X<T, T4, T3, T>
+    type: <local>/U.X<T, T4, T3, T>
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 

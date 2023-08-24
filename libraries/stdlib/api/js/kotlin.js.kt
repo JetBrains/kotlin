@@ -212,6 +212,7 @@ public final annotation class ExperimentalJsExport : kotlin.Annotation {
 @kotlin.RequiresOptIn(level = Level.WARNING)
 @kotlin.annotation.MustBeDocumented
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.SinceKotlin(version = "1.9")
 public final annotation class ExperimentalJsFileName : kotlin.Annotation {
     public constructor ExperimentalJsFileName()
 }
@@ -283,6 +284,7 @@ public final annotation class JsExternalInheritorsOnly : kotlin.Annotation {
 
 @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FILE})
+@kotlin.SinceKotlin(version = "1.9")
 public final annotation class JsFileName : kotlin.Annotation {
     public constructor JsFileName(name: kotlin.String)
 

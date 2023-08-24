@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
-import org.junit.Ignore
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -39,7 +38,6 @@ class LazyResolvedConfigurationTest {
     }
 
     @Test
-    @Ignore("stdlib publication migration - test data changes")
     fun `test - okio - getArtifacts`() {
         val project = buildProject {
             enableDependencyVerification(false)
@@ -75,16 +73,16 @@ class LazyResolvedConfigurationTest {
 
         /* Check stdlib-common dependency on commonMainCompileDependencies */
         run {
-            val resolvedStdlibCommon = lazyCommonMainCompileDependencies.allResolvedDependencies.filter { dependencyResult ->
-                dependencyResult.resolvedVariant.owner.let { id -> id is ModuleComponentIdentifier && id.module == "kotlin-stdlib-common" }
+            val resolvedStdlib = lazyCommonMainCompileDependencies.allResolvedDependencies.filter { dependencyResult ->
+                dependencyResult.resolvedVariant.owner.let { id -> id is ModuleComponentIdentifier && id.module == "kotlin-stdlib" }
             }
 
-            if (resolvedStdlibCommon.isEmpty()) fail("Expected kotlin-stdlib-common in resolved dependencies")
-            resolvedStdlibCommon.forEach { dependencyResult ->
+            if (resolvedStdlib.isEmpty()) fail("Expected kotlin-stdlib in resolved dependencies")
+            resolvedStdlib.forEach { dependencyResult ->
                 val artifacts = lazyCommonMainCompileDependencies.getArtifacts(dependencyResult)
                 if (artifacts.isEmpty()) fail("Expected some artifacts resolved for $dependencyResult")
                 artifacts.forEach { artifact ->
-                    assertEquals(artifact.file.name, "kotlin-stdlib-common-${project.kotlinToolingVersion}.jar")
+                    assertEquals(artifact.file.name, "kotlin-stdlib-${project.kotlinToolingVersion}-all.jar")
                 }
             }
         }

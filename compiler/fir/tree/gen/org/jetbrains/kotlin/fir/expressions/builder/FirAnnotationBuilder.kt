@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotationImpl
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -45,8 +47,8 @@ class FirAnnotationBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder
     }
 
 
-    @Deprecated("Modification of 'typeRef' has no impact for FirAnnotationBuilder", level = DeprecationLevel.HIDDEN)
-    override var typeRef: FirTypeRef
+    @Deprecated("Modification of 'coneTypeOrNull' has no impact for FirAnnotationBuilder", level = DeprecationLevel.HIDDEN)
+    override var coneTypeOrNull: ConeKotlinType?
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()

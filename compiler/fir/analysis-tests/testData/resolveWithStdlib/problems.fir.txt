@@ -18,7 +18,7 @@ FILE: problems.kt
         public get(): R|kotlin/Any|
     public final fun test(): R|kotlin/Unit| {
         local final class Local : R|kotlin/Any| {
-            public constructor(): R|Local| {
+            public constructor(): R|<local>/Local| {
                 super<R|kotlin/Any|>()
             }
 

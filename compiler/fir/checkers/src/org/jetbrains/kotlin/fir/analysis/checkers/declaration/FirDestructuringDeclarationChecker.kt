@@ -26,11 +26,13 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirDestructuringDeclarationChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = declaration.source ?: return
+        if (declaration.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return
         // val (...) = `destructuring_declaration`
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {
             checkInitializer(source, declaration.initializer, reporter, context)
@@ -66,7 +68,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
         val originalDestructuringDeclarationType =
             when (originalDestructuringDeclarationOrInitializer) {
                 is FirVariable -> originalDestructuringDeclarationOrInitializer.returnTypeRef.coneType
-                is FirExpression -> originalDestructuringDeclarationOrInitializer.typeRef.coneType
+                is FirExpression -> originalDestructuringDeclarationOrInitializer.resolvedType
                 else -> null
             } ?: return
 
@@ -152,7 +154,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                 }
             }
             is ConeConstraintSystemHasContradiction -> {
-                val componentType = componentCall.typeRef.coneType
+                val componentType = componentCall.resolvedType
                 if (componentType is ConeErrorType) {
                     // There will be other errors on this error type.
                     return

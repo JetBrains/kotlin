@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
 private val implicitlyActualizedAnnotationFqn = FqName("kotlin.jvm.ImplicitlyActualizedByJvmDeclaration")
@@ -270,7 +269,7 @@ class ExpectedActualDeclarationChecker(
         compatibility: Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>
     ): Boolean {
         return compatibility.values.flatMapTo(hashSetOf()) { it }.all { actual ->
-            val expectedOnes = ExpectedActualResolver.findExpectedForActual_incrementalCompilationWorkaround(actual, onlyFromThisModule(module))
+            val expectedOnes = ExpectedActualResolver.findExpectedForActual(actual, onlyFromThisModule(module))
             expectedOnes != null && Compatible in expectedOnes.keys
         }
     }
@@ -298,7 +297,7 @@ class ExpectedActualDeclarationChecker(
         moduleVisibilityFilter: ModuleFilter
     ) {
         val compatibility = ExpectedActualResolver
-            .findExpectedForActual_incrementalCompilationWorkaround(descriptor, moduleVisibilityFilter, shouldCheckAbsenceOfDefaultParamsInActual = true)
+            .findExpectedForActual(descriptor, moduleVisibilityFilter, shouldCheckAbsenceOfDefaultParamsInActual = true)
             ?: return
 
         checkAmbiguousExpects(compatibility, trace, reportOn, descriptor)
@@ -337,7 +336,7 @@ class ExpectedActualDeclarationChecker(
                 return actualMember != null &&
                         actualMember.isExplicitActualDeclaration() &&
                         !incompatibility.allStrongIncompatibilities() &&
-                        ExpectedActualResolver.findExpectedForActual_incrementalCompilationWorkaround(
+                        ExpectedActualResolver.findExpectedForActual(
                             actualMember, onlyFromThisModule(expectedMember.module)
                         )?.values?.singleOrNull()?.singleOrNull() == expectedMember
             }

@@ -49,126 +49,126 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
     override val MAP = KtDiagnosticFactoryToRendererMap("Parcelize").also { map ->
         map.put(
             PARCELABLE_SHOULD_BE_CLASS,
-            "'Parcelable' should be a class"
+            "'Parcelable' should be a class."
         )
 
         map.put(
             PARCELABLE_DELEGATE_IS_NOT_ALLOWED,
-            "Delegating 'Parcelable' is not allowed"
+            "Delegating 'Parcelable' is not allowed."
         )
 
         map.put(
             PARCELABLE_SHOULD_NOT_BE_ENUM_CLASS,
-            "'Parcelable' should not be a 'enum class'"
+            "'Parcelable' should not be a 'enum class'."
         )
 
         map.put(
             PARCELABLE_SHOULD_BE_INSTANTIABLE,
-            "'Parcelable' should not be an 'abstract' class"
+            "'Parcelable' should not be an 'abstract' class."
         )
 
         map.put(
             PARCELABLE_CANT_BE_INNER_CLASS,
-            "'Parcelable' can't be an inner class"
+            "'Parcelable' can't be an inner class."
         )
 
         map.put(
             PARCELABLE_CANT_BE_LOCAL_CLASS,
-            "'Parcelable' can't be a local class"
+            "'Parcelable' can't be a local class."
         )
 
         map.put(
             NO_PARCELABLE_SUPERTYPE,
-            "No 'Parcelable' supertype"
+            "No 'Parcelable' supertype."
         )
 
         map.put(
             PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR,
-            "'Parcelable' should have a primary constructor"
+            "'Parcelable' should have a primary constructor."
         )
 
         map.put(
             PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY,
-            "The primary constructor is empty, no data will be serialized to 'Parcel'"
+            "The primary constructor is empty, no data will be serialized to 'Parcel'."
         )
 
         map.put(
             PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR,
-            "'Parcelable' constructor parameter should be 'val' or 'var'"
+            "'Parcelable' constructor parameter should be 'val' or 'var'."
         )
 
         map.put(
             PROPERTY_WONT_BE_SERIALIZED,
-            "Property would not be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning"
+            "Property would not be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning."
         )
 
         map.put(
             OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED,
-            "Overriding 'writeToParcel' is not allowed. Use 'Parceler' companion object instead"
+            "Overriding 'writeToParcel' is not allowed. Use 'Parceler' companion object instead."
         )
 
         map.put(
             CREATOR_DEFINITION_IS_NOT_ALLOWED,
-            "'CREATOR' definition is not allowed. Use 'Parceler' companion object instead"
+            "'CREATOR' definition is not allowed. Use 'Parceler' companion object instead."
         )
 
         map.put(
             PARCELABLE_TYPE_NOT_SUPPORTED,
             "Type is not directly supported by 'Parcelize'. " +
-                    "Annotate the parameter type with '@RawValue' if you want it to be serialized using 'writeValue()'"
+                    "Annotate the parameter type with '@RawValue' if you want it to be serialized using 'writeValue()'."
         )
 
         map.put(
             PARCELER_SHOULD_BE_OBJECT,
-            "Parceler should be an object"
+            "Parceler should be an object."
         )
 
         map.put(
             PARCELER_TYPE_INCOMPATIBLE,
-            "Parceler type {0} is incompatible with {1}",
+            "Parceler type {0} is incompatible with {1}.",
             RENDER_TYPE, RENDER_TYPE
         )
 
         map.put(
             DUPLICATING_TYPE_PARCELERS,
-            "Duplicating ''TypeParceler'' annotations"
+            "Duplicating 'TypeParceler' annotations."
         )
 
         map.put(
             REDUNDANT_TYPE_PARCELER,
-            "This ''TypeParceler'' is already provided for {0}",
+            "This ''TypeParceler'' is already provided for ''{0}''.",
             RENDER_CLASS_OR_OBJECT
         )
 
         map.put(
             CLASS_SHOULD_BE_PARCELIZE,
-            "{0} should be annotated with ''@Parcelize''",
+            "{0} should be annotated with ''@Parcelize''.",
             RENDER_CLASS_OR_OBJECT
         )
 
         map.put(
             INAPPLICABLE_IGNORED_ON_PARCEL,
-            "'@IgnoredOnParcel' is only applicable to class properties"
+            "'@IgnoredOnParcel' is only applicable to class properties."
         )
 
         map.put(
             INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY,
-            "'@IgnoredOnParcel' is inapplicable to properties without default value declared in the primary constructor"
+            "'@IgnoredOnParcel' is inapplicable to properties without default value declared in the primary constructor."
         )
 
         map.put(
             FORBIDDEN_DEPRECATED_ANNOTATION,
-            "Parceler-related annotations from package 'kotlinx.android.parcel' are forbidden. Change package to 'kotlinx.parcelize'"
+            "Parceler-related annotations from package 'kotlinx.android.parcel' are forbidden. Change package to 'kotlinx.parcelize'."
         )
 
         map.put(
             DEPRECATED_ANNOTATION,
-            "Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'"
+            "Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'."
         )
 
         map.put(
             DEPRECATED_PARCELER,
-            "'kotlinx.android.parcel.Parceler' is deprecated. Use 'kotlinx.parcelize.Parceler' instead"
+            "'kotlinx.android.parcel.Parceler' is deprecated. Use 'kotlinx.parcelize.Parceler' instead."
         )
     }
 }

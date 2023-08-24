@@ -1,3 +1,16 @@
+/**
+ * public abstract interface EntryHolder : kotlin/Any {
+ *
+ *   // signature: entry(Ljava/util/Map$Entry;)Ljava/util/Map$Entry;
+ *   public abstract fun entry(p: kotlin/collections/Map.Entry<kotlin/CharSequence, kotlin/collections/Map.Entry<kotlin/String, kotlin/Int>>): kotlin/collections/Map.Entry<kotlin/String, kotlin/Any>
+ *
+ *   // getter: getEntryProperty()Ljava/util/Map$Entry;
+ *   public abstract val entryProperty: kotlin/collections/Map.Entry<kotlin/String, kotlin/Any>
+ *     public abstract get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface EntryHolder {
 

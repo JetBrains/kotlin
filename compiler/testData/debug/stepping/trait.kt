@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 
 interface A {
@@ -20,39 +21,39 @@ fun box() {
 // on A$DefaultImpls) have the line number of the class declaration.
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:14 box
-// test.kt:14 <init>
-// test.kt:14 box
-// test.kt:14 bar
-// test.kt:7 bar
-// test.kt:14 foo
-// test.kt:4 foo
-// test.kt:14 foo
-// test.kt:7 bar
-// test.kt:14 bar
-// test.kt:14 box
 // test.kt:15 box
-// test.kt:11 <init>
+// test.kt:15 <init>
 // test.kt:15 box
-// test.kt:11 bar
-// test.kt:7 bar
-// test.kt:11 foo
-// test.kt:4 foo
-// test.kt:11 foo
-// test.kt:7 bar
-// test.kt:11 bar
+// test.kt:15 bar
+// test.kt:8 bar
+// test.kt:15 foo
+// test.kt:5 foo
+// test.kt:15 foo
+// test.kt:8 bar
+// test.kt:15 bar
 // test.kt:15 box
 // test.kt:16 box
+// test.kt:12 <init>
+// test.kt:16 box
+// test.kt:12 bar
+// test.kt:8 bar
+// test.kt:12 foo
+// test.kt:5 foo
+// test.kt:12 foo
+// test.kt:8 bar
+// test.kt:12 bar
+// test.kt:16 box
+// test.kt:17 box
 
 // EXPECTATIONS JS_IR
-// test.kt:14 box
-// test.kt:14 <init>
-// test.kt:14 box
-// test.kt:7 bar
-// test.kt:4 foo
 // test.kt:15 box
-// test.kt:11 <init>
+// test.kt:15 <init>
 // test.kt:15 box
-// test.kt:7 bar
-// test.kt:4 foo
+// test.kt:8 bar
+// test.kt:5 foo
 // test.kt:16 box
+// test.kt:12 <init>
+// test.kt:16 box
+// test.kt:8 bar
+// test.kt:5 foo
+// test.kt:17 box

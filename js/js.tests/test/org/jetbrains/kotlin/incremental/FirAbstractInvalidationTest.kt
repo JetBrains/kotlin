@@ -91,6 +91,7 @@ abstract class FirAbstractInvalidationTest(
             firOutputs = analyzedOutput.output,
             fir2IrActualizedResult = fir2IrActualizedResult,
             outputKlibPath = outputKlibFile.absolutePath,
+            nopack = false,
             messageCollector = messageCollector,
             diagnosticsReporter = diagnosticsReporter,
             jsOutputName = moduleName,

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -76,14 +78,14 @@ internal fun checkConstantArguments(
         }
         expression is FirStringConcatenationCall || expression is FirEqualityOperatorCall -> {
             for (exp in (expression as FirCall).arguments) {
-                if (exp is FirResolvedQualifier) {
+                if (exp is FirResolvedQualifier || expression.isForbiddenComplexConstant(session)) {
                     return ConstantArgumentKind.NOT_CONST
                 }
                 checkConstantArguments(exp, session)?.let { return it }
             }
         }
         expression is FirGetClassCall -> {
-            var coneType = (expression as? FirCall)?.argument?.typeRef?.coneType
+            var coneType = (expression as? FirCall)?.argument?.resolvedType
 
             if (coneType is ConeErrorType)
                 return ConstantArgumentKind.NOT_CONST
@@ -107,7 +109,7 @@ internal fun checkConstantArguments(
         }
         expressionSymbol is FirConstructorSymbol -> {
             if (expression is FirCallableReferenceAccess) return null
-            if (expression.typeRef.coneType.isUnsignedType) {
+            if (expression.resolvedType.isUnsignedType) {
                 (expression as FirFunctionCall).arguments.forEach { argumentExpression ->
                     checkConstantArguments(argumentExpression, session)?.let { return it }
                 }
@@ -120,7 +122,7 @@ internal fun checkConstantArguments(
             if (calleeReference is FirErrorNamedReference) {
                 return null
             }
-            if (expression.typeRef.coneType.classId == StandardClassIds.KClass) {
+            if (expression.resolvedType.classId == StandardClassIds.KClass) {
                 return ConstantArgumentKind.NOT_KCLASS_LITERAL
             }
 
@@ -132,13 +134,13 @@ internal fun checkConstantArguments(
             if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
             val symbol = calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: return ConstantArgumentKind.NOT_CONST
 
-            if (!symbol.canBeEvaluated() && !expression.isCompileTimeBuiltinCall()) {
+            if (!symbol.canBeEvaluated() && !expression.isCompileTimeBuiltinCall() || expression.isForbiddenComplexConstant(session)) {
                 return ConstantArgumentKind.NOT_CONST
             }
 
             for (exp in expression.arguments.plus(expression.dispatchReceiver).plus(expression.extensionReceiver)) {
                 if (exp is FirNoReceiverExpression) continue
-                val expClassId = exp.typeRef.coneType.lowerBoundIfFlexible().classId
+                val expClassId = exp.resolvedType.lowerBoundIfFlexible().classId
                 // TODO, KT-59823: add annotation for allowed constant types
                 if (expClassId !in StandardClassIds.constantAllowedTypes) {
                     return ConstantArgumentKind.NOT_CONST
@@ -150,8 +152,11 @@ internal fun checkConstantArguments(
             return null
         }
         expression is FirQualifiedAccessExpression -> {
-            val expressionType = expression.typeRef.coneType
-            if (expressionType.isReflectFunctionType(session) || expressionType.isKProperty(session) || expressionType.isKMutableProperty(session)) {
+            val expressionType = expression.resolvedType
+            if (expressionType.isReflectFunctionType(session) || expressionType.isKProperty(session) || expressionType.isKMutableProperty(
+                    session
+                )
+            ) {
                 return checkConstantArguments(expression.dispatchReceiver, session)
             }
 
@@ -161,7 +166,8 @@ internal fun checkConstantArguments(
             val property = propertySymbol.fir
             when {
                 property.unwrapFakeOverrides().symbol.canBeEvaluated() || property.isCompileTimeBuiltinProperty() -> {
-                    val receiver = listOf(expression.dispatchReceiver, expression.extensionReceiver).single { it != FirNoReceiverExpression }
+                    val receiver =
+                        listOf(expression.dispatchReceiver, expression.extensionReceiver).single { it != FirNoReceiverExpression }
                     return checkConstantArguments(receiver, session)
                 }
                 propertySymbol.isLocal || propertySymbol.callableId.className?.isRoot == false -> return ConstantArgumentKind.NOT_CONST
@@ -184,6 +190,30 @@ internal fun checkConstantArguments(
     return null
 }
 
+private fun FirExpression.isForbiddenComplexConstant(session: FirSession): Boolean {
+    val forbidComplexBooleanExpressions = session.languageVersionSettings.supportsFeature(
+        LanguageFeature.ProhibitSimplificationOfNonTrivialConstBooleanExpressions
+    )
+    return isComplexBooleanConstant && forbidComplexBooleanExpressions
+}
+
+private val FirExpression.isComplexBooleanConstant
+    get(): Boolean = when {
+        !resolvedType.isBoolean -> false
+        this is FirConstExpression<*> -> false
+        usesVariableAsConstant -> false
+        else -> true
+    }
+
+/**
+ * See: org.jetbranis.kotlin.resolve.constants.CompileTimeConstant.Parameters.usesVariableAsConstant
+ */
+@Suppress("RecursivePropertyAccessor")
+private val FirExpression.usesVariableAsConstant: Boolean
+    get() = this is FirPropertyAccessExpression && toResolvedCallableSymbol()?.isConst == true
+            || this is FirQualifiedAccessExpression && explicitReceiver?.usesVariableAsConstant != false
+            || this is FirCall && this.arguments.any { it.usesVariableAsConstant }
+
 private val compileTimeFunctions = setOf(
     *OperatorNameConventions.BINARY_OPERATION_NAMES.toTypedArray(), *OperatorNameConventions.UNARY_OPERATION_NAMES.toTypedArray(),
     OperatorNameConventions.SHL, OperatorNameConventions.SHR, OperatorNameConventions.USHR,
@@ -205,7 +235,7 @@ private fun FirFunctionCall.isCompileTimeBuiltinCall(): Boolean {
     val symbol = calleeReference.resolvedSymbol as? FirCallableSymbol
     if (!symbol.fromKotlin()) return false
 
-    val coneType = this.dispatchReceiver.typeRef.coneTypeSafe<ConeKotlinType>()
+    val coneType = this.dispatchReceiver.coneTypeSafe<ConeKotlinType>()
     val receiverClassId = coneType?.lowerBoundIfFlexible()?.classId
 
     if (receiverClassId in StandardClassIds.unsignedTypes) return false

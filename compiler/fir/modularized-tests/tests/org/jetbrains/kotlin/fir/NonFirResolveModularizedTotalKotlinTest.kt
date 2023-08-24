@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.FlexibleTypeImpl
 import java.io.FileOutputStream
 import java.io.PrintStream
 import kotlin.system.measureNanoTime
@@ -144,7 +142,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest(
 
     fun testTotalKotlin() {
 
-        isolate()
+        pinCurrentThreadToIsolatedCpu()
 
         writeMessageToLog("use_ni: $USE_NI")
 

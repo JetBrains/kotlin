@@ -149,4 +149,8 @@ internal class KtFe10SymbolProvider(
     override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtLocalVariableSymbol {
         return KtFe10PsiLocalVariableSymbol(psi, analysisContext)
     }
+
+    override fun getDestructuringDeclarationSymbol(psi: KtDestructuringDeclaration): KtDestructuringDeclarationSymbol {
+        return KtFe10PsiDestructuringDeclarationSymbol(psi, analysisSession)
+    }
 }

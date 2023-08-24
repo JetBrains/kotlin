@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 annotation class Ann
@@ -29,4 +28,4 @@ abstract class Intermediate : I {
     override fun noAnnotationOnActual() {}
 }
 
-actual class FakeOverrideActual : Intermediate(), I
+actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>FakeOverrideActual<!> : Intermediate(), I

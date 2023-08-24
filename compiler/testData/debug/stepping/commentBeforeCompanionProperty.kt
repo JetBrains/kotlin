@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 
 class AWithCompanion {
@@ -12,15 +13,15 @@ fun box() {
 }
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:11 box
-// test.kt:6 <clinit>
-// test.kt:6 getCompPropVal
-// test.kt:6 getCompPropVal
-// test.kt:11 box
 // test.kt:12 box
+// test.kt:7 <clinit>
+// test.kt:7 getCompPropVal
+// test.kt:7 getCompPropVal
+// test.kt:12 box
+// test.kt:13 box
 
 // EXPECTATIONS JS_IR
-// test.kt:11 box
-// test.kt:6 <init>
-// test.kt:4 <init>
 // test.kt:12 box
+// test.kt:7 <init>
+// test.kt:5 <init>
+// test.kt:13 box

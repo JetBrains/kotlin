@@ -25,6 +25,6 @@ dependencies {
     compilerLib("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$bootstrapKotlinVersion:sources")
     compilerLib("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$bootstrapKotlinVersion:sources")
 
-    commonStdlib("org.jetbrains.kotlin:kotlin-stdlib-common:$bootstrapKotlinVersion")
-    commonStdlibSources("org.jetbrains.kotlin:kotlin-stdlib-common:$bootstrapKotlinVersion:sources")
+    commonStdlib("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion:common")
+    commonStdlibSources("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion:common-sources")
 }

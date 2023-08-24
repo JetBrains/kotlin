@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
- * Provides [KtAnalysisSession] by [contextElement]
- * Should not be used directly, consider using [analyse]/[analyzeWithReadAction]/[analyzeInModalWindow] instead
+ * Provides [KtAnalysisSession]s by use-site [KtElement]s or [KtModule]s.
+ *
+ * This provider should not be used directly. Please use [analyze][org.jetbrains.kotlin.analysis.api.analyze] or
+ * [analyzeInDependedAnalysisSession][org.jetbrains.kotlin.analysis.api.analyzeInDependedAnalysisSession] instead.
  */
 @OptIn(KtAnalysisApiInternals::class)
 public abstract class KtAnalysisSessionProvider(public val project: Project) : Disposable {

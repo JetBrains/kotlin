@@ -363,6 +363,10 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         return declarationsTransformer?.transformConstructor(constructor, data) ?: constructor
     }
 
+    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: ResolutionMode): FirStatement {
+        return declarationsTransformer?.transformErrorPrimaryConstructor(errorPrimaryConstructor, data) ?: errorPrimaryConstructor
+    }
+
     override fun transformAnonymousInitializer(
         anonymousInitializer: FirAnonymousInitializer,
         data: ResolutionMode

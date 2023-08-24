@@ -88,9 +88,9 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'public final test7: kotlin.Int' field=null getter='public final fun <get-test7> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
-    FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.HashMap<kotlin.String, kotlin.Int> } visibility:private [final,static]
+    FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf>{ kotlin.collections.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf> } declared in kotlin.collections' type=java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.HashMap<kotlin.String, kotlin.Int> } origin=null
+        CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf> declared in kotlin.collections' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
           <K>: kotlin.String
           <V>: kotlin.Int
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL <> () returnType:kotlin.Int
@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
           CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue declared in kotlin.collections' type=kotlin.Int origin=null
             <V>: kotlin.Int
             <V1>: kotlin.Int
-            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.HashMap<kotlin.String, kotlin.Int> } visibility:private [final,static]' type=java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.HashMap<kotlin.String, kotlin.Int> } origin=null
+            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'public final test8: kotlin.Int' field=null getter='public final fun <get-test8> (): kotlin.Int declared in <root>' setter='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
@@ -110,7 +110,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
         RETURN type=kotlin.Nothing from='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>'
           CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
             <V>: kotlin.Int
-            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.HashMap<kotlin.String, kotlin.Int> } visibility:private [final,static]' type=java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.HashMap<kotlin.String, kotlin.Int> } origin=null
+            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'public final test8: kotlin.Int' field=null getter='public final fun <get-test8> (): kotlin.Int declared in <root>' setter='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-test8>' type=kotlin.Int origin=null

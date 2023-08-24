@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -75,10 +72,21 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         isExpect: Boolean,
         forceLocalContext: Boolean = false,
         l: () -> T
+    ) = when {
+        forceLocalContext -> withForcedLocalContext {
+            withChildClassNameRegardlessLocalContext(name, isExpect, l)
+        }
+        else -> {
+            withChildClassNameRegardlessLocalContext(name, isExpect, l)
+        }
+    }
+
+    inline fun <T> withChildClassNameRegardlessLocalContext(
+        name: Name,
+        isExpect: Boolean,
+        l: () -> T
     ): T {
         context.className = context.className.child(name)
-        val oldForcedLocalContext = context.forcedLocalContext
-        context.forcedLocalContext = forceLocalContext || context.forcedLocalContext
         val previousIsExpect = context.containerIsExpect
         context.containerIsExpect = previousIsExpect || isExpect
         val dispatchReceiversNumber = context.dispatchReceiverTypesStack.size
@@ -94,8 +102,25 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             }
 
             context.className = context.className.parent()
-            context.forcedLocalContext = oldForcedLocalContext
             context.containerIsExpect = previousIsExpect
+        }
+    }
+
+    inline fun <R> withForcedLocalContext(block: () -> R): R {
+        val oldForcedLocalContext = context.inLocalContext
+        context.inLocalContext = true
+        val oldClassNameBeforeLocalContext = context.classNameBeforeLocalContext
+        if (!oldForcedLocalContext) {
+            context.classNameBeforeLocalContext = context.className
+        }
+        val oldClassName = context.className
+        context.className = FqName.ROOT
+        return try {
+            block()
+        } finally {
+            context.classNameBeforeLocalContext = oldClassNameBeforeLocalContext
+            context.inLocalContext = oldForcedLocalContext
+            context.className = oldClassName
         }
     }
 
@@ -132,7 +157,11 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             context.inLocalContext -> {
                 val pathFqName =
                     context.firFunctionTargets.fold(
-                        if (context.className.isRoot) context.packageFqName else context.currentClassId.asSingleFqName()
+                        if (context.classNameBeforeLocalContext.isRoot) {
+                            context.packageFqName
+                        } else {
+                            ClassId(context.packageFqName, context.classNameBeforeLocalContext, false).asSingleFqName()
+                        }
                     ) { result, firFunctionTarget ->
                         if (firFunctionTarget.isLambda || firFunctionTarget.labelName == null)
                             result
@@ -252,6 +281,9 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             }
         }
     }
+
+    fun createErrorConstructorBuilder(diagnostic: ConeDiagnostic) =
+        FirErrorPrimaryConstructorBuilder().apply { this.diagnostic = diagnostic }
 
     fun FirLoopBuilder.prepareTarget(firLabelUser: Any): FirLoopTarget = prepareTarget(context.getLastLabel(firLabelUser))
 
@@ -1081,13 +1113,13 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
     ) =
         buildPropertyAccessExpression {
             this.source = parameterSource
-            typeRef = firPropertyReturnTypeRefWithCorrectSourceKind
+            coneTypeOrNull = firPropertyReturnTypeRefWithCorrectSourceKind.coneTypeOrNull
             this.dispatchReceiver = buildThisReceiverExpression {
                 this.source = parameterSource
                 calleeReference = buildImplicitThisReference {
                     boundSymbol = this@createDataClassCopyFunction.symbol
                 }
-                typeRef = classTypeRefWithCorrectSourceKind
+                coneTypeOrNull = classTypeRefWithCorrectSourceKind.coneTypeOrNull
             }
             calleeReference = buildResolvedNamedReference {
                 this.source = parameterSource

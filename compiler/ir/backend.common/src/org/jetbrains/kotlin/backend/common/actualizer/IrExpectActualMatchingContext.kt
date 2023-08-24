@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCom
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.model.AnnotationMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
@@ -267,6 +267,10 @@ internal abstract class IrExpectActualMatchingContext(
         return asIr().declarations.filterIsInstance<IrEnumEntry>().map { it.name }
     }
 
+    override fun RegularClassSymbolMarker.collectEnumEntries(): List<DeclarationSymbolMarker> {
+        return asIr().declarations.filterIsInstance<IrEnumEntry>().map { it.symbol }
+    }
+
     override val CallableSymbolMarker.dispatchReceiverType: KotlinTypeMarker?
         get() = (asIr().parent as? IrClass)?.defaultType
 
@@ -440,7 +444,12 @@ internal abstract class IrExpectActualMatchingContext(
             }
         }
 
-    override fun onMatchedMembers(expectSymbol: DeclarationSymbolMarker, actualSymbol: DeclarationSymbolMarker) {
+    override fun onMatchedMembers(
+        expectSymbol: DeclarationSymbolMarker,
+        actualSymbol: DeclarationSymbolMarker,
+        containingExpectClassSymbol: RegularClassSymbolMarker?,
+        containingActualClassSymbol: RegularClassSymbolMarker?,
+    ) {
         require(expectSymbol is IrSymbol)
         require(actualSymbol is IrSymbol)
         when (expectSymbol) {
@@ -463,14 +472,14 @@ internal abstract class IrExpectActualMatchingContext(
         get() = asIr().annotations.map(::AnnotationCallInfoImpl)
 
     override fun areAnnotationArgumentsEqual(
-        annotation1: AnnotationCallInfo, annotation2: AnnotationCallInfo,
+        expectAnnotation: AnnotationCallInfo, actualAnnotation: AnnotationCallInfo,
         collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
     ): Boolean {
         fun AnnotationCallInfo.getIrElement(): IrConstructorCall = (this as AnnotationCallInfoImpl).irElement
 
         return areIrExpressionConstValuesEqual(
-            annotation1.getIrElement(),
-            annotation2.getIrElement(),
+            expectAnnotation.getIrElement(),
+            actualAnnotation.getIrElement(),
             collectionArgumentsCompatibilityCheckStrategy,
         )
     }
@@ -502,4 +511,16 @@ internal abstract class IrExpectActualMatchingContext(
             val ir = asIr()
             return ir.sourceElement() == null && ir.origin !is IrDeclarationOrigin.GeneratedByPlugin
         }
+
+    // IR checker traverses member scope itself and collects mappings
+    override val checkClassScopesForAnnotationCompatibility = false
+
+    override fun skipCheckingAnnotationsOfActualClassMember(actualMember: DeclarationSymbolMarker): Boolean = error("Should not be called")
+
+    override fun findPotentialExpectClassMembersForActual(
+        expectClass: RegularClassSymbolMarker,
+        actualClass: RegularClassSymbolMarker,
+        actualMember: DeclarationSymbolMarker,
+        checkClassScopesCompatibility: Boolean,
+    ): Map<out DeclarationSymbolMarker, ExpectActualCompatibility<*>> = error("Should not be called")
 }

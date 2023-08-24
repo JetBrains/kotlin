@@ -717,7 +717,7 @@ FILE fqName:<root> fileName:/kt44814.kt
                                               $this: GET_VAR 'val tmp_4: <root>.LighterASTNode? declared in <root>.FirModifierList.Companion.getModifierList.<anonymous>' type=<root>.LighterASTNode? origin=null
                                       arg1: CALL 'public final fun <get-MODIFIER_LIST> (): <root>.TokenType declared in <root>.TokenType.Companion' type=<root>.TokenType origin=GET_PROPERTY
                                         $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.TokenType.Companion
-                        WHEN type=<root>.LighterASTNode origin=ELVIS
+                        WHEN type=<root>.LighterASTNode origin=null
                           BRANCH
                             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                               arg0: GET_VAR 'val tmp_3: <root>.LighterASTNode? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.LighterASTNode? origin=null

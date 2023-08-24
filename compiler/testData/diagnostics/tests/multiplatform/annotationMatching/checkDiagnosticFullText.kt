@@ -12,7 +12,9 @@ expect class OnMember {
 }
 
 @Ann
-expect class ViaTypealias {
+expect class ViaTypealias
+
+expect class MemberScopeViaTypealias {
     @Ann
     fun foo()
 }
@@ -30,11 +32,14 @@ actual class OnMember {
     actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onMember<!>() {}
 }
 
-class ViaTypealiasImpl {
-    fun foo() {}
-}
+class ViaTypealiasImpl
 
 actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ViaTypealias<!> = ViaTypealiasImpl
+
+class MemberScopeViaTypealiasImpl {
+    fun foo() {}
+}
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MemberScopeViaTypealias<!> = MemberScopeViaTypealiasImpl
 
 @WithArg("other str")
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>withDifferentArg<!>() {}

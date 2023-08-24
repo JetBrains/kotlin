@@ -104,6 +104,18 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("defaultParams_inheritanceByDelegation_negative.kt")
+    public void testDefaultParams_inheritanceByDelegation_negative() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/defaultParams_inheritanceByDelegation_negative.kt");
+    }
+
+    @Test
+    @TestMetadata("defaultParams_inheritanceByDelegation_positive.kt")
+    public void testDefaultParams_inheritanceByDelegation_positive() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/defaultParams_inheritanceByDelegation_positive.kt");
+    }
+
+    @Test
     @TestMetadata("expectAbstractToString.kt")
     public void testExpectAbstractToString() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectAbstractToString.kt");
@@ -242,6 +254,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("optionalExpectationDiagnostics.kt")
+    public void testOptionalExpectationDiagnostics() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/optionalExpectationDiagnostics.kt");
+    }
+
+    @Test
     @TestMetadata("privateTopLevelDeclarations.kt")
     public void testPrivateTopLevelDeclarations() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/privateTopLevelDeclarations.kt");
@@ -290,9 +308,391 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker {
+        @Test
+        @TestMetadata("actualTypealias.kt")
+        public void testActualTypealias() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/actualTypealias.kt");
+        }
+
+        @Test
+        @TestMetadata("actualizeFakeOverridePropertyToJavaMethod.kt")
+        public void testActualizeFakeOverridePropertyToJavaMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/actualizeFakeOverridePropertyToJavaMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("actualizePrimaryConstructorWithSecondaryConstructor.kt")
+        public void testActualizePrimaryConstructorWithSecondaryConstructor() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/actualizePrimaryConstructorWithSecondaryConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("actualizeSecondaryConstructorWithPrimaryConstructor.kt")
+        public void testActualizeSecondaryConstructorWithPrimaryConstructor() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/actualizeSecondaryConstructorWithPrimaryConstructor.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("allowDifferentMembersInActual_class.kt")
+        public void testAllowDifferentMembersInActual_class() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/allowDifferentMembersInActual_class.kt");
+        }
+
+        @Test
+        @TestMetadata("allowDifferentMembersInActual_typealias.kt")
+        public void testAllowDifferentMembersInActual_typealias() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/allowDifferentMembersInActual_typealias.kt");
+        }
+
+        @Test
+        @TestMetadata("changeClassTypeParameterNames.kt")
+        public void testChangeClassTypeParameterNames() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/changeClassTypeParameterNames.kt");
+        }
+
+        @Test
+        @TestMetadata("changeFunctionTypeParameterNamesInOverride.kt")
+        public void testChangeFunctionTypeParameterNamesInOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/changeFunctionTypeParameterNamesInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("changeLateinitInOverride.kt")
+        public void testChangeLateinitInOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/changeLateinitInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("changeModalityInOverride.kt")
+        public void testChangeModalityInOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/changeModalityInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("changeModalityOfSubstitutedFakeOverride.kt")
+        public void testChangeModalityOfSubstitutedFakeOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/changeModalityOfSubstitutedFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("changeModalityOfToStringInOverride.kt")
+        public void testChangeModalityOfToStringInOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/changeModalityOfToStringInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("changeParameterNameInOverride.kt")
+        public void testChangeParameterNameInOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/changeParameterNameInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("changeSetterVisibilityInOverride.kt")
+        public void testChangeSetterVisibilityInOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/changeSetterVisibilityInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("changeVisibilityInOverride.kt")
+        public void testChangeVisibilityInOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/changeVisibilityInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("covariantFunctionOverride.kt")
+        public void testCovariantFunctionOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/covariantFunctionOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("covariantOverrideGenericUpperBound.kt")
+        public void testCovariantOverrideGenericUpperBound() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/covariantOverrideGenericUpperBound.kt");
+        }
+
+        @Test
+        @TestMetadata("covariantOverrideGenerics.kt")
+        public void testCovariantOverrideGenerics() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/covariantOverrideGenerics.kt");
+        }
+
+        @Test
+        @TestMetadata("covariantPropertyOverride.kt")
+        public void testCovariantPropertyOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/covariantPropertyOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideChangedToRealOverride.kt")
+        public void testFakeOverrideChangedToRealOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/fakeOverrideChangedToRealOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("finalClassIsActualizedByOpenClass.kt")
+        public void testFinalClassIsActualizedByOpenClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/finalClassIsActualizedByOpenClass.kt");
+        }
+
+        @Test
+        @TestMetadata("finalMethodIsActualizedByOpenMethod.kt")
+        public void testFinalMethodIsActualizedByOpenMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/finalMethodIsActualizedByOpenMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("flexibleTypesMatching.kt")
+        public void testFlexibleTypesMatching() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/flexibleTypesMatching.kt");
+        }
+
+        @Test
+        @TestMetadata("injectClass.kt")
+        public void testInjectClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectClass.kt");
+        }
+
+        @Test
+        @TestMetadata("injectContextReceiverOverload.kt")
+        public void testInjectContextReceiverOverload() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectContextReceiverOverload.kt");
+        }
+
+        @Test
+        @TestMetadata("injectEmptySuperClass.kt")
+        public void testInjectEmptySuperClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectEmptySuperClass.kt");
+        }
+
+        @Test
+        @TestMetadata("injectExtensionReceiverOverload.kt")
+        public void testInjectExtensionReceiverOverload() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectExtensionReceiverOverload.kt");
+        }
+
+        @Test
+        @TestMetadata("injectGenericUpperBoundOverload.kt")
+        public void testInjectGenericUpperBoundOverload() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectGenericUpperBoundOverload.kt");
+        }
+
+        @Test
+        @TestMetadata("injectMethod_internalMethod.kt")
+        public void testInjectMethod_internalMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectMethod_internalMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("injectMethod_privateMethod.kt")
+        public void testInjectMethod_privateMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectMethod_privateMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("injectMethod_protectedMethod.kt")
+        public void testInjectMethod_protectedMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectMethod_protectedMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("injectMethod_publicMethod.kt")
+        public void testInjectMethod_publicMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectMethod_publicMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("injectMethod_publicMethodInJava.kt")
+        public void testInjectMethod_publicMethodInJava() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectMethod_publicMethodInJava.kt");
+        }
+
+        @Test
+        @TestMetadata("injectParameterOverload.kt")
+        public void testInjectParameterOverload() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectParameterOverload.kt");
+        }
+
+        @Test
+        @TestMetadata("injectParameterOverloadWithGenerics.kt")
+        public void testInjectParameterOverloadWithGenerics() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectParameterOverloadWithGenerics.kt");
+        }
+
+        @Test
+        @TestMetadata("injectPrimaryConstructor.kt")
+        public void testInjectPrimaryConstructor() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectPrimaryConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("injectPrivateProperty.kt")
+        public void testInjectPrivateProperty() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectPrivateProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("injectProperty.kt")
+        public void testInjectProperty() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("injectPropertyWithTheSameSignatureAsExistingFunction.kt")
+        public void testInjectPropertyWithTheSameSignatureAsExistingFunction() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectPropertyWithTheSameSignatureAsExistingFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("injectPublicFakeOverrideMethod.kt")
+        public void testInjectPublicFakeOverrideMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectPublicFakeOverrideMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("injectSecondaryConstructor.kt")
+        public void testInjectSecondaryConstructor() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectSecondaryConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("injectSupertype_SupertypeIsExpectActualPair.kt")
+        public void testInjectSupertype_SupertypeIsExpectActualPair() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectSupertype_SupertypeIsExpectActualPair.kt");
+        }
+
+        @Test
+        @TestMetadata("injectSupertype_SupertypeIsExpectActualPair_transitiveFakeOverride.kt")
+        public void testInjectSupertype_SupertypeIsExpectActualPair_transitiveFakeOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectSupertype_SupertypeIsExpectActualPair_transitiveFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("injectVarargParameterOverload.kt")
+        public void testInjectVarargParameterOverload() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/injectVarargParameterOverload.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedExpectOpenClass.kt")
+        public void testNestedExpectOpenClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/nestedExpectOpenClass.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyKindOverride.kt")
+        public void testPropertyKindOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/propertyKindOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("severalMismatches.kt")
+        public void testSeveralMismatches() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/severalMismatches.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutedFakeOverrideChangedToRealOverride.kt")
+        public void testSubstitutedFakeOverrideChangedToRealOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/substitutedFakeOverrideChangedToRealOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypesAreTheSameModuloActualTypealias.kt")
+        public void testSuperTypesAreTheSameModuloActualTypealias() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/superTypesAreTheSameModuloActualTypealias.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypesAreTheSameModuloTypealias1.kt")
+        public void testSuperTypesAreTheSameModuloTypealias1() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/superTypesAreTheSameModuloTypealias1.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypesAreTheSameModuloTypealias2.kt")
+        public void testSuperTypesAreTheSameModuloTypealias2() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/superTypesAreTheSameModuloTypealias2.kt");
+        }
+
+        @Test
+        @TestMetadata("supertypeIsExpectActual_covariantOverrideOfInjectedFromSuper.kt")
+        public void testSupertypeIsExpectActual_covariantOverrideOfInjectedFromSuper() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/supertypeIsExpectActual_covariantOverrideOfInjectedFromSuper.kt");
+        }
+
+        @Test
+        @TestMetadata("supertypeIsExpectActual_covariantOverrideOfInjectedFromSuper_transitiveSubstitutionFakeOverride.kt")
+        public void testSupertypeIsExpectActual_covariantOverrideOfInjectedFromSuper_transitiveSubstitutionFakeOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/supertypeIsExpectActual_covariantOverrideOfInjectedFromSuper_transitiveSubstitutionFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("supertypeIsExpectActual_injectMethod.kt")
+        public void testSupertypeIsExpectActual_injectMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/supertypeIsExpectActual_injectMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("supertypeIsExpectActual_injectMethod_transitiveSubstitutionFakeOverride.kt")
+        public void testSupertypeIsExpectActual_injectMethod_transitiveSubstitutionFakeOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/supertypeIsExpectActual_injectMethod_transitiveSubstitutionFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("supertypeIsExpectActual_injectSupertype.kt")
+        public void testSupertypeIsExpectActual_injectSupertype() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/supertypeIsExpectActual_injectSupertype.kt");
+        }
+
+        @Test
+        @TestMetadata("supertypeIsExpectActual_injectSupertype_transitiveSubstitutionFakeOverride.kt")
+        public void testSupertypeIsExpectActual_injectSupertype_transitiveSubstitutionFakeOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/supertypeIsExpectActual_injectSupertype_transitiveSubstitutionFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("supertypeIsExpectActual_simpleOverride.kt")
+        public void testSupertypeIsExpectActual_simpleOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/supertypeIsExpectActual_simpleOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("supertypeIsExpectActual_simpleOverride_transitiveSubstitutionFakeOverride.kt")
+        public void testSupertypeIsExpectActual_simpleOverride_transitiveSubstitutionFakeOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/supertypeIsExpectActual_simpleOverride_transitiveSubstitutionFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("supertypeIsExpectActual_supertypeIsActualTypealias_injectMethod.kt")
+        public void testSupertypeIsExpectActual_supertypeIsActualTypealias_injectMethod() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/supertypeIsExpectActual_supertypeIsActualTypealias_injectMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("supertypeIsExpectActual_supertypeIsActualTypealias_injectMethod_transitiveSubstitutionFakeOverride.kt")
+        public void testSupertypeIsExpectActual_supertypeIsActualTypealias_injectMethod_transitiveSubstitutionFakeOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/supertypeIsExpectActual_supertypeIsActualTypealias_injectMethod_transitiveSubstitutionFakeOverride.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/annotationMatching")
     @TestDataPath("$PROJECT_ROOT")
     public class AnnotationMatching {
+        @Test
+        @TestMetadata("actualInnerClassMissingMember.kt")
+        public void testActualInnerClassMissingMember() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/actualInnerClassMissingMember.kt");
+        }
+
         @Test
         public void testAllFilesPresentInAnnotationMatching() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/annotationMatching"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
@@ -335,6 +735,18 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("classScopeInnerClasses.kt")
+        public void testClassScopeInnerClasses() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/classScopeInnerClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("classScopeViaTypealiasIncompatible.kt")
+        public void testClassScopeViaTypealiasIncompatible() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/classScopeViaTypealiasIncompatible.kt");
+        }
+
+        @Test
         @TestMetadata("compatibleOverrides.kt")
         public void testCompatibleOverrides() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/compatibleOverrides.kt");
@@ -344,6 +756,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         @TestMetadata("differentOrder.kt")
         public void testDifferentOrder() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/differentOrder.kt");
+        }
+
+        @Test
+        @TestMetadata("enumEntries.kt")
+        public void testEnumEntries() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/enumEntries.kt");
         }
 
         @Test
@@ -398,6 +816,18 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         @TestMetadata("sourceRetentionAnnotationsWhenTypealias.kt")
         public void testSourceRetentionAnnotationsWhenTypealias() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/sourceRetentionAnnotationsWhenTypealias.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionOverrideInTwoClasses.kt")
+        public void testSubstitutionOverrideInTwoClasses() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/substitutionOverrideInTwoClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("twoActualTypealiasesToSameClass.kt")
+        public void testTwoActualTypealiasesToSameClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/twoActualTypealiasesToSameClass.kt");
         }
 
         @Test
@@ -961,6 +1391,40 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
             @TestMetadata("sealedInheritorsInComplexModuleStructure.kt")
             public void testSealedInheritorsInComplexModuleStructure() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/sealedInheritorsInComplexModuleStructure.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching")
+            @TestDataPath("$PROJECT_ROOT")
+            public class AnnotationMatching {
+                @Test
+                public void testAllFilesPresentInAnnotationMatching() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("sourceRetentionAnnotationsWhenTypealias.kt")
+                public void testSourceRetentionAnnotationsWhenTypealias() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/sourceRetentionAnnotationsWhenTypealias.kt");
+                }
+
+                @Test
+                @TestMetadata("typealiasedAnnotation.kt")
+                public void testTypealiasedAnnotation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/typealiasedAnnotation.kt");
+                }
+
+                @Test
+                @TestMetadata("typealiasedAnnotationAsArgument.kt")
+                public void testTypealiasedAnnotationAsArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/typealiasedAnnotationAsArgument.kt");
+                }
+
+                @Test
+                @TestMetadata("typealiasedAsKClassArg.kt")
+                public void testTypealiasedAsKClassArg() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/typealiasedAsKClassArg.kt");
+                }
             }
         }
     }

@@ -66,7 +66,6 @@ class FirJsKlibBackendFacade(
                 klibPath = outputFile,
                 libraries.map { it.library },
                 inputArtifact.irModuleFragment,
-                inputArtifact.expectDescriptorToSymbol,
                 cleanFiles = inputArtifact.icData,
                 nopack = true,
                 perFile = false,

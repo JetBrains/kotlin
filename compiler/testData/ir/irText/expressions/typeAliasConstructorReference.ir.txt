@@ -61,20 +61,20 @@ FILE fqName:<root> fileName:/typeAliasConstructorReference.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   TYPEALIAS name:NA visibility:public expandedType:<root>.Host.Nested
   PROPERTY name:test1 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.Int, <root>.C{ <root>.CA }> visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.Int, <root>.C> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public constructor <init> (x: kotlin.Int) declared in <root>.C' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'x')] kotlin.Int, <root>.C{ <root>.CA }> origin=null reflectionTarget=<same>
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Int, <root>.C{ <root>.CA }>
+        FUNCTION_REFERENCE 'public constructor <init> (x: kotlin.Int) declared in <root>.C' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'x')] kotlin.Int, <root>.C> origin=null reflectionTarget=<same>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Int, <root>.C>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Function1<kotlin.Int, <root>.C{ <root>.CA }> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.Int, <root>.C{ <root>.CA }> visibility:private [final,static]' type=kotlin.Function1<kotlin.Int, <root>.C{ <root>.CA }> origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Function1<kotlin.Int, <root>.C> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.Int, <root>.C> visibility:private [final,static]' type=kotlin.Function1<kotlin.Int, <root>.C> origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function1<kotlin.Int, <root>.Host.Nested{ <root>.NA }> visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function1<kotlin.Int, <root>.Host.Nested> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public constructor <init> (x: kotlin.Int) declared in <root>.Host.Nested' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'x')] kotlin.Int, <root>.Host.Nested{ <root>.NA }> origin=null reflectionTarget=<same>
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Int, <root>.Host.Nested{ <root>.NA }>
+        FUNCTION_REFERENCE 'public constructor <init> (x: kotlin.Int) declared in <root>.Host.Nested' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'x')] kotlin.Int, <root>.Host.Nested> origin=null reflectionTarget=<same>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Int, <root>.Host.Nested>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Function1<kotlin.Int, <root>.Host.Nested{ <root>.NA }> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function1<kotlin.Int, <root>.Host.Nested{ <root>.NA }> visibility:private [final,static]' type=kotlin.Function1<kotlin.Int, <root>.Host.Nested{ <root>.NA }> origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Function1<kotlin.Int, <root>.Host.Nested> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function1<kotlin.Int, <root>.Host.Nested> visibility:private [final,static]' type=kotlin.Function1<kotlin.Int, <root>.Host.Nested> origin=null

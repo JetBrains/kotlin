@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 private val nameToOperator = mapOf(
@@ -90,7 +89,7 @@ object FirJsDynamicCallChecker : FirQualifiedAccessExpressionChecker() {
 
     private fun checkSpreadOperator(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         forAllSpreadArgumentsOf(expression) {
-            if (it.typeRef.coneType is ConeDynamicType) {
+            if (it.resolvedType is ConeDynamicType) {
                 reporter.reportOn(it.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "spread operator", context)
             }
         }

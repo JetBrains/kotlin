@@ -18,11 +18,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
@@ -55,7 +57,7 @@ internal class KtFirImportOptimizer(
 
     override fun analyseImports(file: KtFile): KtImportOptimizerResult {
         val existingImports = file.importDirectives
-        if (existingImports.isEmpty()) return KtImportOptimizerResult(emptySet())
+        if (existingImports.isEmpty()) return KtImportOptimizerResult()
 
         val firFile = file.getOrBuildFirFile(firResolveSession).apply { lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE) }
 
@@ -66,9 +68,10 @@ internal class KtFirImportOptimizer(
             .map { it.fqName }
             .toSet()
 
-        val (usedImports, unresolvedNames) = collectReferencedEntities(firFile)
+        val (usedDeclarations, unresolvedNames) = collectReferencedEntities(firFile)
 
-        val referencesEntities = usedImports
+        // TODO remove unused imports computing code completely
+        val referencesEntities = usedDeclarations
             .filterNot { (fqName, referencedByNames) ->
                 val fromCurrentPackage = fqName.parentOrNull() == file.packageFqName
                 val noAliasedImports = referencedByNames.singleOrNull() == fqName.shortName()
@@ -102,7 +105,7 @@ internal class KtFirImportOptimizer(
             }
         }
 
-        return KtImportOptimizerResult(unusedImports)
+        return KtImportOptimizerResult(unusedImports, usedDeclarations, unresolvedNames)
     }
 
     private data class ReferencedEntitiesResult(
@@ -127,6 +130,11 @@ internal class KtFirImportOptimizer(
             override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall) {
                 processImplicitFunctionCall(implicitInvokeCall)
                 super.visitImplicitInvokeCall(implicitInvokeCall)
+            }
+
+            override fun visitProperty(property: FirProperty) {
+                if (property.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return
+                super.visitProperty(property)
             }
 
             override fun visitComponentCall(componentCall: FirComponentCall) {
@@ -300,9 +308,10 @@ internal class KtFirImportOptimizer(
 }
 
 private val FirErrorNamedReference.unresolvedName: Name?
-    get() {
-        val diagnostic = diagnostic as? ConeUnresolvedError ?: return null
-        return diagnostic.unresolvedName
+    get() = when (val diagnostic = diagnostic) {
+        is ConeUnresolvedError -> diagnostic.unresolvedName
+        is ConeAmbiguityError -> diagnostic.name
+        else -> null
     }
 
 private val ConeUnresolvedError.unresolvedName: Name?
@@ -492,7 +501,12 @@ private sealed interface TypeQualifier {
 
     companion object {
         val FirResolvedQualifier.isPresentInSource: Boolean
-            get() = source?.kind is KtRealSourceElementKind
+            get() = when (source?.kind) {
+                is KtRealSourceElementKind -> true
+                is KtFakeSourceElementKind.ImplicitInvokeCall -> true
+
+                else -> false
+            }
 
         fun createFor(qualifier: FirResolvedQualifier): TypeQualifier? {
             if (!qualifier.isPresentInSource) return null

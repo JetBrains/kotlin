@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 
 // FILE: test.kt
 fun box(): Int {
@@ -15,16 +16,16 @@ inline fun getB(): Int {
 }
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:5 box
-// test.kt:14 box
 // test.kt:6 box
-// test.kt:11 getA
-// test.kt:6 box
-// test.kt:8 box
-// test.kt:14 box
-// test.kt:8 box
+// test.kt:15 box
+// test.kt:7 box
+// test.kt:12 getA
+// test.kt:7 box
+// test.kt:9 box
+// test.kt:15 box
+// test.kt:9 box
 
 // EXPECTATIONS JS_IR
-// test.kt:4 box
-// test.kt:11 getA
-// test.kt:8 box
+// test.kt:5 box
+// test.kt:12 getA
+// test.kt:9 box

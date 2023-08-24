@@ -8,4 +8,10 @@ class Test {
 
     val constJavaClassValue: Class<*> = String::class.java
     val constClassValue: kotlin.reflect.KClass<*> = (String::class)
+
+    @Deprecated("")
+    var isBoolean = false
+
+    @Deprecated("")
+    var unit = Unit
 }

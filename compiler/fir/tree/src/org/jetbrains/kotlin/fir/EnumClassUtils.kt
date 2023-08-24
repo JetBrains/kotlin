@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.toLookupTag
@@ -45,16 +46,21 @@ fun FirRegularClassBuilder.generateValuesFunction(
         source = sourceElement
         this.origin = origin
         this.moduleData = moduleData
-        returnTypeRef = buildResolvedTypeRef {
+        val returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
             type = ConeClassLikeTypeImpl(
                 StandardClassIds.Array.toLookupTag(),
                 arrayOf(
-                    ConeClassLikeTypeImpl(this@generateValuesFunction.symbol.toLookupTag(), emptyArray(), isNullable = false)
+                    ConeClassLikeTypeImpl(
+                        this@generateValuesFunction.symbol.toLookupTag(),
+                        ConeTypeProjection.EMPTY_ARRAY,
+                        isNullable = false
+                    )
                 ),
                 isNullable = false
             )
         }
+        this.returnTypeRef = returnTypeRef
         name = ENUM_VALUES
         this.status = createStatus(this@generateValuesFunction.status).apply {
             isStatic = true
@@ -63,7 +69,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
         symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
         resolvePhase = this@generateValuesFunction.resolvePhase
         body = buildEmptyExpressionBlock().also {
-            it.replaceTypeRef(returnTypeRef)
+            it.replaceConeTypeOrNull(returnTypeRef.type)
         }
     }.apply {
         containingClassForStaticMemberAttr = this@generateValuesFunction.symbol.toLookupTag()
@@ -82,7 +88,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         source = sourceElement
         this.origin = origin
         this.moduleData = moduleData
-        returnTypeRef = buildResolvedTypeRef {
+        val returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
             type = ConeClassLikeTypeImpl(
                 this@generateValueOfFunction.symbol.toLookupTag(),
@@ -90,6 +96,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
                 isNullable = false
             )
         }
+        this.returnTypeRef = returnTypeRef
         name = ENUM_VALUE_OF
 
         status = createStatus(this@generateValueOfFunction.status).apply {
@@ -102,7 +109,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             containingFunctionSymbol = this@buildSimpleFunction.symbol
             this.origin = origin
             this.moduleData = moduleData
-            returnTypeRef = buildResolvedTypeRef {
+            this.returnTypeRef = buildResolvedTypeRef {
                 source = sourceElement
                 type = ConeClassLikeTypeImpl(
                     StandardClassIds.String.toLookupTag(),
@@ -119,7 +126,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         }
         resolvePhase = this@generateValueOfFunction.resolvePhase
         body = buildEmptyExpressionBlock().also {
-            it.replaceTypeRef(returnTypeRef)
+            it.replaceConeTypeOrNull(returnTypeRef.type)
         }
     }.apply {
         containingClassForStaticMemberAttr = this@generateValueOfFunction.symbol.toLookupTag()
@@ -145,7 +152,7 @@ fun FirRegularClassBuilder.generateEntriesGetter(
             type = ConeClassLikeTypeImpl(
                 StandardClassIds.EnumEntries.toLookupTag(),
                 arrayOf(
-                    ConeClassLikeTypeImpl(this@generateEntriesGetter.symbol.toLookupTag(), emptyArray(), isNullable = false)
+                    ConeClassLikeTypeImpl(this@generateEntriesGetter.symbol.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
                 ),
                 isNullable = false
             )

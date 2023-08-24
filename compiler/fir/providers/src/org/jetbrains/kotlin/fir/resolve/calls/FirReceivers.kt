@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
@@ -29,8 +28,11 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SmartcastStability
 
@@ -50,7 +52,7 @@ abstract class ReceiverValue {
 class ExpressionReceiverValue(override val receiverExpression: FirExpression) : ReceiverValue() {
     override val type: ConeKotlinType
         // NB: safe cast is necessary here
-        get() = receiverExpression.typeRef.coneTypeSafe()
+        get() = receiverExpression.coneTypeSafe()
             ?: ConeErrorType(ConeIntermediateDiagnostic("No type calculated for: ${receiverExpression.renderWithType()}")) // TODO: assert here
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? {
@@ -116,12 +118,12 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
             buildSmartCastExpression {
                 originalExpression = originalReceiverExpression
                 smartcastType = buildResolvedTypeRef {
-                    source = originalReceiverExpression.typeRef.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
+                    source = originalReceiverExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
                     type = this@ImplicitReceiverValue.type
                 }
-                typesFromSmartCast = listOf(type)
+                typesFromSmartCast = listOf(this@ImplicitReceiverValue.type)
                 smartcastStability = SmartcastStability.STABLE_VALUE
-                typeRef = smartcastType.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+                coneTypeOrNull = this@ImplicitReceiverValue.type
             }
         } else {
             originalReceiverExpression
@@ -195,16 +197,15 @@ private fun receiverExpression(
         boundSymbol = symbol
         this.contextReceiverNumber = contextReceiverNumber
     }
-    val typeRef = type.toFirResolvedTypeRef()
     return when (inaccessibleReceiver) {
         false -> buildThisReceiverExpression {
             this.calleeReference = calleeReference
-            this.typeRef = typeRef
+            this.coneTypeOrNull = type
             isImplicit = true
         }
         true -> buildInaccessibleReceiverExpression {
             this.calleeReference = calleeReference
-            this.typeRef = typeRef
+            this.coneTypeOrNull = type
         }
     }
 }

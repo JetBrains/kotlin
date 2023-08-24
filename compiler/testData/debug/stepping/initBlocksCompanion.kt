@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 
 class A {
@@ -31,35 +32,35 @@ fun box() {
 }
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:29 box
-// test.kt:7 <clinit>
+// test.kt:30 box
 // test.kt:8 <clinit>
 // test.kt:9 <clinit>
-// test.kt:11 <clinit>
-// test.kt:13 <clinit>
-// test.kt:15 <clinit>
+// test.kt:10 <clinit>
+// test.kt:12 <clinit>
+// test.kt:14 <clinit>
 // test.kt:16 <clinit>
 // test.kt:17 <clinit>
-// test.kt:19 <clinit>
-// test.kt:21 <clinit>
+// test.kt:18 <clinit>
+// test.kt:20 <clinit>
 // test.kt:22 <clinit>
-// test.kt:11 getX
-// test.kt:11 getX
-// test.kt:29 box
-// test.kt:30 box
-// test.kt:5 getS
-// test.kt:5 getS
+// test.kt:23 <clinit>
+// test.kt:12 getX
+// test.kt:12 getX
 // test.kt:30 box
 // test.kt:31 box
+// test.kt:6 getS
+// test.kt:6 getS
+// test.kt:31 box
+// test.kt:32 box
 
 // EXPECTATIONS JS_IR
-// test.kt:29 box
-// test.kt:8 <init>
-// test.kt:11 <init>
-// test.kt:26 x
-// test.kt:13 <init>
-// test.kt:16 <init>
-// test.kt:21 <init>
-// test.kt:4 <init>
 // test.kt:30 box
+// test.kt:9 <init>
+// test.kt:12 <init>
+// test.kt:27 x
+// test.kt:14 <init>
+// test.kt:17 <init>
+// test.kt:22 <init>
+// test.kt:5 <init>
 // test.kt:31 box
+// test.kt:32 box

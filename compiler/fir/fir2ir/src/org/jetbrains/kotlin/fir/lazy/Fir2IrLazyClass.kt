@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -65,7 +66,7 @@ class Fir2IrLazyClass(
         set(_) = mutationNotSupported()
 
     override var modality: Modality
-        get() = fir.modality!!
+        get() = if (fir.classKind.isAnnotationClass) Modality.OPEN else fir.modality!!
         set(_) = mutationNotSupported()
 
     override var attributeOwnerId: IrAttributeContainer
@@ -149,6 +150,7 @@ class Fir2IrLazyClass(
             .also(converter::bindFakeOverridesOrPostpone)
     }
 
+    @OptIn(IrSymbolInternals::class)
     override val declarations: MutableList<IrDeclaration> by lazyVar(lock) {
         val result = mutableListOf<IrDeclaration>()
         // NB: it's necessary to take all callables from scope,
@@ -209,7 +211,7 @@ class Fir2IrLazyClass(
         addDeclarationsFromScope(fir.staticScope(session, scopeSession))
 
         with(classifierStorage) {
-            result.addAll(this@Fir2IrLazyClass.createContextReceiverFields(fir))
+            result.addAll(getFieldsWithContextReceiversForClass(this@Fir2IrLazyClass, fir))
         }
 
         for (name in scope.getCallableNames()) {

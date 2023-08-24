@@ -1,3 +1,22 @@
+/**
+ * public abstract interface A : kotlin/Any {
+ *
+ *   // signature: inject(LA$B;)V
+ *   public abstract fun inject(b: A.B): kotlin/Unit
+ *
+ *   // getter: getX()Ljava/lang/String;
+ *   public abstract val x: kotlin/String
+ *     public abstract get
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: B
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public abstract interface A {
@@ -10,6 +29,22 @@ public abstract interface A {
     @org.jetbrains.annotations.NotNull()
     public abstract java.lang.String getX();
 
+    /**
+     * public abstract class A.B : A {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // signature: inject(LA$B;)V
+     *   public open (* delegation *) fun inject(b: A.B): kotlin/Unit
+     *
+     *   // getter: getX()Ljava/lang/String;
+     *   public open (* delegation *) val x: kotlin/String
+     *     public open get
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static abstract class B implements A {
 
@@ -29,6 +64,15 @@ public abstract interface A {
         }
     }
 
+    /**
+     * public final companion object A.Companion : A.B {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class Companion extends A.B {
 

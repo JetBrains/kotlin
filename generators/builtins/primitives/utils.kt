@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.builtins.numbers.primitives
 import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 
 internal const val END_LINE = "\n"
+internal const val intrinsicConstEvaluationAnnotation = "kotlin.internal.IntrinsicConstEvaluation"
 
 internal fun PrimitiveType.castToIfNecessary(otherType: PrimitiveType): String {
     if (this !in PrimitiveType.onlyNumeric || otherType !in PrimitiveType.onlyNumeric) {

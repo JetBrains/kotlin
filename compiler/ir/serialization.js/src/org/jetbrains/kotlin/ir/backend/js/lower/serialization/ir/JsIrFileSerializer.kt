@@ -10,13 +10,11 @@ import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
@@ -26,9 +24,7 @@ import org.jetbrains.kotlin.name.FqName
 class JsIrFileSerializer(
     messageLogger: IrMessageLogger,
     declarationTable: DeclarationTable,
-    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     compatibilityMode: CompatibilityMode,
-    skipExpects: Boolean,
     languageVersionSettings: LanguageVersionSettings,
     bodiesOnlyForInlines: Boolean = false,
     normalizeAbsolutePaths: Boolean,
@@ -36,11 +32,9 @@ class JsIrFileSerializer(
 ) : IrFileSerializer(
     messageLogger,
     declarationTable,
-    expectDescriptorToSymbol,
-    compatibilityMode,
-    languageVersionSettings,
+    compatibilityMode = compatibilityMode,
+    languageVersionSettings = languageVersionSettings,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
-    skipExpects = skipExpects,
     normalizeAbsolutePaths = normalizeAbsolutePaths,
     sourceBaseDirs = sourceBaseDirs
 ) {

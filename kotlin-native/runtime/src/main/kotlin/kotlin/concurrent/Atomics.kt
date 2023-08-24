@@ -70,24 +70,6 @@ public class AtomicInt(@Volatile public var value: Int) {
     public fun getAndDecrement(): Int = this::value.getAndAddField(-1)
 
     /**
-     * Atomically increments the current value by one.
-     */
-    @Deprecated(level = DeprecationLevel.ERROR, message = "Use incrementAndGet() or getAndIncrement() instead.",
-            replaceWith = ReplaceWith("this.incrementAndGet()"))
-    public fun increment(): Unit {
-        addAndGet(1)
-    }
-
-    /**
-     * Atomically decrements the current value by one.
-     */
-    @Deprecated(level = DeprecationLevel.ERROR, message = "Use decrementAndGet() or getAndDecrement() instead.",
-            replaceWith = ReplaceWith("this.decrementAndGet()"))
-    public fun decrement(): Unit {
-        addAndGet(-1)
-    }
-
-    /**
      * Returns the string representation of the current [value].
      */
     public override fun toString(): String = value.toString()
@@ -152,30 +134,6 @@ public class AtomicLong(@Volatile public var value: Long)  {
     public fun getAndDecrement(): Long = this::value.getAndAddField(-1L)
 
     /**
-     * Atomically adds the [given value][delta] to the current value and returns the new value.
-     */
-    @Deprecated(level = DeprecationLevel.ERROR, message = "Use addAndGet(delta: Long) instead.")
-    public fun addAndGet(delta: Int): Long = addAndGet(delta.toLong())
-
-    /**
-     * Atomically increments the current value by one.
-     */
-    @Deprecated(level = DeprecationLevel.ERROR, message = "Use incrementAndGet() or getAndIncrement() instead.",
-            replaceWith = ReplaceWith("this.incrementAndGet()"))
-    public fun increment(): Unit {
-        addAndGet(1L)
-    }
-
-    /**
-     * Atomically decrements the current value by one.
-     */
-    @Deprecated(level = DeprecationLevel.ERROR, message = "Use decrementAndGet() or getAndDecrement() instead.",
-            replaceWith = ReplaceWith("this.decrementAndGet()"))
-    public fun decrement(): Unit {
-        addAndGet(-1L)
-    }
-
-    /**
      * Returns the string representation of the current [value].
      */
     public override fun toString(): String = value.toString()
@@ -184,7 +142,6 @@ public class AtomicLong(@Volatile public var value: Long)  {
 /**
  * An object reference that is always updated atomically.
  */
-@OptIn(FreezingIsDeprecated::class)
 @SinceKotlin("1.9")
 public class AtomicReference<T>(public @Volatile var value: T) {
 

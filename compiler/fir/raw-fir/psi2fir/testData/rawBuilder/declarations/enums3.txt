@@ -5,9 +5,9 @@ FILE: enums3.kt
         }
 
         init {
-            local final? enum class Planet : R|kotlin/Enum<C.Planet>| {
-                private [ContainingClassKey=Planet] constructor([CorrespondingProperty=<local>/m] m: Double, [CorrespondingProperty=<local>/r] r: Double): R|C.Planet| {
-                    super<R|kotlin/Enum<C.Planet>|>()
+            local final? enum class Planet : R|kotlin/Enum<<local>/Planet>| {
+                private [ContainingClassKey=Planet] constructor([CorrespondingProperty=<local>/m] m: Double, [CorrespondingProperty=<local>/r] r: Double): R|<local>/Planet| {
+                    super<R|kotlin/Enum<<local>/Planet>|>()
                 }
 
                 public? final? [IsFromPrimaryConstructor=true] val m: Double = R|<local>/m|
@@ -16,9 +16,9 @@ FILE: enums3.kt
                 internal final? [IsFromPrimaryConstructor=true] val r: Double = R|<local>/r|
                     internal [ContainingClassKey=Planet] get(): Double
 
-                public final static [ContainingClassKey=Planet] enum entry MERCURY: R|C.Planet| = object : R|C.Planet| {
+                public final static [ContainingClassKey=Planet] enum entry MERCURY: R|<local>/Planet| = object : R|<local>/Planet| {
                     private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|C.Planet|>(Double(1.0), Double(2.0))
+                        super<R|<local>/Planet|>(Double(1.0), Double(2.0))
                     }
 
                     public? open? override fun sayHello(): R|kotlin/Unit| {
@@ -27,9 +27,9 @@ FILE: enums3.kt
 
                 }
 
-                public final static [ContainingClassKey=Planet] enum entry VENERA: R|C.Planet| = object : R|C.Planet| {
+                public final static [ContainingClassKey=Planet] enum entry VENERA: R|<local>/Planet| = object : R|<local>/Planet| {
                     private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|C.Planet|>(Double(3.0), Double(4.0))
+                        super<R|<local>/Planet|>(Double(3.0), Double(4.0))
                     }
 
                     public? open? override fun sayHello(): R|kotlin/Unit| {
@@ -38,9 +38,9 @@ FILE: enums3.kt
 
                 }
 
-                public final static [ContainingClassKey=Planet] enum entry EARTH: R|C.Planet| = object : R|C.Planet| {
+                public final static [ContainingClassKey=Planet] enum entry EARTH: R|<local>/Planet| = object : R|<local>/Planet| {
                     private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|C.Planet|>(Double(5.0), Double(6.0))
+                        super<R|<local>/Planet|>(Double(5.0), Double(6.0))
                     }
 
                     public? open? override fun sayHello(): R|kotlin/Unit| {
@@ -55,7 +55,7 @@ FILE: enums3.kt
                 public? abstract fun sayHello(): R|kotlin/Unit|
 
                 local final? companion [ContainingClassKey=Planet] object Companion : R|kotlin/Any| {
-                    private [ContainingClassKey=Companion] constructor(): R|C.Planet.Companion| {
+                    private [ContainingClassKey=Companion] constructor(): R|<local>/Planet.Companion| {
                         super<R|kotlin/Any|>()
                     }
 
@@ -64,14 +64,14 @@ FILE: enums3.kt
 
                 }
 
-                public final static [ContainingClassKey=Planet] fun values(): R|kotlin/Array<C.Planet>| {
+                public final static [ContainingClassKey=Planet] fun values(): R|kotlin/Array<<local>/Planet>| {
                 }
 
-                public final static [ContainingClassKey=Planet] fun valueOf(value: R|kotlin/String|): R|C.Planet| {
+                public final static [ContainingClassKey=Planet] fun valueOf(value: R|kotlin/String|): R|<local>/Planet| {
                 }
 
-                public final static [ContainingClassKey=Planet] val entries: R|kotlin/enums/EnumEntries<C.Planet>|
-                    public get(): R|kotlin/enums/EnumEntries<C.Planet>|
+                public final static [ContainingClassKey=Planet] val entries: R|kotlin/enums/EnumEntries<<local>/Planet>|
+                    public get(): R|kotlin/enums/EnumEntries<<local>/Planet>|
 
             }
 

@@ -7,6 +7,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
@@ -15,11 +16,16 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 
 private fun Project.createCommonMainSources() = tasks.register("commonMainSources", Sync::class.java) {
     from(
-        "$rootDir/libraries/kotlin.test/common/src",
-        "$rootDir/libraries/kotlin.test/annotations-common/src",
-        "$rootDir/libraries/kotlin.test/wasm/src"
+        "$rootDir/libraries/kotlin.test/common/src/main/kotlin",
+        "$rootDir/libraries/kotlin.test/annotations-common/src/main/kotlin",
     )
     into("$buildDir/commonMainSources")
+}
+private fun Project.createCommonWasmSources() = tasks.register<Sync>("commonWasmSources") {
+    from(
+        "$rootDir/libraries/kotlin.test/wasm/src/main/kotlin"
+    )
+    into("$buildDir/commonWasmSources")
 }
 
 fun Project.configureWasmKotlinTest(
@@ -30,6 +36,7 @@ fun Project.configureWasmKotlinTest(
     withKotlinMPP: (KotlinMultiplatformExtension.() -> Unit) -> Unit
 ) {
     val commonMainSources = createCommonMainSources()
+    val commonWasmSources = createCommonWasmSources()
 
     withKotlinMPP {
         @Suppress("DEPRECATION")
@@ -42,17 +49,20 @@ fun Project.configureWasmKotlinTest(
         }
 
         sourceSets {
-            sourceSets.named("commonMain") {
+            val commonMain = sourceSets.named("commonMain") {
                 dependencies {
                     api(project(stdDependencyName))
                 }
-                kotlin.srcDir(commonMainSources.get().destinationDir)
+                kotlin.srcDir(commonMainSources)
+            }
+
+            val commonWasm = sourceSets.create("commonWasm") {
+                dependsOn(commonMain.get())
+                kotlin.srcDir(commonWasmSources)
             }
 
             sourceSets.named("wasmMain") {
-                dependencies {
-                    api(project(stdDependencyName))
-                }
+                dependsOn(commonWasm)
                 kotlin.srcDir(targetSourceDir)
             }
         }
@@ -60,8 +70,15 @@ fun Project.configureWasmKotlinTest(
         tasks.register<Jar>("sourcesJar") {
             dependsOn(commonMainSources)
             archiveClassifier.set("sources")
-            from(sourceSets["commonMain"].kotlin)
-            from(sourceSets["wasmMain"].kotlin)
+            from(sourceSets["commonMain"].kotlin) {
+                into("commonMain")
+            }
+            from(sourceSets["commonWasm"].kotlin) {
+                into("commonWasm")
+            }
+            from(sourceSets["wasmMain"].kotlin) {
+                into("wasmMain")
+            }
         }
     }
 
@@ -77,6 +94,10 @@ fun Project.configureWasmKotlinTest(
     tasks.named("compileKotlinWasm", KotlinCompile::class.java) {
         kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin-test"
         dependsOn(commonMainSources)
+    }
+
+    tasks.named<Jar>("wasmJar") {
+        manifestAttributes(manifest, "Test")
     }
 
     tasks.register<Jar>("emptyJavadocJar") {

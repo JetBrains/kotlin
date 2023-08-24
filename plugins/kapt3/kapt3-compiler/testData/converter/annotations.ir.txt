@@ -1,4 +1,13 @@
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Anno1 : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract @interface Anno1 {
 }
@@ -7,6 +16,51 @@ public abstract @interface Anno1 {
 
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Anno2 : kotlin/Annotation {
+ *
+ *   // signature: <init>(ILjava/lang/String;[ILkotlin/Array;LAnno1;LColors;Lkotlin/Array;Lkotlin/reflect/KClass;Lkotlin/Array;)V
+ *   public constructor(i: kotlin/Int (* = ... *), s: kotlin/String (* = ... *), ii: kotlin/IntArray (* = ... *), ss: kotlin/Array<kotlin/String> (* = ... *), a: Anno1, color: Colors (* = ... *), colors: kotlin/Array<Colors> (* = ... *), clazz: kotlin/reflect/KClass<*>, classes: kotlin/Array<kotlin/reflect/KClass<*>>)
+ *
+ *   // getter: a()LAnno1;
+ *   public final val a: Anno1
+ *     public final get
+ *
+ *   // getter: classes()[Ljava/lang/Class;
+ *   public final val classes: kotlin/Array<kotlin/reflect/KClass<*>>
+ *     public final get
+ *
+ *   // getter: clazz()Ljava/lang/Class;
+ *   public final val clazz: kotlin/reflect/KClass<*>
+ *     public final get
+ *
+ *   // getter: color()LColors;
+ *   public final val color: Colors
+ *     public final get
+ *
+ *   // getter: colors()[LColors;
+ *   public final val colors: kotlin/Array<Colors>
+ *     public final get
+ *
+ *   // getter: i()I
+ *   public final val i: kotlin/Int
+ *     public final get
+ *
+ *   // getter: ii()[I
+ *   public final val ii: kotlin/IntArray
+ *     public final get
+ *
+ *   // getter: s()Ljava/lang/String;
+ *   public final val s: kotlin/String
+ *     public final get
+ *
+ *   // getter: ss()[Ljava/lang/String;
+ *   public final val ss: kotlin/Array<kotlin/String>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract @interface Anno2 {
 
@@ -33,6 +87,19 @@ public abstract @interface Anno2 {
 
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Anno3 : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(value: kotlin/String)
+ *
+ *   // getter: value()Ljava/lang/String;
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract @interface Anno3 {
 
@@ -42,6 +109,21 @@ public abstract @interface Anno3 {
 ////////////////////
 
 
+/**
+ * public final enum class Colors : kotlin/Enum<Colors> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   WHITE,
+ *
+ *   BLACK,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
 @kotlin.Metadata()
 public enum Colors {
     /*public static final*/ WHITE /* = new Colors() */,
@@ -59,6 +141,21 @@ public enum Colors {
 ////////////////////
 
 
+/**
+ * public final enum class Enum1 : kotlin/Enum<Enum1> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   BLACK,
+ *
+ *   WHITE,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
 @kotlin.Metadata()
 public enum Enum1 {
     /*public static final*/ BLACK /* = new Enum1() */,
@@ -80,6 +177,15 @@ public enum Enum1 {
 @Anno1()
 @Anno2(a = @Anno1(), clazz = TestAnno.class, classes = {TestAnno.class, Anno1.class})
 @Anno3(value = "value")
+/**
+ * public final class TestAnno : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TestAnno {
 
@@ -93,6 +199,26 @@ public final class TestAnno {
 
 @Anno3(value = "value")
 @Anno2(i = 6, s = "BCD", ii = {4, 5, 6}, ss = {"Z", "X"}, a = @Anno1(), color = Colors.WHITE, colors = {Colors.WHITE}, clazz = TestAnno.class, classes = {TestAnno.class, Anno1.class})
+/**
+ * public final class TestAnno2 : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: a(Ljava/lang/String;)V
+ *   public final fun a(param: kotlin/String): kotlin/Unit
+ *
+ *   // field: b:Ljava/lang/String;
+ *   // getter: getB()Ljava/lang/String;
+ *   // setter: setB(Ljava/lang/String;)V
+ *   // synthetic method for annotations: getB$annotations()V
+ *   public final var b: kotlin/String
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(<set-?>: kotlin/String)
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TestAnno2 {
     @Anno3(value = "field")

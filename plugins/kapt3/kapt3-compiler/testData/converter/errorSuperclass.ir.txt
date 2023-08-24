@@ -1,6 +1,15 @@
 package test;
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * internal final annotation class test/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract @interface Anno {
 }
@@ -10,6 +19,15 @@ public abstract @interface Anno {
 package test;
 
 @Anno()
+/**
+ * internal final class test/ClassWithParent : kotlin/CharSequence {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class ClassWithParent implements java.lang.CharSequence {

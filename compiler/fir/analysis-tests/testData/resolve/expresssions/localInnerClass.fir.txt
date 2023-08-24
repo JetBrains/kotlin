@@ -12,7 +12,7 @@ FILE: localInnerClass.kt
             }
 
             local final inner class Derived : R|Foo| {
-                public <anonymous>.constructor(x: R|kotlin/Int|): R|<anonymous>.Derived| {
+                public <anonymous>.constructor(x: R|kotlin/Int|): R|<local>/<anonymous>.Derived| {
                     super<R|kotlin/Any|>()
                 }
 

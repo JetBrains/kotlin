@@ -1,0 +1,21 @@
+MODULE_FRAGMENT name:<Sources of main>
+  FILE fqName:<root> fileName:/fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL <> (p0:<root>.Test, p1:<root>.Test, p2:<root>.Ctx3, p3:<root>.Ctx4) returnType:kotlin.Int
+        VALUE_PARAMETER name:p0 index:0 type:<root>.Test
+        VALUE_PARAMETER name:p1 index:1 type:<root>.Test
+        VALUE_PARAMETER name:p2 index:2 type:<root>.Ctx3
+        VALUE_PARAMETER name:p3 index:3 type:<root>.Ctx4
+        EXPRESSION_BODY
+          BLOCK type=kotlin.Int origin=null
+            CALL 'public final fun useWithCtx1Ctx2Ctx3Ctx4 ($context_receiver_0: <root>.Ctx1, $context_receiver_1: <root>.Ctx2, $context_receiver_2: <root>.Ctx3, $context_receiver_3: <root>.Ctx4): kotlin.Int declared in <root>.MultipleClassAndFunctionContextReceiversKt' type=kotlin.Int origin=null
+              $context_receiver_0: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Ctx1 visibility:private [final]' type=<root>.Ctx1 origin=null
+                receiver: GET_VAR 'p0: <root>.Test declared in <root>.CodeFragment.run' type=<root>.Test origin=null
+              $context_receiver_1: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField1 type:<root>.Ctx2 visibility:private [final]' type=<root>.Ctx2 origin=null
+                receiver: GET_VAR 'p1: <root>.Test declared in <root>.CodeFragment.run' type=<root>.Test origin=null
+              $context_receiver_2: GET_VAR 'p2: <root>.Ctx3 declared in <root>.CodeFragment.run' type=<root>.Ctx3 origin=null
+              $context_receiver_3: GET_VAR 'p3: <root>.Ctx4 declared in <root>.CodeFragment.run' type=<root>.Ctx4 origin=null

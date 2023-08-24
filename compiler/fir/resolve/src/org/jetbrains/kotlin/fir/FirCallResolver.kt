@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isReferredViaField
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
@@ -121,9 +118,9 @@ class FirCallResolver(
             candidate?.updateSourcesOfReceivers()
             functionCall
         }
-        val typeRef = components.typeFromCallee(resultFunctionCall)
-        if (typeRef.type is ConeErrorType) {
-            resultFunctionCall.resultType = typeRef
+        val type = components.typeFromCallee(resultFunctionCall).type
+        if (type is ConeErrorType) {
+            resultFunctionCall.resultType = type
         }
 
         return resultFunctionCall
@@ -258,8 +255,7 @@ class FirCallResolver(
             (qualifiedAccess.explicitReceiver as? FirResolvedQualifier)
                 ?.continueQualifier(
                     callee,
-                    qualifiedAccess.source,
-                    qualifiedAccess.typeArguments,
+                    qualifiedAccess,
                     nonFatalDiagnosticFromExpression,
                     session,
                     components
@@ -283,7 +279,7 @@ class FirCallResolver(
             // }
             if (!result.applicability.isSuccess || (isUsedAsReceiver && result.candidates.all { it.symbol is FirClassLikeSymbol })) {
                 components.resolveRootPartOfQualifier(
-                    callee, qualifiedAccess.source, qualifiedAccess.typeArguments, nonFatalDiagnosticFromExpression,
+                    callee, qualifiedAccess, nonFatalDiagnosticFromExpression,
                 )?.let { return it }
             }
         }
@@ -348,7 +344,7 @@ class FirCallResolver(
                 return buildResolvedReifiedParameterReference {
                     source = nameReference.source
                     symbol = referencedSymbol
-                    typeRef = typeForReifiedParameterReference(this)
+                    coneTypeOrNull = typeForReifiedParameterReference(this)
                 }
             }
         }
@@ -589,7 +585,7 @@ class FirCallResolver(
                 //calleeReference and annotationTypeRef are both error nodes so we need to avoid doubling of the diagnostic report
                 else ConeStubDiagnostic(
                     //prefer diagnostic with symbol, e.g. to use the symbol during navigation in IDE
-                    (annotation.typeRef.coneType as? ConeErrorType)?.diagnostic as? ConeDiagnosticWithSymbol<*>
+                    (annotation.resolvedType as? ConeErrorType)?.diagnostic as? ConeDiagnosticWithSymbol<*>
                         ?: ConeUnresolvedNameError(reference.name)),
                 reference.source
             )
@@ -726,7 +722,7 @@ class FirCallResolver(
                                 ConeResolutionToClassifierError(singleExpectedCandidate!!, fir.symbol)
                             }
                             else -> {
-                                val coneType = explicitReceiver?.typeRef?.coneType
+                                val coneType = explicitReceiver?.resolvedType
                                 when {
                                     coneType != null && !coneType.isUnit -> {
                                         ConeFunctionExpectedError(
@@ -755,7 +751,7 @@ class FirCallResolver(
                     name.asString() == "invoke" && explicitReceiver is FirConstExpression<*> ->
                         ConeFunctionExpectedError(
                             explicitReceiver.value?.toString() ?: "",
-                            explicitReceiver.typeRef.coneType,
+                            explicitReceiver.resolvedType,
                         )
                     reference is FirSuperReference && (reference.superTypeRef.firClassLike(session) as? FirClass)?.isInterface == true -> ConeNoConstructorError
                     else -> ConeUnresolvedNameError(name)
@@ -814,7 +810,7 @@ class FirCallResolver(
          */
         if (components.context.inferenceSession !is FirBuilderInferenceSession &&
             createResolvedReferenceWithoutCandidateForLocalVariables &&
-            explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() == null &&
+            explicitReceiver?.coneTypeSafe<ConeIntegerLiteralType>() == null &&
             coneSymbol is FirVariableSymbol &&
             (coneSymbol !is FirPropertySymbol || (coneSymbol.fir as FirMemberDeclaration).typeParameters.isEmpty())
         ) {

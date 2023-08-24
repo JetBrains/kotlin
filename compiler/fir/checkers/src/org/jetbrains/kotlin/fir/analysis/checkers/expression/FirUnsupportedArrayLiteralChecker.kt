@@ -9,13 +9,14 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker() {
     override fun check(expression: FirArrayLiteral, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -35,7 +36,7 @@ object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker() {
         context.callsOrAssignments.lastOrNull()?.let {
             val arguments = when (it) {
                 is FirFunctionCall ->
-                    if (it.typeRef.toRegularClassSymbol(context.session)?.classKind == ClassKind.ANNOTATION_CLASS) {
+                    if (it.resolvedType.toRegularClassSymbol(context.session)?.classKind == ClassKind.ANNOTATION_CLASS) {
                         it.arguments
                     } else {
                         return false

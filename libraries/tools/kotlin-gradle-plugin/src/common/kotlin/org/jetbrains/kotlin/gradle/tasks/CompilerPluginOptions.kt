@@ -54,8 +54,13 @@ class CompilerPluginOptions() : CompilerPluginConfig() {
     }
 
     private fun copyOptionsFrom(options: CompilerPluginConfig) {
-        options.allOptions().forEach { entry ->
-            optionsByPluginId[entry.key] = entry.value.toMutableList()
+        options.allOptions().forEach { (pluginId, pluginOptions) ->
+            val existingValue = optionsByPluginId[pluginId]
+            optionsByPluginId[pluginId] = if (existingValue != null) {
+                (existingValue + pluginOptions).toMutableList()
+            } else {
+                pluginOptions.toMutableList()
+            }
         }
     }
 }

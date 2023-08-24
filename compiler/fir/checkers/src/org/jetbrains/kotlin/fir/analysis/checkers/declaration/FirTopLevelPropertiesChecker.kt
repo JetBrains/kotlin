@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -133,7 +132,24 @@ internal fun checkPropertyInitializer(
                 if (property.receiverParameter != null && !property.hasAllAccessorImplementation) {
                     reporter.reportOn(propertySource, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, context)
                 } else if (reachable) {
-                    reportMustBeInitialized(property, isDefinitelyAssignedInConstructor, containingClass, propertySource, reporter, context)
+                    val isOpenValDeferredInitDeprecationWarning =
+                        !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
+                                property.getEffectiveModality(containingClass, context.languageVersionSettings) == Modality.OPEN && property.isVal &&
+                                isDefinitelyAssignedInConstructor
+                    // KT-61228
+                    val isFalsePositiveDeferredInitDeprecationWarning = isOpenValDeferredInitDeprecationWarning &&
+                            property.getEffectiveModality(containingClass) == Modality.FINAL
+                    if (!isFalsePositiveDeferredInitDeprecationWarning) {
+                        reportMustBeInitialized(
+                            property,
+                            isDefinitelyAssignedInConstructor,
+                            containingClass,
+                            propertySource,
+                            isOpenValDeferredInitDeprecationWarning,
+                            reporter,
+                            context
+                        )
+                    }
                 }
             }
             if (property.isLateInit) {
@@ -156,6 +172,7 @@ private fun reportMustBeInitialized(
     isDefinitelyAssignedInConstructor: Boolean,
     containingClass: FirClass?,
     propertySource: KtSourceElement,
+    isOpenValDeferredInitDeprecationWarning: Boolean,
     reporter: DiagnosticReporter,
     context: CheckerContext,
 ) {
@@ -165,10 +182,6 @@ private fun reportMustBeInitialized(
             property.getEffectiveModality(containingClass, context.languageVersionSettings) != Modality.FINAL &&
             isDefinitelyAssignedInConstructor
     val suggestMakingItAbstract = containingClass != null && !property.hasAnyAccessorImplementation
-    val isOpenValDeferredInitDeprecationWarning =
-        !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
-                property.getEffectiveModality(containingClass, context.languageVersionSettings) == Modality.OPEN && property.isVal &&
-                isDefinitelyAssignedInConstructor
     if (isOpenValDeferredInitDeprecationWarning && !suggestMakingItFinal && suggestMakingItAbstract) {
         error("Not reachable case. Every \"open val + deferred init\" case that could be made `abstract`, also could be made `final`")
     }
@@ -212,9 +225,14 @@ private val FirProperty.hasAnyAccessorImplementation: Boolean
 private val FirProperty.hasAllAccessorImplementation: Boolean
     get() = getter.hasImplementation && (isVal || setter.hasImplementation)
 
-private fun FirProperty.getEffectiveModality(containingClass: FirClass?, languageVersionSettings: LanguageVersionSettings): Modality? =
-    when (languageVersionSettings.supportsFeature(LanguageFeature.TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck) &&
-            status.modality == Modality.OPEN && containingClass?.status?.modality == Modality.FINAL) {
+private fun FirProperty.getEffectiveModality(containingClass: FirClass?): Modality? =
+    when (status.modality == Modality.OPEN && containingClass?.status?.modality == Modality.FINAL) {
         true -> Modality.FINAL
+        false -> status.modality
+    }
+
+private fun FirProperty.getEffectiveModality(containingClass: FirClass?, languageVersionSettings: LanguageVersionSettings): Modality? =
+    when (languageVersionSettings.supportsFeature(LanguageFeature.TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck)) {
+        true -> getEffectiveModality(containingClass)
         false -> status.modality
     }

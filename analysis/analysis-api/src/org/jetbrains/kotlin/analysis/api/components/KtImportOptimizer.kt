@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 
@@ -28,5 +30,8 @@ public interface KtImportOptimizerMixIn : KtAnalysisSessionMixIn {
 }
 
 public class KtImportOptimizerResult(
-    public val unusedImports: Set<KtImportDirective>,
+    @Deprecated("Compute unused import on the IntelliJ side instead, see org.jetbrains.kotlin.idea.base.analysis.api.utils.computeUnusedImports")
+    public val unusedImports: Set<KtImportDirective> = emptySet(),
+    public val usedDeclarations: Map<FqName, Set<Name>> = emptyMap(),
+    public val unresolvedNames: Set<Name> = emptySet(),
 )

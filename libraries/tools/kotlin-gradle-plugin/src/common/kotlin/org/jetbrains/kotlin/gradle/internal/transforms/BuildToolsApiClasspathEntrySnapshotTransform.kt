@@ -50,7 +50,7 @@ abstract class BuildToolsApiClasspathEntrySnapshotTransform : TransformAction<Bu
 
         try {
             val classLoader = parameters.classLoadersCachingService.get()
-                .getClassLoader(parameters.classpath, SharedApiClassesClassLoaderProvider)
+                .getClassLoader(parameters.classpath.toList(), SharedApiClassesClassLoaderProvider)
             val compilationService = CompilationService.loadImplementation(classLoader)
             val snapshot = compilationService.calculateClasspathSnapshot(classpathEntryInputDirOrJar, granularity)
             snapshot.saveSnapshot(snapshotOutputFile)

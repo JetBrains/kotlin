@@ -1,3 +1,32 @@
+/**
+ * public final class Foo : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: bar$delegate:Lkotlin/Lazy;
+ *   // getter: getBar()Ljava/lang/Object;
+ *   private final (* delegated *) val bar: kotlin/Any
+ *     private final (* non-default *) get
+ *
+ *   // field: baz$delegate:Lkotlin/Lazy;
+ *   // getter: getBaz()Ljava/lang/Object;
+ *   private final (* delegated *) val baz: kotlin/Any
+ *     private final (* non-default *) get
+ *
+ *   // field: foo$delegate:Lkotlin/Lazy;
+ *   // getter: getFoo()Ljava/lang/Runnable;
+ *   private final (* delegated *) val foo: java/lang/Runnable
+ *     private final (* non-default *) get
+ *
+ *   // field: generic1$delegate:Lkotlin/Lazy;
+ *   // getter: getGeneric1()LGenericIntf;
+ *   private final (* delegated *) val generic1: GenericIntf<kotlin/CharSequence>
+ *     private final (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Foo {
     private final kotlin.Lazy foo$delegate = null;
@@ -29,6 +58,12 @@ public final class Foo {
 ////////////////////
 
 
+/**
+ * public abstract interface GenericIntf<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface GenericIntf<T extends java.lang.Object> {
 }
@@ -36,6 +71,12 @@ public abstract interface GenericIntf<T extends java.lang.Object> {
 ////////////////////
 
 
+/**
+ * public abstract interface Intf : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface Intf {
 }

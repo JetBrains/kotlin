@@ -1,6 +1,6 @@
 fun foo(x: String) {}
 
-@Suppress("ARGUMENT_TYPE_MISMATCH")
+@Suppress(<!ERROR_SUPPRESSION!>"ARGUMENT_TYPE_MISMATCH"<!>)
 fun bar() {
     foo(10)
 }

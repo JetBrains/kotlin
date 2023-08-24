@@ -1,3 +1,5 @@
+// STRIP_METADATA
+
 enum class Foo {
     BLA("bla");
 

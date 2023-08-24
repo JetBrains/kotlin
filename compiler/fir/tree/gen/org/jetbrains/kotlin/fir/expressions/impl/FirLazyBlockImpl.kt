@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 internal class FirLazyBlockImpl : FirLazyBlock() {
     override val source: KtSourceElement? get() = error("FirLazyBlock should be calculated before accessing")
+    override val coneTypeOrNull: ConeKotlinType? get() = error("FirLazyBlock should be calculated before accessing")
     override val annotations: List<FirAnnotation> get() = error("FirLazyBlock should be calculated before accessing")
     override val statements: List<FirStatement> get() = error("FirLazyBlock should be calculated before accessing")
-    override val typeRef: FirTypeRef get() = error("FirLazyBlock should be calculated before accessing")
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
     }
@@ -47,7 +47,7 @@ internal class FirLazyBlockImpl : FirLazyBlock() {
         return this
     }
 
-    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {}
 
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 }

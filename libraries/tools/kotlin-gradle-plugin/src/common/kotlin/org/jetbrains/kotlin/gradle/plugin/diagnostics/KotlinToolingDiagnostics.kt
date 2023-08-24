@@ -215,7 +215,7 @@ object KotlinToolingDiagnostics {
             """
             The 'org.jetbrains.kotlin.platform.*' plugins are no longer available.
             Please migrate the project to the 'org.jetbrains.kotlin.multiplatform' plugin.
-            See: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html
+            See: https://kotl.in/legacy-multiplatform-plugins
             """.trimIndent()
         )
     }
@@ -312,7 +312,8 @@ object KotlinToolingDiagnostics {
             """
                 Inconsistent JVM-target compatibility detected for tasks '$javaTaskName' ($targetCompatibility) and '$kotlinTaskName' ($jvmTarget).
                 ${if (severity == WARNING) "This will become an error in Gradle 8.0." else ""}
-                Read more: https://kotl.in/gradle/jvm/target-validation 
+                Consider using JVM Toolchain: https://kotl.in/gradle/jvm/toolchain
+                Learn more about JVM-target validation: https://kotl.in/gradle/jvm/target-validation 
             """.trimIndent(),
             severity
         )
@@ -326,7 +327,7 @@ object KotlinToolingDiagnostics {
                 |kotlin {
                 |    js {
                 |        // To build distributions for and run tests on browser or Node.js use one or both of:
-                |        ${availableEnvironments.joinToString(separator = "\n")}
+                |        ${availableEnvironments.joinToString(separator = "\n        ")}
                 |    }
                 |}
             """.trimMargin()
@@ -454,10 +455,10 @@ object KotlinToolingDiagnostics {
                 |     iosX64()
                 |     iosArm64()
                 |     iosSimulatorArm64()
-                |     
-                |     /* Use convention
+                |
+                |     /* Use convention */
                 |     sourceSets.${sourceSet.name}.dependencies {
-                |     
+                |
                 |     }
                 |  }
             """.trimMargin(),
@@ -468,13 +469,15 @@ object KotlinToolingDiagnostics {
     object KotlinDefaultHierarchyFallbackDependsOnUsageDetected : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(project: Project, sourceSetsWithDependsOnEdges: Iterable<KotlinSourceSet>) = build(
             """
-                The Default Kotlin Hierarchy was not applied to '${project.displayName}':
-                Manual .dependsOn() edges were configured for the following source sets:
+                The Default Kotlin Hierarchy Template was not applied to '${project.displayName}':
+                Explicit .dependsOn() edges were configured for the following source sets:
                 ${sourceSetsWithDependsOnEdges.toSet().map { it.name }}
                 
-                To suppress the 'Default Hierarchy Template' add
+                Consider removing dependsOn-calls or disabling the default template by adding
                     '$KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE=false'
                 to your gradle.properties
+                
+                Learn more about hierarchy templates: https://kotl.in/hierarchy-template
             """.trimIndent()
         )
     }
@@ -482,14 +485,14 @@ object KotlinToolingDiagnostics {
     object KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected : ToolingDiagnosticFactory(WARNING) {
         internal operator fun invoke(project: Project, trace: NativeTargetShortcutTrace) = build(
             """
-                The Default Kotlin Hierarchy was not applied to '${project.displayName}':
+                The Default Kotlin Hierarchy Template was not applied to '${project.displayName}':
                 Deprecated '${trace.shortcut}()' shortcut was used:
                 
                   kotlin {
                       ${trace.shortcut}()
                   }
-                  
-                Could be replaced by declaring the supported ${trace.shortcut} targets directly: 
+                
+                Please declare the required targets explicitly: 
                 
                   kotlin {
                       ${trace.shortcut}X64()
@@ -501,6 +504,8 @@ object KotlinToolingDiagnostics {
                 To suppress the 'Default Hierarchy Template' add
                     '$KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE=false'
                 to your gradle.properties
+                
+                Learn more about hierarchy templates: https://kotl.in/hierarchy-template
             """.trimIndent(),
             throwable = trace
         )
@@ -509,13 +514,15 @@ object KotlinToolingDiagnostics {
     object KotlinDefaultHierarchyFallbackIllegalTargetNames : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(project: Project, illegalTargetNamesUsed: Iterable<String>) = build(
             """
-                The Default Kotlin Hierarchy was not applied to '${project.displayName}':
-                Illegal target names were found:
+                The Default Kotlin Hierarchy Template was not applied to '${project.displayName}':
+                Source sets created by the following targets will clash with source sets created by the template:
                 ${illegalTargetNamesUsed.toSet()}
                 
-                To suppress the 'Default Hierarchy Template' add 
+                Consider renaming the targets or disabling the default template by adding 
                     '$KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE=false'
                 to your gradle.properties
+                
+                Learn more about hierarchy templates: https://kotl.in/hierarchy-template
             """.trimIndent()
         )
     }

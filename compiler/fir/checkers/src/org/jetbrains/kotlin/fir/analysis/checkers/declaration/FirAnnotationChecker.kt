@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
@@ -79,7 +78,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
             val receiverParameter = declaration.receiverParameter
             if (receiverParameter != null) {
                 for (receiverAnnotation in receiverParameter.annotations) {
-                    reportIfMfvc(context, reporter, receiverAnnotation, "receivers", receiverParameter.typeRef)
+                    reportIfMfvc(context, reporter, receiverAnnotation, "receivers", receiverParameter.typeRef.coneType)
                 }
             }
         }
@@ -103,7 +102,13 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun reportIfMfvc(context: CheckerContext, reporter: DiagnosticReporter, annotation: FirAnnotation, hint: String, type: FirTypeRef) {
+    private fun reportIfMfvc(
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+        annotation: FirAnnotation,
+        hint: String,
+        type: ConeKotlinType,
+    ) {
         if (type.needsMultiFieldValueClassFlattening(context.session)) {
             reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET, hint, context)
         }
@@ -120,7 +125,8 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
 
         val (hint, type) = when (annotation.useSiteTarget) {
             FIELD -> "fields" to ((declaration as? FirBackingField)?.returnTypeRef ?: return)
-            PROPERTY_DELEGATE_FIELD -> "delegate fields" to ((declaration as? FirBackingField)?.propertySymbol?.delegate?.typeRef ?: return)
+            PROPERTY_DELEGATE_FIELD -> "delegate fields" to ((declaration as? FirBackingField)?.propertySymbol?.delegate?.coneTypeOrNull
+                ?: return)
             RECEIVER -> "receivers" to ((declaration as? FirCallableDeclaration)?.receiverParameter?.typeRef ?: return)
             FILE, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, CONSTRUCTOR_PARAMETER, SETTER_PARAMETER, null -> when {
                 declaration is FirProperty && !declaration.isLocal -> {
@@ -141,7 +147,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
                 else -> return
             }
         }
-        reportIfMfvc(context, reporter, annotation, hint, type)
+        reportIfMfvc(context, reporter, annotation, hint, type as? ConeKotlinType ?: (type as FirTypeRef).coneType)
     }
 
     private fun checkAnnotationTarget(

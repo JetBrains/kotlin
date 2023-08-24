@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.components.*
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-@OptIn(KtAnalysisApiInternals::class)
+@OptIn(KtAnalysisApiInternals::class, KtAnalysisNonPublicApi::class)
 @Suppress("LeakingThis")
 class KtFe10AnalysisSession(
     val analysisContext: Fe10AnalysisContext,
@@ -71,6 +72,9 @@ class KtFe10AnalysisSession(
     override val symbolProviderByJavaPsiImpl: KtSymbolProviderByJavaPsi = KtFe10SymbolProviderByJavaPsi(this)
     override val resolveExtensionInfoProviderImpl: KtResolveExtensionInfoProvider = KtFe10ResolveExtensionInfoProvider(this)
     override val compilerFacilityImpl: KtCompilerFacility = KtFe10CompilerFacility(this)
+
+    override val metadataCalculatorImpl: KtMetadataCalculator
+        get() = throw UnsupportedOperationException()
 
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession =
         withValidityAssertion {

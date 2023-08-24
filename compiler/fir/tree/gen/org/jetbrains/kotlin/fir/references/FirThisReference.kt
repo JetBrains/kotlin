@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.references
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -21,6 +22,7 @@ abstract class FirThisReference : FirReference() {
     abstract val boundSymbol: FirBasedSymbol<*>?
     abstract val contextReceiverNumber: Int
     abstract val isImplicit: Boolean
+    abstract val diagnostic: ConeDiagnostic?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitThisReference(this, data)
 
@@ -31,4 +33,6 @@ abstract class FirThisReference : FirReference() {
     abstract fun replaceBoundSymbol(newBoundSymbol: FirBasedSymbol<*>?)
 
     abstract fun replaceContextReceiverNumber(newContextReceiverNumber: Int)
+
+    abstract fun replaceDiagnostic(newDiagnostic: ConeDiagnostic?)
 }

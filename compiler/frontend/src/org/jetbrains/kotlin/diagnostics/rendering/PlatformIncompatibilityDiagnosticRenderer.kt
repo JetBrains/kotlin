@@ -16,9 +16,13 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
+import java.text.MessageFormat
 
 class PlatformIncompatibilityDiagnosticRenderer(
     private val mode: MultiplatformDiagnosticRenderingMode
@@ -60,6 +64,49 @@ class IncompatibleExpectedActualClassScopesRenderer(
         @JvmField
         val TEXT = IncompatibleExpectedActualClassScopesRenderer(MultiplatformDiagnosticRenderingMode())
     }
+}
+
+class ExpectActualScopeDiffsRenderer(
+    private val mode: MultiplatformDiagnosticRenderingMode,
+) : DiagnosticParameterRenderer<Set<ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>> {
+    override fun render(
+        obj: Set<ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>,
+        renderingContext: RenderingContext,
+    ): String {
+        check(obj.isNotEmpty())
+        return buildString {
+            mode.renderList(this, obj.toList().map { diff ->
+                {
+                    appendLine()
+                    appendLine(ExpectActualScopeDiffRenderer.render(diff, renderingContext))
+                }
+            })
+        }
+    }
+
+    companion object {
+        @JvmField
+        val TEXT = ExpectActualScopeDiffsRenderer(MultiplatformDiagnosticRenderingMode())
+    }
+}
+
+object ExpectActualScopeDiffRenderer : DiagnosticParameterRenderer<ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>> {
+    override fun render(
+        obj: ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>,
+        renderingContext: RenderingContext,
+    ): String = MessageFormat.format(
+        obj.kind.rawMessage,
+        Renderers.DECLARATION_NAME_WITH_KIND.render(obj.actualMember, renderingContext),
+        Renderers.NAME.render(obj.expectClass)
+    )
+}
+
+class ListRenderer<T>(
+    private val elementRenderer: DiagnosticParameterRenderer<T>,
+    private val elemProcessor: (String) -> String = { it },
+) : DiagnosticParameterRenderer<List<T>> {
+    override fun render(obj: List<T>, renderingContext: RenderingContext): String =
+        obj.joinToString { elemProcessor(elementRenderer.render(it, renderingContext)) }
 }
 
 open class MultiplatformDiagnosticRenderingMode {

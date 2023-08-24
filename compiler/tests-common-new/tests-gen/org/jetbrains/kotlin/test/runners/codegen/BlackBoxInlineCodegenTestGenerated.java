@@ -4295,6 +4295,18 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         }
 
         @Test
+        @TestMetadata("byteIteratorWithForLoop.kt")
+        public void testByteIteratorWithForLoop() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/signature/byteIteratorWithForLoop.kt");
+        }
+
+        @Test
+        @TestMetadata("byteIteratorWithWhileLoop.kt")
+        public void testByteIteratorWithWhileLoop() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/signature/byteIteratorWithWhileLoop.kt");
+        }
+
+        @Test
         @TestMetadata("inProjectionSubstitution.kt")
         public void testInProjectionSubstitution() throws Exception {
             runTest("compiler/testData/codegen/boxInline/signature/inProjectionSubstitution.kt");

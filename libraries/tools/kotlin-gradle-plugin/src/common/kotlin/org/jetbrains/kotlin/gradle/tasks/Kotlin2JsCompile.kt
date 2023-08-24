@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_JS
 import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_UNZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_ZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
@@ -54,7 +55,7 @@ import javax.inject.Inject
 abstract class Kotlin2JsCompile @Inject constructor(
     override val compilerOptions: KotlinJsCompilerOptions,
     objectFactory: ObjectFactory,
-    workerExecutor: WorkerExecutor
+    workerExecutor: WorkerExecutor,
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
     KotlinCompilationTask<KotlinJsCompilerOptions>,
     UsesLibraryFilterCachingService,
@@ -328,7 +329,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 getChangedFiles(inputChanges, incrementalProps),
                 ClasspathChanges.NotAvailableForJSCompiler,
                 taskBuildCacheableOutputDirectory.get().asFile,
-                projectRootDir,
+                rootProjectDir = rootProjectDir,
+                buildDir = projectLayout.buildDirectory.getFile(),
                 multiModuleICSettings = multiModuleICSettings,
                 preciseCompilationResultsBackup = preciseCompilationResultsBackup.get(),
                 keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory.get(),
@@ -351,16 +353,16 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
     }
 
-    private val projectRootDir = project.rootDir
+    private val rootProjectDir = project.rootDir
 
     private fun validateOutputDirectory() {
         val outputFile = outputFileProperty.get()
         val outputDir = outputFile.parentFile
 
-        if (outputDir.isParentOf(projectRootDir)) {
+        if (outputDir.isParentOf(rootProjectDir)) {
             throw InvalidUserDataException(
                 "The output directory '$outputDir' (defined by outputFile of ':$name') contains or " +
-                        "matches the project root directory '${projectRootDir}'.\n" +
+                        "matches the project root directory '${rootProjectDir}'.\n" +
                         "Gradle will not be able to build the project because of the root directory lock.\n" +
                         "To fix this, consider using the default outputFile location instead of providing it explicitly."
             )

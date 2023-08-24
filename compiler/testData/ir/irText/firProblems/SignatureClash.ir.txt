@@ -12,12 +12,12 @@ FILE fqName:<root> fileName:/SignatureClash.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun foo (a: kotlin.String): kotlin.String declared in <root>.Factory'
           CONST String type=kotlin.String value="Alpha"
-    FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Factory, a:kotlin.String, f:kotlin.Function1<kotlin.Any, kotlin.String?>{ <root>.Some }) returnType:kotlin.String
+    FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Factory, a:kotlin.String, f:kotlin.Function1<kotlin.Any, kotlin.String?>) returnType:kotlin.String
       $this: VALUE_PARAMETER name:<this> type:<root>.Factory
       VALUE_PARAMETER name:a index:0 type:kotlin.String
-      VALUE_PARAMETER name:f index:1 type:kotlin.Function1<kotlin.Any, kotlin.String?>{ <root>.Some }
+      VALUE_PARAMETER name:f index:1 type:kotlin.Function1<kotlin.Any, kotlin.String?>
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun foo (a: kotlin.String, f: kotlin.Function1<kotlin.Any, kotlin.String?>{ <root>.Some }): kotlin.String declared in <root>.Factory'
+        RETURN type=kotlin.Nothing from='public final fun foo (a: kotlin.String, f: kotlin.Function1<kotlin.Any, kotlin.String?>): kotlin.String declared in <root>.Factory'
           CONST String type=kotlin.String value="Omega"
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:

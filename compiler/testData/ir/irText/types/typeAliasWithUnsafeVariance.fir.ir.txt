@@ -94,9 +94,8 @@ FILE fqName:<root> fileName:/typeAliasWithUnsafeVariance.kt
           CONST Boolean type=kotlin.Boolean value=true
   FUN name:getTag visibility:public modality:FINAL <> () returnType:<root>.Tag<*>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun getTag (): <root>.Tag<*> declared in <root>'
-        THROW type=kotlin.Nothing
-          CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.Exception' type=java.lang.Exception origin=null
+      THROW type=kotlin.Nothing
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.Exception' type=java.lang.Exception origin=null
   FUN name:doAction visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit

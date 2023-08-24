@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
 import org.jetbrains.kotlin.contracts.description.*
-import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.description.*
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.CallableId
@@ -194,7 +194,7 @@ class ConeEffectExtractor(
         val ownerHasReceiver = callableOwner?.receiverParameter != null
         val ownerIsMemberOfDeclaration = callableOwner?.getContainingClass(session) == declaration
         return if (declaration == owner || owner.isAccessorOf(declaration) || ownerIsMemberOfDeclaration && !ownerHasReceiver) {
-            val type = thisReceiverExpression.typeRef.coneType
+            val type = thisReceiverExpression.resolvedType
             toValueParameterReference(type, -1, "this")
         } else {
             ConeContractDescriptionError.IllegalThis(thisReceiverExpression).asElement()

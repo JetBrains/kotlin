@@ -244,6 +244,8 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
             klass {
                 appendDoc("Represents a ${typeDescriptions[thisKind]}.")
                 name = className
+                superType("Number()")
+                superType("Comparable<$name>")
                 generateCompanionObject(thisKind)
 
                 generateCompareTo(thisKind)
@@ -352,7 +354,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
 
             method {
                 appendDoc(doc)
-                annotations += "kotlin.internal.IntrinsicConstEvaluation"
+                annotations += intrinsicConstEvaluationAnnotation
                 signature {
                     isOverride = otherKind == thisKind
                     isOperator = true
@@ -379,7 +381,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
 
             val annotationsToAdd = buildList {
                 if (operatorName == "rem") add("SinceKotlin(\"1.1\")")
-                add("kotlin.internal.IntrinsicConstEvaluation")
+                add(intrinsicConstEvaluationAnnotation)
             }
 
             method {
@@ -418,7 +420,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
 
             method {
                 appendDoc(doc)
-                annotations += "kotlin.internal.IntrinsicConstEvaluation"
+                annotations += intrinsicConstEvaluationAnnotation
                 signature {
                     isOperator = true
                     methodName = operatorName
@@ -447,7 +449,10 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
                     }
                     returnType = "${opReturnType.capitalized}Range"
                 }
-            }.modifyGeneratedRangeTo(thisKind)
+                val thisCasted = "this${thisKind.castToIfNecessary(opReturnType)}"
+                val otherCasted = "other${otherKind.castToIfNecessary(opReturnType)}"
+                "${returnType}($thisCasted, $otherCasted)".addAsSingleLineBody(bodyOnNewLine = true)
+            }.modifyGeneratedRangeTo(thisKind, otherKind, opReturnType)
         }
     }
 
@@ -477,7 +482,8 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
                     }
                     returnType = "${opReturnType.capitalized}Range"
                 }
-            }.modifyGeneratedRangeUntil(thisKind)
+                "this until $parameterName".addAsSingleLineBody(bodyOnNewLine = false)
+            }.modifyGeneratedRangeUntil(thisKind, otherKind, opReturnType)
         }
     }
 
@@ -487,7 +493,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
         for ((operatorName, doc) in shiftOperators) {
             method {
                 appendDoc(doc + END_LINE + END_LINE + detail)
-                annotations += "kotlin.internal.IntrinsicConstEvaluation"
+                annotations += intrinsicConstEvaluationAnnotation
                 signature {
                     isInfix = true
                     methodName = operatorName
@@ -505,7 +511,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
         for ((operatorName, doc) in bitwiseOperators) {
             method {
                 appendDoc(doc)
-                annotations += "kotlin.internal.IntrinsicConstEvaluation"
+                annotations += intrinsicConstEvaluationAnnotation
                 signature {
                     isInfix = true
                     methodName = operatorName
@@ -521,7 +527,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
 
         method {
             appendDoc("Inverts the bits in this value.")
-            annotations += "kotlin.internal.IntrinsicConstEvaluation"
+            annotations += intrinsicConstEvaluationAnnotation
             signature {
                 methodName = "inv"
                 returnType = thisKind.capitalized
@@ -574,7 +580,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
                 annotationsToAdd += "Suppress(\"OVERRIDE_DEPRECATION\")"
             }
 
-            annotationsToAdd += "kotlin.internal.IntrinsicConstEvaluation"
+            annotationsToAdd += intrinsicConstEvaluationAnnotation
             method {
                 appendDoc(doc)
                 annotations += annotationsToAdd
@@ -583,13 +589,13 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
                     methodName = "to$otherName"
                     returnType = otherName
                 }
-            }.modifyGeneratedConversions(thisKind)
+            }.modifyGeneratedConversions(thisKind, otherKind)
         }
     }
 
     private fun ClassBuilder.generateEquals(thisKind: PrimitiveType) {
         method {
-            annotations += "kotlin.internal.IntrinsicConstEvaluation"
+            annotations += intrinsicConstEvaluationAnnotation
             signature {
                 isOverride = true
                 methodName = "equals"
@@ -604,7 +610,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
 
     private fun ClassBuilder.generateToString(thisKind: PrimitiveType) {
         method {
-            annotations += "kotlin.internal.IntrinsicConstEvaluation"
+            annotations += intrinsicConstEvaluationAnnotation
             signature {
                 isOverride = true
                 methodName = "toString"
@@ -620,11 +626,11 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
     internal open fun MethodBuilder.modifyGeneratedCompareTo(thisKind: PrimitiveType, otherKind: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedBinaryOperation(thisKind: PrimitiveType, otherKind: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedUnaryOperation(thisKind: PrimitiveType) {}
-    internal open fun MethodBuilder.modifyGeneratedRangeTo(thisKind: PrimitiveType) {}
-    internal open fun MethodBuilder.modifyGeneratedRangeUntil(thisKind: PrimitiveType) {}
+    internal open fun MethodBuilder.modifyGeneratedRangeTo(thisKind: PrimitiveType, otherKind: PrimitiveType, opReturnType: PrimitiveType) {}
+    internal open fun MethodBuilder.modifyGeneratedRangeUntil(thisKind: PrimitiveType, otherKind: PrimitiveType, opReturnType: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedBitShiftOperators(thisKind: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedBitwiseOperators(thisKind: PrimitiveType) {}
-    internal open fun MethodBuilder.modifyGeneratedConversions(thisKind: PrimitiveType) {}
+    internal open fun MethodBuilder.modifyGeneratedConversions(thisKind: PrimitiveType, otherKind: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedEquals(thisKind: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedToString(thisKind: PrimitiveType) {}
     internal open fun ClassBuilder.generateAdditionalMethods(thisKind: PrimitiveType) {}

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptStatement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirErrorConstructor
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCodeFragmentSymbol
@@ -114,6 +113,8 @@ internal class KtToFirMapping(firElement: FirElement) {
             }
             // Enum entries/annotation entries constructor calls
             is KtConstructorCalleeExpression -> getElement(current.parent as KtCallElement)
+            // KtParameter for destructuring declaration
+            is KtParameter -> getElement(current as KtElement)
             else -> null
         }
     }
@@ -259,12 +260,15 @@ internal class NonReanalyzableClassDeclarationStructureElement(
 
         override fun visitConstructor(constructor: FirConstructor, data: MutableMap<KtElement, FirElement>) {
             if (
-                (constructor is FirPrimaryConstructor || constructor is FirErrorConstructor) &&
+                (constructor is FirPrimaryConstructor || constructor is FirErrorPrimaryConstructor) &&
                 constructor.source?.kind == KtFakeSourceElementKind.ImplicitConstructor
             ) {
                 NonReanalyzableNonClassDeclarationStructureElement.Recorder.visitConstructor(constructor, data)
             }
         }
+
+        override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: MutableMap<KtElement, FirElement>) =
+            visitConstructor(errorPrimaryConstructor, data)
 
         override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: MutableMap<KtElement, FirElement>) {
         }

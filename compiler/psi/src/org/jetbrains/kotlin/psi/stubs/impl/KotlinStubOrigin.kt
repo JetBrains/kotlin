@@ -10,6 +10,9 @@ import com.intellij.psi.stubs.StubOutputStream
 
 sealed class KotlinStubOrigin {
     companion object {
+        private const val FACADE_KIND = 1
+        private const val MULTI_FILE_FACADE_KIND = 2
+
         @JvmStatic
         fun serialize(origin: KotlinStubOrigin?, dataStream: StubOutputStream) {
             if (origin == null) {
@@ -23,8 +26,8 @@ sealed class KotlinStubOrigin {
         @JvmStatic
         fun deserialize(dataStream: StubInputStream): KotlinStubOrigin? {
             return when (dataStream.readInt()) {
-                Facade.KIND -> Facade.deserializeContent(dataStream)
-                MultiFileFacade.KIND -> MultiFileFacade.deserializeContent(dataStream)
+                FACADE_KIND -> Facade.deserializeContent(dataStream)
+                MULTI_FILE_FACADE_KIND -> MultiFileFacade.deserializeContent(dataStream)
                 else -> null
             }
         }
@@ -38,15 +41,14 @@ sealed class KotlinStubOrigin {
         val className: String // Internal name of the package part class
     ) : KotlinStubOrigin() {
         companion object {
-            const val KIND = 1
-
-            fun deserializeContent(dataStream: StubInputStream): Facade? {
+            @JvmStatic
+            internal fun deserializeContent(dataStream: StubInputStream): Facade? {
                 val className = dataStream.readNameString() ?: return null
                 return Facade(className)
             }
         }
 
-        override val kind: Int get() = KIND
+        override val kind: Int get() = FACADE_KIND
 
         override fun serializeContent(dataStream: StubOutputStream) {
             dataStream.writeName(className)
@@ -58,16 +60,15 @@ sealed class KotlinStubOrigin {
         val facadeClassName: String // Internal name of the facade class
     ) : KotlinStubOrigin() {
         companion object {
-            const val KIND = 2
-
-            fun deserializeContent(dataStream: StubInputStream): MultiFileFacade? {
+            @JvmStatic
+            internal fun deserializeContent(dataStream: StubInputStream): MultiFileFacade? {
                 val classId = dataStream.readNameString() ?: return null
                 val facadeClassId = dataStream.readNameString() ?: return null
                 return MultiFileFacade(classId, facadeClassId)
             }
         }
 
-        override val kind: Int get() = Facade.KIND
+        override val kind: Int get() = MULTI_FILE_FACADE_KIND
 
         override fun serializeContent(dataStream: StubOutputStream) {
             dataStream.writeName(className)

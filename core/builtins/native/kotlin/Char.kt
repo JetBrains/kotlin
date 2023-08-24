@@ -1,13 +1,14 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+// Auto-generated file. DO NOT EDIT!
 
 package kotlin
 
 /**
  * Represents a 16-bit Unicode character.
- *
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
 public class Char private constructor() : Comparable<Char> {
@@ -27,6 +28,7 @@ public class Char private constructor() : Comparable<Char> {
     /** Subtracts the other Char value from this value resulting an Int. */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun minus(other: Char): Int
+
     /** Subtracts the other Int value from this value resulting a Char. */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun minus(other: Int): Char
@@ -62,29 +64,35 @@ public class Char private constructor() : Comparable<Char> {
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public fun toByte(): Byte
+
     /** Returns the value of this character as a `Char`. */
     @kotlin.internal.IntrinsicConstEvaluation
     public fun toChar(): Char
+
     /** Returns the value of this character as a `Short`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toShort()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public fun toShort(): Short
+
     /** Returns the value of this character as a `Int`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public fun toInt(): Int
+
     /** Returns the value of this character as a `Long`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toLong()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public fun toLong(): Long
+
     /** Returns the value of this character as a `Float`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toFloat()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public fun toFloat(): Float
+
     /** Returns the value of this character as a `Double`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toDouble()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
@@ -92,10 +100,12 @@ public class Char private constructor() : Comparable<Char> {
     public fun toDouble(): Double
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean
+    public override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String
+    public override fun equals(other: Any?): Boolean
+
+    public override fun hashCode(): Int
 
     companion object {
         /**
@@ -152,6 +162,4 @@ public class Char private constructor() : Comparable<Char> {
         @SinceKotlin("1.3")
         public const val SIZE_BITS: Int = 16
     }
-
 }
-

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -174,9 +175,7 @@ object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
         val arguments = argumentList.arguments
         return (arguments.firstOrNull() as? FirVarargArgumentsExpression)?.arguments
             ?.filterIsInstance<FirGetClassCall>()
-            ?.map { it.arguments.first().typeRef }
-            ?.filterIsInstance<FirResolvedTypeRef>()
-            ?.map { it.type.fullyExpandedType(session) }
+            ?.mapNotNull { it.arguments.first().coneTypeOrNull?.fullyExpandedType(session) }
             ?: emptyList()
     }
 

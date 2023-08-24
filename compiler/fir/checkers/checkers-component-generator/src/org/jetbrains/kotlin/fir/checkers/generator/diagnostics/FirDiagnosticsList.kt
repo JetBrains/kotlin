@@ -105,6 +105,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<CallableId>("callableId")
         }
         val INNER_ON_TOP_LEVEL_SCRIPT_CLASS by deprecationError<PsiElement>(LanguageFeature.ProhibitScriptTopLevelInnerClasses)
+        val ERROR_SUPPRESSION by warning<PsiElement> {
+            parameter<String>("diagnosticName")
+        }
+        val MISSING_CONSTRUCTOR_KEYWORD by error<PsiElement>()
     }
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {
@@ -125,6 +129,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val DEPRECATION_ERROR by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<Symbol>("reference")
             parameter<String>("message")
+            isSuppressible = true
         }
 
         val DEPRECATION by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
@@ -150,6 +155,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Symbol>("alias")
             parameter<Symbol>("reference")
             parameter<String>("message")
+            isSuppressible = true
         }
         val TYPEALIAS_EXPANSION_DEPRECATION by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<Symbol>("alias")
@@ -168,6 +174,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNRESOLVED_IMPORT by error<PsiElement>(PositioningStrategy.IMPORT_LAST_NAME) {
             parameter<String>("reference")
         }
+
+        val DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE by error<KtTypeReference>()
     }
 
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {
@@ -345,7 +353,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INAPPLICABLE_TARGET_ON_PROPERTY by error<KtAnnotationEntry> {
             parameter<String>("useSiteDescription")
         }
-        val INAPPLICABLE_TARGET_ON_PROPERTY_WARNING by error<KtAnnotationEntry> {
+        val INAPPLICABLE_TARGET_ON_PROPERTY_WARNING by warning<KtAnnotationEntry> {
             parameter<String>("useSiteDescription")
         }
         val INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE by error<KtAnnotationEntry> {
@@ -376,6 +384,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val VOLATILE_ON_VALUE by error<KtAnnotationEntry>()
         val VOLATILE_ON_DELEGATE by error<KtAnnotationEntry>()
+
+        val NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION by error<KtAnnotationEntry>()
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {
@@ -753,6 +763,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val CYCLIC_GENERIC_UPPER_BOUND by error<PsiElement>()
 
+        val FINITE_BOUNDS_VIOLATION by error<PsiElement>()
+        val FINITE_BOUNDS_VIOLATION_IN_JAVA by error<PsiElement> {
+            parameter<List<Symbol>>("containingTypes")
+        }
+
         val DEPRECATED_TYPE_PARAMETER_SYNTAX by error<KtDeclaration>(PositioningStrategy.TYPE_PARAMETERS_LIST)
 
         val MISPLACED_TYPE_PARAMETER_CONSTRAINTS by warning<KtTypeParameter>()
@@ -865,13 +880,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Visibility>("overridingVisibility")
             parameter<FirCallableSymbol<*>>("overridden")
             parameter<Name>("containingClassName")
-        }
-
-        val MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<FirValueParameterSymbol>("valueParameter")
-        }
-        val MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE by error<KtElement>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<FirValueParameterSymbol>("valueParameter")
         }
 
         val TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS by error<KtElement> {
@@ -1236,6 +1244,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Symbol>("actualSymbol")
             parameter<ExpectActualAnnotationsIncompatibilityType<FirAnnotation>>("incompatibilityType")
         }
+
+        val OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY by error<PsiElement>()
+
+        val OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE by error<PsiElement>()
+
+        val OPTIONAL_EXPECTATION_NOT_ON_EXPECTED by error<PsiElement>()
     }
 
     val DESTRUCTING_DECLARATION by object : DiagnosticGroup("Destructuring declaration") {
@@ -1645,6 +1659,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             LanguageFeature.ModifierNonBuiltinSuspendFunError, PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED
         )
         val RETURN_FOR_BUILT_IN_SUSPEND by error<KtReturnExpression>()
+        val MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES by error<PsiElement>(PositioningStrategy.SUPERTYPES_LIST)
+        val MIXING_FUNCTIONAL_KINDS_IN_SUPERTYPES by error<PsiElement>(PositioningStrategy.SUPERTYPES_LIST) {
+            parameter<Set<FunctionTypeKind>>("kinds")
+        }
     }
 
     val LABEL by object : DiagnosticGroup("label") {

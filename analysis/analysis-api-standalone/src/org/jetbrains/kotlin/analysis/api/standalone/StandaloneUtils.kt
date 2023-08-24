@@ -100,14 +100,14 @@ public fun configureProjectEnvironment(
     compilerConfig: CompilerConfiguration,
     packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
 ) {
-    val ktFiles = getPsiFilesFromPaths<KtFile>(project, getSourceFilePaths(compilerConfig))
-    configureProjectEnvironment(project, compilerConfig, ktFiles, packagePartProvider)
+    val sourceKtFiles = getPsiFilesFromPaths<KtFile>(project, getSourceFilePaths(compilerConfig))
+    configureProjectEnvironment(project, compilerConfig, sourceKtFiles, packagePartProvider)
 }
 
 internal fun configureProjectEnvironment(
     project: MockProject,
     compilerConfig: CompilerConfiguration,
-    ktFiles: List<KtFile>,
+    sourceKtFiles: List<KtFile>,
     packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
 ) {
     reRegisterJavaElementFinder(project)
@@ -135,7 +135,7 @@ internal fun configureProjectEnvironment(
 
     project.registerService(
         KotlinAnnotationsResolverFactory::class.java,
-        KotlinStaticAnnotationsResolverFactory(ktFiles)
+        KotlinStaticAnnotationsResolverFactory(sourceKtFiles)
     )
 
     project.registerService(
@@ -161,11 +161,12 @@ internal fun configureProjectEnvironment(
         KtModuleScopeProviderImpl()
     )
 
-    val projectStructureProvider = buildKtModuleProviderByCompilerConfiguration(compilerConfig, project, ktFiles)
+    val projectStructureProvider = buildKtModuleProviderByCompilerConfiguration(compilerConfig, project, sourceKtFiles)
     project.registerService(
         ProjectStructureProvider::class.java,
         projectStructureProvider,
     )
+    val declarationProviderFactory = KotlinStaticDeclarationProviderFactory(project, sourceKtFiles)
     project.registerService(
         KotlinModuleDependentsProvider::class.java,
         KtStaticModuleDependentsProvider(projectStructureProvider.allKtModules),
@@ -173,7 +174,7 @@ internal fun configureProjectEnvironment(
 
     project.registerService(
         KotlinDeclarationProviderFactory::class.java,
-        KotlinStaticDeclarationProviderFactory(project, ktFiles)
+        declarationProviderFactory
     )
     project.registerService(
         KotlinDeclarationProviderMerger::class.java,
@@ -181,7 +182,7 @@ internal fun configureProjectEnvironment(
     )
     project.registerService(
         KotlinPackageProviderFactory::class.java,
-        KotlinStaticPackageProviderFactory(project, ktFiles)
+        KotlinStaticPackageProviderFactory(project, sourceKtFiles + declarationProviderFactory.getAdditionalCreatedKtFiles())
     )
     project.registerService(
         PackagePartProviderFactory::class.java,

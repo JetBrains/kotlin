@@ -10,26 +10,106 @@ import kotlin.IllegalArgumentException
 import kotlin.system.getTimeMillis
 import kotlin.system.measureTimeMillis
 
+/**
+ * Represents a test case, that is a Kotlin test method marked with `@Test` annotaion.
+ *
+ * @see kotlin.test.Test
+ */
 @ExperimentalNativeApi
 public interface TestCase {
     val name: String
+
+    /**
+     * Shows if this test is ignored by the `@Ignore` annotation.
+     *
+     * @see kotlin.test.Ignore
+     */
     val ignored: Boolean
+
+    /**
+     * Test Suite the test belongs to.
+     */
     val suite: TestSuite
 
-    fun run()
+    /**
+     * Runs all methods that were marked with `@BeforeTest` annotation.
+     *
+     * @see kotlin.test.BeforeTest
+     */
+    fun doBefore()
+
+    /**
+     * Runs the test method itself
+     *
+     * @see kotlin.test.Test
+     */
+    fun doRun()
+
+    /**
+     * Runs test with its before and after functions.
+     */
+    fun run() {
+        try {
+            doBefore()
+            doRun()
+        } finally {
+            doAfter()
+        }
+    }
+
+    /**
+     * Runs all methods that were marked with `@AfterTest` annotation.
+     *
+     * @see kotlin.test.AfterTest
+     */
+    fun doAfter()
 }
 
 @ExperimentalNativeApi
 internal val TestCase.prettyName get() = "${suite.name}.$name"
 
+/**
+ * Represents Test suite, a suite that contains test cases.
+ *
+ * Test suite can be either test class containing test cases
+ * or a top level suite for top level methods.
+ */
 @ExperimentalNativeApi
 public interface TestSuite {
+    /**
+     * Test suite name.
+     */
     val name: String
+
+    /**
+     * Shows if the suite is ignored with `@Ignore` annotation.
+     *
+     * @see kotlin.test.Ignore
+     */
     val ignored: Boolean
+
+    /**
+     * Test cases this test suite contains
+     */
     val testCases: Map<String, TestCase>
+
+    /**
+     * Number of test cases
+     */
     val size : Int
 
+    /**
+     * Executes all methods marked with `@BeforeClass` annotation
+     *
+     * @see kotlin.test.BeforeClass
+     */
     fun doBeforeClass()
+
+    /**
+     * Executes all methods marked with `@AfterClass` annotation
+     *
+     * @see @see kotlin.test.AfterClass
+     */
     fun doAfterClass()
 }
 
@@ -85,14 +165,18 @@ public abstract class BaseClassSuite<INSTANCE, COMPANION>(name: String, ignored:
                                         ignored: Boolean)
         : BasicTestCase<INSTANCE.() -> Unit>(name, suite, testFunction, ignored) {
 
-        override fun run() {
-            val instance = suite.createInstance()
-            try {
-                suite.before.forEach { instance.it() }
-                instance.testFunction()
-            } finally {
-                suite.after.forEach { instance.it() }
-            }
+        internal val instance: INSTANCE by lazy { suite.createInstance() }
+
+        override fun doBefore() {
+            suite.before.forEach { instance.it() }
+        }
+
+        override fun doAfter() {
+            suite.after.forEach { instance.it() }
+        }
+
+        override fun doRun() {
+            instance.testFunction()
         }
     }
 
@@ -146,14 +230,16 @@ public class TopLevelSuite(name: String): AbstractTestSuite<TopLevelFun>(name, f
 
     class TestCase(name: String, override val suite: TopLevelSuite, testFunction: TopLevelFun, ignored: Boolean)
         : BasicTestCase<TopLevelFun>(name, suite, testFunction, ignored) {
+        override fun doBefore() {
+            suite.before.forEach { it() }
+        }
 
-        override fun run() {
-            try {
-                suite.before.forEach { it() }
-                testFunction()
-            } finally {
-                suite.after.forEach { it() }
-            }
+        override fun doAfter() {
+            suite.after.forEach { it() }
+        }
+
+        override fun doRun() {
+            testFunction()
         }
     }
 

@@ -1,11 +1,11 @@
 warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
-compiler/testData/cli/jvm/firDeprecationJava.kt:3:12: warning: '@Deprecated(...) fun stop(): Unit' is deprecated. Deprecated in Java
+compiler/testData/cli/jvm/firDeprecationJava.kt:3:12: warning: '@Deprecated(...) fun stop(): Unit' is deprecated. Deprecated in Java.
     thread.stop()
            ^
-compiler/testData/cli/jvm/firDeprecationJava.kt:4:17: warning: '@Deprecated(...) fun bar(a: String!, b: Int, c: Double): String!' is deprecated. Deprecated in Java
+compiler/testData/cli/jvm/firDeprecationJava.kt:4:17: warning: '@Deprecated(...) fun bar(a: String!, b: Int, c: Double): String!' is deprecated. Deprecated in Java.
     JavaClass().bar("", 1, 2.0)
                 ^
-compiler/testData/cli/jvm/firDeprecationJava.kt:5:27: warning: '@Deprecated(...) field baz: List!' is deprecated. Deprecated in Java
+compiler/testData/cli/jvm/firDeprecationJava.kt:5:27: warning: '@Deprecated(...) field baz: List!' is deprecated. Deprecated in Java.
     val baz = JavaClass().baz
                           ^
 OK

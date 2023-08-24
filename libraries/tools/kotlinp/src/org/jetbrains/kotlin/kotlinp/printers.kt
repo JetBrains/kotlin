@@ -99,11 +99,9 @@ private fun visitProperty(
         sb.append(" /* = ... */")
     }
     sb.appendLine()
-    if (property.hasGetter) {
-        sb.append("    ")
-        sb.appendPropertyAccessorModifiers(property.getter)
-        sb.appendLine("get")
-    }
+    sb.append("    ")
+    sb.appendPropertyAccessorModifiers(property.getter)
+    sb.appendLine("get")
     val setter = property.setter
     if (setter != null) {
         sb.append("    ")

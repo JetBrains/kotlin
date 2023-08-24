@@ -122,6 +122,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
+    override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?) =
+        visitConstructor(errorPrimaryConstructor, data)
+
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: Nothing?) {
         visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
     }

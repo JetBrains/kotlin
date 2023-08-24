@@ -1,0 +1,40 @@
+KT element: KtDestructuringDeclarationEntry
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] lval a: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component1|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] entryInDestructuringDeclarationParameterInLambda.kt
+    public final data [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/X.a] a: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=/X.b] b: R|kotlin/Int|): R|X| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(CONTRACTS)] fun component1(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(CONTRACTS)] fun component2(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|kotlin/Int| = this@R|/X|.R|/X.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|/X|.R|/X.b|): R|X|
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun x([ResolvedTo(CONTRACTS)] action: R|(X) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
+        R|/x|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<X, kotlin/Unit>] x@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] <destruct>: R|X|): R|kotlin/Unit| <inline=NoInline>  {
+            [ResolvedTo(BODY_RESOLVE)] lval a: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component1|()
+            [ResolvedTo(BODY_RESOLVE)] lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component2|()
+             {
+                ^@x Unit
+            }
+
+        }
+        )
+    }

@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -67,12 +67,12 @@ internal class KtFirExpressionTypeProvider(
     }
 
     private fun getKtExpressionType(expression: KtExpression, fir: FirElement): KtType? = when (fir) {
-        is FirFunctionCall -> getReturnTypeForArrayStyleAssignmentTarget(expression, fir) ?: fir.typeRef.coneType.asKtType()
+        is FirFunctionCall -> getReturnTypeForArrayStyleAssignmentTarget(expression, fir) ?: fir.resolvedType.asKtType()
         is FirPropertyAccessExpression -> {
             // For unresolved `super`, we manually create an intersection type so that IDE features like completion can work correctly.
             val containingClass = (fir.dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol as? FirClassSymbol<*>
 
-            if (fir.calleeReference is FirSuperReference && fir.typeRef is FirErrorTypeRef && containingClass != null) {
+            if (fir.calleeReference is FirSuperReference && fir.coneTypeOrNull is ConeErrorType && containingClass != null) {
                 val superTypes = containingClass.resolvedSuperTypes
                 when (superTypes.size) {
                     0 -> analysisSession.builtinTypes.ANY
@@ -80,19 +80,19 @@ internal class KtFirExpressionTypeProvider(
                     else -> ConeIntersectionType(superTypes).asKtType()
                 }
             } else {
-                fir.typeRef.coneType.asKtType()
+                fir.resolvedType.asKtType()
             }
         }
         is FirVariableAssignment -> {
             if (fir.lValue.source?.psi == expression) {
-                fir.lValue.typeRef.coneType.asKtType()
+                fir.lValue.resolvedType.asKtType()
             } else if (expression is KtUnaryExpression && expression.operationToken in KtTokens.INCREMENT_AND_DECREMENT) {
-                fir.rValue.typeRef.coneType.asKtType()
+                fir.rValue.resolvedType.asKtType()
             } else {
                 analysisSession.builtinTypes.UNIT
             }
         }
-        is FirExpression -> fir.typeRef.coneType.asKtType()
+        is FirExpression -> fir.resolvedType.asKtType()
         is FirNamedReference -> fir.getCorrespondingTypeIfPossible()?.asKtType()
         is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
         is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel, is FirTypeParameterRef -> null
@@ -123,7 +123,7 @@ internal class KtFirExpressionTypeProvider(
      * of the whole expression instead, and that is not what he wants.
      */
     private fun FirNamedReference.getCorrespondingTypeIfPossible(): ConeKotlinType? =
-        findOuterPropertyAccessExpression()?.typeRef?.coneType
+        findOuterPropertyAccessExpression()?.resolvedType
 
     /**
      * Finds an outer expression for [this] named reference in cases when it is a part of a property access.
@@ -214,9 +214,7 @@ internal class KtFirExpressionTypeProvider(
     private fun getExpectedTypeByTypeCast(expression: PsiElement): KtType? {
         val typeCastExpression =
             expression.unwrapQualified<KtBinaryExpressionWithTypeRHS> { castExpr, expr -> castExpr.left == expr } ?: return null
-        with(analysisSession) {
-            return typeCastExpression.right?.getKtType()
-        }
+        return getKtExpressionType(typeCastExpression)
     }
 
     private fun getExpectedTypeOfFunctionParameter(expression: PsiElement): KtType? {
@@ -427,7 +425,7 @@ internal class KtFirExpressionTypeProvider(
 
     private fun getDefiniteNullability(expression: KtExpression): DefiniteNullability {
         fun FirExpression.isNotNullable() = with(analysisSession.useSiteSession.typeContext) {
-            !typeRef.coneType.isNullableType()
+            !resolvedType.isNullableType()
         }
 
         when (val fir = expression.getOrBuildFir(analysisSession.firResolveSession)) {

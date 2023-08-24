@@ -37,7 +37,6 @@ class JvmIrSerializerImpl(private val configuration: CompilerConfiguration) : Jv
         JvmIrSerializerSession(
             configuration.irMessageLogger,
             declarationTable,
-            mutableMapOf(),
             configuration.get(JVMConfigurationKeys.SERIALIZE_IR) ?: JvmSerializeIrMode.NONE,
             fileClassFqName,
             configuration.languageVersionSettings,

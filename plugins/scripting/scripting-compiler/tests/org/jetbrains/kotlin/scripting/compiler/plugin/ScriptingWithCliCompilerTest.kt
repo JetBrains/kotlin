@@ -75,7 +75,7 @@ class ScriptingWithCliCompilerTest {
             ),
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
-                "unresolved reference: CompilerOptions"
+                "unresolved reference\\W*CompilerOptions"
             ),
         )
         runWithK2JVMCompiler(

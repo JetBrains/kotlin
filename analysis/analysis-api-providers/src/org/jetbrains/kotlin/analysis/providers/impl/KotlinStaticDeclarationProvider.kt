@@ -17,7 +17,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubElement
-import com.intellij.util.containers.CollectionFactory.createConcurrentWeakValueMap
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.FileContentImpl
 import com.intellij.util.io.URLUtil
@@ -135,6 +134,7 @@ public class KotlinStaticDeclarationProviderFactory(
 
     private val psiManager = PsiManager.getInstance(project)
     private val builtInDecompiler = KotlinBuiltInDecompiler()
+    private val createdFakeKtFiles = mutableListOf<KtFile>()
 
     private fun loadBuiltIns(): Collection<KotlinFileStubImpl> {
         val classLoader = this::class.java.classLoader
@@ -170,6 +170,7 @@ public class KotlinStaticDeclarationProviderFactory(
             override fun isPhysical() = false
         }
         ktFileStub.psi = fakeFile
+        createdFakeKtFiles.add(fakeFile)
         return ktFileStub
     }
 
@@ -259,7 +260,6 @@ public class KotlinStaticDeclarationProviderFactory(
     init {
         val recorder = KtDeclarationRecorder()
 
-        // Indexing built-ins
         fun indexStub(stub: StubElement<*>) {
             when (stub) {
                 is KotlinClassStubImpl -> {
@@ -300,6 +300,7 @@ public class KotlinStaticDeclarationProviderFactory(
             ktFileStub.childrenStubs.forEach(::indexStub)
         }
 
+        // Indexing built-ins
         val builtins = mutableSetOf<String>()
         if (!skipBuiltins) {
             loadBuiltIns().forEach { stub ->
@@ -343,6 +344,7 @@ public class KotlinStaticDeclarationProviderFactory(
                     override fun isPhysical() = false
                 }
                 stub.psi = fakeFile
+                createdFakeKtFiles.add(fakeFile)
                 processStub(stub)
             }
         }
@@ -355,6 +357,10 @@ public class KotlinStaticDeclarationProviderFactory(
 
     override fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KtModule?): KotlinDeclarationProvider {
         return KotlinStaticDeclarationProvider(index, scope)
+    }
+
+    public fun getAdditionalCreatedKtFiles(): List<KtFile> {
+        return createdFakeKtFiles
     }
 }
 

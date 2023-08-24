@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -392,7 +393,8 @@ private inline fun <F> createSessionsForLegacyMppProject(
         listOf(),
         libraryList.friendsDependencies,
         targetPlatform,
-        analyzerServices
+        analyzerServices,
+        isCommon = true
     )
 
     val platformModuleData = FirModuleDataImpl(
@@ -401,7 +403,8 @@ private inline fun <F> createSessionsForLegacyMppProject(
         listOf(commonModuleData),
         libraryList.friendsDependencies,
         targetPlatform,
-        analyzerServices
+        analyzerServices,
+        isCommon = false
     )
 
     val commonFiles = mutableListOf<F>()
@@ -438,7 +441,7 @@ private inline fun <F> createSessionsForHmppProject(
 ): List<SessionWithSources<F>> {
     val moduleDataForHmppModule = LinkedHashMap<HmppCliModule, FirModuleData>()
 
-    for (module in hmppModuleStructure.modules) {
+    for ((index, module) in hmppModuleStructure.modules.withIndex()) {
         val dependencies = hmppModuleStructure.dependenciesMap[module]
             ?.map { moduleDataForHmppModule.getValue(it) }
             .orEmpty()
@@ -448,7 +451,8 @@ private inline fun <F> createSessionsForHmppProject(
             dependsOnDependencies = dependencies,
             libraryList.friendsDependencies,
             targetPlatform,
-            analyzerServices
+            analyzerServices,
+            isCommon = index < hmppModuleStructure.modules.size - 1
         )
         moduleDataForHmppModule[module] = moduleData
     }

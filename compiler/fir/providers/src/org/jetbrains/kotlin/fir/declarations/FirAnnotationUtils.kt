@@ -240,7 +240,7 @@ fun FirAnnotation.getKClassArgument(name: Name): ConeKotlinType? {
 }
 
 fun FirGetClassCall.getTargetType(): ConeKotlinType? {
-    return typeRef.coneType.typeArguments.getOrNull(0)?.type
+    return resolvedType.typeArguments.getOrNull(0)?.type
 }
 
 fun FirAnnotationContainer.getJvmNameFromAnnotation(session: FirSession, target: AnnotationUseSiteTarget? = null): String? {

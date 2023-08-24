@@ -17,13 +17,11 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class WasmDependencyResolutionSmokeTest {
 
     @Test
-    @Ignore("stdlib publication migration")
     fun `test - project to project ide dependency resolution`() {
         val rootProject = buildProject()
         val consumer = buildProject(projectBuilder = { withName("consumer").withParent(rootProject) })
@@ -64,6 +62,7 @@ class WasmDependencyResolutionSmokeTest {
         consumer.kotlinIdeMultiplatformImport.resolveDependencies("wasmJsMain").assertMatches(
             dependsOnDependency(":consumer/commonMain"),
             projectArtifactDependency(type = Regular, ":producer", FilePathRegex(".*/producer-wasm-js.klib")),
+            binaryCoordinates(Regex(".*stdlib-wasm-js.*"))
         )
 
         consumer.kotlinIdeMultiplatformImport.resolveDependencies("wasmJsTest").assertMatches(
@@ -71,6 +70,7 @@ class WasmDependencyResolutionSmokeTest {
             friendSourceDependency(":consumer/wasmJsMain"),
             dependsOnDependency(":consumer/commonTest"),
             projectArtifactDependency(type = Regular, ":producer", FilePathRegex(".*/producer-wasm-js.klib")),
+            binaryCoordinates(Regex(".*stdlib-wasm-js.*"))
         )
     }
 }

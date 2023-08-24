@@ -271,7 +271,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
         temporaryFiles: TempFiles,
         isCoverageEnabled: Boolean,
 ) {
-    val compilationResult = temporaryFiles.create("result", ".o").javaFile()
+    val compilationResult = temporaryFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
     runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
     val linkerOutputKind = determineLinkerOutput(context)
     val (linkerInput, cacheBinaries) = run {

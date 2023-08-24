@@ -11,10 +11,10 @@ open class ProtectedInsideInlineError : ProtectedInsideInlineParent() {
     protected var protectedVar = 0
     protected fun protectedFun() = 0
 
-    inline fun publicInlineUserFun() {
-        <!UNRESOLVED_REFERENCE!>println<!>(<!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedVar<!> + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentVar<!>)
+    inline fun publicInlineUserFun(): Int {
         <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedFun<!>()
         <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentFun<!>()
+        return <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedVar<!> + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentVar<!>
     }
 
     inline var publicInlineUserVal: Int

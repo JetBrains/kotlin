@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.*
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -51,7 +48,7 @@ import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState as cleanOutpu
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constructor(
     objectFactory: ObjectFactory,
-    workerExecutor: WorkerExecutor
+    workerExecutor: WorkerExecutor,
 ) : AbstractKotlinCompileTool<T>(objectFactory),
     CompileUsingKotlinDaemonWithNormalization,
     UsesBuildMetricsService,
@@ -68,7 +65,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         cacheOnlyIfEnabledForKotlin()
     }
 
-    private val layout = project.layout
+    @get:Inject
+    internal abstract val projectLayout: ProjectLayout
 
     @get:Inject
     internal abstract val fileSystemOperations: FileSystemOperations
@@ -257,8 +255,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                     buildMetrics.measure(GradleBuildTime.BACKUP_OUTPUT) {
                         TaskOutputsBackup(
                             fileSystemOperations,
-                            layout.buildDirectory,
-                            layout.buildDirectory.dir("snapshot/kotlin/$name"),
+                            projectLayout.buildDirectory,
+                            projectLayout.buildDirectory.dir("snapshot/kotlin/$name"),
                             outputsToRestore = allOutputFiles() - taskOutputsBackupExcludes.get(),
                             logger
                         ).also {

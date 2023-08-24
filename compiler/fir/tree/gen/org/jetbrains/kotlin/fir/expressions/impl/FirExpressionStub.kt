@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -23,16 +23,14 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 class FirExpressionStub @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
-    override var typeRef: FirTypeRef,
+    override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
 ) : FirExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExpressionStub {
-        typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }
@@ -42,8 +40,8 @@ class FirExpressionStub @FirImplementationDetail constructor(
         return this
     }
 
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
-        typeRef = newTypeRef
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
+        coneTypeOrNull = newConeTypeOrNull
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {

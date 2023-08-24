@@ -23,7 +23,7 @@ import java.util.*
 import javax.inject.Inject
 
 class KotlinBuildPublishingPlugin @Inject constructor(
-    private val componentFactory: SoftwareComponentFactory
+    private val componentFactory: SoftwareComponentFactory,
 ) : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
         apply<MavenPublishPlugin>()
@@ -135,8 +135,11 @@ val Project.signLibraryPublication: Boolean
         ?: project.providers.gradleProperty("isSonatypeRelease").orNull?.toBoolean()
         ?: false
 
+// overload for Groovy
+fun Project.configureDefaultPublishing() = configureDefaultPublishing(signingRequired = signLibraryPublication)
+
 fun Project.configureDefaultPublishing(
-    signingRequired: Boolean = signLibraryPublication
+    signingRequired: Boolean = signLibraryPublication,
 ) {
     configure<PublishingExtension> {
         repositories {
@@ -152,8 +155,14 @@ fun Project.configureDefaultPublishing(
         configureSigning()
     }
 
+
     tasks.register("install") {
+        group = "publishing"
         dependsOn(tasks.named("publishToMavenLocal"))
+    }.also {
+        rootProject.tasks.named("mvnInstall").configure {
+            dependsOn(it)
+        }
     }
 
     tasks.withType<PublishToMavenRepository>()

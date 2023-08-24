@@ -26,10 +26,11 @@ object AbstractExpectActualCompatibilityChecker {
     fun <T : DeclarationSymbolMarker> getClassifiersCompatibility(
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassLikeSymbol: ClassLikeSymbolMarker,
+        checkClassScopesCompatibility: Boolean,
         context: ExpectActualMatchingContext<T>,
     ): ExpectActualCompatibility<T> {
         val result = with(context) {
-            getClassifiersCompatibility(expectClassSymbol, actualClassLikeSymbol, parentSubstitutor = null)
+            getClassifiersCompatibility(expectClassSymbol, actualClassLikeSymbol, parentSubstitutor = null, checkClassScopesCompatibility)
         }
         @Suppress("UNCHECKED_CAST")
         return result as ExpectActualCompatibility<T>
@@ -62,7 +63,8 @@ object AbstractExpectActualCompatibilityChecker {
                 substitutor = null,
                 expectClassSymbol = null,
                 actualClassSymbol = null,
-                unfulfilled = null
+                unfulfilled = null,
+                checkClassScopesCompatibility = true,
             )
         }
     }
@@ -73,7 +75,8 @@ object AbstractExpectActualCompatibilityChecker {
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassLikeSymbol: ClassLikeSymbolMarker,
         parentSubstitutor: TypeSubstitutorMarker?,
-    ): ExpectActualCompatibility<*> = getClassifiersIncompatibility(expectClassSymbol, actualClassLikeSymbol, parentSubstitutor)
+        checkClassScopes: Boolean,
+    ): ExpectActualCompatibility<*> = getClassifiersIncompatibility(expectClassSymbol, actualClassLikeSymbol, parentSubstitutor, checkClassScopes)
         ?: ExpectActualCompatibility.Compatible
 
     context(ExpectActualMatchingContext<*>)
@@ -81,7 +84,8 @@ object AbstractExpectActualCompatibilityChecker {
     private fun getClassifiersIncompatibility(
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassLikeSymbol: ClassLikeSymbolMarker,
-        parentSubstitutor: TypeSubstitutorMarker?
+        parentSubstitutor: TypeSubstitutorMarker?,
+        checkClassScopesCompatibility: Boolean,
     ): ExpectActualCompatibility.Incompatible.WeakIncompatible<*>? {
         // Can't check FQ names here because nested expected class may be implemented via actual typealias's expansion with the other FQ name
         require(expectClassSymbol.name == actualClassLikeSymbol.name) {
@@ -136,7 +140,9 @@ object AbstractExpectActualCompatibilityChecker {
             return Incompatible.Supertypes
         }
 
-        getClassScopesIncompatibility(expectClassSymbol, actualClass, substitutor)?.let { return it }
+        if (checkClassScopesCompatibility) {
+            getClassScopesIncompatibility(expectClassSymbol, actualClass, substitutor)?.let { return it }
+        }
 
         return null
     }
@@ -211,7 +217,8 @@ object AbstractExpectActualCompatibilityChecker {
                 substitutor,
                 expectClassSymbol,
                 actualClassSymbol,
-                unfulfilled
+                unfulfilled,
+                checkClassScopesCompatibility = true,
             )
         }
 
@@ -236,7 +243,8 @@ object AbstractExpectActualCompatibilityChecker {
         substitutor: TypeSubstitutorMarker?,
         expectClassSymbol: RegularClassSymbolMarker?,
         actualClassSymbol: RegularClassSymbolMarker?,
-        unfulfilled: MutableList<Pair<DeclarationSymbolMarker, Map<Incompatible<*>, List<DeclarationSymbolMarker?>>>>?
+        unfulfilled: MutableList<Pair<DeclarationSymbolMarker, Map<Incompatible<*>, List<DeclarationSymbolMarker?>>>>?,
+        checkClassScopesCompatibility: Boolean,
     ) {
         val mapping = actualMembers.keysToMap { actualMember ->
             when (expectMember) {
@@ -253,7 +261,8 @@ object AbstractExpectActualCompatibilityChecker {
                     getClassifiersCompatibility(
                         expectMember,
                         actualMember as ClassLikeSymbolMarker,
-                        parentSubstitutor
+                        parentSubstitutor,
+                        checkClassScopesCompatibility,
                     )
                 }
                 else -> error("Unsupported declaration: $expectMember ($actualMembers)")
@@ -264,7 +273,7 @@ object AbstractExpectActualCompatibilityChecker {
         for ((actualMember, compatibility) in mapping) {
             when (compatibility) {
                 ExpectActualCompatibility.Compatible -> {
-                    onMatchedMembers(expectMember, actualMember)
+                    onMatchedMembers(expectMember, actualMember, expectClassSymbol, actualClassSymbol)
                     return
                 }
 
@@ -273,7 +282,7 @@ object AbstractExpectActualCompatibilityChecker {
         }
 
         unfulfilled?.add(expectMember to incompatibilityMap)
-        onMismatchedMembersFromClassScope(expectMember, incompatibilityMap)
+        onMismatchedMembersFromClassScope(expectMember, incompatibilityMap, expectClassSymbol, actualClassSymbol)
     }
 
     context(ExpectActualMatchingContext<*>)

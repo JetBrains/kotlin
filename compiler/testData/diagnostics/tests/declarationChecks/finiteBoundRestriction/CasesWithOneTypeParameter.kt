@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface A0<T : A0<T>>
 interface A1<<!FINITE_BOUNDS_VIOLATION!>T : A1<*><!>>
 interface A2<<!FINITE_BOUNDS_VIOLATION!>T : A2<out T><!>>

@@ -32,6 +32,14 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 
+/**
+ * An [LLFirResolveSession] which *depends* on an [originalFirResolveSession], but can provide its own FIR elements and symbols selectively.
+ * The dependent session mostly provides FIR elements and symbols from the original resolve session, but additionally provides FIR elements
+ * (and their associated symbols) from its own [ktToFirMapping].
+ *
+ * [LLFirResolveSessionDepended] is used by on-air resolve to provide FIR elements for a copied declaration in the larger context of the
+ * original resolve session.
+ */
 internal class LLFirResolveSessionDepended(
     val originalFirResolveSession: LLFirResolvableResolveSession,
     val towerProviderBuiltUponElement: FirTowerContextProvider,

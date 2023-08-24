@@ -121,7 +121,6 @@ class Fir2IrJsResultsConverter(
             mainPluginContext,
             sourceFiles,
             configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList(),
-            expectDescriptorToSymbol = mutableMapOf(),
             diagnosticReporter = diagnosticReporter,
             hasErrors = inputArtifact.hasErrors,
             descriptorMangler = commonMemberStorage.symbolTable.signaturer.mangler,

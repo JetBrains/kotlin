@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirBinaryLogicExpressionImpl
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirBinaryLogicExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
+    override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var leftOperand: FirExpression
     lateinit var rightOperand: FirExpression
@@ -38,6 +38,7 @@ class FirBinaryLogicExpressionBuilder : FirAnnotationContainerBuilder, FirExpres
     override fun build(): FirBinaryLogicExpression {
         return FirBinaryLogicExpressionImpl(
             source,
+            coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             leftOperand,
             rightOperand,
@@ -45,13 +46,6 @@ class FirBinaryLogicExpressionBuilder : FirAnnotationContainerBuilder, FirExpres
         )
     }
 
-
-    @Deprecated("Modification of 'typeRef' has no impact for FirBinaryLogicExpressionBuilder", level = DeprecationLevel.HIDDEN)
-    override var typeRef: FirTypeRef
-        get() = throw IllegalStateException()
-        set(_) {
-            throw IllegalStateException()
-        }
 }
 
 @OptIn(ExperimentalContracts::class)

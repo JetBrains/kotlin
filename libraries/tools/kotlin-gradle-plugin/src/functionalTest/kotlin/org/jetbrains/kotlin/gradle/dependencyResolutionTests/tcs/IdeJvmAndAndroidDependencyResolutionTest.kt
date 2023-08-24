@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeJvmAndAndro
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.androidExtension
-import org.junit.Ignore
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -161,23 +160,21 @@ class IdeJvmAndAndroidDependencyResolutionTest {
     }
 
     @Test
-    @Ignore("stdlib publication migration - test data changes")
     fun `test - MVIKotlin - binary dependencies - with stdlib enabled by default`() {
         val project = buildProject { configureAndroidAndMultiplatform(enableDefaultStdlib = true) }
         val kotlin = project.multiplatformExtension
         kotlin.sourceSets.getByName("commonMain").dependencies {
-            implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
+            implementation("com.arkivanov.mvikotlin:mvikotlin:3.2.1")
         }
 
         project.evaluate()
 
         val kgpVersion = project.getKotlinPluginVersion()
         val jvmAndAndroidDependencies = listOf(
-            binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin-jvm:3.0.2"),
-            binaryCoordinates("com.arkivanov.essenty:lifecycle-jvm:0.4.2"),
-            binaryCoordinates("com.arkivanov.essenty:instance-keeper-jvm:0.4.2"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kgpVersion"), // uplifted to plugin version
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kgpVersion"),
+            binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin-jvm:3.2.1"),
+            binaryCoordinates("com.arkivanov.essenty:lifecycle-jvm:1.0.0"),
+            binaryCoordinates("com.arkivanov.essenty:instance-keeper-jvm:1.0.0"),
+            legacyStdlibJdkDependencies(),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
         )

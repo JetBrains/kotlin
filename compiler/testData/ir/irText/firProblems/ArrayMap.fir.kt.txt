@@ -62,7 +62,7 @@ internal object EmptyArrayMap : ArrayMap<Nothing> {
         }
 
         override operator fun next(): Nothing {
-          return throw NoSuchElementException()
+          throw NoSuchElementException()
         }
 
       }
@@ -328,4 +328,3 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   }
 
 }
-

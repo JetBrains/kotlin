@@ -124,10 +124,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
                 else -> throw UnsupportedOperationException(compiler.toString())
             }
 
-        compileKotlin(
-            "source.kt", usageDestination, listOf(result), compiler,
-            additionalOptions.toList() + listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString)
-        )
+        compileKotlin("source.kt", usageDestination, listOf(result), compiler, additionalOptions.toList())
     }
 
     // ------------------------------------------------------------------------------
@@ -247,7 +244,8 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestBrokenLibrary("library", "test/A\$Anno.class")
     }
 
-    fun testReleaseCompilerAgainstPreReleaseLibrary() {
+    // KT-60780 K2: missing PRE_RELEASE_CLASS
+    fun testReleaseCompilerAgainstPreReleaseLibrary() = muteForK2 {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir)
     }
 
@@ -256,7 +254,8 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 //        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
 //    }
 
-    fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() {
+    // KT-60780 K2: missing PRE_RELEASE_CLASS
+    fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() = muteForK2 {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-prerelease-check")
     }
 
@@ -265,12 +264,23 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 //        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), "-Xskip-prerelease-check")
 //    }
 
-    fun testReleaseCompilerAgainstPreReleaseLibrarySkipMetadataVersionCheck() {
+    // KT-60780 K2: missing PRE_RELEASE_CLASS
+    fun testReleaseCompilerAgainstPreReleaseLibrarySkipMetadataVersionCheck() = muteForK2 {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-metadata-version-check")
     }
 
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheckAllowUnstableDependencies() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xallow-unstable-dependencies", "-Xskip-prerelease-check")
+    }
+
+    // KT-61051 K1/K2 difference on extension functions with specific extension receiver types when compiling code that has itself as a dependency
+    fun testDependencyOnItself() {
+        val compiledLibrary = compileLibrary("library")
+        compileKotlin(
+            "library/sample.kt",
+            output = tmpdir,
+            classpath = listOf(compiledLibrary),
+        )
     }
 
     // KT-60795 K2: missing INCOMPATIBLE_CLASS and corresponding CLI error

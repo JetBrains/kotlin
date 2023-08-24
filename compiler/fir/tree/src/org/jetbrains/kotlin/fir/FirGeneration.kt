@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -36,7 +38,7 @@ fun FirVariable.toQualifiedAccess(
         name = this@toQualifiedAccess.name
         resolvedSymbol = this@toQualifiedAccess.symbol
     }
-    this.typeRef = typeRef
+    this.coneTypeOrNull = typeRef.coneTypeOrNull
 }
 
 fun generateTemporaryVariable(
@@ -85,7 +87,12 @@ fun generateExplicitReceiverTemporaryVariable(
                 source = source,
                 name = SpecialNames.RECEIVER,
                 initializer = receiver,
-                typeRef = receiver.typeRef.copyWithNewSource(source),
+                typeRef = receiver.coneTypeOrNull?.let {
+                    buildResolvedTypeRef {
+                        type = it
+                        this.source = source
+                    }
+                }
             ).also { property ->
                 // Change the expression from x.a to <receiver>.a
                 val newReceiverAccess =

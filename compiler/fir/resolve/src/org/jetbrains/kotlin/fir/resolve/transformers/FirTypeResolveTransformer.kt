@@ -160,6 +160,9 @@ open class FirTypeResolveTransformer(
         }
     }
 
+    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Any?) =
+        transformConstructor(errorPrimaryConstructor, data)
+
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirTypeAlias = whileAnalysing(session, typeAlias) {
         withScopeCleanup {
             addTypeParametersScope(typeAlias)

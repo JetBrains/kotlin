@@ -11,6 +11,7 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.*
 import proguard.gradle.ProGuardTask
 import java.io.File
@@ -93,6 +94,11 @@ val Project.isIdeaActive
 
 val Project.intellijCommunityDir: File
     get() = rootDir.resolve("intellij/community").takeIf { it.isDirectory } ?: rootDir.resolve("intellij")
+
+fun getMvnwCmd(): List<String> = when {
+    OperatingSystem.current().isWindows -> listOf("cmd", "/c", "mvnw.cmd")
+    else -> listOf("./mvnw")
+}
 
 fun String.capitalize(): String = capitalize(Locale.ROOT)
 

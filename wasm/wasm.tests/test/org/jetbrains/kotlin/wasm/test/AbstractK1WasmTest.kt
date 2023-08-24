@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.wasm.test
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.wasmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -17,6 +20,7 @@ import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigura
 import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibBackendFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
+import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
 
 abstract class AbstractK1WasmTest(
     pathToTestDir: String,
@@ -62,3 +66,19 @@ open class AbstractK1WasmJsTranslatorTest : AbstractK1WasmTest(
     "js/js.translator/testData/box/",
     "js.translator/k1Box"
 )
+
+open class AbstractK1WasmSteppingTest : AbstractK1WasmTest(
+    "compiler/testData/debug/stepping/",
+    "debug/stepping/"
+) {
+
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasmDebugRunner
+
+    override fun TestConfigurationBuilder.configuration() {
+        commonConfigurationForWasmBlackBoxCodegenTest()
+        defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
+        }
+    }
+}

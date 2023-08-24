@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSingleSymbolByPsi;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSingleSymbolByPsiTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi")
 @TestDataPath("$PROJECT_ROOT")
-public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiGenerated extends AbstractSingleSymbolByPsi {
+public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiGenerated extends AbstractSingleSymbolByPsiTest {
     @NotNull
     @Override
     public AnalysisApiTestConfigurator getConfigurator() {
@@ -311,6 +311,58 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiGenerated e
         @TestMetadata("twoContracts.kt")
         public void testTwoContracts() throws Exception {
             runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/twoContracts.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Destructuring {
+        @Test
+        public void testAllFilesPresentInDestructuring() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("destructuringDeclaration.kt")
+        public void testDestructuringDeclaration() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("destructuringDeclarationInLambda.kt")
+        public void testDestructuringDeclarationInLambda() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclarationInLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("destructuringDeclarationParameterInLambda.kt")
+        public void testDestructuringDeclarationParameterInLambda() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclarationParameterInLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("entryInDestructuringDeclaration.kt")
+        public void testEntryInDestructuringDeclaration() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryInDestructuringDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("entryInDestructuringDeclarationParameterInLambda.kt")
+        public void testEntryInDestructuringDeclarationParameterInLambda() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryInDestructuringDeclarationParameterInLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("entryUnderscoreInDestructuringDeclaration.kt")
+        public void testEntryUnderscoreInDestructuringDeclaration() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryUnderscoreInDestructuringDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("entryUnderscoreInDestructuringDeclarationParameterInLambda.kt")
+        public void testEntryUnderscoreInDestructuringDeclarationParameterInLambda() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryUnderscoreInDestructuringDeclarationParameterInLambda.kt");
         }
     }
 

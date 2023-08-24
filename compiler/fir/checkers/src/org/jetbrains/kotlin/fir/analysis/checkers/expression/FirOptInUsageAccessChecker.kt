@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirOptInUsageAccessChecker : FirBasicExpressionChecker() {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -35,7 +38,7 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker() {
                 reportNotAcceptedExperimentalities(experimentalities, expression.lValue, context, reporter)
             } else if (expression is FirQualifiedAccessExpression) {
                 val dispatchReceiverType =
-                    expression.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }?.typeRef?.coneType?.fullyExpandedType(context.session)
+                    expression.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }?.resolvedType?.fullyExpandedType(context.session)
 
                 val experimentalities = resolvedSymbol.loadExperimentalities(context, fromSetter = false, dispatchReceiverType) +
                         loadExperimentalitiesFromTypeArguments(context, expression.typeArguments)

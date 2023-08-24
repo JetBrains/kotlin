@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.*
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.NativeArtifactFormat
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.gradle.utils.markResolvable
 
 internal fun createCInteropApiElementsKlibArtifact(
     target: KotlinNativeTarget,
@@ -48,8 +50,7 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
     return configurations.create(compilation.cInteropDependencyConfigurationName).apply {
         extendsFrom(compileOnlyConfiguration, implementationConfiguration)
         isVisible = false
-        isCanBeResolved = true
-        isCanBeConsumed = false
+        markResolvable()
 
         /* Deferring attributes to wait for compilation.attributes to be configured  by user*/
         launchInStage(AfterFinaliseDsl) {
@@ -82,6 +83,11 @@ internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotl
             attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_CINTEROP))
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             attributes.attribute(artifactTypeAttribute, NativeArtifactFormat.KLIB)
+
+            /* Expose api dependencies */
+            target.compilations.findByName(MAIN_COMPILATION_NAME)?.let { compilation ->
+                extendsFrom(compilation.internal.configurations.apiConfiguration)
+            }
         }
     }
 }
@@ -111,4 +117,3 @@ private class CInteropLibraryElementsCompatibilityRule : AttributeCompatibilityR
         }
     }
 }
-

@@ -32,41 +32,8 @@ class WasmBoxRunner(
         val artifacts = modulesToArtifact.values.single()
         val baseFileName = "index"
         val outputDirBase = testServices.getWasmTestOutputDirectory()
-
-        val jsFiles = mutableListOf<AdditionalFile>()
-        val mjsFiles = mutableListOf<AdditionalFile>()
-        var entryMjs: String? = "test.mjs"
-
-        testServices.moduleStructure.modules.forEach { m ->
-            m.files.forEach { file: TestFile ->
-                val name = file.name
-                when {
-                    name.endsWith(".js") ->
-                        jsFiles += AdditionalFile(file.name, file.originalContent)
-
-                    name.endsWith(".mjs") -> {
-                        mjsFiles += AdditionalFile(file.name, file.originalContent)
-                        if (name == "entry.mjs") {
-                            entryMjs = name
-                        }
-                    }
-                }
-            }
-        }
-
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
-
-        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_EXTENSION)
-            .takeIf { it.exists() }
-            ?.let {
-                jsFiles += AdditionalFile(it.name, it.readText())
-            }
-
-        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_MODULE_EXTENSION)
-            .takeIf { it.exists() }
-            ?.let {
-                mjsFiles += AdditionalFile(it.name, it.readText())
-            }
+        val collectedJsArtifacts = collectJsArtifacts(originalFile)
 
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
         val startUnitTests = RUN_UNIT_TESTS in testServices.moduleStructure.allDirectives
@@ -106,16 +73,7 @@ class WasmBoxRunner(
             writeCompilationResult(res, dir, baseFileName)
             File(dir, "test.mjs").writeText(testJs)
 
-            for (mjsFile: AdditionalFile in mjsFiles) {
-                File(dir, mjsFile.name).writeText(mjsFile.content)
-            }
-
-            val jsFilePaths = mutableListOf<String>()
-            for (jsFile: AdditionalFile in jsFiles) {
-                val file = File(dir, jsFile.name)
-                file.writeText(jsFile.content)
-                jsFilePaths += file.canonicalPath
-            }
+            val (jsFilePaths) = collectedJsArtifacts.saveJsArtifacts(dir)
 
             if (debugMode >= DebugMode.DEBUG) {
                 File(dir, "index.html").writeText(
@@ -149,7 +107,7 @@ class WasmBoxRunner(
                 println(" ------ $mode Test file://$path/test.mjs")
                 val projectName = "kotlin"
                 println(" ------ $mode HTML http://0.0.0.0:63342/$projectName/${dir.path}/index.html")
-                for (mjsFile: AdditionalFile in mjsFiles) {
+                for (mjsFile: AdditionalFile in collectedJsArtifacts.mjsFiles) {
                     println(" ------ $mode External ESM file://$path/${mjsFile.name}")
                 }
             }
@@ -164,23 +122,13 @@ class WasmBoxRunner(
                     debugMode = debugMode,
                     disableExceptions = disableExceptions,
                     failsIn = failsIn,
-                    entryMjs = entryMjs,
+                    entryMjs = collectedJsArtifacts.entryPath,
                     jsFilePaths = jsFilePaths,
                     workingDirectory = dir,
                 )
             }
 
-            when (exceptions.size) {
-                0 -> {} // Everything OK
-                1 -> {
-                    throw exceptions.single()
-                }
-                else -> {
-                    throw AssertionError("Failed with several exceptions. Look at suppressed exceptions below.").apply {
-                        exceptions.forEach { addSuppressed(it) }
-                    }
-                }
-            }
+            processExceptions(exceptions)
 
             if (mode == "dce") {
                 checkExpectedOutputSize(debugMode, testFileText, dir)
@@ -190,8 +138,6 @@ class WasmBoxRunner(
         writeToFilesAndRunTest("dev", artifacts.compilerResult)
         writeToFilesAndRunTest("dce", artifacts.compilerResultWithDCE)
     }
-
-    private class AdditionalFile(val name: String, val content: String)
 }
 
 internal fun WasmVM.runWithCathedExceptions(
@@ -221,24 +167,6 @@ internal fun WasmVM.runWithCathedExceptions(
         }
     }
     return null
-}
-
-fun TestServices.getWasmTestOutputDirectory(): File {
-    val originalFile = moduleStructure.originalTestDataFiles.first()
-    val allDirectives = moduleStructure.allDirectives
-
-    val pathToRootOutputDir = allDirectives[WasmEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR].first()
-    val testGroupDirPrefix = allDirectives[WasmEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX].first()
-    val pathToTestDir = allDirectives[WasmEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR].first()
-
-    val testGroupOutputDir = File(File(pathToRootOutputDir, "out"), testGroupDirPrefix)
-    val stopFile = File(pathToTestDir)
-    return generateSequence(originalFile.parentFile) { it.parentFile }
-        .takeWhile { it != stopFile }
-        .map { it.name }
-        .toList().asReversed()
-        .fold(testGroupOutputDir, ::File)
-        .let { File(it, originalFile.nameWithoutExtension) }
 }
 
 fun checkExpectedOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File) {

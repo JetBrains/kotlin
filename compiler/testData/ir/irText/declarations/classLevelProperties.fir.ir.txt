@@ -135,13 +135,14 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY
-          CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
-            <V>: kotlin.Int
-            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
-              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test8>' type=<root>.C origin=null
-            thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test8>' type=<root>.C origin=null
-            property: PROPERTY_REFERENCE 'public final test8: kotlin.Int' field=null getter='public final fun <get-test8> (): kotlin.Int declared in <root>.C' setter='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<<root>.C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-test8>' type=kotlin.Int origin=null
+          RETURN type=kotlin.Nothing from='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C'
+            CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
+              <V>: kotlin.Int
+              $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test8>' type=<root>.C origin=null
+              thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test8>' type=<root>.C origin=null
+              property: PROPERTY_REFERENCE 'public final test8: kotlin.Int' field=null getter='public final fun <get-test8> (): kotlin.Int declared in <root>.C' setter='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<*, *> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-test8>' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

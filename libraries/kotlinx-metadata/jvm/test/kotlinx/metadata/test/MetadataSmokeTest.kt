@@ -30,7 +30,7 @@ class MetadataSmokeTest {
         val classMetadata = L::class.java.readMetadataAsKmClass()
 
         val inlineFunctions = classMetadata.functions
-            .filter { Flag.Function.IS_INLINE(it.flags) }
+            .filter { it.isInline }
             .mapNotNull { it.signature?.toString() }
 
         assertEquals(
@@ -146,6 +146,7 @@ class MetadataSmokeTest {
     }
 
     @Test
+    @Suppress("DEPRECATION_ERROR") // flags will become internal eventually
     fun unstableParameterNames() {
         @Suppress("unused", "UNUSED_PARAMETER")
         class Test(a: String, b: Int, c: Boolean) {

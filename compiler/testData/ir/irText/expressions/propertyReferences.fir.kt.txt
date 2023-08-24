@@ -99,7 +99,7 @@ var delegatedVar: Int /* by */
     return #delegatedVar$delegate.getValue(thisRef = null, kProp = ::delegatedVar)
   }
   set(<set-?>: Int) {
-    #delegatedVar$delegate.setValue(thisRef = null, kProp = ::delegatedVar, value = <set-?>)
+    return #delegatedVar$delegate.setValue(thisRef = null, kProp = ::delegatedVar, value = <set-?>)
   }
 
 val test_delegatedVar: KMutableProperty0<Int>
@@ -115,11 +115,11 @@ val test_constVal: KProperty0<Int>
   get
 
 val test_J_CONST: KProperty0<Int>
-  field = J::CONST/*</* null */>()*/
+  field = J::CONST
   get
 
 val test_J_nonConst: KMutableProperty0<Int>
-  field = J::nonConst/*</* null */>()*/
+  field = J::nonConst
   get
 
 val test_varWithPrivateSet: KProperty1<C, Int>

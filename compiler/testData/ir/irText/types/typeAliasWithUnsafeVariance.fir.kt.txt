@@ -43,10 +43,9 @@ data class Tag<out RenderingT : Any?> {
 }
 
 fun getTag(): Tag<*> {
-  return throw Exception()
+  throw Exception()
 }
 
 fun doAction() {
   getTag().<get-action>() /*~> Unit */
 }
-

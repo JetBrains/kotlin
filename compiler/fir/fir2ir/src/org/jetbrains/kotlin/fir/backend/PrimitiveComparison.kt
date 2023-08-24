@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 
 class PrimitiveConeNumericComparisonInfo(
     val comparisonType: ConeClassLikeType,
@@ -28,8 +28,8 @@ fun FirComparisonExpression.inferPrimitiveNumericComparisonInfo(): PrimitiveCone
     inferPrimitiveNumericComparisonInfo(left, right)
 
 fun inferPrimitiveNumericComparisonInfo(left: FirExpression, right: FirExpression): PrimitiveConeNumericComparisonInfo? {
-    val leftType = left.typeRef.coneType
-    val rightType = right.typeRef.coneType
+    val leftType = left.resolvedType
+    val rightType = right.resolvedType
     val leftPrimitiveOrNullableType = leftType.getPrimitiveTypeOrSupertype() ?: return null
     val rightPrimitiveOrNullableType = rightType.getPrimitiveTypeOrSupertype() ?: return null
     val leastCommonType = leastCommonPrimitiveNumericType(leftPrimitiveOrNullableType, rightPrimitiveOrNullableType)

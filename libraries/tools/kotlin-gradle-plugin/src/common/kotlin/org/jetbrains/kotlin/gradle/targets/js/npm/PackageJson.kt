@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import com.google.gson.*
+import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
@@ -122,7 +123,7 @@ internal fun packageJson(
     version: String,
     main: String,
     npmDependencies: Collection<NpmDependencyDeclaration>,
-    packageJsonHandlers: List<PackageJson.() -> Unit>
+    packageJsonHandlers: List<Action<PackageJson>>
 ): PackageJson {
 
     val packageJson = PackageJson(
@@ -150,7 +151,7 @@ internal fun packageJson(
     }
 
     packageJsonHandlers.forEach {
-        it(packageJson)
+        it.execute(packageJson)
     }
 
     return packageJson

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 
@@ -31,3 +32,13 @@ val FirBasedSymbol<*>.expectForActual: ExpectForActualData?
         return fir.expectForActual
     }
 
+
+private object MemberExpectForActualAttributeKey : FirDeclarationDataKey()
+
+// Expect class in the key is needed, because class may correspond to two expects
+// in case when two `actual typealias` point to the same class.
+typealias MemberExpectForActualData =
+        Map<Pair</* actual member */ FirBasedSymbol<*>, /* expect class */ FirRegularClassSymbol>,
+                Map</* expect member */ FirBasedSymbol<*>, ExpectActualCompatibility<*>>>
+
+var FirRegularClass.memberExpectForActual: MemberExpectForActualData? by FirDeclarationDataRegistry.data(MemberExpectForActualAttributeKey)

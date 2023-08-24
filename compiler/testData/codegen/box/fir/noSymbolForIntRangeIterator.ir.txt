@@ -67,10 +67,10 @@ FILE fqName:<root> fileName:/noSymbolForIntRangeIterator.kt
                     $this: GET_VAR 'val tmp_1: kotlin.collections.IntIterator declared in <root>.test.localFunc' type=kotlin.collections.IntIterator origin=null
                 BLOCK type=kotlin.Unit origin=null
                   VAR name:s type:kotlin.String [val]
-                    CALL 'public final fun buildString (builderAction: @[ExtensionFunctionType] kotlin.Function1<java.lang.StringBuilder{ kotlin.text.StringBuilder }, kotlin.Unit>): kotlin.String declared in kotlin.text' type=kotlin.String origin=null
-                      builderAction: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<java.lang.StringBuilder{ kotlin.text.StringBuilder }, kotlin.Unit> origin=LAMBDA
-                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:java.lang.StringBuilder{ kotlin.text.StringBuilder }) returnType:kotlin.Unit
-                          $receiver: VALUE_PARAMETER name:$this$buildString type:java.lang.StringBuilder{ kotlin.text.StringBuilder }
+                    CALL 'public final fun buildString (builderAction: @[ExtensionFunctionType] kotlin.Function1<java.lang.StringBuilder, kotlin.Unit>): kotlin.String declared in kotlin.text' type=kotlin.String origin=null
+                      builderAction: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<java.lang.StringBuilder, kotlin.Unit> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:java.lang.StringBuilder) returnType:kotlin.Unit
+                          $receiver: VALUE_PARAMETER name:$this$buildString type:java.lang.StringBuilder
                           BLOCK_BODY
                             BLOCK type=kotlin.Unit origin=FOR_LOOP
                               VAR FOR_LOOP_ITERATOR name:tmp_2 type:kotlin.collections.IntIterator [val]
@@ -87,8 +87,8 @@ FILE fqName:<root> fileName:/noSymbolForIntRangeIterator.kt
                                       $this: GET_VAR 'val tmp_2: kotlin.collections.IntIterator declared in <root>.test.localFunc.<anonymous>' type=kotlin.collections.IntIterator origin=null
                                   BLOCK type=kotlin.Unit origin=null
                                     TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                                      CALL 'public final fun appendLine (value: kotlin.String?): java.lang.StringBuilder{ kotlin.text.StringBuilder } declared in kotlin.text' type=java.lang.StringBuilder{ kotlin.text.StringBuilder } origin=null
-                                        $receiver: GET_VAR '$this$buildString: java.lang.StringBuilder{ kotlin.text.StringBuilder } declared in <root>.test.localFunc.<anonymous>' type=java.lang.StringBuilder{ kotlin.text.StringBuilder } origin=null
+                                      CALL 'public final fun appendLine (value: kotlin.String?): java.lang.StringBuilder declared in kotlin.text' type=java.lang.StringBuilder origin=null
+                                        $receiver: GET_VAR '$this$buildString: java.lang.StringBuilder declared in <root>.test.localFunc.<anonymous>' type=java.lang.StringBuilder origin=null
                                         value: STRING_CONCATENATION type=kotlin.String
                                           CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
                                             $this: GET_VAR 'val i: kotlin.Int declared in <root>.test.localFunc' type=kotlin.Int origin=null

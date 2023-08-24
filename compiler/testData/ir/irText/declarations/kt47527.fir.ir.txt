@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/kt47527.kt
             VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.String? [val]
               CALL 'public final fun test_1 (value: kotlin.Any?): kotlin.String? declared in <root>' type=kotlin.String? origin=null
                 value: CONST Int type=kotlin.Int value=1
-            WHEN type=kotlin.String origin=ELVIS
+            WHEN type=kotlin.String origin=null
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                   arg0: GET_VAR 'val tmp_2: kotlin.String? declared in <root>.box' type=kotlin.String? origin=null
@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/kt47527.kt
             VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.String? [val]
               CALL 'public final fun test_2 (value: kotlin.Any?): kotlin.String? declared in <root>' type=kotlin.String? origin=null
                 value: CONST Int type=kotlin.Int value=1
-            WHEN type=kotlin.String origin=ELVIS
+            WHEN type=kotlin.String origin=null
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                   arg0: GET_VAR 'val tmp_3: kotlin.String? declared in <root>.box' type=kotlin.String? origin=null

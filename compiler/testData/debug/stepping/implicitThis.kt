@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 
 fun box() {
@@ -28,41 +29,41 @@ class A {
 }
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:4 box
-// test.kt:20 <clinit>
-// test.kt:15 <init>
-// test.kt:20 <clinit>
-// test.kt:20 <clinit>
-// test.kt:4 box
-
-// test.kt:7 <init>
-// test.kt:4 box
-// test.kt:10 test
-// test.kt:17 foo
-// test.kt:18 foo
-// test.kt:11 test
-// test.kt:22 getProp
-// test.kt:11 test
-// test.kt:12 test
-// test.kt:25 setProp
-// test.kt:26 setProp
-// test.kt:13 test
 // test.kt:5 box
+// test.kt:21 <clinit>
+// test.kt:16 <init>
+// test.kt:21 <clinit>
+// test.kt:21 <clinit>
+// test.kt:5 box
+
+// test.kt:8 <init>
+// test.kt:5 box
+// test.kt:11 test
+// test.kt:18 foo
+// test.kt:19 foo
+// test.kt:12 test
+// test.kt:23 getProp
+// test.kt:12 test
+// test.kt:13 test
+// test.kt:26 setProp
+// test.kt:27 setProp
+// test.kt:14 test
+// test.kt:6 box
 
 // EXPECTATIONS JS_IR
-// test.kt:4 box
-// test.kt:7 <init>
-// test.kt:20 <init>
-// test.kt:15 <init>
-// test.kt:7 <init>
-// test.kt:4 box
-// test.kt:10 test
-// test.kt:10 test
-// test.kt:17 foo
-// test.kt:18 foo
-// test.kt:11 test
-// test.kt:11 test
-// test.kt:22 <get-prop>
-// test.kt:12 test
-// test.kt:13 test
 // test.kt:5 box
+// test.kt:8 <init>
+// test.kt:21 <init>
+// test.kt:16 <init>
+// test.kt:8 <init>
+// test.kt:5 box
+// test.kt:11 test
+// test.kt:11 test
+// test.kt:18 foo
+// test.kt:19 foo
+// test.kt:12 test
+// test.kt:12 test
+// test.kt:23 <get-prop>
+// test.kt:13 test
+// test.kt:14 test
+// test.kt:6 box

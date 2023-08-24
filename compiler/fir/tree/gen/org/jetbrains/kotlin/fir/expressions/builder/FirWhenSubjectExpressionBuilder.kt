@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpressionImpl
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.name.StandardClassIds
 
 /*
  * This file was generated automatically
@@ -41,8 +43,8 @@ class FirWhenSubjectExpressionBuilder : FirAnnotationContainerBuilder, FirExpres
     }
 
 
-    @Deprecated("Modification of 'typeRef' has no impact for FirWhenSubjectExpressionBuilder", level = DeprecationLevel.HIDDEN)
-    override var typeRef: FirTypeRef
+    @Deprecated("Modification of 'coneTypeOrNull' has no impact for FirWhenSubjectExpressionBuilder", level = DeprecationLevel.HIDDEN)
+    override var coneTypeOrNull: ConeKotlinType?
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()

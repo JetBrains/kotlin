@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.ir.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbolTable by originalTable {
-
-    val lock: IrLock get() = originalTable.lock
-
-    /*Don't force builtins class linking before unbound symbols linking: otherwise stdlib compilation will failed*/
+    /*Don't force builtins class linking before unbound symbols linking: otherwise stdlib compilation will fail*/
     var stubGenerator: DeclarationStubGenerator? = null
 
     @ObsoleteDescriptorBasedAPI

@@ -16,7 +16,7 @@ FILE: inlineClassDeclaration.kt
 
         public final fun foo(): R|kotlin/Unit| {
             local final inline class C : R|kotlin/Any| {
-                public constructor(x: R|kotlin/Int|): R|A.C| {
+                public constructor(x: R|kotlin/Int|): R|<local>/C| {
                     super<R|kotlin/Any|>()
                 }
 

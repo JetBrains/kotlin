@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.substitution.*
+import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.NotFixedTypeToVariableSubstitutorForDelegateInference
+import org.jetbrains.kotlin.fir.resolve.substitution.replaceStubsAndTypeVariablesToErrors
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
@@ -72,8 +75,8 @@ class FirDelegatedPropertyInferenceSession(
         if (callee.candidate.system.hasContradiction) return true
 
         val hasStubType =
-            callee.candidate.chosenExtensionReceiver?.typeRef?.coneType?.containsStubType() ?: false
-                    || callee.candidate.dispatchReceiver?.typeRef?.coneType?.containsStubType() ?: false
+            callee.candidate.chosenExtensionReceiver?.resolvedType?.containsStubType() ?: false
+                    || callee.candidate.dispatchReceiver?.resolvedType?.containsStubType() ?: false
 
         if (!hasStubType) {
             return true

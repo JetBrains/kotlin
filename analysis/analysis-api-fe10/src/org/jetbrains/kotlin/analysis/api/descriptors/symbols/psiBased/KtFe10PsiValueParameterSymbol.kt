@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -68,7 +69,10 @@ internal class KtFe10PsiValueParameterSymbol(
         }
 
     override val name: Name
-        get() = withValidityAssertion { psi.nameAsSafeName }
+        get() = withValidityAssertion {
+            if (psi.destructuringDeclaration != null) SpecialNames.DESTRUCT
+            else psi.nameAsSafeName
+        }
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> = withValidityAssertion {

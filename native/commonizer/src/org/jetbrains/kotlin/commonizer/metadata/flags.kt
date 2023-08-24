@@ -32,8 +32,6 @@ internal fun KmProperty.modifiersFrom(cp: CirProperty, isExpect: Boolean) {
     visibility = cp.kmVisibility
     modality = cp.kmModality
     kind = cp.kind.kmMemberKind
-    hasGetter = cp.getter != null
-    hasSetter = cp.setter != null
     isDelegated = cp.isDelegate
     this.isExpect = isExpect
     isVar = cp.isVar

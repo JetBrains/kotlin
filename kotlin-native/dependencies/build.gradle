@@ -75,7 +75,7 @@ enum DependencyKind {
 
 def platformManager = rootProject.project(":kotlin-native").ext.platformManager
 
-platformManager.enabled.each { target ->
+EnabledTargetsKt.enabledTargets(platformManager).each { target ->
     def loader = platformManager.loader(target)
 
     tasks.register("${target}Dependencies", NativeDep) {

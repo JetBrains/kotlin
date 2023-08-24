@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: JVM
 // FILE: test.kt
 fun box(){
@@ -22,24 +23,24 @@ fun fail() : String {
 // and the JVM_IR stepping is more correct.
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:4 box
-// test.kt:12 box
-// test.kt:4 box
 // test.kt:5 box
-// test.kt:16 fail
-// test.kt:4 box
-// test.kt:7 box
-// test.kt:16 fail
-// test.kt:7 box
+// test.kt:13 box
+// test.kt:5 box
+// test.kt:6 box
+// test.kt:17 fail
+// test.kt:5 box
 // test.kt:8 box
-// test.kt:12 box
-// test.kt:7 box
+// test.kt:17 fail
+// test.kt:8 box
 // test.kt:9 box
+// test.kt:13 box
+// test.kt:8 box
+// test.kt:10 box
 
 // EXPECTATIONS JS_IR
-// test.kt:12 box
-// test.kt:16 fail
-// test.kt:7 box
-// test.kt:16 fail
-// test.kt:7 box
-// test.kt:9 box
+// test.kt:13 box
+// test.kt:17 fail
+// test.kt:8 box
+// test.kt:17 fail
+// test.kt:8 box
+// test.kt:10 box

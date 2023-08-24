@@ -10,14 +10,9 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
 @JsGradlePluginTests
-abstract class JsIrConfigurationCacheIT : KGPBaseTest() {
-    @Suppress("DEPRECATION")
-    private val defaultJsOptions = BuildOptions.JsOptions(
-    )
-
-    final override val defaultBuildOptions =
+class JsIrConfigurationCacheIT : KGPBaseTest() {
+    override val defaultBuildOptions =
         super.defaultBuildOptions.copy(
-            jsOptions = defaultJsOptions,
             configurationCache = true,
             configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
         )
@@ -53,7 +48,7 @@ abstract class JsIrConfigurationCacheIT : KGPBaseTest() {
     }
 
     @DisplayName("configuration cache is reused when idea.version system property is changed in browser project")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_5)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun testBrowserDistributionOnIdeaPropertyChange(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
@@ -92,7 +87,7 @@ abstract class JsIrConfigurationCacheIT : KGPBaseTest() {
     }
 
     @DisplayName("configuration cache is reused when idea.version system property is changed in node project")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_5, maxVersion = TestVersions.Gradle.G_7_5)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun testNodeJsOnIdeaPropertyChange(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {

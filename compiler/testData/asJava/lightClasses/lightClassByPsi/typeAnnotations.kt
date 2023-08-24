@@ -22,10 +22,9 @@ class Y
 
 class klass {
     fun annotatedMethod(x: @A0 P<@A1 X, P<@A2 @A3 X, @A4 Y>>, y: Array<@A5 Y>): @A6 X {
-        return ""
+        return X()
     }
 
     val x: @A0 Int = 2
     val y: List<@A0 Int>? = null
 }
-// COMPILATION_ERRORS

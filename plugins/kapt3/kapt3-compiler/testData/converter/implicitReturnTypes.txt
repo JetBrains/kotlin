@@ -15,6 +15,22 @@ public abstract class Prop<T> {
 
 package test;
 
+/**
+ * public final class test/Cl : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(name: kotlin/String)
+ *
+ *   // field: name:Ljava/lang/String;
+ *   // getter: getName()Ljava/lang/String;
+ *   // setter: setName(Ljava/lang/String;)V
+ *   public final var name: kotlin/String
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Cl {
     @org.jetbrains.annotations.NotNull()
@@ -39,6 +55,27 @@ public final class Cl {
 
 package test;
 
+/**
+ * package {
+ *
+ *   // field: TEST:Llib/Prop;
+ *   // getter: getTEST()Llib/Prop;
+ *   public final val TEST: lib/Prop<test/Cl>
+ *     public final get
+ *
+ *   // field: TESTS_ARRAY:[Llib/Prop;
+ *   // getter: getTESTS_ARRAY()[Llib/Prop;
+ *   public final val TESTS_ARRAY: kotlin/Array<lib/Prop<test/Cl>>
+ *     public final get
+ *
+ *   // field: TESTS_LIST:Ljava/util/List;
+ *   // getter: getTESTS_LIST()Ljava/util/List;
+ *   public final val TESTS_LIST: kotlin/collections/List<lib/Prop<test/Cl>>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TestKt {
 

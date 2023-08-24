@@ -50,6 +50,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
             is KtLocalVariableSymbol -> getParentSymbolByPsi()
             is KtAnonymousFunctionSymbol -> getParentSymbolByPsi()
             is KtAnonymousObjectSymbol -> getParentSymbolByPsi()
+            is KtDestructuringDeclarationSymbol -> getParentSymbolByPsi()
 
             is KtSamConstructorSymbol -> null // SAM constructors are always top-level
             is KtScriptSymbol -> null // Scripts are always top-level

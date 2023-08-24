@@ -1,6 +1,6 @@
 import kotlin.contracts.*
 
-@Suppress("OPT_IN_USAGE_ERROR", "OPT_IN_USAGE_FUTURE_ERROR")
+@Suppress(<!ERROR_SUPPRESSION!>"OPT_IN_USAGE_ERROR"<!>, "OPT_IN_USAGE_FUTURE_ERROR")
 fun foo(f1: () -> Unit, f2: () -> Unit) {
     contract {
         callsInPlace(f1, InvocationKind.EXACTLY_ONCE)

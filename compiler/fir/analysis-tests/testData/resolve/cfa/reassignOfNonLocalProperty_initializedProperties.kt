@@ -1,4 +1,4 @@
-// ISSUE: KT-55493
+// ISSUE: KT-55493, KT-59744
 // WITH_STDLIB
 
 val z: String = "ok"
@@ -21,6 +21,33 @@ class Some {
         <!VAL_REASSIGNMENT!>z<!> = "error"
         "hello"
     }
+
+    var b: String = "hello"
+        get() {
+            <!VAL_REASSIGNMENT!>x<!> = "error"
+            <!VAL_REASSIGNMENT!>y<!> = "error"
+            <!VAL_REASSIGNMENT!>z<!> = "error"
+            return field
+        }
+        set(value) {
+            <!VAL_REASSIGNMENT!>x<!> = value
+            <!VAL_REASSIGNMENT!>y<!> = value
+            <!VAL_REASSIGNMENT!>z<!> = value
+            field = value
+        }
+
+    var c: String
+        get() {
+            <!VAL_REASSIGNMENT!>x<!> = "error"
+            <!VAL_REASSIGNMENT!>y<!> = "error"
+            <!VAL_REASSIGNMENT!>z<!> = "error"
+            return "hello"
+        }
+        set(value) {
+            <!VAL_REASSIGNMENT!>x<!> = value
+            <!VAL_REASSIGNMENT!>y<!> = value
+            <!VAL_REASSIGNMENT!>z<!> = value
+        }
 
     fun test_1() {
         <!VAL_REASSIGNMENT!>x<!> = "error"

@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.fir.expressions.isExhaustive
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isBooleanOrNullableBoolean
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 object FirExhaustiveWhenChecker : FirWhenExpressionChecker() {
@@ -41,7 +41,7 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker() {
 
         val source = whenExpression.source ?: return
 
-        val subjectType = whenExpression.subject?.typeRef?.coneType?.lowerBoundIfFlexible()
+        val subjectType = whenExpression.subject?.resolvedType?.lowerBoundIfFlexible()
         val subjectClassSymbol = subjectType?.fullyExpandedType(context.session)?.toRegularClassSymbol(context.session)
 
         if (whenExpression.usedAsExpression) {

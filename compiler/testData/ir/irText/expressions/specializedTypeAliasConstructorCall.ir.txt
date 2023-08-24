@@ -32,9 +32,9 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   TYPEALIAS name:IntAlias visibility:public expandedType:<root>.Cell<kotlin.Int>
-  FUN name:test visibility:public modality:FINAL <> () returnType:<root>.Cell<kotlin.Int>{ <root>.IntAlias }
+  FUN name:test visibility:public modality:FINAL <> () returnType:<root>.Cell<kotlin.Int>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test (): <root>.Cell<kotlin.Int>{ <root>.IntAlias } declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun test (): <root>.Cell<kotlin.Int> declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Cell) declared in <root>.Cell' type=<root>.Cell<kotlin.Int> origin=null
           <class: T>: kotlin.Int
           value: CONST Int type=kotlin.Int value=42

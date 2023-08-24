@@ -36,23 +36,13 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtConstructorCalleeExpression
-import org.jetbrains.kotlin.psi.KtDoubleColonExpression
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.util.bfs
@@ -172,9 +162,9 @@ internal class KtFirTypeProvider(
     override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType? {
         return when (val fir = expression.getOrBuildFir(firResolveSession)) {
             is FirGetClassCall ->
-                fir.typeRef.coneType.getReceiverOfReflectionType()?.asKtType()
+                fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
             is FirCallableReferenceAccess ->
-                fir.typeRef.coneType.getReceiverOfReflectionType()?.asKtType()
+                fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
             else -> throwUnexpectedFirElementError(fir, expression)
         }
     }

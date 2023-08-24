@@ -106,14 +106,6 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
 
 internal fun KtClassLikeSymbol.getSymbolKind(): KtSymbolKind {
     val firSymbol = firSymbol
-    if (firSymbol.isLocal) {
-        // TODO: hack should be dropped after KT-54390
-        when {
-            firSymbol is FirRegularClassSymbol && firSymbol.fir.containingClassForLocalAttr == null -> {
-                return KtSymbolKind.LOCAL
-            }
-        }
-    }
     return when {
         firSymbol.classId.isNestedClass -> KtSymbolKind.CLASS_MEMBER
         firSymbol.isLocal -> KtSymbolKind.LOCAL

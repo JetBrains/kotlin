@@ -14598,6 +14598,27 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/equivalentCalls")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @UseExtTestCaseGroupProvider()
+        @UsePartialLinkage(mode = Mode.DISABLED)
+        @Tag("no-partial-linkage-may-be-skipped")
+        public class EquivalentCalls {
+            @Test
+            public void testAllFilesPresentInEquivalentCalls() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/equivalentCalls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("localEquivalentWins.kt")
+            public void testLocalEquivalentWins() throws Exception {
+                runTest("compiler/testData/codegen/box/equivalentCalls/localEquivalentWins.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/evaluate")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("frontend-fir")
@@ -15344,6 +15365,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @TestMetadata("SamWithReceiverMavenProjectImportHandler.kt")
             public void testSamWithReceiverMavenProjectImportHandler() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/SamWithReceiverMavenProjectImportHandler.kt");
+            }
+
+            @Test
+            @TestMetadata("suppressedInvisibleReferenceQualifier.kt")
+            public void testSuppressedInvisibleReferenceQualifier() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/suppressedInvisibleReferenceQualifier.kt");
             }
 
             @Test
@@ -24706,12 +24733,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                 }
 
                 @Test
-                @TestMetadata("ifConstVal.kt")
-                public void testIfConstVal() throws Exception {
-                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/ifConstVal.kt");
-                }
-
-                @Test
                 @TestMetadata("kCallableName.kt")
                 public void testKCallableName() throws Exception {
                     runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kCallableName.kt");
@@ -27101,6 +27122,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @Tag("no-partial-linkage-may-be-skipped")
             public class K2 {
                 @Test
+                @TestMetadata("actualInnerClassesFirMemberMapping.kt")
+                public void testActualInnerClassesFirMemberMapping() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/actualInnerClassesFirMemberMapping.kt");
+                }
+
+                @Test
                 public void testAllFilesPresentInK2() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
@@ -27123,6 +27150,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                     @Test
                     public void testAllFilesPresentInAnnotations() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                    }
+
+                    @Test
+                    @TestMetadata("expectAnnotationCallInLibrary.kt")
+                    public void testExpectAnnotationCallInLibrary() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/expectAnnotationCallInLibrary.kt");
                     }
 
                     @Test

@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
  */
 
 internal class FirSmartCastExpressionImpl(
+    override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override var typeRef: FirTypeRef,
     override var originalExpression: FirExpression,
     override val typesFromSmartCast: Collection<ConeKotlinType>,
     override var smartcastType: FirTypeRef,
@@ -39,7 +39,6 @@ internal class FirSmartCastExpressionImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
-        typeRef.accept(visitor, data)
         originalExpression.accept(visitor, data)
         smartcastType.accept(visitor, data)
         smartcastTypeWithoutNullableNothing?.accept(visitor, data)
@@ -47,7 +46,6 @@ internal class FirSmartCastExpressionImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSmartCastExpressionImpl {
         transformAnnotations(transformer, data)
-        typeRef = typeRef.transform(transformer, data)
         transformOriginalExpression(transformer, data)
         smartcastType = smartcastType.transform(transformer, data)
         smartcastTypeWithoutNullableNothing = smartcastTypeWithoutNullableNothing?.transform(transformer, data)
@@ -64,12 +62,12 @@ internal class FirSmartCastExpressionImpl(
         return this
     }
 
-    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
-        annotations = newAnnotations.toMutableOrEmpty()
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
+        coneTypeOrNull = newConeTypeOrNull
     }
 
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
-        typeRef = newTypeRef
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 
     override fun replaceOriginalExpression(newOriginalExpression: FirExpression) {

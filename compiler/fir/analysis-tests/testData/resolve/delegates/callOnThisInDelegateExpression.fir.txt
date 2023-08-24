@@ -23,7 +23,7 @@ FILE: callOnThisInDelegateExpression.kt
                 ^ this@R|/SomeImpl|.D|/SomeImpl.bundle|.R|SubstitutionOverride</Delegate.getValue: R|R?|>|(this@R|/SomeImpl|, ::R|/SomeImpl.bundle|)
             }
             public set(<set-?>: R|R?|): R|kotlin/Unit| {
-                this@R|/SomeImpl|.D|/SomeImpl.bundle|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/SomeImpl|, ::R|/SomeImpl.bundle|, R|<local>/bundle|)
+                ^ this@R|/SomeImpl|.D|/SomeImpl.bundle|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/SomeImpl|, ::R|/SomeImpl.bundle|, R|<local>/bundle|)
             }
 
         public final fun <M : R|SomeImpl<T>|, T : R|Some|> getFactory(): R|Factory<M, T?>| {

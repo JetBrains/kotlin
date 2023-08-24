@@ -41,7 +41,7 @@ fun test(i: Inv<Nothing>, iUnit: Inv<Unit>) {
         run(A.flexible(iUnit)) { 42 }
     }
     launch {
-        @Suppress("UNSUPPORTED")
+        @Suppress(<!ERROR_SUPPRESSION!>"UNSUPPORTED"<!>)
         run<dynamic> { "" }
     }
 

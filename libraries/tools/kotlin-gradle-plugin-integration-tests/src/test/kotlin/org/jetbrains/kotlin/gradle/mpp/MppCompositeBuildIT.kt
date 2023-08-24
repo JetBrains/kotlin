@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regu
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.assertEquals
@@ -28,7 +27,6 @@ import kotlin.test.assertIs
 @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_2)
 class MppCompositeBuildIT : KGPBaseTest() {
     @GradleTest
-    @Disabled("stdlib publication migration - test data changes")
     fun `test - sample0 - ide dependencies`(gradleVersion: GradleVersion) {
         val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
 
@@ -46,7 +44,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     regularSourceDependency(":producerBuild::producerA/nativeMain"),
                     regularSourceDependency(":producerBuild::producerA/linuxMain"),
                     kotlinNativeDistributionDependencies,
-                    binaryCoordinates(Regex(".*stdlib-common:.*")) /* KT-56278 */
+                    binaryCoordinates(Regex(".*stdlib:commonMain:.*")) /* KT-56278 */
                 )
 
                 dependencies["linuxMain"].assertMatches(
@@ -316,7 +314,6 @@ class MppCompositeBuildIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @Disabled("stdlib publication migration - test data changes")
     fun `test - sample5-KT-56536-rootProject_name - ide dependencies`(gradleVersion: GradleVersion) {
         val producer = project("mpp-composite-build/sample5-KT-56536-rootProject.name/producerBuild", gradleVersion)
 
@@ -334,7 +331,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     regularSourceDependency(":producerBuild::producerA/nativeMain"),
                     regularSourceDependency(":producerBuild::producerA/linuxMain"),
                     kotlinNativeDistributionDependencies,
-                    binaryCoordinates(Regex(".*stdlib-common:.*")) /* KT-56278 */
+                    binaryCoordinates(Regex(".*stdlib:commonMain:.*")) /* KT-56278 */
                 )
 
                 dependencies["linuxMain"].assertMatches(

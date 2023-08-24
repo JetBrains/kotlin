@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirBlockImpl
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -29,24 +28,19 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirBlockBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
+    override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     val statements: MutableList<FirStatement> = mutableListOf()
 
     override fun build(): FirBlock {
         return FirBlockImpl(
             source,
+            coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             statements,
         )
     }
 
-
-    @Deprecated("Modification of 'typeRef' has no impact for FirBlockBuilder", level = DeprecationLevel.HIDDEN)
-    override var typeRef: FirTypeRef
-        get() = throw IllegalStateException()
-        set(_) {
-            throw IllegalStateException()
-        }
 }
 
 @OptIn(ExperimentalContracts::class)

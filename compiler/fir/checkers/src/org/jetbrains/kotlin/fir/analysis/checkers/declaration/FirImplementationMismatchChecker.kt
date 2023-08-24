@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -188,6 +189,21 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         reporter.reportOn(containingClass.source, FirErrors.VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, symbol, overriddenVar, context)
     }
 
+    private fun FirTypeScope.collectFunctionsNamed(name: Name, containingClass: FirClass): List<FirNamedFunctionSymbol> {
+        val allFunctions = mutableListOf<FirNamedFunctionSymbol>()
+
+        processFunctionsByName(name) { sym ->
+            when (sym) {
+                is FirIntersectionOverrideFunctionSymbol -> sym.intersections.mapNotNullTo(allFunctions) { it as? FirNamedFunctionSymbol }
+                else -> allFunctions.add(sym)
+            }
+        }
+
+        return allFunctions.filter {
+            it.isVisibleInClass(containingClass.symbol)
+        }
+    }
+
     private fun checkConflictingMembers(
         containingClass: FirClass,
         context: CheckerContext,
@@ -195,13 +211,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         scope: FirTypeScope,
         name: Name
     ) {
-        val allFunctions = mutableListOf<FirNamedFunctionSymbol>()
-        scope.processFunctionsByName(name) { sym ->
-            when (sym) {
-                is FirIntersectionOverrideFunctionSymbol -> sym.intersections.mapNotNullTo(allFunctions) { it as? FirNamedFunctionSymbol }
-                else -> allFunctions.add(sym)
-            }
-        }
+        val allFunctions = scope.collectFunctionsNamed(name, containingClass)
 
         val sameArgumentGroups = allFunctions.groupBy { function ->
             buildList {

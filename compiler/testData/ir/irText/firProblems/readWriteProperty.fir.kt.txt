@@ -43,7 +43,7 @@ class IdeWizard {
       return <this>.#projectTemplate$delegate.getValue(thisRef = <this>, property = IdeWizard::projectTemplate)
     }
     set(<set-?>: Int?) {
-      <this>.#projectTemplate$delegate.setValue(thisRef = <this>, property = IdeWizard::projectTemplate, value = <set-?>)
+      return <this>.#projectTemplate$delegate.setValue(thisRef = <this>, property = IdeWizard::projectTemplate, value = <set-?>)
     }
 
   private fun <V : Any, T : SettingType<V>> setting(reference: SettingReference<V, T>): <no name provided><V, T> {

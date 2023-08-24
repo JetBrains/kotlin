@@ -50,27 +50,27 @@ public final class ClassInnerStuffCache {
     public static final String NOT_NULL_ANNOTATION_QUALIFIER = "@" + NotNull.class.getName();
 
     private final @NotNull KtExtensibleLightClass myClass;
-    private final @NotNull ModificationTracker myModificationTracker;
+    private final @NotNull List<ModificationTracker> myModificationTrackers;
     private final @NotNull Ref<Pair<Long, Interner<PsiMember>>> myInterner = Ref.create();
     private final boolean myGenerateEnumMethods;
 
     public ClassInnerStuffCache(
             @NotNull KtExtensibleLightClass aClass,
             boolean generateEnumMethods,
-            @NotNull ModificationTracker modificationTracker
+            @NotNull List<ModificationTracker> modificationTrackers
     ) {
         myGenerateEnumMethods = generateEnumMethods;
         myClass = aClass;
-        myModificationTracker = modificationTracker;
+        myModificationTrackers = modificationTrackers;
     }
 
     @NotNull
     public PsiMethod[] getConstructors() {
         return copy(CachedValuesManager.getCachedValue(
                 myClass,
-                () -> CachedValueProvider.Result.createSingleDependency(
+                () -> CachedValueProvider.Result.create(
                         PsiImplUtil.getConstructors(myClass),
-                        myModificationTracker
+                        myModificationTrackers
                 )
         ));
     }
@@ -79,9 +79,9 @@ public final class ClassInnerStuffCache {
     public PsiField[] getFields() {
         return copy(CachedValuesManager.getCachedValue(
                 myClass,
-                () -> CachedValueProvider.Result.createSingleDependency(
+                () -> CachedValueProvider.Result.create(
                         calcFields(),
-                        myModificationTracker
+                        myModificationTrackers
                 )
         ));
     }
@@ -90,9 +90,9 @@ public final class ClassInnerStuffCache {
     public PsiMethod[] getMethods() {
         return copy(CachedValuesManager.getCachedValue(
                 myClass,
-                () -> CachedValueProvider.Result.createSingleDependency(
+                () -> CachedValueProvider.Result.create(
                         calcMethods(),
-                        myModificationTracker
+                        myModificationTrackers
                 )
         ));
     }
@@ -101,9 +101,9 @@ public final class ClassInnerStuffCache {
     public PsiClass[] getInnerClasses() {
         return copy(CachedValuesManager.getCachedValue(
                 myClass,
-                () -> CachedValueProvider.Result.createSingleDependency(
+                () -> CachedValueProvider.Result.create(
                         calcInnerClasses(),
-                        myModificationTracker
+                        myModificationTrackers
                 )
         ));
     }
@@ -116,9 +116,9 @@ public final class ClassInnerStuffCache {
         else {
             return CachedValuesManager.getCachedValue(
                     myClass,
-                    () -> CachedValueProvider.Result.createSingleDependency(
+                    () -> CachedValueProvider.Result.create(
                             getFieldsMap(),
-                            myModificationTracker
+                            myModificationTrackers
                     )
             ).get(name);
         }
@@ -132,9 +132,9 @@ public final class ClassInnerStuffCache {
         else {
             return copy(notNull(CachedValuesManager.getCachedValue(
                     myClass,
-                    () -> CachedValueProvider.Result.createSingleDependency(
+                    () -> CachedValueProvider.Result.create(
                             getMethodsMap(),
-                            myModificationTracker
+                            myModificationTrackers
                     )
             ).get(name), PsiMethod.EMPTY_ARRAY));
         }
@@ -148,9 +148,9 @@ public final class ClassInnerStuffCache {
         else {
             return CachedValuesManager.getCachedValue(
                     myClass,
-                    () -> CachedValueProvider.Result.createSingleDependency(
+                    () -> CachedValueProvider.Result.create(
                             getInnerClassesMap(),
-                            myModificationTracker
+                            myModificationTrackers
                     )
             ).get(name);
         }
@@ -160,9 +160,9 @@ public final class ClassInnerStuffCache {
     private PsiMethod getValuesMethod() {
         return isEnum() ? internMember(CachedValuesManager.getCachedValue(
                 myClass,
-                () -> CachedValueProvider.Result.createSingleDependency(
+                () -> CachedValueProvider.Result.create(
                         makeValuesMethod(myClass),
-                        myModificationTracker
+                        myModificationTrackers
                 )
         )) : null;
     }
@@ -171,9 +171,9 @@ public final class ClassInnerStuffCache {
     private PsiMethod getValueOfMethod() {
         return isEnum() ? internMember(CachedValuesManager.getCachedValue(
                 myClass,
-                () -> CachedValueProvider.Result.createSingleDependency(
+                () -> CachedValueProvider.Result.create(
                         makeValueOfMethod(myClass),
-                        myModificationTracker
+                        myModificationTrackers
                 )
         )) : null;
     }
@@ -201,7 +201,11 @@ public final class ClassInnerStuffCache {
     @SuppressWarnings("unchecked")
     private <T extends PsiMember> T internMember(T m) {
         if (m == null) return null;
-        long modCount = myModificationTracker.getModificationCount();
+        long modCount = 0;
+        for (ModificationTracker tracker : myModificationTrackers) {
+            modCount += tracker.getModificationCount();
+        }
+
         synchronized (myInterner) {
             Pair<Long, Interner<PsiMember>> pair = myInterner.get();
             if (pair == null || pair.first.longValue() != modCount) {

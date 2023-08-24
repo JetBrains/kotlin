@@ -1,0 +1,7 @@
+compiler/testData/javaModules/jdkModulesFromNamed/main/test.kt:11:12: error: unresolved reference 'javax.swing.JFrame'.
+    val s: javax.swing.JFrame? = null
+           ^
+compiler/testData/javaModules/jdkModulesFromNamed/main/test.kt:12:5: error: overload resolution ambiguity between candidates: [@InlineOnly() fun println(message: Any?): Unit, @InlineOnly() fun println(message: Boolean): Unit, @InlineOnly() fun println(message: Byte): Unit, ...]
+    println(s)
+    ^
+COMPILATION_ERROR

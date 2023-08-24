@@ -59,6 +59,10 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allConstructorCheckers.check(constructor, data)
     }
 
+    override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: CheckerContext) {
+        checkers.allConstructorCheckers.check(errorPrimaryConstructor, data)
+    }
+
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CheckerContext) {
         checkers.allAnonymousFunctionCheckers.check(anonymousFunction, data)
     }

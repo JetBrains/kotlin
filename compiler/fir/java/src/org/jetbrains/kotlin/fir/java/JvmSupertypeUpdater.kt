@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.hasAnnotationSafe
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -78,6 +75,9 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
         override fun transformConstructor(constructor: FirConstructor, data: ScopeSession): FirStatement {
             return constructor.transformDelegatedConstructor(this, data)
         }
+
+        override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: ScopeSession) =
+            transformConstructor(errorPrimaryConstructor, data)
 
         override fun transformDelegatedConstructorCall(
             delegatedConstructorCall: FirDelegatedConstructorCall,

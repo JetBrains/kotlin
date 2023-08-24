@@ -21,9 +21,11 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
     override fun ClassBuilder.modifyGeneratedClass(thisKind: PrimitiveType) {
         annotations += "WasmAutoboxed"
         // used here little hack with name extension just to avoid creation of specialized "ConstructorParameterDescription"
-        constructorParam {
-            name = "private val value"
-            type = thisKind.capitalized
+        primaryConstructor {
+            parameter {
+                name = "private val value"
+                type = thisKind.capitalized
+            }
         }
     }
 
@@ -153,17 +155,6 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
         }
     }
 
-    override fun MethodBuilder.modifyGeneratedRangeTo(thisKind: PrimitiveType) {
-        val rangeType = PrimitiveType.valueOf(returnType.replace("Range", "").uppercase())
-        val thisCasted = "this" + thisKind.castToIfNecessary(rangeType)
-        val otherCasted = parameterName + parameterType.toPrimitiveType().castToIfNecessary(rangeType)
-        "return ${returnType}($thisCasted, $otherCasted)".addAsMultiLineBody()
-    }
-
-    override fun MethodBuilder.modifyGeneratedRangeUntil(thisKind: PrimitiveType) {
-        "this until $parameterName".addAsSingleLineBody(bodyOnNewLine = false)
-    }
-
     override fun MethodBuilder.modifyGeneratedBitShiftOperators(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.INT) {
             implementAsIntrinsic(thisKind, methodName)
@@ -184,16 +175,15 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
         implementAsIntrinsic(thisKind, methodName)
     }
 
-    override fun MethodBuilder.modifyGeneratedConversions(thisKind: PrimitiveType) {
-        val returnTypeAsPrimitive = PrimitiveType.valueOf(returnType.uppercase())
-        if (returnTypeAsPrimitive == thisKind) {
+    override fun MethodBuilder.modifyGeneratedConversions(thisKind: PrimitiveType, otherKind: PrimitiveType) {
+        if (otherKind == thisKind) {
             modifySignature { isInline = true }
             "this".addAsSingleLineBody(bodyOnNewLine = true)
             return
         }
 
         when (thisKind) {
-            PrimitiveType.BYTE, PrimitiveType.SHORT -> when (returnTypeAsPrimitive) {
+            PrimitiveType.BYTE, PrimitiveType.SHORT -> when (otherKind) {
                 // byte to byte conversion impossible here due to earlier check on type equality
                 PrimitiveType.BYTE -> "this.toInt().toByte()".also { modifySignature { isInline = true } }
                 PrimitiveType.CHAR -> "reinterpretAsInt().reinterpretAsChar()"
@@ -202,33 +192,33 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
                 PrimitiveType.LONG -> "wasm_i64_extend_i32_s(this.toInt())"
                 PrimitiveType.FLOAT -> "wasm_f32_convert_i32_s(this.toInt())"
                 PrimitiveType.DOUBLE -> "wasm_f64_convert_i32_s(this.toInt())"
-                else -> throw IllegalArgumentException("Unsupported type $returnTypeAsPrimitive for generation conversion method from type $thisKind")
+                else -> throw IllegalArgumentException("Unsupported type $otherKind for generation conversion method from type $thisKind")
             }
-            PrimitiveType.INT -> when (returnTypeAsPrimitive) {
+            PrimitiveType.INT -> when (otherKind) {
                 PrimitiveType.BYTE -> "((this shl 24) shr 24).reinterpretAsByte()"
                 PrimitiveType.CHAR -> "(this and 0xFFFF).reinterpretAsChar()"
                 PrimitiveType.SHORT -> "((this shl 16) shr 16).reinterpretAsShort()"
                 PrimitiveType.LONG -> "wasm_i64_extend_i32_s(this)"
                 PrimitiveType.FLOAT -> "wasm_f32_convert_i32_s(this)"
                 PrimitiveType.DOUBLE -> "wasm_f64_convert_i32_s(this)"
-                else -> throw IllegalArgumentException("Unsupported type $returnTypeAsPrimitive for generation conversion method from type $thisKind")
+                else -> throw IllegalArgumentException("Unsupported type $otherKind for generation conversion method from type $thisKind")
             }
-            PrimitiveType.LONG -> when (returnTypeAsPrimitive) {
-                PrimitiveType.BYTE, PrimitiveType.CHAR, PrimitiveType.SHORT -> "this.toInt().to${returnTypeAsPrimitive.capitalized}()"
+            PrimitiveType.LONG -> when (otherKind) {
+                PrimitiveType.BYTE, PrimitiveType.CHAR, PrimitiveType.SHORT -> "this.toInt().to${otherKind.capitalized}()"
                     .also { modifySignature { isInline = true } }
                 PrimitiveType.INT -> "wasm_i32_wrap_i64(this)"
                 PrimitiveType.FLOAT -> "wasm_f32_convert_i64_s(this)"
                 PrimitiveType.DOUBLE -> "wasm_f64_convert_i64_s(this)"
-                else -> throw IllegalArgumentException("Unsupported type $returnTypeAsPrimitive for generation conversion method from type $thisKind")
+                else -> throw IllegalArgumentException("Unsupported type $otherKind for generation conversion method from type $thisKind")
             }
-            in PrimitiveType.floatingPoint -> when (returnTypeAsPrimitive) {
-                PrimitiveType.BYTE, PrimitiveType.CHAR, PrimitiveType.SHORT -> "this.toInt().to${returnTypeAsPrimitive.capitalized}()"
+            in PrimitiveType.floatingPoint -> when (otherKind) {
+                PrimitiveType.BYTE, PrimitiveType.CHAR, PrimitiveType.SHORT -> "this.toInt().to${otherKind.capitalized}()"
                     .also { modifySignature { isInline = true } }
                 PrimitiveType.INT -> "wasm_i32_trunc_sat_${thisKind.prefixLowercase}_s(this)"
                 PrimitiveType.LONG -> "wasm_i64_trunc_sat_${thisKind.prefixLowercase}_s(this)"
                 PrimitiveType.FLOAT -> "wasm_f32_demote_f64(this)"
                 PrimitiveType.DOUBLE -> "wasm_f64_promote_f32(this)"
-                else -> throw IllegalArgumentException("Unsupported type $returnTypeAsPrimitive for generation conversion method from type $thisKind")
+                else -> throw IllegalArgumentException("Unsupported type $otherKind for generation conversion method from type $thisKind")
             }
             else -> throw IllegalArgumentException("Unsupported type $thisKind to generate conversion methods")
         }.addAsSingleLineBody(bodyOnNewLine = false)
@@ -290,11 +280,13 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
                 methodName = "reinterpretAs${otherKind.capitalized}"
                 returnType = otherKind.capitalized
             }
-            "implementedAsIntrinsic".addAsSingleLineBody(bodyOnNewLine = true)
+            implementedAsIntrinsic.addAsSingleLineBody(bodyOnNewLine = true)
         }
     }
 
     companion object {
+        internal const val implementedAsIntrinsic = "implementedAsIntrinsic"
+
         private fun String.toWasmOperator(): String {
             return when (this) {
                 "plus" -> "ADD"
@@ -305,19 +297,20 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
                 "shr" -> "SHR_S"
                 "ushr" -> "SHR_U"
                 "equals" -> "EQ"
+                "not" -> "EQZ"
                 else -> this.uppercase()
             }
         }
 
-        private fun MethodBuilder.implementAsIntrinsic(thisKind: PrimitiveType, methodName: String) {
+        internal fun MethodBuilder.implementAsIntrinsic(thisKind: PrimitiveType, methodName: String) {
             modifySignature { isInline = false }
             annotations += "WasmOp(WasmOp.${thisKind.prefixUppercase}_${methodName.toWasmOperator()})"
-            "implementedAsIntrinsic".addAsSingleLineBody(bodyOnNewLine = true)
+            implementedAsIntrinsic.addAsSingleLineBody(bodyOnNewLine = true)
         }
 
         private val PrimitiveType.prefixUppercase: String
             get() = when (this) {
-                PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT -> "I32"
+                PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT, PrimitiveType.BOOLEAN -> "I32"
                 PrimitiveType.LONG -> "I64"
                 PrimitiveType.FLOAT -> "F32"
                 PrimitiveType.DOUBLE -> "F64"

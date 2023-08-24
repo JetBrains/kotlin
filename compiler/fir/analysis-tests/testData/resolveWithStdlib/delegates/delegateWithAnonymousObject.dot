@@ -230,15 +230,20 @@ digraph delegateWithAnonymousObject_kt {
             72 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
             73 [label="Access variable R|<local>/issueListView|"];
             74 [label="Function call: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(...)" style="filled" fillcolor=yellow];
-            75 [label="Exit block"];
+            75 [label="Jump: ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|, R|<local>/issueListView|)"];
+            76 [label="Stub" style="filled" fillcolor=gray];
+            77 [label="Exit block" style="filled" fillcolor=gray];
         }
-        76 [label="Exit function <setter>" style="filled" fillcolor=red];
+        78 [label="Exit function <setter>" style="filled" fillcolor=red];
     }
     70 -> {71};
     71 -> {72};
     72 -> {73};
     73 -> {74};
     74 -> {75};
-    75 -> {76};
+    75 -> {78};
+    75 -> {76} [style=dotted];
+    76 -> {77} [style=dotted];
+    77 -> {78} [style=dotted];
 
 }

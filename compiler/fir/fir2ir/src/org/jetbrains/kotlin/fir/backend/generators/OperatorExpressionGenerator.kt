@@ -8,15 +8,16 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isNullable
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.ir.builders.primitiveOp1
 import org.jetbrains.kotlin.ir.builders.primitiveOp2
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 
@@ -45,7 +46,7 @@ internal class OperatorExpressionGenerator(
         val operation = comparisonExpression.operation
         val receiver = comparisonExpression.compareToCall.explicitReceiver
 
-        if (receiver?.typeRef?.coneType is ConeDynamicType) {
+        if (receiver?.resolvedType is ConeDynamicType) {
             val dynamicOperator = operation.toIrDynamicOperator()
                 ?: throw Exception("Can't convert to the corresponding IrDynamicOperator")
             val argument = comparisonExpression.compareToCall.dynamicVarargArguments?.firstOrNull()
@@ -235,11 +236,12 @@ internal class OperatorExpressionGenerator(
     private fun IrExpression.negate(origin: IrStatementOrigin) =
         primitiveOp1(startOffset, endOffset, irBuiltIns.booleanNotSymbol, irBuiltIns.booleanType, origin, this)
 
+    @OptIn(IrSymbolInternals::class)
     private fun FirExpression.convertToIrExpression(
         comparisonInfo: PrimitiveConeNumericComparisonInfo?,
         isLeftType: Boolean
     ): IrExpression {
-        val isOriginalNullable = (this as? FirSmartCastExpression)?.originalExpression?.typeRef?.isMarkedNullable ?: false
+        val isOriginalNullable = (this as? FirSmartCastExpression)?.originalExpression?.resolvedType?.isMarkedNullable ?: false
         val irExpression = visitor.convertToIrExpression(this)
         val operandType = if (isLeftType) comparisonInfo?.leftType else comparisonInfo?.rightType
         val targetType = comparisonInfo?.comparisonType

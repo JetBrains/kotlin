@@ -6,17 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractTreeTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -40,7 +36,10 @@ open class FirExpectActualMatcherTransformer(
     private val scopeSession: ScopeSession,
 ) : FirAbstractTreeTransformer<Nothing?>(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
 
-    private val expectActualMatchingContext = session.expectActualMatchingContextFactory.create(session, scopeSession)
+    private val expectActualMatchingContext = session.expectActualMatchingContextFactory.create(
+        session, scopeSession,
+        allowedWritingMemberExpectForActualMapping = true,
+    )
 
     // --------------------------- classifiers ---------------------------
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): FirStatement {
@@ -69,6 +68,9 @@ open class FirExpectActualMatcherTransformer(
         transformMemberDeclaration(constructor)
         return constructor
     }
+
+    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?) =
+        transformConstructor(errorPrimaryConstructor, data)
 
     override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): FirStatement {
         transformMemberDeclaration(simpleFunction)

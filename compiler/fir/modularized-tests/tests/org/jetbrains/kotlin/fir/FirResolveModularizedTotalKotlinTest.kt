@@ -9,8 +9,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
-import com.sun.jna.Library
-import com.sun.jna.Native
 import com.sun.management.HotSpotDiagnosticMXBean
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
@@ -56,33 +54,7 @@ private val RUN_CHECKERS = System.getProperty("fir.bench.run.checkers", "false")
 private val USE_LIGHT_TREE = System.getProperty("fir.bench.use.light.tree", "true").toBooleanLenient()!!
 private val DUMP_MEMORY = System.getProperty("fir.bench.dump.memory", "false").toBooleanLenient()!!
 
-private interface CLibrary : Library {
-    fun getpid(): Int
-    fun gettid(): Int
 
-    companion object {
-        val INSTANCE = Native.load("c", CLibrary::class.java) as CLibrary
-    }
-}
-
-internal fun isolate() {
-    val isolatedList = System.getenv("DOCKER_ISOLATED_CPUSET")
-    val othersList = System.getenv("DOCKER_CPUSET")
-    println("Trying to set affinity, other: '$othersList', isolated: '$isolatedList'")
-    if (othersList != null) {
-        println("Will move others affinity to '$othersList'")
-        ProcessBuilder().command("bash", "-c", "ps -ae -o pid= | xargs -n 1 taskset -cap $othersList ").inheritIO().start().waitFor()
-    }
-    if (isolatedList != null) {
-        val selfPid = CLibrary.INSTANCE.getpid()
-        val selfTid = CLibrary.INSTANCE.gettid()
-        println("Will pin self affinity, my pid: $selfPid, my tid: $selfTid")
-        ProcessBuilder().command("taskset", "-cp", isolatedList, "$selfTid").inheritIO().start().waitFor()
-    }
-    if (othersList == null && isolatedList == null) {
-        println("No affinity specified")
-    }
-}
 
 class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
 
@@ -256,7 +228,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
     }
 
     private fun beforeAllPasses() {
-        isolate()
+        pinCurrentThreadToIsolatedCpu()
     }
 
     fun testTotalKotlin() {
@@ -292,7 +264,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
 
 class FirCheckersResolveProcessor(
     session: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, phase = null) {
     val diagnosticCollector: AbstractDiagnosticCollector = FirDiagnosticsCollector.create(session, scopeSession)
 

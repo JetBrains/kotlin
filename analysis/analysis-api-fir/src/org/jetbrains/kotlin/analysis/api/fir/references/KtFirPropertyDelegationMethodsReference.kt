@@ -27,7 +27,7 @@ class KtFirPropertyDelegationMethodsReference(
         val property = (expression.parent as? KtElement)?.getOrBuildFirSafe<FirProperty>(firResolveSession) ?: return emptyList()
         if (property.delegate == null) return emptyList()
         val getValueSymbol = (property.getter?.singleStatementOfType<FirReturnExpression>()?.result as? FirFunctionCall)?.getCalleeSymbol()
-        val setValueSymbol = property.setter?.singleStatementOfType<FirFunctionCall>()?.getCalleeSymbol()
+        val setValueSymbol = (property.setter?.singleStatementOfType<FirReturnExpression>()?.result as? FirFunctionCall)?.getCalleeSymbol()
         return listOfNotNull(
             getValueSymbol?.fir?.buildSymbol(firSymbolBuilder),
             setValueSymbol?.fir?.buildSymbol(firSymbolBuilder)

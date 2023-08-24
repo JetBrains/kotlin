@@ -286,7 +286,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             } as? FirQualifiedAccessExpression ?: return
 
             if (receiver.calleeReference is FirSuperReference) {
-                val dispatchReceiverType = receiver.dispatchReceiver.typeRef.coneType
+                val dispatchReceiverType = receiver.dispatchReceiver.resolvedType
                 val classSymbol = dispatchReceiverType.toSymbol(session) ?: return
                 if (!classSymbol.isDefinedInInlineFunction()) {
                     reporter.reportOn(

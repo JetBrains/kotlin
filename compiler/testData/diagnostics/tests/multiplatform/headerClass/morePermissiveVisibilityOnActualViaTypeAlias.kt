@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // MODULE: m1-common
 // FILE: common.kt
@@ -14,9 +13,9 @@ expect open class Container {
 package foo;
 
 public class Foo {
-    public final void internalFun() {}    // OK: internal -> public
+    public final void internalFun() {}
 }
 
 // FILE: jvm.kt
 
-actual typealias Container = foo.Foo
+actual typealias <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER!>Container<!> = foo.Foo

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.ConstValueProviderImpl
 import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.serialization.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
@@ -72,7 +70,6 @@ internal fun PhaseContext.firSerializerBase(
             fir2IrInput?.irModuleFragment,
             moduleName = fir2IrInput?.irModuleFragment?.descriptor?.name?.asString()
                     ?: firResult.outputs.last().session.moduleData.name.asString(),
-            expectDescriptorToSymbol = mutableMapOf(), // TODO: expect -> actual mapping
             firFilesAndSessionsBySourceFile,
     ) { firFile, session, scopeSession ->
         serializeSingleFirFile(
@@ -111,7 +108,6 @@ internal fun PhaseContext.serializeNativeModule(
         dependencies: List<KonanLibrary>?,
         moduleFragment: IrModuleFragment?,
         moduleName: String,
-        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
         firFilesAndSessionsBySourceFile: Map<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>,
         serializeSingleFile: (FirFile, FirSession, ScopeSession) -> ProtoBuf.PackageFragment
 ): SerializerOutput {
@@ -121,14 +117,11 @@ internal fun PhaseContext.serializeNativeModule(
 
     val sourceBaseDirs = configuration[CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES] ?: emptyList()
     val absolutePathNormalization = configuration[CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH] ?: false
-    val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
 
     val serializedIr = moduleFragment?.let {
         KonanIrModuleSerializer(
                 messageLogger,
                 moduleFragment.irBuiltins,
-                expectDescriptorToSymbol,
-                skipExpects = !expectActualLinker,
                 CompatibilityMode.CURRENT,
                 normalizeAbsolutePaths = absolutePathNormalization,
                 sourceBaseDirs = sourceBaseDirs,

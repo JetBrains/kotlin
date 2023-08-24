@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.CallableId
 
 object UselessCallOnNotNullChecker : FirQualifiedAccessExpressionChecker() {
@@ -37,10 +37,10 @@ object UselessCallOnNotNullChecker : FirQualifiedAccessExpressionChecker() {
     }
 
     private fun FirExpression.getPackage(): String {
-        return typeRef.coneType.classId?.packageFqName.toString()
+        return resolvedType.classId?.packageFqName.toString()
     }
 
-    private fun FirExpression.getNullability() = typeRef.coneType.nullability
+    private fun FirExpression.getNullability() = resolvedType.nullability
 
 
     private val triggerOn = setOf(

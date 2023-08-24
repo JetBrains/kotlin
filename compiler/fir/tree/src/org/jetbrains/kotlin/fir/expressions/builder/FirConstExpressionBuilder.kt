@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
-import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 fun <T> buildConstExpression(
@@ -20,23 +21,23 @@ fun <T> buildConstExpression(
     annotations: MutableList<FirAnnotation> = mutableListOf(),
     setType: Boolean
 ): FirConstExpression<T> {
-    return FirConstExpressionImpl(source, annotations.toMutableOrEmpty(), kind, value).also {
+    return FirConstExpressionImpl(source, null, annotations.toMutableOrEmpty(), kind, value).also {
         if (setType) {
             when (kind) {
-                ConstantValueKind.Boolean -> it.typeRef = FirImplicitBooleanTypeRef(null)
-                ConstantValueKind.Byte -> it.typeRef = FirImplicitByteTypeRef(null)
-                ConstantValueKind.Char -> it.typeRef = FirImplicitCharTypeRef(null)
-                ConstantValueKind.Double -> it.typeRef = FirImplicitDoubleTypeRef(null)
-                ConstantValueKind.Float -> it.typeRef = FirImplicitFloatTypeRef(null)
-                ConstantValueKind.Int -> it.typeRef = FirImplicitIntTypeRef(null)
-                ConstantValueKind.Long -> it.typeRef = FirImplicitLongTypeRef(null)
-                ConstantValueKind.Null -> it.typeRef = FirImplicitNullableAnyTypeRef(null)
-                ConstantValueKind.Short -> it.typeRef = FirImplicitShortTypeRef(null)
-                ConstantValueKind.String -> it.typeRef = FirImplicitStringTypeRef(null)
-                ConstantValueKind.UnsignedByte -> it.typeRef = FirImplicitUByteTypeRef(null)
-                ConstantValueKind.UnsignedInt -> it.typeRef = FirImplicitUIntTypeRef(null)
-                ConstantValueKind.UnsignedLong -> it.typeRef = FirImplicitULongTypeRef(null)
-                ConstantValueKind.UnsignedShort -> it.typeRef = FirImplicitUShortTypeRef(null)
+                ConstantValueKind.Boolean -> it.coneTypeOrNull = StandardClassIds.Boolean.constructClassLikeType()
+                ConstantValueKind.Byte -> it.coneTypeOrNull = StandardClassIds.Byte.constructClassLikeType()
+                ConstantValueKind.Char -> it.coneTypeOrNull = StandardClassIds.Char.constructClassLikeType()
+                ConstantValueKind.Double -> it.coneTypeOrNull = StandardClassIds.Double.constructClassLikeType()
+                ConstantValueKind.Float -> it.coneTypeOrNull = StandardClassIds.Float.constructClassLikeType()
+                ConstantValueKind.Int -> it.coneTypeOrNull = StandardClassIds.Int.constructClassLikeType()
+                ConstantValueKind.Long -> it.coneTypeOrNull = StandardClassIds.Long.constructClassLikeType()
+                ConstantValueKind.Null -> it.coneTypeOrNull = StandardClassIds.Any.constructClassLikeType(isNullable = true)
+                ConstantValueKind.Short -> it.coneTypeOrNull = StandardClassIds.Short.constructClassLikeType()
+                ConstantValueKind.String -> it.coneTypeOrNull = StandardClassIds.String.constructClassLikeType()
+                ConstantValueKind.UnsignedByte -> it.coneTypeOrNull = StandardClassIds.UByte.constructClassLikeType()
+                ConstantValueKind.UnsignedInt -> it.coneTypeOrNull = StandardClassIds.UInt.constructClassLikeType()
+                ConstantValueKind.UnsignedLong -> it.coneTypeOrNull = StandardClassIds.ULong.constructClassLikeType()
+                ConstantValueKind.UnsignedShort -> it.coneTypeOrNull = StandardClassIds.UShort.constructClassLikeType()
                 ConstantValueKind.IntegerLiteral,
                 ConstantValueKind.UnsignedIntegerLiteral,
                 ConstantValueKind.Error,

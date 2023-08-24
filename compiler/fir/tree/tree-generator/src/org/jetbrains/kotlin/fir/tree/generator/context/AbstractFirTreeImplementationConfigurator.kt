@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.context
 
+import org.jetbrains.kotlin.fir.tree.generator.constructClassLikeTypeImport
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.noReceiverExpressionType
 import org.jetbrains.kotlin.fir.tree.generator.printer.call
+import org.jetbrains.kotlin.fir.tree.generator.standardClassIdsType
 
 abstract class AbstractFirTreeImplementationConfigurator {
     private val elementsWithImpl = mutableSetOf<Element>()
@@ -119,10 +121,12 @@ abstract class AbstractFirTreeImplementationConfigurator {
             }
         }
 
-        fun defaultTypeRefWithSource(typeRefClass: String) {
-            default("typeRef", "$typeRefClass(source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef))")
-            implementation.arbitraryImportables += ArbitraryImportable("org.jetbrains.kotlin", "KtFakeSourceElementKind")
-            implementation.arbitraryImportables += ArbitraryImportable("org.jetbrains.kotlin", "fakeElement")
+        fun defaultBuiltInType(type: String) {
+            default("coneTypeOrNull") {
+                value = "StandardClassIds.$type.constructClassLikeType()"
+                isMutable = false
+            }
+            useTypes(standardClassIdsType, constructClassLikeTypeImport)
         }
 
         fun defaultTrue(field: String, withGetter: Boolean = false) {

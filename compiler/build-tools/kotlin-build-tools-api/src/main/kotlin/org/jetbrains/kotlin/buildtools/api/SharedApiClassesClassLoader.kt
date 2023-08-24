@@ -19,7 +19,6 @@ import kotlin.reflect.KClass
 @JvmName("newInstance")
 public fun SharedApiClassesClassLoader(): ClassLoader = SharedApiClassesClassLoaderImpl(
     SharedApiClassesClassLoaderImpl::class.java.classLoader,
-    ClassLoader.getSystemClassLoader(),
     SharedApiClassesClassLoaderImpl::class.java.`package`.name,
 )
 
@@ -32,9 +31,8 @@ internal fun <T : Any> loadImplementation(cls: KClass<T>, classLoader: ClassLoad
 
 private class SharedApiClassesClassLoaderImpl(
     private val parent: ClassLoader,
-    fallback: ClassLoader,
     private val allowedPackage: String,
-) : ClassLoader(fallback) {
+) : ClassLoader(null) { // `null` parent means that the parent is the bootstrap classloader
     override fun loadClass(name: String, resolve: Boolean): Class<*> {
         return if (name.startsWith(allowedPackage)) {
             parent.loadClass(name)

@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -DEBUG_INFO_CONSTANT -UNUSED_EXPRESSION
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <@kotlin.internal.OnlyInputTypes K, V, V1 : V?>
     Map<out K, @kotlin.internal.Exact V>.getOrDefault_Exact(key: K, defaultValue: V1): V1 = TODO()
 

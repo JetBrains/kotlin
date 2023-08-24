@@ -96,18 +96,22 @@ fun main(args: Array<String>) {
                 )
             )
 
-            testClass<AbstractIncrementalJsKlibCompilerRunnerTest>() {
+            testClass<AbstractIncrementalK1JsKlibCompilerRunnerTest>() {
                 // IC of sealed interfaces are not supported in JS
                 model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "(^sealed.*)|(.*SinceK2)")
                 model("incremental/classHierarchyAffected", extension = null, recursive = false)
                 model("incremental/js", extension = null, excludeParentDirs = true)
             }
 
-            testClass<AbstractIncrementalMultiModuleJsKlibCompilerRunnerTest> {
+            testClass<AbstractIncrementalK1JsKlibMultiModuleCompilerRunnerTest> {
                 model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
             }
 
-            testClass<AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest> {
+            testClass<AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest> {
+                model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
+            }
+
+            testClass<AbstractIncrementalK1JsKlibCompilerWithScopeExpansionRunnerTest> {
                 // IC of sealed interfaces are not supported in JS
                 model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "^sealed.*")
                 model("incremental/classHierarchyAffected", extension = null, recursive = false)
@@ -115,7 +119,7 @@ fun main(args: Array<String>) {
                 model("incremental/scopeExpansion", extension = null, excludeParentDirs = true)
             }
 
-            testClass<AbstractIncrementalJsFirKlibCompilerWithScopeExpansionRunnerTest> {
+            testClass<AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest> {
                 // IC of sealed interfaces are not supported in JS
                 model("incremental/pureKotlin", extension = null, recursive = false,
                     // TODO: 'fileWithConstantRemoved' should be fixed in https://youtrack.jetbrains.com/issue/KT-58824
@@ -125,7 +129,7 @@ fun main(args: Array<String>) {
                 model("incremental/scopeExpansion", extension = null, excludeParentDirs = true)
             }
 
-            testClass<AbstractIncrementalJsCompilerRunnerWithFriendModulesDisabledTest> {
+            testClass<AbstractIncrementalK1JsLegacyCompilerRunnerWithFriendModulesDisabledTest> {
                 model("incremental/js/friendsModuleDisabled", extension = null, recursive = false)
             }
 
@@ -133,7 +137,7 @@ fun main(args: Array<String>) {
                 model("incremental/mpp/allPlatforms", extension = null, excludeParentDirs = true)
                 model("incremental/mpp/jvmOnly", extension = null, excludeParentDirs = true)
             }
-            testClass<AbstractIncrementalMultiplatformJsCompilerRunnerTest> {
+            testClass<AbstractIncrementalK1JsLegacyMultiplatformJsCompilerRunnerTest> {
                 model("incremental/mpp/allPlatforms", extension = null, excludeParentDirs = true)
             }
         }

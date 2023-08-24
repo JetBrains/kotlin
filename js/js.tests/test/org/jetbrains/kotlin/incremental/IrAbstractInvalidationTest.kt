@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
@@ -95,7 +93,6 @@ abstract class IrAbstractInvalidationTest(
 
         val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
         val icData = sourceModule.compilerConfiguration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
-        val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
         val (moduleFragment, _) = generateIrForKlibSerialization(
             environment.project,
             moduleSourceFiles,
@@ -103,7 +100,6 @@ abstract class IrAbstractInvalidationTest(
             sourceModule.jsFrontEndResult.jsAnalysisResult,
             sortDependencies(sourceModule.moduleDependencies),
             icData,
-            expectDescriptorToSymbol,
             IrFactoryImpl,
             verifySignatures = true
         ) {
@@ -118,7 +114,6 @@ abstract class IrAbstractInvalidationTest(
             nopack = false,
             jsOutputName = moduleName,
             icData = icData,
-            expectDescriptorToSymbol = expectDescriptorToSymbol,
             moduleFragment = moduleFragment
         ) { file ->
             metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)

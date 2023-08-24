@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpressionImpl
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -35,8 +35,8 @@ class FirLazyExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBui
     }
 
 
-    @Deprecated("Modification of 'typeRef' has no impact for FirLazyExpressionBuilder", level = DeprecationLevel.HIDDEN)
-    override var typeRef: FirTypeRef
+    @Deprecated("Modification of 'coneTypeOrNull' has no impact for FirLazyExpressionBuilder", level = DeprecationLevel.HIDDEN)
+    override var coneTypeOrNull: ConeKotlinType?
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()

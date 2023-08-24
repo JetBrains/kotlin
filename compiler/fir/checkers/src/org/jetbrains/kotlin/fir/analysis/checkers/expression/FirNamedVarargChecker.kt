@@ -44,12 +44,11 @@ object FirNamedVarargChecker : FirCallChecker() {
                 }
                 return
             }
-            val typeRef = argument.expression.typeRef
-            if (typeRef is FirErrorTypeRef) return
+            val type = argument.expression.coneTypeOrNull
+            if (type is ConeErrorType) return
             if (argument.expression is FirArrayLiteral) return
 
-            @OptIn(UnexpandedTypeCheck::class)
-            if (allowAssignArray && typeRef.isArrayType) return
+            if (allowAssignArray && type?.isArrayType == true) return
 
             if (isAnnotation) {
                 reporter.reportOn(
@@ -70,7 +69,7 @@ object FirNamedVarargChecker : FirCallChecker() {
 
         if (expression is FirArrayLiteral) {
             // FirArrayLiteral has the `vararg` argument expression pre-flattened and doesn't have an argument mapping.
-            expression.arguments.forEach { checkArgument(it, it is FirNamedArgumentExpression, expression.typeRef.coneTypeOrNull) }
+            expression.arguments.forEach { checkArgument(it, it is FirNamedArgumentExpression, expression.coneTypeOrNull) }
         } else {
             val argumentMap = expression.resolvedArgumentMapping ?: return
             for ((argument, parameter) in argumentMap) {

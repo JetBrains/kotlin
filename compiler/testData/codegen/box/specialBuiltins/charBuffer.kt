@@ -1,4 +1,6 @@
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K2: JVM_IR
+//   Ignore reason: KT-61282
 // MODULE: lib
 // FILE: CharBuffer.java
 

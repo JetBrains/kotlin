@@ -18,7 +18,7 @@ fun test2() {
       return x$delegate.getValue<Int, Int>(thisRef = null, property = ::x)
     }
     local set(<set-?>: Int) {
-      x$delegate.setValue<Int>(thisRef = null, property = ::x, value = <set-?>)
+      return x$delegate.setValue<Int>(thisRef = null, property = ::x, value = <set-?>)
     }
 
   <set-x>(<set-?> = 0)
@@ -29,4 +29,3 @@ fun test2() {
   } /*~> Unit */
   <set-x>(<set-?> = <get-x>().plus(other = 1))
 }
-

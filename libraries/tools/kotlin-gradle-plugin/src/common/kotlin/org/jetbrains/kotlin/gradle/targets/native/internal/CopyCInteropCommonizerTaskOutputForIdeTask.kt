@@ -35,10 +35,6 @@ internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
     override val outputDirectory: File = project.rootDir.resolve(".gradle/kotlin/commonizer")
         .resolve(project.path.removePrefix(":").replace(":", "/"))
 
-    override suspend fun findInteropsGroup(dependent: CInteropCommonizerDependent): CInteropCommonizerGroup? {
-        return commonizeCInteropTask.get().findInteropsGroup(dependent)
-    }
-
     @get:Internal
     val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())

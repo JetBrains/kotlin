@@ -192,7 +192,7 @@ class FirSyntheticCallGenerator(
             source = arrayLiteral.source
         }.also {
             if (arrayOfSymbol == null) {
-                it.resultType = components.typeFromCallee(it)
+                it.resultType = components.typeFromCallee(it).type
             }
         }
     }
@@ -242,7 +242,7 @@ class FirSyntheticCallGenerator(
             // If the callable reference cannot be resolved with the expected type, let's try to resolve it with any type and report
             // something like INITIALIZER_TYPE_MISMATCH or NONE_APPLICABLE instead of UNRESOLVED_REFERENCE.
 
-            check(callableReferenceAccess.calleeReference is FirSimpleNamedReference && callableReferenceAccess.typeRef is FirImplicitTypeRef) {
+            check(callableReferenceAccess.calleeReference is FirSimpleNamedReference && callableReferenceAccess.coneTypeOrNull == null) {
                 "Expected FirCallableReferenceAccess to be unresolved."
             }
 

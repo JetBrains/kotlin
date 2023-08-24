@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 fun box() {
     val x = value()
@@ -30,15 +31,10 @@ fun nop() {}
 // JVM_IR generates an additional line number for the end of the condition, which is necessary for the correct "step over" behavior.
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:3 box
-// test.kt:19 value
-// test.kt:3 box
+// test.kt:4 box
+// test.kt:20 value
 // test.kt:4 box
 // test.kt:5 box
-// test.kt:20 box
-// EXPECTATIONS JVM_IR
-// test.kt:5 box
-// EXPECTATIONS JVM JVM_IR
 // test.kt:6 box
 // test.kt:21 box
 // EXPECTATIONS JVM_IR
@@ -46,42 +42,47 @@ fun nop() {}
 // EXPECTATIONS JVM JVM_IR
 // test.kt:7 box
 // test.kt:22 box
-// test.kt:7 box
-// test.kt:28 nop
-// test.kt:7 box
-// test.kt:12 box
-// test.kt:20 box
-// test.kt:12 box
-// test.kt:21 box
-// test.kt:12 box
-// test.kt:13 box
-// test.kt:20 box
-// test.kt:13 box
-// test.kt:26 box
 // EXPECTATIONS JVM_IR
-// test.kt:13 box
+// test.kt:7 box
 // EXPECTATIONS JVM JVM_IR
+// test.kt:8 box
+// test.kt:23 box
+// test.kt:8 box
+// test.kt:29 nop
+// test.kt:8 box
+// test.kt:13 box
+// test.kt:21 box
+// test.kt:13 box
+// test.kt:22 box
+// test.kt:13 box
 // test.kt:14 box
 // test.kt:21 box
 // test.kt:14 box
-// test.kt:25 box
+// test.kt:27 box
+// EXPECTATIONS JVM_IR
 // test.kt:14 box
-// test.kt:28 nop
-// test.kt:14 box
-// test.kt:17 box
+// EXPECTATIONS JVM JVM_IR
+// test.kt:15 box
+// test.kt:22 box
+// test.kt:15 box
+// test.kt:26 box
+// test.kt:15 box
+// test.kt:29 nop
+// test.kt:15 box
+// test.kt:18 box
 
 // EXPECTATIONS JS_IR
-// test.kt:3 box
-// test.kt:19 value
-// test.kt:5 box
+// test.kt:4 box
+// test.kt:20 value
 // test.kt:6 box
 // test.kt:7 box
-// test.kt:7 box
-// test.kt:28 nop
-// test.kt:20 box
-// test.kt:12 box
+// test.kt:8 box
+// test.kt:8 box
+// test.kt:29 nop
+// test.kt:21 box
 // test.kt:13 box
 // test.kt:14 box
-// test.kt:14 box
-// test.kt:28 nop
-// test.kt:17 box
+// test.kt:15 box
+// test.kt:15 box
+// test.kt:29 nop
+// test.kt:18 box

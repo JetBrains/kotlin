@@ -281,12 +281,10 @@ private class MappingExtensions(
         modality = ps.modality.kmModality
         kind = MemberKind.DECLARATION
         hasAnnotations = ps.annotations.isNotEmpty()
-        hasGetter = true
         when (ps.kind) {
             is PropertyStub.Kind.Val -> {}
             is PropertyStub.Kind.Var -> {
                 isVar = true
-                hasGetter = true
             }
             is PropertyStub.Kind.Constant -> {
                 isConst = true

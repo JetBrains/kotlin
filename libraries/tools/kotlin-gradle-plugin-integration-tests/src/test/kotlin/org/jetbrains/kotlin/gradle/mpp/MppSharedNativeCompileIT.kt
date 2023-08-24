@@ -52,7 +52,7 @@ class MppSharedNativeCompileIT : KGPBaseTest() {
      *
      */
     @GradleTest
-    @Disabled("stdlib publication migration")
+    @Disabled("KT-60943: Will be fixed in K2")
     fun `test - K2 - shared native compilation - assemble`(gradleVersion: GradleVersion) {
         project("kt-57944-k2-native-compilation", gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = "2.0")) {
             build("assemble") {

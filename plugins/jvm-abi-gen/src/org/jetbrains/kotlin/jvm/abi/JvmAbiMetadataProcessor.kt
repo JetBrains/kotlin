@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
-import kotlinx.metadata.KmClass
-import kotlinx.metadata.KmPackage
-import kotlinx.metadata.Visibility
+import kotlinx.metadata.*
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.jvm.Metadata
 import kotlinx.metadata.jvm.localDelegatedProperties
-import kotlinx.metadata.visibility
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -162,17 +159,27 @@ private fun AnnotationVisitor.visitKotlinMetadata(header: Metadata) {
 
 private fun KmClass.removePrivateDeclarations() {
     constructors.removeIf { it.visibility.isPrivate }
-    functions.removeIf { it.visibility.isPrivate }
-    properties.removeIf { it.visibility.isPrivate }
+    (this as KmDeclarationContainer).removePrivateDeclarations()
     localDelegatedProperties.clear()
     // TODO: do not serialize private type aliases once KT-17229 is fixed.
 }
 
 private fun KmPackage.removePrivateDeclarations() {
-    functions.removeIf { it.visibility.isPrivate }
-    properties.removeIf { it.visibility.isPrivate }
+    (this as KmDeclarationContainer).removePrivateDeclarations()
     localDelegatedProperties.clear()
     // TODO: do not serialize private type aliases once KT-17229 is fixed.
+}
+
+private fun KmDeclarationContainer.removePrivateDeclarations() {
+    functions.removeIf { it.visibility.isPrivate }
+    properties.removeIf { it.visibility.isPrivate }
+
+    for (property in properties) {
+        // Whether or not the *non-const* property is initialized by a compile-time constant is not a part of the ABI.
+        if (!property.isConst) {
+            property.hasConstant = false
+        }
+    }
 }
 
 private val Visibility.isPrivate: Boolean

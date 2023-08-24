@@ -153,7 +153,12 @@ open class CompareDistributionSignatures : DefaultTask() {
         val tool = if (HostManager.hostIsMingw) "klib.bat" else "klib"
         val klibTool = File("$newDistribution/bin/$tool").absolutePath
         val args = listOf("signatures", klib.absolutePath)
-        return runProcess(localExecutor(project), klibTool, args).stdOut.lines().filter { it.isNotBlank() }
+        val output = runProcess(localExecutor(project), klibTool, args)
+        if (output.exitCode != 0) {
+            logger.error(output.stdErr)
+            error("Execution failed with exit code: ${output.exitCode}")
+        }
+        return output.stdOut.lines().filter { it.isNotBlank() }
     }
 
     private fun looksLikeKotlinNativeDistribution(directory: Path): Boolean {

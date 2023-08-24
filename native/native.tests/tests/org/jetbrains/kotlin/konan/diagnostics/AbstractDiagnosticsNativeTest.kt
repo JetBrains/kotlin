@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.runners.enableLazyResolvePhaseChecking
+import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -43,6 +44,7 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
 
         defaultDirectives {
             +JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
+            +ConfigurationDirectives.WITH_STDLIB
         }
 
         enableMetaInfoHandler()
@@ -65,12 +67,6 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
         forTestsMatching("testData/diagnostics/nativeTests/*") {
             defaultDirectives {
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-                +ConfigurationDirectives.WITH_STDLIB
-            }
-        }
-        forTestsMatching("testData/diagnostics/nativeTests/testsWithStdLib/*") {
-            defaultDirectives {
-                +ConfigurationDirectives.WITH_STDLIB
             }
         }
     }
@@ -90,6 +86,7 @@ abstract class AbstractDiagnosticsNativeTest : AbstractDiagnosticsNativeTestBase
                 ::ClassicDiagnosticsHandler,
             )
         }
+        builder.useAdditionalService(::LibraryProvider)
     }
 }
 

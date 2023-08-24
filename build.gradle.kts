@@ -135,6 +135,7 @@ val commonCompilerModules = arrayOf(
     ":compiler:frontend.java", // TODO this is fe10 module but some utils used in fir ide now
     ":analysis:decompiled:decompiler-to-stubs",
     ":analysis:decompiled:decompiler-to-file-stubs",
+    ":analysis:decompiled:native",
     ":analysis:decompiled:decompiler-to-psi",
     ":analysis:decompiled:light-classes-for-decompiled",
     ":analysis:analysis-api-providers",
@@ -155,6 +156,7 @@ val firCompilerCoreModules = arrayOf(
     ":compiler:fir:plugin-utils",
     ":compiler:fir:tree",
     ":compiler:fir:java",
+    ":compiler:fir:native",
     ":compiler:fir:raw-fir:raw-fir.common",
     ":compiler:fir:raw-fir:psi2fir",
     ":compiler:fir:checkers",
@@ -325,8 +327,6 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":plugins:parcelize:parcelize-runtime",
     ":kotlin-stdlib-common",
     ":kotlin-stdlib",
-    ":kotlin-stdlib-wasm-js",
-    ":kotlin-stdlib-wasm-wasi",
     ":kotlin-test",
     ":kotlin-daemon",
     ":kotlin-compiler",
@@ -371,6 +371,9 @@ val projectsWithEnabledContextReceivers by extra {
         ":compiler:fir:resolve",
         ":compiler:fir:plugin-utils",
         ":compiler:fir:fir2ir",
+        ":compiler:fir:raw-fir:raw-fir.common",
+        ":compiler:fir:raw-fir:psi2fir",
+        ":compiler:fir:raw-fir:light-tree2fir",
         ":kotlin-lombok-compiler-plugin.k1",
         ":kotlinx-serialization-compiler-plugin.k2",
         ":plugins:parcelize:parcelize-compiler:parcelize.k2",
@@ -710,6 +713,7 @@ tasks {
         dependsOn(":kotlin-scripting-jvm-host-test:test")
         dependsOn(":kotlin-scripting-dependencies:test")
         dependsOn(":kotlin-scripting-dependencies-maven:test")
+        dependsOn(":kotlin-scripting-dependencies-maven-all:test")
         dependsOn(":kotlin-scripting-jsr223-test:test")
         // see comments on the task in kotlin-scripting-jvm-host-test
 //        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
@@ -871,6 +875,12 @@ tasks {
             @Suppress("UNCHECKED_CAST")
             dependsOn((rootProject.extra["compilerArtifactsForIde"] as List<String>).map { "$it:install" })
         }
+    }
+
+    register<Exec>("mvnInstall") {
+        group = "publishing"
+        workingDir = rootProject.projectDir.resolve("libraries")
+        commandLine = getMvnwCmd() + listOf("clean", "install", "-DskipTests")
     }
 }
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 
 fun box() {
@@ -14,14 +15,14 @@ fun box() {
 // JVM_IR and JVM backends have different heuristics for when to use a switch.
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:4 box
-// EXPECTATIONS JVM_IR
 // test.kt:5 box
-// test.kt:7 box
+// EXPECTATIONS JVM_IR
+// test.kt:6 box
+// test.kt:8 box
 // EXPECTATIONS JVM JVM_IR
-// test.kt:10 box
-// test.kt:12 box
+// test.kt:11 box
+// test.kt:13 box
 
 // EXPECTATIONS JS_IR
-// test.kt:4 box
-// test.kt:12 box
+// test.kt:5 box
+// test.kt:13 box

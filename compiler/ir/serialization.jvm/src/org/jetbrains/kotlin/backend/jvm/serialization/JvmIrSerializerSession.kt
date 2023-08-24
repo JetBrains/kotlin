@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
@@ -23,15 +21,14 @@ import org.jetbrains.kotlin.synthetic.isVisibleOutside
 class JvmIrSerializerSession(
     messageLogger: IrMessageLogger,
     private val declarationTable: DeclarationTable,
-    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     private val mode: JvmSerializeIrMode,
     private val fileClassFqName: FqName,
     languageVersionSettings: LanguageVersionSettings,
-    skipExpects: Boolean = false,
 ) : IrFileSerializer(
-    messageLogger, declarationTable, expectDescriptorToSymbol, CompatibilityMode.CURRENT, languageVersionSettings,
+    messageLogger, declarationTable, compatibilityMode = CompatibilityMode.CURRENT,
+    languageVersionSettings = languageVersionSettings,
     bodiesOnlyForInlines = mode == JvmSerializeIrMode.INLINE,
-    skipExpects, normalizeAbsolutePaths = false, sourceBaseDirs = emptyList()
+    normalizeAbsolutePaths = false, sourceBaseDirs = emptyList()
 ) {
     init {
         assert(mode != JvmSerializeIrMode.NONE)

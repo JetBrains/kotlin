@@ -20,7 +20,7 @@ configurations {
             attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.legacy)
         }
     }
-    [compileClasspath, testCompileClasspath, testRuntimeClasspath].forEach {
+    [compileClasspath, runtimeClasspath, testCompileClasspath, testRuntimeClasspath].forEach {
         it.attributes {
             attribute(org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute.jsCompilerAttribute, org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute.legacy)
         }

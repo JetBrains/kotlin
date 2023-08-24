@@ -1,3 +1,3 @@
 KtErrorCallInfo:
   candidateCalls = []
-  diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: function>
+  diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'function'.>

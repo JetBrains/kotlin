@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.types.toSymbol
 
 object FirJsModuleGetClassCallChecker : FirGetClassCallChecker() {
     override fun check(expression: FirGetClassCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val callee = expression.argument.typeRef.coneTypeOrNull?.toSymbol(context.session) ?: return
-        checkJsModuleUsage(callee, context, reporter, expression.argument.typeRef.source ?: expression.source)
+        val callee = expression.argument.coneTypeOrNull?.toSymbol(context.session) ?: return
+        checkJsModuleUsage(callee, context, reporter, expression.source)
     }
 }

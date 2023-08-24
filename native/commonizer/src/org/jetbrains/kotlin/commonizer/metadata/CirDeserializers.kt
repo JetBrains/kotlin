@@ -123,9 +123,6 @@ object CirDeserializers {
     }
 
     private fun propertyGetter(source: KmProperty, typeResolver: CirTypeResolver): CirPropertyGetter? {
-        if (!source.hasGetter)
-            return null
-
         val isDefault = !source.getter.isNotDefault
         val annotations = annotations(source.getter.hasAnnotations, typeResolver, source::getterAnnotations)
 
@@ -140,9 +137,6 @@ object CirDeserializers {
     }
 
     private fun propertySetter(source: KmProperty, typeResolver: CirTypeResolver): CirPropertySetter? {
-        if (!source.hasSetter)
-            return null
-
         val setter = source.setter ?: return null
 
         return CirPropertySetter.createInterned(

@@ -128,12 +128,13 @@ FILE fqName:<root> fileName:/readWriteProperty.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.IdeWizard
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int?
         BLOCK_BODY
-          CALL 'public open fun setValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of <root>.IdeWizard.setting?): kotlin.Unit declared in <root>.IdeWizard.setting.<no name provided>' type=kotlin.Unit origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:projectTemplate$delegate type:<root>.IdeWizard.setting.<no name provided><kotlin.Int, <root>.SettingType<kotlin.Int>> visibility:private [final]' type=<root>.IdeWizard.setting.<no name provided><kotlin.Int, <root>.SettingType<kotlin.Int>> origin=null
-              receiver: GET_VAR '<this>: <root>.IdeWizard declared in <root>.IdeWizard.<set-projectTemplate>' type=<root>.IdeWizard origin=null
-            thisRef: GET_VAR '<this>: <root>.IdeWizard declared in <root>.IdeWizard.<set-projectTemplate>' type=<root>.IdeWizard origin=null
-            property: PROPERTY_REFERENCE 'public final projectTemplate: kotlin.Int?' field=null getter='public final fun <get-projectTemplate> (): kotlin.Int? declared in <root>.IdeWizard' setter='public final fun <set-projectTemplate> (<set-?>: kotlin.Int?): kotlin.Unit declared in <root>.IdeWizard' type=kotlin.reflect.KMutableProperty1<<root>.IdeWizard, kotlin.Int?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-            value: GET_VAR '<set-?>: kotlin.Int? declared in <root>.IdeWizard.<set-projectTemplate>' type=kotlin.Int? origin=null
+          RETURN type=kotlin.Nothing from='public final fun <set-projectTemplate> (<set-?>: kotlin.Int?): kotlin.Unit declared in <root>.IdeWizard'
+            CALL 'public open fun setValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of <root>.IdeWizard.setting?): kotlin.Unit declared in <root>.IdeWizard.setting.<no name provided>' type=kotlin.Unit origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:projectTemplate$delegate type:<root>.IdeWizard.setting.<no name provided><kotlin.Int, <root>.SettingType<kotlin.Int>> visibility:private [final]' type=<root>.IdeWizard.setting.<no name provided><kotlin.Int, <root>.SettingType<kotlin.Int>> origin=null
+                receiver: GET_VAR '<this>: <root>.IdeWizard declared in <root>.IdeWizard.<set-projectTemplate>' type=<root>.IdeWizard origin=null
+              thisRef: GET_VAR '<this>: <root>.IdeWizard declared in <root>.IdeWizard.<set-projectTemplate>' type=<root>.IdeWizard origin=null
+              property: PROPERTY_REFERENCE 'public final projectTemplate: kotlin.Int?' field=null getter='public final fun <get-projectTemplate> (): kotlin.Int? declared in <root>.IdeWizard' setter='public final fun <set-projectTemplate> (<set-?>: kotlin.Int?): kotlin.Unit declared in <root>.IdeWizard' type=kotlin.reflect.KMutableProperty1<*, *> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              value: GET_VAR '<set-?>: kotlin.Int? declared in <root>.IdeWizard.<set-projectTemplate>' type=kotlin.Int? origin=null
     FUN name:setting visibility:private modality:FINAL <V, T> ($this:<root>.IdeWizard, reference:<root>.SettingReference<V of <root>.IdeWizard.setting, T of <root>.IdeWizard.setting>) returnType:<root>.IdeWizard.setting.<no name provided><V of <root>.IdeWizard.setting, T of <root>.IdeWizard.setting>
       TYPE_PARAMETER name:V index:0 variance: superTypes:[kotlin.Any] reified:false
       TYPE_PARAMETER name:T index:1 variance: superTypes:[<root>.SettingType<V of <root>.IdeWizard.setting>] reified:false

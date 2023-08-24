@@ -7,36 +7,45 @@ package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
-import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.KClassValue
 
-internal fun ExpectActualMatchingContext<*>.areExpressionConstValuesEqual(
-    a: Any?,
-    b: Any?,
+internal fun ClassicExpectActualMatchingContext.areExpressionConstValuesEqual(
+    expectValue: Any?,
+    actualValue: Any?,
     collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
 ): Boolean {
     return when {
-        a is AnnotationDescriptor && b is AnnotationDescriptor -> {
-            val aArgs = a.allValueArguments
-            val bArgs = b.allValueArguments
-            a.fqName == b.fqName &&
-                    aArgs.size == bArgs.size &&
-                    areCompatibleExpectActualTypes(a.type, b.type) &&
+        expectValue is AnnotationDescriptor && actualValue is AnnotationDescriptor -> {
+            val aArgs = expectValue.allValueArguments
+            val bArgs = actualValue.allValueArguments
+            aArgs.size == bArgs.size &&
+                    areCompatibleExpectActualTypes(expectValue.type, actualValue.type) &&
                     aArgs.keys.all { k -> areExpressionConstValuesEqual(aArgs[k], bArgs[k], collectionArgumentsCompatibilityCheckStrategy) }
         }
-        a is ConstantValue<*> && b is ConstantValue<*> -> {
-            areExpressionConstValuesEqual(a.value, b.value, collectionArgumentsCompatibilityCheckStrategy)
+        expectValue is ConstantValue<*> && actualValue is ConstantValue<*> -> {
+            areExpressionConstValuesEqual(expectValue.value, actualValue.value, collectionArgumentsCompatibilityCheckStrategy)
         }
-        a is Collection<*> && b is Collection<*> -> {
-            collectionArgumentsCompatibilityCheckStrategy.areCompatible(a, b) { f, s ->
+        expectValue is Collection<*> && actualValue is Collection<*> -> {
+            collectionArgumentsCompatibilityCheckStrategy.areCompatible(expectValue, actualValue) { f, s ->
                 areExpressionConstValuesEqual(f, s, collectionArgumentsCompatibilityCheckStrategy)
             }
         }
-        a is Array<*> && b is Array<*> -> {
-            collectionArgumentsCompatibilityCheckStrategy.areCompatible(a.toList(), b.toList()) { f, s ->
+        expectValue is Array<*> && actualValue is Array<*> -> {
+            collectionArgumentsCompatibilityCheckStrategy.areCompatible(expectValue.toList(), actualValue.toList()) { f, s ->
                 areExpressionConstValuesEqual(f, s, collectionArgumentsCompatibilityCheckStrategy)
             }
         }
-        else -> a == b
+        expectValue is KClassValue.Value.NormalClass && actualValue is KClassValue.Value.NormalClass -> {
+            val expectClassIdOriginal = expectValue.classId
+            val expectClassIdPlatform = findExpandedExpectClassInPlatformModule(expectClassIdOriginal)?.classId
+            val expectValueCopy = expectValue.copy(
+                value = expectValue.value.copy(
+                    classId = expectClassIdPlatform ?: expectClassIdOriginal
+                )
+            )
+            expectValueCopy == actualValue
+        }
+        else -> expectValue == actualValue
     }
 }

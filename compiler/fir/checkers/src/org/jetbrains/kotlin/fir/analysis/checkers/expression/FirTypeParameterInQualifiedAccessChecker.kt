@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterInQualifiedAccess
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -36,7 +36,7 @@ object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessExpressionCh
         val secondLast = context.callsOrAssignments.elementAtOrNull(context.callsOrAssignments.size - 2)
         if (secondLast is FirQualifiedAccessExpression && secondLast.explicitReceiver == expression) return
 
-        val diagnostic = expression.typeRef.coneTypeParameterInQualifiedAccess ?: return
+        val diagnostic = expression.coneTypeOrNull?.coneTypeParameterInQualifiedAccess ?: return
         val source = expression.source ?: return
         reporter.reportOn(source, FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, diagnostic.symbol, context)
     }
@@ -49,7 +49,7 @@ object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessExpressionCh
         val explicitReceiver = expression.explicitReceiver
         val typeParameterSymbol =
             (explicitReceiver as? FirResolvedReifiedParameterReference)?.symbol
-                ?: explicitReceiver?.typeRef?.coneTypeParameterInQualifiedAccess?.symbol
+                ?: explicitReceiver?.coneTypeOrNull?.coneTypeParameterInQualifiedAccess?.symbol
                 ?: return
         if (expression is FirCallableReferenceAccess) {
             reporter.reportOn(expression.source, FirErrors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS, context)
@@ -58,6 +58,6 @@ object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessExpressionCh
         }
     }
 
-    private val FirTypeRef.coneTypeParameterInQualifiedAccess: ConeTypeParameterInQualifiedAccess?
-        get() = (this as? FirErrorTypeRef)?.diagnostic as? ConeTypeParameterInQualifiedAccess
+    private val ConeKotlinType.coneTypeParameterInQualifiedAccess: ConeTypeParameterInQualifiedAccess?
+        get() = (this as? ConeErrorType)?.diagnostic as? ConeTypeParameterInQualifiedAccess
 }

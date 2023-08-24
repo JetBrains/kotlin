@@ -418,6 +418,9 @@ abstract class AbstractFirStatusResolveTransformer(
         return transformDeclaration(constructor, data) as FirStatement
     }
 
+    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: FirResolvedDeclarationStatus?) =
+        transformConstructor(errorPrimaryConstructor, data)
+
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: FirResolvedDeclarationStatus?,

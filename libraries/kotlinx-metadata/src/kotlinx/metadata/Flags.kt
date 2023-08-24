@@ -16,7 +16,8 @@ import kotlinx.metadata.internal.FlagImpl
  */
 @Deprecated(
     "Flags API is deprecated and this typealias will be removed. Use Int directly and then migrate to corresponding Km nodes extensions, e.g. KmClass.visibility",
-    ReplaceWith("Int")
+    ReplaceWith("Int"),
+    DeprecationLevel.ERROR
 )
 public typealias Flags = Int
 
@@ -27,9 +28,10 @@ public typealias Flags = Int
  * hold the value of the latest flag. For example, `flagsOf(Flag.IS_PRIVATE, Flag.IS_PUBLIC, Flag.IS_INTERNAL)` is the same as
  * `flagsOf(Flag.IS_INTERNAL)`.
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @Deprecated(
     "Flags API is deprecated and this function will be removed. Create Km nodes directly and then use corresponding Km nodes extensions, e.g. KmClass.visibility",
+    level = DeprecationLevel.ERROR
 )
 public fun flagsOf(vararg flags: Flag): Int =
-    flags.fold(0) { acc, flag -> (flag as FlagImpl) + acc }
+    flags.fold(0) { acc, flag -> flag + acc }

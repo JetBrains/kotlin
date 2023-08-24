@@ -47,7 +47,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
     private fun Stack.push(
         levelName: String,
-        defaultValues: MutableList<String> = mutableListOf()
+        defaultValues: MutableList<String> = mutableListOf(),
     ) = this.add(levelName to defaultValues)
 
     private fun Stack.pop() = this.removeAt(this.size - 1)
@@ -164,7 +164,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             if (function.isLocal) stack.addName(function.name ?: ANONYMOUS_NAME)
             stack.push((function.name ?: ANONYMOUS_NAME))
             if (function.equalsToken != null) {
-                function.bodyExpression!!.firstOfTypeWithRender<FirReturnExpression>(function.equalsToken) { this.result.typeRef }
+                function.bodyExpression!!.firstOfTypeWithRender<FirReturnExpression>(function.equalsToken) { this.result.resolvedType.toFirResolvedTypeRef() }
                     ?: function.firstOfTypeWithRender<FirCallableDeclaration>(function.equalsToken) { this.returnTypeRef }
             }
             super.visitNamedFunction(function)
@@ -249,12 +249,12 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitIfExpression(expression: KtIfExpression) {
-            expression.firstOfTypeWithRender<FirWhenExpression> { this.typeRef }
+            expression.firstOfTypeWithRender<FirWhenExpression> { this.resolvedType.toFirResolvedTypeRef() }
             super.visitIfExpression(expression)
         }
 
         override fun visitWhenExpression(expression: KtWhenExpression) {
-            expression.firstOfTypeWithRender<FirWhenExpression> { this.typeRef }
+            expression.firstOfTypeWithRender<FirWhenExpression> { this.resolvedType.toFirResolvedTypeRef() }
             super.visitWhenExpression(expression)
         }
 
@@ -306,7 +306,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitWhenEntry(ktWhenEntry: KtWhenEntry) {
-            ktWhenEntry.firstOfTypeWithRender<FirWhenBranch>(ktWhenEntry.expression) { this.result.typeRef }
+            ktWhenEntry.firstOfTypeWithRender<FirWhenBranch>(ktWhenEntry.expression) { this.result.resolvedType.toFirResolvedTypeRef() }
             super.visitWhenEntry(ktWhenEntry)
         }
 
@@ -564,7 +564,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                     fir.receiverParameter?.accept(this, data)
                     data.append(".").append(callableName)
                 }
-                call.dispatchReceiver.typeRef.annotations.any { it.isExtensionFunctionAnnotationCall } -> {
+                call.dispatchReceiver.resolvedType.isExtensionFunctionType -> {
                     withExtensionFunctionType = true
                     fir.valueParameters.first().returnTypeRef.accept(this, data)
                     data.append(".").append(callableName)
@@ -786,7 +786,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: StringBuilder) {
             when (constExpression.kind) {
                 ConstantValueKind.String -> return
-                ConstantValueKind.Null -> constExpression.typeRef.accept(this, data)
+                ConstantValueKind.Null -> constExpression.resolvedType.tryToRenderConeAsFunctionType(data)
                 else -> data.append(constExpression.kind)
             }
         }
@@ -794,9 +794,9 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: StringBuilder) {
             val fir = resolvedQualifier.symbol?.fir
             when {
-                fir is FirRegularClass && fir.classKind != ClassKind.ENUM_CLASS && fir.companionObjectSymbol?.defaultType() == resolvedQualifier.typeRef.coneTypeSafe() -> {
+                fir is FirRegularClass && fir.classKind != ClassKind.ENUM_CLASS && fir.companionObjectSymbol?.defaultType() == resolvedQualifier.coneTypeSafe() -> {
                     data.append("companion object ")
-                    data.append(resolvedQualifier.typeRef.render()).append(": ")
+                    data.append(resolvedQualifier.resolvedType.toFirResolvedTypeRef().render()).append(": ")
                     data.append(fir.symbol.classId.asString().removeCurrentFilePackage())
                 }
                 fir is FirClass -> {
@@ -845,8 +845,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: StringBuilder) {
-            val name = arrayLiteral.typeRef.coneType.classId!!.shortClassName.asString()
-            val typeArguments = arrayLiteral.typeRef.coneType.typeArguments
+            val name = arrayLiteral.resolvedType.classId!!.shortClassName.asString()
+            val typeArguments = arrayLiteral.resolvedType.typeArguments
             val typeParameters = if (typeArguments.isEmpty()) "" else " <T>"
             data.append("fun$typeParameters ${name.replaceFirstChar(Char::lowercaseChar)}Of")
             typeArguments.firstOrNull()?.let {

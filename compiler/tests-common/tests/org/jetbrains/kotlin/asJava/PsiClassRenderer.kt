@@ -38,7 +38,7 @@ class PsiClassRenderer private constructor(
     }
 
     companion object {
-        var extendedTypeRenderer = false
+        var extendedTypeRenderer: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
 
         fun renderClass(
             psiClass: PsiClass,
@@ -85,7 +85,7 @@ class PsiClassRenderer private constructor(
 
     private fun PsiType.renderType() = StringBuffer().also { renderType(it) }.toString()
     private fun PsiType.renderType(sb: StringBuffer) {
-        if (extendedTypeRenderer && annotations.isNotEmpty()) {
+        if (extendedTypeRenderer.get() && annotations.isNotEmpty()) {
             sb.append(annotations.joinToString(" ", postfix = " ") { it.renderAnnotation() })
         }
         when (this) {

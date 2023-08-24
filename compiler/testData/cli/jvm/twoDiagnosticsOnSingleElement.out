@@ -1,8 +1,8 @@
 warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
-compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.kt:11:1: error: class C is not abstract and does not implement abstract member foo
+compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.kt:11:1: error: 'Class C' is not abstract and does not implement abstract member 'foo'.
 class C : I1, I2
 ^
-compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.kt:11:1: error: c inherits conflicting members: foo, foo
+compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.kt:11:1: error: 'C' inherits conflicting members: foo, foo.
 class C : I1, I2
 ^
 COMPILATION_ERROR

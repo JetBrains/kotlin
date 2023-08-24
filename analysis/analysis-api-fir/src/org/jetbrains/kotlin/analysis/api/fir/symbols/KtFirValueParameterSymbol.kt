@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.arrayElementType
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.fir.types.varargElementType
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KtFirValueParameterSymbol(
     override val firSymbol: FirValueParameterSymbol,
@@ -50,13 +48,8 @@ internal class KtFirValueParameterSymbol(
 
     override val returnType by cached {
         val returnType = firSymbol.resolvedReturnType
-        return@cached if (firSymbol.isVararg) {
-            // There SHOULD always be an array element type (even if it is an error type, e.g., unresolved).
-            val arrayElementType = returnType.arrayElementType()
-                ?: errorWithAttachment("No array element type for vararg value parameter") {
-                    withFirEntry("fir", firSymbol.fir)
-                }
-            builder.typeBuilder.buildKtType(arrayElementType)
+        if (firSymbol.isVararg) {
+            builder.typeBuilder.buildKtType(returnType.varargElementType())
         } else {
             builder.typeBuilder.buildKtType(returnType)
         }

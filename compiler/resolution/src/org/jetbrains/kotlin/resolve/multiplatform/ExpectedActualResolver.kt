@@ -46,6 +46,7 @@ object ExpectedActualResolver {
                     AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
                         expected,
                         actual,
+                        checkClassScopesCompatibility = true,
                         context
                     )
                 }
@@ -54,8 +55,38 @@ object ExpectedActualResolver {
         }
     }
 
-    // incremental compilation workaround for KT-60759
-    fun findExpectedForActual_incrementalCompilationWorkaround(
+    fun findExpectForActualClassMember(
+        actual: MemberDescriptor,
+        actualClass: ClassDescriptor,
+        expectClass: ClassDescriptor,
+        checkClassScopesCompatibility: Boolean,
+        context: ClassicExpectActualMatchingContext,
+    ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>> {
+        val candidates = with(context) {
+            expectClass.getMembersForExpectClass(actual.name)
+        }
+        return when (actual) {
+            is CallableMemberDescriptor -> {
+                matchActualCallableAgainstPotentialExpects(
+                    actual,
+                    candidates.filterIsInstance<CallableMemberDescriptor>(),
+                    actualClass,
+                    context
+                )
+            }
+            is ClassDescriptor -> {
+                matchActualClassAgainstPotentialExpects(
+                    actual,
+                    candidates.filterIsInstance<ClassifierDescriptorWithTypeParameters>(),
+                    checkClassScopesCompatibility,
+                    context
+                )
+            }
+            else -> emptyMap()
+        }
+    }
+
+    fun findExpectedForActual(
         actual: MemberDescriptor,
         moduleFilter: (ModuleDescriptor) -> Boolean = allModulesProvidingExpectsFor(actual.module),
         shouldCheckAbsenceOfDefaultParamsInActual: Boolean = false,
@@ -68,7 +99,7 @@ object ExpectedActualResolver {
                     is ClassifierDescriptorWithTypeParameters -> {
                         // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
                         val expectedClass =
-                            findExpectedForActual_incrementalCompilationWorkaround(container, moduleFilter, shouldCheckAbsenceOfDefaultParamsInActual)?.values
+                            findExpectedForActual(container, moduleFilter, shouldCheckAbsenceOfDefaultParamsInActual)?.values
                                 ?.firstOrNull()?.firstOrNull() as? ClassDescriptor
                         with(context) {
                             expectedClass?.getMembersForExpectClass(actual.name)?.filterIsInstance<CallableMemberDescriptor>().orEmpty()
@@ -78,50 +109,70 @@ object ExpectedActualResolver {
                     else -> return null // do not report anything for incorrect code, e.g. 'actual' local function
                 }
 
-                candidates.filter { declaration ->
-                    actual != declaration && declaration.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE && declaration.isExpect
-                }.groupBy { declaration ->
-                    // TODO: optimize by caching this per actual-expected class pair, do not create a new substitutor for each actual member
-                    var expectedClass: ClassDescriptor? = null
-                    var actualClass: ClassDescriptor? = null
-                    val substitutor =
-                        when (container) {
-                            is ClassDescriptor -> {
-                                actualClass = container
-                                expectedClass = declaration.containingDeclaration as ClassDescriptor
-                                // TODO: this might not work for members of inner generic classes
-                                runIf(expectedClass.declaredTypeParameters.size == container.declaredTypeParameters.size) {
-                                    context.createExpectActualTypeParameterSubstitutor(
-                                        expectedClass.declaredTypeParameters,
-                                        container.declaredTypeParameters,
-                                        parentSubstitutor = null
-                                    )
-                                }
-                            }
-                            else -> null
-                        }
-                    AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
-                        expectDeclaration = declaration,
-                        actualDeclaration = actual,
-                        parentSubstitutor = substitutor,
-                        expectContainingClass = expectedClass,
-                        actualContainingClass = actualClass,
-                        context
-                    )
-                }
+                matchActualCallableAgainstPotentialExpects(actual, candidates, container, context)
             }
             is ClassifierDescriptorWithTypeParameters -> {
-                context.findClassifiersFromModule(actual.classId, actual.module, moduleFilter).filter { declaration ->
-                    actual != declaration && declaration is ClassDescriptor && declaration.isExpect
-                }.groupBy { expected ->
-                    AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
-                        expected as ClassDescriptor,
-                        actual,
-                        context
-                    )
-                }
+                val candidates = context.findClassifiersFromModule(actual.classId, actual.module, moduleFilter)
+                matchActualClassAgainstPotentialExpects(actual, candidates, checkClassScopesCompatibility = true, context)
             }
             else -> null
+        }
+    }
+
+    private fun matchActualCallableAgainstPotentialExpects(
+        actual: CallableMemberDescriptor,
+        candidates: Collection<CallableMemberDescriptor>,
+        container: DeclarationDescriptor,
+        context: ClassicExpectActualMatchingContext,
+    ): Map<ExpectActualCompatibility<MemberDescriptor>, List<CallableMemberDescriptor>> {
+        return candidates.filter { declaration ->
+            actual != declaration && declaration.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE && declaration.isExpect
+        }.groupBy { declaration ->
+            // TODO: optimize by caching this per actual-expected class pair, do not create a new substitutor for each actual member
+            var expectedClass: ClassDescriptor? = null
+            var actualClass: ClassDescriptor? = null
+            val substitutor =
+                when (container) {
+                    is ClassDescriptor -> {
+                        actualClass = container
+                        expectedClass = declaration.containingDeclaration as ClassDescriptor
+                        // TODO: this might not work for members of inner generic classes
+                        runIf(expectedClass.declaredTypeParameters.size == container.declaredTypeParameters.size) {
+                            context.createExpectActualTypeParameterSubstitutor(
+                                expectedClass.declaredTypeParameters,
+                                container.declaredTypeParameters,
+                                parentSubstitutor = null
+                            )
+                        }
+                    }
+                    else -> null
+                }
+            AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
+                expectDeclaration = declaration,
+                actualDeclaration = actual,
+                parentSubstitutor = substitutor,
+                expectContainingClass = expectedClass,
+                actualContainingClass = actualClass,
+                context
+            )
+        }
+    }
+
+    private fun matchActualClassAgainstPotentialExpects(
+        actual: ClassifierDescriptorWithTypeParameters,
+        candidates: Collection<ClassifierDescriptorWithTypeParameters>,
+        checkClassScopesCompatibility: Boolean,
+        context: ClassicExpectActualMatchingContext,
+    ): Map<ExpectActualCompatibility<MemberDescriptor>, List<ClassifierDescriptorWithTypeParameters>> {
+        return candidates.filter { declaration ->
+            actual != declaration && declaration is ClassDescriptor && declaration.isExpect
+        }.groupBy { expected ->
+            AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
+                expected as ClassDescriptor,
+                actual,
+                checkClassScopesCompatibility,
+                context
+            )
         }
     }
 
@@ -184,7 +235,7 @@ fun MemberDescriptor.findAnyActualsForExpected(
 fun MemberDescriptor.findCompatibleExpectsForActual(
     moduleFilter: ModuleFilter = allModulesProvidingExpectsFor(module)
 ): List<MemberDescriptor> =
-    ExpectedActualResolver.findExpectedForActual_incrementalCompilationWorkaround(this, moduleFilter)?.get(Compatible).orEmpty()
+    ExpectedActualResolver.findExpectedForActual(this, moduleFilter)?.get(Compatible).orEmpty()
 
 fun DeclarationDescriptor.findExpects(): List<MemberDescriptor> {
     if (this !is MemberDescriptor) return emptyList()

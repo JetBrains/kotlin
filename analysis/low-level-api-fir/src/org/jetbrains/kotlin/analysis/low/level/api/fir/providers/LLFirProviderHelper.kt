@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.getNotNullValueForNotNullContext
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.CompositeKotlinPackageProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
@@ -115,7 +116,7 @@ internal class LLFirProviderHelper(
     ): FirClassLikeDeclaration? {
         if (classId.isLocal) return null
         if (!allowKotlinPackage && classId.isKotlinPackage()) return null
-        return classifierByClassId.getValue(classId, classLikeDeclaration)
+        return classifierByClassId.getNotNullValueForNotNullContext(classId, classLikeDeclaration)
     }
 
     fun getTopLevelClassNamesInPackage(packageFqName: FqName): Set<Name> {

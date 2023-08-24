@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 
 enum class E() {
@@ -35,36 +36,36 @@ fun box() {
 // but not for the allocation of the object.
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:22 box
-// EXPECTATIONS JVM_IR
-// test.kt:4 <clinit>
-// test.kt:5 <clinit>
-// EXPECTATIONS JVM JVM_IR
-// test.kt:7 foo
-// test.kt:9 foo
-// test.kt:22 box
 // test.kt:23 box
-// test.kt:15 <clinit>
 // EXPECTATIONS JVM_IR
-// test.kt:16 <clinit>
+// test.kt:5 <clinit>
+// test.kt:6 <clinit>
 // EXPECTATIONS JVM JVM_IR
-// test.kt:17 <clinit>
-// test.kt:16 <clinit>
+// test.kt:8 foo
+// test.kt:10 foo
+// test.kt:23 box
 // test.kt:24 box
+// test.kt:16 <clinit>
+// EXPECTATIONS JVM_IR
+// test.kt:17 <clinit>
+// EXPECTATIONS JVM JVM_IR
+// test.kt:18 <clinit>
+// test.kt:17 <clinit>
+// test.kt:25 box
 
 // EXPECTATIONS JS_IR
-// test.kt:22 box
-// test.kt:11 <init>
-// test.kt:3 <init>
-// test.kt:11 <init>
-// test.kt:3 <init>
-// test.kt:22 box
-// test.kt:9 foo
-// test.kt:7 E$foo$lambda
-// test.kt:15 E2_initEntries
-// test.kt:14 <init>
-// test.kt:14 <init>
-// test.kt:17 E2_initEntries
-// test.kt:14 <init>
-// test.kt:14 <init>
-// test.kt:24 box
+// test.kt:23 box
+// test.kt:12 <init>
+// test.kt:4 <init>
+// test.kt:12 <init>
+// test.kt:4 <init>
+// test.kt:23 box
+// test.kt:10 foo
+// test.kt:8 E$foo$lambda
+// test.kt:16 E2_initEntries
+// test.kt:15 <init>
+// test.kt:15 <init>
+// test.kt:18 E2_initEntries
+// test.kt:15 <init>
+// test.kt:15 <init>
+// test.kt:25 box

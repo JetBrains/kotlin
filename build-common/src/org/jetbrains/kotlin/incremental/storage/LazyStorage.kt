@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
-interface LazyStorage<K, V> {
+import java.io.Closeable
+
+interface LazyStorage<K, V> : Closeable {
     val keys: Collection<K>
     operator fun contains(key: K): Boolean
     operator fun get(key: K): V?
@@ -24,7 +26,7 @@ interface LazyStorage<K, V> {
     fun remove(key: K)
     fun clean()
     fun flush(memoryCachesOnly: Boolean)
-    fun close()
+    override fun close()
 }
 
 interface AppendableLazyStorage<K, V> : LazyStorage<K, V> {

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // WITH_STDLIB
 package test
 

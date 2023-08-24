@@ -18,9 +18,10 @@ import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirEqualityOperatorCallImpl
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.name.StandardClassIds
 
 /*
  * This file was generated automatically
@@ -44,8 +45,8 @@ class FirEqualityOperatorCallBuilder : FirAnnotationContainerBuilder, FirExpress
     }
 
 
-    @Deprecated("Modification of 'typeRef' has no impact for FirEqualityOperatorCallBuilder", level = DeprecationLevel.HIDDEN)
-    override var typeRef: FirTypeRef
+    @Deprecated("Modification of 'coneTypeOrNull' has no impact for FirEqualityOperatorCallBuilder", level = DeprecationLevel.HIDDEN)
+    override var coneTypeOrNull: ConeKotlinType?
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()

@@ -1,3 +1,12 @@
+/**
+ * public final class AnotherRootClass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class AnotherRootClass {
 
@@ -9,6 +18,15 @@ public final class AnotherRootClass {
 ////////////////////
 
 
+/**
+ * public final class RootClass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class RootClass {
 
@@ -21,6 +39,12 @@ public final class RootClass {
 
 package test;
 
+/**
+ * multi-file class {
+ *   // test/M1__BKt
+ *   // test/M1__CKt
+ * }
+ */
 @kotlin.Metadata()
 public final class M1 {
 

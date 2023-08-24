@@ -93,7 +93,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             fields from functionCall
         }
 
-        for (constructorType in listOf("FirPrimaryConstructor", "FirConstructorImpl", "FirErrorConstructor")) {
+        for (constructorType in listOf("FirPrimaryConstructor", "FirConstructorImpl")) {
             builder(constructor, constructorType) {
                 parents += abstractConstructorBuilder
                 defaultNull("delegatedConstructor")
@@ -101,6 +101,14 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
                 default("contractDescription", "FirEmptyContractDescription")
                 useTypes(emptyContractDescriptionType)
             }
+        }
+
+        builder(errorPrimaryConstructor) {
+            parents += abstractConstructorBuilder
+            defaultNull("delegatedConstructor")
+            defaultNull("body")
+            default("contractDescription", "FirEmptyContractDescription")
+            useTypes(emptyContractDescriptionType)
         }
 
         builder(constructor, "FirConstructorImpl") {
@@ -285,8 +293,9 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             default("inlineStatus", "InlineStatus.Unknown")
             default("contractDescription", "FirEmptyContractDescription")
             default("status", "FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS")
+            default("typeRef", "FirImplicitTypeRefImplWithoutSource")
             withCopy()
-            useTypes(emptyContractDescriptionType, resolvedDeclarationStatusImport)
+            useTypes(emptyContractDescriptionType, resolvedDeclarationStatusImport, firImplicitTypeWithoutSourceType)
         }
 
         builder(propertyAccessor) {
@@ -305,7 +314,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(resolvedTypeRef) {
             defaultNull("delegatedTypeRef")
-            default("isFromStubType", "false")
             withCopy()
         }
 
@@ -383,12 +391,12 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(resolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
-            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified")
+            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue")
         }
 
         builder(errorResolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
-            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified")
+            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue")
         }
 
 //        builder(safeCallExpression) {
@@ -402,37 +410,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 //        builder(whenSubjectExpression) {
 //            useTypes(whenExpressionType)
 //        }
-
-        val elementsWithDefaultTypeRef = listOf(
-            thisReceiverExpression,
-            callableReferenceAccess,
-            propertyAccessExpression,
-            functionCall,
-            anonymousFunction,
-            whenExpression,
-            tryExpression,
-            checkNotNullCall,
-            resolvedQualifier,
-            resolvedReifiedParameterReference,
-            expression to "FirExpressionStub",
-            varargArgumentsExpression,
-            checkedSafeCallSubject,
-            safeCallExpression,
-            arrayLiteral,
-            classReferenceExpression,
-            getClassCall
-        )
-        elementsWithDefaultTypeRef.forEach {
-            val (element, name) = when (it) {
-                is Pair<*, *> -> it.first as Element to it.second as String
-                is Element -> it to null
-                else -> throw IllegalArgumentException()
-            }
-            builder(element, name) {
-                default("typeRef", "FirImplicitTypeRefImplWithoutSource")
-                useTypes(firImplicitTypeWithoutSourceType)
-            }
-        }
 
         noBuilder(constExpression)
 

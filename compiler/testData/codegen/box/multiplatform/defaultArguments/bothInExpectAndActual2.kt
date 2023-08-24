@@ -1,4 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
+// WITH_STDLIB
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND_K2: ANY
 // FIR status: outdated code (expect and actual in the same module)
@@ -20,6 +21,8 @@ actual interface I {
     actual fun test(source: String = "actual")
 }
 
+@OptIn(ExperimentalMultiplatform::class)
+@AllowDifferentMembersInActual
 actual interface J : I {
     override fun test(source: String) {
         if (source != "actual") throw AssertionError(source)

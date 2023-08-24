@@ -40,6 +40,12 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
         }
 
         @Test
+        @TestMetadata("mixingComposableAndNormalFunctions.kt")
+        public void testMixingComposableAndNormalFunctions() throws Exception {
+            runTest("plugins/fir-plugin-prototype/testData/diagnostics/checkers/mixingComposableAndNormalFunctions.kt");
+        }
+
+        @Test
         @TestMetadata("signedNumbersCheckers.kt")
         public void testSignedNumbersCheckers() throws Exception {
             runTest("plugins/fir-plugin-prototype/testData/diagnostics/checkers/signedNumbersCheckers.kt");

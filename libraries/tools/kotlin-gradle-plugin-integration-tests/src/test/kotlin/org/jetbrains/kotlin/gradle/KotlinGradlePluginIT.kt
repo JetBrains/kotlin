@@ -768,4 +768,38 @@ class KotlinGradleIT : KGPBaseTest() {
             build(":consumer:aggregate")
         }
     }
+
+    @DisplayName("KT-61273: task output backup works correctly if the first output is absent")
+    @GradleTest
+    fun taskOutputBackupWorksIfFirstOutputIsAbsent(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion) {
+            buildGradle.append(
+                //language=Gradle
+                """
+                tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configure {
+                    Provider<Directory> dir = project.layout.buildDirectory.dir(".a") // name it that's way so it will be the first output in an ordered set
+                    outputs.dir(dir)
+                    doFirst {
+                        dir.get().getAsFile().delete()
+                    }
+                }
+                """.trimIndent()
+            )
+
+            build("compileKotlin") {
+                assertTasksExecuted(":compileKotlin")
+            }
+
+            kotlinSourcesDir().resolve("Dummy.kt").append(
+                """
+                fun foo() {}
+                """.trimIndent()
+            )
+
+
+            build("compileKotlin") {
+                assertTasksExecuted(":compileKotlin")
+            }
+        }
+    }
 }

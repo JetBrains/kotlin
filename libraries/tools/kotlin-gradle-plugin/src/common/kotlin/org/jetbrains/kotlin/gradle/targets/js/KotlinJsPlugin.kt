@@ -92,5 +92,9 @@ open class KotlinJsPlugin: Plugin<Project> {
         // Also create predefined source sets
         kotlinExtension.sourceSets.maybeCreate(MAIN_COMPILATION_NAME)
         kotlinExtension.sourceSets.maybeCreate(TEST_COMPILATION_NAME)
+
+        kotlinExtension.registerTargetObserver { target ->
+            target?.compilerOptions?.configureExperimentalTryK2(project)
+        }
     }
 }

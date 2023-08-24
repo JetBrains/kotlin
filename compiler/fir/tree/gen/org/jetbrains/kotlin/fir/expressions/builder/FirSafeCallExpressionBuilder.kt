@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirSafeCallExpressionImpl
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -32,7 +31,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirSafeCallExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource
+    override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var receiver: FirExpression
     lateinit var checkedSubjectRef: FirExpressionRef<FirCheckedSafeCallSubject>
@@ -41,7 +40,7 @@ class FirSafeCallExpressionBuilder : FirAnnotationContainerBuilder, FirExpressio
     override fun build(): FirSafeCallExpression {
         return FirSafeCallExpressionImpl(
             source,
-            typeRef,
+            coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             receiver,
             checkedSubjectRef,

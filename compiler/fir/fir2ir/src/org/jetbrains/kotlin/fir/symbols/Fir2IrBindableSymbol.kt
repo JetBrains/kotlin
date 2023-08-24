@@ -10,15 +10,17 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrDeclaration>(
     override val signature: IdSignature,
 ) : IrBindableSymbol<D, B> {
 
     private var _owner: B? = null
+
+    @IrSymbolInternals
     override val owner: B
         get() = _owner ?: throw IllegalStateException("Symbol is unbound")
 
@@ -33,6 +35,7 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrDeclara
     override val isBound: Boolean
         get() = _owner != null
 
+    @OptIn(IrSymbolInternals::class)
     @ObsoleteDescriptorBasedAPI
     override val descriptor: D
         @Suppress("UNCHECKED_CAST")
@@ -44,6 +47,7 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrDeclara
 
     override var privateSignature: IdSignature? = null
 
+    @OptIn(IrSymbolInternals::class)
     override fun toString(): String {
         if (isBound) return owner.render()
         return "Unbound public symbol for $signature"

@@ -1,0 +1,15 @@
+MODULE_FRAGMENT name:<Sources of main>
+  FILE fqName:<root> fileName:/fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL <> (p0:<root>.Ctx1, p1:<root>.Ctx2) returnType:kotlin.Int
+        VALUE_PARAMETER name:p0 index:0 type:<root>.Ctx1
+        VALUE_PARAMETER name:p1 index:1 type:<root>.Ctx2
+        EXPRESSION_BODY
+          BLOCK type=kotlin.Int origin=null
+            CALL 'public final fun useWithCtx1Ctx2 ($context_receiver_0: <root>.Ctx1, $context_receiver_1: <root>.Ctx2): kotlin.Int declared in <root>.MultipleFunctionContextReceiversKt' type=kotlin.Int origin=null
+              $context_receiver_0: GET_VAR 'p0: <root>.Ctx1 declared in <root>.CodeFragment.run' type=<root>.Ctx1 origin=null
+              $context_receiver_1: GET_VAR 'p1: <root>.Ctx2 declared in <root>.CodeFragment.run' type=<root>.Ctx2 origin=null

@@ -122,36 +122,55 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
     }
 
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {
-        if (Visibilities.isPrivate(baseDeclaration.visibility)) return false
+        return isOverriddenFunction(overrideCandidate, baseDeclaration, ignoreVisibility = false)
+    }
 
+    fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction, ignoreVisibility: Boolean): Boolean {
         if (overrideCandidate.valueParameters.size != baseDeclaration.valueParameters.size) return false
 
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
 
-        overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
-        baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
-        if (!isEqualReceiverTypes(
-                overrideCandidate.receiverParameter?.typeRef,
-                baseDeclaration.receiverParameter?.typeRef,
-                substitutor,
-            )
-        ) return false
+        if (!commonCallableChecks(overrideCandidate, baseDeclaration, substitutor, ignoreVisibility)) return false
 
         return overrideCandidate.valueParameters.zip(baseDeclaration.valueParameters).all { (memberParam, selfParam) ->
             isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef, substitutor)
         }
     }
 
-    override fun isOverriddenProperty(
-        overrideCandidate: FirCallableDeclaration,
-        baseDeclaration: FirProperty
-    ): Boolean {
-        if (Visibilities.isPrivate(baseDeclaration.visibility)) return false
+    override fun isOverriddenProperty(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirProperty): Boolean {
+        return isOverriddenProperty(overrideCandidate, baseDeclaration, ignoreVisibility = false)
+    }
 
+    fun isOverriddenProperty(
+        overrideCandidate: FirCallableDeclaration,
+        baseDeclaration: FirProperty,
+        ignoreVisibility: Boolean,
+    ): Boolean {
         if (overrideCandidate !is FirProperty) return false
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
+        return commonCallableChecks(overrideCandidate, baseDeclaration, substitutor, ignoreVisibility)
+    }
+
+    private fun FirStandardOverrideChecker.commonCallableChecks(
+        overrideCandidate: FirCallableDeclaration,
+        baseDeclaration: FirCallableDeclaration,
+        substitutor: ConeSubstitutor,
+        // Overload-ability is used to filter out equivalent calls (see ConeEquivalentCallConflictResolver) in which case visibility
+        // must be ignored.
+        ignoreVisibility: Boolean,
+    ): Boolean {
+        if (!ignoreVisibility && Visibilities.isPrivate(baseDeclaration.visibility)) return false
+        if (overrideCandidate.contextReceivers.size != baseDeclaration.contextReceivers.size) return false
+
         overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
-        return isEqualReceiverTypes(overrideCandidate.receiverParameter?.typeRef, baseDeclaration.receiverParameter?.typeRef, substitutor)
+
+        return isEqualReceiverTypes(
+            overrideCandidate.receiverParameter?.typeRef,
+            baseDeclaration.receiverParameter?.typeRef,
+            substitutor
+        ) && overrideCandidate.contextReceivers.zip(baseDeclaration.contextReceivers).all { (memberParam, selfParam) ->
+            isEqualTypes(memberParam.typeRef, selfParam.typeRef, substitutor)
+        }
     }
 }

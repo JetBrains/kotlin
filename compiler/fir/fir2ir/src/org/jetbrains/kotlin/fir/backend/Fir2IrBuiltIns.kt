@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -79,6 +80,7 @@ class Fir2IrBuiltIns(
         return session.symbolProvider.getClassLikeSymbolByClassId(id) as? FirRegularClassSymbol
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun IrClassSymbol.toConstructorCall(firSymbol: FirRegularClassSymbol? = null): IrConstructorCallImpl? {
         val constructorSymbol = if (firSymbol == null) {
             owner.declarations.firstIsInstance<IrConstructor>().symbol

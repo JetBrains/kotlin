@@ -119,6 +119,12 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGene
     }
 
     @Test
+    @TestMetadata("unusedObject_invokeOperator.kt")
+    public void testUnusedObject_invokeOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedObject_invokeOperator.kt");
+    }
+
+    @Test
     @TestMetadata("unusedStaticFunctionImportFromJavaChildClass.kt")
     public void testUnusedStaticFunctionImportFromJavaChildClass() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedStaticFunctionImportFromJavaChildClass.kt");
@@ -215,6 +221,12 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGene
     }
 
     @Test
+    @TestMetadata("usedObject_invokeOperator.kt")
+    public void testUsedObject_invokeOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedObject_invokeOperator.kt");
+    }
+
+    @Test
     @TestMetadata("usedStaticFunctionImportFromJavaChildClass.kt")
     public void testUsedStaticFunctionImportFromJavaChildClass() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedStaticFunctionImportFromJavaChildClass.kt");
@@ -239,6 +251,18 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGene
         @Test
         public void testAllFilesPresentInReferencesWithErrors() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("ambiguousFunction.kt")
+        public void testAmbiguousFunction() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/ambiguousFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("missingFunctionCall.kt")
+        public void testMissingFunctionCall() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/missingFunctionCall.kt");
         }
 
         @Test

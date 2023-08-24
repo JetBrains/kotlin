@@ -28,6 +28,17 @@ internal abstract class LLFirTargetResolver(
 
     val nestedClassesStack: List<FirRegularClass> get() = _nestedClassesStack.toList()
 
+    /**
+     * Must be executed without a lock
+     */
+    protected fun resolveFileAnnotationContainerIfNeeded(elementWithResolveState: FirElementWithResolveState) {
+        if (elementWithResolveState !is FirFile) return
+        val annotationContainer = elementWithResolveState.annotationsContainer ?: return
+        withFile(elementWithResolveState) {
+            performResolve(annotationContainer)
+        }
+    }
+
     protected open fun withFile(firFile: FirFile, action: () -> Unit) {
         action()
     }
@@ -50,7 +61,11 @@ internal abstract class LLFirTargetResolver(
 
     protected open fun checkResolveConsistency() {}
 
-    protected open fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean = false
+    protected open fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
+        resolveFileAnnotationContainerIfNeeded(target)
+        return false
+    }
+
     protected abstract fun doLazyResolveUnderLock(target: FirElementWithResolveState)
 
     fun resolveDesignation() {

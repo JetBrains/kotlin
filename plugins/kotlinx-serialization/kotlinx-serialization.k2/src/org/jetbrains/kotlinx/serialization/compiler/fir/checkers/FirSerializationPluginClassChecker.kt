@@ -175,8 +175,8 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             this is FirConstExpression<*> && other is FirConstExpression<*> -> kind == other.kind && value == other.value
             this is FirGetClassCall && other is FirGetClassCall -> AbstractTypeChecker.equalTypes(
                 session.typeContext,
-                typeRef.coneType,
-                other.typeRef.coneType
+                resolvedType,
+                other.resolvedType
             )
 
             this is FirPropertyAccessExpression && other is FirPropertyAccessExpression ->

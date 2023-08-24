@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidBaseSourceSetName
@@ -33,14 +34,11 @@ internal const val KOTLIN_STDLIB_MODULE_NAME = "kotlin-stdlib"
 internal const val KOTLIN_STDLIB_JDK7_MODULE_NAME = "kotlin-stdlib-jdk7"
 internal const val KOTLIN_STDLIB_JDK8_MODULE_NAME = "kotlin-stdlib-jdk8"
 internal const val KOTLIN_STDLIB_JS_MODULE_NAME = "kotlin-stdlib-js"
-internal const val KOTLIN_STDLIB_WASM_JS_MODULE_NAME = "kotlin-stdlib-wasm-js"
-internal const val KOTLIN_STDLIB_WASM_WASI_MODULE_NAME = "kotlin-stdlib-wasm-wasi"
-
 internal const val KOTLIN_ANDROID_JVM_STDLIB_MODULE_NAME = KOTLIN_STDLIB_MODULE_NAME
 
 internal fun Project.configureStdlibDefaultDependency(
     topLevelExtension: KotlinTopLevelExtension,
-    coreLibrariesVersion: Provider<String>
+    coreLibrariesVersion: Provider<String>,
 ) {
     when (topLevelExtension) {
         is KotlinJsProjectExtension -> topLevelExtension.registerTargetObserver { target ->
@@ -98,7 +96,7 @@ internal fun ConfigurationContainer.configureStdlibVersionAlignment() = all { co
 }
 
 private fun Configuration.alignStdlibJvmVariantVersions(
-    kotlinStdlibDependency: ExternalDependency
+    kotlinStdlibDependency: ExternalDependency,
 ) {
     resolutionStrategy.dependencySubstitution {
         if (kotlinStdlibDependency.name != KOTLIN_STDLIB_JDK7_MODULE_NAME) {
@@ -120,11 +118,9 @@ private fun KotlinTarget.addStdlibDependency(
     isMppProject: Boolean,
 ) {
     compilations.configureEach { compilation ->
-        compilation.allKotlinSourceSets.forEach { kotlinSourceSet ->
+        compilation.internal.kotlinSourceSets.forAll { kotlinSourceSet ->
             val scope = if (compilation.isTest() ||
-                (this is KotlinAndroidTarget &&
-                        kotlinSourceSet.isRelatedToAndroidTestSourceSet()
-                        )
+                (this is KotlinAndroidTarget && kotlinSourceSet.isRelatedToAndroidTestSourceSet())
             ) {
                 KotlinDependencyScope.IMPLEMENTATION_SCOPE
             } else {
@@ -135,7 +131,13 @@ private fun KotlinTarget.addStdlibDependency(
 
             scopeConfiguration.withDependencies { dependencySet ->
                 // Check if stdlib is directly added to SourceSet
-                if (isStdlibAddedByUser(configurations, stdlibModules, kotlinSourceSet)) return@withDependencies
+                /*
+                In case of 'kotlin-stdlib-common being added: Ensure that stdlib is added also
+                This will help with substituting kotlin-stdlib-common with kotlin-stdlib:
+                Currently transformed metadata dependencies will not recognise the substitution otherwise.
+                */
+                if (isStdlibAddedByUser(configurations, stdlibModules - KOTLIN_STDLIB_COMMON_MODULE_NAME, kotlinSourceSet))
+                    return@withDependencies
 
                 val requestedStdlibVersion = coreLibrariesVersion.get()
                 val stdlibVersion = SemVer.fromGradleRichVersion(requestedStdlibVersion)
@@ -144,23 +146,11 @@ private fun KotlinTarget.addStdlibDependency(
                 // except standalone compilations which as not using 'common'
                 if (isMppProject &&
                     stdlibVersion >= kotlin1920Version &&
-                    (compilation.platformType != KotlinPlatformType.common && compilation.platformType != KotlinPlatformType.wasm) &&
-                    kotlinSourceSet.hasDependencyOnCommon()
+                    kotlinSourceSet.dependsOn.isNotEmpty()
                 ) return@withDependencies
 
-                val stdlibModule = compilation
-                    .platformType
-                    .stdlibPlatformType(this, kotlinSourceSet, stdlibVersion >= kotlin1920Version)
+                val stdlibModule = compilation.platformType.stdlibPlatformType(this, kotlinSourceSet, stdlibVersion >= kotlin1920Version)
                     ?: return@withDependencies
-
-                // Check if stdlib module is added to SourceSets hierarchy
-                if (
-                    isStdlibAddedByUser(
-                        configurations,
-                        setOf(stdlibModule),
-                        *kotlinSourceSet.internal.dependsOnClosure.toTypedArray()
-                    )
-                ) return@withDependencies
 
                 dependencySet.addLater(
                     coreLibrariesVersion.map {
@@ -172,15 +162,10 @@ private fun KotlinTarget.addStdlibDependency(
     }
 }
 
-internal fun KotlinSourceSet.hasDependencyOnCommon(): Boolean = dependsOn
-    .any { sourceSet ->
-        sourceSet.internal.compilations.any { it.platformType == KotlinPlatformType.common }
-    }
-
 internal fun isStdlibAddedByUser(
     configurations: ConfigurationContainer,
     stdlibModules: Set<String>,
-    vararg sourceSets: KotlinSourceSet
+    vararg sourceSets: KotlinSourceSet,
 ): Boolean {
     return sourceSets
         .asSequence()
@@ -198,7 +183,7 @@ internal fun isStdlibAddedByUser(
 internal fun KotlinPlatformType.stdlibPlatformType(
     kotlinTarget: KotlinTarget,
     kotlinSourceSet: KotlinSourceSet,
-    isVersionWithGradleMetadata: Boolean
+    isVersionWithGradleMetadata: Boolean,
 ): String? = when (this) {
     KotlinPlatformType.jvm -> if (isVersionWithGradleMetadata) KOTLIN_STDLIB_MODULE_NAME else KOTLIN_STDLIB_JDK8_MODULE_NAME
     KotlinPlatformType.androidJvm -> {
@@ -212,12 +197,7 @@ internal fun KotlinPlatformType.stdlibPlatformType(
     }
 
     KotlinPlatformType.js -> if (isVersionWithGradleMetadata) KOTLIN_STDLIB_MODULE_NAME else KOTLIN_STDLIB_JS_MODULE_NAME
-    KotlinPlatformType.wasm -> {
-        when ((kotlinTarget as KotlinJsIrTarget).wasmTargetType!!) {
-            KotlinWasmTargetType.JS -> KOTLIN_STDLIB_WASM_JS_MODULE_NAME
-            KotlinWasmTargetType.WASI -> KOTLIN_STDLIB_WASM_WASI_MODULE_NAME
-        }
-    }
+    KotlinPlatformType.wasm -> KOTLIN_STDLIB_MODULE_NAME
     KotlinPlatformType.native -> null
     KotlinPlatformType.common -> // there's no platform compilation that the source set is default for
         if (isVersionWithGradleMetadata) KOTLIN_STDLIB_MODULE_NAME else KOTLIN_STDLIB_COMMON_MODULE_NAME

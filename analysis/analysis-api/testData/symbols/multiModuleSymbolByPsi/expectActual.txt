@@ -232,7 +232,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-  hasBackingField: true
+  hasBackingField: false
   hasGetter: true
   hasSetter: false
   initializer: null
@@ -381,7 +381,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-  hasBackingField: true
+  hasBackingField: false
   hasGetter: true
   hasSetter: true
   initializer: null

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirWrappedDelegateExpressionImpl
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -42,8 +42,8 @@ class FirWrappedDelegateExpressionBuilder : FirAnnotationContainerBuilder, FirEx
     }
 
 
-    @Deprecated("Modification of 'typeRef' has no impact for FirWrappedDelegateExpressionBuilder", level = DeprecationLevel.HIDDEN)
-    override var typeRef: FirTypeRef
+    @Deprecated("Modification of 'coneTypeOrNull' has no impact for FirWrappedDelegateExpressionBuilder", level = DeprecationLevel.HIDDEN)
+    override var coneTypeOrNull: ConeKotlinType?
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()

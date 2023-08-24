@@ -27,7 +27,6 @@ class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val type: ConeKotlinType,
     override var delegatedTypeRef: FirTypeRef?,
-    override val isFromStubType: Boolean,
 ) : FirResolvedTypeRef() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

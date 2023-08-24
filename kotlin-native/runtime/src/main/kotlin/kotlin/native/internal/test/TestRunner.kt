@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -11,20 +11,39 @@ import kotlin.text.StringBuilder
 import kotlin.time.TimeSource
 import kotlin.time.measureTime
 
-@OptIn(kotlin.time.ExperimentalTime::class)
+/**
+ * Test execution settings.
+ */
 @ExperimentalNativeApi
-internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
-    private val filters = mutableListOf<(TestCase) -> Boolean>()
-    private val listeners = mutableSetOf<TestListener>()
-    private var logger: TestLogger = GTestLogger()
-    private var runTests = true
-    private var useExitCode = true
-    var iterations = 1
-        private set
-    var exitCode = 0
-        private set
+internal data class TestSettings(
+        val testSuites: List<TestSuite>,
+        val listeners: Set<TestListener>,
+        val logger: TestLogger,
+        val runTests: Boolean,
+        val iterations: Int,
+        val useExitCode: Boolean
+)
 
-    init {
+/**
+ *  Test processor that initializes the [TestSettings] using the command line options passed in [args].
+ *
+ *  See the [help] for the description of arguments
+ */
+@ExperimentalNativeApi
+internal class TestProcessor(val suites: List<TestSuite>, val args: Array<String>) {
+    /**
+     * Processes given arguments to set test settings and filter tests to be run
+     *
+     * @see TestSettings
+     */
+    fun process(): TestSettings {
+        val listeners = mutableSetOf<TestListener>()
+        val filters = mutableListOf<TestFilter>()
+        var logger: TestLogger = GTestLogger()
+        var runTests = true
+        var useExitCode = true
+        var iterations = 1
+
         args.filter {
             it.startsWith("--gtest_") || it.startsWith("--ktest_") || it == "--help" || it == "-h"
         }.forEach {
@@ -33,11 +52,13 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
                 1 -> when (arg[0]) {
                     "--gtest_list_tests",
                     "--ktest_list_tests" -> {
-                        logger.logTestList(this, filterSuites()); runTests = false
+                        logger.logTestList(suites.filterWith(filters))
+                        runTests = false
                     }
                     "-h",
                     "--help" -> {
-                        logger.log(help); runTests = false
+                        logger.log(help)
+                        runTests = false
                     }
                     "--ktest_no_exit_code" -> useExitCode = false
                     else -> throw IllegalArgumentException("Unknown option: $it\n$help")
@@ -46,70 +67,28 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
                     val key = arg[0]
                     val value = arg[1]
                     when (key) {
-                        "--ktest_logger" -> setLoggerFromArg(value)
+                        "--ktest_logger" -> logger = loggerFromArg(value)
                         "--gtest_filter",
-                        "--ktest_filter" -> setGTestFilterFromArg(value)
-                        "--ktest_regex_filter" -> setRegexFilterFromArg(value, true)
-                        "--ktest_negative_regex_filter" -> setRegexFilterFromArg(value, false)
-                        "--ktest_gradle_filter" -> setGradleFilterFromArg(value, true)
-                        "--ktest_negative_gradle_filter" -> setGradleFilterFromArg(value, false)
+                        "--ktest_filter" -> filters.add(gTestFilterFromArg(value))
+                        "--ktest_regex_filter" -> filters.add(regexFilterFromArg(value, true))
+                        "--ktest_negative_regex_filter" -> filters.add(regexFilterFromArg(value, false))
+                        "--ktest_gradle_filter" -> filters.add(gradleFilterFromArg(value, true))
+                        "--ktest_negative_gradle_filter" -> filters.add(gradleFilterFromArg(value, false))
                         "--ktest_repeat",
-                        "--gtest_repeat" -> iterations = value.toIntOrNull() ?: throw IllegalArgumentException("Cannot parse number: $value")
+                        "--gtest_repeat" ->
+                            iterations = value.toIntOrNull() ?: throw IllegalArgumentException("Cannot parse number: $value")
                         else -> throw IllegalArgumentException("Unknown option: $it\n$help")
                     }
                 }
                 else -> throw IllegalArgumentException("Unknown option: $it\n$help")
             }
         }
+        val testSuites = suites.filterWith(filters).toList()
+
+        return TestSettings(testSuites, listeners, logger, runTests, iterations, useExitCode)
     }
 
-    inner class FilteredSuite(val innerSuite: TestSuite) : TestSuite by innerSuite {
-
-        private val TestCase.matchFilters: Boolean
-            get() = filters.all { it(this) }
-
-        override val size: Int
-            get() = testCases.size
-
-        override val testCases: Map<String, TestCase> = innerSuite.testCases.filter { it.value.matchFilters }
-        override fun toString() = innerSuite.toString()
-    }
-
-    private fun filterSuites(): Collection<TestSuite> = suites.map { FilteredSuite(it) }
-
-    // TODO: Support short aliases.
-    // TODO: Support several test iterations.
-    /**
-     *  Initialize the TestRunner using the command line options passed in [args].
-     *  Returns: true if tests may be ran, false otherwise (there are unrecognized options or just help).
-     *  The following options are available:
-     *
-     *  --gtest_list_tests
-     *  --ktest_list_tests                                  - Show all available tests.
-     *
-     *  --gtest_filter=POSITIVE_PATTERNS[-NEGATIVE_PATTERNS]
-     *  --ktest_filter=POSITIVE_PATTERNS[-NEGATIVE_PATTERNS] - Run only the tests whose name matches one of the
-     *                                                        positive patterns but none of the negative patterns.
-     *                                                        '?' matches any single character; '*' matches any
-     *                                                        substring; ':' separates two patterns.
-     *
-     *  --ktest_regex_filter=PATTERN                        - Run only the tests whose name matches the pattern.
-     *                                                        The pattern is a Kotlin regular expression.
-     *
-     *  --ktest_negative_regex_filter=PATTERN               - Run only the tests whose name doesn't match the pattern.
-     *                                                        The pattern is a Kotlin regular expression.
-     *
-     *  --gtest_repeat=COUNT
-     *  --ktest_repeat=COUNT                                - Run the tests repeatedly.
-     *                                                        Use a negative count to repeat forever.
-     *
-     *  --ktest_logger=GTEST|TEAMCITY|SIMPLE|SILENT         - Use the specified output format. The default one is GTEST.
-     *
-     *  --ktest_no_exit_code                                - Don't return a non-zero exit code if there are failing tests.
-     */
-
-    private fun String.substringEscaped(range: IntRange) =
-            this.substring(range).let { if (it.isNotEmpty()) Regex.escape(it) else "" }
+    private fun String.substringEscaped(range: IntRange) = this.substring(range).let { if (it.isNotEmpty()) Regex.escape(it) else "" }
 
     private fun String.toGTestPatterns() = splitToSequence(':').map { pattern ->
         val result = StringBuilder()
@@ -125,7 +104,9 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
         return@map result.toString().toRegex()
     }.toList()
 
-    private fun setGTestFilterFromArg(filter: String) {
+    // region filters
+
+    private fun gTestFilterFromArg(filter: String): TestFilter {
         if (filter.isEmpty()) {
             throw IllegalArgumentException("Empty filter")
         }
@@ -137,23 +118,23 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
         val positivePatterns = filters[0].toGTestPatterns()
         val negativePatterns = filters.getOrNull(1)?.toGTestPatterns() ?: emptyList()
 
-        this.filters.add { testCase ->
+        return { testCase ->
             positivePatterns.any { testCase.prettyName.matches(it) } &&
                     negativePatterns.none { testCase.prettyName.matches(it) }
         }
     }
 
-    private fun setRegexFilterFromArg(filter: String, positive: Boolean = true) {
+    private fun regexFilterFromArg(filter: String, positive: Boolean = true): TestFilter {
         if (filter.isEmpty()) {
             throw IllegalArgumentException("Empty filter")
         }
         val pattern = filter.toRegex()
-        filters.add { testCase ->
+        return { testCase ->
             testCase.prettyName.matches(pattern) == positive
         }
     }
 
-    private fun setGradleFilterFromArg(filter: String, positive: Boolean = true) {
+    private fun gradleFilterFromArg(filter: String, positive: Boolean = true): TestFilter {
         if (filter.isEmpty()) {
             throw IllegalArgumentException("Empty filter")
         }
@@ -165,25 +146,39 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
         fun TestCase.matches(pattern: Regex) =
             prettyName.matches(pattern) || suite.name.matches(pattern)
 
-        if (positive) {
-            filters.add { testCase ->
+        return if (positive) {
+            { testCase ->
                 patterns.any { testCase.matches(it) }
             }
         } else {
-            filters.add { testCase ->
+            { testCase ->
                 patterns.none { testCase.matches(it) }
             }
         }
     }
 
-    private fun setLoggerFromArg(logger: String) {
-        when (logger.uppercase()) {
-            "GTEST" -> this.logger = GTestLogger()
-            "TEAMCITY" -> this.logger = TeamCityLogger()
-            "SIMPLE" -> this.logger = SimpleTestLogger()
-            "SILENT" -> this.logger = SilentTestLogger()
-            else -> throw IllegalArgumentException("Unknown logger type. Available types: GTEST, TEAMCITY, SIMPLE")
-        }
+    inner class FilteredSuite(val innerSuite: TestSuite, val filters: Collection<TestFilter>) : TestSuite by innerSuite {
+        private val TestCase.matchFilters: Boolean
+            get() = filters.all { it(this) }
+
+        override val size: Int
+            get() = testCases.size
+
+        override val testCases: Map<String, TestCase> = innerSuite.testCases.filter { it.value.matchFilters }
+        override fun toString() = innerSuite.toString()
+    }
+
+    private fun Collection<TestSuite>.filterWith(filters: Collection<TestFilter>): Collection<TestSuite> =
+            map { FilteredSuite(it, filters) }
+
+    // endregion
+
+    private fun loggerFromArg(logger: String): TestLogger = when (logger.uppercase()) {
+        "GTEST" -> GTestLogger()
+        "TEAMCITY" -> TeamCityLogger()
+        "SIMPLE" -> SimpleTestLogger()
+        "SILENT" -> SilentTestLogger()
+        else -> throw IllegalArgumentException("Unknown logger type. Available types: GTEST, TEAMCITY, SIMPLE")
     }
 
     private val help: String
@@ -221,10 +216,27 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
             |
             |--ktest_no_exit_code                                - Don't return a non-zero exit code if there are failing tests.
         """.trimMargin()
+}
+
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+private typealias TestFilter = (TestCase) -> Boolean
+
+/**
+ * Test runner.
+ *
+ * Runs tests for the given [TestSettings].
+ */
+@OptIn(kotlin.time.ExperimentalTime::class)
+@ExperimentalNativeApi
+internal class TestRunner(val settings: TestSettings) {
+    constructor(suites: List<TestSuite>, args: Array<String>) : this(TestProcessor(suites, args).process())
+
+    var exitCode = 0
+        private set
 
     private inline fun sendToListeners(event: TestListener.() -> Unit) {
-        logger.event()
-        listeners.forEach(event)
+        settings.logger.event()
+        settings.listeners.forEach(event)
     }
 
     private fun TestSuite.run() {
@@ -249,7 +261,7 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
                     sendToListeners { pass(testCase, startTime.elapsedNow().inWholeMilliseconds) }
                 } catch (e: Throwable) {
                     sendToListeners { fail(testCase, e, startTime.elapsedNow().inWholeMilliseconds) }
-                    if (useExitCode) {
+                    if (settings.useExitCode) {
                         exitCode = 1
                     }
                 }
@@ -259,8 +271,8 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
     }
 
     private fun runIteration(iteration: Int) {
-        val suitesFiltered = filterSuites()
-        sendToListeners { startIteration(this@TestRunner, iteration, suitesFiltered) }
+        val suitesFiltered = settings.testSuites
+        sendToListeners { startIteration(settings, iteration, suitesFiltered) }
         val iterationTime = measureTime {
             suitesFiltered.forEach {
                 if (it.ignored) {
@@ -276,21 +288,21 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
                 }
             }
         }.inWholeMilliseconds
-        sendToListeners { finishIteration(this@TestRunner, iteration, iterationTime) }
+        sendToListeners { finishIteration(settings, iteration, iterationTime) }
     }
 
     fun run(): Int {
-        if (!runTests)
+        if (!settings.runTests)
             return 0
-        sendToListeners { startTesting(this@TestRunner) }
+        sendToListeners { startTesting(settings) }
         val totalTime = measureTime {
             var i = 1
-            while (i <= iterations || iterations < 0) {
+            while (i <= settings.iterations || settings.iterations < 0) {
                 runIteration(i)
                 i++
             }
         }.inWholeMilliseconds
-        sendToListeners { finishTesting(this@TestRunner, totalTime) }
+        sendToListeners { finishTesting(settings, totalTime) }
         return exitCode
     }
 }

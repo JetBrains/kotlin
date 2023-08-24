@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassTypeBean
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 class StubBasedAnnotationDeserializer(
     private val session: FirSession,
@@ -109,23 +108,20 @@ class StubBasedAnnotationDeserializer(
                 source = KtRealPsiSourceElement(sourceElement)
                 val lookupTag = (value.value as KClassValue.Value.NormalClass).classId.toLookupTag()
                 val referencedType = lookupTag.constructType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
-                val resolvedTypeRef = buildResolvedTypeRef {
-                    type = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
-                }
+                val resolvedType = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
                 argumentList = buildUnaryArgumentList(
                     buildClassReferenceExpression {
                         classTypeRef = buildResolvedTypeRef { type = referencedType }
-                        typeRef = resolvedTypeRef
+                        coneTypeOrNull = resolvedType
                     }
                 )
+                coneTypeOrNull = resolvedType
             }
             is ArrayValue -> {
                 buildArrayLiteral {
                     source = KtRealPsiSourceElement(sourceElement)
-                    typeRef = buildResolvedTypeRef {
-                        // Not quite precise, yet doesn't require annotation resolution
-                        type = (inferArrayValueType(value.value) ?: session.builtinTypes.anyType.type).createArrayType()
-                    }
+                    // Not quite precise, yet doesn't require annotation resolution
+                    coneTypeOrNull = (inferArrayValueType(value.value) ?: session.builtinTypes.anyType.type).createArrayType()
 
                     argumentList = buildArgumentList {
                         value.value.mapTo(arguments) { resolveValue(sourceElement, it) }
@@ -208,7 +204,7 @@ class StubBasedAnnotationDeserializer(
             kind,
             value,
             setType = true
-        ).apply { this.replaceTypeRef(typeRef) }
+        ).apply { this.replaceConeTypeOrNull(typeRef.type) }
     }
 
     private fun PsiElement.toEnumEntryReferenceExpression(classId: ClassId, entryName: Name): FirExpression {
@@ -228,7 +224,7 @@ class StubBasedAnnotationDeserializer(
                 name = entryName
             }
             if (enumEntrySymbol != null) {
-                typeRef = enumEntrySymbol.returnTypeRef
+                coneTypeOrNull = enumEntrySymbol.returnTypeRef.coneTypeOrNull
             }
         }
     }

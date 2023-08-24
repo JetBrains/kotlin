@@ -1,3 +1,18 @@
+/**
+ * public final enum class Em : kotlin/Enum<Em> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   FOO,
+ *
+ *   BAR,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
 @kotlin.Metadata()
 public enum Em {
     /*public static final*/ FOO /* = new Em() */,
@@ -10,6 +25,108 @@ public enum Em {
 ////////////////////
 
 
+/**
+ * public final class Foo : kotlin/Any {
+ *
+ *   // signature: <init>(ZBCCSIJFDLjava/lang/String;[I[J[D[Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Class;LEm;[LEm;)V
+ *   public constructor(z: kotlin/Boolean (* = ... *), b: kotlin/Byte (* = ... *), c: kotlin/Char (* = ... *), c2: kotlin/Char (* = ... *), sh: kotlin/Short (* = ... *), i: kotlin/Int (* = ... *), l: kotlin/Long (* = ... *), f: kotlin/Float (* = ... *), d: kotlin/Double (* = ... *), s: kotlin/String (* = ... *), iarr: kotlin/IntArray (* = ... *), larr: kotlin/LongArray (* = ... *), darr: kotlin/DoubleArray (* = ... *), sarr: kotlin/Array<kotlin/String> (* = ... *), cl: java/lang/Class<*> (* = ... *), clarr: kotlin/Array<java/lang/Class<*>> (* = ... *), em: Em (* = ... *), emarr: kotlin/Array<Em> (* = ... *))
+ *
+ *   // signature: foo(I)V
+ *   public final fun foo(a: kotlin/Int (* = ... *)): kotlin/Unit
+ *
+ *   // field: b:B
+ *   // getter: getB()B
+ *   public final val b: kotlin/Byte
+ *     public final get
+ *
+ *   // field: c:C
+ *   // getter: getC()C
+ *   public final val c: kotlin/Char
+ *     public final get
+ *
+ *   // field: c2:C
+ *   // getter: getC2()C
+ *   public final val c2: kotlin/Char
+ *     public final get
+ *
+ *   // field: cl:Ljava/lang/Class;
+ *   // getter: getCl()Ljava/lang/Class;
+ *   public final val cl: java/lang/Class<*>
+ *     public final get
+ *
+ *   // field: clarr:[Ljava/lang/Class;
+ *   // getter: getClarr()[Ljava/lang/Class;
+ *   public final val clarr: kotlin/Array<java/lang/Class<*>>
+ *     public final get
+ *
+ *   // field: d:D
+ *   // getter: getD()D
+ *   public final val d: kotlin/Double
+ *     public final get
+ *
+ *   // field: darr:[D
+ *   // getter: getDarr()[D
+ *   public final val darr: kotlin/DoubleArray
+ *     public final get
+ *
+ *   // field: em:LEm;
+ *   // getter: getEm()LEm;
+ *   public final val em: Em
+ *     public final get
+ *
+ *   // field: emarr:[LEm;
+ *   // getter: getEmarr()[LEm;
+ *   public final val emarr: kotlin/Array<Em>
+ *     public final get
+ *
+ *   // field: f:F
+ *   // getter: getF()F
+ *   public final val f: kotlin/Float
+ *     public final get
+ *
+ *   // field: i:I
+ *   // getter: getI()I
+ *   public final val i: kotlin/Int
+ *     public final get
+ *
+ *   // field: iarr:[I
+ *   // getter: getIarr()[I
+ *   public final val iarr: kotlin/IntArray
+ *     public final get
+ *
+ *   // field: l:J
+ *   // getter: getL()J
+ *   public final val l: kotlin/Long
+ *     public final get
+ *
+ *   // field: larr:[J
+ *   // getter: getLarr()[J
+ *   public final val larr: kotlin/LongArray
+ *     public final get
+ *
+ *   // field: s:Ljava/lang/String;
+ *   // getter: getS()Ljava/lang/String;
+ *   public final val s: kotlin/String
+ *     public final get
+ *
+ *   // field: sarr:[Ljava/lang/String;
+ *   // getter: getSarr()[Ljava/lang/String;
+ *   public final val sarr: kotlin/Array<kotlin/String>
+ *     public final get
+ *
+ *   // field: sh:S
+ *   // getter: getSh()S
+ *   public final val sh: kotlin/Short
+ *     public final get
+ *
+ *   // field: z:Z
+ *   // getter: getZ()Z
+ *   public final val z: kotlin/Boolean
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Foo {
     private final boolean z = true;

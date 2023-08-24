@@ -88,7 +88,7 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
                 /* Assert p2 & p3 compiled for Windows */
                 assertTasksExecuted(":p2:compileKotlinWindowsX64")
                 assertTasksExecuted(":p3:compileKotlinWindowsX64")
-                    
+
                 /* Assert p2 & p3 compiled tests */
                 assertTasksExecuted(":p2:compileTestKotlinLinuxX64")
                 assertTasksExecuted(":p3:compileTestKotlinLinuxX64")

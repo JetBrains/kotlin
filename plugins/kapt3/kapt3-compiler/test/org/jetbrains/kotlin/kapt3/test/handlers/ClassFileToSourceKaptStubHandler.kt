@@ -40,7 +40,7 @@ class ClassFileToSourceKaptStubHandler(testServices: TestServices) : BaseKaptHan
 
         val actualRaw = convertedFiles
             .sortedBy { it.sourceFile.name }
-            .joinToString(FILE_SEPARATOR) { it.prettyPrint(kaptContext.context) }
+            .joinToString(FILE_SEPARATOR) { it.prettyPrint(kaptContext.context, ::renderMetadata) }
 
         val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' })
             .trimTrailingWhitespacesAndAddNewlineAtEOF()

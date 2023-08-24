@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -20,9 +21,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNullableNothing
 import org.jetbrains.kotlin.fir.types.makeConeTypeDefinitelyNotNullOrNotNull
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -85,11 +86,11 @@ private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiver: FirEx
     val expressionWithSmartcastIfStable =
         (dispatchReceiver as? FirSmartCastExpression)?.takeIf { it.isStable } ?: return null
 
-    val receiverType = dispatchReceiver.typeRef.coneType
+    val receiverType = dispatchReceiver.resolvedType
     if (receiverType.isNullableNothing) return null
 
     val originalExpression = expressionWithSmartcastIfStable.originalExpression
-    val originalType = originalExpression.typeRef.coneType
+    val originalType = originalExpression.resolvedType
     val originalTypeNotNullable =
         originalType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
 
@@ -103,12 +104,12 @@ private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiver: FirEx
                 buildSmartCastExpression {
                     this.originalExpression = originalExpression
                     smartcastType = buildResolvedTypeRef {
-                        source = originalExpression.typeRef.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
+                        source = originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
                         type = originalTypeNotNullable
                     }
                     typesFromSmartCast = listOf(originalTypeNotNullable)
                     smartcastStability = expressionWithSmartcastIfStable.smartcastStability
-                    typeRef = smartcastType.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+                    coneTypeOrNull = originalTypeNotNullable
                 }
             else -> originalExpression
         }

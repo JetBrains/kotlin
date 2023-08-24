@@ -239,7 +239,7 @@ digraph localClassesWithImplicit_kt {
                     115 [label="Access variable R|<local>/a|"];
                     116 [label="Smart cast: R|<local>/a|"];
                     117 [label="Access variable R|kotlin/String.length|"];
-                    118 [label="Function call: this@R|/A|.R|<local>/baz|()" style="filled" fillcolor=yellow];
+                    118 [label="Function call: this@R|<local>/A|.R|<local>/baz|()" style="filled" fillcolor=yellow];
                     119 [label="Exit block"];
                 }
                 120 [label="Exit function <anonymous>" style="filled" fillcolor=red];
@@ -249,7 +249,7 @@ digraph localClassesWithImplicit_kt {
             123 [label="Jump: ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
     R|<local>/b|.<Unresolved name: length>#
     R|<local>/a|.R|kotlin/String.length|
-    ^ this@R|/A|.R|<local>/baz|()
+    ^ this@R|<local>/A|.R|<local>/baz|()
 }
 )"];
             124 [label="Stub" style="filled" fillcolor=gray];
@@ -303,7 +303,7 @@ digraph localClassesWithImplicit_kt {
                             149 [label="Access variable R|<local>/b|"];
                             150 [label="Smart cast: R|<local>/b|"];
                             151 [label="Access variable R|kotlin/String.length|"];
-                            152 [label="Function call: this@R|/A|.R|<local>/bar|()" style="filled" fillcolor=yellow];
+                            152 [label="Function call: this@R|<local>/A|.R|<local>/bar|()" style="filled" fillcolor=yellow];
                             153 [label="Exit block"];
                         }
                         154 [label="Exit when branch result"];
@@ -320,7 +320,7 @@ digraph localClassesWithImplicit_kt {
     ^ when () {
         (R|<local>/b| is R|kotlin/String|) ->  {
             R|<local>/b|.R|kotlin/String.length|
-            this@R|/A|.R|<local>/bar|()
+            this@R|<local>/A|.R|<local>/bar|()
         }
         else ->  {
             Int(1)

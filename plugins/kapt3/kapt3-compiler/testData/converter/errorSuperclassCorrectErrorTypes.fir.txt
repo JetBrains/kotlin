@@ -1,5 +1,14 @@
 package test;
 
+/**
+ * public final class test/Child : kotlin/collections/AbstractList<kotlin/String>, test/Parent<kotlin/String, kotlin/Int>, kotlin/collections/List<kotlin/String> {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Child extends kotlin.collections.AbstractList<java.lang.String> implements test.Parent<java.lang.String, java.lang.Integer>, java.util.List<java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
 
@@ -12,6 +21,15 @@ public final class Child extends kotlin.collections.AbstractList<java.lang.Strin
 
 package test;
 
+/**
+ * public open class test/Cl : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public class Cl {
 
@@ -24,6 +42,15 @@ public class Cl {
 
 package test;
 
+/**
+ * public final class test/Generics1 : error/NonExistentClass {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Generics1 extends Foo<java.lang.String> {
 
@@ -36,6 +63,15 @@ public final class Generics1 extends Foo<java.lang.String> {
 
 package test;
 
+/**
+ * public final class test/Generics2 : error/NonExistentClass {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Generics2 implements Foo<java.lang.String> {
 
@@ -48,6 +84,15 @@ public final class Generics2 implements Foo<java.lang.String> {
 
 package test;
 
+/**
+ * public final class test/Generics3 : error/NonExistentClass {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Generics3 implements Foo<Bar, Baz, Boo<Baz, java.util.List<?>>, java.lang.String> {
 
@@ -60,6 +105,12 @@ public final class Generics3 implements Foo<Bar, Baz, Boo<Baz, java.util.List<?>
 
 package test;
 
+/**
+ * public abstract interface test/Intf : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface Intf {
 }
@@ -68,6 +119,22 @@ public abstract interface Intf {
 
 package test;
 
+/**
+ * public final class test/MappedList<T#0 (* R *)> : kotlin/collections/AbstractList<T#0>, kotlin/collections/List<T#0> {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: get(I)Ljava/lang/Void;
+ *   public open operator fun get(index: kotlin/Int): kotlin/Nothing
+ *
+ *   // getter: getSize()I
+ *   public open val size: kotlin/Int
+ *     public open (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class MappedList<R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<R>, kotlin.jvm.internal.markers.KMappedMarker {
 
@@ -91,6 +158,12 @@ public final class MappedList<R extends java.lang.Object> extends kotlin.collect
 
 package test;
 
+/**
+ * public abstract interface test/Parent<T#0 (* A *) : kotlin/CharSequence?, T#1 (* B *)> : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface Parent<A extends java.lang.CharSequence, B extends java.lang.Object> {
 }
@@ -99,6 +172,15 @@ public abstract interface Parent<A extends java.lang.CharSequence, B extends jav
 
 package test;
 
+/**
+ * public final class test/TBarBazCl : error/NonExistentClass, error/NonExistentClass, test/Cl {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TBarBazCl extends test.Cl implements Bar, Baz {
 
@@ -111,6 +193,15 @@ public final class TBarBazCl extends test.Cl implements Bar, Baz {
 
 package test;
 
+/**
+ * public final class test/TClBarBaz : test/Cl, error/NonExistentClass, error/NonExistentClass {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TClBarBaz extends test.Cl implements Bar, Baz {
 
@@ -123,6 +214,20 @@ public final class TClBarBaz extends test.Cl implements Bar, Baz {
 
 package test;
 
+/**
+ * public final class test/TFooBar : error/NonExistentClass, error/NonExistentClass, test/Intf {
+ *
+ *   // signature: <init>(Lerror/NonExistentClass;)V
+ *   public constructor(a: error/NonExistentClass)
+ *
+ *   // field: a:Lerror/NonExistentClass;
+ *   // getter: getA()Lerror/NonExistentClass;
+ *   public final val a: error/NonExistentClass
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TFooBar extends Foo implements Bar, test.Intf {
     @org.jetbrains.annotations.NotNull()
@@ -143,6 +248,20 @@ public final class TFooBar extends Foo implements Bar, test.Intf {
 
 package test;
 
+/**
+ * public final class test/TFooBar2 : error/NonExistentClass, error/NonExistentClass {
+ *
+ *   // signature: <init>(Lerror/NonExistentClass;)V
+ *   public constructor(a: error/NonExistentClass)
+ *
+ *   // field: a:Lerror/NonExistentClass;
+ *   // getter: getA()Lerror/NonExistentClass;
+ *   public final val a: error/NonExistentClass
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TFooBar2 implements Foo, Bar {
     @org.jetbrains.annotations.NotNull()
@@ -163,6 +282,15 @@ public final class TFooBar2 implements Foo, Bar {
 
 package test;
 
+/**
+ * public final class test/TFooBarBaz : error/NonExistentClass, error/NonExistentClass, error/NonExistentClass {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TFooBarBaz extends Foo implements Bar, Baz {
 
@@ -175,6 +303,15 @@ public final class TFooBarBaz extends Foo implements Bar, Baz {
 
 package test;
 
+/**
+ * public final class test/TFooBarBaz2 : error/NonExistentClass, error/NonExistentClass, error/NonExistentClass, test/Intf {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TFooBarBaz2 extends Foo implements Baz, test.Intf {
 
@@ -187,6 +324,15 @@ public final class TFooBarBaz2 extends Foo implements Baz, test.Intf {
 
 package test;
 
+/**
+ * public final class test/TFooBarBaz3 : error/NonExistentClass, error/NonExistentClass, error/NonExistentClass {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TFooBarBaz3 implements Foo, Bar, Baz {
 
@@ -199,6 +345,15 @@ public final class TFooBarBaz3 implements Foo, Bar, Baz {
 
 package test;
 
+/**
+ * public final class test/TFooBarBaz4 : error/NonExistentClass, error/NonExistentClass, error/NonExistentClass {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TFooBarBaz4 implements Foo, Bar, Baz {
 
@@ -211,6 +366,18 @@ public final class TFooBarBaz4 implements Foo, Bar, Baz {
 
 package test;
 
+/**
+ * public final class test/TFooBarBaz5 : error/NonExistentClass, error/NonExistentClass, error/NonExistentClass {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public (* secondary *) constructor(s: kotlin/String)
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TFooBarBaz5 implements Foo, Bar, Baz {
 
@@ -228,6 +395,15 @@ public final class TFooBarBaz5 implements Foo, Bar, Baz {
 
 package test;
 
+/**
+ * public final class test/TFooBarBaz6 : error/NonExistentClass, error/NonExistentClass, error/NonExistentClass {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public (* secondary *) constructor(s: kotlin/String)
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TFooBarBaz6 implements Foo, Bar, Baz {
 
@@ -241,6 +417,15 @@ public final class TFooBarBaz6 implements Foo, Bar, Baz {
 
 package test;
 
+/**
+ * public final class test/TxFooxBarxBaz : error/NonExistentClass, error/NonExistentClass, error/NonExistentClass, test/Intf {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TxFooxBarxBaz extends x.Foo implements x.Bar, x.Baz, test.Intf {
 
@@ -253,6 +438,15 @@ public final class TxFooxBarxBaz extends x.Foo implements x.Bar, x.Baz, test.Int
 
 package test;
 
+/**
+ * public final class test/TxFooxBarxBaz2 : error/NonExistentClass, error/NonExistentClass, error/NonExistentClass {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TxFooxBarxBaz2 extends x.Foo implements x.Bar {
 

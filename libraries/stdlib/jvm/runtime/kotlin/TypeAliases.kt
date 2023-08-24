@@ -28,4 +28,5 @@ package kotlin
 @Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS")
 @SinceKotlin("1.3") public actual typealias ConcurrentModificationException = java.util.ConcurrentModificationException
 
+@AllowDifferentMembersInActual // New 'reversed', 'thenComparing', etc. members are added compared to the expect declaration
 @SinceKotlin("1.1") public actual typealias Comparator<T> = java.util.Comparator<T>

@@ -1,5 +1,34 @@
 package kapt;
 
+/**
+ * public final class kapt/StaticImport : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: l:Lkapt/StaticMethod;
+ *   // getter: getL()Lkapt/StaticMethod;
+ *   public final val l: kapt/StaticMethod<kotlin/String!>!
+ *     public final get
+ *
+ *   // field: m:Lkapt/StaticMethod;
+ *   // getter: getM()Lkapt/StaticMethod;
+ *   public final val m: kapt/StaticMethod<kotlin/String!>!
+ *     public final get
+ *
+ *   // field: x:Ljava/util/Collection;
+ *   // getter: getX()Ljava/util/Collection;
+ *   public final val x: kotlin/collections/MutableCollection<kotlin/String!>..kotlin/collections/Collection<kotlin/String!>?
+ *     public final get
+ *
+ *   // field: y:I
+ *   // getter: getY()I
+ *   public final val y: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class StaticImport {
     private final java.util.Collection<java.lang.String> x = null;
@@ -56,6 +85,15 @@ public class StaticMethod<T> {
 
 package my.lib;
 
+/**
+ * package {
+ *
+ *   // signature: func(Ljava/lang/String;)I
+ *   public final fun kotlin/String.func(): kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class LibKt {
 

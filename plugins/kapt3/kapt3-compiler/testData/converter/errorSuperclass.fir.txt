@@ -1,5 +1,14 @@
 package test;
 
+/**
+ * internal final annotation class test/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno {
@@ -9,6 +18,15 @@ public abstract @interface Anno {
 
 package test;
 
+/**
+ * internal final class test/ClassWithParent : error/NonExistentClass, error/NonExistentClass, error/NonExistentClass, kotlin/CharSequence {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @Anno()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})

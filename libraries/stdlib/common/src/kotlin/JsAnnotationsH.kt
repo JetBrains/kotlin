@@ -27,6 +27,7 @@ public expect annotation class JsName(val name: String)
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
+@SinceKotlin("1.9")
 public annotation class ExperimentalJsFileName
 
 /**
@@ -38,6 +39,7 @@ public annotation class ExperimentalJsFileName
 @OptionalExpectation
 @ExperimentalJsFileName
 @Retention(AnnotationRetention.SOURCE)
+@SinceKotlin("1.9")
 public expect annotation class JsFileName(val name: String)
 
 /**

@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.collectUpperBounds
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
@@ -352,10 +352,10 @@ private class ArgumentInfo(
 private val FirExpression.mostOriginalTypeIfSmartCast: ConeKotlinType
     get() = when (this) {
         is FirSmartCastExpression -> originalExpression.mostOriginalTypeIfSmartCast
-        else -> typeRef.coneType
+        else -> resolvedType
     }
 
 private fun FirExpression.toArgumentInfo(context: CheckerContext) =
     ArgumentInfo(
-        this, typeRef.coneType, mostOriginalTypeIfSmartCast.fullyExpandedType(context.session), context.session,
+        this, resolvedType, mostOriginalTypeIfSmartCast.fullyExpandedType(context.session), context.session,
     )

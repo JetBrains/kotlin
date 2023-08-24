@@ -65,6 +65,8 @@ public final class Boolean : R|kotlin/Comparable<kotlin/Boolean>|, R|java/io/Ser
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
+    public open fun hashCode(): R|kotlin/Int|
+
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun not(): R|kotlin/Boolean|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun or(other: R|kotlin/Boolean|): R|kotlin/Boolean|
@@ -260,6 +262,8 @@ public final class Char : R|kotlin/Comparable<kotlin/Char>|, R|java/io/Serializa
     public final operator fun dec(): R|kotlin/Char|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open fun hashCode(): R|kotlin/Int|
 
     public final operator fun inc(): R|kotlin/Char|
 

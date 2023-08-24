@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.util.classIdOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
+import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
@@ -218,6 +219,8 @@ private class ExpectActualLinkCollector(
         override fun onMismatchedMembersFromClassScope(
             expectSymbol: DeclarationSymbolMarker,
             actualSymbolsByIncompatibility: Map<ExpectActualCompatibility.Incompatible<*>, List<DeclarationSymbolMarker>>,
+            containingExpectClassSymbol: RegularClassSymbolMarker?,
+            containingActualClassSymbol: RegularClassSymbolMarker?,
         ) {
             require(expectSymbol is IrSymbol)
             if (actualSymbolsByIncompatibility.isEmpty() && !expectSymbol.owner.containsOptionalExpectation()) {

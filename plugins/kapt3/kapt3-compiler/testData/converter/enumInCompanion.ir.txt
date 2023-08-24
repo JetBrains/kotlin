@@ -1,3 +1,20 @@
+/**
+ * public final class Test : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: foo:LTest$Companion$Example;
+ *   private final val foo: Test.Companion.Example
+ *     private final get
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
@@ -9,6 +26,17 @@ public final class Test {
         super();
     }
 
+    /**
+     * public final companion object Test.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // nested class: Example
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class Companion {
 
@@ -16,6 +44,19 @@ public final class Test {
             super();
         }
 
+        /**
+         * public final enum class Test.Companion.Example : kotlin/Enum<Test.Companion.Example> {
+         *
+         *   // signature: <init>(Ljava/lang/String;I)V
+         *   private constructor()
+         *
+         *   FOO,
+         *
+         *   // module name: main
+         *
+         *   // has Enum.entries
+         * }
+         */
         @kotlin.Metadata()
         public static enum Example {
             /*public static final*/ FOO /* = new Example() */;
@@ -34,6 +75,23 @@ public final class Test {
 ////////////////////
 
 
+/**
+ * public final class Test2 : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: foo:LTest2$Amigo$Example;
+ *   private final val foo: Test2.Amigo.Example
+ *     private final get
+ *
+ *   // companion object: Amigo
+ *
+ *   // nested class: Amigo
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test2 {
     @org.jetbrains.annotations.NotNull()
@@ -45,6 +103,17 @@ public final class Test2 {
         super();
     }
 
+    /**
+     * public final companion object Test2.Amigo : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // nested class: Example
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class Amigo {
 
@@ -52,6 +121,19 @@ public final class Test2 {
             super();
         }
 
+        /**
+         * public final enum class Test2.Amigo.Example : kotlin/Enum<Test2.Amigo.Example> {
+         *
+         *   // signature: <init>(Ljava/lang/String;I)V
+         *   private constructor()
+         *
+         *   FOO,
+         *
+         *   // module name: main
+         *
+         *   // has Enum.entries
+         * }
+         */
         @kotlin.Metadata()
         public static enum Example {
             /*public static final*/ FOO /* = new Example() */;
@@ -70,6 +152,21 @@ public final class Test2 {
 ////////////////////
 
 
+/**
+ * public final class Test3 : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: foo:LTest3$Amigo$Example;
+ *   private final val foo: Test3.Amigo.Example
+ *     private final get
+ *
+ *   // nested class: Amigo
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test3 {
     @org.jetbrains.annotations.NotNull()
@@ -79,6 +176,17 @@ public final class Test3 {
         super();
     }
 
+    /**
+     * public final object Test3.Amigo : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // nested class: Example
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class Amigo {
         @org.jetbrains.annotations.NotNull()
@@ -88,6 +196,19 @@ public final class Test3 {
             super();
         }
 
+        /**
+         * public final enum class Test3.Amigo.Example : kotlin/Enum<Test3.Amigo.Example> {
+         *
+         *   // signature: <init>(Ljava/lang/String;I)V
+         *   private constructor()
+         *
+         *   FOO,
+         *
+         *   // module name: main
+         *
+         *   // has Enum.entries
+         * }
+         */
         @kotlin.Metadata()
         public static enum Example {
             /*public static final*/ FOO /* = new Example() */;
@@ -106,6 +227,23 @@ public final class Test3 {
 ////////////////////
 
 
+/**
+ * public final class Test4 : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: foo:I
+ *   private final val foo: kotlin/Int (* = ... *)
+ *     private final get
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test4 {
     private final int foo = 1;
@@ -116,6 +254,17 @@ public final class Test4 {
         super();
     }
 
+    /**
+     * public final companion object Test4.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // nested class: Foo
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class Companion {
 
@@ -123,6 +272,19 @@ public final class Test4 {
             super();
         }
 
+        /**
+         * public final object Test4.Companion.Foo : kotlin/Any {
+         *
+         *   // signature: <init>()V
+         *   private constructor()
+         *
+         *   // field: constProperty:I
+         *   public final const val constProperty: kotlin/Int (* = ... *)
+         *     public final get
+         *
+         *   // module name: main
+         * }
+         */
         @kotlin.Metadata()
         public static final class Foo {
             public static final int constProperty = 1;
@@ -139,6 +301,21 @@ public final class Test4 {
 ////////////////////
 
 
+/**
+ * public final class Test5 : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: foo:LTest5$Amigos$Companion$Goo$Example;
+ *   private final val foo: Test5.Amigos.Companion.Goo.Example
+ *     private final get
+ *
+ *   // nested class: Amigos
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test5 {
     @org.jetbrains.annotations.NotNull()
@@ -148,6 +325,19 @@ public final class Test5 {
         super();
     }
 
+    /**
+     * public final class Test5.Amigos : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // companion object: Companion
+     *
+     *   // nested class: Companion
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class Amigos {
         @org.jetbrains.annotations.NotNull()
@@ -157,6 +347,17 @@ public final class Test5 {
             super();
         }
 
+        /**
+         * public final companion object Test5.Amigos.Companion : kotlin/Any {
+         *
+         *   // signature: <init>()V
+         *   private constructor()
+         *
+         *   // nested class: Goo
+         *
+         *   // module name: main
+         * }
+         */
         @kotlin.Metadata()
         public static final class Companion {
 
@@ -164,6 +365,17 @@ public final class Test5 {
                 super();
             }
 
+            /**
+             * public final class Test5.Amigos.Companion.Goo : kotlin/Any {
+             *
+             *   // signature: <init>()V
+             *   public constructor()
+             *
+             *   // nested class: Example
+             *
+             *   // module name: main
+             * }
+             */
             @kotlin.Metadata()
             public static final class Goo {
 
@@ -171,6 +383,19 @@ public final class Test5 {
                     super();
                 }
 
+                /**
+                 * public final enum class Test5.Amigos.Companion.Goo.Example : kotlin/Enum<Test5.Amigos.Companion.Goo.Example> {
+                 *
+                 *   // signature: <init>(Ljava/lang/String;I)V
+                 *   private constructor()
+                 *
+                 *   FOO,
+                 *
+                 *   // module name: main
+                 *
+                 *   // has Enum.entries
+                 * }
+                 */
                 @kotlin.Metadata()
                 public static enum Example {
                     /*public static final*/ FOO /* = new Example() */;

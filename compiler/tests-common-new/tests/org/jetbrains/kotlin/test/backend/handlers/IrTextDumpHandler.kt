@@ -70,6 +70,10 @@ class IrTextDumpHandler(
             normalizeNames = true,
             printFacadeClassInFqNames = false,
             printFlagsInDeclarationReferences = false,
+            // KT-60248 Abbreviations should not be rendered to make K2 IR dumps closer to K1 IR dumps during irText tests.
+            // PSI2IR assigns field `abbreviation` with type abbreviation. It serves only debugging purposes, and no compiler functionality relies on it.
+            // FIR2IR does not initialize field `abbreviation` at all.
+            printTypeAbbreviations = false,
         )
 
         info.processAllIrModuleFragments(module) { irModuleFragment, moduleName ->

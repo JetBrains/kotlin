@@ -1,5 +1,5 @@
 warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
-compiler/testData/cli/jvm/firSyntaxError.kt:1:10: error: syntax error: Expecting '}'
+compiler/testData/cli/jvm/firSyntaxError.kt:1:10: error: syntax error: Expecting '}'.
 fun a() {
          ^
 COMPILATION_ERROR

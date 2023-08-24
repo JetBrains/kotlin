@@ -1,0 +1,11 @@
+KtDestructuringDeclarationSymbol:
+  annotationsList: []
+  entries: [
+    KtLocalVariableSymbol(<local>/a)
+    KtLocalVariableSymbol(<local>/b)
+  ]
+  origin: SOURCE
+  symbolKind: LOCAL
+  typeParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

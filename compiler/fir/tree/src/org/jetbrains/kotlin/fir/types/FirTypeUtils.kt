@@ -37,6 +37,12 @@ val FirTypeRef.coneType: ConeKotlinType
 val FirTypeRef.coneTypeOrNull: ConeKotlinType?
     get() = coneTypeSafe()
 
+val FirExpression.resolvedType: ConeKotlinType get() = requireNotNull(coneTypeOrNull) { "Expected type to be resolved" }
+
+inline fun <reified T : ConeKotlinType> FirExpression.coneTypeSafe(): T? = (coneTypeOrNull as? T)
+
+inline fun <reified T : ConeKotlinType> FirExpression.coneTypeUnsafe(): T = coneTypeOrNull as T
+
 @RequiresOptIn(
     "This type check never expands type aliases. Use with care (probably Ok for expression & constructor types). " +
             "Generally this.coneType.fullyExpandedType(session).isSomeType is better"

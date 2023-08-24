@@ -783,9 +783,10 @@ private fun IrType.renderTypeInner(renderer: RenderIrElementVisitor?, options: D
             } else if (isMarkedNullable()) {
                 append('?')
             }
-            abbreviation?.let {
-                append(it.renderTypeAbbreviation(renderer, options))
-            }
+            if (options.printTypeAbbreviations)
+                abbreviation?.let {
+                    append(it.renderTypeAbbreviation(renderer, options))
+                }
         }
 
         else -> "{${javaClass.simpleName} $this}"

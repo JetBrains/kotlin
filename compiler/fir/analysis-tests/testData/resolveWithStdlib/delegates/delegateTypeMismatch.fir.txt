@@ -38,7 +38,7 @@ FILE: delegateTypeMismatch.kt
                 ^ this@R|/A|.D|/A.classifierNamePolicy|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|Stub (chain inference): TypeVariable(+T)|>|(this@R|/A|, ::R|/A.classifierNamePolicy|)
             }
             public set(<set-?>: R|ClassifierNamePolicy|): R|kotlin/Unit| {
-                this@R|/A|.D|/A.classifierNamePolicy|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.classifierNamePolicy|, R|<local>/classifierNamePolicy|)
+                ^ this@R|/A|.D|/A.classifierNamePolicy|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.classifierNamePolicy|, R|<local>/classifierNamePolicy|)
             }
 
         public final var typeNormalizer: R|(KotlinType) -> KotlinType|by this@R|/A|.R|/A.property|<R|(KotlinType) -> KotlinType|>(property@fun <anonymous>(it: R|KotlinType|): R|KotlinType| <inline=NoInline>  {
@@ -49,7 +49,7 @@ FILE: delegateTypeMismatch.kt
                 ^ this@R|/A|.D|/A.typeNormalizer|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|(KotlinType) -> KotlinType|>|(this@R|/A|, ::R|/A.typeNormalizer|)
             }
             public set(<set-?>: R|(KotlinType) -> KotlinType|): R|kotlin/Unit| {
-                this@R|/A|.D|/A.typeNormalizer|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.typeNormalizer|, R|<local>/typeNormalizer|)
+                ^ this@R|/A|.D|/A.typeNormalizer|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.typeNormalizer|, R|<local>/typeNormalizer|)
             }
 
     }

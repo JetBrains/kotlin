@@ -1,1 +1,1 @@
-/upperBoundViolated2.fir.kt:(111,123): error: Type argument is not within its bounds: should be subtype of 'kotlin/collections/List<kotlin/CharSequence>'
+/upperBoundViolated2.fir.kt:(111,123): error: Type argument is not within its bounds: should be subtype of 'kotlin/collections/List<kotlin/CharSequence>'.

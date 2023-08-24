@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.ir.util.isSetter
@@ -98,6 +99,7 @@ internal class ClassMemberGenerator(
         declarationStorage.leaveScope(irClass)
     }
 
+    @OptIn(IrSymbolInternals::class)
     fun <T : IrFunction> convertFunctionContent(irFunction: T, firFunction: FirFunction?, containingClass: FirClass?): T {
         conversionScope.withParent(irFunction) {
             if (firFunction != null) {
@@ -130,13 +132,16 @@ internal class ClassMemberGenerator(
 
                 if (containingClass is FirRegularClass && containingClass.contextReceivers.isNotEmpty()) {
                     val contextReceiverFields =
-                        components.classifierStorage.getFieldsWithContextReceiversForClass(irClass)
-                            ?: error("Not found context receiver fields")
+                        components.classifierStorage.getFieldsWithContextReceiversForClass(irClass, containingClass)
 
                     val thisParameter =
                         conversionScope.dispatchReceiverParameter(irClass) ?: error("No found this parameter for $irClass")
 
                     for (index in containingClass.contextReceivers.indices) {
+                        require(contextReceiverFields.size > index) {
+                            "Not defined context receiver #${index} for $irClass. " +
+                                    "Context receivers found: $contextReceiverFields"
+                        }
                         val irValueParameter = valueParameters[index]
                         body.statements.add(
                             IrSetFieldImpl(
@@ -263,7 +268,11 @@ internal class ClassMemberGenerator(
                         val irExpression = visitor.convertToIrExpression(initializerExpression, isDelegate = property.delegate != null)
                         if (property.delegate == null) {
                             with(visitor.implicitCastInserter) {
-                                irExpression.cast(initializerExpression, initializerExpression.typeRef, property.returnTypeRef)
+                                irExpression.cast(
+                                    initializerExpression,
+                                    initializerExpression.resolvedType,
+                                    property.returnTypeRef.coneType
+                                )
                             }
                         } else {
                             irExpression
@@ -332,6 +341,7 @@ internal class ClassMemberGenerator(
         return this
     }
 
+    @OptIn(IrSymbolInternals::class)
     internal fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrExpression {
         val constructedIrType = constructedTypeRef.toIrType()
         val referencedSymbol = calleeReference.toResolvedConstructorSymbol()

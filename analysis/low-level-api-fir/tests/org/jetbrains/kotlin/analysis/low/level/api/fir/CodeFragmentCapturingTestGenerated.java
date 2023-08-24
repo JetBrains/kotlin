@@ -121,6 +121,24 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
     }
 
     @Test
+    @TestMetadata("multipleClassAndFunctionContextReceivers.kt")
+    public void testMultipleClassAndFunctionContextReceivers() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/multipleClassAndFunctionContextReceivers.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleClassContextReceivers.kt")
+    public void testMultipleClassContextReceivers() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/multipleClassContextReceivers.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleFunctionContextReceivers.kt")
+    public void testMultipleFunctionContextReceivers() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/multipleFunctionContextReceivers.kt");
+    }
+
+    @Test
     @TestMetadata("nestedOuterClass.kt")
     public void testNestedOuterClass() throws Exception {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/nestedOuterClass.kt");
@@ -160,6 +178,18 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
     @TestMetadata("privateMemberCall.kt")
     public void testPrivateMemberCall() throws Exception {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/privateMemberCall.kt");
+    }
+
+    @Test
+    @TestMetadata("secondClassContextReceiver.kt")
+    public void testSecondClassContextReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/secondClassContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("singleClassContextReceiver.kt")
+    public void testSingleClassContextReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/singleClassContextReceiver.kt");
     }
 
     @Test

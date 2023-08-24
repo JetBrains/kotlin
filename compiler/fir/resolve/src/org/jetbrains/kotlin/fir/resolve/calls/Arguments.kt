@@ -147,7 +147,7 @@ private fun Candidate.resolveBlockArgument(
         checkApplicabilityForArgumentType(
             csBuilder,
             block,
-            block.typeRef.coneType,
+            block.resolvedType,
             expectedType?.type,
             SimpleConstraintSystemConstraintPosition,
             isReceiver = false,
@@ -222,7 +222,7 @@ fun Candidate.resolvePlainExpressionArgument(
 ) {
 
     if (expectedType == null) return
-    val argumentType = argument.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
+    val argumentType = argument.coneTypeSafe<ConeKotlinType>() ?: return
     resolvePlainArgumentType(
         csBuilder,
         argument,
@@ -513,7 +513,7 @@ private fun getExpectedTypeWithImplicintIntegerCoercion(
     val argumentType =
         if (argument.isIntegerLiteralOrOperatorCall()) {
             if (candidateExpectedType.fullyExpandedType(session).isUnsignedTypeOrNullableUnsignedType)
-                argument.resultType.coneType
+                argument.resolvedType
             else null
         } else {
             argument.calleeReference?.toResolvedCallableSymbol()?.takeIf {
@@ -534,7 +534,7 @@ fun FirExpression.isFunctional(
         is FirAnonymousFunctionExpression, is FirCallableReferenceAccess -> return true
         else -> {
             // Either a functional type or a subtype of a class that has a contributed `invoke`.
-            val coneType = typeRef.coneTypeSafe<ConeKotlinType>() ?: return false
+            val coneType = coneTypeSafe<ConeKotlinType>() ?: return false
             if (coneType.isSomeFunctionType(session)) {
                 return true
             }

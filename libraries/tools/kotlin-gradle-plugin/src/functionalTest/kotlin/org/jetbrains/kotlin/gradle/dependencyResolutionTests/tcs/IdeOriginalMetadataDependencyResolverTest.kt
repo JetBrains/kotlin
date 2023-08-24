@@ -8,6 +8,8 @@
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonTest
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.dependencies
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
@@ -16,17 +18,15 @@ import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
-import org.junit.Ignore
 import org.junit.Test
 
 class IdeOriginalMetadataDependencyResolverTest {
 
     @Test
-    @Ignore("stdlib publication migration - test data changes")
-    fun `test kotlin-stdlib-common`() {
+    fun `test kotlin-test-common`() {
         val project = buildProject {
             enableDependencyVerification(false)
-            enableDefaultStdlibDependency(true)
+            enableDefaultStdlibDependency(false)
             applyMultiplatformPlugin()
             repositories.mavenLocal()
             repositories.mavenCentralCacheRedirector()
@@ -38,17 +38,15 @@ class IdeOriginalMetadataDependencyResolverTest {
         kotlin.linuxX64()
         kotlin.linuxArm64()
 
-        kotlin.applyDefaultHierarchyTemplate()
+        kotlin.sourceSets.commonTest.dependencies {
+            implementation("org.jetbrains.kotlin:kotlin-test-common:${kotlin.coreLibrariesVersion}")
+        }
 
         project.evaluate()
 
-        val stdlibCommonSourceSets = listOf("commonMain", "commonTest").map(kotlin.sourceSets::getByName)
-
-        for (sourceSet in stdlibCommonSourceSets) {
-            IdeOriginalMetadataDependencyResolver.resolve(sourceSet).assertMatches(
-                binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:common:${kotlin.coreLibrariesVersion}")
-            )
-        }
+        IdeOriginalMetadataDependencyResolver.resolve(kotlin.sourceSets.commonTest.get()).assertMatches(
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-test-common:${kotlin.coreLibrariesVersion}")
+        )
     }
 
     @Test

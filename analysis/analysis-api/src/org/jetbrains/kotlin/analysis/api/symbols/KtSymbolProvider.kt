@@ -32,6 +32,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
         is KtClassInitializer -> getClassInitializerSymbol(psi)
         is KtDestructuringDeclarationEntry -> getDestructuringDeclarationEntrySymbol(psi)
         is KtScript -> getScriptSymbol(psi)
+        is KtDestructuringDeclaration -> getDestructuringDeclarationSymbol(psi)
         else -> error("Cannot build symbol for ${psi::class}")
     }
 
@@ -52,6 +53,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     public abstract fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol
     public abstract fun getClassInitializerSymbol(psi: KtClassInitializer): KtClassInitializerSymbol
     public abstract fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtLocalVariableSymbol
+    public abstract fun getDestructuringDeclarationSymbol(psi: KtDestructuringDeclaration): KtDestructuringDeclarationSymbol
 
     public abstract fun getPackageSymbolIfPackageExists(packageFqName: FqName): KtPackageSymbol?
 

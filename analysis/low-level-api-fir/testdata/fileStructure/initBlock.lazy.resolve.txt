@@ -7,7 +7,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] initBlock.kt
         init {
             [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = Int(10)
             local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] constructor(): R|A.B| {
+                public [ResolvedTo(RAW_FIR)] constructor(): R|<local>/B| {
                     super<R|kotlin/Any|>()
                 }
 

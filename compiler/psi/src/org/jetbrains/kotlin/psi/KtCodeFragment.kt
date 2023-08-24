@@ -157,6 +157,9 @@ abstract class KtCodeFragment(
         return null
     }
 
+    override val importLists: List<KtImportList>
+        get() = importsAsImportList().let(::listOfNotNull)
+
     override val importDirectives: List<KtImportDirective>
         get() = importsAsImportList()?.imports ?: emptyList()
 

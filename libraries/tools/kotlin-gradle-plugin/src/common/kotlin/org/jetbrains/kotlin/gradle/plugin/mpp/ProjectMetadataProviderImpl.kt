@@ -27,13 +27,7 @@ internal fun ProjectMetadataProvider(
 
 internal class SourceSetMetadataOutputs(
     val metadata: FileCollection?,
-    val cinterop: CInterop?,
-) {
-    class CInterop(
-        val forCli: FileCollection,
-        val forIde: FileCollection,
-    )
-}
+)
 
 private class ProjectMetadataProviderImpl(
     private val sourceSetMetadataOutputs: Map<SourceSetName, SourceSetMetadataOutputs>,
@@ -44,15 +38,6 @@ private class ProjectMetadataProviderImpl(
         return metadataOutputs.metadata
     }
 
-
-    override fun getSourceSetCInteropMetadata(sourceSetName: String, consumer: MetadataConsumer): FileCollection? {
-        val metadataOutputs = sourceSetMetadataOutputs[sourceSetName] ?: error("Unexpected source set '$sourceSetName'")
-        val cinteropMetadata = metadataOutputs.cinterop ?: return null
-        return when (consumer) {
-            MetadataConsumer.Ide -> cinteropMetadata.forIde
-            MetadataConsumer.Cli -> cinteropMetadata.forCli
-        }
-    }
 }
 
 internal suspend fun Project.collectSourceSetMetadataOutputs(): Map<SourceSetName, SourceSetMetadataOutputs> {
@@ -72,14 +57,9 @@ internal suspend fun Project.collectSourceSetMetadataOutputs(): Map<SourceSetNam
     val multiplatformExtension = multiplatformExtensionOrNull ?: return emptyMap()
 
     val sourceSetMetadata = multiplatformExtension.sourceSetsMetadataOutputs()
-    val sourceSetCInteropMetadata = multiplatformExtension.cInteropMetadataOfSourceSets(sourceSetMetadata.keys)
 
-    return sourceSetMetadata.mapValues { (sourceSet, metadata) ->
-        val cinteropMetadataOutput = sourceSetCInteropMetadata[sourceSet]
-        SourceSetMetadataOutputs(
-            metadata = metadata,
-            cinterop = cinteropMetadataOutput
-        )
+    return sourceSetMetadata.mapValues { (_, metadata) ->
+        SourceSetMetadataOutputs(metadata = metadata,)
     }.mapKeys { it.key.name }
 }
 
@@ -96,17 +76,4 @@ private suspend fun KotlinMultiplatformExtension.sourceSetsMetadataOutputs(): Ma
     }
 }
 
-private suspend fun KotlinMultiplatformExtension.cInteropMetadataOfSourceSets(
-    sourceSets: Iterable<KotlinSourceSet>,
-): Map<KotlinSourceSet, SourceSetMetadataOutputs.CInterop?> {
-    val taskForCLI = project.commonizeCInteropTask() ?: return emptyMap()
-    val taskForIde = project.copyCommonizeCInteropForIdeTask() ?: return emptyMap()
 
-    return sourceSets.associateWith { sourceSet ->
-        val dependent = CInteropCommonizerDependent.from(sourceSet) ?: return@associateWith null
-        SourceSetMetadataOutputs.CInterop(
-            forCli = taskForCLI.get().commonizedOutputLibraries(dependent),
-            forIde = taskForIde.get().commonizedOutputLibraries(dependent)
-        )
-    }
-}

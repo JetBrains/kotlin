@@ -36,9 +36,9 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'public open fun toChar (): kotlin.Char declared in kotlin.Int' type=kotlin.Char origin=null
                 $this: GET_VAR 'val tmp_0: kotlin.Int? declared in <root>.nextChar' type=kotlin.Int? origin=null
-  FUN name:consumeRestOfQuotedSequence visibility:public modality:FINAL <> ($receiver:java.io.Reader, sb:java.lang.StringBuilder{ kotlin.text.StringBuilder }, quote:kotlin.Char) returnType:kotlin.Unit
+  FUN name:consumeRestOfQuotedSequence visibility:public modality:FINAL <> ($receiver:java.io.Reader, sb:java.lang.StringBuilder, quote:kotlin.Char) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:java.io.Reader
-    VALUE_PARAMETER name:sb index:0 type:java.lang.StringBuilder{ kotlin.text.StringBuilder }
+    VALUE_PARAMETER name:sb index:0 type:java.lang.StringBuilder
     VALUE_PARAMETER name:quote index:1 type:kotlin.Char
     BLOCK_BODY
       VAR name:ch type:kotlin.Char? [var]
@@ -87,13 +87,13 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
                             BLOCK_BODY
                               RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Char): @[FlexibleNullability] java.lang.StringBuilder? declared in <root>.consumeRestOfQuotedSequence'
                                 CALL 'public open fun append (p0: kotlin.Char): @[FlexibleNullability] java.lang.StringBuilder? declared in java.lang.StringBuilder' type=@[FlexibleNullability] java.lang.StringBuilder? origin=null
-                                  $this: GET_VAR 'sb: java.lang.StringBuilder{ kotlin.text.StringBuilder } declared in <root>.consumeRestOfQuotedSequence' type=java.lang.StringBuilder{ kotlin.text.StringBuilder } origin=null
+                                  $this: GET_VAR 'sb: java.lang.StringBuilder declared in <root>.consumeRestOfQuotedSequence' type=java.lang.StringBuilder origin=null
                                   p0: GET_VAR 'it: kotlin.Char declared in <root>.consumeRestOfQuotedSequence.<anonymous>' type=kotlin.Char origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 CALL 'public open fun append (p0: kotlin.Char): @[FlexibleNullability] java.lang.StringBuilder? declared in java.lang.StringBuilder' type=@[FlexibleNullability] java.lang.StringBuilder? origin=null
-                  $this: GET_VAR 'sb: java.lang.StringBuilder{ kotlin.text.StringBuilder } declared in <root>.consumeRestOfQuotedSequence' type=java.lang.StringBuilder{ kotlin.text.StringBuilder } origin=null
+                  $this: GET_VAR 'sb: java.lang.StringBuilder declared in <root>.consumeRestOfQuotedSequence' type=java.lang.StringBuilder origin=null
                   p0: GET_VAR 'var ch: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
           SET_VAR 'var ch: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Unit origin=EQ
             CALL 'private final fun nextChar (): kotlin.Char? declared in <root>' type=kotlin.Char? origin=null

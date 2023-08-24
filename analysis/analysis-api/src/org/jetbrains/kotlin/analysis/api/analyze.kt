@@ -7,15 +7,16 @@
 
 package org.jetbrains.kotlin.analysis.api
 
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
- * Execute given [action] in [KtAnalysisSession] context
- * Uses [useSiteKtElement] as an [KtElement] which containing module is a use-site module,
- * i.e, the module from which perspective the project will be analyzed.
+ * Executes the given [action] in a [KtAnalysisSession] context.
+ *
+ * The project will be analyzed from the perspective of [useSiteKtElement]'s module, also called the use-site module.
  *
  * @see KtAnalysisSession
  */
@@ -26,10 +27,10 @@ public inline fun <R> analyze(
     KtAnalysisSessionProvider.getInstance(useSiteKtElement.project)
         .analyse(useSiteKtElement, action)
 
-
 /**
- * Execute given [action] in [KtAnalysisSession] context
- * Uses [useSiteKtModule] as use-site module, i.e, the module from which perspective the project will be analyzed.
+ * Executes the given [action] in a [KtAnalysisSession] context.
+ *
+ * The project will be analyzed from the perspective of the given [useSiteKtModule].
  *
  * @see KtAnalysisSession
  * @see KtLifetimeTokenFactory
@@ -42,7 +43,14 @@ public inline fun <R> analyze(
     return sessionProvider.analyze(useSiteKtModule, action)
 }
 
-
+/**
+ * Executes the given [action] in the context of a [KtAnalysisSession] that depends on an original analysis session determined by
+ * [originalFile]. In addition to the symbols provided by the original analysis session, the dependent analysis session provides its own
+ * symbols derived from analyzing [elementToReanalyze]. This allows analyzing some new or copied (and modified) element in the larger
+ * context of the original analysis session.
+ *
+ * @see KtAnalysisSession.createContextDependentCopy
+ */
 public inline fun <R> analyzeInDependedAnalysisSession(
     originalFile: KtFile,
     elementToReanalyze: KtElement,

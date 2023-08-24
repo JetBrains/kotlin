@@ -43,8 +43,7 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
     val serializedIr = input.psiToIrOutput?.let {
         val ir = it.irModule
         KonanIrModuleSerializer(
-                messageLogger, ir.irBuiltins, it.expectDescriptorToSymbol,
-                skipExpects = !expectActualLinker,
+                messageLogger, ir.irBuiltins,
                 compatibilityMode = CompatibilityMode.CURRENT,
                 normalizeAbsolutePaths = normalizeAbsolutePaths,
                 sourceBaseDirs = relativePathBase,

@@ -1,0 +1,3 @@
+@Suppress("UNSUPPORTED")
+fun foo() {
+}

@@ -33,7 +33,7 @@ class C {
       return <this>.#test3$delegate.getValue<Any, Any>(thisRef = <this>, property = C::test3)
     }
     set(<set-?>: Any) {
-      <this>.#test3$delegate.setValue<Any>(thisRef = <this>, property = C::test3, value = <set-?>)
+      return <this>.#test3$delegate.setValue<Any>(thisRef = <this>, property = C::test3, value = <set-?>)
     }
 
 }
@@ -44,6 +44,5 @@ var test4: Any /* by */
     return #test4$delegate.getValue<Any, Any>(thisRef = null, property = ::test4)
   }
   set(<set-?>: Any) {
-    #test4$delegate.setValue<Any>(thisRef = null, property = ::test4, value = <set-?>)
+    return #test4$delegate.setValue<Any>(thisRef = null, property = ::test4, value = <set-?>)
   }
-

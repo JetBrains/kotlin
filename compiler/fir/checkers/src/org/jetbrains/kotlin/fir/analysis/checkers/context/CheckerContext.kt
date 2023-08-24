@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -58,6 +59,12 @@ abstract class CheckerContext : DiagnosticContext {
     override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
         val factory = diagnostic.factory
         val name = factory.name
+
+        if (name == FirErrors.ERROR_SUPPRESSION.name) {
+            // Can't suppress warning about suppressed error
+            return false
+        }
+
         val suppressedByAll = when (factory.severity) {
             Severity.INFO -> allInfosSuppressed
             Severity.WARNING -> allWarningsSuppressed

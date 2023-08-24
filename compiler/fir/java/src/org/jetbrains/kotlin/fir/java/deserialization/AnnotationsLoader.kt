@@ -42,9 +42,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             val resolvedClassTypeRef = classId.toLookupTag().toDefaultResolvedTypeRef()
             return buildClassReferenceExpression {
                 classTypeRef = resolvedClassTypeRef
-                typeRef = buildResolvedTypeRef {
-                    type = StandardClassIds.KClass.constructClassLikeType(arrayOf(resolvedClassTypeRef.type), false)
-                }
+                coneTypeOrNull = StandardClassIds.KClass.constructClassLikeType(arrayOf(resolvedClassTypeRef.type), false)
             }
         }
 
@@ -52,7 +50,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             visitExpression(name, buildGetClassCall {
                 val argument = value.toFirClassReferenceExpression()
                 argumentList = buildUnaryArgumentList(argument)
-                typeRef = argument.typeRef
+                coneTypeOrNull = argument.coneTypeOrNull
             })
         }
 
@@ -78,7 +76,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                     elements.add(buildGetClassCall {
                         val argument = value.toFirClassReferenceExpression()
                         argumentList = buildUnaryArgumentList(argument)
-                        typeRef = argument.typeRef
+                        coneTypeOrNull = argument.coneTypeOrNull
                     })
                 }
 
@@ -96,11 +94,9 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 override fun visitEnd() {
                     visitExpression(name, buildArrayLiteral {
                         guessArrayTypeIfNeeded(name, elements)?.let {
-                            typeRef = it
-                        } ?: elements.firstOrNull()?.typeRef?.coneType?.createOutArrayType()?.let {
-                            typeRef = buildResolvedTypeRef {
-                                type = it
-                            }
+                            coneTypeOrNull = it.coneTypeOrNull
+                        } ?: elements.firstOrNull()?.resolvedType?.createOutArrayType()?.let {
+                            coneTypeOrNull = it
                         }
                         argumentList = buildArgumentList {
                             arguments += elements

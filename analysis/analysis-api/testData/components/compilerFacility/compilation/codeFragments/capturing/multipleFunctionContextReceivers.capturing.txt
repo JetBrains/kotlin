@@ -1,0 +1,8 @@
+ContextReceiver[name: Ctx1; isMutated: false; displayText: this@Ctx1]
+    context(R|Ctx1|, R|Ctx2|)
+    fun foo(): R|kotlin/Unit|
+    R|Ctx1|
+ContextReceiver[name: Ctx2; isMutated: false; displayText: this@Ctx2]
+    context(R|Ctx1|, R|Ctx2|)
+    fun foo(): R|kotlin/Unit|
+    R|Ctx2|

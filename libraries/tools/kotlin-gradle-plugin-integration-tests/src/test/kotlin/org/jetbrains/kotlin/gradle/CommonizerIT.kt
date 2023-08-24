@@ -381,11 +381,7 @@ open class CommonizerIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            build(
-                "commonizeCInterop",
-                /* See: https://youtrack.jetbrains.com/issue/KT-59596/CInterop-commonization-depends-on-compile-tasks */
-                "-Pkotlin.mpp.applyDefaultHierarchyTemplate=false"
-            ) {
+            build("commonizeCInterop") {
                 assertTasksExecuted(":p1:commonizeCInterop")
                 assertTasksExecuted(":p2:commonizeCInterop")
 
@@ -479,10 +475,10 @@ open class CommonizerIT : KGPBaseTest() {
     @GradleTest
     fun testCommonizationWithTwoCInteropCommonizerGroups(gradleVersion: GradleVersion) {
         nativeProject("commonize-kt-57796-twoCInteropCommonizerGroups", gradleVersion) {
-            build(":app:commonizeCIntero") {
-                assertTasksExecuted(":lib:transformCommonMainCInteropDependenciesMetadata")
+            build(":app:commonizeCInterop") {
+                assertTasksNotExecuted(":lib:transformCommonMainCInteropDependenciesMetadata")
                 assertTasksExecuted(":lib:commonizeCInterop")
-                assertTasksExecuted(":app:transformCommonMainCInteropDependenciesMetadata")
+                assertTasksNotExecuted(":app:transformCommonMainCInteropDependenciesMetadata")
                 assertTasksExecuted(":app:commonizeCInterop")
             }
         }

@@ -1,0 +1,25 @@
+FILE: mixingComposableAndNormalFunctions.kt
+    public abstract class MyClass : R|kotlin/reflect/KSuspendFunction0<kotlin/Unit>|, R|() -> kotlin/Unit| {
+        public constructor(): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract class OurClass : R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction1<kotlin/Int, kotlin/Unit>|, R|() -> kotlin/Unit| {
+        public constructor(): R|OurClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract class YourClass : R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  kotlin/reflect/KFunction1<kotlin/Boolean, kotlin/Unit>|, R|() -> kotlin/Unit| {
+        public constructor(): R|YourClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract class Their : R|kotlin/reflect/KSuspendFunction1<kotlin/Boolean, kotlin/Unit>|, R|() -> kotlin/Unit| {
+        public constructor(): R|Their| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

@@ -30,9 +30,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
@@ -87,7 +85,7 @@ internal class KtFirReferenceShortener(
         val declarationToVisit = file.findSmallestElementOfTypeContainingSelection<KtDeclaration>(selection)
             ?: file
 
-        val firDeclaration = declarationToVisit.getOrBuildFir(firResolveSession) as? FirDeclaration ?: return ShortenCommandImpl(
+        val firDeclaration = declarationToVisit.getCorrespondingFirElement() ?: return ShortenCommandImpl(
             file.createSmartPointer(),
             importsToAdd = emptySet(),
             starImportsToAdd = emptySet(),
@@ -142,15 +140,24 @@ internal class KtFirReferenceShortener(
         )
     }
 
+    private fun KtElement.getCorrespondingFirElement(): FirElement? {
+        require(this is KtFile || this is KtDeclaration)
+
+        val firElement = getOrBuildFir(firResolveSession)
+
+        return when (firElement) {
+            is FirDeclaration -> firElement
+            is FirAnonymousFunctionExpression -> firElement.anonymousFunction
+            is FirFunctionTypeParameter -> firElement
+            else -> null
+        }
+    }
+
     private fun buildSymbol(firSymbol: FirBasedSymbol<*>): KtSymbol = analysisSession.firSymbolBuilder.buildSymbol(firSymbol)
 }
 
-private fun FqName.dropFakeRootPrefixIfPresent(): FqName {
-    val pathSegments = pathSegments()
-    return if (pathSegments.firstOrNull()?.asString() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) {
-        FqName.fromSegments(pathSegments.drop(1).map { it.asString() })
-    } else this
-}
+private fun FqName.dropFakeRootPrefixIfPresent(): FqName =
+    tail(FqName(ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE))
 
 private data class AdditionalImports(val simpleImports: Set<FqName>, val starImports: Set<FqName>)
 
@@ -318,8 +325,8 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
         }
     }
 
-    fun getRegularClass(typeRef: FirTypeRef): FirRegularClass? {
-        return typeRef.toRegularClassSymbol(firSession)?.fir
+    fun getRegularClass(type: ConeKotlinType?): FirRegularClass? {
+        return type?.toRegularClassSymbol(firSession)?.fir
     }
 
     fun toClassSymbol(classId: ClassId) =
@@ -423,7 +430,7 @@ private class ElementsToShortenCollector(
 
         val classifierId = resolvedTypeRef.type.lowerBoundIfFlexible().candidateClassId ?: return
 
-        findTypeToShorten(classifierId, typeElement)?.let(::addElementToShorten)
+        findTypeQualifierToShorten(classifierId, typeElement)?.let(::addElementToShorten)
     }
 
     /**
@@ -474,20 +481,6 @@ private class ElementsToShortenCollector(
         yieldAll(qualifiersToShorten)
     }.filter { starImport == it.importAllInParent }.mapNotNull { it.nameToImport }.distinct()
 
-    private fun findTypeToShorten(wholeClassifierId: ClassId, wholeTypeElement: KtUserType): ElementToShorten? {
-        val positionScopes =
-            shorteningContext.findScopesAtPosition(wholeTypeElement, getNamesToImport(), towerContextProvider) ?: return null
-        val allClassIds = wholeClassifierId.outerClassesWithSelf
-        val allQualifiedTypeElements = wholeTypeElement.qualifiedTypesWithSelf
-        return findClassifierElementsToShorten(
-            positionScopes,
-            allClassIds,
-            allQualifiedTypeElements,
-            ::ShortenType,
-            this::findFakePackageToShorten
-        )
-    }
-
     private fun findFakePackageToShorten(typeElement: KtUserType): ShortenType? {
         val deepestTypeWithQualifier = typeElement.qualifiedTypesWithSelf.last()
 
@@ -511,18 +504,16 @@ private class ElementsToShortenCollector(
 
     private fun findTypeQualifierToShorten(
         wholeClassQualifier: ClassId,
-        wholeQualifierElement: KtDotQualifiedExpression
+        wholeQualifierElement: KtElement,
     ): ElementToShorten? {
         val positionScopes: List<FirScope> =
             shorteningContext.findScopesAtPosition(wholeQualifierElement, getNamesToImport(), towerContextProvider) ?: return null
-        val allClassIds: Sequence<ClassId> = wholeClassQualifier.outerClassesWithSelf
-        val allQualifiers: Sequence<KtDotQualifiedExpression> = wholeQualifierElement.qualifiedExpressionsWithSelf
+        val allClassIds = wholeClassQualifier.outerClassesWithSelf
+        val allQualifiers = wholeQualifierElement.qualifiedElementsWithSelf
         return findClassifierElementsToShorten(
             positionScopes,
             allClassIds,
             allQualifiers,
-            ::ShortenQualifier,
-            this::findFakePackageToShorten
         )
     }
 
@@ -729,12 +720,10 @@ private class ElementsToShortenCollector(
         return !element.containingFile.hasImportDirectiveForDifferentSymbolWithSameName(classId)
     }
 
-    private inline fun <E : KtElement> findClassifierElementsToShorten(
+    private fun findClassifierElementsToShorten(
         positionScopes: List<FirScope>,
         allClassIds: Sequence<ClassId>,
-        allQualifiedElements: Sequence<E>,
-        createElementToShorten: (E, nameToImport: FqName?, importAllInParent: Boolean) -> ElementToShorten,
-        findFakePackageToShortenFn: (E) -> ElementToShorten?,
+        allQualifiedElements: Sequence<KtElement>,
     ): ElementToShorten? {
         for ((classId, element) in allClassIds.zip(allQualifiedElements)) {
             val classSymbol = shorteningContext.toClassSymbol(classId) ?: return null
@@ -778,7 +767,23 @@ private class ElementsToShortenCollector(
                 }
             }
         }
-        return findFakePackageToShortenFn(allQualifiedElements.last())
+        return findFakePackageToShorten(allQualifiedElements.last())
+    }
+
+    private fun createElementToShorten(element: KtElement, nameToImport: FqName?, importAllInParent: Boolean): ElementToShorten {
+        return when (element) {
+            is KtUserType -> ShortenType(element, nameToImport, importAllInParent)
+            is KtDotQualifiedExpression -> ShortenQualifier(element, nameToImport, importAllInParent)
+            else -> error("Unexpected ${element::class}")
+        }
+    }
+
+    private fun findFakePackageToShorten(element: KtElement): ElementToShorten? {
+        return when (element) {
+            is KtUserType -> findFakePackageToShorten(element)
+            is KtDotQualifiedExpression -> findFakePackageToShorten(element)
+            else -> error("Unexpected ${element::class}")
+        }
     }
 
     private fun importedClassifierOverwritesAvailableClassifier(
@@ -985,6 +990,9 @@ private class ElementsToShortenCollector(
     }
 
     private fun processPropertyAccess(firPropertyAccess: FirPropertyAccessExpression) {
+        // if explicit receiver is a property access or a function call, we cannot shorten it
+        if (!canBePossibleToDropReceiver(firPropertyAccess)) return
+
         val propertyReferenceExpression = firPropertyAccess.correspondingNameReference ?: return
         if (!propertyReferenceExpression.textRange.intersects(selection)) return
 
@@ -996,10 +1004,6 @@ private class ElementsToShortenCollector(
 
         val scopes = shorteningContext.findScopesAtPosition(qualifiedProperty, getNamesToImport(), towerContextProvider) ?: return
         val availableCallables = shorteningContext.findPropertiesInScopes(scopes, propertySymbol.name)
-
-        // if explicit receiver is a property access or a function call, we cannot shorten it
-        if (firPropertyAccess.explicitReceiver !is FirResolvedQualifier) return
-
         if (availableCallables.isNotEmpty() && shortenIfAlreadyImported(firPropertyAccess, propertySymbol, qualifiedProperty)) {
             addElementToShorten(ShortenQualifier(qualifiedProperty))
             return
@@ -1100,15 +1104,12 @@ private class ElementsToShortenCollector(
         callToShorten?.let(::addElementToShorten)
     }
 
-    private fun canBePossibleToDropReceiver(functionCall: FirFunctionCall): Boolean {
+    private fun canBePossibleToDropReceiver(qualifiedAccess: FirQualifiedAccessExpression): Boolean {
         // we can remove receiver only if it is a qualifier
-        val explicitReceiver = functionCall.explicitReceiver as? FirResolvedQualifier ?: return false
+        if (qualifiedAccess.explicitReceiver !is FirResolvedQualifier) return false
 
         // if there is no extension receiver necessary, then it can be removed
-        if (functionCall.extensionReceiver is FirNoReceiverExpression) return true
-
-        val receiverType = shorteningContext.getRegularClass(explicitReceiver.typeRef) ?: return true
-        return receiverType.classKind != ClassKind.OBJECT
+        return qualifiedAccess.extensionReceiver is FirNoReceiverExpression
     }
 
     private fun findUnambiguousReferencedCallableId(namedReference: FirNamedReference): FirCallableSymbol<*>? {
@@ -1189,6 +1190,13 @@ private class ElementsToShortenCollector(
 
     private val ClassId.outerClassesWithSelf: Sequence<ClassId>
         get() = generateSequence(this) { it.outerClassId }
+
+    private val KtElement.qualifiedElementsWithSelf: Sequence<KtElement>
+        get() = when (this) {
+            is KtUserType -> qualifiedTypesWithSelf
+            is KtDotQualifiedExpression -> qualifiedExpressionsWithSelf
+            else -> error("Unexpected ${this::class}")
+        }
 
     /**
      * Note: The resulting sequence does not contain non-qualified types!
@@ -1298,8 +1306,8 @@ private fun KtUserType.hasFakeRootPrefix(): Boolean =
 private fun KtDotQualifiedExpression.hasFakeRootPrefix(): Boolean =
     (receiverExpression as? KtNameReferenceExpression)?.getReferencedName() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 
-internal fun KtElement.getDotQualifiedExpressionForSelector(): KtDotQualifiedExpression? =
-    getQualifiedExpressionForSelector() as? KtDotQualifiedExpression
+internal fun KtSimpleNameExpression.getDotQualifiedExpressionForSelector(): KtDotQualifiedExpression? =
+    getQualifiedElement() as? KtDotQualifiedExpression
 
 private fun KtElement.getQualifier(): KtElement? = when (this) {
     is KtUserType -> qualifier

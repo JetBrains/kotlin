@@ -82,4 +82,4 @@ KtErrorCallInfo:
           callableIdIfNonLocal = null)
       }
   ]
-  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [fun function(a: Char): Unit, fun function(b: Boolean): Unit, fun function(c: String): Unit]>
+  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions is applicable: [fun function(a: Char): Unit, fun function(b: Boolean): Unit, fun function(c: String): Unit]>

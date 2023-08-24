@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 class Foo {
     @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
     @kotlin.internal.LowPriorityInOverloadResolution

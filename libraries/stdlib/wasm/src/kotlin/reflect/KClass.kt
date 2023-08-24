@@ -32,4 +32,7 @@ public actual interface KClass<T : Any> : KClassifier {
     @SinceKotlin("1.1")
     public actual fun isInstance(value: Any?): Boolean
 
+    actual override fun equals(other: Any?): Boolean // KT-24971
+
+    actual override fun hashCode(): Int // KT-24971
 }

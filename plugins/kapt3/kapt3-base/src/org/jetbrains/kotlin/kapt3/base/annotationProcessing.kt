@@ -14,6 +14,7 @@ import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.kapt3.base.incremental.*
+import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaFileManager
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
@@ -25,6 +26,7 @@ import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
 import javax.tools.JavaFileObject
+import kotlin.collections.List
 import kotlin.system.measureTimeMillis
 import com.sun.tools.javac.util.List as JavacList
 
@@ -124,6 +126,10 @@ fun KaptContext.doAnnotationProcessing(
 
         options.processorsStatsReportFile?.let { dumpProcessorStats(wrappedProcessors, it, logger::info) }
 
+        options.fileReadHistoryReportFile?.let {
+            dumpFileReadHistory(fileManager, it, logger::info)
+        }
+
         if (logger.isVerbose) {
             filer.displayState()
         }
@@ -161,6 +167,12 @@ private fun dumpProcessorStats(wrappedProcessors: List<ProcessorWrapper>, apRepo
             appendLine(processor.renderGenerations())
         }
     })
+}
+
+private fun dumpFileReadHistory(fileManager: KaptJavaFileManager, reportFile: File, logger: (String) -> Unit) {
+    logger("Dumping KAPT file read history to ${reportFile.absolutePath}")
+
+    reportFile.writeText(fileManager.renderFileReadHistory())
 }
 
 private fun reportIfRunningNonIncrementally(

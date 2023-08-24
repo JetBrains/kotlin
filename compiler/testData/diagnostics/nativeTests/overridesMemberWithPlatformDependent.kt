@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-57858
 
 // FILE: Sub.kt

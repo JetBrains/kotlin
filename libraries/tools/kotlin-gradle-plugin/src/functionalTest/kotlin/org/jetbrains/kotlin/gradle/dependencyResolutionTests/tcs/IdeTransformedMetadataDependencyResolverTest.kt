@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeTransformedMetadataDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.*
-import org.junit.Ignore
 import org.junit.Test
 
 class IdeTransformedMetadataDependencyResolverTest {
@@ -72,7 +71,6 @@ class IdeTransformedMetadataDependencyResolverTest {
     }
 
     @Test
-    @Ignore("stdlib publication migration - test data changes")
     fun `test OKIO in JVM + Android project`() {
         val project = buildProject {
             enableDependencyVerification(false)
@@ -104,16 +102,14 @@ class IdeTransformedMetadataDependencyResolverTest {
         val kgpVersion = project.getKotlinPluginVersion()
         commonMain.binaryDependencies().assertMatches(
             binaryCoordinates("com.squareup.okio:okio-jvm:3.2.0"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kgpVersion"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kgpVersion"),
+            legacyStdlibJdkDependencies(),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
         )
 
         commonTest.binaryDependencies().assertMatches(
             binaryCoordinates("com.squareup.okio:okio-jvm:3.2.0"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kgpVersion"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kgpVersion"),
+            legacyStdlibJdkDependencies(),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
         )

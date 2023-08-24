@@ -29,5 +29,5 @@ var <T : Any?> C<T>.genericDelegatedProperty: Int /* by */
     return #genericDelegatedProperty$delegate.getValue(thisRef = <this>, kProp = ::genericDelegatedProperty/*<T>()*/)
   }
   set(<set-?>: Int) {
-    #genericDelegatedProperty$delegate.setValue(thisRef = <this>, kProp = ::genericDelegatedProperty/*<T>()*/, newValue = <set-?>)
+    return #genericDelegatedProperty$delegate.setValue(thisRef = <this>, kProp = ::genericDelegatedProperty/*<T>()*/, newValue = <set-?>)
   }

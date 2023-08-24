@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NativeStandardInteropNames
+import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.constants.BooleanValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -30,14 +32,14 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 internal val interopPackageName = InteropFqNames.packageName
-internal val objCObjectFqName = interopPackageName.child(Name.identifier("ObjCObject"))
+internal val objCObjectFqName = NativeStandardInteropNames.objCObjectClassId.asSingleFqName()
 private val objCClassFqName = interopPackageName.child(Name.identifier("ObjCClass"))
 private val objCProtocolFqName = interopPackageName.child(Name.identifier("ObjCProtocol"))
-internal val externalObjCClassFqName = interopPackageName.child(Name.identifier("ExternalObjCClass"))
-internal val objCDirectFqName = interopPackageName.child(Name.identifier("ObjCDirect"))
-internal val objCMethodFqName = interopPackageName.child(Name.identifier("ObjCMethod"))
-internal val objCConstructorFqName = FqName("kotlinx.cinterop.ObjCConstructor")
-internal val objCFactoryFqName = interopPackageName.child(Name.identifier("ObjCFactory"))
+internal val externalObjCClassFqName = NativeStandardInteropNames.externalObjCClassClassId.asSingleFqName()
+internal val objCDirectFqName = NativeStandardInteropNames.objCDirectClassId.asSingleFqName()
+internal val objCMethodFqName = NativeStandardInteropNames.objCMethodClassId.asSingleFqName()
+internal val objCConstructorFqName = NativeStandardInteropNames.objCConstructorClassId.asSingleFqName()
+internal val objCFactoryFqName = NativeStandardInteropNames.objCFactoryClassId.asSingleFqName()
 
 fun ClassDescriptor.isObjCClass(): Boolean =
                 this.containingDeclaration.fqNameSafe != interopPackageName &&
@@ -111,11 +113,6 @@ fun ClassDescriptor.isKotlinObjCClass(): Boolean = this.isObjCClass() && !this.i
 
 fun IrClass.isKotlinObjCClass(): Boolean = this.isObjCClass() && !this.isExternalObjCClass()
 
-
-data class ObjCMethodInfo(val selector: String,
-                          val encoding: String,
-                          val isStret: Boolean,
-                          val directSymbol: String?)
 
 private fun FunctionDescriptor.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
     assert (this.kind.isReal)

@@ -569,6 +569,58 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/getOrBuildFir/destructuring")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Destructuring {
+        @Test
+        public void testAllFilesPresentInDestructuring() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/destructuring"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("destructuringDeclaration.kt")
+        public void testDestructuringDeclaration() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/destructuring/destructuringDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("destructuringDeclarationInLambda.kt")
+        public void testDestructuringDeclarationInLambda() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/destructuring/destructuringDeclarationInLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("destructuringDeclarationParameterInLambda.kt")
+        public void testDestructuringDeclarationParameterInLambda() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/destructuring/destructuringDeclarationParameterInLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("entryInDestructuringDeclaration.kt")
+        public void testEntryInDestructuringDeclaration() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/destructuring/entryInDestructuringDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("entryInDestructuringDeclarationParameterInLambda.kt")
+        public void testEntryInDestructuringDeclarationParameterInLambda() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/destructuring/entryInDestructuringDeclarationParameterInLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("entryUnderscoreInDestructuringDeclaration.kt")
+        public void testEntryUnderscoreInDestructuringDeclaration() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/destructuring/entryUnderscoreInDestructuringDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("entryUnderscoreInDestructuringDeclarationParameterInLambda.kt")
+        public void testEntryUnderscoreInDestructuringDeclarationParameterInLambda() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/destructuring/entryUnderscoreInDestructuringDeclarationParameterInLambda.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions")
     @TestDataPath("$PROJECT_ROOT")
     public class Expressions {

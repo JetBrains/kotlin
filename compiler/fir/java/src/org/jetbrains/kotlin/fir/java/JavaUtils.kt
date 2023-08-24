@@ -123,9 +123,7 @@ private fun <T> List<T>.createArrayLiteral(session: FirSession, kind: ConstantVa
                 arguments += element.createConstantOrError(session)
             }
         }
-        typeRef = buildResolvedTypeRef {
-            type = kind.expectedConeType(session).createArrayType()
-        }
+        coneTypeOrNull = kind.expectedConeType(session).createArrayType()
     }
 }
 

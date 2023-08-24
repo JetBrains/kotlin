@@ -1,8 +1,8 @@
 warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
-compiler/testData/cli/jvm/firErrorOnLastLine.kt:1:9: error: 'this' is not defined in this context
+compiler/testData/cli/jvm/firErrorOnLastLine.kt:1:9: error: 'this' is not defined in this context.
 val x = this
         ^
-compiler/testData/cli/jvm/firErrorOnLastLine.kt:2:9: error: 'this' is not defined in this context
+compiler/testData/cli/jvm/firErrorOnLastLine.kt:2:9: error: 'this' is not defined in this context.
 val y = this // EOL AFTER THIS LINE!
         ^
 COMPILATION_ERROR

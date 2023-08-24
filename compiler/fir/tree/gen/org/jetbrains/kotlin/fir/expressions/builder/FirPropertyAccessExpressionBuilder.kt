@@ -22,9 +22,8 @@ import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirPropertyAccessExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -34,7 +33,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirPropertyAccessExpressionBuilder : FirQualifiedAccessExpressionBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource
+    override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var calleeReference: FirReference
     override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
@@ -48,7 +47,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessExpressionBuilder, 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirPropertyAccessExpression {
         return FirPropertyAccessExpressionImpl(
-            typeRef,
+            coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             calleeReference,
             contextReceiverArguments.toMutableOrEmpty(),

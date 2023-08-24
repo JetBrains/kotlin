@@ -48,6 +48,8 @@ dependencies {
     testRuntimeOnly(jpsModelImpl())
 }
 
+optInToObsoleteDescriptorBasedAPI()
+
 val generationRoot = projectDir.resolve("tests-gen")
 
 sourceSets {
@@ -55,14 +57,6 @@ sourceSets {
     "test" {
         projectDefault()
         this.java.srcDir(generationRoot.name)
-    }
-}
-
-tasks {
-    named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileKotlin") {
-        kotlinOptions {
-            freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
-        }
     }
 }
 

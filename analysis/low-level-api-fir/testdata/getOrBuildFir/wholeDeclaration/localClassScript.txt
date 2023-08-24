@@ -4,7 +4,7 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
-    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|X| {
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|<local>/X| {
         super<R|kotlin/Any|>()
     }
 
@@ -15,12 +15,12 @@ local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] localClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/Unit| {
             local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|X| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|<local>/X| {
                     super<R|kotlin/Any|>()
                 }
 

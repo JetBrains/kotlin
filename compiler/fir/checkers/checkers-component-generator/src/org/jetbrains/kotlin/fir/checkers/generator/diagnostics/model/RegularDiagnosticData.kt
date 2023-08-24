@@ -24,6 +24,7 @@ data class RegularDiagnosticData(
     override val psiType: KType,
     override val parameters: List<DiagnosticParameter>,
     override val positioningStrategy: PositioningStrategy,
+    val isSuppressible: Boolean,
 ) : DiagnosticData()
 
 data class DeprecationDiagnosticData(

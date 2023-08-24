@@ -289,6 +289,12 @@ public class OutOfContentRootInBlockModificationTestGenerated extends AbstractOu
     }
 
     @Test
+    @TestMetadata("topLevelFunctionWithTypeWithBodyDumpFile.kt")
+    public void testTopLevelFunctionWithTypeWithBodyDumpFile() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelFunctionWithTypeWithBodyDumpFile.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelFunctionWithTypeWithoutBody.kt")
     public void testTopLevelFunctionWithTypeWithoutBody() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/topLevelFunctionWithTypeWithoutBody.kt");

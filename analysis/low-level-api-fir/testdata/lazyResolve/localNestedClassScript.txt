@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] localNestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(RAW_FIR)] localNestedClassScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -146,7 +146,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -204,7 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -233,7 +233,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -287,7 +287,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 
         public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
             local final? [ResolvedTo(RAW_FIR)] class LocalClass : AnotherTopLevelClass {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|LocalClass| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                     super<AnotherTopLevelClass>()
                 }
 
@@ -295,7 +295,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
                 }
 
                 local final? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] class NestedLocalClass : R|kotlin/Any| {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedLocalClass] constructor(): R|LocalClass.NestedLocalClass| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedLocalClass] constructor(): R|<local>/LocalClass.NestedLocalClass| {
                         super<R|kotlin/Any|>()
                     }
 
@@ -309,7 +309,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -334,7 +334,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             local final? [ResolvedTo(RAW_FIR)] class LocalClass : AnotherTopLevelClass {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|LocalClass| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                     super<AnotherTopLevelClass>()
                 }
 
@@ -342,7 +342,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
                 }
 
                 local final? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] class NestedLocalClass : R|kotlin/Any| {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedLocalClass] constructor(): R|LocalClass.NestedLocalClass| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedLocalClass] constructor(): R|<local>/LocalClass.NestedLocalClass| {
                         super<R|kotlin/Any|>()
                     }
 
@@ -356,7 +356,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -381,7 +381,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 
         public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
             local final? [ResolvedTo(RAW_FIR)] class LocalClass : AnotherTopLevelClass {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|LocalClass| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                     super<AnotherTopLevelClass>()
                 }
 
@@ -389,7 +389,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
                 }
 
                 local final? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] class NestedLocalClass : R|kotlin/Any| {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedLocalClass] constructor(): R|LocalClass.NestedLocalClass| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedLocalClass] constructor(): R|<local>/LocalClass.NestedLocalClass| {
                         super<R|kotlin/Any|>()
                     }
 
@@ -403,7 +403,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
@@ -428,7 +428,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|AnotherTopLevelClass| {
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|LocalClass| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                     super<R|AnotherTopLevelClass|>()
                 }
 
@@ -436,7 +436,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
                 }
 
                 local final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] class NestedLocalClass : R|kotlin/Any| {
-                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedLocalClass] constructor(): R|LocalClass.NestedLocalClass| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedLocalClass] constructor(): R|<local>/LocalClass.NestedLocalClass| {
                         super<R|kotlin/Any|>()
                     }
 
@@ -450,7 +450,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] localNestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
@@ -478,7 +478,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localNestedClassScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|AnotherTopLevelClass| {
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|LocalClass| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                     super<R|AnotherTopLevelClass|>()
                 }
 
@@ -486,7 +486,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localNestedClassScript.kts
                 }
 
                 local final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] class NestedLocalClass : R|kotlin/Any| {
-                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedLocalClass] constructor(): R|LocalClass.NestedLocalClass| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedLocalClass] constructor(): R|<local>/LocalClass.NestedLocalClass| {
                         super<R|kotlin/Any|>()
                     }
 
@@ -495,4 +495,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localNestedClassScript.kts
             }
 
         }
-

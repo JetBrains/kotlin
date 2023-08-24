@@ -87,6 +87,14 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         generateBody: BodyGenerator.() -> IrBody?
     ): IrSimpleFunction =
         declareSimpleFunctionInner(descriptor, ktFunction, origin).buildWithScope { irFunction ->
+            if (descriptor != irFunction.descriptor) {
+                val message = """
+                    |IrSymbolTable contains function with wrong descriptor.
+                    |Expected: $descriptor
+                    |Actual: ${irFunction.descriptor}
+                """.trimMargin()
+                error(message)
+            }
             generateFunctionParameterDeclarationsAndReturnType(irFunction, ktFunction, ktReceiver, ktContextReceivers)
             irFunction.body = createBodyGenerator(irFunction.symbol, parentLoopResolver).generateBody()
         }

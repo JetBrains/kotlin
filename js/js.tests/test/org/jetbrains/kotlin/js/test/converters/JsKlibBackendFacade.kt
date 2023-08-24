@@ -55,7 +55,6 @@ class JsKlibBackendFacade(
                 klibPath = outputFile,
                 JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList(),
                 inputArtifact.irModuleFragment,
-                inputArtifact.expectDescriptorToSymbol,
                 cleanFiles = inputArtifact.icData,
                 nopack = true,
                 perFile = false,

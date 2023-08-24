@@ -52,8 +52,11 @@ modules.forEach { module ->
 
   final Configuration  lib_src = configurations.create(lib)
 
-  if (module == "kotlin-test-js") {
-    lib_src.attributes {attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, "kotlin-runtime")) }
+  if (module == "kotlin-test-js" || module == "kotlin-stdlib-js") {
+    lib_src.attributes {
+      attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, "kotlin-runtime"))
+      attribute(Attribute.of("org.jetbrains.kotlin.js.compiler", String), "ir")
+    }
   }
 
   dependencies {

@@ -23,8 +23,8 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY name:x type:kotlin.Int flags:var
-        VAR PROPERTY_DELEGATE name:x$delegate type:java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.HashMap<kotlin.String, kotlin.Int> } [val]
-          CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf>{ kotlin.collections.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf> } declared in kotlin.collections' type=java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.HashMap<kotlin.String, kotlin.Int> } origin=null
+        VAR PROPERTY_DELEGATE name:x$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> [val]
+          CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf> declared in kotlin.collections' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
             <K>: kotlin.String
             <V>: kotlin.Int
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-x> visibility:local modality:FINAL <> () returnType:kotlin.Int
@@ -33,18 +33,18 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
               CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue declared in kotlin.collections' type=kotlin.Int origin=null
                 <V>: kotlin.Int
                 <V1>: kotlin.Int
-                $receiver: GET_VAR 'val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.HashMap<kotlin.String, kotlin.Int> } declared in <root>.test2' type=java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.HashMap<kotlin.String, kotlin.Int> } origin=null
+                $receiver: GET_VAR 'val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int> declared in <root>.test2' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null
-                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'var x: kotlin.Int by (...)' delegate='val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.HashMap<kotlin.String, kotlin.Int> } declared in <root>.test2' getter='local final fun <get-x> (): kotlin.Int declared in <root>.test2' setter='local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'var x: kotlin.Int by (...)' delegate='val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int> declared in <root>.test2' getter='local final fun <get-x> (): kotlin.Int declared in <root>.test2' setter='local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
         FUN DELEGATED_PROPERTY_ACCESSOR name:<set-x> visibility:local modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
           VALUE_PARAMETER name:value index:0 type:kotlin.Int
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2'
               CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
                 <V>: kotlin.Int
-                $receiver: GET_VAR 'val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.HashMap<kotlin.String, kotlin.Int> } declared in <root>.test2' type=java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.HashMap<kotlin.String, kotlin.Int> } origin=null
+                $receiver: GET_VAR 'val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int> declared in <root>.test2' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null
-                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'var x: kotlin.Int by (...)' delegate='val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.HashMap<kotlin.String, kotlin.Int> } declared in <root>.test2' getter='local final fun <get-x> (): kotlin.Int declared in <root>.test2' setter='local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'var x: kotlin.Int by (...)' delegate='val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int> declared in <root>.test2' getter='local final fun <get-x> (): kotlin.Int declared in <root>.test2' setter='local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
                 value: GET_VAR 'value: kotlin.Int declared in <root>.test2.<set-x>' type=kotlin.Int origin=null
       CALL 'local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=EQ
         value: CONST Int type=kotlin.Int value=0

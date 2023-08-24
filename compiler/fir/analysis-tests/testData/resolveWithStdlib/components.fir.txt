@@ -37,8 +37,11 @@ FILE: components.kt
         R|<local>/list|.R|kotlin/collections/forEach|<R|D|>(<L> = forEach@fun <anonymous>(<destruct>: R|D|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
             lval x: R|kotlin/Int| = R|<local>/<destruct>|.R|/D.component1|()
             lval y: R|kotlin/String| = R|<local>/<destruct>|.R|/D.component2|()
-            R|kotlin/io/println|(R|<local>/x|)
-            R|kotlin/io/println|(R|<local>/y|)
+             {
+                R|kotlin/io/println|(R|<local>/x|)
+                R|kotlin/io/println|(R|<local>/y|)
+            }
+
         }
         )
     }

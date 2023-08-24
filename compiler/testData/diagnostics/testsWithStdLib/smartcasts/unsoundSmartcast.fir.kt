@@ -4,7 +4,7 @@
 fun test1() {
     var x: MutableList<Int>? = mutableListOf(1)
     x!!
-    x[if (true) { x = null; 0 } else 0] <!UNRESOLVED_REFERENCE!>+=<!> <!UNSAFE_CALL!>x[0]<!>
+    x[if (true) { x = null; 0 } else 0] += <!UNSAFE_CALL!>x[0]<!>
     <!UNSAFE_CALL!>x[0]<!>.inv()
 }
 

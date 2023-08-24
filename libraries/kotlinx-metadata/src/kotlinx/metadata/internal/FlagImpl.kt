@@ -7,7 +7,7 @@ package kotlinx.metadata.internal
 
 import org.jetbrains.kotlin.metadata.deserialization.Flags as F
 
-public class FlagImpl(internal val offset: Int, internal val bitWidth: Int, internal val value: Int) : @Suppress("DEPRECATION") kotlinx.metadata.Flag() {
+public class FlagImpl(internal val offset: Int, internal val bitWidth: Int, internal val value: Int) {
     @IgnoreInApiDump
     internal constructor(field: F.FlagField<*>, value: Int) : this(field.offset, field.bitWidth, value)
 
@@ -17,8 +17,5 @@ public class FlagImpl(internal val offset: Int, internal val bitWidth: Int, inte
     internal operator fun plus(flags: Int): Int =
         (flags and (((1 shl bitWidth) - 1) shl offset).inv()) + (value shl offset)
 
-    override operator fun invoke(flags: Int): Boolean = (flags ushr offset) and ((1 shl bitWidth) - 1) == value
+    public operator fun invoke(flags: Int): Boolean = (flags ushr offset) and ((1 shl bitWidth) - 1) == value
 }
-
-internal fun Flag(field: F.FlagField<*>, value: Int): FlagImpl = FlagImpl(field, value)
-internal fun Flag(field: F.BooleanFlagField): FlagImpl = FlagImpl(field)

@@ -1,3 +1,15 @@
+/**
+ * public abstract interface ABC : kotlin/Any {
+ *
+ *   // signature: abc(Ljava/lang/CharSequence;Ljava/util/List;[Ljava/lang/CharSequence;)Ljava/util/List;
+ *   public abstract fun <T#0 (* T *) : kotlin/CharSequence> abc(item: T#0, items: kotlin/collections/List<T#0>, vararg otherItems: T#0 (* kotlin/Array<out T#0> *)): kotlin/collections/List<T#0>
+ *
+ *   // signature: bcd([C)I
+ *   public abstract fun <T#0 (* X *)> bcd(vararg a: kotlin/Char (* kotlin/CharArray *)): kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface ABC {
 
@@ -14,6 +26,15 @@ public abstract interface ABC {
 ////////////////////
 
 
+/**
+ * public open class BaseClass<T#0 (* B *) : kotlin/Any> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public class BaseClass<B extends java.lang.Object> {
 
@@ -25,6 +46,12 @@ public class BaseClass<B extends java.lang.Object> {
 ////////////////////
 
 
+/**
+ * public abstract interface Intf<T#0 (* I1 *), T#1 (* I2 *) : java/io/Serializable> : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface Intf<I1 extends java.lang.Object, I2 extends java.io.Serializable> {
 }
@@ -32,6 +59,12 @@ public abstract interface Intf<I1 extends java.lang.Object, I2 extends java.io.S
 ////////////////////
 
 
+/**
+ * public abstract interface Intf2<out T#0 (* T *) : kotlin/collections/List<kotlin/String>, T#1 (* M *) : T#0> : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface Intf2<T extends java.util.List<? extends java.lang.String>, M extends T> {
 }
@@ -39,6 +72,20 @@ public abstract interface Intf2<T extends java.util.List<? extends java.lang.Str
 ////////////////////
 
 
+/**
+ * public final class MyClass<T#0 (* M1 *), T#1 (* M2 *)> : Intf<kotlin/Any, java/util/Date>, OtherIntf<kotlin/String>, BaseClass<java/lang/RuntimeException (* = kotlin/RuntimeException^ *)> {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: fld:Ljava/util/List;
+ *   // getter: getFld()Ljava/util/List;
+ *   public final val fld: kotlin/collections/List<kotlin/collections/Map<kotlin/String, T#0>>?
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class MyClass<M1 extends java.lang.Object, M2 extends java.lang.Object> extends BaseClass<java.lang.RuntimeException> implements Intf<java.lang.Object, java.util.Date>, OtherIntf<java.lang.String> {
     @org.jetbrains.annotations.Nullable()
@@ -57,6 +104,12 @@ public final class MyClass<M1 extends java.lang.Object, M2 extends java.lang.Obj
 ////////////////////
 
 
+/**
+ * public abstract interface OtherIntf<T#0 (* O *) : kotlin/CharSequence> : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface OtherIntf<O extends java.lang.CharSequence> {
 }

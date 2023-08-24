@@ -232,6 +232,15 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InnerOnTopLevelScriptClassWarning::class
     }
 
+    interface ErrorSuppression : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ErrorSuppression::class
+        val diagnosticName: String
+    }
+
+    interface MissingConstructorKeyword : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MissingConstructorKeyword::class
+    }
+
     interface InvisibleReference : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvisibleReference::class
         val reference: KtSymbol
@@ -320,6 +329,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
     interface UnresolvedImport : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UnresolvedImport::class
         val reference: String
+    }
+
+    interface DuplicateParameterNameInFunctionType : KtFirDiagnostic<KtTypeReference> {
+        override val diagnosticClass get() = DuplicateParameterNameInFunctionType::class
     }
 
     interface CreatingAnInstanceOfAbstractClass : KtFirDiagnostic<KtExpression> {
@@ -829,6 +842,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface VolatileOnDelegate : KtFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = VolatileOnDelegate::class
+    }
+
+    interface NonSourceAnnotationOnInlinedLambdaExpression : KtFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = NonSourceAnnotationOnInlinedLambdaExpression::class
     }
 
     interface WrongJsQualifier : KtFirDiagnostic<KtElement> {
@@ -1644,6 +1661,15 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CyclicGenericUpperBound::class
     }
 
+    interface FiniteBoundsViolation : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = FiniteBoundsViolation::class
+    }
+
+    interface FiniteBoundsViolationInJava : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = FiniteBoundsViolationInJava::class
+        val containingTypes: List<KtSymbol>
+    }
+
     interface DeprecatedTypeParameterSyntax : KtFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = DeprecatedTypeParameterSyntax::class
     }
@@ -1810,16 +1836,6 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val overridingVisibility: Visibility
         val overridden: KtCallableSymbol
         val containingClassName: Name
-    }
-
-    interface MultipleDefaultsInheritedFromSupertypes : KtFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = MultipleDefaultsInheritedFromSupertypes::class
-        val valueParameter: KtSymbol
-    }
-
-    interface MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverride : KtFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverride::class
-        val valueParameter: KtSymbol
     }
 
     interface TypealiasExpandsToArrayOfNothings : KtFirDiagnostic<KtElement> {
@@ -2533,6 +2549,18 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val incompatibilityType: ExpectActualAnnotationsIncompatibilityType<FirAnnotation>
     }
 
+    interface OptionalDeclarationOutsideOfAnnotationEntry : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = OptionalDeclarationOutsideOfAnnotationEntry::class
+    }
+
+    interface OptionalDeclarationUsageInNonCommonSource : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = OptionalDeclarationUsageInNonCommonSource::class
+    }
+
+    interface OptionalExpectationNotOnExpected : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = OptionalExpectationNotOnExpected::class
+    }
+
     interface InitializerRequiredForDestructuringDeclaration : KtFirDiagnostic<KtDestructuringDeclaration> {
         override val diagnosticClass get() = InitializerRequiredForDestructuringDeclaration::class
     }
@@ -3243,6 +3271,15 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface ReturnForBuiltInSuspend : KtFirDiagnostic<KtReturnExpression> {
         override val diagnosticClass get() = ReturnForBuiltInSuspend::class
+    }
+
+    interface MixingSuspendAndNonSuspendSupertypes : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MixingSuspendAndNonSuspendSupertypes::class
+    }
+
+    interface MixingFunctionalKindsInSupertypes : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MixingFunctionalKindsInSupertypes::class
+        val kinds: List<FunctionTypeKind>
     }
 
     interface RedundantLabelWarning : KtFirDiagnostic<KtLabelReferenceExpression> {

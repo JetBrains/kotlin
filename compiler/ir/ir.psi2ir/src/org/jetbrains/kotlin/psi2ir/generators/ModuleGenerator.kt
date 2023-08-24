@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -40,10 +38,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-open class ModuleGenerator(
-    override val context: GeneratorContext,
-    private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null
-) : Generator {
+open class ModuleGenerator(override val context: GeneratorContext) : Generator {
 
     open fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
         IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
@@ -74,10 +69,6 @@ open class ModuleGenerator(
         }
 
         irFile.patchDeclarationParents()
-
-        if (expectDescriptorToSymbol != null) {
-            referenceExpectsForUsedActuals(expectDescriptorToSymbol, context.symbolTable, irFile)
-        }
 
         IrSyntheticDeclarationGenerator(context).generateSyntheticDeclarations(irFile)
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
@@ -14,17 +15,22 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.ConstantArgumentKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkConstantArguments
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FIR_NON_SUPPRESSIBLE_ERROR_NAMES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.declarations.unwrapVarargValue
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 
 object FirAnnotationExpressionChecker : FirAnnotationCallChecker() {
@@ -39,7 +45,8 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker() {
 
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val argumentMapping = expression.argumentMapping.mapping
-        val fqName = expression.fqName(context.session)
+        val annotationClassId = expression.toAnnotationClassId(context.session)
+        val fqName = annotationClassId?.asSingleFqName()
         for (arg in argumentMapping.values) {
             val argExpression = (arg as? FirNamedArgumentExpression)?.expression ?: (arg as? FirErrorExpression)?.expression ?: arg
             checkAnnotationArgumentWithSubElements(argExpression, context.session, reporter, context)
@@ -50,6 +57,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker() {
         checkDeprecatedSinceKotlin(expression.source, fqName, argumentMapping, context, reporter)
         checkAnnotationUsedAsAnnotationArgument(expression, context, reporter)
         checkNotAClass(expression, context, reporter)
+        checkErrorSuppression(annotationClassId, argumentMapping, reporter, context)
     }
 
     private fun checkAnnotationArgumentWithSubElements(
@@ -218,6 +226,26 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker() {
             annotationTypeRef.coneType !is ConeClassLikeType
         ) {
             reporter.reportOn(annotationTypeRef.source, FirErrors.NOT_A_CLASS, context)
+        }
+    }
+
+    private fun checkErrorSuppression(
+        annotationClassId: ClassId?,
+        argumentMapping: Map<Name, FirExpression>,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        if (context.languageVersionSettings.getFlag(AnalysisFlags.dontWarnOnErrorSuppression)) return
+        if (annotationClassId != StandardClassIds.Annotations.Suppress) return
+        val nameExpressions = argumentMapping[StandardClassIds.Annotations.ParameterNames.suppressNames]?.unwrapVarargValue() ?: return
+        for (nameExpression in nameExpressions) {
+            val name = (nameExpression as? FirConstExpression<*>)?.value as? String ?: continue
+            val parameter = when (name) {
+                in FIR_NON_SUPPRESSIBLE_ERROR_NAMES -> name
+                AbstractDiagnosticCollector.SUPPRESS_ALL_ERRORS -> "all errors"
+                else -> continue
+            }
+            reporter.reportOn(nameExpression.source, FirErrors.ERROR_SUPPRESSION, parameter, context)
         }
     }
 }

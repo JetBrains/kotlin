@@ -1,3 +1,18 @@
+/**
+ * public final class B : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: a$delegate:Lerror/NonExistentClass;
+ *   // getter: getA()Ljava/lang/String;
+ *   // synthetic method for annotations: getA$annotations()V
+ *   public final (* delegated *) val a: kotlin/String
+ *     public final (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class B implements NonExisting {
@@ -22,6 +37,15 @@ public final class B implements NonExisting {
 ////////////////////
 
 
+/**
+ * public open class C : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public class C {
 
@@ -33,6 +57,15 @@ public class C {
 ////////////////////
 
 
+/**
+ * public final class D : I {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class D implements I {
@@ -45,6 +78,15 @@ public final class D implements I {
 ////////////////////
 
 
+/**
+ * public final class E : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "DELEGATION_NOT_TO_INTERFACE"})
 public final class E implements NonExisting {
@@ -57,6 +99,12 @@ public final class E implements NonExisting {
 ////////////////////
 
 
+/**
+ * public abstract interface I : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface I {
 }
@@ -64,6 +112,15 @@ public abstract interface I {
 ////////////////////
 
 
+/**
+ * package {
+ *
+ *   // signature: flaf(LC;)Ljava/lang/String;
+ *   public final fun C.flaf(): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class UnresolvedDelegateExpressionKt {
 

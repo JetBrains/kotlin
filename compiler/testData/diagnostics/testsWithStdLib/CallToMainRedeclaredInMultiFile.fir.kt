@@ -8,4 +8,4 @@ fun main(args: Array<String>) {}
 fun main(args: Array<String>) {}
 
 // FILE: c.kt
-fun foo() { main(arrayOf("a", "b")) }
+fun foo() { <!OVERLOAD_RESOLUTION_AMBIGUITY!>main<!>(arrayOf("a", "b")) }

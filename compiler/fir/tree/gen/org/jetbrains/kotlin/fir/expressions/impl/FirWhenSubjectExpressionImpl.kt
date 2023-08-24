@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -27,7 +29,7 @@ internal class FirWhenSubjectExpressionImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val whenRef: FirExpressionRef<FirWhenExpression>,
 ) : FirWhenSubjectExpression() {
-    override val typeRef: FirTypeRef get() = whenRef.value.subject?.typeRef ?: org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef(source)
+    override val coneTypeOrNull: ConeKotlinType? get() = whenRef.value.subject?.coneTypeOrNull ?: StandardClassIds.Unit.constructClassLikeType()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -43,7 +45,7 @@ internal class FirWhenSubjectExpressionImpl(
         return this
     }
 
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {}
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()

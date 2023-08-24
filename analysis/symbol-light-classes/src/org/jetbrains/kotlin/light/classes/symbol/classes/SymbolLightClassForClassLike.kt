@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.*
 import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.impl.PsiClassImplUtil
@@ -55,6 +56,10 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
         ktModule = ktModule,
         manager = manager,
     )
+
+    override fun modificationTrackerForClassInnerStuff(): List<ModificationTracker> {
+        return classOrObjectDeclaration?.modificationTrackerForClassInnerStuff() ?: super.modificationTrackerForClassInnerStuff()
+    }
 
     override val kotlinOrigin: KtClassOrObject? get() = classOrObjectDeclaration
 

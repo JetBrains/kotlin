@@ -1,5 +1,14 @@
 @Condition(condition = "value1")
 @Condition(condition = "value2")
+/**
+ * public final class A : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class A {
 
@@ -12,6 +21,19 @@ public final class A {
 
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Condition : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(condition: kotlin/String)
+ *
+ *   // getter: condition()Ljava/lang/String;
+ *   public final val condition: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract @interface Condition {
 

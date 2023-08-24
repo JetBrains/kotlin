@@ -24,6 +24,10 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
         }
     }
 
+    override fun MethodBuilder.modifyGeneratedRangeTo(thisKind: PrimitiveType, otherKind: PrimitiveType, opReturnType: PrimitiveType) {
+        noBody()
+    }
+
     override fun ClassBuilder.generateAdditionalMethods(thisKind: PrimitiveType) {
         method {
             signature {
@@ -32,9 +36,5 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
                 returnType = PrimitiveType.INT.capitalized
             }
         }
-    }
-
-    override fun MethodBuilder.modifyGeneratedRangeUntil(thisKind: PrimitiveType) {
-        "this until $parameterName".addAsSingleLineBody(bodyOnNewLine = false)
     }
 }

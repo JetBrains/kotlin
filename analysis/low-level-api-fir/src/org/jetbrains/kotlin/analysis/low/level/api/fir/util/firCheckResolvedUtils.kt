@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -49,6 +50,26 @@ internal inline fun checkTypeRefIsResolved(
     }
 }
 
+internal inline fun checkExpressionTypeIsResolved(
+    type: ConeKotlinType?,
+    typeName: String,
+    owner: FirElementWithResolveState,
+    extraAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
+) {
+    checkWithAttachment(
+        condition = type != null,
+        message = {
+            buildString {
+                append("Expected resolved expression type")
+                append(" for $typeName of ${owner::class.simpleName}(${(owner as? FirDeclaration)?.origin})")
+            }
+        }
+    ) {
+        withFirEntry("firDeclaration", owner)
+        extraAttachment()
+    }
+}
+
 internal fun <T> checkAnnotationTypeIsResolved(annotationContainer: T) where T : FirAnnotationContainer, T : FirElementWithResolveState {
     annotationContainer.annotations.forEach { annotation ->
         checkTypeRefIsResolved(annotation.annotationTypeRef, "annotation type", owner = annotationContainer) {
@@ -59,7 +80,7 @@ internal fun <T> checkAnnotationTypeIsResolved(annotationContainer: T) where T :
 
 internal fun checkBodyIsResolved(function: FirFunction) {
     val block = function.body ?: return
-    checkTypeRefIsResolved(block.typeRef, "block type", function) {
+    checkExpressionTypeIsResolved(block.coneTypeOrNull, "block type", function) {
         withFirEntry("block", block)
     }
 }
@@ -67,7 +88,7 @@ internal fun checkBodyIsResolved(function: FirFunction) {
 internal fun checkStatementsAreResolved(script: FirScript) {
     for (statement in script.statements) {
         if (statement.isScriptStatement && statement is FirExpression) {
-            checkTypeRefIsResolved(statement.typeRef, "script statement", script) {
+            checkExpressionTypeIsResolved(statement.coneTypeOrNull, "script statement", script) {
                 withFirEntry("expression", statement)
             }
         }
@@ -114,14 +135,14 @@ internal fun checkReferenceIsResolved(
 
 internal fun checkInitializerIsResolved(variable: FirVariable) {
     val initializer = variable.initializer ?: return
-    checkTypeRefIsResolved(initializer.typeRef, "initializer type", variable) {
+    checkExpressionTypeIsResolved(initializer.coneTypeOrNull, "initializer type", variable) {
         withFirEntry("initializer", initializer)
     }
 }
 
 internal fun checkDefaultValueIsResolved(parameter: FirValueParameter) {
     val defaultValue = parameter.defaultValue ?: return
-    checkTypeRefIsResolved(defaultValue.typeRef, "default value type", parameter) {
+    checkExpressionTypeIsResolved(defaultValue.coneTypeOrNull, "default value type", parameter) {
         withFirEntry("defaultValue", defaultValue)
     }
 }
@@ -194,7 +215,7 @@ internal fun <T> checkAnnotationArgumentsMappingIsResolved(
         }
 
         for (argument in annotation.argumentMapping.mapping.values) {
-            checkTypeRefIsResolved(argument.typeRef, "annotation argument", annotationContainer) {
+            checkExpressionTypeIsResolved(argument.coneTypeOrNull, "annotation argument", annotationContainer) {
                 withFirEntry("firAnnotation", annotation)
                 withFirEntry("firArgument", argument)
             }

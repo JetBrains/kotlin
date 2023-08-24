@@ -1,0 +1,8 @@
+FILE: Main.kt
+    public final fun main(): R|kotlin/Unit| {
+        lvar generic: R|ft<Raw type Generic<kotlin/Any!>, Generic<*>?>| = Q|Generic|.R|/Generic.raw*s|
+        lvar inner1: R|ft<Raw type Generic.Inner<kotlin/Any!>, Generic.Inner<*>?>| = R|<local>/generic|.R|SubstitutionOverride</Generic.inner>|
+        R|<local>/inner1| = R|/Generic.Generic|<R|kotlin/String|>().R|SubstitutionOverride</Generic.Inner.Inner>|()
+        lvar inner2: R|ft<Raw type Generic.Inner<kotlin/Any!>, Generic.Inner<*>?>| = R|<local>/generic|.R|SubstitutionOverride</Generic.rawInner>|
+        R|<local>/inner2| = R|/Generic.Generic|<R|kotlin/String|>().R|SubstitutionOverride</Generic.Inner.Inner>|()
+    }

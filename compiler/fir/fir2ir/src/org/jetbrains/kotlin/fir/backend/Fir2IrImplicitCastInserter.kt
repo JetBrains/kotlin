@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -69,6 +70,11 @@ class Fir2IrImplicitCastInserter(
     override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: IrElement): IrElement = data
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: IrElement): IrElement = data
+
+    override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: IrElement): IrElement {
+        // Support for error suppression case
+        return visitResolvedQualifier(errorResolvedQualifier, data)
+    }
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: IrElement): IrElement = data
 
@@ -179,21 +185,21 @@ class Fir2IrImplicitCastInserter(
     }
 
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: IrElement): IrElement =
-        (data as IrThrow).cast(throwExpression, throwExpression.exception.typeRef, throwExpression.typeRef)
+        (data as IrThrow).cast(throwExpression, throwExpression.exception.resolvedType, throwExpression.resolvedType)
 
     override fun visitBlock(block: FirBlock, data: IrElement): IrElement =
         (data as? IrContainerExpression)?.insertImplicitCasts() ?: data
 
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: IrElement): IrElement {
-        val irReturn = data as IrReturn
+        val irReturn = data as? IrReturn ?: return data
         val expectedType = returnExpression.target.labeledElement.returnTypeRef
-        irReturn.value = irReturn.value.cast(returnExpression.result, returnExpression.result.typeRef, expectedType)
+        irReturn.value = irReturn.value.cast(returnExpression.result, returnExpression.result.resolvedType, expectedType.coneType)
         return data
     }
 
     // ==================================================================================
 
-    internal fun IrExpression.cast(expression: FirExpression, valueTypeRef: FirTypeRef, expectedTypeRef: FirTypeRef): IrExpression {
+    internal fun IrExpression.cast(expression: FirExpression, valueTypeRef: ConeKotlinType, expectedTypeRef: ConeKotlinType): IrExpression {
         if (this is IrTypeOperatorCall) {
             return this
         }
@@ -202,8 +208,8 @@ class Fir2IrImplicitCastInserter(
             insertImplicitCasts()
         }
 
-        val valueType = valueTypeRef.coneType.fullyExpandedType(session)
-        val expectedType = expectedTypeRef.coneType.fullyExpandedType(session)
+        val valueType = valueTypeRef.fullyExpandedType(session)
+        val expectedType = expectedTypeRef.fullyExpandedType(session)
 
         return when {
             expectedType.isUnit -> {
@@ -267,7 +273,7 @@ class Fir2IrImplicitCastInserter(
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: IrElement): IrElement {
         // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
         return if (smartCastExpression.isStable && smartCastExpression.smartcastTypeWithoutNullableNothing == null) {
-            implicitCastOrExpression(data as IrExpression, smartCastExpression.typeRef)
+            implicitCastOrExpression(data as IrExpression, smartCastExpression.resolvedType)
         } else {
             data as IrExpression
         }
@@ -275,7 +281,7 @@ class Fir2IrImplicitCastInserter(
 
     internal fun implicitCastFromDispatchReceiver(
         original: IrExpression,
-        originalTypeRef: FirTypeRef,
+        coneKotlinType: ConeKotlinType,
         calleeReference: FirReference?,
         typeOrigin: ConversionTypeOrigin,
     ): IrExpression {
@@ -283,18 +289,18 @@ class Fir2IrImplicitCastInserter(
 
         val dispatchReceiverType =
             referencedDeclaration?.dispatchReceiverType as? ConeClassLikeType
-                ?: return implicitCastOrExpression(original, originalTypeRef)
+                ?: return implicitCastOrExpression(original, coneKotlinType)
 
         val starProjectedDispatchReceiver = dispatchReceiverType.replaceArgumentsWithStarProjections()
 
-        val castType = originalTypeRef.coneTypeSafe<ConeIntersectionType>()
+        val castType = coneKotlinType as? ConeIntersectionType
         castType?.intersectedTypes?.forEach { componentType ->
             if (AbstractTypeChecker.isSubtypeOf(session.typeContext, componentType, starProjectedDispatchReceiver)) {
                 return implicitCastOrExpression(original, componentType, typeOrigin)
             }
         }
 
-        return implicitCastOrExpression(original, originalTypeRef, typeOrigin)
+        return implicitCastOrExpression(original, coneKotlinType, typeOrigin)
     }
 
     private fun implicitCastOrExpression(
@@ -347,6 +353,7 @@ class Fir2IrImplicitCastInserter(
                 )
         }
 
+        @OptIn(IrSymbolInternals::class)
         internal fun implicitNotNullCast(original: IrExpression): IrTypeOperatorCall {
             // Cast type massage 1. Remove @EnhancedNullability
             // Cast type massage 2. Convert it to a non-null variant (in case of @FlexibleNullability)

@@ -24,7 +24,7 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
         val delegate = declaration.delegate as? FirFunctionCall ?: return
         val parameters = declaration.typeParameters.mapTo(hashSetOf()) { it.symbol }
 
-        val usedTypeParameterSymbol = delegate.typeRef.coneType.findUsedTypeParameterSymbol(parameters, delegate, context, reporter)
+        val usedTypeParameterSymbol = delegate.resolvedType.findUsedTypeParameterSymbol(parameters, delegate, context, reporter)
             ?: return
 
         reporter.reportOn(declaration.source, FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER, usedTypeParameterSymbol, context)
@@ -37,7 +37,7 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
         reporter: DiagnosticReporter,
     ): FirTypeParameterSymbol? {
         val expandedDelegateClassLikeType =
-            delegate.typeRef.coneType.lowerBoundIfFlexible().fullyExpandedType(context.session)
+            delegate.resolvedType.lowerBoundIfFlexible().fullyExpandedType(context.session)
                 .unwrapDefinitelyNotNull() as? ConeClassLikeType ?: return null
         val delegateClassSymbol = expandedDelegateClassLikeType.lookupTag.toSymbol(context.session) as? FirRegularClassSymbol ?: return null
         val delegateClassScope by lazy { delegateClassSymbol.unsubstitutedScope(context) }

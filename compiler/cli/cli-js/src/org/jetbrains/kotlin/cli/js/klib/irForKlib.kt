@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDe
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
 import org.jetbrains.kotlin.ir.backend.js.generateModuleFragmentWithPlugins
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -54,7 +52,6 @@ fun generateIrForKlibSerialization(
     analysisResult: AnalysisResult,
     sortedDependencies: Collection<KotlinLibrary>,
     icData: List<KotlinFileSerializedData>,
-    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     irFactory: IrFactory,
     verifySignatures: Boolean = true,
     getDescriptorByLibrary: (KotlinLibrary) -> ModuleDescriptor,
@@ -102,7 +99,6 @@ fun generateIrForKlibSerialization(
         files,
         irLinker,
         messageLogger,
-        expectDescriptorToSymbol,
         stubGenerator
     )
 

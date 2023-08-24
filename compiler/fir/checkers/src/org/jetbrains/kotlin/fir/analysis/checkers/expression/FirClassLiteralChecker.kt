@@ -49,8 +49,8 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
         val markedNullable = source.getChild(QUEST, depth = 1) != null
         val isNullable = markedNullable ||
                 (argument as? FirResolvedQualifier)?.isNullableLHSForCallableReference == true ||
-                argument.typeRef.coneType.isMarkedNullable ||
-                argument.typeRef.coneType.isNullableTypeParameter(context.session.typeContext)
+                argument.resolvedType.isMarkedNullable ||
+                argument.resolvedType.isNullableTypeParameter(context.session.typeContext)
         if (isNullable) {
             if (argument.canBeDoubleColonLHSAsType) {
                 reporter.reportOn(source, FirErrors.NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, context)
@@ -58,7 +58,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
                 reporter.reportOn(
                     argument.source,
                     FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS,
-                    argument.typeRef.coneType,
+                    argument.resolvedType,
                     context
                 )
             }
@@ -74,7 +74,8 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
 
         if (argument !is FirResolvedQualifier) return
         // TODO, KT-59835: differentiate RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS
-        if (argument.typeArguments.isNotEmpty() && !argument.typeRef.coneType.fullyExpandedType(context.session).isAllowedInClassLiteral(context)) {
+        if (argument.typeArguments.isNotEmpty() && !argument.resolvedType.fullyExpandedType(context.session)
+                .isAllowedInClassLiteral(context)) {
             val symbol = argument.symbol
             symbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
             @OptIn(SymbolInternals::class)

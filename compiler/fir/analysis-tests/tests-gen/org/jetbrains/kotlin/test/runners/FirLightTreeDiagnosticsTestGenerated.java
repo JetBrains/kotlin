@@ -525,6 +525,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
         }
 
         @Test
+        @TestMetadata("properLocalPackages.kt")
+        public void testProperLocalPackages() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/properLocalPackages.kt");
+        }
+
+        @Test
         @TestMetadata("propertyFromJavaPlusAssign.kt")
         public void testPropertyFromJavaPlusAssign() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/propertyFromJavaPlusAssign.kt");
@@ -6895,6 +6901,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
             @TestMetadata("localScopesInAnonymousObject.kt")
             public void testLocalScopesInAnonymousObject() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/localScopesInAnonymousObject.kt");
+            }
+
+            @Test
+            @TestMetadata("malformedRawTypes.kt")
+            public void testMalformedRawTypes() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/malformedRawTypes.kt");
             }
 
             @Test

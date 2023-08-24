@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.backend.common.lower.parentsWithSelf
+import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.classIdOrFail
 import org.jetbrains.kotlin.ir.util.isFakeOverride
@@ -36,13 +37,18 @@ internal class IrExpectActualAnnotationMatchingChecker(
 
     fun check() {
         for ((expectSymbol, actualSymbol) in matchedExpectToActual.entries) {
-            if (expectSymbol.isFakeOverride || actualSymbol.isFakeOverride) {
+            if (expectSymbol is IrTypeParameterSymbol) {
+                continue
+            }
+            if (expectSymbol.isFakeOverride) {
                 continue
             }
             val incompatibility =
                 AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(expectSymbol, actualSymbol, context) ?: continue
 
-            val reportOn = getTypealiasSymbolIfActualizedViaTypealias(expectSymbol) ?: actualSymbol
+            val reportOn = getTypealiasSymbolIfActualizedViaTypealias(expectSymbol)
+                ?: getContainingActualClassIfFakeOverride(actualSymbol)
+                ?: actualSymbol
             diagnosticsReporter.reportActualAnnotationsNotMatchExpect(
                 incompatibility.expectSymbol as IrSymbol,
                 incompatibility.actualSymbol as IrSymbol,
@@ -56,9 +62,21 @@ internal class IrExpectActualAnnotationMatchingChecker(
         get() = (owner as IrDeclaration).isFakeOverride
 
     private fun getTypealiasSymbolIfActualizedViaTypealias(expectSymbol: IrSymbol): IrTypeAliasSymbol? {
-        val expectDeclaration = expectSymbol.owner as IrDeclaration
-        val topLevelExpectClass = expectDeclaration.parentsWithSelf.filterIsInstance<IrClass>().lastOrNull() ?: return null
+        val topLevelExpectClass = getContainingTopLevelClass(expectSymbol) ?: return null
         val classId = topLevelExpectClass.classIdOrFail
         return classActualizationInfo.actualTypeAliases[classId]
+    }
+
+    private fun getContainingActualClassIfFakeOverride(actualSymbol: IrSymbol): IrSymbol? {
+        if (!actualSymbol.isFakeOverride) {
+            return null
+        }
+        return getContainingTopLevelClass(actualSymbol)?.symbol
+    }
+
+    private fun getContainingTopLevelClass(symbol: IrSymbol): IrClass? {
+        val declaration = symbol.owner as IrDeclaration
+        val parentsWithSelf = sequenceOf(declaration) + declaration.parents
+        return parentsWithSelf.filterIsInstance<IrClass>().lastOrNull()
     }
 }

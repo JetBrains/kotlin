@@ -113,10 +113,11 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/Classpat
 	public abstract fun forceNonIncrementalMode (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
 	public abstract fun getAssuredNoClasspathSnapshotsChanges ()Z
 	public abstract fun keepIncrementalCompilationCachesInMemory (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
+	public abstract fun setBuildDir (Ljava/io/File;)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
+	public abstract fun setRootProjectDir (Ljava/io/File;)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
 	public abstract fun useOutputDirs (Ljava/util/Collection;)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
 	public abstract fun usePreciseCompilationResultsBackup (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
 	public abstract fun usePreciseJavaTracking (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
-	public abstract fun useProjectDir (Ljava/io/File;)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/InaccessibleClassSnapshot : org/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshot {
@@ -128,17 +129,19 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/Incremen
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/IncrementalJvmCompilationConfiguration {
 	public abstract fun forceNonIncrementalMode (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/IncrementalJvmCompilationConfiguration;
 	public static synthetic fun forceNonIncrementalMode$default (Lorg/jetbrains/kotlin/buildtools/api/jvm/IncrementalJvmCompilationConfiguration;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/jvm/IncrementalJvmCompilationConfiguration;
+	public abstract fun getBuildDir ()Ljava/io/File;
 	public abstract fun getForcedNonIncrementalMode ()Z
 	public abstract fun getIncrementalCompilationCachesKeptInMemory ()Z
 	public abstract fun getOutputDirs ()Ljava/util/Set;
 	public abstract fun getPreciseCompilationResultsBackupEnabled ()Z
 	public abstract fun getPreciseJavaTrackingEnabled ()Z
-	public abstract fun getProjectDir ()Ljava/io/File;
+	public abstract fun getRootProjectDir ()Ljava/io/File;
 	public abstract fun keepIncrementalCompilationCachesInMemory (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/IncrementalJvmCompilationConfiguration;
+	public abstract fun setBuildDir (Ljava/io/File;)Lorg/jetbrains/kotlin/buildtools/api/jvm/IncrementalJvmCompilationConfiguration;
+	public abstract fun setRootProjectDir (Ljava/io/File;)Lorg/jetbrains/kotlin/buildtools/api/jvm/IncrementalJvmCompilationConfiguration;
 	public abstract fun useOutputDirs (Ljava/util/Collection;)Lorg/jetbrains/kotlin/buildtools/api/jvm/IncrementalJvmCompilationConfiguration;
 	public abstract fun usePreciseCompilationResultsBackup (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/IncrementalJvmCompilationConfiguration;
 	public abstract fun usePreciseJavaTracking (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/IncrementalJvmCompilationConfiguration;
-	public abstract fun useProjectDir (Ljava/io/File;)Lorg/jetbrains/kotlin/buildtools/api/jvm/IncrementalJvmCompilationConfiguration;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmCompilationConfiguration {

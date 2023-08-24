@@ -70,7 +70,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
             // Anything is acceptable for raw types
             if (expectedType is ConeRawType) continue
 
-            val argType = arg.typeRef.coneType
+            val argType = arg.resolvedType
 
             val lowerBound = expectedType.lowerBound
             val upperBound = expectedType.upperBound

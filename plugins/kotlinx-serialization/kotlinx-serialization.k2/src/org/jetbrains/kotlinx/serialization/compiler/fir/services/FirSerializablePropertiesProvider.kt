@@ -89,7 +89,7 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
             .let { restoreCorrectOrderFromClassProtoExtension(classSymbol, it) }
 
         val isExternallySerializable = classSymbol.isEnumClass ||
-                primaryConstructorProperties.size == (classSymbol.primaryConstructorSymbol()?.valueParameterSymbols?.size ?: 0)
+                primaryConstructorProperties.size == (classSymbol.primaryConstructorSymbol(session)?.valueParameterSymbols?.size ?: 0)
 
         val (serializableConstructorProperties, serializableStandaloneProperties) = serializableProperties.partition { it.propertySymbol in primaryConstructorProperties }
         return FirSerializableProperties(

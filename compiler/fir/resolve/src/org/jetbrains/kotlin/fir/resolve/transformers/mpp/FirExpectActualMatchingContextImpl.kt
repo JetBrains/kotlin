@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.getRetention
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
@@ -40,7 +41,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.castAll
 
 class FirExpectActualMatchingContextImpl private constructor(
     private val actualSession: FirSession,
-    private val scopeSession: ScopeSession
+    private val scopeSession: ScopeSession,
+    private val allowedWritingMemberExpectForActualMapping: Boolean,
 ) : FirExpectActualMatchingContext, TypeSystemContext by actualSession.typeContext {
     override val shouldCheckReturnTypesOfCallables: Boolean
         get() = false
@@ -236,6 +238,10 @@ class FirExpectActualMatchingContextImpl private constructor(
         return asSymbol().fir.collectEnumEntries().map { it.name }
     }
 
+    override fun RegularClassSymbolMarker.collectEnumEntries(): List<DeclarationSymbolMarker> {
+        return asSymbol().fir.collectEnumEntries().map { it.symbol }
+    }
+
     override val CallableSymbolMarker.dispatchReceiverType: SimpleTypeMarker?
         get() = asSymbol().dispatchReceiverType
     override val CallableSymbolMarker.extensionReceiverType: KotlinTypeMarker?
@@ -256,7 +262,7 @@ class FirExpectActualMatchingContextImpl private constructor(
                     // Tests work even if you don't filter out fake-overrides. Filtering fake-overrides is needed because
                     // the returned descriptors are compared by `equals`. And `equals` for fake-overrides is weird.
                     // I didn't manage to invent a test that would check this condition
-                    .filter { !it.isSubstitutionOrIntersectionOverride }
+                    .filter { !it.isSubstitutionOrIntersectionOverride && it.origin != FirDeclarationOrigin.Delegated }
             }
         }
     }
@@ -337,18 +343,18 @@ class FirExpectActualMatchingContextImpl private constructor(
         get() = asSymbol().resolvedAnnotationsWithArguments.map(::AnnotationCallInfoImpl)
 
     override fun areAnnotationArgumentsEqual(
-        annotation1: AnnotationCallInfo,
-        annotation2: AnnotationCallInfo,
+        expectAnnotation: AnnotationCallInfo,
+        actualAnnotation: AnnotationCallInfo,
         collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
     ): Boolean {
         fun AnnotationCallInfo.getFirAnnotation(): FirAnnotation {
             return (this as AnnotationCallInfoImpl).annotation
         }
-        return areFirAnnotationsEqual(annotation1.getFirAnnotation(), annotation2.getFirAnnotation())
+        return areFirAnnotationsEqual(expectAnnotation.getFirAnnotation(), actualAnnotation.getFirAnnotation())
     }
 
     private fun areFirAnnotationsEqual(annotation1: FirAnnotation, annotation2: FirAnnotation): Boolean {
-        if (!areCompatibleExpectActualTypes(annotation1.typeRef.coneType, annotation2.typeRef.coneType)) {
+        if (!areCompatibleExpectActualTypes(annotation1.resolvedType, annotation2.resolvedType)) {
             return false
         }
         val args1 = annotation1.argumentMapping.mapping
@@ -396,8 +402,89 @@ class FirExpectActualMatchingContextImpl private constructor(
             return symbol.source == null && symbol.origin !is FirDeclarationOrigin.Plugin
         }
 
+    override fun onMatchedMembers(
+        expectSymbol: DeclarationSymbolMarker,
+        actualSymbol: DeclarationSymbolMarker,
+        containingExpectClassSymbol: RegularClassSymbolMarker?,
+        containingActualClassSymbol: RegularClassSymbolMarker?
+    ) {
+        if (containingActualClassSymbol == null || containingExpectClassSymbol == null) return
+
+        containingActualClassSymbol.asSymbol().addMemberExpectForActualMapping(
+            expectSymbol.asSymbol(),
+            actualSymbol.asSymbol(),
+            containingExpectClassSymbol.asSymbol(),
+            ExpectActualCompatibility.Compatible
+        )
+    }
+
+    override fun onMismatchedMembersFromClassScope(
+        expectSymbol: DeclarationSymbolMarker,
+        actualSymbolsByIncompatibility: Map<ExpectActualCompatibility.Incompatible<*>, List<DeclarationSymbolMarker>>,
+        containingExpectClassSymbol: RegularClassSymbolMarker?,
+        containingActualClassSymbol: RegularClassSymbolMarker?
+    ) {
+        if (containingExpectClassSymbol == null || containingActualClassSymbol == null) return
+
+        for ((incompatibility, actualSymbols) in actualSymbolsByIncompatibility.entries) {
+            for (actualSymbol in actualSymbols) {
+                containingActualClassSymbol.asSymbol().addMemberExpectForActualMapping(
+                    expectSymbol.asSymbol(),
+                    actualSymbol.asSymbol(),
+                    containingExpectClassSymbol.asSymbol(),
+                    incompatibility,
+                )
+            }
+        }
+    }
+
+    private fun FirRegularClassSymbol.addMemberExpectForActualMapping(
+        expectMember: FirBasedSymbol<*>, actualMember: FirBasedSymbol<*>,
+        expectClassSymbol: FirRegularClassSymbol, compatibility: ExpectActualCompatibility<*>,
+    ) {
+        check(allowedWritingMemberExpectForActualMapping) { "Writing memberExpectForActual is not allowed in this context" }
+        val fir = fir
+        val expectForActualMap = fir.memberExpectForActual ?: mutableMapOf()
+        fir.memberExpectForActual = expectForActualMap
+
+        val expectToCompatibilityMap = expectForActualMap.asMutableMap()
+            .computeIfAbsent(actualMember to expectClassSymbol) { mutableMapOf() }
+
+        /*
+        Don't report when value is overwritten, because it's the case for actual inner classes:
+        actual class A {
+            actual class B {
+                actual fun foo() {} <-- twice checked (from A and B) and added to mapping
+            }
+        }
+        Can be fixed after KT-61361.
+         */
+        expectToCompatibilityMap.asMutableMap()[expectMember] = compatibility
+    }
+
+    private fun <K, V> Map<K, V>.asMutableMap(): MutableMap<K, V> = this as MutableMap
+
+    override val checkClassScopesForAnnotationCompatibility = true
+
+    override fun skipCheckingAnnotationsOfActualClassMember(actualMember: DeclarationSymbolMarker): Boolean {
+        return (actualMember.asSymbol().fir as? FirMemberDeclaration)?.isActual == true
+    }
+
+    override fun findPotentialExpectClassMembersForActual(
+        expectClass: RegularClassSymbolMarker,
+        actualClass: RegularClassSymbolMarker,
+        actualMember: DeclarationSymbolMarker,
+        checkClassScopesCompatibility: Boolean,
+    ): Map<FirBasedSymbol<*>, ExpectActualCompatibility<*>> {
+        val mapping = actualClass.asSymbol().fir.memberExpectForActual
+        return mapping?.get(actualMember to expectClass) ?: emptyMap()
+    }
+
     object Factory : FirExpectActualMatchingContextFactory {
-        override fun create(session: FirSession, scopeSession: ScopeSession): FirExpectActualMatchingContextImpl =
-            FirExpectActualMatchingContextImpl(session, scopeSession)
+        override fun create(
+            session: FirSession, scopeSession: ScopeSession,
+            allowedWritingMemberExpectForActualMapping: Boolean,
+        ): FirExpectActualMatchingContextImpl =
+            FirExpectActualMatchingContextImpl(session, scopeSession, allowedWritingMemberExpectForActualMapping)
     }
 }

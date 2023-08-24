@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.getOrPut
+import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -105,7 +106,15 @@ class InlineClassLowering(val context: CommonBackendContext) {
                                     }
                                     expression.transformChildrenVoid()
                                     if (isMemberFieldSet) {
-                                        return expression.value
+                                        return builder.irBlock {
+                                            if (!expression.value.isPure(true)) {
+                                                // Preserving side effects
+                                                +expression.value
+                                                // Adding empty block to provide Unit value.
+                                                // This is useful when original IrSetField is the last statement in a Unit-returning block.
+                                                +builder.irBlock {}
+                                            }
+                                        }
                                     }
                                     return expression
                                 }

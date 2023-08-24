@@ -336,3 +336,11 @@ fun FirTypeRef.toIrType(
     with(typeConverter) {
         toIrType(typeOrigin)
     }
+
+fun ConeKotlinType.toIrType(
+    typeConverter: Fir2IrTypeConverter,
+    typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
+): IrType =
+    with(typeConverter) {
+        toIrType(typeOrigin)
+    }

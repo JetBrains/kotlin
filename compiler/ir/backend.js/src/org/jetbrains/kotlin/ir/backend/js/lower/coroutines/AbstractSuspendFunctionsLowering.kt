@@ -100,7 +100,12 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         // This happens a lot in practice because of suspend functions with default arguments.
         // TODO: use TailRecursionCallsCollector.
         val lastCall = when (val lastStatement = (body as IrBlockBody).statements.lastOrNull()) {
-            is IrCall -> lastStatement
+            is IrCall ->
+                // Delegation to call without return can only be performed to Unit-returning function call from Unit-returning function
+                if (lastStatement.type == context.irBuiltIns.unitType && function.returnType == context.irBuiltIns.unitType)
+                    lastStatement
+                else
+                    null
             is IrReturn -> {
                 var value: IrElement = lastStatement
                 /*

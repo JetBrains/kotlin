@@ -138,7 +138,7 @@ public final class kotlinx/metadata/ClassNameKt {
 public abstract interface annotation class kotlinx/metadata/ExperimentalContextReceivers : java/lang/annotation/Annotation {
 }
 
-public abstract class kotlinx/metadata/Flag {
+public final class kotlinx/metadata/Flag {
 	public static final field Common Lkotlinx/metadata/Flag$Common;
 	public static final field HAS_ANNOTATIONS Lkotlinx/metadata/Flag;
 	public static final field IS_ABSTRACT Lkotlinx/metadata/Flag;
@@ -151,7 +151,8 @@ public abstract class kotlinx/metadata/Flag {
 	public static final field IS_PROTECTED Lkotlinx/metadata/Flag;
 	public static final field IS_PUBLIC Lkotlinx/metadata/Flag;
 	public static final field IS_SEALED Lkotlinx/metadata/Flag;
-	public abstract fun invoke (I)Z
+	public fun <init> (III)V
+	public final fun invoke (I)Z
 }
 
 public final class kotlinx/metadata/Flag$Class {

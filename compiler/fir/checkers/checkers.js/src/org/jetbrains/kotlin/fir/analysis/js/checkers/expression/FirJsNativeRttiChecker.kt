@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeInterface
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 object FirJsNativeRttiChecker : FirBasicExpressionChecker() {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -25,7 +27,7 @@ object FirJsNativeRttiChecker : FirBasicExpressionChecker() {
     }
 
     private fun checkGetClassCall(expression: FirGetClassCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val declarationToCheck = expression.argument.typeRef.toRegularClassSymbol(context.session) ?: return
+        val declarationToCheck = expression.argument.resolvedType.toRegularClassSymbol(context.session) ?: return
 
         if (expression.arguments.firstOrNull() !is FirResolvedQualifier) {
             return
@@ -48,7 +50,7 @@ object FirJsNativeRttiChecker : FirBasicExpressionChecker() {
             FirOperation.AS, FirOperation.SAFE_AS -> reporter.reportOn(
                 expression.source,
                 FirJsErrors.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE,
-                expression.argument.typeRef.coneType,
+                expression.argument.resolvedType,
                 targetTypeRef.coneType,
                 context,
             )

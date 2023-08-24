@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -68,3 +69,5 @@ val FirNamedFunctionSymbol.isMethodOfAny: Boolean
             else -> false
         }
     }
+
+val FirConstructorSymbol.isErrorPrimaryConstructor get() = fir is FirErrorPrimaryConstructor

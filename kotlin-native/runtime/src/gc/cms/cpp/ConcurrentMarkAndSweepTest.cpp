@@ -1191,12 +1191,14 @@ INSTANTIATE_TEST_SUITE_P(,
     ConcurrentMarkAndSweepTest,
     testing::Values(
             ParallelismOptions{kDefaultThreadCount * 3, false, 0},
-            ParallelismOptions{kDefaultThreadCount * 3, true, 0},
-            ParallelismOptions{kDefaultThreadCount * 3, false, kDefaultThreadCount},
+            ParallelismOptions{kDefaultThreadCount * 3, true, 0}
+#if !__has_feature(thread_sanitizer) // TODO: Fix auxilary threads with tsan.
+            , ParallelismOptions{kDefaultThreadCount * 3, false, kDefaultThreadCount},
             ParallelismOptions{kDefaultThreadCount * 3, true, kDefaultThreadCount},
 
             ParallelismOptions{kDefaultThreadCount / 2, true, kDefaultThreadCount},
             ParallelismOptions{kDefaultThreadCount / 2 * 3, true, kDefaultThreadCount}
+#endif
     ),
     [] (const testing::TestParamInfo<ParallelismOptions>& paramInfo) {
         using namespace std::string_literals;

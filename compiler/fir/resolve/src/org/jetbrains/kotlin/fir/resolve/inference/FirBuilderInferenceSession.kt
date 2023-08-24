@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.replaceStubsAndTypeVariablesToErrors
-import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -27,7 +25,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariableIfNotPresent
 import org.jetbrains.kotlin.resolve.descriptorUtil.BUILDER_INFERENCE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -78,8 +78,8 @@ class FirBuilderInferenceSession(
         val dispatchReceiver = dispatchReceiver
         return when {
             extensionReceiver == null && dispatchReceiver == null -> false
-            dispatchReceiver?.typeRef?.coneType?.containsStubType() == true -> true
-            extensionReceiver?.typeRef?.coneType?.containsStubType() == true -> symbol.fir.hasBuilderInferenceAnnotation(session)
+            dispatchReceiver?.resolvedType?.containsStubType() == true -> true
+            extensionReceiver?.resolvedType?.containsStubType() == true -> symbol.fir.hasBuilderInferenceAnnotation(session)
             else -> false
         }
     }
@@ -268,8 +268,25 @@ class FirStubTypeTransformer(private val substitutor: ConeSubstitutor) : FirDefa
         if (element is FirResolvable) {
             element.candidate()?.let { processCandidate(it) }
         }
+
+        // Since FirExpressions don't have typeRefs, they need to be updated separately.
+        // FirAnonymousFunctionExpression doesn't support replacing the type
+        // since it delegates the getter to the underlying FirAnonymousFunction.
+        if (element is FirExpression && element !is FirAnonymousFunctionExpression) {
+            element.coneTypeOrNull
+                ?.let(substitutor::substituteOrNull)
+                ?.let { element.replaceConeTypeOrNull(it) }
+        }
+
         @Suppress("UNCHECKED_CAST")
         return element.transformChildren(this, data = null) as E
+    }
+
+    override fun transformTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): FirStatement {
+        if (typeOperatorCall.argument.coneTypeOrNull is ConeStubType) {
+            typeOperatorCall.replaceArgFromStubType(true)
+        }
+        return super.transformTypeOperatorCall(typeOperatorCall, data)
     }
 
     override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?): FirTypeRef =

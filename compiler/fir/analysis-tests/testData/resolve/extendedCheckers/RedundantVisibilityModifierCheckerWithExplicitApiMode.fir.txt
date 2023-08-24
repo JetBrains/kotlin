@@ -1,7 +1,7 @@
 FILE: RedundantVisibilityModifierCheckerWithExplicitApiMode.kt
     public final fun f1(): R|kotlin/Unit| {
         local final class LocalClass : R|kotlin/Any| {
-            public constructor(): R|LocalClass| {
+            public constructor(): R|<local>/LocalClass| {
                 super<R|kotlin/Any|>()
             }
 

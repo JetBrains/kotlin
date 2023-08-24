@@ -113,14 +113,15 @@ FILE fqName:<root> fileName:/delegatedPropertiesOperators.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Result
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
         BLOCK_BODY
-          CALL 'public final fun setValue ($context_receiver_0: kotlin.Int, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.String): kotlin.Unit declared in <root>.Delegate' type=kotlin.Unit origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:s$delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
-              receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.<set-s>' type=<root>.Result origin=null
-            $context_receiver_0: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.<set-s>' type=<root>.Result origin=null
-            thisRef: GET_VAR '<this>: <root>.Result declared in <root>.Result.<set-s>' type=<root>.Result origin=null
-            property: PROPERTY_REFERENCE 'public final s: kotlin.String' field=null getter='public final fun <get-s> (): kotlin.String declared in <root>.Result' setter='public final fun <set-s> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Result' type=kotlin.reflect.KMutableProperty1<<root>.Result, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-            value: GET_VAR '<set-?>: kotlin.String declared in <root>.Result.<set-s>' type=kotlin.String origin=null
+          RETURN type=kotlin.Nothing from='public final fun <set-s> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Result'
+            CALL 'public final fun setValue ($context_receiver_0: kotlin.Int, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.String): kotlin.Unit declared in <root>.Delegate' type=kotlin.Unit origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:s$delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
+                receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.<set-s>' type=<root>.Result origin=null
+              $context_receiver_0: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.<set-s>' type=<root>.Result origin=null
+              thisRef: GET_VAR '<this>: <root>.Result declared in <root>.Result.<set-s>' type=<root>.Result origin=null
+              property: PROPERTY_REFERENCE 'public final s: kotlin.String' field=null getter='public final fun <get-s> (): kotlin.String declared in <root>.Result' setter='public final fun <set-s> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Result' type=kotlin.reflect.KMutableProperty1<*, *> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              value: GET_VAR '<set-?>: kotlin.String declared in <root>.Result.<set-s>' type=kotlin.String origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

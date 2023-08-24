@@ -27,7 +27,7 @@ FILE: typeParametersInObject.kt
     }
     public final fun test(): R|kotlin/Unit| {
         local final object M<H> : R|kotlin/Any| {
-            private constructor<H>(): R|M<H>| {
+            private constructor<H>(): R|<local>/M<H>| {
                 super<R|kotlin/Any|>()
             }
 

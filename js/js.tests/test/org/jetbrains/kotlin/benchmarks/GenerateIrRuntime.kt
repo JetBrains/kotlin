@@ -480,7 +480,7 @@ class GenerateIrRuntime {
         val irProviders = listOf(irLinker)
 
         val psi2IrTranslator = Psi2IrTranslator(languageVersionSettings, psi2IrContext.configuration, messageLogger::checkNoUnboundSymbols)
-        return psi2IrTranslator.generateModuleFragment(psi2IrContext, files, irProviders, emptyList(), null)
+        return psi2IrTranslator.generateModuleFragment(psi2IrContext, files, irProviders, emptyList())
     }
 
     @OptIn(ExperimentalPathApi::class)
@@ -500,7 +500,6 @@ class GenerateIrRuntime {
             tmpKlibDir,
             emptyList(),
             moduleFragment,
-            mutableMapOf(),
             emptyList(),
             true,
             perFile,
@@ -529,9 +528,7 @@ class GenerateIrRuntime {
         val serializedIr = JsIrModuleSerializer(
             IrMessageLogger.None,
             module.irBuiltins,
-            mutableMapOf(),
             CompatibilityMode.CURRENT,
-            skipExpects = true,
             normalizeAbsolutePaths = false,
             emptyList(),
             configuration.languageVersionSettings,

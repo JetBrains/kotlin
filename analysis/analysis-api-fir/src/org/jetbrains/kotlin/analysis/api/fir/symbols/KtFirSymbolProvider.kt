@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.components.KtFirAnalysisSessionComp
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
@@ -186,11 +187,19 @@ internal class KtFirSymbolProvider(
 
     override val ROOT_PACKAGE_SYMBOL: KtPackageSymbol = KtFirPackageSymbol(FqName.ROOT, firResolveSession.project, token)
 
-    override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtFirLocalOrErrorVariableSymbol<*, *> {
-        return when (val firSymbol = psi.resolveToFirSymbolOfType<FirVariableSymbol<*>>(firResolveSession)) {
+    override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtLocalVariableSymbol {
+        return when (val firSymbol = psi.resolveToFirSymbol(firResolveSession)) {
             is FirPropertySymbol -> firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(firSymbol)
             is FirErrorPropertySymbol -> firSymbolBuilder.variableLikeBuilder.buildErrorVariableSymbol(firSymbol)
-            else -> throwUnexpectedFirElementError(firSymbol, psi, FirPropertySymbol::class, FirErrorPropertySymbol::class)
+            else -> throwUnexpectedFirElementError(
+                firSymbol, psi,
+                FirPropertySymbol::class, FirErrorPropertySymbol::class, FirValueParameterSymbol::class
+            )
         }
+    }
+
+    override fun getDestructuringDeclarationSymbol(psi: KtDestructuringDeclaration): KtDestructuringDeclarationSymbol {
+        val firSymbol = psi.resolveToFirSymbolOfType<FirVariableSymbol<*>>(firResolveSession)
+        return firSymbolBuilder.buildDestructuringDeclarationSymbol(firSymbol)
     }
 }

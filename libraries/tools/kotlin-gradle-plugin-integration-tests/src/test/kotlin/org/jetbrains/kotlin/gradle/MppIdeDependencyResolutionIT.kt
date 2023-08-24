@@ -262,6 +262,55 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `test cinterops - transitive project dependencies`(gradleVersion: GradleVersion) {
+        project(
+            "cinterop-MetadataDependencyTransformation",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(freeArgs = defaultBuildOptions.freeArgs + "-PdependencyMode=project")
+        ) {
+            resolveIdeDependencies(":p3") { dependencies ->
+                /* Check that no compile-tasks are executed */
+                run {
+                    val compileTaskRegex = Regex(".*[cC]ompile.*")
+                    val compileTasks = tasks.filter { task -> task.path.matches(compileTaskRegex) }
+                    if (compileTasks.isNotEmpty()) {
+                        fail("Expected no compile tasks to be executed. Found $compileTasks")
+                    }
+                }
+
+                dependencies["nativeMain"].cinteropDependencies().assertMatches(
+                    binaryCoordinates(Regex(".*p1-cinterop-simple.*")),
+                    binaryCoordinates(Regex(".*p1-cinterop-withPosix.*"))
+                )
+
+                dependencies["linuxX64Main"].cinteropDependencies().assertMatches(
+                    binaryCoordinates(Regex(".*p1-cinterop-simple.*")),
+                    binaryCoordinates(Regex(".*p1-cinterop-withPosix.*"))
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test cinterops - transitive project dependencies - disabled cinterop commonization`(gradleVersion: GradleVersion) {
+        project(
+            "cinterop-MetadataDependencyTransformation",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                freeArgs = defaultBuildOptions.freeArgs + "-PdependencyMode=project" + "-Pkotlin.mpp.enableCInteropCommonization=false"
+            )
+        ) {
+            resolveIdeDependencies(":p3") { dependencies ->
+                dependencies["nativeMain"].cinteropDependencies().assertMatches()
+                dependencies["linuxX64Main"].cinteropDependencies().assertMatches(
+                    binaryCoordinates(Regex(".*p1-cinterop-simple.*")),
+                    binaryCoordinates(Regex(".*p1-cinterop-withPosix.*"))
+                )
+            }
+        }
+    }
+
+    @GradleTest
     fun `test dependency on composite build with commonized cinterops`(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         val includedLib = project("composite-build-with-cinterop-commonization/includedLib", gradleVersion, localRepoDir = tempDir)
         project("composite-build-with-cinterop-commonization", gradleVersion, localRepoDir = tempDir) {

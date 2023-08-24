@@ -6,12 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.checkers.FirTypeRefSource
-import org.jetbrains.kotlin.fir.analysis.checkers.checkUpperBoundViolated
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.withSource
-import org.jetbrains.kotlin.fir.analysis.checkers.createSubstitutorForUpperBoundViolationCheck
-import org.jetbrains.kotlin.fir.analysis.checkers.toTypeArgumentsWithSourceInfo
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -45,7 +41,7 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
         val typeParameters: List<FirTypeParameterSymbol>
 
         if (calleeSymbol is FirConstructorSymbol && calleeSymbol.isTypeAliasedConstructor) {
-            val constructedType = expression.typeRef.coneType.fullyExpandedType(context.session)
+            val constructedType = expression.resolvedType.fullyExpandedType(context.session)
             // Updating arguments with source information after expanding the type seems extremely brittle as it relies on identity equality
             // of the expression type arguments and the expanded type arguments. This cannot be applied before expanding the type because it
             // seems like the type is already expended.

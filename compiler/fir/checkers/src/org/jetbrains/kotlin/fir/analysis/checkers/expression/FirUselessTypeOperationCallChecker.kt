@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isRefinementUseless
 import org.jetbrains.kotlin.fir.analysis.checkers.shouldCheckForExactType
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.expressions.FirOperation
+import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
+import org.jetbrains.kotlin.fir.expressions.argument
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 
@@ -21,7 +23,7 @@ object FirUselessTypeOperationCallChecker : FirTypeOperatorCallChecker() {
         if (expression.operation !in FirOperation.TYPES) return
         val arg = expression.argument
 
-        val candidateType = arg.typeRef.coneType.upperBoundIfFlexible().fullyExpandedType(context.session)
+        val candidateType = arg.resolvedType.upperBoundIfFlexible().fullyExpandedType(context.session)
         if (candidateType is ConeErrorType) return
 
         val targetType = expression.conversionTypeRef.coneType.fullyExpandedType(context.session)
@@ -39,7 +41,7 @@ object FirUselessTypeOperationCallChecker : FirTypeOperatorCallChecker() {
                 FirOperation.IS -> reporter.reportOn(expression.source, FirErrors.USELESS_IS_CHECK, true, context)
                 FirOperation.NOT_IS -> reporter.reportOn(expression.source, FirErrors.USELESS_IS_CHECK, false, context)
                 FirOperation.AS, FirOperation.SAFE_AS -> {
-                    if ((arg.typeRef as? FirResolvedTypeRef)?.isFromStubType != true) {
+                    if (!expression.argFromStubType) {
                         reporter.reportOn(expression.source, FirErrors.USELESS_CAST, context)
                     }
                 }

@@ -12,6 +12,7 @@ package kotlin.collections
  *
  * @param E the type of elements contained in the collection. The collection is invariant in its element type.
  */
+@AllowDifferentMembersInActual // New 'checkIsMutable', 'toJSON', etc. members are added compared to the expect declaration
 public actual abstract class AbstractMutableCollection<E> protected actual constructor() : AbstractCollection<E>(), MutableCollection<E> {
 
     actual abstract override fun add(element: E): Boolean

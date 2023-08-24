@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassLike
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterface
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
+import org.jetbrains.kotlin.light.classes.symbol.classes.modificationTrackerForClassInnerStuff
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
@@ -324,5 +326,11 @@ internal inline fun <reified T> Collection<T>.toArrayIfNotEmptyOrDefault(default
 internal inline fun <R : PsiElement, T> R.cachedValue(
     crossinline computer: () -> T,
 ): T = CachedValuesManager.getCachedValue(this) {
-    CachedValueProvider.Result.createSingleDependency(computer(), project.createProjectWideOutOfBlockModificationTracker())
+    val value = computer()
+    val specialClassTrackers = (this as? SymbolLightClassForClassLike<*>)?.classOrObjectDeclaration?.modificationTrackerForClassInnerStuff()
+    if (specialClassTrackers != null) {
+        CachedValueProvider.Result.create(value, specialClassTrackers)
+    } else {
+        CachedValueProvider.Result.createSingleDependency(value, project.createProjectWideOutOfBlockModificationTracker())
+    }
 }

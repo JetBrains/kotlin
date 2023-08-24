@@ -21,8 +21,11 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.info
-import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute.*
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -35,6 +38,8 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
+import org.jetbrains.kotlin.incremental.storage.FileLocations
+import org.jetbrains.kotlin.incremental.storage.FileToAbsolutePathConverter
 import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.incremental.util.ExceptionLocation
 import org.jetbrains.kotlin.incremental.util.reportException
@@ -45,7 +50,6 @@ import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.toMetadataVersion
 import java.io.File
 import java.nio.file.Files
-import java.util.*
 
 abstract class IncrementalCompilerRunner<
         Args : CommonCompilerArguments,
@@ -83,11 +87,12 @@ abstract class IncrementalCompilerRunner<
      * Creates an instance of [IncrementalCompilationContext] that holds common incremental compilation context mostly required for [CacheManager]
      */
     private fun createIncrementalCompilationContext(
-        projectDir: File?,
-        transaction: CompilationTransaction
+        fileLocations: FileLocations?,
+        transaction: CompilationTransaction,
     ) = IncrementalCompilationContext(
+        pathConverterForSourceFiles = fileLocations?.let { it.getRelocatablePathConverterForSourceFiles() } ?: FileToAbsolutePathConverter,
+        pathConverterForOutputFiles = fileLocations?.let { it.getRelocatablePathConverterForOutputFiles() } ?: FileToAbsolutePathConverter,
         transaction = transaction,
-        rootProjectDir = projectDir,
         reporter = reporter,
         trackChangesInLookupCache = shouldTrackChangesInLookupCache,
         storeFullFqNamesInLookupCache = shouldStoreFullFqNamesInLookupCache,
@@ -105,12 +110,10 @@ abstract class IncrementalCompilerRunner<
         allSourceFiles: List<File>,
         args: Args,
         messageCollector: MessageCollector,
-        // when `changedFiles` is not null, changes are provided by external system (e.g. Gradle)
-        // otherwise we track source files changes ourselves.
-        changedFiles: ChangedFiles?,
-        projectDir: File? = null
+        changedFiles: ChangedFiles?, // When not-null, changes are provided by the build system; otherwise, the IC will need to track them
+        fileLocations: FileLocations? = null, // Must be not-null if the build system needs to support build cache relocatability
     ): ExitCode = reporter.measure(GradleBuildTime.INCREMENTAL_COMPILATION_DAEMON) {
-        return when (val result = tryCompileIncrementally(allSourceFiles, changedFiles, args, projectDir, messageCollector)) {
+        return when (val result = tryCompileIncrementally(allSourceFiles, changedFiles, args, fileLocations, messageCollector)) {
             is ICResult.Completed -> {
                 reporter.debug { "Incremental compilation completed" }
                 result.exitCode
@@ -120,7 +123,7 @@ abstract class IncrementalCompilerRunner<
                 reporter.addAttribute(result.reason)
 
                 compileNonIncrementally(
-                    result.reason, allSourceFiles, args, projectDir, trackChangedFiles = changedFiles == null, messageCollector
+                    result.reason, allSourceFiles, args, fileLocations, trackChangedFiles = changedFiles == null, messageCollector
                 )
             }
             is ICResult.Failed -> {
@@ -139,7 +142,7 @@ abstract class IncrementalCompilerRunner<
                 reporter.addAttribute(result.reason)
 
                 compileNonIncrementally(
-                    result.reason, allSourceFiles, args, projectDir, trackChangedFiles = changedFiles == null, messageCollector
+                    result.reason, allSourceFiles, args, fileLocations, trackChangedFiles = changedFiles == null, messageCollector
                 )
             }
         }
@@ -173,8 +176,8 @@ abstract class IncrementalCompilerRunner<
         allSourceFiles: List<File>,
         changedFiles: ChangedFiles?,
         args: Args,
-        projectDir: File?,
-        messageCollector: MessageCollector
+        fileLocations: FileLocations?,
+        messageCollector: MessageCollector,
     ): ICResult {
         if (changedFiles is ChangedFiles.Unknown) {
             return ICResult.RequiresRebuild(UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
@@ -182,7 +185,7 @@ abstract class IncrementalCompilerRunner<
         changedFiles as ChangedFiles.Known?
 
         return createTransaction().runWithin(::incrementalCompilationExceptionTransformer) { transaction ->
-            val icContext = createIncrementalCompilationContext(projectDir, transaction)
+            val icContext = createIncrementalCompilationContext(fileLocations, transaction)
             val caches = createCacheManager(icContext, args).also {
                 // this way we make the transaction to be responsible for closing the caches manager
                 transaction.cachesManager = it
@@ -253,7 +256,7 @@ abstract class IncrementalCompilerRunner<
         rebuildReason: BuildAttribute,
         allSourceFiles: List<File>,
         args: Args,
-        projectDir: File?,
+        fileLocations: FileLocations?,
         trackChangedFiles: Boolean, // Whether we need to track changes to the source files or the build system already handles it
         messageCollector: MessageCollector,
     ): ExitCode {
@@ -266,7 +269,7 @@ abstract class IncrementalCompilerRunner<
             reporter.debug { "Cleaning ${outputDirsToClean.size} output directories" }
             cleanOrCreateDirectories(outputDirsToClean)
         }
-        val icContext = createIncrementalCompilationContext(projectDir, NonRecoverableCompilationTransaction())
+        val icContext = createIncrementalCompilationContext(fileLocations, NonRecoverableCompilationTransaction())
         return createCacheManager(icContext, args).use { caches ->
             if (trackChangedFiles) {
                 caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)

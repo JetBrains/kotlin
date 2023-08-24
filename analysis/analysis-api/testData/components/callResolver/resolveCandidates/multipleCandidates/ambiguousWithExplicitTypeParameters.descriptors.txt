@@ -1,0 +1,116 @@
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'a'>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /function(t: T, a: kotlin.Char): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = t
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = t: T
+            callableIdIfNonLocal = null,
+          KtVariableLikeSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Char
+            symbol = a: kotlin.Char
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /function
+    typeArgumentsMapping = {
+      T -> (kotlin.Int)
+    }
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = t
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = t: T
+        callableIdIfNonLocal = null)
+    }
+  isInBestCandidates = true
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /function(u: U, b: kotlin.Boolean): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = u
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = u: U
+            callableIdIfNonLocal = null,
+          KtVariableLikeSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = b: kotlin.Boolean
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /function
+    typeArgumentsMapping = {
+      U -> (kotlin.Int)
+    }
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = u
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = u: U
+        callableIdIfNonLocal = null)
+    }
+  isInBestCandidates = true
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'c'>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /function(v: V, c: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = v
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = v: V
+            callableIdIfNonLocal = null,
+          KtVariableLikeSignature:
+            name = c
+            receiverType = null
+            returnType = kotlin.String
+            symbol = c: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /function
+    typeArgumentsMapping = {
+      V -> (kotlin.Int)
+    }
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = v
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = v: V
+        callableIdIfNonLocal = null)
+    }
+  isInBestCandidates = true

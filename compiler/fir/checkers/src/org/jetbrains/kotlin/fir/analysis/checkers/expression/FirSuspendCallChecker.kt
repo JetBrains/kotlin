@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -165,7 +165,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
             expression.computeReceiversInfo(session, calledDeclarationSymbol)
 
         for (receiverExpression in listOfNotNull(dispatchReceiverExpression, extensionReceiverExpression)) {
-            if (!receiverExpression.typeRef.coneType.isRestrictSuspensionReceiver(session)) continue
+            if (!receiverExpression.resolvedType.isRestrictSuspensionReceiver(session)) continue
             if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionDispatchReceiverOwnerSymbol)) continue
             if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionExtensionReceiverOwnerSymbol)) continue
 
@@ -221,10 +221,10 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         calledDeclarationSymbol: FirCallableSymbol<*>
     ): Triple<FirExpression?, FirExpression?, ConeKotlinType?> {
         if (this is FirImplicitInvokeCall &&
-            dispatchReceiver != FirNoReceiverExpression && dispatchReceiver.typeRef.coneType.isSuspendOrKSuspendFunctionType(session)
+            dispatchReceiver != FirNoReceiverExpression && dispatchReceiver.resolvedType.isSuspendOrKSuspendFunctionType(session)
         ) {
             val variableForInvoke = dispatchReceiver
-            val variableForInvokeType = variableForInvoke.typeRef.coneType
+            val variableForInvokeType = variableForInvoke.resolvedType
             if (!variableForInvokeType.isExtensionFunctionType) return Triple(null, null, null)
 
             // `a.foo()` is resolved to invokeExtension, so it's been desugared to `foo.invoke(a)`

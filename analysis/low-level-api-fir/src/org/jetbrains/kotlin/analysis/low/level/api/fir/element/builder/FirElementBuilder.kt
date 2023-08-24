@@ -270,7 +270,7 @@ internal fun getNonLocalContainingDeclaration(
             if (parent is KtEnumEntry ||
                 parent is KtCallableDeclaration &&
                 !notNullCandidate.isPartOf(parent) ||
-                parent is KtClassInitializer ||
+                parent is KtAnonymousInitializer ||
                 parent is KtObjectLiteralExpression ||
                 parent is KtCallElement ||
                 parent is KtCodeFragment

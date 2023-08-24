@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -134,6 +135,7 @@ internal class AdapterGenerator(
         }
     }
 
+    @OptIn(IrSymbolInternals::class)
     internal fun generateAdaptedCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
         explicitReceiverExpression: IrExpression?,
@@ -283,6 +285,7 @@ internal class AdapterGenerator(
     private fun IrValueDeclaration.toIrGetValue(startOffset: Int, endOffset: Int): IrGetValue =
         IrGetValueImpl(startOffset, endOffset, this.type, this.symbol)
 
+    @OptIn(IrSymbolInternals::class)
     private fun createAdapteeCallForCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
         firAdaptee: FirFunction,
@@ -447,7 +450,7 @@ internal class AdapterGenerator(
         if (!samType.isSamType) return this
         return IrTypeOperatorCallImpl(
             this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType,
-            castArgumentToFunctionalInterfaceForSamType(this, argument.typeRef.coneType, samFirType)
+            castArgumentToFunctionalInterfaceForSamType(this, argument.resolvedType, samFirType)
         )
     }
 
@@ -548,12 +551,12 @@ internal class AdapterGenerator(
 
     private fun needSamConversion(argument: FirExpression, parameter: FirValueParameter): Boolean {
         // If the type of the argument is already an explicitly subtype of the type of the parameter, we don't need SAM conversion.
-        if (argument.typeRef !is FirResolvedTypeRef ||
+        if (argument.coneTypeOrNull == null ||
             AbstractTypeChecker.isSubtypeOf(
                 session.typeContext.newTypeCheckerState(
                     errorTypesEqualToAnything = false, stubTypesEqualToAnything = true
                 ),
-                argument.typeRef.coneType,
+                argument.resolvedType,
                 parameter.returnTypeRef.coneType,
                 isFromNullabilityConstraint = true
             )
@@ -562,12 +565,21 @@ internal class AdapterGenerator(
         }
         // If the expected type is a built-in functional type, we don't need SAM conversion.
         val expectedType = argument.getExpectedType(parameter)
-        if (expectedType is ConeTypeParameterType || expectedType.isSomeFunctionType(session)) {
+        if (expectedType.isTypeParameterBased() || expectedType.isSomeFunctionType(session)) {
             return false
         }
         // On the other hand, the actual type should be either a functional type or a subtype of a class that has a contributed `invoke`.
         val expectedFunctionType = getFunctionTypeForPossibleSamType(parameter.returnTypeRef.coneType)
         return argument.isFunctional(session, scopeSession, expectedFunctionType, ReturnTypeCalculatorForFullBodyResolve.Default)
+    }
+
+    private fun ConeKotlinType.isTypeParameterBased(): Boolean {
+        return when (this) {
+            is ConeTypeParameterType -> true
+            is ConeDefinitelyNotNullType -> original.isTypeParameterBased()
+            is ConeFlexibleType -> lowerBound.isTypeParameterBased()
+            else -> false
+        }
     }
 
     internal fun getFunctionTypeForPossibleSamType(parameterType: ConeKotlinType): ConeKotlinType? {
@@ -626,7 +638,7 @@ internal class AdapterGenerator(
         expectedFunctionalType: ConeClassLikeType,
         argument: FirExpression
     ): IrSimpleFunctionSymbol? {
-        val argumentType = argument.typeRef.coneType
+        val argumentType = argument.resolvedType
         val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionalType) ?: return null
 
         return if (argumentTypeWithInvoke.isSomeFunctionType(session)) {

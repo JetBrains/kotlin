@@ -4,7 +4,7 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+SCRIPT: [ResolvedTo(BODY_RESOLVE)]
     [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
     public open [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
@@ -36,7 +36,7 @@ SCRIPT: [ResolvedTo(BODY_RESOLVE)]
     R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
         this@R|special/anonymous|.R|/Builder.version| = String(123)
         local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
                 super<R|kotlin/Any|>()
             }
 
@@ -92,7 +92,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/Builder.version| = String(123)
             local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
                     super<R|kotlin/Any|>()
                 }
 

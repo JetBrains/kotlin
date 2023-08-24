@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.backend.konan.ir.SymbolOverDescriptorsLookupUtils
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -55,7 +53,6 @@ internal fun PsiToIrContext.psiToIr(
     val symbolTable = symbolTable!!
     val (moduleDescriptor, environment, isProducingLibrary) = input
     // Translate AST to high level IR.
-    val expectActualLinker = config.configuration[CommonConfigurationKeys.EXPECT_ACTUAL_LINKER] ?: false
     val messageLogger = config.configuration.irMessageLogger
 
     val partialLinkageConfig = config.configuration.partialLinkageConfig
@@ -214,17 +211,11 @@ internal fun PsiToIrContext.psiToIr(
         }
     }
 
-    val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
     val mainModule = translator.generateModuleFragment(
             generatorContext,
             environment.getSourceFiles(),
             irProviders = listOf(irDeserializer),
             linkerExtensions = pluginExtensions,
-            // TODO: This is a hack to allow platform libs to build in reasonable time.
-            // referenceExpectsForUsedActuals() appears to be quadratic in time because of
-            // how ExpectedActualResolver is implemented.
-            // Need to fix ExpectActualResolver to either cache expects or somehow reduce the member scope searches.
-            expectDescriptorToSymbol = if (expectActualLinker) expectDescriptorToSymbol else null
     ).toKonanModule()
 
     irDeserializer.postProcess(inOrAfterLinkageStep = true)
@@ -263,7 +254,7 @@ internal fun PsiToIrContext.psiToIr(
     }
 
     return if (isProducingLibrary) {
-        PsiToIrOutput.ForKlib(mainModule, symbols, expectDescriptorToSymbol)
+        PsiToIrOutput.ForKlib(mainModule, symbols)
     } else if (libraryToCache == null) {
         PsiToIrOutput.ForBackend(modules, mainModule, symbols, irDeserializer as KonanIrLinker)
     } else {

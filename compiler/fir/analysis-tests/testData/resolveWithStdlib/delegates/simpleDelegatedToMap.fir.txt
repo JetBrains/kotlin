@@ -12,7 +12,7 @@ FILE: simpleDelegatedToMap.kt
                 ^ this@R|/C|.D|/C.foo|.R|kotlin/collections/getValue|<R|kotlin/Any|, R|kotlin/Any|>(this@R|/C|, ::R|/C.foo|)
             }
             public set(<set-?>: R|kotlin/Any|): R|kotlin/Unit| {
-                this@R|/C|.D|/C.foo|.R|kotlin/collections/setValue|<R|kotlin/Any|>(this@R|/C|, ::R|/C.foo|, R|<local>/foo|)
+                ^ this@R|/C|.D|/C.foo|.R|kotlin/collections/setValue|<R|kotlin/Any|>(this@R|/C|, ::R|/C.foo|, R|<local>/foo|)
             }
 
     }
@@ -21,5 +21,5 @@ FILE: simpleDelegatedToMap.kt
             ^ D|/bar|.R|kotlin/collections/getValue|<R|kotlin/Any|, R|kotlin/Any|>(Null(null), ::R|/bar|)
         }
         public set(<set-?>: R|kotlin/Any|): R|kotlin/Unit| {
-            D|/bar|.R|kotlin/collections/setValue|<R|kotlin/Any|>(Null(null), ::R|/bar|, R|<local>/bar|)
+            ^ D|/bar|.R|kotlin/collections/setValue|<R|kotlin/Any|>(Null(null), ::R|/bar|, R|<local>/bar|)
         }

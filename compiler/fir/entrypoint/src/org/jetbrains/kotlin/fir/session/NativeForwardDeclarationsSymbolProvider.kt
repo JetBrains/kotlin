@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassType
 import org.jetbrains.kotlin.fir.types.toLookupTag
@@ -125,7 +126,7 @@ class NativeForwardDeclarationsSymbolProvider(
                         NativeStandardInteropNames.ExperimentalForeignApi
                     )
                     type = annotationClassId.toLookupTag()
-                        .constructClassType(typeArguments = emptyArray(), isNullable = false)
+                        .constructClassType(typeArguments = ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
                 }
                 argumentMapping = FirEmptyAnnotationArgumentMapping
             }

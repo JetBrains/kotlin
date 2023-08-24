@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
@@ -78,9 +79,9 @@ open class KotlinJsCompilation @Inject internal constructor(
     override val compileTaskProvider: TaskProvider<Kotlin2JsCompile>
         get() = compilation.compileTaskProvider as TaskProvider<Kotlin2JsCompile>
 
-    internal val packageJsonHandlers = mutableListOf<PackageJson.() -> Unit>()
+    internal val packageJsonHandlers = mutableListOf<Action<PackageJson>>()
 
-    fun packageJson(handler: PackageJson.() -> Unit) {
+    fun packageJson(handler: Action<PackageJson>) {
         packageJsonHandlers.add(handler)
     }
 

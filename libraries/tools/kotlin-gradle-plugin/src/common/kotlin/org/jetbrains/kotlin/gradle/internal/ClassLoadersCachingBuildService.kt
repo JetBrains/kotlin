@@ -33,13 +33,14 @@ internal abstract class ClassLoadersCachingBuildService : BuildService<BuildServ
     private val logger = Logging.getLogger(javaClass)
 
     fun getClassLoader(
-        classpath: Iterable<File>,
+        classpath: List<File>,
         parentClassLoaderProvider: ParentClassLoaderProvider = DefaultParentClassLoaderProvider()
-    ) =
-        classLoaders.computeIfAbsent(ClassLoaderCacheKey(classpath, parentClassLoaderProvider)) {
+    ): ClassLoader {
+        return classLoaders.computeIfAbsent(ClassLoaderCacheKey(classpath, parentClassLoaderProvider)) {
             logger.debug("Creating a new classloader for classpath $classpath")
             URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), parentClassLoaderProvider.getClassLoader())
         }
+    }
 
     override fun close() {
         logger.debug("Clearing ${classLoaders.size} cached classloaders")
@@ -59,7 +60,7 @@ internal abstract class ClassLoadersCachingBuildService : BuildService<BuildServ
 }
 
 private data class ClassLoaderCacheKey(
-    val classpath: Iterable<File>,
+    val classpath: List<File>,
     val parentClassLoaderProvider: ParentClassLoaderProvider,
 )
 

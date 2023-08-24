@@ -1,3 +1,28 @@
+/**
+ * public final enum class E : kotlin/Enum<E> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   // signature: a()V
+ *   public abstract fun a(): kotlin/Unit
+ *
+ *   // signature: b()V
+ *   public final fun b(): kotlin/Unit
+ *
+ *   // nested class: NestedClass
+ *
+ *   // nested class: Obj
+ *
+ *   X,
+ *
+ *   Y,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
 @kotlin.Metadata()
 public enum E {
     /*public static final*/ X /* = new E() */,
@@ -16,6 +41,15 @@ public enum E {
         return null;
     }
 
+    /**
+     * public final class E.NestedClass : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class NestedClass {
 
@@ -24,6 +58,15 @@ public enum E {
         }
     }
 
+    /**
+     * public final object E.Obj : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class Obj {
         @org.jetbrains.annotations.NotNull()
@@ -38,6 +81,27 @@ public enum E {
 ////////////////////
 
 
+/**
+ * public final enum class E2 : kotlin/Enum<E2> {
+ *
+ *   // signature: <init>(Ljava/lang/String;II)V
+ *   private (* secondary *) constructor(n: kotlin/Int)
+ *
+ *   // signature: <init>(Ljava/lang/String;ILjava/lang/String;)V
+ *   private (* secondary *) constructor(s: kotlin/String)
+ *
+ *   // signature: a()V
+ *   public abstract fun a(): kotlin/Unit
+ *
+ *   X,
+ *
+ *   Y,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
 @kotlin.Metadata()
 public enum E2 {
     /*public static final*/ X /* = new E2() */,
@@ -60,6 +124,26 @@ public enum E2 {
 ////////////////////
 
 
+/**
+ * public final enum class E3 : kotlin/Enum<E3> {
+ *
+ *   // signature: <init>(Ljava/lang/String;ILjava/lang/String;)V
+ *   private constructor(a: kotlin/String)
+ *
+ *   // field: a:Ljava/lang/String;
+ *   // getter: getA()Ljava/lang/String;
+ *   public final val a: kotlin/String
+ *     public final get
+ *
+ *   X,
+ *
+ *   Y,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
 @kotlin.Metadata()
 public enum E3 {
     /*public static final*/ X /* = new E3() */,
@@ -84,6 +168,39 @@ public enum E3 {
 ////////////////////
 
 
+/**
+ * public final enum class E4 : kotlin/Enum<E4> {
+ *
+ *   // signature: <init>(Ljava/lang/String;ILjava/lang/String;IJZ)V
+ *   private constructor(a: kotlin/String, b: kotlin/Int, c: kotlin/Long, d: kotlin/Boolean)
+ *
+ *   // field: a:Ljava/lang/String;
+ *   // getter: getA()Ljava/lang/String;
+ *   public final val a: kotlin/String
+ *     public final get
+ *
+ *   // field: b:I
+ *   // getter: getB()I
+ *   public final val b: kotlin/Int
+ *     public final get
+ *
+ *   // field: c:J
+ *   // getter: getC()J
+ *   public final val c: kotlin/Long
+ *     public final get
+ *
+ *   // field: d:Z
+ *   // getter: getD()Z
+ *   public final val d: kotlin/Boolean
+ *     public final get
+ *
+ *   X,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
 @kotlin.Metadata()
 public enum E4 {
     /*public static final*/ X /* = new E4() */;

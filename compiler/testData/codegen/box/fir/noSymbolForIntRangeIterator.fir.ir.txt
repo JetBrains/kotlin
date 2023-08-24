@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/noSymbolForIntRangeIterator.kt
                     VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int? [val]
                       CALL 'public final fun toIntOrNull (): kotlin.Int? declared in kotlin.text' type=kotlin.Int? origin=null
                         $receiver: GET_VAR 'it: kotlin.String declared in <root>.takeString.<anonymous>' type=kotlin.String origin=null
-                    WHEN type=kotlin.Int origin=ELVIS
+                    WHEN type=kotlin.Int origin=null
                       BRANCH
                         if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                           arg0: GET_VAR 'val tmp_0: kotlin.Int? declared in <root>.takeString.<anonymous>' type=kotlin.Int? origin=null

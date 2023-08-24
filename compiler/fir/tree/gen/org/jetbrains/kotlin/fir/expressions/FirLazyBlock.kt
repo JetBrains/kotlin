@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirLazyBlock : FirBlock() {
     abstract override val source: KtSourceElement?
+    abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
     abstract override val statements: List<FirStatement>
-    abstract override val typeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLazyBlock(this, data)
 
@@ -27,9 +27,9 @@ abstract class FirLazyBlock : FirBlock() {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformLazyBlock(this, data) as E
 
-    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+    abstract override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?)
 
-    abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLazyBlock
 

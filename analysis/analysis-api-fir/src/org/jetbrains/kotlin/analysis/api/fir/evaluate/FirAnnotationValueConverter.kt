@@ -45,7 +45,7 @@ internal object FirAnnotationValueConverter {
 
     private fun <T> FirConstExpression<T>.convertConstantExpression(): KtConstantAnnotationValue? {
         val expression = psi as? KtElement
-        val type = (typeRef as? FirResolvedTypeRef)?.type
+        val type = coneTypeOrNull
         val constantValue = when {
             value == null -> KtConstantValue.KtNullConstantValue(expression)
             type == null -> KtConstantValueFactory.createConstantValue(value, psi as? KtElement)
@@ -179,7 +179,7 @@ internal object FirAnnotationValueConverter {
                         val qualifierParts = mutableListOf<String?>()
 
                         fun process(expression: FirExpression) {
-                            val errorType = expression.typeRef.coneType as? ConeErrorType
+                            val errorType = expression.resolvedType as? ConeErrorType
                             val unresolvedName = when (val diagnostic = errorType?.diagnostic) {
                                 is ConeUnresolvedTypeQualifierError -> diagnostic.qualifier
                                 is ConeUnresolvedNameError -> diagnostic.qualifier

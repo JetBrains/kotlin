@@ -34,14 +34,14 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
   TYPEALIAS name:CT visibility:public expandedType:<root>.Cell<T of <root>.CT>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
   TYPEALIAS name:CStr visibility:public expandedType:<root>.Cell<kotlin.String>
-  CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>{ <root>.CT<kotlin.String> }]
+  CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C1
     CONSTRUCTOR visibility:public <> () returnType:<root>.C1 [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Cell) declared in <root>.Cell'
           <T>: kotlin.String
           value: CONST String type=kotlin.String value="O"
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>{ <root>.CT<kotlin.String> }]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>]'
     PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
       overridden:
         public final value: T of <root>.Cell
@@ -63,14 +63,14 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Cell
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>{ <root>.CStr }]
+  CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C2
     CONSTRUCTOR visibility:public <> () returnType:<root>.C2 [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Cell) declared in <root>.Cell'
           <T>: kotlin.String
           value: CONST String type=kotlin.String value="K"
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>{ <root>.CStr }]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>]'
     PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
       overridden:
         public final value: T of <root>.Cell

@@ -9,13 +9,15 @@ Read the details here: https://kotlinlang.org/docs/multiplatform-compatibility-g
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
 #diagnostic-end
 
-w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy was not applied to 'project ':subprojectA'':
-Manual .dependsOn() edges were configured for the following source sets:
+w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'project ':subprojectA'':
+Explicit .dependsOn() edges were configured for the following source sets:
 [commonMain]
 
-To suppress the 'Default Hierarchy Template' add
+Consider removing dependsOn-calls or disabling the default template by adding
     'kotlin.mpp.applyDefaultHierarchyTemplate=false'
 to your gradle.properties
+
+Learn more about hierarchy templates: https://kotl.in/hierarchy-template
 #diagnostic-end
 
 
@@ -23,13 +25,15 @@ to your gradle.properties
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
 #diagnostic-end
 
-w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy was not applied to 'project ':subprojectB'':
-Manual .dependsOn() edges were configured for the following source sets:
+w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'project ':subprojectB'':
+Explicit .dependsOn() edges were configured for the following source sets:
 [commonMain]
 
-To suppress the 'Default Hierarchy Template' add
+Consider removing dependsOn-calls or disabling the default template by adding
     'kotlin.mpp.applyDefaultHierarchyTemplate=false'
 to your gradle.properties
+
+Learn more about hierarchy templates: https://kotl.in/hierarchy-template
 #diagnostic-end
 
 w: [UnusedSourceSetsWarning | WARNING] The Kotlin source set unusedCreatedInAfterEvaluate was configured but not added to any Kotlin compilation.

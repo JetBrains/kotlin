@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import java.lang.annotation.ElementType
+import java.lang.annotation.RetentionPolicy
 
 internal object AbstractClassAdditionalAnnotationsProvider : AdditionalAnnotationsProvider {
     override fun addAllAnnotations(
@@ -143,12 +144,17 @@ private fun javaRetentionArguments(kotlinRetentionName: String?): List<KtNamedAn
         expression = KtEnumEntryAnnotationValue(
             callableId = CallableId(
                 StandardClassIds.Annotations.Java.RetentionPolicy,
-                Name.identifier(kotlinRetentionName ?: AnnotationRetention.RUNTIME.name),
+                Name.identifier(retentionMapping(kotlinRetentionName ?: AnnotationRetention.RUNTIME.name)),
             ),
             sourcePsi = null,
         )
     )
 )
+
+private fun retentionMapping(name: String): String = when (name) {
+    AnnotationRetention.BINARY.name -> RetentionPolicy.CLASS.name
+    else -> name
+}
 
 private fun GranularAnnotationsBox.tryConvertToRepeatableJavaAnnotation(
     qualifiedName: String,

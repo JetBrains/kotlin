@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// FIR_IDENTICAL
 // FILE: SomeJavaClass.java
 
 public class SomeJavaClass {

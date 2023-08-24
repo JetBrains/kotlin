@@ -16,6 +16,7 @@ abstract class AbstractAnalysisApiImportOptimizerTest : AbstractAnalysisApiBased
         val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.first { it.name == "main.kt" }
         val unusedImports = analyseForTest(mainKtFile) {
             val results = analyseImports(mainKtFile)
+            @Suppress("DEPRECATION")
             results.unusedImports
         }
 

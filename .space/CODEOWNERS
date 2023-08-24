@@ -9,7 +9,7 @@
 # OWNER_LIST: "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
 # OWNER_LIST: "Kotlin Compiler Core"
 # OWNER_LIST: "Kotlin Build Infrastructure" "Kotlin Build Tools"
-# OWNER_LIST: "IntelliJ Kotlin Plugin"
+# OWNER_LIST: "Kotlin IDE Analysis Core"
 # OWNER_LIST: "Kotlin Release"
 # OWNER_LIST: "Kotlin Multiplatform"
 # OWNER_LIST: "Kotlin Language Evolution"
@@ -30,7 +30,7 @@
 
 /.space/ "Kotlin Build Infrastructure"
 
-/analysis/ "IntelliJ Kotlin Plugin"
+/analysis/ "Kotlin IDE Analysis Core"
 /analysis/light-classes-base/ Dmitry.Gridin
 /analysis/symbol-light-classes/ Dmitry.Gridin
 /analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KtFirDiagnostics.kt "Kotlin Compiler Core"
@@ -81,7 +81,7 @@
 /compiler/ir/serialization.js/ "Kotlin JS"
 /compiler/ir/serialization.jvm/ "Kotlin JVM"
 /compiler/javac-wrapper/ "Kotlin Compiler Core"
-/compiler/light-classes/ "IntelliJ Kotlin Plugin"
+/compiler/light-classes/ "Kotlin IDE Analysis Core"
 /compiler/plugin-api/ "Kotlin Compiler Core"
 /compiler/preloader/ "Kotlin Compiler Core"
 /compiler/psi/ "Kotlin Compiler Core"
@@ -93,8 +93,7 @@
 /compiler/test-infrastructure-utils/ "Kotlin Compiler Core"
 
 /compiler/testData/asJava/findClasses/ "Kotlin Compiler Core"
-/compiler/testData/asJava/lightClasses/ "IntelliJ Kotlin Plugin"
-/compiler/testData/binaryCompatibility/klibEvolution/ "Kotlin Native"
+/compiler/testData/asJava/lightClasses/ "Kotlin IDE Analysis Core"
 /compiler/testData/builtin-classes/ "Kotlin Libraries"
 /compiler/testData/capturedTypeApproximation/ "Kotlin Compiler Core"
 /compiler/testData/cfg/ "Kotlin Compiler Core"
@@ -152,7 +151,7 @@
 /compiler/testData/ir/klibLayout/ "Kotlin Native"
 /compiler/testData/ir/sourceRanges/ "Kotlin Compiler Core"
 /compiler/testData/javaModules/ "Kotlin JVM"
-/compiler/testData/klibABI/ "Kotlin Native"
+/compiler/testData/klib/ "Kotlin Native"
 /compiler/testData/kotlinClassFinder/ "Kotlin Compiler Core"
 # UNKNOWN: /compiler/testData/launcher/
 /compiler/testData/lexer/ "Kotlin Compiler Core"
@@ -231,7 +230,7 @@
 
 # UNKNOWN: /docs/
 
-/generators/analysis-api-generator/ "IntelliJ Kotlin Plugin"
+/generators/analysis-api-generator/ "Kotlin IDE Analysis Core"
 /generators/builtins/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
 /generators/evaluate/ "Kotlin Compiler Core"
 /generators/ide-iml-to-gradle-generator/ "Kotlin Build Infrastructure"
@@ -339,6 +338,9 @@
 
 /libraries/maven-settings.xml "Kotlin Build Infrastructure"
 /libraries/pom.xml "Kotlin Build Infrastructure"
+/libraries/mvnw "Kotlin Build Infrastructure"
+/libraries/mvnw.cmd "Kotlin Build Infrastructure"
+/libraries/.mvn/wrapper/maven-wrapper.properties "Kotlin Build Infrastructure"
 /libraries/ReadMe.md A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
 
 /license/ "Kotlin Build Infrastructure"
@@ -387,7 +389,7 @@
 /wasm/ "Kotlin Wasm"
 
 # Generated files (no review required)
-*Generated.java "Kotlin" "IntelliJ Kotlin Plugin"
+*Generated.java "Kotlin" "Kotlin IDE Analysis Core"
 
 # Singular files
 /.gitattributes "Kotlin Build Infrastructure"

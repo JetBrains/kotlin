@@ -43,6 +43,12 @@ public class SymbolLightClassesEqualityByFqNameForLibraryTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("annotationBinaryRetention.kt")
+    public void testAnnotationBinaryRetention() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/annotationBinaryRetention.kt");
+    }
+
+    @Test
     @TestMetadata("AnnotationClass.kt")
     public void testAnnotationClass() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationClass.kt");

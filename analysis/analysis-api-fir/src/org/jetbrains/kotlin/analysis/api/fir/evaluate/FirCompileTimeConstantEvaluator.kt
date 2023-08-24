@@ -178,19 +178,19 @@ internal object FirCompileTimeConstantEvaluator {
 
         val opr1 = evaluate(functionCall.explicitReceiver, mode) ?: return null
         opr1.evaluate(function)?.let {
-            return it.adjustType(functionCall.typeRef)
+            return it.adjustType(functionCall.coneTypeOrNull)
         }
 
         val argument = functionCall.arguments.firstOrNull() ?: return null
         val opr2 = evaluate(argument, mode) ?: return null
         opr1.evaluate(function, opr2)?.let {
-            return it.adjustType(functionCall.typeRef)
+            return it.adjustType(functionCall.coneTypeOrNull)
         }
         return null
     }
 
-    private fun FirConstExpression<*>.adjustType(expectedType: FirTypeRef): FirConstExpression<*> {
-        val expectedKind = expectedType.toConstantValueKind()
+    private fun FirConstExpression<*>.adjustType(expectedType: ConeKotlinType?): FirConstExpression<*> {
+        val expectedKind = expectedType?.toConstantValueKind()
         // Note that the resolved type for the const expression is not always matched with the const kind. For example,
         //   fun foo(x: Int) {
         //     when (x) {
@@ -207,7 +207,7 @@ internal object FirCompileTimeConstantEvaluator {
             }
         // Lastly, we should preserve the resolved type of the original function call.
         return expression.apply {
-            replaceTypeRef(expectedType)
+            replaceConeTypeOrNull(expectedType)
         }
     }
 
@@ -303,25 +303,6 @@ internal object FirCompileTimeConstantEvaluator {
         get() = classId == StandardClassIds.String && callableName.identifierOrNullIfSpecial == "plus"
 
     ////// KINDS
-
-    private fun FirTypeRef.toConstantValueKind(): ConstantValueKind<*>? =
-        when (this) {
-            !is FirResolvedTypeRef -> null
-            !is FirImplicitBuiltinTypeRef -> type.toConstantValueKind()
-
-            is FirImplicitByteTypeRef -> ConstantValueKind.Byte
-            is FirImplicitDoubleTypeRef -> ConstantValueKind.Double
-            is FirImplicitFloatTypeRef -> ConstantValueKind.Float
-            is FirImplicitIntTypeRef -> ConstantValueKind.Int
-            is FirImplicitLongTypeRef -> ConstantValueKind.Long
-            is FirImplicitShortTypeRef -> ConstantValueKind.Short
-
-            is FirImplicitCharTypeRef -> ConstantValueKind.Char
-            is FirImplicitStringTypeRef -> ConstantValueKind.String
-            is FirImplicitBooleanTypeRef -> ConstantValueKind.Boolean
-
-            else -> null
-        }
 
     private fun ConeKotlinType.toConstantValueKind(): ConstantValueKind<*>? =
         when (this) {

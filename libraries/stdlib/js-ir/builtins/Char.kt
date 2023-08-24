@@ -1,7 +1,9 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+// Auto-generated file. DO NOT EDIT!
 
 package kotlin
 
@@ -9,20 +11,17 @@ package kotlin
 // Char is defined as a regular class, but we lower it as a value class.
 // See [org.jetbrains.kotlin.ir.backend.js.utils.JsInlineClassesUtils.isClassInlineLike] for explanation.
 
-/**
- * Represents a 16-bit Unicode character.
- * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
- */
-public /*value*/ class Char
+/** Represents a 16-bit Unicode character. */
+public class Char 
 @kotlin.internal.LowPriorityInOverloadResolution
 internal constructor(private val value: Int) : Comparable<Char> {
-
     @SinceKotlin("1.5")
     @WasExperimental(ExperimentalStdlibApi::class)
     public constructor(code: UShort) : this(code.toInt())
 
     /**
      * Compares this value with the specified value for order.
+     *
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
@@ -36,6 +35,7 @@ internal constructor(private val value: Int) : Comparable<Char> {
     /** Subtracts the other Char value from this value resulting an Int. */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun minus(other: Char): Int = value - other.value
+
     /** Subtracts the other Int value from this value resulting a Char. */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun minus(other: Int): Char = (value - other).toChar()
@@ -66,35 +66,40 @@ internal constructor(private val value: Int) : Comparable<Char> {
     @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Char): CharRange = this until other
 
-
     /** Returns the value of this character as a `Byte`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toByte()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public fun toByte(): Byte = value.toByte()
+
     /** Returns the value of this character as a `Char`. */
     @kotlin.internal.IntrinsicConstEvaluation
     public fun toChar(): Char = this
+
     /** Returns the value of this character as a `Short`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toShort()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public fun toShort(): Short = value.toShort()
+
     /** Returns the value of this character as a `Int`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public fun toInt(): Int = value
+
     /** Returns the value of this character as a `Long`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toLong()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public fun toLong(): Long = value.toLong()
+
     /** Returns the value of this character as a `Float`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toFloat()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public fun toFloat(): Float = value.toFloat()
+
     /** Returns the value of this character as a `Double`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toDouble()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
@@ -102,20 +107,20 @@ internal constructor(private val value: Int) : Comparable<Char> {
     public fun toDouble(): Double = value.toDouble()
 
     @kotlin.internal.IntrinsicConstEvaluation
-    override fun equals(other: Any?): Boolean {
+    @Suppress("JS_NAME_PROHIBITED_FOR_OVERRIDE")
+    @JsName("toString")
+    // TODO implicit usages of toString and valueOf must be covered in DCE
+    public override fun toString(): String {
+        return js("String").fromCharCode(value).unsafeCast<String>()
+    }
+
+    @kotlin.internal.IntrinsicConstEvaluation
+    public override fun equals(other: Any?): Boolean {
         if (other !is Char) return false
         return this.value == other.value
     }
 
-    override fun hashCode(): Int = value
-
-    // TODO implicit usages of toString and valueOf must be covered in DCE
-    @Suppress("JS_NAME_PROHIBITED_FOR_OVERRIDE")
-    @JsName("toString")
-    @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String {
-        return js("String").fromCharCode(value).unsafeCast<String>()
-    }
+    public override fun hashCode(): Int = value
 
     companion object {
         /**
@@ -172,5 +177,4 @@ internal constructor(private val value: Int) : Comparable<Char> {
         @SinceKotlin("1.3")
         public const val SIZE_BITS: Int = 16
     }
-
 }

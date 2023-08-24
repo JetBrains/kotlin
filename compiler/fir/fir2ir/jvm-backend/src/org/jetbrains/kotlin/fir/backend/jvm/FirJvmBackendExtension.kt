@@ -39,7 +39,12 @@ class FirJvmBackendExtension(
     }
 
     override fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int =
-        JvmAnnotationNames.METADATA_JVM_IR_FLAG or
-                JvmAnnotationNames.METADATA_FIR_FLAG or
-                (if (abiStability == JvmAbiStability.STABLE) JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG else 0)
+        Companion.generateMetadataExtraFlags(abiStability)
+
+    companion object {
+        fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int =
+            JvmAnnotationNames.METADATA_JVM_IR_FLAG or
+                    JvmAnnotationNames.METADATA_FIR_FLAG or
+                    (if (abiStability == JvmAbiStability.STABLE) JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG else 0)
+    }
 }

@@ -14,6 +14,14 @@ object NativeStandardInteropNames {
     internal val ObjCObject = Name.identifier("ObjCObject")
     val ExperimentalForeignApi = Name.identifier("ExperimentalForeignApi")
 
+    val objCDirectClassId = ClassId(cInteropPackage, Name.identifier("ObjCDirect"))
+    val objCMethodClassId = ClassId(cInteropPackage, Name.identifier("ObjCMethod"))
+    val objCObjectClassId = ClassId(cInteropPackage, Name.identifier("ObjCObject"))
+    val objCFactoryClassId = ClassId(cInteropPackage, Name.identifier("ObjCFactory"))
+    val objCConstructorClassId = ClassId(cInteropPackage, Name.identifier("ObjCConstructor"))
+    val externalObjCClassClassId = ClassId(cInteropPackage, Name.identifier("ExternalObjCClass"))
+
+
     object ForwardDeclarations {
         private val cNamesPackage = FqName("cnames")
         val cNamesStructsPackage = cNamesPackage.child(Name.identifier("structs"))

@@ -11,7 +11,9 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COMPONENT_PREFIX
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.diagnostics.startOffsetSkippingComments
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.buildFileAnnotationsContainer
@@ -28,8 +30,11 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
-import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -180,6 +185,7 @@ private fun FirBasedSymbol<*>.toSymbolForCall(
 }
 
 context(Fir2IrComponents)
+@OptIn(IrSymbolInternals::class)
 fun FirReference.toSymbolForCall(
     dispatchReceiver: FirExpression,
     conversionScope: Fir2IrConversionScope,
@@ -245,7 +251,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
         }
         // Member fake override or bound callable reference
         dispatchReceiver !is FirNoReceiverExpression -> {
-            val callSiteDispatchReceiverType = dispatchReceiver.typeRef.coneType
+            val callSiteDispatchReceiverType = dispatchReceiver.resolvedType
             val declarationSiteDispatchReceiverType = dispatchReceiverType
             val type = if (callSiteDispatchReceiverType is ConeDynamicType && declarationSiteDispatchReceiverType != null) {
                 declarationSiteDispatchReceiverType
@@ -295,7 +301,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
 
 fun FirConstExpression<*>.getIrConstKind(): IrConstKind<*> = when (kind) {
     ConstantValueKind.IntegerLiteral, ConstantValueKind.UnsignedIntegerLiteral -> {
-        val type = typeRef.coneTypeUnsafe<ConeIntegerLiteralType>()
+        val type = coneTypeUnsafe<ConeIntegerLiteralType>()
         type.getApproximatedType().toConstKind()!!.toIrConstKind()
     }
 
@@ -464,6 +470,7 @@ fun FirTypeScope.processOverriddenPropertiesFromSuperClasses(
     }
 
 context(Fir2IrComponents)
+@OptIn(IrSymbolInternals::class)
 private fun FirClass.getSuperTypesAsIrClasses(): Set<IrClass>? {
     val irClass =
         declarationStorage.classifierStorage.getIrClassSymbol(symbol).owner as? IrClass ?: return null
@@ -510,6 +517,7 @@ internal fun FirProperty.generateOverriddenPropertySymbols(containingClass: FirC
 }
 
 context(Fir2IrComponents)
+@OptIn(IrSymbolInternals::class)
 internal fun FirProperty.generateOverriddenAccessorSymbols(containingClass: FirClass, isGetter: Boolean): List<IrSimpleFunctionSymbol> {
     val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
     scope.processPropertiesByName(name) {}
@@ -620,6 +628,7 @@ fun FirClass.irOrigin(firProvider: FirProvider): IrDeclarationOrigin = when {
     }
 }
 
+@OptIn(IrSymbolInternals::class)
 val IrType.isSamType: Boolean
     get() {
         val irClass = classOrNull ?: return false

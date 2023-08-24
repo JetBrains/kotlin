@@ -3,7 +3,7 @@
 // FULL_JDK
 import java.lang.reflect.Field
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <@kotlin.internal.OnlyInputTypes T> assertEquals(expected: T, actual: T): T = actual
 
 fun test(field: Field) {
