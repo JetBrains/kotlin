@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 abstract class ErrorDeclarationLowering : DeclarationTransformer {
