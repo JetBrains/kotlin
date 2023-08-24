@@ -116,7 +116,7 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
     protected abstract fun newFrame(nLocals: Int, nStack: Int): F
 
     @Suppress("UNCHECKED_CAST")
-    fun getFrame(insn: AbstractInsnNode): F? = frames[insn.indexOf()] as? F
+    protected fun getFrame(insn: AbstractInsnNode): F? = frames[insn.indexOf()] as? F
 
     @Suppress("UNCHECKED_CAST")
     protected fun getFrame(index: Int): F? = frames[index] as? F
