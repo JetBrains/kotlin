@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
-import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -95,6 +94,16 @@ class Fir2IrDeclarationStorage(
     private val initializerCache: ConcurrentHashMap<FirAnonymousInitializer, IrAnonymousInitializer> = ConcurrentHashMap()
 
     private val propertyCache: ConcurrentHashMap<FirProperty, IrProperty> = commonMemberStorage.propertyCache
+    private val getterForPropertyCache: ConcurrentHashMap<IrSymbol, IrSimpleFunctionSymbol> =
+        commonMemberStorage.getterForPropertyCache
+    private val setterForPropertyCache: ConcurrentHashMap<IrSymbol, IrSimpleFunctionSymbol> =
+        commonMemberStorage.setterForPropertyCache
+    private val backingFieldForPropertyCache: ConcurrentHashMap<IrPropertySymbol, IrFieldSymbol> =
+        commonMemberStorage.backingFieldForPropertyCache
+    private val propertyForBackingFieldCache: ConcurrentHashMap<IrFieldSymbol, IrPropertySymbol> =
+        commonMemberStorage.propertyForBackingFieldCache
+    private val delegateVariableForPropertyCache: ConcurrentHashMap<IrLocalDelegatedPropertySymbol, IrVariableSymbol> =
+        commonMemberStorage.delegateVariableForPropertyCache
 
     // interface A { /* $1 */ fun foo() }
     // interface B : A {
@@ -1023,6 +1032,34 @@ class Fir2IrDeclarationStorage(
 
     private var FirProperty.isStubPropertyForPureField: Boolean? by FirDeclarationDataRegistry.data(IsStubPropertyForPureFieldKey)
 
+    fun findGetterOfProperty(propertySymbol: IrPropertySymbol): IrSimpleFunctionSymbol? {
+        return getterForPropertyCache[propertySymbol]
+    }
+
+    fun findSetterOfProperty(propertySymbol: IrPropertySymbol): IrSimpleFunctionSymbol? {
+        return setterForPropertyCache[propertySymbol]
+    }
+
+    fun findBackingFieldOfProperty(propertySymbol: IrPropertySymbol): IrFieldSymbol? {
+        return backingFieldForPropertyCache[propertySymbol]
+    }
+
+    fun findPropertyForBackingField(fieldSymbol: IrFieldSymbol): IrPropertySymbol? {
+        return propertyForBackingFieldCache[fieldSymbol]
+    }
+
+    fun findGetterOfProperty(propertySymbol: IrLocalDelegatedPropertySymbol): IrSimpleFunctionSymbol {
+        return getterForPropertyCache.getValue(propertySymbol)
+    }
+
+    fun findSetterOfProperty(propertySymbol: IrLocalDelegatedPropertySymbol): IrSimpleFunctionSymbol? {
+        return setterForPropertyCache[propertySymbol]
+    }
+
+    fun findDelegateVariableOfProperty(propertySymbol: IrLocalDelegatedPropertySymbol): IrVariableSymbol {
+        return delegateVariableForPropertyCache.getValue(propertySymbol)
+    }
+
     fun createIrProperty(
         property: FirProperty,
         irParent: IrDeclarationParent?,
@@ -1078,7 +1115,7 @@ class Fir2IrDeclarationStorage(
                     val getter = property.getter
                     val setter = property.setter
                     if (delegate != null || property.hasBackingField) {
-                        backingField = if (delegate != null) {
+                        val backingField = if (delegate != null) {
                             ((delegate as? FirQualifiedAccessExpression)?.calleeReference?.toResolvedBaseSymbol()?.fir as? FirTypeParameterRefsOwner)?.let {
                                 classifierStorage.preCacheTypeParameters(it, symbol)
                             }
@@ -1106,6 +1143,11 @@ class Fir2IrDeclarationStorage(
                                 }
                             }
                         }
+                        backingField.symbol.let {
+                            backingFieldForPropertyCache[symbol] = it
+                            propertyForBackingFieldCache[it] = symbol
+                        }
+                        this.backingField = backingField
                     }
                     if (irParent != null) {
                         backingField?.parent = irParent
@@ -1124,7 +1166,9 @@ class Fir2IrDeclarationStorage(
                         startOffset, endOffset,
                         dontUseSignature = signature == null, fakeOverrideOwnerLookupTag,
                         property.unwrapFakeOverrides().getter,
-                    )
+                    ).also {
+                        getterForPropertyCache[symbol] = it.symbol
+                    }
                     if (property.isVar) {
                         this.setter = createIrPropertyAccessor(
                             setter, property, this, type, irParent, thisReceiverOwner, true,
@@ -1138,7 +1182,9 @@ class Fir2IrDeclarationStorage(
                             startOffset, endOffset,
                             dontUseSignature = signature == null, fakeOverrideOwnerLookupTag,
                             property.unwrapFakeOverrides().setter,
-                        )
+                        ).also {
+                            setterForPropertyCache[symbol] = it.symbol
+                        }
                     }
                     leaveScope(this)
                 }
@@ -1509,13 +1555,14 @@ class Fir2IrDeclarationStorage(
     ): IrLocalDelegatedProperty = convertCatching(property) {
         val type = property.returnTypeRef.toIrType()
         val origin = IrDeclarationOrigin.DEFINED
+        val symbol = IrLocalDelegatedPropertySymbolImpl()
         val irProperty = property.convertWithOffsets { startOffset, endOffset ->
             irFactory.createLocalDelegatedProperty(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
                 name = property.name,
-                symbol = IrLocalDelegatedPropertySymbolImpl(),
+                symbol = symbol,
                 type = type,
                 isVar = property.isVar
             )
@@ -1527,17 +1574,23 @@ class Fir2IrDeclarationStorage(
                 startOffset, endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,
                 NameUtils.propertyDelegateName(property.name), property.delegate!!.resolvedType.toIrType(),
                 isVar = false, isConst = false, isLateinit = false
-            )
+            ).also {
+                delegateVariableForPropertyCache[symbol] = it.symbol
+            }
             delegate.parent = irParent
             getter = createIrPropertyAccessor(
                 property.getter, property, this, type, irParent, null, false,
                 IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR, startOffset, endOffset, dontUseSignature = true
-            )
+            ).also {
+                getterForPropertyCache[symbol] = it.symbol
+            }
             if (property.isVar) {
                 setter = createIrPropertyAccessor(
                     property.setter, property, this, type, irParent, null, true,
                     IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR, startOffset, endOffset, dontUseSignature = true
-                )
+                ).also {
+                    setterForPropertyCache[symbol] = it.symbol
+                }
             }
             annotationGenerator.generate(this, property)
             leaveScope(this)
@@ -1745,6 +1798,12 @@ class Fir2IrDeclarationStorage(
             }
         }
         propertyCache[fir] = irProperty
+        irProperty.getter?.symbol?.let { getterForPropertyCache[symbol] = it }
+        irProperty.setter?.symbol?.let { setterForPropertyCache[symbol] = it }
+        irProperty.backingField?.symbol?.let {
+            backingFieldForPropertyCache[symbol] = it
+            propertyForBackingFieldCache[it] = symbol
+        }
         return irProperty
     }
 
