@@ -239,6 +239,9 @@ abstract class FirJavaFacade(
         return buildJavaClass {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             javaAnnotations += javaClass.annotations
+            if (javaClass.isDeprecatedInJavaDoc && javaAnnotations.none { it.isJavaDeprecatedAnnotation() }) {
+                javaAnnotations += DeprecatedInJavaDocAnnotation
+            }
             source = javaClass.toSourceElement()
             this.moduleData = moduleData
             symbol = classSymbol

@@ -53,7 +53,24 @@ internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
 
 internal fun JavaAnnotationOwner.convertAnnotationsToFir(
     session: FirSession,
-): List<FirAnnotation> = annotations.convertAnnotationsToFir(session)
+): List<FirAnnotation> = buildList {
+    var isDeprecated = false
+
+    annotations.mapTo(this) {
+        if (it.isJavaDeprecatedAnnotation()) isDeprecated = true
+        it.toFirAnnotationCall(session)
+    }
+
+    if (!isDeprecated && isDeprecatedInJavaDoc) {
+        add(DeprecatedInJavaDocAnnotation.toFirAnnotationCall(session))
+    }
+}
+
+internal object DeprecatedInJavaDocAnnotation : JavaAnnotation {
+    override val arguments: Collection<JavaAnnotationArgument> get() = emptyList()
+    override val classId: ClassId get() = StandardClassIds.Annotations.Java.Deprecated
+    override fun resolve(): JavaClass? = null
+}
 
 internal fun FirAnnotationContainer.setAnnotationsFromJava(
     session: FirSession,
@@ -223,6 +240,10 @@ private fun fillAnnotationArgumentMapping(
         val parameter = annotationConstructor?.valueParameters?.find { it.name == name }
         name to argument.toFirExpression(session, JavaTypeParameterStack.EMPTY, parameter?.returnTypeRef)
     }
+}
+
+internal fun JavaAnnotation.isJavaDeprecatedAnnotation(): Boolean {
+    return classId == StandardClassIds.Annotations.Java.Deprecated
 }
 
 private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotation = buildAnnotation {
