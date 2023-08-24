@@ -6,11 +6,13 @@
 package kotlin.js
 
 @PublishedApi
-internal fun <T : Enum<T>> enumValuesIntrinsic(): Array<T> =
+@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
+internal fun <reified T : Enum<T>> enumValuesIntrinsic(): Array<T> =
     throw IllegalStateException("Should be replaced by compiler")
 
 @PublishedApi
-internal fun <T : Enum<T>> enumValueOfIntrinsic(@Suppress("UNUSED_PARAMETER") name: String): T =
+@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
+internal fun <reified T : Enum<T>> enumValueOfIntrinsic(@Suppress("UNUSED_PARAMETER") name: String): T =
     throw IllegalStateException("Should be replaced by compiler")
 
 // These were necessary for legacy-property-access functionality in IR

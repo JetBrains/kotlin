@@ -170,7 +170,7 @@ class FunctionInlining(
                 else callee.typeParameters
             val typeArguments =
                 (0 until callSite.typeArgumentsCount).associate {
-                    typeParameters[it].symbol to callSite.getTypeArgument(it)
+                    typeParameters[it].symbol to typeParameters.getTypeReplacementAt(it)
                 }
             DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent)
         }
@@ -178,6 +178,15 @@ class FunctionInlining(
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
 
         fun inline() = inlineFunction(callSite, callee, inlineFunctionResolver.getFunctionSymbol(callee).owner, true)
+
+        private fun List<IrTypeParameter>.getTypeReplacementAt(index: Int): DeepCopyIrTreeWithSymbolsForInliner.TypeReplacement {
+            val typeParameter = get(index)
+            val actualTypeReplacement = callSite.getTypeArgument(index)
+            return DeepCopyIrTreeWithSymbolsForInliner.TypeReplacement(
+                forRegularTypeUsage = if (useTypeParameterUpperBound) typeParameter.firstRealUpperBound() else actualTypeReplacement,
+                forReifiedTypeUsage = actualTypeReplacement.takeIf { typeParameter.isReified }
+            )
+        }
 
         private fun <E : IrElement> E.copy(): E {
             @Suppress("UNCHECKED_CAST")

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicMemberExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -45,7 +46,7 @@ class JsClassUsageInReflectionLowering(val backendContext: JsIrBackendContext) :
 
     private fun IrClassReference.generateDirectValueUsage(): IrExpression? {
         return with(backendContext) {
-            when (val classSymbol = symbol as? IrClassSymbol ?: return null) {
+            when (val classSymbol = classType.classOrNull ?: return null) {
                 irBuiltIns.nothingClass -> null
                 irBuiltIns.anyClass ->
                     JsIrBuilder.buildCall(intrinsics.jsCode).apply {
