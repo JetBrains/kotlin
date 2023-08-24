@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.transformStatement
@@ -125,23 +123,21 @@ internal abstract class JvmValueClassAbstractLowering(
     }
 
     final override fun visitReturn(expression: IrReturn): IrExpression {
-        (expression.returnTargetSymbol.owner as? IrFunction)?.let { target ->
+        val target = expression.returnTargetSymbol.owner
+        if (target is IrFunction) {
             val suffix = target.hashSuffix()
-            if (suffix != null && target.name.asString().endsWith(suffix))
-                return super.visitReturn(expression)
-
-            replacements.run {
-                getReplacementFunction(target) ?: if (target is IrConstructor) getReplacementForRegularClassConstructor(target) else null
-            }?.let {
-                return context.createIrBuilder(it.symbol, expression.startOffset, expression.endOffset).irReturn(
-                    expression.value.transform(this, null)
-                )
+            if (suffix == null || !target.name.asString().endsWith(suffix)) {
+                val replacement = replacements.getReplacementFunction(target)
+                    ?: if (target is IrConstructor) replacements.getReplacementForRegularClassConstructor(target) else null
+                if (replacement != null) {
+                    expression.returnTargetSymbol = replacement.symbol
+                }
             }
         }
         return super.visitReturn(expression)
     }
 
-    internal fun visitStatementContainer(container: IrStatementContainer) {
+    private fun visitStatementContainer(container: IrStatementContainer) {
         container.statements.transformFlat { statement ->
             val newStatements =
                 if (statement is IrFunction) withinScope(statement) { transformFunctionFlat(statement) }
