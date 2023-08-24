@@ -106,16 +106,8 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
 ) : FastAnalyzer<V, StoreLoadInterpreter<V>, StoreLoadFrame<V>>(owner, method, interpreter) {
     private val isMergeNode = BooleanArray(nInsns)
 
-    fun analyze(): Array<Frame<V>?> {
-        if (nInsns == 0) return getFrames()
-
-        checkAssertions()
-        computeExceptionHandlers(method)
+    override fun beforeAnalyze() {
         initMergeNodes()
-
-        analyzeInner()
-
-        return getFrames()
     }
 
     override fun analyzeInstruction(
