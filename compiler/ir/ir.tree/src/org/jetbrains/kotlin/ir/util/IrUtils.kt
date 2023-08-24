@@ -316,11 +316,18 @@ val IrClass.isClass get() = kind == ClassKind.CLASS
 val IrClass.isObject get() = kind == ClassKind.OBJECT
 val IrClass.isAnonymousObject get() = isClass && name == SpecialNames.NO_NAME_PROVIDED
 val IrClass.isNonCompanionObject: Boolean get() = isObject && !isCompanion
+
+private val fqNameCache = mutableMapOf<IrDeclarationWithName, FqName?>()
+
 val IrDeclarationWithName.fqNameWhenAvailable: FqName?
-    get() = when (val parent = parent) {
-        is IrDeclarationWithName -> parent.fqNameWhenAvailable?.child(name)
-        is IrPackageFragment -> parent.packageFqName.child(name)
-        else -> null
+    get() = fqNameCache.getOrPutNullable(
+        this
+    ) {
+        when (val parent = parent) {
+            is IrDeclarationWithName -> parent.fqNameWhenAvailable?.child(name)
+            is IrPackageFragment -> parent.packageFqName.child(name)
+            else -> null
+        }
     }
 
 val IrDeclaration.parentAsClass: IrClass
@@ -438,7 +445,7 @@ fun irConstructorCall(
     call: IrFunctionAccessExpression,
     newSymbol: IrConstructorSymbol,
     receiversAsArguments: Boolean = false,
-    argumentsAsDispatchers: Boolean = false
+    argumentsAsDispatchers: Boolean = false,
 ): IrConstructorCall =
     call.run {
         IrConstructorCallImpl(
@@ -1216,7 +1223,7 @@ fun IrFactory.createStaticFunctionWithReceivers(
     isFakeOverride: Boolean = oldFunction.isFakeOverride,
     copyMetadata: Boolean = true,
     typeParametersFromContext: List<IrTypeParameter> = listOf(),
-    remapMultiFieldValueClassStructure: (IrFunction, IrFunction, Map<IrValueParameter, IrValueParameter>?) -> Unit
+    remapMultiFieldValueClassStructure: (IrFunction, IrFunction, Map<IrValueParameter, IrValueParameter>?) -> Unit,
 ): IrSimpleFunction {
     return createSimpleFunction(
         startOffset = oldFunction.startOffset,
