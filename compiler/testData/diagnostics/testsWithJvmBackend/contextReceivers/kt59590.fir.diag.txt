@@ -1,0 +1,7 @@
+/kt59590.fir.kt:4:1: error: Platform declaration clash: The following declarations have the same JVM signature (INSTANCELO;):
+    val INSTANCE: O? defined in O
+    val INSTANCE: O defined in O
+
+/kt59590.fir.kt:5:5: error: Platform declaration clash: The following declarations have the same JVM signature (INSTANCELO;):
+    val INSTANCE: O? defined in O
+    val INSTANCE: O defined in O

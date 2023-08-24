@@ -1,0 +1,13 @@
+/kt59590WithContextReceiver.kt:4:1: error: Platform declaration clash: The following declarations have the same JVM signature (INSTANCELO;):
+    context(O) val INSTANCE: O? defined in O
+    val INSTANCE: O defined in O
+
+/kt59590WithContextReceiver.kt:5:5: error: The feature "context receivers" is experimental and should be enabled explicitly
+
+/kt59590WithContextReceiver.kt:5:5: error: The feature "context receivers" is experimental and should be enabled explicitly
+
+/kt59590WithContextReceiver.kt:5:5: error: Platform declaration clash: The following declarations have the same JVM signature (INSTANCELO;):
+    context(O) val INSTANCE: O? defined in O
+    val INSTANCE: O defined in O
+
+/kt59590WithContextReceiver.kt:7:24: error: Property with context receivers cannot be initialized because it has no backing field
