@@ -961,6 +961,7 @@ public fun CharProgression.reversed(): CharProgression {
 
 /**
  * Returns a progression that goes over the same range with the given step.
+ * 
  * @sample samples.ranges.Ranges.stepInt
  */
 public infix fun IntProgression.step(step: Int): IntProgression {
@@ -970,6 +971,7 @@ public infix fun IntProgression.step(step: Int): IntProgression {
 
 /**
  * Returns a progression that goes over the same range with the given step.
+ * 
  * @sample samples.ranges.Ranges.stepLong
  */
 public infix fun LongProgression.step(step: Long): LongProgression {
@@ -979,7 +981,8 @@ public infix fun LongProgression.step(step: Long): LongProgression {
 
 /**
  * Returns a progression that goes over the same range with the given step.
- * @sample samples.ranges.Ranges.stepChar
+ * 
+ * @sample samples.ranges.Ranges.stepInt
  */
 public infix fun CharProgression.step(step: Int): CharProgression {
     checkStepIsPositive(step > 0, step)
