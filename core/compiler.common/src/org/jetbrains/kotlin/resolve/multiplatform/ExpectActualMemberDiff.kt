@@ -14,7 +14,7 @@ data class ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember
      */
     enum class Kind(val rawMessage: String) {
         NonPrivateCallableAdded(
-            "{0}: non-private member must be declared in the expect class as well. " +
+            "{0}: non-private member must be declared in both the actual class and the expect class. " +
                     "This error happens because the expect class ''{1}'' is non-final"
         ),
         ReturnTypeChangedInOverride(
