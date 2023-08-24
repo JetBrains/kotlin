@@ -107,7 +107,7 @@ class TemporaryValsAnalyzer {
         // Exclude stores observed at LVT liveness range start using information from bytecode analysis.
         for (lv in methodNode.localVariables) {
             val frameAtStart = frames[insnList.indexOf(lv.start)] ?: continue
-            when (val valueAtStart = frameAtStart[lv.index]) {
+            when (val valueAtStart = frameAtStart.getLocal(lv.index)) {
                 is StoredValue.Store ->
                     valueAtStart.temporaryVal.isDirty = true
                 is StoredValue.DirtyStore ->
