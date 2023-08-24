@@ -11,7 +11,6 @@ import java.io.Serializable
 /**
  * A hierarchy representing source files changes for incremental compilation
  */
-@ExperimentalBuildToolsApi
 public sealed interface SourcesChanges : Serializable {
     /**
      * A marker object stating that the API consumer cannot calculate changes (either because it's an initial build or for some other reason).
