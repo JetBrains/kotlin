@@ -4,7 +4,9 @@ package test
 enum class E {
     A {
         val x: String = ""
-    }
+    };
+
+    val foo: Int = 5
 }
 
-// callable: test/E.A
+// enum_entry_initializer: test/E.A
