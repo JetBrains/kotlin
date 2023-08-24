@@ -84,7 +84,6 @@ class CallAndReferenceGenerator(
 
         val symbol = callableReferenceAccess.calleeReference.toSymbolForCall(
             callableReferenceAccess.dispatchReceiver,
-            conversionScope,
             explicitReceiver = callableReferenceAccess.explicitReceiver,
             isDelegate = isDelegate,
             isReference = true
@@ -392,12 +391,6 @@ class CallAndReferenceGenerator(
                 )
             }
 
-            val symbol = calleeReference.toSymbolForCall(
-                dispatchReceiver,
-                conversionScope,
-                explicitReceiver = qualifiedAccess.explicitReceiver
-            )
-
             // We might have had a dynamic receiver, but resolved
             // into a non-fake member. For example, we can
             // resolve into members of `Any`.
@@ -423,6 +416,10 @@ class CallAndReferenceGenerator(
                         return@convertWithOffsets visitor.convertToIrExpression(dispatchReceiver)
                     }
                 }
+                val symbol = calleeReference.toSymbolForCall(
+                    dispatchReceiver,
+                    explicitReceiver = qualifiedAccess.explicitReceiver
+                )
                 when (symbol) {
                     is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, irType, symbol)
                     is IrSimpleFunctionSymbol -> {
@@ -600,7 +597,6 @@ class CallAndReferenceGenerator(
 
             val symbol = calleeReference.toSymbolForCall(
                 variableAssignment.dispatchReceiver,
-                conversionScope,
                 explicitReceiver = variableAssignment.explicitReceiver,
                 preferGetter = false,
             )

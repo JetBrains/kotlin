@@ -16,13 +16,11 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.diagnostics.startOffsetSkippingComments
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.unsubstitutedScope
 import org.jetbrains.kotlin.fir.builder.buildFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -58,7 +56,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
-import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -67,6 +64,8 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
     return when (this) {
@@ -186,49 +185,33 @@ private fun FirBasedSymbol<*>.toSymbolForCall(
 }
 
 context(Fir2IrComponents)
+@OptIn(ExperimentalContracts::class)
 fun FirReference.toSymbolForCall(
     dispatchReceiver: FirExpression,
-    conversionScope: Fir2IrConversionScope,
     explicitReceiver: FirExpression?,
     preferGetter: Boolean = true,
     isDelegate: Boolean = false,
     isReference: Boolean = false,
 ): IrSymbol? {
-    return when (this) {
-        is FirResolvedNamedReference -> {
-            var symbol = resolvedSymbol
-
-            if (symbol is FirCallableSymbol<*> && symbol.origin == FirDeclarationOrigin.SubstitutionOverride.CallSite) {
-                symbol = symbol.fir.unwrapUseSiteSubstitutionOverrides<FirCallableDeclaration>().symbol
-            }
-
-            symbol.toSymbolForCall(
-                dispatchReceiver,
-                preferGetter,
-                explicitReceiver,
-                isDelegate,
-                isReference
-            )
-        }
-
-        is FirThisReference -> {
-            when (val boundSymbol = boundSymbol) {
-                is FirClassSymbol<*> -> classifierStorage.getIrClassSymbol(boundSymbol)
-                is FirFunctionSymbol -> {
-                    val firClassSymbol = boundSymbol.receiverParameter?.typeRef?.coneType?.toRegularClassSymbol(session)
-                    firClassSymbol?.let { classifierStorage.getIrClassSymbol(it) }
-                }
-                is FirPropertySymbol -> {
-                    val propertySymbol = declarationStorage.getIrPropertySymbol(boundSymbol) as? IrPropertySymbol
-                    propertySymbol?.let { conversionScope.parentAccessorOfPropertyFromStack(it).symbol }
-                }
-                is FirScriptSymbol -> declarationStorage.getCachedIrScript(boundSymbol.fir)?.thisReceiver?.symbol
-                else -> null
-            }
-        }
-
-        else -> null
+    contract {
+        returnsNotNull() implies (this@toSymbolForCall is FirResolvedNamedReference)
     }
+    if (this !is FirResolvedNamedReference) {
+        return null
+    }
+    var symbol = resolvedSymbol
+
+    if (symbol is FirCallableSymbol<*> && symbol.origin == FirDeclarationOrigin.SubstitutionOverride.CallSite) {
+        symbol = symbol.fir.unwrapUseSiteSubstitutionOverrides<FirCallableDeclaration>().symbol
+    }
+
+    return symbol.toSymbolForCall(
+        dispatchReceiver,
+        preferGetter,
+        explicitReceiver,
+        isDelegate,
+        isReference
+    )
 }
 
 private fun FirResolvedQualifier.toLookupTag(session: FirSession): ConeClassLikeLookupTag? =
