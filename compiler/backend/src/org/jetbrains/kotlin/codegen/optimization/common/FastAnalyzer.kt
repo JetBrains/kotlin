@@ -5,20 +5,92 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
+import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
-abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F: Frame<V>>(
+abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
     protected val owner: String,
     protected val method: MethodNode,
     protected val interpreter: I,
 ) {
     protected val nInsns = method.instructions.size()
     protected val handlers: Array<MutableList<TryCatchBlockNode>?> = arrayOfNulls(nInsns)
+
+    private val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
+
+    private val queued = BooleanArray(nInsns)
+    private val queue = IntArray(nInsns)
+    private var top = 0
+
+    protected fun analyzeInner() {
+        val current = newFrame(method.maxLocals, method.maxStack)
+        val handler = newFrame(method.maxLocals, method.maxStack)
+        initLocals(current)
+        mergeControlFlowEdge(0, current)
+
+        while (top > 0) {
+            val insn = queue[--top]
+
+            @Suppress("UNCHECKED_CAST")
+            val f = frames[insn]!! as F
+            queued[insn] = false
+
+            val insnNode = method.instructions[insn]
+            val insnOpcode = insnNode.opcode
+            val insnType = insnNode.toType
+
+            try {
+                privateAnalyze(insnNode, insn, insnType, insnOpcode, f, current, handler)
+            } catch (e: AnalyzerException) {
+                throw AnalyzerException(
+                    e.node,
+                    "Error at instruction #$insn ${insnNode.insnText(method.instructions)}: ${e.message}\ncurrent: ${current.dump()}",
+                    e
+                )
+            } catch (e: Exception) {
+                throw AnalyzerException(
+                    insnNode,
+                    "Error at instruction #$insn ${insnNode.insnText(method.instructions)}: ${e.message}\ncurrent: ${current.dump()}",
+                    e
+                )
+            }
+        }
+    }
+
+    abstract fun initLocals(current: F)
+
+    abstract fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean = false)
+
+    abstract fun privateAnalyze(
+        insnNode: AbstractInsnNode,
+        insnIndex: Int,
+        insnType: Int,
+        insnOpcode: Int,
+        currentlyAnalyzing: F,
+        current: F,
+        handler: F
+    )
+
+    protected abstract fun newFrame(nLocals: Int, nStack: Int): F
+
+    @Suppress("UNCHECKED_CAST")
+    protected fun getFrame(insn: AbstractInsnNode): F? = frames[insn.indexOf()] as? F
+
+    @Suppress("UNCHECKED_CAST")
+    protected fun getFrame(index: Int): F? = frames[index] as? F
+
+    protected fun setFrame(index: Int, newFrame: F) {
+        frames[index] = newFrame
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    protected fun getFrames(): Array<F?> = frames as Array<F?>
 
     protected fun visitMeaningfulInstruction(insnNode: AbstractInsnNode, insnType: Int, insnOpcode: Int, current: F, insn: Int) {
         when {
@@ -80,6 +152,13 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F: Frame<V>>(
             handlers[start] = insnHandlers
         }
         insnHandlers.add(tcb)
+    }
+
+    protected fun updateQueue(changes: Boolean, dest: Int) {
+        if (changes && !queued[dest]) {
+            queued[dest] = true
+            queue[top++] = dest
+        }
     }
 
     protected fun F.dump(): String {

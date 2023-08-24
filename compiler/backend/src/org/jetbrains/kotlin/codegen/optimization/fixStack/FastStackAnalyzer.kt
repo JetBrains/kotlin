@@ -33,13 +33,10 @@
 
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
-import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.optimization.common.FastAnalyzer
-import org.jetbrains.kotlin.codegen.optimization.common.toType
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
-import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
@@ -52,20 +49,14 @@ internal open class FastStackAnalyzer<V : Value>(
     method: MethodNode,
     interpreter: Interpreter<V>
 ) : FastAnalyzer<V, Interpreter<V>, Frame<V>>(owner, method, interpreter) {
-    private val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
-
-    private val queued = BooleanArray(nInsns)
-    private val queue = IntArray(nInsns)
-    private var top = 0
-
-    protected open fun newFrame(nLocals: Int, nStack: Int): Frame<V> = Frame(nLocals, nStack)
+    override fun newFrame(nLocals: Int, nStack: Int): Frame<V> = Frame(nLocals, nStack)
 
     protected open fun visitControlFlowEdge(insnNode: AbstractInsnNode, successor: Int): Boolean = true
 
     protected open fun visitControlFlowExceptionEdge(insn: Int, successor: Int): Boolean = true
 
     fun analyze(): Array<Frame<V>?> {
-        if (nInsns == 0) return frames
+        if (nInsns == 0) return getFrames()
 
         // This is a very specific version of method bytecode analyzer that doesn't perform any DFA,
         // but infers stack types for reachable instructions instead.
@@ -75,65 +66,42 @@ internal open class FastStackAnalyzer<V : Value>(
         // Don't have to visit same exception handler multiple times - we care only about stack state at TCB start.
         computeExceptionHandlers(method, forEachInsn = false)
 
-        val current = newFrame(method.maxLocals, method.maxStack)
-        val handler = newFrame(method.maxLocals, method.maxStack)
-        initControlFlowAnalysis(current, method, owner)
+        analyzeInner()
 
-        while (top > 0) {
-            val insn = queue[--top]
-            val f = frames[insn]!!
-            queued[insn] = false
-
-            val insnNode = method.instructions[insn]
-            val insnOpcode = insnNode.opcode
-            val insnType = insnNode.toType
-
-            try {
-                privateAnalyze(insnType, insnNode, f, insn, current, insnOpcode, handler)
-            } catch (e: AnalyzerException) {
-                throw AnalyzerException(e.node, "Error at instruction #$insn ${insnNode.insnText}: ${e.message}", e)
-            } catch (e: Exception) {
-                throw AnalyzerException(insnNode, "Error at instruction #$insn ${insnNode.insnText}: ${e.message}", e)
-            }
-        }
-
-        return frames
+        return getFrames()
     }
 
-    private fun privateAnalyze(
-        insnType: Int,
+    override fun privateAnalyze(
         insnNode: AbstractInsnNode,
-        f: Frame<V>,
-        insn: Int,
-        current: Frame<V>,
+        insnIndex: Int,
+        insnType: Int,
         insnOpcode: Int,
+        currentlyAnalyzing: Frame<V>,
+        current: Frame<V>,
         handler: Frame<V>,
     ) {
         if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
-            visitNopInsn(insnNode, f, insn)
+            visitNopInsn(insnNode, currentlyAnalyzing, insnIndex)
         } else {
-            current.init(f)
+            current.init(currentlyAnalyzing)
             if (insnOpcode != Opcodes.RETURN) {
                 // Don't care about possibly incompatible return type
                 current.execute(insnNode, interpreter)
             }
-            visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insn)
+            visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insnIndex)
         }
 
-        handlers[insn]?.forEach { tcb ->
+        handlers[insnIndex]?.forEach { tcb ->
             val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
             val jump = tcb.handler.indexOf()
-            if (visitControlFlowExceptionEdge(insn, tcb.handler.indexOf())) {
-                handler.init(f)
+            if (visitControlFlowExceptionEdge(insnIndex, jump)) {
+                handler.init(currentlyAnalyzing)
                 handler.clearStack()
                 handler.push(interpreter.newValue(exnType))
                 mergeControlFlowEdge(jump, handler)
             }
         }
     }
-
-    fun getFrame(insn: AbstractInsnNode): Frame<V>? =
-        frames[insn.indexOf()]
 
     override fun visitOpInsn(insnNode: AbstractInsnNode, current: Frame<V>, insn: Int) {
         processControlFlowEdge(current, insnNode, insn + 1)
@@ -180,35 +148,36 @@ internal open class FastStackAnalyzer<V : Value>(
         }
     }
 
-    private fun initControlFlowAnalysis(current: Frame<V>, m: MethodNode, owner: String) {
-        current.setReturn(interpreter.newValue(Type.getReturnType(m.desc)))
-        val args = Type.getArgumentTypes(m.desc)
+    override fun initLocals(current: Frame<V>) {
+        current.setReturn(interpreter.newValue(Type.getReturnType(method.desc)))
+        val args = Type.getArgumentTypes(method.desc)
         var local = 0
-        if ((m.access and Opcodes.ACC_STATIC) == 0) {
+        val isInstanceMethod = (method.access and Opcodes.ACC_STATIC) == 0
+        if (isInstanceMethod) {
             val ctype = Type.getObjectType(owner)
-            current.setLocal(local++, interpreter.newValue(ctype))
+            current.setLocal(local, interpreter.newValue(ctype))
+            local++
         }
         for (arg in args) {
-            current.setLocal(local++, interpreter.newValue(arg))
+            current.setLocal(local, interpreter.newValue(arg))
+            local++
             if (arg.size == 2) {
-                current.setLocal(local++, interpreter.newValue(null))
+                current.setLocal(local, interpreter.newValue(null))
+                local++
             }
         }
-        while (local < m.maxLocals) {
-            current.setLocal(local++, interpreter.newValue(null))
+        while (local < method.maxLocals) {
+            current.setLocal(local, interpreter.newValue(null))
+            local++
         }
-        mergeControlFlowEdge(0, current)
     }
 
-    private fun mergeControlFlowEdge(dest: Int, frame: Frame<V>) {
-        val destFrame = frames[dest]
+    override fun mergeControlFlowEdge(dest: Int, frame: Frame<V>, canReuse: Boolean) {
+        val destFrame = getFrame(dest)
         if (destFrame == null) {
             // Don't have to visit same instruction multiple times - we care only about "initial" stack state.
-            frames[dest] = newFrame(frame.locals, frame.maxStackSize).apply { init(frame) }
-            if (!queued[dest]) {
-                queued[dest] = true
-                queue[top++] = dest
-            }
+            setFrame(dest, newFrame(frame.locals, frame.maxStackSize).apply { init(frame) })
+            updateQueue(true, dest)
         }
     }
 

@@ -160,7 +160,7 @@ class TemporaryValsAnalyzer {
         private val storeInsnToStoreData: Map<AbstractInsnNode, StoreData>
     ) : StoreLoadInterpreter<StoredValue>() {
 
-        override fun uninitialized(): StoredValue = StoredValue.Unknown
+        override fun newEmptyValue(local: Int): StoredValue = StoredValue.Unknown
 
         override fun newValue(type: Type?): StoredValue = StoredValue.Unknown
 
