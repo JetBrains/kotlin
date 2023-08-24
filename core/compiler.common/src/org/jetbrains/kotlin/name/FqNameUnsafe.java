@@ -20,6 +20,7 @@ import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.utils.StringInterner;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,16 +49,16 @@ public final class FqNameUnsafe {
     private transient Name shortName;
 
     FqNameUnsafe(@NotNull String fqName, @NotNull FqName safe) {
-        this.fqName = fqName;
+        this.fqName = StringInterner.interned(fqName);
         this.safe = safe;
     }
 
     public FqNameUnsafe(@NotNull String fqName) {
-        this.fqName = fqName;
+        this.fqName = StringInterner.interned(fqName);
     }
 
     private FqNameUnsafe(@NotNull String fqName, FqNameUnsafe parent, Name shortName) {
-        this.fqName = fqName;
+        this.fqName = StringInterner.interned(fqName);
         this.parent = parent;
         this.shortName = shortName;
     }
@@ -196,7 +197,7 @@ public final class FqNameUnsafe {
 
         FqNameUnsafe that = (FqNameUnsafe) o;
 
-        if (!fqName.equals(that.fqName)) return false;
+        if (fqName != that.fqName) return false; // strings are interned
 
         return true;
     }
