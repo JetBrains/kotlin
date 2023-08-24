@@ -24,3 +24,10 @@ internal fun Configuration.markResolvable(): Configuration = apply {
     this.isCanBeConsumed = false
     this.isCanBeResolved = true
 }
+
+internal fun Configuration.exclude(group: String?, module: String): Configuration = exclude(
+    mapOf(
+        "group" to group,
+        "module" to module,
+    )
+)

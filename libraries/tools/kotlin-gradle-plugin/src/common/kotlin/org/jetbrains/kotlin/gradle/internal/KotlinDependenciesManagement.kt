@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
+import org.jetbrains.kotlin.gradle.utils.exclude
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import org.jetbrains.kotlin.gradle.utils.withType
 
@@ -99,9 +100,9 @@ private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilation
             (it as? KotlinWithJavaCompilation<*, *>)?.apiConfigurationName
         ).forEach { configurationName ->
             project.configurations.getByName(configurationName).apply {
-                exclude(mapOf("group" to "org.jetbrains.kotlin", "module" to "kotlin-stdlib-common"))
-                exclude(mapOf("group" to "org.jetbrains.kotlin", "module" to "kotlin-test-common"))
-                exclude(mapOf("group" to "org.jetbrains.kotlin", "module" to "kotlin-test-annotations-common"))
+                exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+                exclude("org.jetbrains.kotlin", "kotlin-test-common")
+                exclude("org.jetbrains.kotlin", "kotlin-test-annotations-common")
             }
         }
     }

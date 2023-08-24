@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.utils.contains
 import org.jetbrains.kotlin.gradle.utils.currentBuild
+import org.jetbrains.kotlin.gradle.utils.exclude
 import org.jetbrains.kotlin.tooling.core.extrasNullableLazyProperty
 
 /**
@@ -82,7 +83,7 @@ private fun Project.applyTransformationToLegacyDependenciesMetadataConfiguration
                  * not from [ModuleIds.fromProjectPathDependency], as `exclude` checks it against the project's group:name  */
                 ModuleDependencyIdentifier(group.toString(), name)
             } ?: ModuleIds.fromComponent(project, it.dependency)
-            configuration.exclude(mapOf("group" to group, "module" to name))
+            configuration.exclude(group, name)
         }
 
         requested.filter { it.dependency !in currentBuild }.forEach {
