@@ -502,19 +502,32 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    fun addContextReceiverParametersTo(
+        contextReceivers: List<FirContextReceiver>,
+        parent: IrFunction,
+        result: MutableList<IrValueParameter>,
+    ) {
+        contextReceivers.mapIndexedTo(result) { index, contextReceiver ->
+            createIrParameterFromContextReceiver(contextReceiver, index).apply {
+                this.parent = parent
+            }
+        }
+    }
+
     /*
      * In perfect world dispatchReceiverType should always be the default type of containing class
      * But fake-overrides for members from Any have special rules for type of dispatch receiver
      */
-    private fun <T : IrFunction> T.declareParameters(
+    private fun IrFunction.declareParameters(
         function: FirFunction?,
-        containingClass: IrClass?,
+        irParent: IrDeclarationParent?,
         dispatchReceiverType: IrType?, // has no sense for constructors
         isStatic: Boolean,
         forSetter: Boolean,
         // Can be not-null only for property accessors
-        parentPropertyReceiver: FirReceiverParameter?
+        parentPropertyReceiver: FirReceiverParameter? = null
     ) {
+        val containingClass = computeContainingClass(irParent)
         val parent = this
         if (function is FirSimpleFunction || function is FirConstructor) {
             with(classifierStorage) {
@@ -585,31 +598,6 @@ class Fir2IrDeclarationStorage(
                 )
             }
         }
-    }
-
-    fun addContextReceiverParametersTo(
-        contextReceivers: List<FirContextReceiver>,
-        parent: IrFunction,
-        result: MutableList<IrValueParameter>,
-    ) {
-        contextReceivers.mapIndexedTo(result) { index, contextReceiver ->
-            createIrParameterFromContextReceiver(contextReceiver, index).apply {
-                this.parent = parent
-            }
-        }
-    }
-
-    private fun <T : IrFunction> T.bindAndDeclareParameters(
-        function: FirFunction?,
-        irParent: IrDeclarationParent?,
-        dispatchReceiverType: IrType?, // has no sense for constructors
-        isStatic: Boolean,
-        forSetter: Boolean,
-        parentPropertyReceiver: FirReceiverParameter? = null
-    ): T {
-        val containingClass = computeContainingClass(irParent)
-        declareParameters(function, containingClass, dispatchReceiverType, isStatic, forSetter, parentPropertyReceiver)
-        return this
     }
 
     fun <T : IrFunction> T.putParametersInScope(function: FirFunction): T {
@@ -752,7 +740,7 @@ class Fir2IrDeclarationStorage(
                     metadata = FirMetadataSource.Function(function)
                     enterScope(this.symbol)
                     setAndModifyParent(irParent)
-                    bindAndDeclareParameters(
+                    declareParameters(
                         function, irParent,
                         dispatchReceiverType = computeDispatchReceiverType(this, simpleFunction, irParent),
                         isStatic = simpleFunction?.isStatic == true,
@@ -863,7 +851,7 @@ class Fir2IrDeclarationStorage(
                     constructorCache[constructor] = this
                     enterScope(this.symbol)
                     setAndModifyParent(irParent)
-                    bindAndDeclareParameters(constructor, irParent, dispatchReceiverType = null, isStatic = false, forSetter = false)
+                    declareParameters(constructor, irParent, dispatchReceiverType = null, isStatic = false, forSetter = false)
                     leaveScope(this.symbol)
                 }
             }
@@ -960,7 +948,7 @@ class Fir2IrDeclarationStorage(
                 }
                 setAndModifyParent(irParent)
                 val dispatchReceiverType = computeDispatchReceiverType(this, property, irParent)
-                bindAndDeclareParameters(
+                declareParameters(
                     propertyAccessor, irParent, dispatchReceiverType,
                     isStatic = irParent !is IrClass || propertyAccessor?.isStatic == true, forSetter = isSetter,
                     parentPropertyReceiver = property.receiverParameter,
