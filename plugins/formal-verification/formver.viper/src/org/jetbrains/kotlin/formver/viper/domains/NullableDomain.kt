@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.formver.domains
+package org.jetbrains.kotlin.formver.viper.domains
 
-import org.jetbrains.kotlin.formver.domains.NullableDomain.T
+import org.jetbrains.kotlin.formver.viper.domains.NullableDomain.T
 import org.jetbrains.kotlin.formver.viper.ast.*
 import org.jetbrains.kotlin.formver.viper.ast.Exp.*
 import org.jetbrains.kotlin.formver.viper.ast.Exp.Companion.Forall1

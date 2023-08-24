@@ -33,10 +33,15 @@ A few notes:
 
 ## Directory structure:
 
-- `src/org/.../formver/plugin`: Infrastructure for integrating our code into the compiler
-  and reporting warnings.
-- `src/org/.../formver/conversion`: Conversion logic from Kotlin to Viper.
-- `src/org/.../formver/scala`: Utilities for constructing Viper data structures, which are defined in Scala.
+- `formver.embeddable`: Separate target necessary for the Gradle plugin.
+- `formver.cli`: Command-line processor and plugin loading implementation.
+- `formver.core`: Core conversion logic and associated data structures.
+  - `formver.core/.../conversion`: Conversion logic from the FIR to Viper
+  - `formver.core/.../embeddings`: Embedded versions of Kotlin constructs.
+- `formver.plugin`: Infrastructure for packaging our conversion as a plugin and reporting verification errors.
+- `formver.viper`: Wrappers around Viper code. This is the only place any direct reference to Viper is permitted!
+  - `formver.viper/.../ast/`: Wrappers around Silver data structures.
+  - `formver.viper/.../domains/`: New domains that we need for our conversion.
 - `testData/diagnostics`: Test suite of example programs.  Only the `.kt` files are human-written:
   the rest is generated automatically when running the tests in `tests-gen`.
 - `tests`: Harness for running our automated tests.  Manual tests should also be put here.
