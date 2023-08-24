@@ -50,6 +50,21 @@ abstract class StoreLoadInterpreter<V : StoreLoadValue> : Interpreter<V>(API_VER
 }
 
 class StoreLoadFrame<V : StoreLoadValue>(val maxLocals: Int) : Frame<V>(maxLocals, 0) {
+    private val locals = arrayOfNulls<StoreLoadValue>(maxLocals)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun getLocal(index: Int): V =
+        locals[index] as V
+
+    override fun setLocal(index: Int, value: V) {
+        locals[index] = value
+    }
+
+    fun init(other: StoreLoadFrame<V>): StoreLoadFrame<V> {
+        System.arraycopy(other.locals, 0, this.locals, 0, locals.size)
+        return this
+    }
+
     fun execute(insn: AbstractInsnNode, interpreter: StoreLoadInterpreter<V>) {
         when (insn.opcode) {
             in Opcodes.ISTORE..Opcodes.ASTORE -> {
@@ -65,6 +80,19 @@ class StoreLoadFrame<V : StoreLoadValue>(val maxLocals: Int) : Frame<V>(maxLocal
                 interpreter.iinc(iincInsn, this.getLocal(iincInsn.`var`))
             }
         }
+    }
+
+    override fun merge(frame: Frame<out V>, interpreter: Interpreter<V>): Boolean {
+        var changes = false
+        for (i in locals.indices) {
+            val oldValue = this.getLocal(i)
+            val newValue = interpreter.merge(oldValue, frame.getLocal(i))
+            if (newValue != oldValue) {
+                changes = true
+                this.setLocal(i, newValue)
+            }
+        }
+        return changes
     }
 }
 
@@ -184,7 +212,7 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
         val oldFrame = getFrame(dest)
         val changes = when {
             oldFrame == null -> {
-                setFrame(dest, newFrame(frame.maxLocals, 0).init(frame) as StoreLoadFrame<V>)
+                setFrame(dest, newFrame(frame.maxLocals, 0).init(frame))
                 true
             }
             !isMergeNode[dest] -> {
