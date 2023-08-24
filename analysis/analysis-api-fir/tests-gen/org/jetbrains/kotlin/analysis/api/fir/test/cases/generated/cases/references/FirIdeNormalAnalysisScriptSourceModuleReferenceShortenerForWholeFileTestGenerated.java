@@ -27,14 +27,14 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile")
 @TestDataPath("$PROJECT_ROOT")
-public class FirIdeNormalAnalysisSourceModuleReferenceShortenerForWholeFileTestGenerated extends AbstractReferenceShortenerForWholeFileTest {
+public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerForWholeFileTestGenerated extends AbstractReferenceShortenerForWholeFileTest {
     @NotNull
     @Override
     public AnalysisApiTestConfigurator getConfigurator() {
         return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
             new AnalysisApiTestConfiguratorFactoryData(
                 FrontendKind.Fir,
-                TestModuleKind.Source,
+                TestModuleKind.ScriptSource,
                 AnalysisSessionMode.Normal,
                 AnalysisApiMode.Ide
             )
@@ -43,18 +43,24 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerForWholeFileTestG
 
     @Test
     public void testAllFilesPresentInReferenceShortenerWholeFile() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
 
     @Test
-    @TestMetadata("fileWithKDoc.kt")
-    public void testFileWithKDoc() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile/fileWithKDoc.kt");
+    @TestMetadata("callInsideScriptExpression.kts")
+    public void testCallInsideScriptExpression() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile/callInsideScriptExpression.kts");
     }
 
     @Test
-    @TestMetadata("fileWithMultipleDeclarations.kt")
-    public void testFileWithMultipleDeclarations() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile/fileWithMultipleDeclarations.kt");
+    @TestMetadata("scriptFileWithImportStatement.kts")
+    public void testScriptFileWithImportStatement() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile/scriptFileWithImportStatement.kts");
+    }
+
+    @Test
+    @TestMetadata("scriptFileWithoutImportStatements.kts")
+    public void testScriptFileWithoutImportStatements() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile/scriptFileWithoutImportStatements.kts");
     }
 }

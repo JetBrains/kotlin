@@ -43,7 +43,7 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
 
     @Test
     public void testAllFilesPresentInReferenceShortener() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -68,12 +68,6 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     @TestMetadata("anonymousFunction_returnType.kt")
     public void testAnonymousFunction_returnType() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/anonymousFunction_returnType.kt");
-    }
-
-    @Test
-    @TestMetadata("callInsideScriptExpression.kts")
-    public void testCallInsideScriptExpression() throws Exception {
-        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/callInsideScriptExpression.kts");
     }
 
     @Test
@@ -520,7 +514,7 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     public class NestedClasses {
         @Test
         public void testAllFilesPresentInNestedClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -565,7 +559,7 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
         public class ClassHeaderPositions {
             @Test
             public void testAllFilesPresentInClassHeaderPositions() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @Test
