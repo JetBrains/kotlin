@@ -147,7 +147,12 @@ fun IrDeclarationWithName.hasEqualFqName(fqName: FqName): Boolean =
 
 fun IrSymbol.hasEqualFqName(fqName: FqName): Boolean {
     return this is IrClassPublicSymbolImpl && with(signature as? IdSignature.CommonSignature ?: return false) {
-        FqName("$packageFqName.$declarationFqName") == fqName
+        // optimized version of FqName("$packageFqName.$declarationFqName") == fqName
+        val fqNameAsString = fqName.toUnsafe().asString()
+        fqNameAsString.length == packageFqName.length + 1 + declarationFqName.length &&
+                fqNameAsString[packageFqName.length] == '.' &&
+                fqNameAsString.startsWith(packageFqName) &&
+                fqNameAsString.endsWith(declarationFqName)
     }
 }
 
