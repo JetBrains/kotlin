@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.kpm.idea
+package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
 import org.jetbrains.kotlin.tooling.core.Extras
 
-internal fun IdeaSerializationContext(
+internal fun IdeaKotlinSerializationContext(
     logger: Logger, extrasSerializationExtensions: List<IdeaKotlinExtrasSerializationExtension>
 ): IdeaKotlinSerializationContext {
     return IdeaKotlinSerializationContextImpl(
-        extrasSerializationExtension = IdeaKpmCompositeExtrasSerializationExtension(logger, extrasSerializationExtensions),
-        logger = IdeaKpmSerializationLoggerImpl(logger)
+        extrasSerializationExtension = IdeaKotlinExtrasSerializationExtensionImpl(logger, extrasSerializationExtensions),
+        logger = IdeaKotlinSerializationLoggerImpl(logger)
     )
 }
 
@@ -26,8 +26,10 @@ private class IdeaKotlinSerializationContextImpl(
     override val logger: IdeaKotlinSerializationLogger
 ) : IdeaKotlinSerializationContext
 
+
 /* Simple composite implementation, reporting conflicting extensions */
-private class IdeaKpmCompositeExtrasSerializationExtension(
+
+private class IdeaKotlinExtrasSerializationExtensionImpl(
     private val logger: Logger,
     private val extensions: List<IdeaKotlinExtrasSerializationExtension>
 ) : IdeaKotlinExtrasSerializationExtension {
@@ -48,11 +50,11 @@ private class IdeaKpmCompositeExtrasSerializationExtension(
 }
 
 /* Simple Gradle logger based implementation */
-private class IdeaKpmSerializationLoggerImpl(
+private class IdeaKotlinSerializationLoggerImpl(
     private val logger: Logger,
 ) : IdeaKotlinSerializationLogger {
     override fun report(severity: IdeaKotlinSerializationLogger.Severity, message: String, cause: Throwable?) {
-        val text = "[KPM] Serialization: $message"
+        val text = "Serialization: $message"
         when (severity) {
             IdeaKotlinSerializationLogger.Severity.WARNING -> logger.warn(text, cause)
             IdeaKotlinSerializationLogger.Severity.ERROR -> logger.error(text, cause)
