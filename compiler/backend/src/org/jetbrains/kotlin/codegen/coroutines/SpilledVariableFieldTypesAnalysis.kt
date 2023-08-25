@@ -130,8 +130,7 @@ internal fun performSpilledVariableFieldTypesAnalysis(
     thisName: String
 ): Array<out Frame<BasicValue>?> {
     val interpreter = IntLikeCoerceInterpreter()
-    val frames = FastMethodAnalyzer(thisName, methodNode, interpreter).analyze()
-    if (interpreter.needsToBeCoerced.isEmpty()) return frames
+    FastMethodAnalyzer(thisName, methodNode, interpreter).analyze()
     for ((insn, type) in interpreter.needsToBeCoerced) {
         methodNode.instructions.insert(insn, withInstructionAdapter { coerceInt(type, this) })
     }
