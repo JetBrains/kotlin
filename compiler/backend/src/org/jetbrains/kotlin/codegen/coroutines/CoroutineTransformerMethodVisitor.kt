@@ -1285,8 +1285,14 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
     for (variableIndex in start until method.maxLocals) {
         if (oldLvt.none { it.index == variableIndex }) continue
         var startLabel: LabelNode? = null
+        var nextSuspensionPointIndex = 0
         for (insnIndex in 0 until (method.instructions.size() - 1)) {
             val insn = method.instructions[insnIndex]
+            if (insn is LabelNode && nextSuspensionPointIndex < suspensionPoints.size &&
+                suspensionPoints[nextSuspensionPointIndex] == insn
+            ) {
+                nextSuspensionPointIndex++
+            }
             if (!isAlive(insnIndex, variableIndex) && isAlive(insnIndex + 1, variableIndex)) {
                 startLabel = insn as? LabelNode ?: insn.findNextOrNull { it is LabelNode } as? LabelNode
             }
@@ -1305,13 +1311,14 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
                 // If we can extend the previous range to where the local variable dies, we do not need a
                 // new entry, we know we cannot extend it to the lvt.endOffset, if we could we would have
                 // done so when we added it below.
-                val extended = latest?.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, liveness) ?: false
+                val extended =
+                    latest?.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, liveness, nextSuspensionPointIndex) ?: false
                 if (!extended) {
                     val new = LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
                     oldLvtNodeToLatestNewLvtNode[lvtRecord] = new
                     method.localVariables.add(new)
                     // See if we can extend it all the way to the old end.
-                    new.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, liveness)
+                    new.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, liveness, nextSuspensionPointIndex)
                 }
             }
         }
@@ -1392,9 +1399,11 @@ private fun LocalVariableNode.extendRecordIfPossible(
     method: MethodNode,
     suspensionPoints: List<LabelNode>,
     endLabel: LabelNode,
-    liveness: List<VariableLivenessFrame>
+    liveness: List<VariableLivenessFrame>,
+    nextSuspensionPointIndex: Int
 ): Boolean {
-    val nextSuspensionPointLabel = suspensionPoints.find { it in InsnSequence(end, endLabel) } ?: endLabel
+    val nextSuspensionPointLabel =
+        suspensionPoints.drop(nextSuspensionPointIndex).find { it in InsnSequence(end, endLabel) } ?: endLabel
 
     var current: AbstractInsnNode? = end
     var index = method.instructions.indexOf(current)
