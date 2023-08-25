@@ -34,7 +34,7 @@ import baz.*
     /*p:E(func) p:bar p:baz p:baz.E(func) p:foo p:kotlin(Unit)*/E.S.func()
 }
 
-/*p:foo*/fun classifiers(
+fun classifiers(
     c: /*p:bar p:baz p:foo*/C,
     b: /*p:bar p:baz p:foo*/C.B,
     s: /*p:bar p:baz p:foo*/C.S,
