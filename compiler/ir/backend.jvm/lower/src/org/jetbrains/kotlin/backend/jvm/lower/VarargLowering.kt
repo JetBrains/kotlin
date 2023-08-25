@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContextShallow
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.IrArrayBuilder
@@ -33,7 +33,7 @@ val varargPhase = makeIrFilePhase(
     prerequisite = setOf(polymorphicSignaturePhase)
 )
 
-internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContextShallow() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     // Ignore annotations
@@ -41,7 +41,7 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
         val constructor = expression.symbol.owner
         if (constructor.constructedClass.isAnnotationClass)
             return expression
-        return super.visitConstructorCall(expression)
+        return visitFunctionAccess(expression)
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
@@ -63,6 +63,9 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
 
         return expression
     }
+    override fun visitCall(expression: IrCall) = visitFunctionAccess(expression)
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitFunctionAccess(expression)
+    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = visitFunctionAccess(expression)
 
     override fun visitVararg(expression: IrVararg): IrExpression =
         createBuilder(expression.startOffset, expression.endOffset).irArray(expression.type) { addVararg(expression) }

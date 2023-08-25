@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContextShallow
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -103,7 +104,7 @@ internal abstract class SuspendLoweringUtils(protected val context: JvmBackendCo
 
 private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweringUtils(context), FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
+        irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContextShallow() {
             override fun visitBlock(expression: IrBlock): IrExpression {
                 val reference = expression.statements.lastOrNull() as? IrFunctionReference ?: return super.visitBlock(expression)
                 if (reference.isSuspend && reference.origin.isLambda) {

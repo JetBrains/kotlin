@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContextShallow
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.ir.util.inlineDeclaration
 import org.jetbrains.kotlin.ir.util.isFunctionInlining
@@ -101,7 +101,7 @@ private class SyntheticAccessorTransformer(
     val context: JvmBackendContext,
     val irFile: IrFile,
     val pendingAccessorsToAdd: MutableSet<IrFunction>
-) : IrElementTransformerVoidWithContext() {
+) : IrElementTransformerVoidWithContextShallow() {
     private val accessorGenerator = context.cachedDeclarations.syntheticAccessorGenerator
     private val inlineScopeResolver: IrInlineScopeResolver = irFile.findInlineCallSites(context)
     private var processingIrInlinedFun = false
@@ -160,6 +160,10 @@ private class SyntheticAccessorTransformer(
         }
         return super.visitExpression(modifyFunctionAccessExpression(expression, accessor))
     }
+    override fun visitCall(expression: IrCall) = visitFunctionAccess(expression)
+    override fun visitConstructorCall(expression: IrConstructorCall) = visitFunctionAccess(expression)
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitFunctionAccess(expression)
+    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = visitFunctionAccess(expression)
 
     private fun handleLambdaMetafactoryIntrinsic(call: IrCall, thisSymbol: IrClassSymbol?): IrExpression {
         val implFunRef = call.getValueArgument(1) as? IrFunctionReference

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContextShallow
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -24,8 +25,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -42,7 +42,7 @@ internal val functionNVarargBridgePhase = makeIrFilePhase(
 // adds a bridge method for such large arity functions, which checks the number of arguments
 // dynamically.
 private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
-    FileLoweringPass, IrElementTransformerVoidWithContext() {
+    FileLoweringPass, IrElementTransformerVoidWithContextShallow() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
 
     // Change calls to big arity invoke functions to vararg calls.
@@ -68,6 +68,10 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
             }
         }
     }
+    override fun visitCall(expression: IrCall) = visitFunctionAccess(expression)
+    override fun visitConstructorCall(expression: IrConstructorCall) = visitFunctionAccess(expression)
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitFunctionAccess(expression)
+    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = visitFunctionAccess(expression)
 
     private fun IrExpression.transformVoid() =
         transform(this@FunctionNVarargBridgeLowering, null)

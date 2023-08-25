@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContextShallow
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.defaultArgumentCleanerPhase
@@ -61,7 +62,7 @@ val reflectiveAccessLowering = makeIrFilePhase(
 // the use of `invokespecial` - see `invokeSpecialForCall` below.
 internal class ReflectiveAccessLowering(
     val context: JvmBackendContext
-) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+) : IrElementTransformerVoidWithContextShallow(), FileLoweringPass {
 
     lateinit var inlineScopeResolver: IrInlineScopeResolver
 

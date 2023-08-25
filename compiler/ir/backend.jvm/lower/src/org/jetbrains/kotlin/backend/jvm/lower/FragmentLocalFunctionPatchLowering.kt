@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContextShallow
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -42,7 +42,7 @@ val fragmentLocalFunctionPatchLowering = makeIrFilePhase(
 // parameters supplied at evaluation time.
 internal class FragmentLocalFunctionPatchLowering(
     val context: JvmBackendContext
-) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+) : IrElementTransformerVoidWithContextShallow(), FileLoweringPass {
 
     lateinit var localDeclarationsData: Map<IrFunction, JvmBackendContext.LocalFunctionData>
 
@@ -54,7 +54,7 @@ internal class FragmentLocalFunctionPatchLowering(
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
-        declaration.body?.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
+        declaration.body?.transformChildrenVoid(object : IrElementTransformerVoidWithContextShallow() {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
                 val localDeclarationsDataKey = when (expression.symbol.owner.origin) {
