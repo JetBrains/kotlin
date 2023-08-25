@@ -38,10 +38,11 @@ kotlin {
 
     targets {
         macosX64("macos64")
+        macosArm64("macosArm64")
         linuxX64("linux64")
         mingwX64("mingw64")
 
-        configure([findByName('macos64'), findByName('linux64'), findByName('mingw64')]) {
+        configure([findByName('macos64'), findByName('macosArm64'), findByName('linux64'), findByName('mingw64')]) {
             compilations.all { kotlinOptions.verbose = true }
             compilations.test.kotlinOptions.freeCompilerArgs += "-nowarn"
             binaries {

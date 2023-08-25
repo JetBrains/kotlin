@@ -38,6 +38,7 @@ kotlin {
         fromPreset(presets.linuxX64, 'linux64')
         fromPreset(presets.mingwX64, 'mingw64')
         fromPreset(presets.macosX64, 'macos64')
+        fromPreset(presets.macosArm64, 'macosArm64')
 
         // Check the DSL constructs in the Groovy DSL:
         fromPreset(presets.jvm, 'jvm6') {
@@ -95,6 +96,7 @@ kotlin {
         nativeMain { dependsOn commonMain }
         linux64Main { dependsOn nativeMain }
         macos64Main { dependsOn nativeMain }
+        macosArm64Main { dependsOn nativeMain }
     }
 }
 
