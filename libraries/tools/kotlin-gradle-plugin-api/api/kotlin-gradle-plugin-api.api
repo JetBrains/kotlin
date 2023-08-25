@@ -1442,3 +1442,11 @@ public final class org/jetbrains/kotlin/gradle/tasks/UsesKotlinJavaToolchain$Def
 	public static fun getKotlinJavaToolchain (Lorg/jetbrains/kotlin/gradle/tasks/UsesKotlinJavaToolchain;)Lorg/jetbrains/kotlin/gradle/tasks/KotlinJavaToolchain;
 }
 
+public abstract interface class org/jetbrains/kotlin/project/model/LanguageSettings {
+	public abstract fun getApiVersion ()Ljava/lang/String;
+	public abstract fun getEnabledLanguageFeatures ()Ljava/util/Set;
+	public abstract fun getLanguageVersion ()Ljava/lang/String;
+	public abstract fun getOptInAnnotationsInUse ()Ljava/util/Set;
+	public abstract fun getProgressiveMode ()Z
+}
+

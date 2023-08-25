@@ -13,7 +13,6 @@ dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-annotations"))
     commonApi(project(":native:kotlin-native-utils"))
-    commonApi(project(":kotlin-project-model"))
     commonApi(project(":kotlin-tooling-core"))
 
     commonCompileOnly(project(":kotlin-gradle-compiler-types"))
