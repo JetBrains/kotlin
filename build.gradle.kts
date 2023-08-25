@@ -408,7 +408,6 @@ val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin-annotations",
     ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-idea-proto",
-    ":kotlin-gradle-plugin-kpm-android",
     ":kotlin-gradle-plugin-model",
     ":kotlin-gradle-plugin-tcs-android",
     ":kotlin-allopen",
