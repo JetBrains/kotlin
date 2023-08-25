@@ -11,11 +11,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
 
 internal val uniqueLoopLabelsPhase = makeIrFilePhase(
     ::UniqueLoopLabelsLowering,
@@ -28,15 +25,23 @@ private class UniqueLoopLabelsLowering(val context: JvmBackendContext) : FileLow
         irFile.accept(object : IrElementVisitorShallow<Unit, String>() {
             // This counter is intentionally not local to every declaration because their names might clash.
             private var counter = 0
+            private val stack = ArrayList<Name>()
 
-            override fun visitElement(element: IrElement, data: String) =
-                element.acceptChildren(this, if (element is IrDeclarationWithName) "$data${element.name}$" else data)
+            override fun visitElement(element: IrElement) {
+                if (element is IrDeclarationWithName) {
+                    stack.add(element.name)
+                    element.acceptChildrenVoid(this)
+                    stack.removeLast()
+                } else {
+                    element.acceptChildrenVoid(this)
+                }
+            }
 
             override fun visitLoop(loop: IrLoop, data: String) {
                 // Give all loops unique labels so that we can generate unambiguous instructions for non-local
                 // `break`/`continue` statements.
-                loop.label = "$data${++counter}"
-                visitElement(loop, data)
+                loop.label = stack.joinToString("$", postfix = (++counter).toString())
+                super.visitLoop(loop)
             }
 
             override fun visitWhileLoop(loop: IrWhileLoop, data: String) = visitLoop(loop, data)
