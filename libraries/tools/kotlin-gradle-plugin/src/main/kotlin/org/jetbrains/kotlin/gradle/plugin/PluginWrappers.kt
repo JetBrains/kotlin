@@ -172,4 +172,5 @@ private fun Project.registerVariantImplementations() {
         CompatibilityConventionRegistrarG6.Factory()
     factories[UnameExecutor.UnameExecutorVariantFactory::class] =
         UnameExecutorG6.UnameExecutorVariantFactoryG6()
+    factories[ConfigurationCacheStartParameterAccessor.Factory::class] = ConfigurationCacheStartParameterAccessorG6.Factory()
 }

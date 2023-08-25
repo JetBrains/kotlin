@@ -153,4 +153,5 @@ private fun Project.registerVariantImplementations() {
         ProjectIsolationStartParameterAccessorG75.Factory()
     factories[CompatibilityConventionRegistrar.Factory::class] =
         CompatibilityConventionRegistrarG75.Factory()
+    factories[ConfigurationCacheStartParameterAccessor.Factory::class] = ConfigurationCacheStartParameterAccessorG75.Factory()
 }
