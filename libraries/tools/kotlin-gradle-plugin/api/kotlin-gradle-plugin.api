@@ -821,6 +821,10 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotli
 	public static final fun ExternalKotlinCompilationDescriptor (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor;
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetApiExtensionsKt {
+	public static final fun getProject (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension;)Lorg/gradle/api/Project;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetApiUtils {
 	public abstract fun enableKgpBasedDependencyResolution (Z)V
 	public abstract fun publishJvmEnvironmentAttribute (Z)V

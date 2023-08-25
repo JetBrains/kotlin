@@ -3,14 +3,6 @@ public final class org/jetbrains/kotlin/gradle/idea/proto/ExtrasKt {
 	public static final fun toByteArray (Lorg/jetbrains/kotlin/tooling/core/Extras;Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;)[B
 }
 
-public final class org/jetbrains/kotlin/gradle/idea/proto/kpm/KpmIdeaProto {
-	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;Ljava/io/InputStream;)Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;
-	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;Ljava/nio/ByteBuffer;)Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;
-	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;[B)Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;
-	public static final fun toByteArray (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;)[B
-	public static final fun writeTo (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;Ljava/io/OutputStream;Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;)V
-}
-
 public final class org/jetbrains/kotlin/gradle/idea/proto/tcs/IdeaKotlinClasspathKt {
 	public static final fun IdeaKotlinClasspath ([B)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinClasspath;
 	public static final fun toByteArray (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinClasspath;)[B
