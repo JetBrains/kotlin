@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
@@ -36,8 +34,6 @@ internal fun Project.configureKotlinDomApiDefaultDependency(
     coreLibrariesVersion: Provider<String>
 ) {
     when (topLevelExtension) {
-        is KotlinPm20ProjectExtension -> addKotlinDomApiToKpmProject(project, coreLibrariesVersion)
-
         is KotlinJsProjectExtension -> topLevelExtension.registerTargetObserver { target ->
             target?.addKotlinDomApiDependency(configurations, dependencies, coreLibrariesVersion)
         }
@@ -51,26 +47,6 @@ internal fun Project.configureKotlinDomApiDefaultDependency(
             .configureEach { target ->
                 target.addKotlinDomApiDependency(configurations, dependencies, coreLibrariesVersion)
             }
-    }
-}
-
-private fun addKotlinDomApiToKpmProject(
-    project: Project,
-    coreLibrariesVersion: Provider<String>
-) {
-    project.pm20Extension.modules.named(GradleKpmModule.MAIN_MODULE_NAME) { main ->
-        main.variants.configureEach { variant ->
-            when (variant.platformType) {
-                KotlinPlatformType.common -> error("variants are not expected to be common")
-                KotlinPlatformType.js -> {
-                    val dependencyHandler = project.dependencies
-                    variant.dependencies {
-                        api(dependencyHandler.kotlinDomApiDependency(coreLibrariesVersion.get()))
-                    }
-                }
-                else -> {}
-            }
-        }
     }
 }
 

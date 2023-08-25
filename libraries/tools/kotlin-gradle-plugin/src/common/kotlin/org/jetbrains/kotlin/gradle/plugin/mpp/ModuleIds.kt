@@ -13,7 +13,6 @@ import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublishedModuleCoordinatesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.gradle.utils.currentBuild
@@ -78,26 +77,16 @@ internal object ModuleIds {
                 val dependencyProject = thisProject.project(moduleIdentifier.projectId)
                 val topLevelExtension = dependencyProject.topLevelExtension
                 val getRootPublication: () -> MavenPublication? = when {
-                    dependencyProject.pm20ExtensionOrNull != null -> {
-                        { dependencyProject.pm20Extension.kpmModelContainer.rootPublication }
-                    }
                     topLevelExtension is KotlinMultiplatformExtension -> {
                         { topLevelExtension.rootSoftwareComponent.publicationDelegate }
                     }
-                    else -> error("unexpected top-level extension $topLevelExtension")
-                }
-                val capabilities = when {
-                    dependencyProject.pm20ExtensionOrNull != null -> listOfNotNull(ComputedCapability.capabilityStringFromModule(
-                        dependencyProject.pm20Extension.modules.single { it.moduleIdentifier == moduleIdentifier }
-                    ))
-                    topLevelExtension is KotlinMultiplatformExtension -> emptyList()
                     else -> error("unexpected top-level extension $topLevelExtension")
                 }
                 val coordinatesProvider = MavenPublicationCoordinatesProvider(
                     dependencyProject,
                     getRootPublication,
                     defaultModuleSuffix = null,
-                    capabilities = capabilities
+                    capabilities = emptyList()
                 )
                 return ChangingModuleDependencyIdentifier({ coordinatesProvider.group }, { coordinatesProvider.name })
             }

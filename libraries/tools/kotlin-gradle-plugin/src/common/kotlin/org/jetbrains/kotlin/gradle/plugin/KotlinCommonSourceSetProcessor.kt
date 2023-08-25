@@ -25,7 +25,7 @@ internal class KotlinCommonSourceSetProcessor(
         project.tasks.named(compilationInfo.compileAllTaskName).dependsOn(kotlinTask)
         // can be missing (e.g. in case of tests)
         if (compilationInfo.isMain) {
-            compilationInfo.tcsOrNull?.compilation?.target?.let { target ->
+            compilationInfo.tcs.compilation.target.let { target ->
                 project.locateTask<Task>(target.artifactsTaskName)?.dependsOn(kotlinTask)
             }
         }
@@ -33,7 +33,7 @@ internal class KotlinCommonSourceSetProcessor(
         project.whenEvaluated {
             val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
             /* Not supported in KPM yet */
-            compilationInfo.tcsOrNull?.compilation?.let { compilation ->
+            compilationInfo.tcs.compilation.let { compilation ->
                 subpluginEnvironment.addSubpluginOptions(project, compilation)
             }
         }

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.targets
+import org.jetbrains.kotlin.gradle.utils.targets
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -272,7 +272,6 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             runtimeDependencyConfigurationName,
         )
 
-        @Suppress("DEPRECATION")
         project.kotlinExtension.targets.flatMap { it.compilations }.forEach { compilation ->
             val compilationSourceSets = compilation.allKotlinSourceSets
             val compilationConfigurationNames = compilation.allCompilationDependenciesConfigurationNames()

@@ -12,8 +12,6 @@ import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.directoryNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.moduleName
@@ -71,17 +69,7 @@ class DefaultKotlinDependencyHandler(
         configurationName: String,
         dependencyNotation: Any
     ): Dependency? {
-        val dependency = when (dependencyNotation) {
-            is GradleKpmModule -> project.dependencies.create(dependencyNotation.project).apply {
-                (this as ModuleDependency).capabilities {
-                    if (dependencyNotation.moduleClassifier != null) {
-                        it.requireCapability(ComputedCapability.fromModule(dependencyNotation))
-                    }
-                }
-            }
-            else -> dependencyNotation
-        }
-        return project.dependencies.add(configurationName, dependency)
+        return project.dependencies.add(configurationName, dependencyNotation)
     }
 
     private fun addDependencyByStringNotation(

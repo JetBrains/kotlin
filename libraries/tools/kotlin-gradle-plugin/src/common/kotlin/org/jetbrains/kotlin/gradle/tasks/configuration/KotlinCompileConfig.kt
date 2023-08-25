@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
-import org.jetbrains.kotlin.gradle.utils.markResolvable
-import org.jetbrains.kotlin.gradle.plugin.tcsOrNull
+import org.jetbrains.kotlin.gradle.plugin.tcs
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 
 internal typealias KotlinCompileConfig = BaseKotlinCompileConfig<KotlinCompile>
@@ -78,7 +78,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
     }
 
     constructor(compilationInfo: KotlinCompilationInfo) : super(compilationInfo) {
-        val javaTaskProvider = when (val compilation = compilationInfo.tcsOrNull?.compilation) {
+        val javaTaskProvider = when (val compilation = compilationInfo.tcs.compilation) {
             is KotlinJvmCompilation -> compilation.compileJavaTaskProviderSafe
             is KotlinJvmAndroidCompilation -> compilation.compileJavaTaskProvider
             is KotlinWithJavaCompilation<*, *> -> compilation.compileJavaTaskProvider

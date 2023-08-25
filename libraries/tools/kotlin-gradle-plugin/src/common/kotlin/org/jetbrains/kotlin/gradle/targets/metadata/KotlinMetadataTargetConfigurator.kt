@@ -20,10 +20,8 @@ import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.pm20ExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropMetadataDependencyClasspath
@@ -40,14 +38,14 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
 
 internal val Project.isKotlinGranularMetadataEnabled: Boolean
-    get() = project.pm20ExtensionOrNull != null || with(PropertiesProvider(this)) {
+    get() = with(PropertiesProvider(this)) {
         mppHierarchicalStructureByDefault || // then we want to use KLIB granular compilation & artifacts even if it's just commonMain
                 hierarchicalStructureSupport ||
                 enableGranularSourceSetsMetadata == true
     }
 
 internal val Project.shouldCompileIntermediateSourceSetsToMetadata: Boolean
-    get() = project.pm20ExtensionOrNull != null || with(PropertiesProvider(this)) {
+    get() = with(PropertiesProvider(this)) {
         when {
             !hierarchicalStructureSupport && mppHierarchicalStructureByDefault -> false
             else -> true
@@ -393,24 +391,11 @@ internal class NativeSharedCompilationProcessor(
     override fun run() = Unit
 }
 
-internal fun Project.createGenerateProjectStructureMetadataTask(module: GradleKpmModule): TaskProvider<GenerateProjectStructureMetadata> =
-    project.registerTask(lowerCamelCaseName("generate", module.moduleClassifier, "ProjectStructureMetadata")) { task ->
-        task.lazyKotlinProjectStructureMetadata = lazy { buildProjectStructureMetadata(module) }
-        task.description = "Generates serialized project structure metadata of module '${module.name}' (for tooling)"
-    }
-
 internal fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =
     project.registerTask(lowerCamelCaseName("generateProjectStructureMetadata")) { task ->
         task.lazyKotlinProjectStructureMetadata = lazy { project.multiplatformExtension.kotlinProjectStructureMetadata }
         task.description = "Generates serialized project structure metadata of the current project (for tooling)"
     }
-
-internal interface ResolvedMetadataFilesProvider {
-    val buildDependencies: Iterable<TaskProvider<*>>
-    val metadataResolutions: Iterable<MetadataDependencyResolution>
-    val metadataFilesByResolution: Map<out MetadataDependencyResolution, FileCollection>
-}
-
 
 internal val KotlinSourceSet.isNativeSourceSet: Future<Boolean> by futureExtension("isNativeSourceSet") {
     val compilations = internal.awaitPlatformCompilations()

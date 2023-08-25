@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.launchKotlinGradleProjectC
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20GradlePlugin
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFlowService
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
@@ -402,21 +400,6 @@ abstract class AbstractKotlinMultiplatformPluginWrapper : KotlinBasePluginWrappe
 
     override val projectExtensionClass: KClass<out KotlinMultiplatformExtension>
         get() = KotlinMultiplatformExtension::class
-}
-
-abstract class AbstractKotlinPm20PluginWrapper(
-    private val objectFactory: ObjectFactory,
-) : KotlinBasePluginWrapper() {
-    override fun apply(project: Project) {
-        super.apply(project)
-        project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied()
-    }
-
-    override fun getPlugin(project: Project): Plugin<Project> =
-        objectFactory.newInstance(KotlinPm20GradlePlugin::class.java)
-
-    override val projectExtensionClass: KClass<out KotlinPm20ProjectExtension>
-        get() = KotlinPm20ProjectExtension::class
 }
 
 fun Project.getKotlinPluginVersion() = getKotlinPluginVersion(project.logger)

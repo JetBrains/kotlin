@@ -57,7 +57,7 @@ internal class Kotlin2JvmSourceSetProcessor(
         project.launchInStage(AfterEvaluateBuildscript) {
             val subpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
             /* Not supported in KPM yet */
-            compilationInfo.tcsOrNull?.compilation?.let { compilation ->
+            compilationInfo.tcs.compilation.let { compilation ->
                 subpluginEnvironment.addSubpluginOptions(project, compilation)
             }
 

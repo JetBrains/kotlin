@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeBinaryDepen
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
