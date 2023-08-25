@@ -41,7 +41,7 @@ class DomainFunc(
     val name: DomainFuncName,
     val formalArgs: List<Declaration.LocalVarDecl>,
     val typeArgs: List<Type.TypeVar>,
-    val typ: Type,
+    val returnType: Type,
     val unique: Boolean,
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
@@ -51,7 +51,7 @@ class DomainFunc(
         viper.silver.ast.DomainFunc(
             name.mangled,
             formalArgs.map { it.toViper() }.toScalaSeq(),
-            typ.toViper(),
+            returnType.toViper(),
             unique,
             null.toScalaOption(),
             pos.toViper(),
@@ -61,7 +61,7 @@ class DomainFunc(
         )
 
     operator fun invoke(vararg args: Exp): Exp.DomainFuncApp =
-        Exp.DomainFuncApp(name, args.toList(), typeArgs.associateWith { it }, typ)
+        Exp.DomainFuncApp(this, args.toList(), typeArgs.associateWith { it })
 }
 
 class DomainAxiom(
@@ -117,13 +117,16 @@ abstract class Domain(
             trafos.toViper()
         )
 
+    // Don't use this directly, instead, use the custom types defined in `org.jetbrains.kotlin.formver.viper.ast.Type` for specific domains.
     fun toType(typeParamSubst: Map<Type.TypeVar, Type> = typeVars.associateWith { it }): Type.Domain =
         Type.Domain(name.mangled, typeVars, typeParamSubst)
 
     fun createDomainFunc(funcName: String, args: List<Declaration.LocalVarDecl>, type: Type, unique: Boolean = false) =
         DomainFunc(DomainFuncName(this.name, funcName), args, typeVars, type, unique)
 
-    fun createNamedDomainAxiom(axiomName: String, exp: Exp): DomainAxiom = DomainAxiom(NamedDomainAxiomLabel(this.name, axiomName), exp)
+    fun createNamedDomainAxiom(axiomName: String, exp: Exp): DomainAxiom =
+        DomainAxiom(NamedDomainAxiomLabel(this.name, axiomName), exp)
+
     fun createAnonymousDomainAxiom(exp: Exp): DomainAxiom = DomainAxiom(AnonymousDomainAxiomLabel(this.name), exp)
 
     fun funcApp(
@@ -133,7 +136,7 @@ abstract class Domain(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): Exp.DomainFuncApp = Exp.DomainFuncApp(func.name, args, typeVarMap, func.typ, pos, info, trafos)
+    ): Exp.DomainFuncApp = Exp.DomainFuncApp(func, args, typeVarMap, pos, info, trafos)
 }
 
 abstract class BuiltinDomain(

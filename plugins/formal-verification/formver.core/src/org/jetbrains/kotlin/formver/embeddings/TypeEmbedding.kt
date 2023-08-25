@@ -48,7 +48,7 @@ class TypeVarEmbedding(val name: String) : TypeEmbedding {
 }
 
 class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding {
-    override val type: Type = NullableDomain.toType(mapOf(NullableDomain.T to elementType.type))
+    override val type: Type = NullableDomain.nullableType(elementType.type)
 }
 
 object FunctionTypeEmbedding : TypeEmbedding {

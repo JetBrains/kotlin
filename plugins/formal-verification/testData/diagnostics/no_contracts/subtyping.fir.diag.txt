@@ -1,0 +1,44 @@
+/subtyping.kt:(4,14): info: Generated Viper text for smart_cast:
+method global$pkg_$smart_cast(local$x: dom$Nullable[Int])
+  returns (ret$: Int)
+{
+  if (local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||
+  (dom$Casting$cast(local$x): Int) ==
+  (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit])): Int)) {
+    ret$ := 0
+  } else {
+    ret$ := (dom$Casting$cast(local$x): Int)}
+}
+
+/subtyping.kt:(112,128): info: Generated Viper text for return_subtyping:
+method global$pkg_$return_subtyping() returns (ret$: dom$Nullable[Int])
+{
+  ret$ := (dom$Casting$cast(0): dom$Nullable[Int])
+}
+
+/subtyping.kt:(159,179): info: Generated Viper text for assignment_subtyping:
+method global$pkg_$assignment_subtyping() returns (ret$: dom$Unit)
+{
+  var local$x: dom$Nullable[Bool]
+  local$x := (dom$Casting$cast(false): dom$Nullable[Bool])
+  local$x := (dom$Casting$cast(true): dom$Nullable[Bool])
+}
+
+/subtyping.kt:(232,250): info: Generated Viper text for nullable_parameter:
+method global$pkg_$nullable_parameter(local$b: dom$Nullable[Bool])
+  returns (ret$: dom$Unit)
+{
+}
+
+/subtyping.kt:(272,300): info: Generated Viper text for function_parameter_subtyping:
+method global$pkg_$nullable_parameter(local$b: dom$Nullable[Bool])
+  returns (ret$: dom$Unit)
+
+
+method global$pkg_$function_parameter_subtyping() returns (ret$: dom$Unit)
+{
+  var anonymous$1: dom$Unit
+  anonymous$1 := global$pkg_$nullable_parameter((dom$Casting$cast(false): dom$Nullable[Bool]))
+}

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.formver.embeddings.NullableTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Exp.*
+import org.jetbrains.kotlin.formver.viper.ast.Type
 
 class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, MethodConversionContext, ConeKotlinType, ConeDiagnostic>() {
     private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.embeddedVar(data: MethodConversionContext): VariableEmbedding {

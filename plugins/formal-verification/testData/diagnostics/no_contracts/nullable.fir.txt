@@ -8,3 +8,12 @@ FILE: nullable.kt
         R|/use_nullable_twice|(R|<local>/x|)
         ^pass_nullable_parameter R|<local>/x|
     }
+    public final fun nullable_nullable_comparison(x: R|kotlin/Int?|, y: R|kotlin/Int?|): R|kotlin/Boolean| {
+        ^nullable_nullable_comparison ==(R|<local>/x|, R|<local>/y|)
+    }
+    public final fun nullable_non_nullable_comparison(x: R|kotlin/Int?|, y: R|kotlin/Int?|): R|kotlin/Boolean| {
+        ^nullable_non_nullable_comparison !=(R|<local>/x|, Int(3))
+    }
+    public final fun null_comparison(x: R|kotlin/Int?|): R|kotlin/Boolean| {
+        ^null_comparison ==(R|<local>/x|, Null(null))
+    }

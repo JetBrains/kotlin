@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Method
 import org.jetbrains.kotlin.formver.viper.ast.Program
+import org.jetbrains.kotlin.formver.viper.domains.CastingDomain
 
 /**
  * Tracks the top-level information about the program.
@@ -28,7 +29,7 @@ class ProgramConverter(val session: FirSession) : ProgramConversionContext {
 
     val program: Program
         get() = Program(
-            listOf(UnitDomain, NullableDomain), /* Domains */
+            listOf(UnitDomain, NullableDomain, CastingDomain), /* Domains */
             SpecialFields.all, /* Fields */
             SpecialMethods.all + methods.values.toList(), /* Methods */
         )

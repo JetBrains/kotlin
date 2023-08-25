@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.formver.embeddings.MethodSignatureEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 
 interface ProgramConversionContext {
     fun add(symbol: FirNamedFunctionSymbol): MethodSignatureEmbedding
     fun embedType(type: ConeKotlinType): TypeEmbedding
+
+    fun embedType(exp: FirExpression): TypeEmbedding = embedType(exp.typeRef.coneType)
 }

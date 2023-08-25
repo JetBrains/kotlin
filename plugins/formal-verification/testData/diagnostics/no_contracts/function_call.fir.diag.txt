@@ -22,10 +22,10 @@ method global$pkg_$f(local$x: Int) returns (ret$: Int)
 
 method global$pkg_$function_call_nested() returns (ret$: dom$Unit)
 {
-  var anonymous$1: Int
-  var anonymous$2: Int
   var anonymous$3: Int
-  anonymous$1 := global$pkg_$f(0)
-  anonymous$2 := global$pkg_$f(anonymous$1)
-  anonymous$3 := global$pkg_$f(anonymous$2)
+  var anonymous$2: Int
+  var anonymous$1: Int
+  anonymous$3 := global$pkg_$f(0)
+  anonymous$2 := global$pkg_$f(anonymous$3)
+  anonymous$1 := global$pkg_$f(anonymous$2)
 }

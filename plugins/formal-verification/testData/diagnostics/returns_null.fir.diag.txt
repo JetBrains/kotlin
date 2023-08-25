@@ -4,7 +4,7 @@ method global$pkg_$simple_returns_null(local$x: dom$Nullable[Int])
   ensures ret$ == (dom$Nullable$null(): dom$Nullable[Int])
   ensures ret$ != (dom$Nullable$null(): dom$Nullable[Int]) ==> true
 {
-  ret$ := (dom$Nullable$null(): dom$Nullable[Int])
+  ret$ := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit])): dom$Nullable[Int])
 }
 
 /returns_null.kt:(299,319): info: Generated Viper text for returns_null_implies:
@@ -30,7 +30,11 @@ method global$pkg_$returns_null_with_if(local$x: dom$Nullable[Int], local$y: dom
     local$x != (dom$Nullable$null(): dom$Nullable[Int]) ||
     local$y != (dom$Nullable$null(): dom$Nullable[Int])
 {
-  if (local$x == (dom$Nullable$null(): dom$Nullable[Int])) {
+  if (local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||
+  (dom$Casting$cast(local$x): Int) ==
+  (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit])): Int)) {
     ret$ := local$y
   } else {
     ret$ := local$z}

@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.*
 
 class VariableEmbedding(val name: MangledName, val type: TypeEmbedding) {
+
+    val viperType = type.type
+
     fun toLocalVarDecl(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,

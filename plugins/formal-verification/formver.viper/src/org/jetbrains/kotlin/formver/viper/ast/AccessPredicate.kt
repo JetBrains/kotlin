@@ -15,6 +15,7 @@ sealed interface AccessPredicate : Exp {
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
     ) : AccessPredicate {
+        override val type: Type.Bool = Type.Bool
         override fun toViper(): viper.silver.ast.AccessPredicate =
             viper.silver.ast.FieldAccessPredicate(access.toViper(), perm.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }

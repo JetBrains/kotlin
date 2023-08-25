@@ -18,7 +18,7 @@ object UnitDomain : BuiltinDomain("Unit") {
     override val typeVars: List<Type.TypeVar> = emptyList()
 
     val elementFunc = createDomainFunc("element", emptyList(), toType())
-    val element: Exp = elementFunc()
+    val element = elementFunc()
 
     override val functions: List<DomainFunc> = listOf(elementFunc)
     override val axioms: List<DomainAxiom> = emptyList()
