@@ -50,8 +50,7 @@ class SourceToOutputFilesMapTest {
 
     @After
     fun tearDown() {
-        stofMap.flush(false)
-        stofMap.closeForTest()
+        stofMap.close()
     }
 
     @Test
