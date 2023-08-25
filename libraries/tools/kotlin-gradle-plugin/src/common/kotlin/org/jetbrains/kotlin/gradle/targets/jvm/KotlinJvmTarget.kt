@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDslImpl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.registerMainRunTask

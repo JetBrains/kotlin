@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.subtargets
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
+import org.jetbrains.kotlin.gradle.utils.distsDirectory
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution.Companion.DIST
 import org.jetbrains.kotlin.gradle.utils.property

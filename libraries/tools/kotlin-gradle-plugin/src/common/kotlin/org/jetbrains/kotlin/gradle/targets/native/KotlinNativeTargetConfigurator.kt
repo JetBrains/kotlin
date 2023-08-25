@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.version
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
@@ -44,6 +43,7 @@ import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.XcodeUtils
+import org.jetbrains.kotlin.gradle.utils.copyAttributes
 import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.konan.target.HostManager

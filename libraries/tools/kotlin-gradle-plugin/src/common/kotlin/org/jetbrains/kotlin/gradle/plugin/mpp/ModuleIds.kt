@@ -8,32 +8,18 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.artifacts.component.*
+import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
-import org.gradle.api.publish.maven.MavenPublication
-import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublishedModuleCoordinatesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
-import org.jetbrains.kotlin.gradle.utils.buildPathCompat
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.utils.currentBuild
-import org.jetbrains.kotlin.gradle.utils.getValue
-import org.jetbrains.kotlin.project.model.KpmLocalModuleIdentifier
-import org.jetbrains.kotlin.project.model.KpmMavenModuleIdentifier
-import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 
 internal object ModuleIds {
     fun fromDependency(dependency: Dependency): ModuleDependencyIdentifier = when (dependency) {
         is ProjectDependency -> idOfRootModule(dependency.dependencyProject)
         else -> ModuleDependencyIdentifier(dependency.group, dependency.name)
-    }
-
-    fun fromComponentSelector(
-        thisProject: Project,
-        componentSelector: ComponentSelector
-    ): ModuleDependencyIdentifier = when (componentSelector) {
-        is ProjectComponentSelector -> idOfRootModuleByProjectPath(thisProject, componentSelector.projectPath)
-        is ModuleComponentSelector -> ModuleDependencyIdentifier(componentSelector.group, componentSelector.module)
-        else -> idFromName(componentSelector.displayName)
     }
 
     private fun fromComponentId(
@@ -68,52 +54,4 @@ internal object ModuleIds {
 
     private fun idOfRootModuleByProjectPath(thisProject: Project, projectPath: String): ModuleDependencyIdentifier =
         idOfRootModule(thisProject.project(projectPath))
-
-    // FIXME use capabilities to point to auxiliary modules
-    fun lossyFromModuleIdentifier(thisProject: Project, moduleIdentifier: KpmModuleIdentifier): ModuleDependencyIdentifier {
-        when (moduleIdentifier) {
-            is KpmLocalModuleIdentifier -> {
-                check(moduleIdentifier.buildId == thisProject.currentBuildId().buildPathCompat)
-                val dependencyProject = thisProject.project(moduleIdentifier.projectId)
-                val topLevelExtension = dependencyProject.topLevelExtension
-                val getRootPublication: () -> MavenPublication? = when {
-                    topLevelExtension is KotlinMultiplatformExtension -> {
-                        { topLevelExtension.rootSoftwareComponent.publicationDelegate }
-                    }
-                    else -> error("unexpected top-level extension $topLevelExtension")
-                }
-                val coordinatesProvider = MavenPublicationCoordinatesProvider(
-                    dependencyProject,
-                    getRootPublication,
-                    defaultModuleSuffix = null,
-                    capabilities = emptyList()
-                )
-                return ChangingModuleDependencyIdentifier({ coordinatesProvider.group }, { coordinatesProvider.name })
-            }
-            is KpmMavenModuleIdentifier -> {
-                return ModuleDependencyIdentifier(moduleIdentifier.group, moduleIdentifier.name)
-            }
-            else -> error("unexpected module identifier $moduleIdentifier")
-        }
-    }
-}
-
-open class MavenPublicationCoordinatesProvider(
-    project: Project,
-    val getPublication: () -> MavenPublication?,
-    defaultModuleSuffix: String?,
-    override val capabilities: Iterable<String> = emptyList()
-) : PublishedModuleCoordinatesProvider {
-
-    override val group: String by project.provider {
-        getPublication()?.groupId ?: project.group.toString()
-    }
-
-    override val name: String by project.provider {
-        getPublication()?.artifactId ?: project.name.plus(defaultModuleSuffix?.let { "-$it" }.orEmpty())
-    }
-
-    override val version: String by project.provider {
-        getPublication()?.version ?: project.version.toString()
-    }
 }

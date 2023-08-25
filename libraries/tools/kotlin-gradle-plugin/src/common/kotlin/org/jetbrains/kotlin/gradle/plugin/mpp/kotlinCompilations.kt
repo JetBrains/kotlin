@@ -13,11 +13,10 @@ import org.jetbrains.kotlin.gradle.internal.KAPT_GENERATE_STUBS_PREFIX
 import org.jetbrains.kotlin.gradle.internal.getKaptTaskName
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
+import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.tooling.core.closure
 import java.util.concurrent.Callable
 
 internal fun KotlinCompilation<*>.isMain(): Boolean =

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 import java.io.File
 import java.io.InputStream
 import java.util.zip.ZipFile
@@ -18,7 +17,6 @@ sealed class MppDependencyProjectStructureMetadataExtractor {
 }
 
 internal class ProjectMppDependencyProjectStructureMetadataExtractor(
-    val moduleIdentifier: KpmModuleIdentifier,
     val projectPath: String,
     private val projectStructureMetadataProvider: () -> KotlinProjectStructureMetadata?,
 ) : MppDependencyProjectStructureMetadataExtractor() {

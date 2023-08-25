@@ -10,7 +10,6 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleKpmModuleIdentifier
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.CurrentBuildIdentifier
 import org.jetbrains.kotlin.gradle.utils.buildNameCompat
@@ -42,7 +41,6 @@ private constructor(
                     ?: error("Project structure metadata not found for project '${moduleId.projectPath}'")
 
                 ProjectMppDependencyProjectStructureMetadataExtractor(
-                    moduleIdentifier = metadataArtifact.variant.toSingleKpmModuleIdentifier(),
                     projectPath = moduleId.projectPath,
                     projectStructureMetadataProvider = projectStructureMetadataProvider::value
                 )
