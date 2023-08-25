@@ -19,9 +19,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder
-import org.jetbrains.kotlin.gradle.kpm.idea.default
-import org.jetbrains.kotlin.gradle.kpm.idea.locateOrRegisterIdeaKpmBuildProjectModelTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import javax.inject.Inject
@@ -41,7 +38,6 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
         registerDefaultVariantFactories(project)
         setupFragmentsMetadataForKpmModules(project)
         setupKpmModulesPublication(project)
-        setupToolingModelBuilder(project)
     }
 
     private fun createDefaultModules(project: Project) {
@@ -82,11 +78,6 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
             }
         }
     }
-
-    private fun setupToolingModelBuilder(project: Project) {
-        toolingModelBuilderRegistry.register(project.pm20Extension.ideaKpmProjectModelBuilder)
-        project.locateOrRegisterIdeaKpmBuildProjectModelTask()
-    }
 }
 
 fun rootPublicationComponentName(module: GradleKpmModule) =
@@ -110,8 +101,6 @@ open class KotlinPm20ProjectExtension(project: Project) : KotlinProjectExtension
         }
 
     internal val kpmModelContainer = GradleKpmDefaultProjectModelContainer.create(project)
-
-    internal val ideaKpmProjectModelBuilder by lazy { IdeaKpmProjectModelBuilder.default(this) }
 
     val modules: NamedDomainObjectContainer<GradleKpmModule>
         get() = kpmModelContainer.modules
