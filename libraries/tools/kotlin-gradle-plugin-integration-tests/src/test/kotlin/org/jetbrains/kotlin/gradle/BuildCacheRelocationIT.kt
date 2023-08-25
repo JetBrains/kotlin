@@ -22,10 +22,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
-import kotlin.io.path.createDirectory
-import kotlin.io.path.isRegularFile
-import kotlin.io.path.readText
-import kotlin.io.path.walk
+import kotlin.io.path.*
 
 @DisplayName("Build cache relocation")
 class BuildCacheRelocationIT : KGPBaseTest() {
@@ -423,7 +420,9 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             firstProject.projectPath.resolve("../BUILD_DIR_1/kotlin/compileKotlin").walk()
                 .filter {
                     // Use readText() even for binary files as we don't have a better way for now
-                    it.isRegularFile() && it.readText().contains("BUILD_DIR_1")
+                    it.isRegularFile() && it.readText().let { text ->
+                        text.contains("BUILD_DIR_1") || text.contains(firstProject.projectPath.pathString)
+                    }
                 }.toList()
         assert(outputFilesContainingNonRelocatablePaths.isEmpty()) {
             "The following output files contain non-relocatable paths:\n" + outputFilesContainingNonRelocatablePaths.joinToString("\n")

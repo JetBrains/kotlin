@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.incremental.storage.FileToAbsolutePathConverter
 import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 
 class IncrementalCompilationContext(
-    // The root directories of source files and class files are different, so we may need different `FileToPathConverter`s
+    // The root directories of source files and output files are different, so we may need different `FileToPathConverter`s
     val pathConverterForSourceFiles: FileToPathConverter = FileToAbsolutePathConverter,
     val pathConverterForOutputFiles: FileToPathConverter = FileToAbsolutePathConverter,
     val storeFullFqNamesInLookupCache: Boolean = false,
@@ -47,6 +47,6 @@ class IncrementalCompilationContext(
     )
 
     // FIXME: Remove `pathConverter` and require its users to decide whether to use `pathConverterForSourceFiles` or
-    // `pathConverterForClassFiles`
+    // `pathConverterForOutputFiles`
     val pathConverter = pathConverterForSourceFiles
 }

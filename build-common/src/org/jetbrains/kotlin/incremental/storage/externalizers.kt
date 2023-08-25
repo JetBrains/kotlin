@@ -31,23 +31,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.*
 
-/**
- * Externalizer that works correctly when [com.intellij.util.io.PersistentHashMap.appendData] is called
- *
- * Besides the [append] method, it should support incremental [save] and [read]. E.g. if [save] was called multiple times, [read] should be able to collect them together
- */
-interface AppendableDataExternalizer<T> : DataExternalizer<T> {
-    /**
-     * Creates an empty appendable object
-     */
-    fun createNil(): T
-
-    /**
-     * Combines two non-serialized appendable objects
-     */
-    fun append(currentValue: T, appendData: T): T
-}
-
 class LookupSymbolKeyDescriptor(
     /** If `true`, original values are saved; if `false`, only hashes are saved. */
     private val storeFullFqNames: Boolean = false
@@ -278,51 +261,6 @@ class DelegateDataExternalizer<T>(
     }
 }
 
-/**
- * [DataExternalizer] for a [Collection].
- *
- * If you need a [DataExternalizer] for a more specific instance of [Collection] (e.g., [List]), use [ListExternalizer] or create another
- * instance of [GenericCollectionExternalizer].
- *
- * Note: The implementations of this class and [GenericCollectionExternalizer] are similar but not exactly the same: the latter reads and
- * writes the size of the collection to avoid resizing the collection when reading. Therefore, if we make this class extend
- * [GenericCollectionExternalizer] to share code, we will need to update some expected files in tests as the serialized data will change
- * slightly.
- */
-open class CollectionExternalizer<T>(
-    private val elementExternalizer: DataExternalizer<T>,
-    private val newCollection: () -> MutableCollection<T>
-) : AppendableDataExternalizer<Collection<T>> {
-    override fun read(input: DataInput): Collection<T> {
-        val result = newCollection()
-        val stream = input as DataInputStream
-
-        while (stream.available() > 0) {
-            result.add(elementExternalizer.read(stream))
-        }
-
-        return result
-    }
-
-    override fun save(output: DataOutput, value: Collection<T>) {
-        value.forEach { elementExternalizer.save(output, it) }
-    }
-
-    override fun createNil() = newCollection()
-
-    override fun append(currentValue: Collection<T>, appendData: Collection<T>) = when (currentValue) {
-        is MutableCollection<*> -> {
-            (currentValue as MutableCollection<T>).addAll(appendData)
-            currentValue
-        }
-        else -> currentValue + appendData
-    }
-}
-
-object StringCollectionExternalizer : CollectionExternalizer<String>(EnumeratorStringDescriptor(), { HashSet() })
-
-object IntCollectionExternalizer : CollectionExternalizer<Int>(IntExternalizer, { HashSet() })
-
 fun DataOutput.writeString(value: String) = StringExternalizer.save(this, value)
 
 fun DataInput.readString(): String = StringExternalizer.read(this)
@@ -358,7 +296,8 @@ object ByteArrayExternalizer : DataExternalizer<ByteArray> {
     }
 }
 
-abstract class GenericCollectionExternalizer<T, C : Collection<T>>(
+/** [DataExternalizer] for a [Collection]. */
+open class CollectionExternalizer<T, C : Collection<T>>(
     private val elementExternalizer: DataExternalizer<T>,
     private val newCollection: (size: Int) -> MutableCollection<T>
 ) : DataExternalizer<C> {
@@ -384,11 +323,13 @@ abstract class GenericCollectionExternalizer<T, C : Collection<T>>(
     }
 }
 
+object StringCollectionExternalizer : CollectionExternalizer<String, Collection<String>>(StringExternalizer, { size -> ArrayList(size) })
+
 class ListExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
-    GenericCollectionExternalizer<T, List<T>>(elementExternalizer, { size -> ArrayList(size) })
+    CollectionExternalizer<T, List<T>>(elementExternalizer, { size -> ArrayList(size) })
 
 class SetExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
-    GenericCollectionExternalizer<T, Set<T>>(elementExternalizer, { size -> LinkedHashSet(size) })
+    CollectionExternalizer<T, Set<T>>(elementExternalizer, { size -> LinkedHashSet(size) })
 
 open class MapExternalizer<K, V, M : Map<K, V>>(
     private val keyExternalizer: DataExternalizer<K>,
