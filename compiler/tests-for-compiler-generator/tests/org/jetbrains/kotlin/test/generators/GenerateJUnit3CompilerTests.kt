@@ -50,10 +50,10 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
 
-fun generateJUnit3CompilerTests(args: Array<String>) {
+fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
-    generateTestGroupSuite(args) {
+    generateTestGroupSuite(args, mainClassName) {
         testGroup("compiler/tests-gen", "compiler/testData") {
             testClass<AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation> {
                 model("diagnostics/testsWithJsStdLibAndBackendCompilation")

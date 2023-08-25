@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
+import java.util.concurrent.ForkJoinPool
 import java.util.regex.Pattern
 import kotlin.reflect.KClass
 
@@ -17,6 +18,14 @@ fun testGroupSuite(
     init: TestGroupSuite.() -> Unit
 ): TestGroupSuite {
     return TestGroupSuite(DefaultTargetBackendComputer).apply(init)
+}
+
+fun TestGroupSuite.forEachTestClassParallel(f: (TestGroup.TestClass) -> Unit) {
+    testGroups
+        .parallelStream()
+        .flatMap { it.testClasses.stream() }
+        .sorted(compareByDescending { it.testModels.sumOf { it.methods.size } })
+        .forEach(f)
 }
 
 class TestGroupSuite(val targetBackendComputer: TargetBackendComputer) {

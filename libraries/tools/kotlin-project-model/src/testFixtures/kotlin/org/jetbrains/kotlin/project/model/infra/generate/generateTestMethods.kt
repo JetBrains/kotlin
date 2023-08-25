@@ -7,24 +7,24 @@ package org.jetbrains.kotlin.project.model.infra.generate
 
 import org.jetbrains.kotlin.generators.*
 import org.jetbrains.kotlin.generators.model.*
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.project.model.infra.KpmCoreCasesTestRunner
 import java.io.File
 
 fun generateKpmTestCases(
     dryRun: Boolean = false,
-    init: TestGroupSuite.() -> Unit
+    init: TestGroupSuite.() -> Unit,
 ) {
     val suite = TestGroupSuite(DefaultTargetBackendComputer).apply {
         init()
     }
-    for (testGroup in suite.testGroups) {
-        for (testClass in testGroup.testClasses) {
-            val (changed, testSourceFilePath) = NewTestGeneratorImpl(
-                listOf(KpmCoreCaseTestMethodGenerator)
-            ).generateAndSave(testClass, dryRun)
-            if (changed) {
-                InconsistencyChecker.inconsistencyChecker(dryRun).add(testSourceFilePath)
-            }
+    val mainClassName = TestGeneratorUtil.getMainClassName()
+    suite.forEachTestClassParallel { testClass ->
+        val (changed, testSourceFilePath) = NewTestGeneratorImpl(
+            listOf(KpmCoreCaseTestMethodGenerator)
+        ).generateAndSave(testClass, dryRun, mainClassName)
+        if (changed) {
+            InconsistencyChecker.inconsistencyChecker(dryRun).add(testSourceFilePath)
         }
     }
 }

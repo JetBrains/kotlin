@@ -36,6 +36,7 @@ object TestGeneratorUtil {
         return escapeForJavaIdentifier(file.name).replaceFirstChar(Char::uppercaseChar)
     }
 
+    /** Must be called on the main thread, otherwise returns the root class of the worker thread. */
     fun getMainClassName(): String? =
         Throwable().stackTrace.lastOrNull()?.className
 }

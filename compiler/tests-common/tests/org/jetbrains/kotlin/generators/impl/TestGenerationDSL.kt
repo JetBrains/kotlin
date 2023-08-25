@@ -8,26 +8,28 @@ package org.jetbrains.kotlin.generators.impl
 import org.jetbrains.kotlin.generators.InconsistencyChecker
 import org.jetbrains.kotlin.generators.InconsistencyChecker.Companion.inconsistencyChecker
 import org.jetbrains.kotlin.generators.TestGroupSuite
+import org.jetbrains.kotlin.generators.forEachTestClassParallel
 import org.jetbrains.kotlin.generators.testGroupSuite
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun generateTestGroupSuite(
     args: Array<String>,
+    mainClassName: String? = TestGeneratorUtil.getMainClassName(),
     init: TestGroupSuite.() -> Unit
 ) {
-    generateTestGroupSuite(InconsistencyChecker.hasDryRunArg(args), init)
+    generateTestGroupSuite(InconsistencyChecker.hasDryRunArg(args), mainClassName, init)
 }
 
 fun generateTestGroupSuite(
     dryRun: Boolean = false,
-    init: TestGroupSuite.() -> Unit
+    mainClassName: String? = TestGeneratorUtil.getMainClassName(),
+    init: TestGroupSuite.() -> Unit,
 ) {
     val suite = testGroupSuite(init)
-    for (testGroup in suite.testGroups) {
-        for (testClass in testGroup.testClasses) {
-            val (changed, testSourceFilePath) = TestGeneratorImpl.generateAndSave(testClass, dryRun)
-            if (changed) {
-                inconsistencyChecker(dryRun).add(testSourceFilePath)
-            }
+    suite.forEachTestClassParallel { testClass ->
+        val (changed, testSourceFilePath) = TestGeneratorImpl.generateAndSave(testClass, dryRun, mainClassName)
+        if (changed) {
+            inconsistencyChecker(dryRun).add(testSourceFilePath)
         }
     }
 }
