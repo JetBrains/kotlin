@@ -63,4 +63,8 @@ internal abstract class LLFirKotlinSymbolProvider(session: FirSession) : FirSymb
         callableId: CallableId,
         properties: Collection<KtProperty>,
     )
+
+    override fun toString(): String {
+        return "${this::class.simpleName} for $session"
+    }
 }

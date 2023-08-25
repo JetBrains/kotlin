@@ -60,6 +60,10 @@ abstract class LLFirSession(
             return count.incrementAndGet()
         }
     }
+
+    override fun toString(): String {
+        return "${this::class.simpleName} for ${ktModule.moduleDescription}"
+    }
 }
 
 abstract class LLFirModuleSession(
