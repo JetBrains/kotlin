@@ -87,18 +87,6 @@ open class KotlinJsPluginWrapper : AbstractKotlinJsPluginWrapper() {
     }
 }
 
-open class KotlinPm20PluginWrapper @Inject constructor(
-    objectFactory: ObjectFactory
-) : AbstractKotlinPm20PluginWrapper(objectFactory) {
-
-    override val pluginVariant: String = PLUGIN_VARIANT_NAME
-
-    override fun apply(project: Project) {
-        project.registerVariantImplementations()
-        super.apply(project)
-    }
-}
-
 open class KotlinPlatformJvmPlugin : KotlinPlatformImplementationPluginBase("jvm") {
     override fun apply(project: Project) {
         project.applyPlugin<KotlinPluginWrapper>()

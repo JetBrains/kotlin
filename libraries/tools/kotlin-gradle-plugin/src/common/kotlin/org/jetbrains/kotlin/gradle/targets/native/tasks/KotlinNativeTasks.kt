@@ -37,8 +37,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Create
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeCompilationData
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
@@ -158,7 +156,6 @@ abstract class AbstractKotlinNativeCompile<
     @get:Internal
     protected val konanTarget by project.provider {
         when (val compilation = compilation) {
-            is KotlinCompilationInfo.KPM -> (compilation.compilationData as GradleKpmNativeCompilationData<*>).konanTarget
             is KotlinCompilationInfo.TCS -> (compilation.compilation as AbstractKotlinNativeCompilation).konanTarget
         }
     }
@@ -507,7 +504,6 @@ internal constructor(
 
 
     private val isMetadataCompilation: Boolean = when (compilation) {
-        is KotlinCompilationInfo.KPM -> compilation.compilationData is GradleKpmMetadataCompilationData<*>
         is KotlinCompilationInfo.TCS -> compilation.compilation is KotlinMetadataCompilation<*>
     }
 

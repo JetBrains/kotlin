@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo.KPM
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForExecution
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.version
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
@@ -425,11 +423,8 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
                 project.project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(compileTaskProvider)
             }
-            val shouldAddCompileOutputsToElements =
-                (compilationInfo is KPM && compilationInfo.compilationData.owner is GradleKpmVariant) ||
-                        compilationInfo.isMain
 
-
+            val shouldAddCompileOutputsToElements = compilationInfo.isMain
             if (shouldAddCompileOutputsToElements) {
                 createRegularKlibArtifact(compilationInfo, konanTarget, compileTaskProvider)
             }
@@ -484,7 +479,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             }
 
             val apiElementsName = when (compilationInfo) {
-                is KPM -> (compilationInfo.compilationData.owner as GradleKpmVariant).apiElementsConfiguration.name
                 is KotlinCompilationInfo.TCS -> compilationInfo.compilation.target.apiElementsConfigurationName
             }
 

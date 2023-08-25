@@ -239,17 +239,6 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     }
 
     @Test
-    fun `test - is automatically executed when android plugin is applied - kpm plugin`() {
-        val project = buildProjectWithKPM { }
-        val executedProjectPaths = project.getOrPutRootProjectProperty(PROPERTY_KEY_EXECUTED_PROJECT_PATHS) { mutableSetOf<String>() }
-        if (executedProjectPaths.isNotEmpty()) fail("Expected 'executed' project paths to be empty")
-        project.plugins.apply(LibraryPlugin::class.java)
-
-        /* Expect project was checked */
-        assertEquals(setOf(project.path), executedProjectPaths)
-    }
-
-    @Test
     fun `test - is not executed when android plugin is applied - kotlin-android plugin`() {
         val project = ProjectBuilder.builder().build()
         addBuildEventsListenerRegistryMock(project)

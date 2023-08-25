@@ -54,7 +54,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
             // Related commit into Gradle: https://github.com/gradle/gradle/commit/758adc5b0c5a5d27e2797a9fa8fd2690530c5de9
             // Proper workaround is peeked from here:
             // https://github.com/gradle/gradle/blob/16cbc3a678771b08418d086eb67e9934c9282dfb/subprojects/plugins/src/main/java/org/gradle/api/plugins/internal/JvmPluginsHelper.java#L142-L148
-            if (compilationInfo.tcsOrNull?.compilation is KotlinWithJavaCompilation<*, *>) {
+            if (compilationInfo.tcs.compilation is KotlinWithJavaCompilation<*, *>) {
                 val kotlinSourceDirectorySet = compilationInfo.tcs.compilation.defaultSourceSet.kotlin
                 kotlinSourceDirectorySet.destinationDirectory.value(defaultKotlinDestinationDir)
                 task.configure {
@@ -93,7 +93,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     override fun run() {
         doTargetSpecificProcessing()
 
-        if (compilationInfo.tcsOrNull?.compilation is KotlinWithJavaCompilation<*, *>) {
+        if (compilationInfo.tcs.compilation is KotlinWithJavaCompilation<*, *>) {
             project.launch { addKotlinDirectoriesToJavaSourceSet() }
             createAdditionalClassesTaskForIdeRunner()
         }
@@ -113,7 +113,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 
 
     private fun createAdditionalClassesTaskForIdeRunner() {
-        val kotlinCompilation = compilationInfo.tcsOrNull?.compilation ?: return
+        val kotlinCompilation = compilationInfo.tcs.compilation
 
         @DisableCachingByDefault(because = "Marker task for IDE sync")
         open class IDEClassesTask : DefaultTask()

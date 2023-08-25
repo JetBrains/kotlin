@@ -20,10 +20,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_INTRANSITIVE_METADATA_CONFIGURATION
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.getExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionImpl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifactsExtension
-import org.jetbrains.kotlin.gradle.unitTests.kpm.applyKpmPlugin
 
 fun buildProject(
     projectBuilder: ProjectBuilder.() -> Unit = { },
@@ -45,11 +43,6 @@ fun buildProjectWithMPP(
     preApplyCode()
     project.applyMultiplatformPlugin()
     disableLegacyWarning(project)
-    code()
-}
-
-fun buildProjectWithKPM(projectBuilder: ProjectBuilder.() -> Unit = { }, code: Project.() -> Unit= {}) = buildProject(projectBuilder) {
-    project.applyKpmPlugin()
     code()
 }
 
@@ -96,11 +89,6 @@ fun Project.androidApplication(code: ApplicationExtension.() -> Unit) {
     plugins.findPlugin("com.android.application") ?: plugins.apply("com.android.application")
     val androidExtension = project.extensions.getByName("android") as ApplicationExtension
     androidExtension.code()
-}
-
-fun Project.projectModel(code: KotlinPm20ProjectExtension.() -> Unit) {
-    val extension = project.extensions.getByType(KotlinPm20ProjectExtension::class.java)
-    extension.code()
 }
 
 fun Project.applyMultiplatformPlugin(): KotlinMultiplatformExtension {

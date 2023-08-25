@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 
 internal class KotlinCompileCommonConfig(
@@ -17,8 +16,7 @@ internal class KotlinCompileCommonConfig(
         configureTask { task ->
             task.expectActualLinker.value(
                 providers.provider {
-                    (compilationInfo.origin as? KotlinCommonCompilation)?.isKlibCompilation == true ||
-                            compilationInfo.origin is GradleKpmMetadataCompilationData<*>
+                    (compilationInfo.origin as? KotlinCommonCompilation)?.isKlibCompilation == true
                 }
             ).disallowChanges()
             task.refinesMetadataPaths.from(compilationInfo.refinesPaths).disallowChanges()

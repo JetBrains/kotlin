@@ -15,7 +15,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
@@ -222,40 +221,6 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
         },
         isPublishedAsRoot = true,
         sourceSetNames = sourceSetsWithMetadataCompilations.keys.map { it.name }.toSet(),
-    )
-}
-
-internal fun buildProjectStructureMetadata(module: GradleKpmModule): KotlinProjectStructureMetadata {
-    val kotlinVariantToGradleVariantNames = module.variants.associate { it.name to it.gradleVariantNames }
-
-    fun <T> expandVariantKeys(map: Map<String, T>) =
-        map.entries.flatMap { (key, value) ->
-            kotlinVariantToGradleVariantNames[key].orEmpty().plus(key).map { it to value }
-        }.toMap()
-
-    val kotlinFragmentsPerKotlinVariant =
-        module.variants.associate { variant -> variant.name to variant.withRefinesClosure.map { it.name }.toSet() }
-    val fragmentRefinesRelation =
-        module.fragments.associate { it.name to it.declaredRefinesDependencies.map { it.fragmentName }.toSet() }
-
-    // FIXME: support native implementation-as-api-dependencies
-    // FIXME: support dependencies on auxiliary modules
-    val fragmentDependencies =
-        module.fragments.associate { fragment ->
-            fragment.name to fragment.declaredModuleDependencies.map {
-                ModuleIds.lossyFromModuleIdentifier(module.project, it.moduleIdentifier)
-            }.toSet()
-        }
-
-    return KotlinProjectStructureMetadata(
-        sourceSetNamesByVariantName = expandVariantKeys(kotlinFragmentsPerKotlinVariant),
-        sourceSetsDependsOnRelation = fragmentRefinesRelation,
-        sourceSetBinaryLayout = module.fragments.associate { it.name to SourceSetMetadataLayout.KLIB },
-        sourceSetModuleDependencies = fragmentDependencies,
-        sourceSetCInteropMetadataDirectory = emptyMap(), // Not supported yet
-        hostSpecificSourceSets = module.project.future { getHostSpecificFragments(module).mapTo(mutableSetOf()) { it.name } }.getOrThrow(),
-        isPublishedAsRoot = true,
-        sourceSetNames = module.fragments.map { it.name }.toSet()
     )
 }
 

@@ -8,8 +8,8 @@
 package org.jetbrains.kotlin.gradle.regressionTests
 
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.targets
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
+import org.jetbrains.kotlin.gradle.utils.targets
 import kotlin.test.Test
 
 class KotlinJvmFunctionalTest {

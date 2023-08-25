@@ -18,8 +18,6 @@ import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings.IncludeDirectories
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeVariantCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -153,26 +151,6 @@ internal class DefaultCInteropSettingsFactory(private val compilation: KotlinCom
                 compilation.name.takeIf { it != "main" }.orEmpty(),
                 name,
                 compilation.target.disambiguationClassifier
-            ),
-            services = compilation.project.objects.newInstance()
-        )
-
-        return compilation.project.objects.newInstance(params)
-    }
-}
-
-internal class GradleKpmDefaultCInteropSettingsFactory(private val compilation: GradleKpmNativeVariantCompilationData) :
-    NamedDomainObjectFactory<DefaultCInteropSettings> {
-    override fun create(name: String): DefaultCInteropSettings {
-        val params = DefaultCInteropSettings.Params(
-            name = name,
-            identifier = CInteropIdentifier(CInteropIdentifier.Scope.create(compilation), name),
-            dependencyConfigurationName = compilation.owner.disambiguateName("${name.capitalizeAsciiOnly()}CInterop"),
-            interopProcessingTaskName = lowerCamelCaseName(
-                "cinterop",
-                compilation.compilationPurpose.takeIf { it != "main" }.orEmpty(),
-                name,
-                compilation.compilationClassifier
             ),
             services = compilation.project.objects.newInstance()
         )
