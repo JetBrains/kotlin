@@ -10,6 +10,9 @@ import com.intellij.psi.*
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
@@ -73,4 +76,14 @@ internal abstract class SymbolLightParameterBase(containingDeclaration: SymbolLi
     abstract override fun hashCode(): Int
 
     abstract override fun isVarArgs(): Boolean
+
+    context(KtAnalysisSession)
+    protected fun KtType.typeMappingMode(): KtTypeMappingMode {
+        return when {
+            this@typeMappingMode.isSuspendFunctionType -> KtTypeMappingMode.DEFAULT
+            // TODO: extract type mapping mode from annotation?
+            // TODO: methods with declaration site wildcards?
+            else -> KtTypeMappingMode.VALUE_PARAMETER
+        }
+    }
 }

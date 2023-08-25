@@ -87,7 +87,11 @@ internal class SymbolLightParameterForReceiver private constructor(
     private val _type: PsiType by lazyPub {
         withReceiverSymbol { receiver ->
             val ktType = receiver.type
-            val psiType = ktType.asPsiTypeElement(this, allowErrorTypes = true)?.let {
+            val psiType = ktType.asPsiTypeElement(
+                this,
+                allowErrorTypes = true,
+                ktType.typeMappingMode()
+            )?.let {
                 annotateByKtType(it.type, ktType, it, modifierList)
             }
             if (method is SymbolLightAnnotationsMethod) {

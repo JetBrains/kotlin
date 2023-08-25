@@ -22,7 +22,12 @@ internal class SymbolLightParameterForDefaultImplsReceiver(containingDeclaration
     SymbolLightParameterBase(containingDeclaration) {
     private val _type by lazyPub {
         (method.containingClass.containingClass as SymbolLightClassForInterface).withClassOrObjectSymbol {
-            it.buildSelfClassType().asPsiType(containingDeclaration, allowErrorTypes = true) ?: nonExistentType()
+            val ktType = it.buildSelfClassType()
+            ktType.asPsiType(
+                containingDeclaration,
+                allowErrorTypes = true,
+                ktType.typeMappingMode()
+            ) ?: nonExistentType()
         }
     }
 
