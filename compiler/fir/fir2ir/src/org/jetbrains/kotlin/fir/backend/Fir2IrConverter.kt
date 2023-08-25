@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.Fir2IrConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
-import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -548,46 +547,21 @@ class Fir2IrConverter(
             session.lazyDeclarationResolver.disableLazyResolveContractChecks()
             val moduleDescriptor = FirModuleDescriptor(session, kotlinBuiltIns)
             val components = Fir2IrComponentsStorage(
-                session,
-                scopeSession,
-                commonMemberStorage.symbolTable,
-                irFactory,
-                commonMemberStorage.firSignatureComposer,
-                fir2IrExtensions,
-                fir2IrConfiguration,
+                session, scopeSession, irFactory, fir2IrExtensions, fir2IrConfiguration, visibilityConverter,
+                moduleDescriptor, commonMemberStorage, irMangler, specialSymbolProvider, initializedIrBuiltIns
             )
-            val converter = Fir2IrConverter(moduleDescriptor, components)
-
-            components.converter = converter
-            components.classifierStorage = Fir2IrClassifierStorage(components, commonMemberStorage)
-            components.delegatedMemberGenerator = DelegatedMemberGenerator(components)
-            components.declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor, commonMemberStorage)
-            components.visibilityConverter = visibilityConverter
-            components.typeConverter = Fir2IrTypeConverter(components)
-            val irBuiltIns = initializedIrBuiltIns ?: IrBuiltInsOverFir(
-                components, fir2IrConfiguration.languageVersionSettings, moduleDescriptor, irMangler
-            )
-            components.irBuiltIns = irBuiltIns
-            val conversionScope = Fir2IrConversionScope(components.configuration)
-            val fir2irVisitor = Fir2IrVisitor(components, conversionScope)
-            components.builtIns = Fir2IrBuiltIns(components, specialSymbolProvider)
-            components.annotationGenerator = AnnotationGenerator(components)
-            components.fakeOverrideGenerator = FakeOverrideGenerator(components, conversionScope)
-            components.callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
-            components.irProviders = listOf(FirIrProvider(components))
-            components.annotationsFromPluginRegistrar = Fir2IrAnnotationsFromPluginRegistrar(components)
 
             fir2IrExtensions.registerDeclarations(commonMemberStorage.symbolTable)
 
-            val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltIns)
+            val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, components.irBuiltIns)
 
             val allFirFiles = buildList {
                 addAll(firFiles)
                 addAll(session.createFilesWithGeneratedDeclarations())
             }
 
-            converter.runSourcesConversion(
-                allFirFiles, irModuleFragment, fir2irVisitor, runPreCacheBuiltinClasses = initializedIrBuiltIns == null
+            components.converter.runSourcesConversion(
+                allFirFiles, irModuleFragment, components.fir2IrVisitor, runPreCacheBuiltinClasses = initializedIrBuiltIns == null
             )
 
             return Fir2IrResult(irModuleFragment, components, moduleDescriptor)
