@@ -194,6 +194,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             UnameExecutor.UnameExecutorVariantFactory::class,
             DefaultUnameExecutorVariantFactory()
         )
+
+        factories.putIfAbsent(
+            ConfigurationCacheStartParameterAccessor.Factory::class,
+            DefaultConfigurationCacheStartParameterAccessorVariantFactory()
+        )
     }
 
     protected fun setupAttributeMatchingStrategy(
