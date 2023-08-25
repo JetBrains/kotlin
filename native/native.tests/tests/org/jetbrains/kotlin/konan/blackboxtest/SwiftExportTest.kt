@@ -38,4 +38,9 @@ class SwiftExportTest : AbstractNativeSwiftExportTest() {
         runTest(testDir.absolutePath)
     }
 
+    @Test
+    fun namespacing() {
+        val testDir = File("native/native.tests/testData/SwiftExport/namespacing")
+        runTest(testDir.absolutePath)
+    }
 }

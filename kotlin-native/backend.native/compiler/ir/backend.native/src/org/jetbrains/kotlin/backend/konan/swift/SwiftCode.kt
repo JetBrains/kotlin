@@ -29,7 +29,7 @@ sealed interface SwiftCode {
 
         val String.identifier get() = Expression.Identifier(this)
 
-        val String.type get() = Type.Nominal(this)
+        val String.type get() = Type.Named(this)
 
         val String.literal get() = Expression.StringLiteral(this)
 
@@ -243,6 +243,35 @@ sealed interface SwiftCode {
                         listOfNotNull(get, set).takeIf { it.isNotEmpty() }
                                 ?.joinToString(separator = "\n") { it.render() }
                                 ?.let { " {\n${it.prependIndent(DEFAULT_INDENT)}\n}" }
+                ).joinToString(separator = "")
+            }
+        }
+
+        data class Enum(
+                val name: String,
+                val genericTypes: List<GenericParameter> = emptyList(),
+                val inheritedTypes: List<Type.Nominal> = emptyList(),
+                val genericTypeConstraints: List<GenericConstraint> = emptyList(),
+                override val attributes: List<Attribute> = emptyList(),
+                override val visibility: Visibility = Visibility.INTERNAL,
+                val block: DeclarationsBlock,
+        ) : Declaration {
+            class Builder(
+                    var statements: MutableList<Statement> = mutableListOf()
+            ) : StatementsBuilder, DeclarationsBuilder {
+                override fun <T : Declaration> T.unaryPlus(): T = also { this@Builder.statements.add(this) }
+                override fun <T : Statement> T.unaryPlus() = also { this@Builder.statements.add(it) }
+            }
+
+            override fun render(): String {
+                listOfNotNull(
+                        attributes.render(),
+                        visibility.renderAsPrefix(),
+                        name,
+                        genericTypes.render(),
+                        inheritedTypes.takeIf { it.isNotEmpty() }?.joinToString(separator = " & ") { it.render() }?.let { ": $it" },
+                        genericTypeConstraints.takeIf { it.isNotEmpty() }?.render()?.let { "\n$it" },
+                        block.renderAsBlock()
                 ).joinToString(separator = "")
             }
         }
@@ -498,13 +527,14 @@ sealed interface SwiftCode {
     }
 
     sealed interface Type : FunctionArgumentType {
+        sealed interface Nominal: Type
         sealed interface PossiblyGeneric : Type
 
-        data class Nominal(val name: String) : PossiblyGeneric {
+        data class Named(val name: String) : Nominal, PossiblyGeneric {
             override fun render(): String = name
         }
 
-        data class Nested(val receiver: Type?, val name: String) : PossiblyGeneric {
+        data class Nested(val receiver: Type?, val name: String) : Nominal, PossiblyGeneric {
             override fun render(): String {
                 val receiver = receiver?.render() ?: ""
                 val name = name.escapeIdentifierIfNeeded()
@@ -512,7 +542,7 @@ sealed interface SwiftCode {
             }
         }
 
-        data class GenericInstantiation(val target: PossiblyGeneric, val arguments: List<Type>) : Type {
+        data class GenericInstantiation(val target: PossiblyGeneric, val arguments: List<Type>) : Nominal {
             override fun render(): String = target.render() + arguments.render()
         }
 
@@ -541,7 +571,7 @@ sealed interface SwiftCode {
         data class Function(val arguments: List<Type> = emptyList(), val result: Type?) : Type {
             override fun render(): String {
                 val arguments = arguments.joinToString(separator = ", ") { it.render() }
-                val result = (result ?: Nominal("Swift.Void")).render()
+                val result = (result ?: Named("Swift.Void")).render()
                 return "($arguments) -> $result"
             }
         }
@@ -609,22 +639,34 @@ sealed interface SwiftCode {
     }
 
     class CodeBlock(val statements: List<Statement>) : SwiftCode {
-        class Builder(
-                var statements: MutableList<Statement> = mutableListOf()
-        ) : StatementsBuilder, DeclarationsBuilder {
+        private class Builder(var statements: MutableList<Statement> = mutableListOf()) : StatementsBuilder, DeclarationsBuilder {
             override fun <T : Declaration> T.unaryPlus(): T = also { this@Builder.statements.add(this) }
-
             override fun <T : Statement> T.unaryPlus() = also { this@Builder.statements.add(it) }
         }
 
-        constructor(block: Builder.() -> Unit) : this(Builder().apply(block).statements.toList())
+        constructor(block: StatementsBuilder.() -> Unit) : this(Builder().apply(block).statements.toList())
 
         override fun render(): String = statements.joinToString(separator = "\n") { it.render() }
 
         fun renderAsBlock() = render().prependIndent(DEFAULT_INDENT).let { "{\n$it\n}" }
 
-        val block: Builder.() -> Unit get() = { this@CodeBlock.statements.forEach { +it } }
+        val block: StatementsBuilder.() -> Unit get() = { this@CodeBlock.statements.forEach { +it } }
     }
+
+    class DeclarationsBlock(val declarations: List<Declaration>) : SwiftCode {
+        class Builder(var declarations: MutableList<Declaration> = mutableListOf()) : DeclarationsBuilder {
+            override fun <T : Declaration> T.unaryPlus(): T = also { this@Builder.declarations.add(this) }
+        }
+
+        constructor(block: DeclarationsBuilder.() -> Unit) : this(Builder().apply(block).declarations.toList())
+
+        override fun render(): String = declarations.joinToString(separator = "\n") { it.render() }
+
+        fun renderAsBlock() = render().prependIndent(DEFAULT_INDENT).let { "{\n$it\n}" }
+
+        val block: Builder.() -> Unit get() = { this@DeclarationsBlock.declarations.forEach { +it } }
+    }
+
 
     data class Attribute(val name: String, val arguments: List<Argument>? = null) : SwiftCode {
         override fun render(): String {
@@ -688,7 +730,7 @@ private fun List<SwiftCode.Type>.render() = takeIf { it.isNotEmpty() }?.joinToSt
 private fun List<SwiftCode.GenericParameter>.render() = takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") { it.render() } ?: ""
 
 @JvmName("renderAsGenericWhereClause")
-private fun List<SwiftCode.GenericConstraint>.render() = joinToString(prefix = "where ") { it.render() }
+private fun List<SwiftCode.GenericConstraint>.render() = takeIf { it.isNotEmpty() }?.joinToString(prefix = "where ") { it.render() } ?: ""
 
 @JvmName("renderAsCaptureList")
 private fun List<SwiftCode.Expression.Closure.Capture>.render() = takeIf { it.isNotEmpty() }?.joinToString(prefix = "[", postfix = "]") { it.render() } ?: ""
@@ -800,21 +842,21 @@ fun SwiftCode.Builder.let(
 
 fun SwiftCode.Builder.willSet(
         arg: String? = null,
-        body: SwiftCode.CodeBlock.Builder.() -> Unit
+        body: SwiftCode.StatementsBuilder.() -> Unit
 ) = SwiftCode.Declaration.StoredVariable.Observer("willSet", argumentName = arg, SwiftCode.CodeBlock(body))
 
 fun SwiftCode.Builder.didSet(
         arg: String? = null,
-        body: SwiftCode.CodeBlock.Builder.() -> Unit
+        body: SwiftCode.StatementsBuilder.() -> Unit
 ) = SwiftCode.Declaration.StoredVariable.Observer("didSet", argumentName = arg, SwiftCode.CodeBlock(body))
 
 fun SwiftCode.Builder.get(
-        body: SwiftCode.CodeBlock.Builder.() -> Unit
+        body: SwiftCode.StatementsBuilder.() -> Unit
 ) = SwiftCode.Declaration.ComputedVariable.Accessor("get", argumentName = null, SwiftCode.CodeBlock(body))
 
 fun SwiftCode.Builder.set(
         arg: String? = null,
-        body: SwiftCode.CodeBlock.Builder.() -> Unit
+        body: SwiftCode.StatementsBuilder.() -> Unit
 ) = SwiftCode.Declaration.ComputedVariable.Accessor("set", argumentName = arg, SwiftCode.CodeBlock(body))
 
 fun SwiftCode.Type.isEqualTo(type: SwiftCode.Type) = SwiftCode.GenericConstraint(this, type, isExact = true)
@@ -906,11 +948,11 @@ fun SwiftCode.Builder.capture(
 
 //region Types
 
-val SwiftCode.Builder.any: SwiftCode.Type.Nominal get() = "Any".type
+val SwiftCode.Builder.any: SwiftCode.Type.Named get() = "Any".type
 
-val SwiftCode.Builder.anyObject: SwiftCode.Type.Nominal get() = "AnyObject".type
+val SwiftCode.Builder.anyObject: SwiftCode.Type.Named get() = "AnyObject".type
 
-val SwiftCode.Builder.self: SwiftCode.Type.Nominal get() = "Self".type
+val SwiftCode.Builder.self: SwiftCode.Type.Named get() = "Self".type
 
 val SwiftCode.Type.metatype: SwiftCode.Type.Metatype get() = SwiftCode.Type.Metatype(this)
 

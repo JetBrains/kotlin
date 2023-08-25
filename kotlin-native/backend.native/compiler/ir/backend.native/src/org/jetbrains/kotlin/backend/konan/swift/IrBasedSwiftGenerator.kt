@@ -178,26 +178,35 @@ class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVo
         }
     }
 
-    private data class Names(val swift: String, val c: String, val symbol: String) {
+    private data class Names(val swift: String, val c: String, val path: List<String>, val symbol: String) {
         companion object {
             operator fun invoke(declaration: IrFunction): Names {
-                val property = declaration.propertyIfAccessor.takeIf { declaration.isPropertyAccessor }
+                val symbolName = "_" + with(KonanBinaryInterface) { declaration.symbolName }
+                val path: List<String>
+                val cName: String
+                val swiftName: String
 
-                val name = when {
-                    property != null -> property.getNameWithAssert().identifier.let { identifier ->
+                val property = declaration.propertyIfAccessor.takeIf { declaration.isPropertyAccessor }
+                when {
+                    property != null -> {
+                        swiftName = property.getNameWithAssert().identifier
+                        path = property.parent.kotlinFqName.pathSegments().map { it.identifier }
+                        val pathString = path.joinToString(separator = "_")
                         when {
-                            declaration.isGetter -> "get_${identifier}"
-                            declaration.isSetter -> "set_${identifier}"
-                            else -> error("A property accessor is expected to either be setter or getter")
+                            declaration.isGetter -> cName = "__kn_get_$pathString"
+                            declaration.isSetter -> cName = "__kn_set_$pathString"
+                            else -> error("A property accessor is expected to either be a setter or getter")
                         }
                     }
-                    else -> declaration.name.identifier
+                    else -> {
+                        swiftName = declaration.name.identifier
+                        path = declaration.kotlinFqName.pathSegments().map { it.identifier }
+                        val pathString = path.joinToString(separator = "_")
+                        cName = "__kn_$pathString"
+                    }
                 }
 
-                val cName = "__kn_${name}"
-                val symbolName = "_" + with(KonanBinaryInterface) { declaration.symbolName }
-
-                return Names(name, cName, symbolName)
+                return Names(swiftName, cName, listOf("Kotlin") + path.dropLast(1), symbolName)
             }
         }
     }
