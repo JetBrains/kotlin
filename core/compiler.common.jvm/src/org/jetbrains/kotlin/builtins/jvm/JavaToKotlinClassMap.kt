@@ -150,7 +150,9 @@ object JavaToKotlinClassMap {
     }
 
     private fun isKotlinFunctionWithBigArity(kotlinFqName: FqNameUnsafe, prefix: String): Boolean {
-        val arityString = kotlinFqName.asString().substringAfter(prefix, "")
+        val fqNameAsString = kotlinFqName.asString()
+        if (!fqNameAsString.startsWith(prefix)) return false
+        val arityString = fqNameAsString.substring(prefix.length)
         if (arityString.isNotEmpty() && !arityString.startsWith('0')) {
             val arity = arityString.toIntOrNull()
             return arity != null && arity >= BuiltInFunctionArity.BIG_ARITY
