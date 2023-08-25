@@ -68,6 +68,7 @@ object RangeOps : TemplateGroupBase() {
     } builder {
         infix(true)
         doc { "Returns a progression that goes over the same range with the given step." }
+        sample("samples.ranges.Ranges.step$primitive")
         signature("step(step: ${primitive!!.stepType})", notForSorting = true)
         returns("TProgression")
         body {
