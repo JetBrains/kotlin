@@ -34,14 +34,6 @@ val generateAbstractKotlinArtifactsExtensionImplementation by generator(
     setOutputSourceRoot()
 }
 
-val generateKpmNativeVariants by generator(
-    "org.jetbrains.kotlin.generators.gradle.dsl.KpmNativeVariantCodegenKt",
-    sourceSets["main"]
-) {
-    group = generateGroupName
-    setOutputSourceRoot()
-}
-
 fun JavaExec.setOutputSourceRoot() {
     systemProperty(
         "org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot",
