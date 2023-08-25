@@ -13,7 +13,7 @@
 # Args:
 # 1. Platform name: ios, tvos, osx or watchos
 # 2. Path to Kotlin/Native sources.
-set -e
+set -xe
 
 NATIVE_SRCDIR=$2
 

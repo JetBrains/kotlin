@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlinx.cinterop.allocArrayOf
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.reinterpret
+import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -15,6 +13,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.isTypeParameter
@@ -63,6 +62,12 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
     val compilationUnit: DIScopeOpaqueRef
     val module: DIModuleRef
     val objHeaderPointerType: DITypeOpaqueRef
+
+//    val stringPointerType: DITypeOpaqueRef
+//    val a: Any
+//    val b: Any
+//    val c: Any
+//    val d: Any
 
     init {
         val path = generationState.outputFile.toFileAndFolder(config)
@@ -130,6 +135,97 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
                 refPlace = null
         )!!.reinterpret()
         objHeaderPointerType = dwarfPointerType(objHeaderType)
+
+//        DICreateStructType(
+//            refBuilder = builder,
+//            // TODO: here should be DIFile as scope.
+//            scope = null,
+//            name = "StringHeader",
+//            file = null,
+//            lineNumber = 0,
+//            sizeInBits = 0,
+//            alignInBits = 0,
+//            flags = DWARF.flagsForwardDeclaration,
+//            derivedFrom = objHeaderType,
+//            elements = null,
+//            elementsCount = 0,
+//            refPlace = null
+//        )
+//        DICreate
+//        DI
+
+//        val array
+//        DICreateReferenceType()
+
+//        val typePointer = DICreatePointerType(builder, objHeaderType)!!
+//        val charactersCount = DICreateBasicType(builder, "CharCounter", 64, 64, 0x07 /* DW_ATE_unsigned */)!!
+//        val arrayTypePointer: DICompositeTypeRef = DICreateArrayType(
+//            builder,
+//            42 * 2,
+//            64,
+//            DICreateBasicType(
+//                builder,
+//                "Kotlin-Utf16-Char",
+//                16,
+//                16,
+//                0x10,
+//            )!!.reinterpret(),
+//            42
+//        )!!
+//        a = typePointer
+//        b = charactersCount
+//        c = arrayTypePointer
+//
+//        val foo: CValuesRef<DIDerivedTypeRefVar> = createValues(
+//            3
+//        ) {
+//            this.value = when (it) {
+//                0 -> typePointer.reinterpret()
+//                1 -> charactersCount.reinterpret()
+//                2 -> arrayTypePointer.reinterpret()
+//                else -> kotlin.error("What??")
+//            }
+//        }
+//
+//        d = foo
+//        create
+
+//        val stringType: DITypeOpaqueRef = DICreateStructType(
+//            refBuilder = builder,
+//            scope = null,
+//            name = "StringHeader",
+//            file = null,
+//            lineNumber = 0,
+//            sizeInBits = 64 * 2 + 42 * 2,
+//            alignInBits = 64,
+//            flags = 0,
+//            derivedFrom = objHeaderType,
+//            elements = foo,
+//            elementsCount = 3,
+//            refPlace = null
+//        )!!.reinterpret()
+
+//        CValuesRef<DIDerivedTypeRefVar>
+
+
+//        val stringType: DITypeOpaqueRef = DICreateBasicType(
+//            builder = builder,
+//            name = "KotlinString",
+////            file = null,
+////            lineNumber = 0,
+////            DwarfTag.DW_TAG_base_type
+//            alignment = 8,
+//            sizeInBits = 16,
+//            // DW_ATE_UTF
+//            encoding = 0x10,
+////            alignInBits = 0,
+////            flags = DWARF.flagsForwardDeclaration,
+////            derivedFrom = null,
+////            elements = null,
+////            elementsCount = 0,
+////            refPlace = null
+//        )!!.reinterpret()
+//        stringPointerType = dwarfPointerType(stringType)
     }
 
     val files = mutableMapOf<String, DIFileRef>()
@@ -211,7 +307,7 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
     private fun IrType.dwarfType(targetData: LLVMTargetDataRef) = when {
         this.computePrimitiveBinaryTypeOrNull() != null ->
             debugInfoBaseType(targetData, render(), llvmType(), encoding().value.toInt())
-
+//        classFqName?.toString() == "kotlin.String" -> stringPointerType
         classOrNull != null || isTypeParameter() -> objHeaderPointerType
         else -> TODO("$this: Does this case really exist?")
     }

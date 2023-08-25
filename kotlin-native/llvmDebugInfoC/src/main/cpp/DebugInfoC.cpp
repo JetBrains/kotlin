@@ -43,6 +43,7 @@ DEFINE_SIMPLE_CONVERSION_FUNCTIONS(DISubprogram,     DISubprogramRef)
 DEFINE_SIMPLE_CONVERSION_FUNCTIONS(DILocation,       DILocationRef)
 DEFINE_SIMPLE_CONVERSION_FUNCTIONS(DILocalVariable,  DILocalVariableRef)
 DEFINE_SIMPLE_CONVERSION_FUNCTIONS(DIExpression,     DIExpressionRef)
+//DEFINE_SIMPLE_CONVERSION_FUNCTIONS(DINodeArray,      DINodeArray)
 
 // from Module.cpp
 //DEFINE_SIMPLE_CONVERSION_FUNCTIONS(Module,        LLVMModuleRef)
@@ -147,7 +148,41 @@ DICompositeTypeRef DICreateStructType(DIBuilderRef refBuilder,
     builder->replaceTemporary(llvm::TempDIType(tmp), tmp);
     builder->retainType(tmp);
     return llvm::wrap(tmp);
+  } else {
+      std::vector<llvm::Metadata *> nodesArray;
+//      auto foo = llvm::ArrayRef<llvm::Metadata>(elements, 3)
+      for (int i = 0; i != elementsCount; ++i) {
+          nodesArray.push_back(llvm::unwrap(elements[i]));
+      }
+      auto tmp = builder->createStructType(
+              llvm::unwrap(scope), name, llvm::unwrap(file), lineNumber, sizeInBits, alignInBits,
+              llvm::DINode::FlagZero,
+              nullptr, builder->getOrCreateArray(nodesArray)
+     );
+      builder->retainType(tmp);
+      return llvm::wrap(tmp);
   }
+//  else {
+//      builder->createArrayType()
+////      auto expr = builder->createExpression();
+////      auto expr = builder->createAutoVariable();
+////      builder->createReplaceableCompositeType(
+////              llvm::dwarf::DW_TAG_string_type, name,
+////          )
+////      DICompositeType
+//        builder
+////        builder->createExpression();
+////        builder->getOrCreateSubrange(0, );
+////      builder->createArrayType()
+////      expr->
+////      builder->createArrayType()
+//
+//    auto tmp = builder->createStructType(
+//        llvm::dwarf::DW_TAG_structure_type, name,
+//        llvm::unwrap(file), lineNumber, sizeInBits,
+//        alignInBits, (llvm::DINode::DIFlags)flags, derivedFrom, elements
+//    );
+//  }
   assert(false);
   return nullptr;
 }

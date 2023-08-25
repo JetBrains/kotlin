@@ -4,7 +4,7 @@ set -xueo pipefail
 
 kotlin-native/dist/bin/generate-platform -t macos_arm64 -k dynamic_cache -c kotlin-native/dist/klib/cache/macos_arm64-gDYNAMIC
 
-exit 0
+#exit 0
 
 kotlin-native/dist/bin/generate-platform -t macos_x64 -k dynamic_cache -c kotlin-native/dist/klib/cache/macos_x64-gDYNAMIC
 kotlin-native/dist/bin/generate-platform -t macos_arm64 -k dynamic_cache -c kotlin-native/dist/klib/cache/macos_arm64-gDYNAMIC

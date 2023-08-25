@@ -68,7 +68,6 @@ private class CInteropOptions(val additionalArguments: List<String>)
 
 // TODO: Use Distribution's paths after compiler update.
 fun generatePlatformLibraries(args: Array<String>) = usingNativeMemoryAllocator {
-    error("Oops")
     // IMPORTANT! These command line keys are used by the Gradle plugin to configure platform libraries generation,
     // so any changes in them must be reflected at the Gradle plugin side too.
     // See org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator in the Big Kotlin repo.
