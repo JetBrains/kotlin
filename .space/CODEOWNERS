@@ -318,8 +318,6 @@
 /libraries/tools/kotlin-osgi-bundle/ "Kotlin Build Tools"
 /libraries/tools/kotlin-noarg/ "Kotlin Build Tools"
 /libraries/tools/kotlin-prepush-hook/ "Kotlin Build Infrastructure"
-/libraries/tools/kotlin-project-model/ "Kotlin Multiplatform"
-/libraries/tools/kotlin-project-model-tests-generator/ "Kotlin Multiplatform"
 /libraries/tools/kotlin-sam-with-receiver/ "Kotlin Build Tools"
 /libraries/tools/kotlin-script-util/ "Kotlin Compiler Core"
 /libraries/tools/kotlin-serialization/ "Kotlin Build Tools"

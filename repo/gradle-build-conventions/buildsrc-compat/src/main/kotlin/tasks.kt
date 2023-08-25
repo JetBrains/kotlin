@@ -47,7 +47,6 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-compiler-runner",
     ":kotlin-daemon-embeddable",
     ":kotlin-daemon-client",
-    ":kotlin-project-model",
     ":kotlin-gradle-plugins-bom",
     ":kotlin-gradle-plugin-api",
     ":kotlin-gradle-plugin-annotations",
