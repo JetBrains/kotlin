@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -135,7 +135,7 @@ fun IrElement.replaceThisByStaticReference(
     irClass: IrClass,
     oldThisReceiverParameter: IrValueParameter
 ) {
-    transformChildrenVoid(object : IrElementTransformerVoid() {
+    transformChildrenVoid(object : IrElementTransformerVoidShallow() {
         override fun visitGetValue(expression: IrGetValue): IrExpression =
             if (expression.symbol == oldThisReceiverParameter.symbol) {
                 IrGetFieldImpl(
