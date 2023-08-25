@@ -242,6 +242,9 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 |        macos64Main {
                 |            languageSettings.optIn("my.custom.OptInAnnotation")
                 |        }
+                |        macosArm64Main {
+                |            languageSettings.optIn("my.custom.OptInAnnotation")
+                |        }
                 |    }
                 |}
                 |

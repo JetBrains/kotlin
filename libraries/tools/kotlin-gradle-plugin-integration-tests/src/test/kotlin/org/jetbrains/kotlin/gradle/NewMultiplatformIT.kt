@@ -777,6 +777,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                     |kotlin.sourceSets.nativeMain.${initialSetupForSourceSets}
                     |kotlin.sourceSets.linux64Main.${initialSetupForSourceSets}
                     |kotlin.sourceSets.macos64Main.${initialSetupForSourceSets}
+                    |kotlin.sourceSets.macosArm64Main.${initialSetupForSourceSets}
                     |kotlin.sourceSets.jvm6Main.${initialSetupForSourceSets}
                     |kotlin.sourceSets.mingw64Main.${initialSetupForSourceSets}
                     |kotlin.sourceSets.nodeJsMain.${initialSetupForSourceSets}
@@ -795,6 +796,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 |kotlin.sourceSets.nativeMain.${sourceSetConfigurationChange}
                 |kotlin.sourceSets.linux64Main.${sourceSetConfigurationChange}
                 |kotlin.sourceSets.macos64Main.${sourceSetConfigurationChange}
+                |kotlin.sourceSets.macosArm64Main.${sourceSetConfigurationChange}
                 |kotlin.sourceSets.jvm6Main.${sourceSetConfigurationChange}
                 |kotlin.sourceSets.mingw64Main.${sourceSetConfigurationChange}
                 |kotlin.sourceSets.nodeJsMain.${sourceSetConfigurationChange}
@@ -1426,7 +1428,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
             }
 
             val expectedDefaultSourceSets = listOf(
-                "jvm6", "nodeJs", "mingw64", "linux64", "macos64", "wasmJs"
+                "jvm6", "nodeJs", "mingw64", "linux64", "macos64", "macosArm64", "wasmJs"
             ).flatMapTo(mutableSetOf()) { target ->
                 listOf("main", "test").map { compilation ->
                     Triple(
