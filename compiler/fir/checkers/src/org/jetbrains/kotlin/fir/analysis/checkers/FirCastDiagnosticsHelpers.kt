@@ -128,7 +128,7 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
     }
 
     // cast between T and T? is always OK
-    if (supertype.isMarkedNullable || subtype.isMarkedNullable) {
+    if ((supertype !is ConeErrorType && supertype.isMarkedNullable) || (subtype !is ConeErrorType && subtype.isMarkedNullable)) {
         return isCastErased(
             supertype.withNullability(ConeNullability.NOT_NULL, typeContext),
             subtype.withNullability(ConeNullability.NOT_NULL, typeContext),
