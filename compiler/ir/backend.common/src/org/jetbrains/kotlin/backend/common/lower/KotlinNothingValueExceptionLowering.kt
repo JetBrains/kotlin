@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 class KotlinNothingValueExceptionLowering(
@@ -29,11 +31,8 @@ class KotlinNothingValueExceptionLowering(
         }
     }
 
-    private inner class Transformer(val parent: IrSymbol) : IrElementTransformerVoidShallow() {
+    private inner class Transformer(val parent: IrSymbol) : IrElementTransformerVoid() {
         override fun visitBody(body: IrBody): IrBody = body
-        override fun visitExpressionBody(body: IrExpressionBody) = body
-        override fun visitBlockBody(body: IrBlockBody) = body
-        override fun visitSyntheticBody(body: IrSyntheticBody) = body
 
         override fun visitCall(expression: IrCall): IrExpression =
             if (expression.type.isNothing()) {
