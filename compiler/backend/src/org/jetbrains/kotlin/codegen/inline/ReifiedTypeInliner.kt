@@ -401,7 +401,7 @@ val MethodInsnNode.reificationArgument: ReificationArgument?
 val MethodInsnNode.operationKind: ReifiedTypeInliner.OperationKind?
     get() =
         previous?.previous?.intConstant?.let {
-            ReifiedTypeInliner.OperationKind.values().getOrNull(it)
+            ReifiedTypeInliner.OperationKind.entries.getOrNull(it)
         }
 
 class TypeParameterMappings<KT : KotlinTypeMarker>(
