@@ -61,6 +61,17 @@ fun IrType.eraseTypeParameters(): IrType = when (this) {
     else -> error("Unknown IrType kind: $this")
 }
 
+fun IrType.eraseIfTypeParameter(): IrType {
+    val owner = (this as? IrSimpleType)?.classifier?.owner as? IrTypeParameter ?: return this
+    val upperBound = owner.erasedUpperBound
+    return IrSimpleTypeImpl(
+        upperBound.symbol,
+        isNullable(),
+        List(upperBound.typeParameters.size) { IrStarProjectionImpl },
+        owner.annotations
+    )
+}
+
 private fun IrTypeArgument.eraseTypeParameters(): IrTypeArgument = when (this) {
     is IrStarProjection -> this
     is IrTypeProjection -> makeTypeProjection(type.eraseTypeParameters(), variance)
