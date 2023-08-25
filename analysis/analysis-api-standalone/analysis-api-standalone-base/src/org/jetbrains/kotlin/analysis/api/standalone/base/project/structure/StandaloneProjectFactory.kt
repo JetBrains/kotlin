@@ -11,7 +11,6 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.core.CorePackageIndex
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.PluginDescriptor
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.java.source.JavaElementSource
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProvider
+import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProviderCliImpl
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.DummyFileAttributeService
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
@@ -114,7 +114,7 @@ object StandaloneProjectFactory {
                 registerService(ClsKotlinBinaryClassCache::class.java)
                 registerService(
                     BuiltInsVirtualFileProvider::class.java,
-                    BuiltInsVirtualFileProviderImp(applicationEnvironment.jarFileSystem as CoreJarFileSystem)
+                    BuiltInsVirtualFileProviderCliImpl(applicationEnvironment.jarFileSystem as CoreJarFileSystem)
                 )
                 registerService(FileAttributeService::class.java, DummyFileAttributeService::class.java)
             }
