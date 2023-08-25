@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContextShallow
 import org.jetbrains.kotlin.backend.common.ir.asInlinableFunctionReference
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.at
@@ -34,7 +35,7 @@ internal val directInvokeLowering = makeIrFilePhase(
     description = "Inline directly invoked lambdas and replace invoked function references with calls"
 )
 
-private class DirectInvokeLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+private class DirectInvokeLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContextShallow() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     override fun visitCall(expression: IrCall): IrExpression {

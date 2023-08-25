@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContextShallow
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -31,7 +32,7 @@ internal val objectClassPhase = makeIrFilePhase(
     description = "Handle object classes"
 )
 
-private class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+private class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContextShallow(), FileLoweringPass {
 
     private var pendingTransformations = mutableListOf<Function0<Unit>>()
 
