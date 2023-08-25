@@ -185,3 +185,28 @@ private fun MetaInfoHierarchySet.NodeBase.hasOverlappingChildWhere(
 
 fun Collection<ParsedCodeMetaInfo>.toMetaInfosHierarchySet() =
     MetaInfoHierarchySet().also { it.addAll(this) }
+
+@Suppress("unused")
+fun MetaInfoHierarchySet.NodeBase.render(
+    indent: String = "",
+): String = buildString {
+    if (this@render is MetaInfoHierarchySet.Node) {
+        append(metaInfo.tag)
+        append(" (")
+        append(metaInfo.start)
+        append(", ")
+        append(metaInfo.end)
+        append(")")
+    } else {
+        append("<root>")
+    }
+
+    val childRepresentations = children.map { (bound, node) ->
+        "-- $bound: " + node.render("$indent--")
+    }
+
+    if (childRepresentations.isNotEmpty()) {
+        append("\n")
+        append(childRepresentations.joinToString("\n"))
+    }
+}

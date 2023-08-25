@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.test.frontend.fir.differences.AdditionalTestFailureKind.COMPILE_TIME
 import org.jetbrains.kotlin.test.frontend.fir.differences.AdditionalTestFailureKind.RUNTIME
 import org.jetbrains.kotlin.test.util.LANGUAGE_FEATURE_PATTERN
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.IOException
 import java.io.Writer
@@ -55,6 +56,14 @@ val equivalentDiagnostics = listOf(
         "TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS",
         "AMBIGUOUS_ANNOTATION_ARGUMENT",
         "INTEGER_OPERATOR_RESOLVE_WILL_CHANGE",
+        "INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR",
+//    ),
+//    listOf(
+        "CONTRACT_NOT_ALLOWED",
+        "UNSUPPORTED",
+        "UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS",
+        "INAPPLICABLE_OPERATOR_MODIFIER",
+        "USAGE_IS_NOT_INLINABLE",
 //    ),
 //    listOf(
         "UNRESOLVED_REFERENCE_WRONG_RECEIVER",
@@ -68,10 +77,13 @@ val equivalentDiagnostics = listOf(
         "VARARG_OUTSIDE_PARENTHESES",
         "CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY",
         "DEPRECATION_ERROR",
+        "DEPRECATION",
+        "FUNCTION_CALL_EXPECTED",
         "OVERLOAD_RESOLUTION_AMBIGUITY",
         "NO_COMPANION_OBJECT",
         "NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE",
         "RESOLUTION_TO_CLASSIFIER",
+        "EXPECT_CLASS_AS_FUNCTION",
         "INNER_CLASS_CONSTRUCTOR_NO_RECEIVER",
         "FUNCTION_EXPECTED",
         "INTERFACE_AS_FUNCTION",
@@ -79,7 +91,9 @@ val equivalentDiagnostics = listOf(
         "RECURSIVE_TYPEALIAS_EXPANSION",
         "MISSING_DEPENDENCY_CLASS",
         "CANNOT_INFER_PARAMETER_TYPE",
+        "VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION",
         "COMPONENT_FUNCTION_MISSING",
+        "COMPONENT_FUNCTION_AMBIGUITY",
         "NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER",
         "FORBIDDEN_BINARY_MOD_AS_REM",
         "API_NOT_AVAILABLE",
@@ -200,11 +214,6 @@ val equivalentDiagnostics = listOf(
         "BREAK_OR_CONTINUE_OUTSIDE_A_LOOP",
     ),
     listOf(
-        "CONTRACT_NOT_ALLOWED",
-        "UNSUPPORTED",
-        "INAPPLICABLE_OPERATOR_MODIFIER",
-    ),
-    listOf(
         "NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY_MIGRATION",
         "NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY",
     ),
@@ -220,6 +229,7 @@ val equivalentDiagnostics = listOf(
         "NESTED_CLASS_NOT_ALLOWED",
         "LOCAL_OBJECT_NOT_ALLOWED",
         "LOCAL_INTERFACE_NOT_ALLOWED",
+        "WRONG_MODIFIER_TARGET",
     ),
     listOf(
         "RETURN_TYPE_MISMATCH_ON_INHERITANCE",
@@ -232,6 +242,24 @@ val equivalentDiagnostics = listOf(
     listOf(
         "ANNOTATION_IN_WHERE_CLAUSE_ERROR",
         "ANNOTATION_IN_WHERE_CLAUSE_WARNING",
+    ),
+    listOf(
+        "DATA_CLASS_OVERRIDE_DEFAULT_VALUES",
+        "DATA_CLASS_OVERRIDE_DEFAULT_VALUES_ERROR"
+    ),
+    listOf(
+        "TYPEALIAS_EXPANDED_TO_MALFORMED_TYPE",
+        "TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS",
+    ),
+    listOf(
+        "ACTUAL_WITHOUT_EXPECT",
+        "NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS",
+    ),
+    listOf(
+        "PACKAGE_OR_CLASSIFIER_REDECLARATION",
+        "ACTUAL_MISSING",
+        "AMBIGUOUS_ACTUALS",
+        "IMPLICIT_JVM_ACTUALIZATION",
     ),
 )
 
@@ -1207,4 +1235,9 @@ fun main() {
 
     @Suppress("UNUSED_VARIABLE") val a = 10 + 1
     println("")
+}
+
+class Runner {
+    @Test
+    fun runMain() = main()
 }

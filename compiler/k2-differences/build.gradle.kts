@@ -34,6 +34,8 @@ dependencies {
     // Errors.java have some ImmutableSet fields which we
     // don't need here, but otherwise getDeclaredFields fails
     testRuntimeOnly(commonDependency("com.google.guava:guava"))
+
+    testApiJUnit5()
 }
 
 optInToExperimentalCompilerApi()
@@ -44,4 +46,15 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+}
+
+projectTest(jUnitMode = JUnitMode.JUnit5, parallel = true) {
+    workingDir = rootDir
+    useJUnitPlatform()
+}
+
+kotlin {
+    // Otherwise sometimes there will be:
+    // `Internal Server Error: Please provide a valid jdkVersion`
+    jvmToolchain(17)
 }
