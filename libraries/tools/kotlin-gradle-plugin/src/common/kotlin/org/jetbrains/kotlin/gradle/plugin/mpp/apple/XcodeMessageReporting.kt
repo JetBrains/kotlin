@@ -11,8 +11,8 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
+import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
 import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
-import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 
 internal val Project.useXcodeMessageStyle: Boolean
     get() = getOrPutRootProjectProperty("$KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE.extra") {
@@ -32,7 +32,7 @@ internal fun Project.addBuildListenerForXcode() {
         return
     }
 
-    if (isConfigurationCacheAvailable(gradle)) {
+    if (isConfigurationCacheRequested) {
         // TODO https://youtrack.jetbrains.com/issue/KT-55832
         // Configuration cache case will be supported later
         return

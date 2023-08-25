@@ -20,10 +20,10 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
+import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.report.reportingSettings
-import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.IStatisticsValuesConsumer
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
@@ -46,13 +46,13 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
     companion object {
         private val serviceName = "${BuildFlowService::class.simpleName}_${BuildFlowService::class.java.classLoader.hashCode()}"
 
-        private fun fusStatisticsAvailable(gradle: Gradle): Boolean {
+        private fun fusStatisticsAvailable(project: Project): Boolean {
             return when {
                 //known issue for Gradle with configurationCache: https://github.com/gradle/gradle/issues/20001
-                GradleVersion.current().baseVersion < GradleVersion.version("7.4") -> !isConfigurationCacheAvailable(gradle)
+                GradleVersion.current().baseVersion < GradleVersion.version("7.4") -> !project.isConfigurationCacheRequested
                 GradleVersion.current().baseVersion < GradleVersion.version("8.1") -> true
                 //known issue. Cant reuse cache if file is changed in gradle_user_home dir: KT-58768
-                else -> !isConfigurationCacheAvailable(gradle)
+                else -> !project.isConfigurationCacheRequested
             }
         }
         fun registerIfAbsent(
@@ -64,7 +64,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
                 return it.service as Provider<BuildFlowService>
             }
 
-            val fusStatisticsAvailable = fusStatisticsAvailable(project.gradle)
+            val fusStatisticsAvailable = fusStatisticsAvailable(project)
             val buildScanReportEnabled = reportingSettings(project).buildReportOutputs.contains(BuildReportType.BUILD_SCAN)
 
             //Workaround for known issues for Gradle 8+: https://github.com/gradle/gradle/issues/24887:

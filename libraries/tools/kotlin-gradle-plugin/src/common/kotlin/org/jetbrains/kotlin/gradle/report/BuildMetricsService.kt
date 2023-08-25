@@ -36,13 +36,13 @@ import org.jetbrains.kotlin.gradle.report.BuildReportsService.Companion.getStart
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
-import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
 import java.lang.management.ManagementFactory
 
 internal interface UsesBuildMetricsService : Task {
@@ -220,7 +220,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 }
                 it.parameters.projectDir.set(project.rootProject.layout.projectDirectory)
                 //init gradle tags for build scan and http reports
-                it.parameters.buildConfigurationTags.value(setupTags(project.gradle))
+                it.parameters.buildConfigurationTags.value(setupTags(project))
             }.also {
                 subscribeForTaskEvents(project, it)
             }
@@ -294,9 +294,10 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             }
         }
 
-        private fun setupTags(gradle: Gradle): ArrayList<StatTag> {
+        private fun setupTags(project: Project): ArrayList<StatTag> {
+            val gradle = project.gradle
             val additionalTags = ArrayList<StatTag>()
-            if (isConfigurationCacheAvailable(gradle)) {
+            if (project.isConfigurationCacheRequested) {
                 additionalTags.add(StatTag.CONFIGURATION_CACHE)
             }
             if (gradle.startParameter.isBuildCacheEnabled) {
