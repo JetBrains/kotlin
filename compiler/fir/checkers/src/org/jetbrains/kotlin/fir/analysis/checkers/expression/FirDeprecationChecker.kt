@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.firClassLike
 import org.jetbrains.kotlin.fir.resolve.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -51,6 +51,9 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
         val calleeReference = expression.calleeReference ?: return
         val resolvedReference = calleeReference.resolved ?: return
         val referencedSymbol = resolvedReference.resolvedSymbol
+
+        if (expression.isDelegatedPropertySelfAccess(context, referencedSymbol)) return
+
         val source = resolvedReference.source ?: expression.source
 
         if (expression is FirDelegatedConstructorCall) {
@@ -65,6 +68,19 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
         } else {
             reportApiStatusIfNeeded(source, referencedSymbol, context, reporter, callSite = expression)
         }
+    }
+
+    /** Checks if this is an access to a delegated property inside the delegated property itself.
+     *  Deprecations shouldn't be reported here. */
+    @OptIn(SymbolInternals::class)
+    private fun FirStatement.isDelegatedPropertySelfAccess(context: CheckerContext, referencedSymbol: FirBasedSymbol<*>): Boolean {
+        if (source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor) return false
+        val containers = context.containingDeclarations
+        val size = containers.size
+        val fir = referencedSymbol.fir
+
+        return containers.getOrNull(size - 1) == fir // For `provideDelegate`, the call will be in the initializer
+                || containers.getOrNull(size - 2) == fir // For `getValue`, the call will be in the accessor
     }
 
     internal fun reportApiStatusIfNeeded(
