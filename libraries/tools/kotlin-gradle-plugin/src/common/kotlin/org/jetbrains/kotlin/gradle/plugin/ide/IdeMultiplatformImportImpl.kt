@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.idea.proto.toByteArray
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaSerializationContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.resolvedBy
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.*
@@ -209,7 +208,7 @@ internal class IdeMultiplatformImportImpl(
     }
 
     private fun createSerializationContext(): IdeaKotlinSerializationContext {
-        return IdeaSerializationContext(
+        return IdeaKotlinSerializationContext(
             logger = extension.project.logger,
             extrasSerializationExtensions = registeredExtrasSerializationExtensions.toList()
         )
