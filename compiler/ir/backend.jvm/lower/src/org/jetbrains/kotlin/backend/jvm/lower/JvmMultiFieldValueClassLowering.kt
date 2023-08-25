@@ -1503,7 +1503,7 @@ private fun BlockOrBody.makeBodyWithAddedVariables(context: JvmBackendContext, v
     val containingVariables: Map<BlockOrBody, List<IrVariable>> = nearestBlocks.entries
         .mapNotNull { (k, v) -> if (v != null) k to v else null }
         .groupBy({ (_, v) -> v }, { (k, _) -> k })
-    return element.transform(object : IrElementTransformerVoidShallow() {
+    return element.transform(object : IrElementTransformerVoid() {
         private fun getFirstInnerStatement(statement: IrStatement): IrStatement? =
             if (statement is IrStatementContainer) statement.statements.first().let(::getFirstInnerStatement) else statement
 

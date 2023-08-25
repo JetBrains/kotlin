@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.properties
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 fun IrBuilderWithScope.getProperty(receiver: IrExpression, property: IrProperty): IrExpression {
     return if (property.getter != null)
@@ -85,7 +85,7 @@ fun createInitializerAdapter(
     paramGetReplacer: (ValueParameterDescriptor) -> IrExpression?,
     thisGetReplacer: Pair<IrValueSymbol, () -> IrExpression>? = null
 ): (IrExpressionBody) -> IrExpression {
-    val initializerTransformer = object : IrElementTransformerVoidShallow() {
+    val initializerTransformer = object : IrElementTransformerVoid() {
         // try to replace `get some value` expression
         override fun visitGetValue(expression: IrGetValue): IrExpression {
             val symbol = expression.symbol

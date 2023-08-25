@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 class NullableFieldsForLateinitCreationLowering(val backendContext: CommonBackendContext) : DeclarationTransformer {
@@ -112,7 +111,7 @@ class LateinitUsageLowering(val backendContext: CommonBackendContext) : BodyLowe
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val nullableVariables = mutableMapOf<IrVariable, IrVariable>()
 
-        irBody.transformChildrenVoid(object : IrElementTransformerVoidShallow() {
+        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitVariable(declaration: IrVariable): IrStatement {
                 declaration.transformChildrenVoid(this)
 
@@ -137,7 +136,7 @@ class LateinitUsageLowering(val backendContext: CommonBackendContext) : BodyLowe
             }
         })
 
-        irBody.transformChildrenVoid(object : IrElementTransformerVoidShallow() {
+        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 val irVar = nullableVariables[expression.symbol.owner] ?: return expression
 

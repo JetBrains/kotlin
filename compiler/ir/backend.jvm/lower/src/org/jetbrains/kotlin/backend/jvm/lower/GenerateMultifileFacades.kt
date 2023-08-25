@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -322,7 +321,7 @@ private class UpdateConstantFacadePropertyReferences(
         val facadeClass = getReplacementFacadeClassOrNull(irClass) ?: return
 
         // Replace the class reference in the body of the property reference class (in getOwner) to refer to the facade class instead.
-        irClass.transformChildrenVoid(object : IrElementTransformerVoidShallow() {
+        irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitClass(declaration: IrClass): IrStatement = declaration
 
             override fun visitClassReference(expression: IrClassReference): IrExpression = IrClassReferenceImpl(

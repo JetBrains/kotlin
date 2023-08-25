@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -47,7 +46,7 @@ class InitializersLowering(context: CommonBackendContext) : InitializersLowering
                 throw AssertionError("class in initializer should have been moved out by LocalClassPopupLowering: ${declaration.render()}")
         }, null)
 
-        container.body?.transformChildrenVoid(object : IrElementTransformerVoidShallow() {
+        container.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrExpression =
                 block.deepCopyWithSymbols(container)
         })

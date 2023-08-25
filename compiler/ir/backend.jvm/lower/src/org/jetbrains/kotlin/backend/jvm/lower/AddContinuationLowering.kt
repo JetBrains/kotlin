@@ -57,16 +57,13 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
     }
 
     private fun addContinuationParameterToSuspendCalls(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoidShallow() {
+        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             val functionStack = mutableListOf<IrFunction>()
 
             override fun visitFunction(declaration: IrFunction): IrStatement {
                 functionStack.push(declaration)
                 return super.visitFunction(declaration).also { functionStack.pop() }
             }
-
-            override fun visitSimpleFunction(declaration: IrSimpleFunction) = visitFunction(declaration)
-            override fun visitConstructor(declaration: IrConstructor) = visitFunction(declaration)
 
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 val transformed = super.visitFunctionReference(expression) as IrFunctionReference
@@ -239,7 +236,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
             assert(movedDispatchParameter.origin === IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER) {
                 "MOVED_DISPATCH_RECEIVER should be the first parameter in ${static.render()}"
             }
-            static.body!!.transformChildrenVoid(object : IrElementTransformerVoidShallow() {
+            static.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     val owner = expression.symbol.owner
                     if (owner is IrValueParameter && isInstanceReceiverOfOuterClass(owner)) {
@@ -294,7 +291,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
     }
 
     private fun addContinuationObjectAndContinuationParameterToSuspendFunctions(irFile: IrFile) {
-        irFile.accept(object : IrElementTransformerVoidShallow() {
+        irFile.accept(object : IrElementTransformerVoid() {
             override fun visitClass(declaration: IrClass): IrStatement {
                 declaration.transformDeclarationsFlat {
                     if (it is IrSimpleFunction && it.isSuspend)

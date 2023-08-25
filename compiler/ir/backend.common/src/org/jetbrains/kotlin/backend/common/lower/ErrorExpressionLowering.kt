@@ -32,7 +32,7 @@ abstract class ErrorExpressionLowering(context: CommonBackendContext) : BodyLowe
     abstract fun transformErrorExpression(expression: IrExpression, nodeKind: String): IrExpression
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildrenVoid(object : IrElementTransformerVoidShallow() {
+        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
 
             override fun visitErrorExpression(expression: IrErrorExpression): IrExpression {
                 return transformErrorExpression(expression, "Error Expression")

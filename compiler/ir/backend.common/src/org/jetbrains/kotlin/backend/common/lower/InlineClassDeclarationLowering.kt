@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
@@ -328,7 +327,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
     val inlineClassUsageLowering = object : BodyLoweringPass {
 
         override fun lower(irBody: IrBody, container: IrDeclaration) {
-            irBody.transformChildrenVoid(object : IrElementTransformerVoidShallow() {
+            irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
 
                 override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
                     expression.transformChildrenVoid(this)
