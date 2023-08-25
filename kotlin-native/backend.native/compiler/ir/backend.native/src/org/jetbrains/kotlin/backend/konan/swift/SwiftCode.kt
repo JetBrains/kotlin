@@ -263,17 +263,16 @@ sealed interface SwiftCode {
                 override fun <T : Statement> T.unaryPlus() = also { this@Builder.statements.add(it) }
             }
 
-            override fun render(): String {
-                listOfNotNull(
-                        attributes.render(),
-                        visibility.renderAsPrefix(),
-                        name,
-                        genericTypes.render(),
-                        inheritedTypes.takeIf { it.isNotEmpty() }?.joinToString(separator = " & ") { it.render() }?.let { ": $it" },
-                        genericTypeConstraints.takeIf { it.isNotEmpty() }?.render()?.let { "\n$it" },
-                        block.renderAsBlock()
-                ).joinToString(separator = "")
-            }
+            override fun render(): String = listOfNotNull(
+                    attributes.render(),
+                    visibility.renderAsPrefix(),
+                    "enum ",
+                    name,
+                    genericTypes.render(),
+                    inheritedTypes.takeIf { it.isNotEmpty() }?.joinToString(separator = " & ") { it.render() }?.let { ": $it" },
+                    genericTypeConstraints.takeIf { it.isNotEmpty() }?.render()?.let { "\n$it" },
+                    block.renderAsBlock().let { " $it" }
+            ).joinToString(separator = "")
         }
     }
 
@@ -862,6 +861,16 @@ fun SwiftCode.Builder.set(
 fun SwiftCode.Type.isEqualTo(type: SwiftCode.Type) = SwiftCode.GenericConstraint(this, type, isExact = true)
 
 fun SwiftCode.Type.isSubtypeOf(type: SwiftCode.Type) = SwiftCode.GenericConstraint(this, type, isExact = false)
+
+fun SwiftCode.Builder.enum(
+        name: String,
+        genericTypes: List<SwiftCode.GenericParameter> = emptyList(),
+        inheritedTypes: List<SwiftCode.Type.Nominal> = emptyList(),
+        genericTypeConstraints: List<SwiftCode.GenericConstraint> = emptyList(),
+        attributes: List<SwiftCode.Attribute> = emptyList(),
+        visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
+        block: SwiftCode.DeclarationsBuilder.() -> Unit
+) = SwiftCode.Declaration.Enum(name, genericTypes, inheritedTypes, genericTypeConstraints, attributes, visibility, SwiftCode.DeclarationsBlock(block))
 
 //endregion
 
