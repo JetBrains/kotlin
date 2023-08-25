@@ -169,7 +169,8 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
                 val typeParameters = callee.typeParameters
 
                 for (i in 0 until typeArgumentsCount) {
-                    if (!typeParameters[i].isReified) continue
+                    val typeParameter = typeParameters.getOrNull(i)
+                    if (typeParameter?.isReified != true) continue
                     putTypeArgument(i, expression.getTypeArgument(i)?.remapReifiedTypeUsage())
                 }
             }
