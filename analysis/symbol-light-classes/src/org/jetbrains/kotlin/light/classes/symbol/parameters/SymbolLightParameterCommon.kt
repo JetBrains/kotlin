@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
-import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -80,17 +79,11 @@ internal abstract class SymbolLightParameterCommon(
         parameterSymbolPointer.withSymbol(ktModule) { parameterSymbol ->
             val convertedType = run {
                 val ktType = parameterSymbol.returnType
-                val typeMappingMode = when {
-                    ktType.isSuspendFunctionType -> KtTypeMappingMode.DEFAULT
-                    // TODO: extract type mapping mode from annotation?
-                    // TODO: methods with declaration site wildcards?
-                    else -> KtTypeMappingMode.VALUE_PARAMETER
-                }
 
                 ktType.asPsiTypeElement(
                     this@SymbolLightParameterCommon,
                     allowErrorTypes = true,
-                    typeMappingMode
+                    ktType.typeMappingMode()
                 )?.let {
                     annotateByKtType(it.type, ktType, it, modifierList)
                 }
