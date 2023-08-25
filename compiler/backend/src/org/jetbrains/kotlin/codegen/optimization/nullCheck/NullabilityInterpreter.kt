@@ -95,20 +95,20 @@ class NullabilityInterpreter(private val generationState: GenerationState) : Opt
     }
 
     override fun merge(v: BasicValue, w: BasicValue): BasicValue =
-        when(v) {
-            NullBasicValue -> if (w === NullBasicValue) NullBasicValue else StrictBasicValue.REFERENCE_VALUE
+        when {
+            v === NullBasicValue -> if (w === NullBasicValue) NullBasicValue else StrictBasicValue.REFERENCE_VALUE
 
-            is ProgressionIteratorBasicValue -> when (w) {
+            v is ProgressionIteratorBasicValue -> when (w) {
                 is ProgressionIteratorBasicValue -> mergeNotNullValuesOfSameKind(v, w)
                 is NotNullBasicValue -> NotNullBasicValue.NOT_NULL_REFERENCE_VALUE
                 else -> super.merge(v, w)
             }
-            is NotNullBasicValue -> when(w) {
+            v is NotNullBasicValue -> when (w) {
                 is ProgressionIteratorBasicValue -> NotNullBasicValue.NOT_NULL_REFERENCE_VALUE
                 is NotNullBasicValue -> mergeNotNullValuesOfSameKind(v, w)
                 else -> super.merge(v, w)
             }
-            else -> if (w === NullBasicValue)  StrictBasicValue.REFERENCE_VALUE else super.merge(v, w)
+            else -> if (w === NullBasicValue) StrictBasicValue.REFERENCE_VALUE else super.merge(v, w)
         }
 
     private fun mergeNotNullValuesOfSameKind(v: StrictBasicValue, w: StrictBasicValue) =
