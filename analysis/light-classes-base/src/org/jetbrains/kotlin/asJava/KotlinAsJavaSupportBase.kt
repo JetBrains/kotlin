@@ -21,13 +21,15 @@ import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) : KotlinAsJavaSupport() {
+abstract class KotlinAsJavaSupportBase<TModule : Any>(protected val project: Project) : KotlinAsJavaSupport() {
     @Suppress("MemberVisibilityCanBePrivate")
     fun createLightFacade(file: KtFile): LightClassCachedValue<KtLightClassForFacade>? {
         if (!file.facadeIsPossible()) return null
 
-        val module = file.findModule().takeIf { facadeIsApplicable(it, file) } ?: return null
+        val module = file.findModule()?.takeIf { facadeIsApplicable(it, file) } ?: return null
         val facadeFqName = file.javaFileFacadeFqName
         val facadeFiles = if (file.canHaveAdditionalFilesInFacade()) {
             findFilesForFacade(facadeFqName, module.contentSearchScope).filter(KtFile::isJvmMultifileClassFile)
@@ -61,11 +63,11 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
 
     private fun KtFile.canHaveAdditionalFilesInFacade(): Boolean = !isCompiled && isJvmMultifileClassFile
 
-    protected abstract fun KtFile.findModule(): TModule
+    protected abstract fun KtFile.findModule(): TModule?
     protected abstract fun facadeIsApplicable(module: TModule, file: KtFile): Boolean
     protected abstract val TModule.contentSearchScope: GlobalSearchScope
 
-    protected abstract fun createInstanceOfLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade
+    protected abstract fun createInstanceOfLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade?
     protected abstract fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade?
 
     protected open fun projectWideOutOfBlockModificationTracker(): ModificationTracker {
@@ -85,7 +87,12 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
     }
 
     override fun createFacadeForSyntheticFile(file: KtFile): KtLightClassForFacade {
-        return createInstanceOfLightFacade(file.javaFileFacadeFqName, listOf(file))
+        return createInstanceOfLightFacade(file.javaFileFacadeFqName, listOf(file)) ?: errorWithAttachment(
+            "Unsupported ${file::class.simpleName}"
+        ) {
+            withEntry("module", file.findModule().toString())
+            withPsiEntry("file", file)
+        }
     }
 
     override fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<KtLightClassForFacade> {
@@ -99,19 +106,21 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {
         return findFilesForFacadeByPackage(packageFqName, scope).mapNotNullTo(mutableSetOf()) { file ->
             file.takeIf { it.facadeIsPossible() }
-                ?.takeIf { facadeIsApplicable(it.findModule(), file) }
+                ?.takeIf { it.findModule()?.let { module -> facadeIsApplicable(module, file) } == true }
                 ?.javaFileFacadeFqName
                 ?.shortName()
                 ?.asString()
         }.toSet()
     }
 
-    private fun Collection<KtFile>.toFacadeClasses(): List<KtLightClassForFacade> = filter {
-        it.facadeIsPossible()
-    }.groupBy {
-        FacadeKey(it.javaFileFacadeFqName, it.isJvmMultifileClassFile, it.findModule())
-    }.mapNotNull { (key, files) ->
-        files.firstOrNull { facadeIsApplicable(key.module, it) }?.let(::getLightFacade)
+    private fun Collection<KtFile>.toFacadeClasses(): List<KtLightClassForFacade> = mapNotNull { file ->
+        file.takeIf { it.facadeIsPossible() }?.findModule()?.let { file to it }
+    }.groupBy { (file, module) ->
+        FacadeKey(file.javaFileFacadeFqName, file.isJvmMultifileClassFile, module)
+    }.mapNotNull { (_, pairs) ->
+        pairs.firstNotNullOfOrNull { (file, module) ->
+            file.takeIf { facadeIsApplicable(module, file) }
+        }?.let(::getLightFacade)
     }
 
     private data class FacadeKey<TModule>(val fqName: FqName, val isMultifile: Boolean, val module: TModule)
