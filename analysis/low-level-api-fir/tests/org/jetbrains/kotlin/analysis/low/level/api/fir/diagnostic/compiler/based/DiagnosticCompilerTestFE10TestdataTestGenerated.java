@@ -37883,6 +37883,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("buildListRemoveAddInBranches.kt")
+            public void testBuildListRemoveAddInBranches() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListRemoveAddInBranches.kt");
+            }
+
+            @Test
             @TestMetadata("buildListToUpperBound.kt")
             public void testBuildListToUpperBound() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListToUpperBound.kt");
