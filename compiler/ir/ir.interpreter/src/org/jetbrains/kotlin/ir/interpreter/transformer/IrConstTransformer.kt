@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 fun IrFile.transformConst(
     interpreter: IrInterpreter,
@@ -146,16 +149,32 @@ internal abstract class IrConstTransformer(
         )
 
         if (result is IrConst<*>) {
-            val field = when (this) {
-                is IrGetField -> this.symbol.owner
-                is IrCall -> this.symbol.owner.property?.backingField
-                else -> null
-            }
-
-            if (field != null) inlineConstTracker?.reportOnIr(irFile, field, result)
+            reportInlinedJavaConst(result)
         }
 
         return if (failAsError) result.reportIfError(this) else result.warningIfError(this)
+    }
+
+    private fun IrExpression.reportInlinedJavaConst(result: IrConst<*>) {
+        this.acceptVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            private fun report(field: IrField) {
+                inlineConstTracker?.reportOnIr(irFile, field, result)
+            }
+
+            override fun visitGetField(expression: IrGetField) {
+                report(expression.symbol.owner)
+                super.visitGetField(expression)
+            }
+
+            override fun visitCall(expression: IrCall) {
+                expression.symbol.owner.property?.backingField?.let { backingField -> report(backingField) }
+                super.visitCall(expression)
+            }
+        })
     }
 }
 
