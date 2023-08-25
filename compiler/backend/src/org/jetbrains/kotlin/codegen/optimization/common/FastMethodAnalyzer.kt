@@ -104,27 +104,6 @@ open class FastMethodAnalyzer<V : Value>
         }
     }
 
-    override fun initLocals(current: Frame<V>) {
-        current.setReturn(interpreter.newReturnTypeValue(Type.getReturnType(method.desc)))
-        val args = Type.getArgumentTypes(method.desc)
-        var local = 0
-        val isInstanceMethod = (method.access and Opcodes.ACC_STATIC) == 0
-        if (isInstanceMethod) {
-            val ctype = Type.getObjectType(owner)
-            current.setLocal(local, interpreter.newParameterValue(true, local, ctype))
-            local++
-        }
-        for (arg in args) {
-            current.setLocal(local++, interpreter.newValue(arg))
-            if (arg.size == 2) {
-                current.setLocal(local++, interpreter.newValue(null))
-            }
-        }
-        while (local < method.maxLocals) {
-            current.setLocal(local++, interpreter.newValue(null))
-        }
-    }
-
     override fun visitOpInsn(insnNode: AbstractInsnNode, current: Frame<V>, insn: Int) {
         mergeControlFlowEdge(insn + 1, current)
     }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen.optimization.common
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
@@ -76,7 +77,29 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
 
     protected open fun beforeAnalyze() {}
 
-    protected abstract fun initLocals(current: F)
+    private fun initLocals(current: F) {
+        current.setReturn(interpreter.newReturnTypeValue(Type.getReturnType(method.desc)))
+        val args = Type.getArgumentTypes(method.desc)
+        var local = 0
+        val isInstanceMethod = (method.access and Opcodes.ACC_STATIC) == 0
+        if (isInstanceMethod) {
+            val ctype = Type.getObjectType(owner)
+            current.setLocal(local, interpreter.newParameterValue(true, local, ctype))
+            local++
+        }
+        for (arg in args) {
+            current.setLocal(local, interpreter.newParameterValue(isInstanceMethod, local, arg))
+            local++
+            if (arg.size == 2) {
+                current.setLocal(local, interpreter.newEmptyValue(local))
+                local++
+            }
+        }
+        while (local < method.maxLocals) {
+            current.setLocal(local, interpreter.newEmptyValue(local))
+            local++
+        }
+    }
 
     protected abstract fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean = false)
 
