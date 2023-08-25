@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerShallow
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A non-leaf IR tree element.
@@ -46,7 +46,7 @@ abstract class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract var body: IrBody?
 
-    override fun <D> acceptChildren(visitor: IrElementVisitorShallow<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
         dispatchReceiverParameter?.accept(visitor, data)
         extensionReceiverParameter?.accept(visitor, data)
@@ -54,8 +54,7 @@ abstract class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration,
         body?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformerShallow<D>,
-            data: D) {
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
         dispatchReceiverParameter = dispatchReceiverParameter?.transform(transformer, data)
         extensionReceiverParameter = extensionReceiverParameter?.transform(transformer, data)

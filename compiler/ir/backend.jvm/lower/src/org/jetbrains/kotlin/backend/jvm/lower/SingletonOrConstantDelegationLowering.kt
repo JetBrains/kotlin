@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.remapReceiver
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
 
 internal val singletonOrConstantDelegationPhase = makeIrFilePhase(
     ::SingletonOrConstantDelegationLowering,
@@ -37,7 +36,7 @@ private class SingletonOrConstantDelegationLowering(val context: JvmBackendConte
     }
 }
 
-private class SingletonOrConstantDelegationTransformer(val context: JvmBackendContext) : IrElementTransformerVoidShallow() {
+private class SingletonOrConstantDelegationTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
     override fun visitClass(declaration: IrClass): IrClass {
         declaration.transformChildren(this, null)
         declaration.transformDeclarationsFlat {

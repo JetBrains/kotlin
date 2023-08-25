@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerShallow
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
@@ -34,15 +34,14 @@ abstract class IrVariable : IrDeclarationBase(), IrValueDeclaration {
 
     abstract var initializer: IrExpression?
 
-    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitVariable(this, data)
 
-    override fun <D> acceptChildren(visitor: IrElementVisitorShallow<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         initializer?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformerShallow<D>,
-            data: D) {
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         initializer = initializer?.transform(transformer, data)
     }
 }

@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerShallow
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
@@ -70,18 +70,17 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
 
     abstract var defaultValue: IrExpressionBody?
 
-    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitValueParameter(this, data)
 
-    override fun <D> transform(transformer: IrElementTransformerShallow<D>, data: D):
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D):
             IrValueParameter = accept(transformer, data) as IrValueParameter
 
-    override fun <D> acceptChildren(visitor: IrElementVisitorShallow<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         defaultValue?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformerShallow<D>,
-            data: D) {
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         defaultValue = defaultValue?.transform(transformer, data)
     }
 }

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal val annotationPhase = makeIrFilePhase<JvmBackendContext>(
@@ -23,7 +22,7 @@ internal val annotationPhase = makeIrFilePhase<JvmBackendContext>(
     description = "Remove constructors of annotation classes"
 )
 
-private class AnnotationLowering : FileLoweringPass, IrElementTransformerVoidShallow() {
+private class AnnotationLowering : FileLoweringPass, IrElementTransformerVoid() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
 
     override fun visitClass(declaration: IrClass): IrStatement =

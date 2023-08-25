@@ -11,7 +11,7 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
@@ -26,6 +26,6 @@ abstract class IrConstructor : IrFunction() {
 
     abstract var isPrimary: Boolean
 
-    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstructor(this, data)
 }

@@ -20,9 +20,8 @@ private val visitorVoidTypeName = ClassName(VISITOR_PACKAGE, "IrElementVisitorVo
 private val transformerTypeName = ClassName(VISITOR_PACKAGE, "IrElementTransformer")
 private val typeTransformerTypeName = ClassName(VISITOR_PACKAGE, "IrTypeTransformer")
 
-fun printVisitor(generationPath: File, model: Model, shallow: Boolean = false): GeneratedFile {
-    val shallowType = ClassName(visitorTypeName.packageName, visitorTypeName.simpleName + "Shallow")
-    val visitorType = TypeSpec.classBuilder(if (shallow) shallowType else visitorTypeName).apply {
+fun printVisitor(generationPath: File, model: Model): GeneratedFile {
+    val visitorType = TypeSpec.classBuilder(visitorTypeName).apply {
         modifiers += KModifier.ABSTRACT
         val r = TypeVariableName("R", KModifier.OUT)
         val d = TypeVariableName("D", KModifier.IN)
@@ -36,23 +35,13 @@ fun printVisitor(generationPath: File, model: Model, shallow: Boolean = false): 
             returns(r)
         }
 
-        if (shallow) {
-            addFunction(buildVisitFun(model.rootElement).apply { modifiers -= KModifier.OPEN }.addModifiers(KModifier.ABSTRACT).build())
-        } else {
-            superclass(shallowType.parameterizedBy(r, d))
-        }
+        addFunction(buildVisitFun(model.rootElement).apply { modifiers -= KModifier.OPEN }.addModifiers(KModifier.ABSTRACT).build())
 
         for (element in model.elements) {
             element.visitorParent?.let { parent ->
-                if (shallow or (parent.element != model.rootElement)) {
-                    addFunction(buildVisitFun(element).apply {
-                        if (!shallow) {
-                            modifiers -= KModifier.OPEN
-                            addModifiers(KModifier.OVERRIDE)
-                        }
-                        addStatement("return ${(if (shallow) model.rootElement else parent.element).visitFunName}(${element.visitorParam}, data)")
-                    }.build())
-                }
+                addFunction(buildVisitFun(element).apply {
+                    addStatement("return ${parent.element.visitFunName}(${element.visitorParam}, data)")
+                }.build())
             }
         }
     }.build()
@@ -60,13 +49,12 @@ fun printVisitor(generationPath: File, model: Model, shallow: Boolean = false): 
     return printTypeCommon(generationPath, visitorTypeName.packageName, visitorType)
 }
 
-fun printVisitorVoid(generationPath: File, model: Model, shallow: Boolean = false): GeneratedFile {
+fun printVisitorVoid(generationPath: File, model: Model): GeneratedFile {
     val dataType = NOTHING.copy(nullable = true)
-    val shallowType = ClassName(visitorVoidTypeName.packageName, visitorVoidTypeName.simpleName + "Shallow")
 
-    val visitorType = TypeSpec.classBuilder(if (shallow) shallowType else visitorVoidTypeName).apply {
+    val visitorType = TypeSpec.classBuilder(visitorVoidTypeName).apply {
         modifiers += KModifier.ABSTRACT
-        superclass(if (shallow) visitorTypeName.parameterizedBy(UNIT, dataType) else shallowType)
+        superclass(visitorTypeName.parameterizedBy(UNIT, dataType))
 
         fun buildVisitFun(element: Element) = FunSpec.builder(element.visitFunName).apply {
             addModifiers(KModifier.OVERRIDE)
@@ -76,23 +64,19 @@ fun printVisitorVoid(generationPath: File, model: Model, shallow: Boolean = fals
         }
 
         fun buildVisitVoidFun(element: Element) = FunSpec.builder(element.visitFunName).apply {
-            if (KModifier.ABSTRACT !in modifiers) addModifiers(if (shallow) KModifier.OPEN else KModifier.OVERRIDE)
+            if (KModifier.ABSTRACT !in modifiers) addModifiers(KModifier.OPEN)
             addParameter(element.visitorParam, element.toPoetStarParameterized())
         }
 
-        if (shallow) {
-            addFunction(buildVisitFun(model.rootElement).build())
-            addFunction(buildVisitVoidFun(model.rootElement).build())
-        }
+        addFunction(buildVisitFun(model.rootElement).build())
+        addFunction(buildVisitVoidFun(model.rootElement).build())
 
         for (element in model.elements) {
             element.visitorParent?.let { parent ->
-                if (shallow) addFunction(buildVisitFun(element).build())
-                if (shallow or (parent.element != model.rootElement)) {
-                    addFunction(buildVisitVoidFun(element).apply {
-                        addStatement("return ${(if (shallow) model.rootElement else parent.element).visitFunName}(${element.visitorParam})")
-                    }.build())
-                }
+                addFunction(buildVisitFun(element).build())
+                addFunction(buildVisitVoidFun(element).apply {
+                    addStatement("return ${parent.element.visitFunName}(${element.visitorParam})")
+                }.build())
             }
         }
     }.build()
@@ -100,14 +84,13 @@ fun printVisitorVoid(generationPath: File, model: Model, shallow: Boolean = fals
     return printTypeCommon(generationPath, visitorVoidTypeName.packageName, visitorType)
 }
 
-fun printTransformer(generationPath: File, model: Model, shallow: Boolean = false): GeneratedFile {
-    val shallowType = ClassName(transformerTypeName.packageName, transformerTypeName.simpleName + "Shallow")
-    val visitorType = TypeSpec.classBuilder(if (shallow) shallowType else transformerTypeName).apply {
+fun printTransformer(generationPath: File, model: Model): GeneratedFile {
+    val visitorType = TypeSpec.classBuilder(transformerTypeName).apply {
         modifiers += KModifier.ABSTRACT
         val d = TypeVariableName("D", KModifier.IN)
         addTypeVariable(d)
 
-        superclass(if (shallow) visitorTypeName.parameterizedBy(model.rootElement.toPoetStarParameterized(), d) else shallowType.parameterizedBy(d))
+        superclass(visitorTypeName.parameterizedBy(model.rootElement.toPoetStarParameterized(), d))
 
         fun buildVisitFun(element: Element) = FunSpec.builder(element.visitFunName).apply {
             addModifiers(KModifier.OVERRIDE)
@@ -117,7 +100,7 @@ fun printTransformer(generationPath: File, model: Model, shallow: Boolean = fals
 
         for (element in model.elements) {
             val returnType = element.getTransformExplicitType()
-            if (shallow and (element.visitorParent != null) or element.transformByChildren) {
+            if (element.transformByChildren) {
                 addFunction(buildVisitFun(element).apply {
                     addStatement("${element.visitorParam}.transformChildren(this, data)")
                     addStatement("return ${element.visitorParam}")
@@ -126,7 +109,7 @@ fun printTransformer(generationPath: File, model: Model, shallow: Boolean = fals
             } else {
                 element.visitorParent?.let { parent ->
                     addFunction(buildVisitFun(element).apply {
-                        addStatement("return ${(if (shallow) model.rootElement else parent.element).visitFunName}(${element.visitorParam}, data)")
+                        addStatement("return ${parent.element.visitFunName}(${element.visitorParam}, data)")
                         returns(returnType.toPoetStarParameterized())
                     }.build())
                 }

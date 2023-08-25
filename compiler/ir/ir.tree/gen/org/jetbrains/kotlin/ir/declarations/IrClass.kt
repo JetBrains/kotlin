@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerShallow
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
@@ -69,17 +69,16 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration,
      */
     abstract var sealedSubclasses: List<IrClassSymbol>
 
-    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)
 
-    override fun <D> acceptChildren(visitor: IrElementVisitorShallow<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
         declarations.forEach { it.accept(visitor, data) }
         thisReceiver?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformerShallow<D>,
-            data: D) {
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
         declarations.transformInPlace(transformer, data)
         thisReceiver = thisReceiver?.transform(transformer, data)

@@ -25,11 +25,8 @@ fun main(args: Array<String>) {
     val previouslyGeneratedFiles = collectPreviouslyGeneratedFiles(generationPath)
     val generatedFiles = sequence {
         yieldAll(printElements(generationPath, model))
-        yield(printVisitor(generationPath, model, shallow = true))
         yield(printVisitor(generationPath, model))
-        yield(printVisitorVoid(generationPath, model, shallow = true))
         yield(printVisitorVoid(generationPath, model))
-        yield(printTransformer(generationPath, model, shallow = true))
         yield(printTransformer(generationPath, model))
         yield(printTypeVisitor(generationPath, model))
         // IrElementTransformerVoid is too random to autogenerate

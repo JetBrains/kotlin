@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerShallow
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -38,18 +38,17 @@ abstract class IrModuleFragment : IrElementBase(), IrElement {
     override val endOffset: Int
         get() = UNDEFINED_OFFSET
 
-    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitModuleFragment(this, data)
 
-    override fun <D> transform(transformer: IrElementTransformerShallow<D>, data: D):
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D):
             IrModuleFragment = accept(transformer, data) as IrModuleFragment
 
-    override fun <D> acceptChildren(visitor: IrElementVisitorShallow<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         files.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformerShallow<D>,
-            data: D) {
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         files.transformInPlace(transformer, data)
     }
 }

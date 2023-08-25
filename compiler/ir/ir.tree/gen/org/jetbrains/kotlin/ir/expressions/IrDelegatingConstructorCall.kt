@@ -9,7 +9,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
@@ -19,6 +19,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
 abstract class IrDelegatingConstructorCall : IrFunctionAccessExpression() {
     abstract override var symbol: IrConstructorSymbol
 
-    override fun <R, D> accept(visitor: IrElementVisitorShallow<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitDelegatingConstructorCall(this, data)
 }

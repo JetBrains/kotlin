@@ -11,11 +11,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
 import org.jetbrains.kotlin.name.Name
 
 internal val uniqueLoopLabelsPhase = makeIrFilePhase(
@@ -26,7 +23,7 @@ internal val uniqueLoopLabelsPhase = makeIrFilePhase(
 
 private class UniqueLoopLabelsLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.accept(object : IrElementVisitorShallow<Unit, String>() {
+        irFile.accept(object : IrElementVisitor<Unit, String>() {
             // This counter is intentionally not local to every declaration because their names might clash.
             private var counter = 0
             private val stack = ArrayList<Name>()
@@ -47,10 +44,6 @@ private class UniqueLoopLabelsLowering(val context: JvmBackendContext) : FileLow
                 loop.label = stack.joinToString("$", postfix = (++counter).toString())
                 super.visitLoop(loop, data)
             }
-
-            override fun visitWhileLoop(loop: IrWhileLoop, data: String) = visitLoop(loop, data)
-
-            override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: String) = visitLoop(loop, data)
         }, "")
     }
 }
