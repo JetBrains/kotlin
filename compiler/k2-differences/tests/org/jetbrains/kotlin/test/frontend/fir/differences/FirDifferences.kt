@@ -1203,8 +1203,8 @@ fun main() {
     }
 
     generateAdditionalBoxTestsAndLogManuals(candidatesForAdditionalBoxTests, candidatesForManualChecking)
-    doNonLocalThings(containmentStatistics)
+//    doNonLocalThings(containmentStatistics)
 
-    val a = 10 + 1
+    @Suppress("UNUSED_VARIABLE") val a = 10 + 1
     println("")
 }
