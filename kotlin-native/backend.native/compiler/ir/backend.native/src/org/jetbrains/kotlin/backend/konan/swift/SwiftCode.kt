@@ -197,7 +197,7 @@ sealed interface SwiftCode {
                 override fun render(): String {
                     val arguments = argumentName?.let { "($it)" } ?: ""
                     val body = body.renderAsBlock()
-                    return "$name$arguments$body"
+                    return "$name$arguments $body"
                 }
             }
 
@@ -212,7 +212,7 @@ sealed interface SwiftCode {
                         value?.render()?.let { " = $it" },
                         listOfNotNull(willSet, didSet).takeIf { it.isNotEmpty() }
                                 ?.joinToString(separator = "\n") { it.render() }
-                                ?.let { " {${it.prependIndent(DEFAULT_INDENT)}\n}" }
+                                ?.let { " {\n${it.prependIndent(DEFAULT_INDENT)}\n}" }
                 ).joinToString(separator = "")
             }
         }
@@ -229,7 +229,7 @@ sealed interface SwiftCode {
                 override fun render(): String {
                     val arguments = argumentName?.let { "($it)" } ?: ""
                     val body = body.renderAsBlock()
-                    return "$name$arguments$body"
+                    return "$name$arguments $body"
                 }
             }
 
@@ -242,7 +242,7 @@ sealed interface SwiftCode {
                         type.render().let { ": $it" },
                         listOfNotNull(get, set).takeIf { it.isNotEmpty() }
                                 ?.joinToString(separator = "\n") { it.render() }
-                                ?.let { " {${it.prependIndent(DEFAULT_INDENT)}\n}" }
+                                ?.let { " {\n${it.prependIndent(DEFAULT_INDENT)}\n}" }
                 ).joinToString(separator = "")
             }
         }
@@ -622,6 +622,8 @@ sealed interface SwiftCode {
         override fun render(): String = statements.joinToString(separator = "\n") { it.render() }
 
         fun renderAsBlock() = render().prependIndent(DEFAULT_INDENT).let { "{\n$it\n}" }
+
+        val block: Builder.() -> Unit get() = { this@CodeBlock.statements.forEach { +it } }
     }
 
     data class Attribute(val name: String, val arguments: List<Argument>? = null) : SwiftCode {
