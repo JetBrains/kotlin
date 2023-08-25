@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
 import org.jetbrains.kotlin.test.frontend.fir.resolveLibraries
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.getDependencies
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 
@@ -93,7 +95,13 @@ class FirJsKlibBackendFacade(
         )
         // TODO: find out why it must be so weird
         moduleDescriptor.safeAs<ModuleDescriptorImpl>()?.let {
-            it.setDependencies(inputArtifact.irModuleFragment.descriptor.allDependencyModules.filterIsInstance<ModuleDescriptorImpl>() + it)
+            val friends = getDependencies(module, testServices, DependencyRelation.FriendDependency)
+                .map { it as ModuleDescriptorImpl }
+                .toSet()
+            it.setDependencies(
+                inputArtifact.irModuleFragment.descriptor.allDependencyModules.filterIsInstance<ModuleDescriptorImpl>() + it,
+                friends
+            )
         }
 
         testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)

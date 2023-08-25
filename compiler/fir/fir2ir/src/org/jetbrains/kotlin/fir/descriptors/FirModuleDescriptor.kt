@@ -21,7 +21,9 @@ class FirModuleDescriptor(
     override val builtIns: KotlinBuiltIns
 ) : ModuleDescriptor {
     override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
-        return false
+        if (this == targetModule) return true
+        if (targetModule !is FirModuleDescriptor) return false
+        return session.moduleData.friendDependencies.contains(targetModule.session.moduleData)
     }
 
     override val platform: TargetPlatform

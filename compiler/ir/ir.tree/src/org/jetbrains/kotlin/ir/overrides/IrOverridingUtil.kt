@@ -23,11 +23,10 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
 abstract class FakeOverrideBuilderStrategy(
-    private val friendModules: Map<String, Collection<String>>,
     private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) {
     fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember =
-        buildFakeOverrideMember(superType, member, clazz, friendModules, unimplementedOverridesStrategy)
+        buildFakeOverrideMember(superType, member, clazz, unimplementedOverridesStrategy)
 
     fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableMember, clazz: IrClass) {
         unimplementedOverridesStrategy.postProcessGeneratedFakeOverride(fakeOverride as IrOverridableDeclaration<*>, clazz)
@@ -46,37 +45,19 @@ abstract class FakeOverrideBuilderStrategy(
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class) // Because of the LazyIR, have to use descriptors here.
-private fun IrOverridableMember.isPrivateToThisModule(thisClass: IrClass, memberClass: IrClass, friendModules: Map<String, Collection<String>>): Boolean {
+private fun IrOverridableMember.isPrivateToThisModule(thisClass: IrClass, memberClass: IrClass): Boolean {
     if (visibility != DescriptorVisibilities.INTERNAL) return false
 
     val thisModule = thisClass.getPackageFragment().packageFragmentDescriptor.containingDeclaration
     val memberModule = memberClass.getPackageFragment().packageFragmentDescriptor.containingDeclaration
 
-    return thisModule != memberModule && !isInFriendModules(thisModule, memberModule, friendModules)
-}
-
-private fun isInFriendModules(
-    fromModule: ModuleDescriptor,
-    toModule: ModuleDescriptor,
-    friendModules: Map<String, Collection<String>>
-): Boolean {
-
-    if (friendModules.isEmpty()) return false
-
-    val fromModuleName = fromModule.name.asStringStripSpecialMarkers()
-
-    val fromFriends = friendModules[fromModuleName] ?: return false
-
-    val toModuleName = toModule.name.asStringStripSpecialMarkers()
-
-    return toModuleName in fromFriends
+    return thisModule != memberModule && !thisModule.shouldSeeInternalsOf(memberModule)
 }
 
 fun buildFakeOverrideMember(
     superType: IrType,
     member: IrOverridableMember,
     clazz: IrClass,
-    friendModules: Map<String, Collection<String>> = emptyMap(),
     unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
 ): IrOverridableMember {
     require(superType is IrSimpleType) { "superType is $superType, expected IrSimpleType" }
@@ -102,7 +83,7 @@ fun buildFakeOverrideMember(
     return CopyIrTreeWithSymbolsForFakeOverrides(member, substitutionMap, clazz, unimplementedOverridesStrategy)
         .copy()
         .apply {
-            val isInvisible = isPrivateToThisModule(clazz, classifier.owner, friendModules)
+            val isInvisible = isPrivateToThisModule(clazz, classifier.owner)
             if (isInvisible && !member.annotations.hasAnnotation(StandardNames.FqNames.publishedApi))
                 visibility = DescriptorVisibilities.INVISIBLE_FAKE
         }

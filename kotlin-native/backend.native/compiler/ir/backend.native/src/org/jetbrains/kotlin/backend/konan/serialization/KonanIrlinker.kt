@@ -459,7 +459,6 @@ internal class KonanIrLinker(
         messageLogger: IrMessageLogger,
         builtIns: IrBuiltIns,
         symbolTable: SymbolTable,
-        friendModules: Map<String, Collection<String>>,
         private val forwardModuleDescriptor: ModuleDescriptor?,
         private val stubGenerator: DeclarationStubGenerator,
         private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
@@ -484,7 +483,6 @@ internal class KonanIrLinker(
             symbolTable = symbolTable,
             mangler = KonanManglerIr,
             typeSystem = IrTypeSystemContextImpl(builtIns),
-            friendModules = friendModules,
             partialLinkageSupport = partialLinkageSupport,
             platformSpecificClassFilter = KonanFakeOverrideClassFilter
     )

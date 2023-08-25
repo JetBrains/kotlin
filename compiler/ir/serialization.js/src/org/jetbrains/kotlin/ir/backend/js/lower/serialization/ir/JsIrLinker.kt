@@ -24,7 +24,6 @@ class JsIrLinker(
     override val partialLinkageSupport: PartialLinkageSupportForLinker,
     override val translationPluginContext: TranslationPluginContext?,
     private val icData: ICData? = null,
-    friendModules: Map<String, Collection<String>> = emptyMap(),
     private val stubGenerator: DeclarationStubGenerator? = null
 ) : KotlinIrLinker(
     currentModule = currentModule,
@@ -44,7 +43,6 @@ class JsIrLinker(
         symbolTable = symbolTable,
         mangler = JsManglerIr,
         typeSystem = IrTypeSystemContextImpl(builtIns),
-        friendModules = friendModules,
         partialLinkageSupport = partialLinkageSupport
     )
 

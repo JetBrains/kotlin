@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.converters
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.util.irMessageLogger
@@ -20,9 +21,11 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.getDependencies
 import java.io.File
 
 class JsKlibBackendFacade(
@@ -80,7 +83,10 @@ class JsKlibBackendFacade(
             packageAccessHandler = null,
             lookupTracker = LookupTracker.DO_NOTHING
         )
-        moduleDescriptor.setDependencies(dependencies + moduleDescriptor)
+        val friends = getDependencies(module, testServices, DependencyRelation.FriendDependency)
+            .map { it as ModuleDescriptorImpl }
+            .toSet()
+        moduleDescriptor.setDependencies(dependencies + moduleDescriptor, friends)
         testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
 
         if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {

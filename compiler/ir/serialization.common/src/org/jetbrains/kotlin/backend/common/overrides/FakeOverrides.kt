@@ -76,14 +76,12 @@ class FakeOverrideBuilder(
     val symbolTable: SymbolTable,
     mangler: KotlinMangler.IrMangler,
     typeSystem: IrTypeSystemContext,
-    friendModules: Map<String, Collection<String>>,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: DeclarationTable = FakeOverrideDeclarationTable(mangler) { builder, table ->
         IdSignatureSerializer(builder, table)
     }
 ) : FakeOverrideBuilderStrategy(
-    friendModules = friendModules,
     unimplementedOverridesStrategy = if (partialLinkageSupport.isEnabled)
         ImplementAsErrorThrowingStubs(partialLinkageSupport)
     else

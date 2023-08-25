@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.test.frontend.fir.getAllWasmDependenciesPaths
 import org.jetbrains.kotlin.test.frontend.fir.resolveLibraries
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.getDependencies
 import java.io.File
 
 class FirWasmKlibBackendFacade(
@@ -92,8 +94,12 @@ class FirWasmKlibBackendFacade(
             lookupTracker = LookupTracker.DO_NOTHING
         )
 
+        val friends = getDependencies(module, testServices, DependencyRelation.FriendDependency)
+            .map { it as ModuleDescriptorImpl }
+            .toSet()
         moduleDescriptor.setDependencies(
-            inputArtifact.irModuleFragment.descriptor.allDependencyModules.filterIsInstance<ModuleDescriptorImpl>() + moduleDescriptor
+            inputArtifact.irModuleFragment.descriptor.allDependencyModules.filterIsInstance<ModuleDescriptorImpl>() + moduleDescriptor,
+            friends
         )
 
         testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)

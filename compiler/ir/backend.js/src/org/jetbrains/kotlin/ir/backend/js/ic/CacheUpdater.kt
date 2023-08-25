@@ -57,7 +57,6 @@ enum class DirtyFileState(val str: String) {
 class CacheUpdater(
     mainModule: String,
     private val allModules: Collection<String>,
-    private val mainModuleFriends: Collection<String>,
     cacheDir: String,
     private val compilerConfiguration: CompilerConfiguration,
     private val irFactory: () -> IrFactory,
@@ -118,11 +117,6 @@ class CacheUpdater(
                     nameToKotlinLibrary[depName] ?: notFoundIcError("library $depName")
                 }
             }
-        }
-
-        val mainModuleFriendLibraries = libraryDependencies.keys.let { libs ->
-            val friendPaths = mainModuleFriends.mapTo(newHashSetWithExpectedSize(mainModuleFriends.size)) { File(it).canonicalPath }
-            libs.memoryOptimizedFilter { it.libraryFile.canonicalPath in friendPaths }
         }
 
         private val incrementalCaches = libraryDependencies.keys.associate { lib ->
@@ -673,7 +667,6 @@ class CacheUpdater(
         val jsIrLinkerLoader = JsIrLinkerLoader(
             compilerConfiguration = compilerConfiguration,
             dependencyGraph = updater.libraryDependencies,
-            mainModuleFriends = updater.mainModuleFriendLibraries,
             irFactory = irFactory(),
             stubbedSignatures = stubbedSignatures
         )
@@ -794,7 +787,7 @@ fun rebuildCacheForDirtyFiles(
 
     val modifiedFiles = mapOf(libFile to dirtySrcFiles.associateWith { emptyMetadata })
 
-    val jsIrLoader = JsIrLinkerLoader(configuration, dependencyGraph, emptyList(), irFactory, emptySet())
+    val jsIrLoader = JsIrLinkerLoader(configuration, dependencyGraph, irFactory, emptySet())
     val loadedIr = jsIrLoader.loadIr(KotlinSourceFileMap<KotlinSourceFileExports>(modifiedFiles), true)
 
     val currentIrModule = loadedIr.loadedFragments[libFile] ?: notFoundIcError("loaded fragment", libFile)

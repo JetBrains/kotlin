@@ -1167,7 +1167,6 @@ val IrFunction.allParametersCount: Int
 // but it bypasses SymbolTable.
 // TODO: merge it with FakeOverrideBuilder.
 private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy(
-    friendModules = emptyMap(),
     unimplementedOverridesStrategy = ProcessAsFakeOverrides
 ) {
     override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {

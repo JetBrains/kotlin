@@ -574,7 +574,14 @@ class GenerateIrRuntime {
         val typeTranslator = TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
-        val jsLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, PartialLinkageSupportForLinker.DISABLED, null)
+        val jsLinker = JsIrLinker(
+            moduleDescriptor,
+            IrMessageLogger.None,
+            irBuiltIns,
+            symbolTable,
+            PartialLinkageSupportForLinker.DISABLED,
+            null
+        )
 
         val moduleFragment = jsLinker.deserializeFullModule(moduleDescriptor, moduleDescriptor.kotlinLibrary)
         // Create stubs

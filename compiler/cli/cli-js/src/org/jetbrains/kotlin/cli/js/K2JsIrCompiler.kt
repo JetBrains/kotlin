@@ -253,7 +253,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             messageCollector = messageCollector,
             outputDir = outputDir,
             libraries = libraries,
-            friendLibraries = friendLibraries,
             configurationJs = configurationJs,
             mainCallArguments = mainCallArguments
         )
@@ -568,7 +567,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         messageCollector: MessageCollector,
         outputDir: File,
         libraries: List<String>,
-        friendLibraries: List<String>,
         configurationJs: CompilerConfiguration,
         mainCallArguments: List<String>?
     ): IcCachesArtifacts? {
@@ -593,7 +591,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val cacheUpdater = CacheUpdater(
                 mainModule = arguments.includes!!,
                 allModules = libraries,
-                mainModuleFriends = friendLibraries,
                 cacheDir = cacheDirectory,
                 compilerConfiguration = configurationJs,
                 irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },

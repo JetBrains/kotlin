@@ -358,7 +358,6 @@ abstract class AbstractInvalidationTest(
                 val cacheUpdater = CacheUpdater(
                     mainModule = mainModuleInfo.modulePath,
                     allModules = testInfo.mapTo(mutableListOf(STDLIB_KLIB)) { it.modulePath },
-                    mainModuleFriends = mainModuleInfo.friends,
                     cacheDir = buildDir.resolve("incremental-cache").absolutePath,
                     compilerConfiguration = configuration,
                     irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
