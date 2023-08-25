@@ -1,3 +1,11 @@
-fun sum(a: Int, b: Int): Long =
-    (a + b).toLong()
-
+fun addByte(a: Byte, b: Byte): Byte = (a + b).toByte()
+fun addUByte(a: UByte, b: UByte): UByte = (a + b).toUByte()
+fun addShort(a: Short, b: Short): Short = (a + b).toShort()
+fun addUShort(a: UShort, b: UShort): UShort = (a + b).toUShort()
+fun addInt(a: Int, b: Int): Int = (a + b).toInt()
+fun addUInt(a: UInt, b: UInt): UInt = (a + b).toUInt()
+fun addLong(a: Long, b: Long): Long = (a + b).toLong()
+fun addULong(a: ULong, b: ULong): ULong = (a + b).toULong()
+fun addFloat(a: Float, b: Float): Float = (a + b).toFloat()
+fun addDouble(a: Double, b: Double): Double = (a + b).toDouble()
+fun addBoolean(a: Boolean, b: Boolean): Boolean = a || b
