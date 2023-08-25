@@ -207,12 +207,12 @@ OBJ_GETTER(Kotlin_String_unsafeStringFromCharArray, KConstRef thiz, KInt start, 
   RETURN_OBJ(result->obj());
 }
 
-OBJ_GETTER(Kotlin_String_toCharArray, KString string, KInt start, KInt size) {
-  ArrayHeader* result = AllocArrayInstance(theCharArrayTypeInfo, size, OBJ_RESULT)->array();
-  memcpy(CharArrayAddressOfElementAt(result, 0),
+OBJ_GETTER(Kotlin_String_toCharArray, KString string, KRef destination, KInt destinationOffset, KInt start, KInt size) {
+  ArrayHeader* destinationArray = destination->array();
+  memcpy(CharArrayAddressOfElementAt(destinationArray, destinationOffset),
          CharArrayAddressOfElementAt(string, start),
          size * sizeof(KChar));
-  RETURN_OBJ(result->obj());
+  RETURN_OBJ(destinationArray->obj());
 }
 
 OBJ_GETTER(Kotlin_String_subSequence, KString thiz, KInt startIndex, KInt endIndex) {

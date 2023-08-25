@@ -256,10 +256,10 @@ public actual fun String.lowercase(): String = lowercaseImpl()
 /**
  * Returns a [CharArray] containing characters of this string.
  */
-public actual fun String.toCharArray(): CharArray = toCharArray(this, 0, length)
+public actual fun String.toCharArray(): CharArray = toCharArray(this, CharArray(length), 0, 0, length)
 
 @GCUnsafeCall("Kotlin_String_toCharArray")
-private external fun toCharArray(string: String, start: Int, size: Int): CharArray
+private external fun toCharArray(string: String, destination: CharArray, destinationOffset: Int, start: Int, size: Int): CharArray
 
 /**
  * Returns a copy of this string having its first letter titlecased using the rules of the default locale,
@@ -377,7 +377,35 @@ internal external fun unsafeStringFromCharArray(array: CharArray, start: Int, si
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
-    return toCharArray(this, startIndex, endIndex - startIndex)
+    val rangeSize = endIndex - startIndex
+    return toCharArray(this, CharArray(rangeSize), 0, startIndex, rangeSize)
+}
+
+/**
+ * Copies characters from this string into the [destination] character array and returns that array.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the array to copy to.
+ * @param startIndex the start offset (inclusive) of the substring to copy.
+ * @param endIndex the end offset (exclusive) of the substring to copy.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
+ *  or when that index is out of the [destination] array indices range.
+ */
+@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.toCharArray(
+        destination: CharArray,
+        destinationOffset: Int = 0,
+        startIndex: Int = 0,
+        endIndex: Int = length
+): CharArray {
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkBoundsIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+    return toCharArray(this, destination, destinationOffset, startIndex, rangeSize)
 }
 
 /**

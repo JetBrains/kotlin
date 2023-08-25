@@ -146,6 +146,34 @@ public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
 }
 
 /**
+ * Copies characters from this string into the [destination] character array and returns that array.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the array to copy to.
+ * @param startIndex the start offset (inclusive) of the substring to copy.
+ * @param endIndex the end offset (exclusive) of the substring to copy.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
+ *  or when that index is out of the [destination] array indices range.
+ */
+@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.toCharArray(
+    destination: CharArray,
+    destinationOffset: Int = 0,
+    startIndex: Int = 0,
+    endIndex: Int = length
+): CharArray {
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkBoundsIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+    copyWasmArray(this.chars, destination.storage, startIndex, destinationOffset, rangeSize)
+    return destination
+}
+
+/**
  * Decodes a string from the bytes in UTF-8 encoding in this array.
  *
  * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
