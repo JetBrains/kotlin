@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.inlineClassFieldName
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.eraseIfTypeParameter
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -32,18 +30,6 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
     // If this value is immaterial, construct an object on the top of the stack. This
     // must always be done before generating other values or emitting raw bytecode.
     open fun materializeAt(target: Type, irTarget: IrType, castForReified: Boolean) {
-
-        fun IrType.eraseIfTypeParameter(): IrType {
-            val owner = (this as? IrSimpleType)?.classifier?.owner as? IrTypeParameter ?: return this
-            val upperBound = owner.erasedUpperBound
-            return IrSimpleTypeImpl(
-                upperBound.symbol,
-                isNullable(),
-                List(upperBound.typeParameters.size) { IrStarProjectionImpl },
-                owner.annotations
-            )
-        }
-
         val erasedSourceType = irType.eraseIfTypeParameter()
         val erasedTargetType = irTarget.eraseIfTypeParameter()
 
