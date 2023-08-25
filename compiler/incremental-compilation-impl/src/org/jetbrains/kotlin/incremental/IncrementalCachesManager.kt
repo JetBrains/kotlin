@@ -60,8 +60,6 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
     private class CacheCloser(private val cache: BasicMapsOwner) : Closeable {
 
         override fun close() {
-            // It's important to flush the cache when closing (see KT-53168)
-            cache.flush(memoryCachesOnly = false)
             cache.close()
         }
     }

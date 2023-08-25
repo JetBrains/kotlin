@@ -154,7 +154,7 @@ open class IncrementalJsCache(
         }
         removeAllFromClassStorage(dirtyOutputClassesMap.getDirtyOutputClasses(), changesCollector)
         dirtySources.clear()
-        dirtyOutputClassesMap.clean()
+        dirtyOutputClassesMap.clear()
     }
 
     fun nonDirtyPackageParts(): Map<File, TranslationResultValue> =
@@ -447,13 +447,7 @@ private class PackageMetadataMap(
         storage[packageName] = newMetadata
     }
 
-    fun remove(packageName: String) {
-        storage.remove(packageName)
-    }
-
     fun keys() = storage.keys
-
-    operator fun get(packageName: String) = storage[packageName]
 
     override fun dumpValue(value: ByteArray): String = "Package metadata: ${value.md5()}"
 }
