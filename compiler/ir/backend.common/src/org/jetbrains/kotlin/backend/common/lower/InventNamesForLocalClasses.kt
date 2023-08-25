@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.getAdditionalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.ir.getNonDefaultAdditionalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
+import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
@@ -39,8 +39,58 @@ abstract class InventNamesForLocalClasses(
      * @property enclosingName internal name of the enclosing class (including anonymous classes, local objects and callable references)
      * @property isLocal true if the next declaration to be encountered in the IR tree is local
      */
-    private data class Data(val enclosingName: String?, val isLocal: Boolean, val processingInlinedFunction: Boolean = false) {
+    private class Data(
+        private val lazyEnclosingName: Lazy<String?>,
+        val isLocal: Boolean,
+        val processingInlinedFunction: Boolean = false,
+    ) {
+        val enclosingName: String? by lazyEnclosingName
+
+        constructor(enclosingName: String?, isLocal: Boolean, processingInlinedFunction: Boolean = false) : this(
+            lazy(LazyThreadSafetyMode.NONE) { enclosingName }, isLocal, processingInlinedFunction
+        )
+
         fun makeLocal(): Data = if (isLocal) this else copy(isLocal = true)
+
+        fun copy(
+            lazyEnclosingName: Lazy<String?> = this.lazyEnclosingName,
+            isLocal: Boolean = this.isLocal,
+            processingInlinedFunction: Boolean = this.processingInlinedFunction,
+        ): Data {
+            return Data(lazyEnclosingName, isLocal, processingInlinedFunction)
+        }
+
+        fun copy(
+            enclosingName: String?,
+            isLocal: Boolean = this.isLocal,
+            processingInlinedFunction: Boolean = this.processingInlinedFunction,
+        ): Data {
+            return Data(enclosingName, isLocal, processingInlinedFunction)
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as Data
+
+            if (isLocal != other.isLocal) return false
+            if (processingInlinedFunction != other.processingInlinedFunction) return false
+            if (enclosingName != other.enclosingName) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = isLocal.hashCode()
+            result = 31 * result + processingInlinedFunction.hashCode()
+            result = 31 * result + (enclosingName?.hashCode() ?: 0)
+            return result
+        }
+
+        override fun toString(): String {
+            return "Data(enclosingName=$enclosingName, isLocal=$isLocal, processingInlinedFunction=$processingInlinedFunction)"
+        }
     }
 
     private inner class NameInventor : IrElementVisitor<Unit, Data>() {
@@ -57,7 +107,7 @@ abstract class InventNamesForLocalClasses(
 
                 val inlinedAt = expression.inlineCall.symbol.owner.name.asString()
                 val newData = data.copy(
-                    enclosingName = data.enclosingName + "$\$inlined\$$inlinedAt", isLocal = true, processingInlinedFunction = true
+                    lazyEnclosingName = lazy(LazyThreadSafetyMode.NONE) { data.enclosingName + "$\$inlined\$$inlinedAt" }, isLocal = true, processingInlinedFunction = true
                 )
                 expression.getOriginalStatementsFromInlinedBlock().forEach { it.accept(this, newData) }
 
@@ -71,12 +121,14 @@ abstract class InventNamesForLocalClasses(
                 // This is not a local class, so we need not invent a name for it, the type mapper will correctly compute it
                 // by navigating through its containers.
                 val enclosingName = data.enclosingName
-                val internalName = if (enclosingName != null) {
-                    "$enclosingName$${declaration.name.asString()}"
-                } else {
-                    computeTopLevelClassName(declaration)
+                val internalName = lazy(LazyThreadSafetyMode.NONE) {
+                    if (enclosingName != null) {
+                        "$enclosingName$${declaration.name.asString()}"
+                    } else {
+                        computeTopLevelClassName(declaration)
+                    }
                 }
-                declaration.acceptChildren(this, data.copy(enclosingName = internalName))
+                declaration.acceptChildren(this, data.copy(lazyEnclosingName = internalName))
                 return
             }
 
@@ -116,21 +168,23 @@ abstract class InventNamesForLocalClasses(
             val enclosingName = data.enclosingName
             val simpleName = declaration.name.asString()
 
-            val internalName = when {
-                declaration is IrFunction && !NameUtils.hasName(declaration.name) -> {
-                    // Replace "unnamed" function names with indices.
-                    inventName(null, data).also { name ->
-                        // We save the name of the function to reuse it in the reference to it (produced by the closure conversion) later.
-                        localFunctionNames[declaration.symbol] = name
+            val internalName = lazy(LazyThreadSafetyMode.NONE) {
+                when {
+                    declaration is IrFunction && !NameUtils.hasName(declaration.name) -> {
+                        // Replace "unnamed" function names with indices.
+                        inventName(null, data).also { name ->
+                            // We save the name of the function to reuse it in the reference to it (produced by the closure conversion) later.
+                            localFunctionNames[declaration.symbol] = name
+                        }
                     }
-                }
 
-                declaration is IrVariable && generateNamesForRegeneratedObjects || data.processingInlinedFunction -> enclosingName
-                enclosingName != null -> "$enclosingName$$simpleName"
-                else -> simpleName
+                    declaration is IrVariable && generateNamesForRegeneratedObjects || data.processingInlinedFunction -> enclosingName
+                    enclosingName != null -> "$enclosingName$$simpleName"
+                    else -> simpleName
+                }
             }
 
-            val newData = data.copy(enclosingName = internalName, isLocal = true)
+            val newData = data.copy(lazyEnclosingName = internalName, isLocal = true)
             if ((declaration is IrProperty && declaration.isDelegated) || declaration is IrLocalDelegatedProperty) {
                 // Old backend currently reserves a name here, in case a property reference-like anonymous object will need
                 // to be generated in the codegen later, which is now happening for local delegated properties in inline functions.
