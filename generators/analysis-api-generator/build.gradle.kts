@@ -23,6 +23,7 @@ dependencies {
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(projectTests(":analysis:symbol-light-classes"))
+    testImplementation(projectTests(":analysis:decompiled:native"))
     testImplementation(intellijCore())
     testApiJUnit5()
 }

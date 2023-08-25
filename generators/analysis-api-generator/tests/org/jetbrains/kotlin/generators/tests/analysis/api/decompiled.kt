@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
+import org.jetbrains.kotlin.analysis.decompiler.konan.AbstractDecompiledKnmStubConsistencyFe10Test
+import org.jetbrains.kotlin.analysis.decompiler.konan.AbstractDecompiledKnmStubConsistencyK2Test
 import org.jetbrains.kotlin.analysis.decompiler.psi.AbstractByDecompiledPsiStubBuilderK2CompilerTest
 import org.jetbrains.kotlin.analysis.decompiler.psi.AbstractByDecompiledPsiStubBuilderTest
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractAdditionalStubInfoK2CompilerTest
@@ -49,6 +51,18 @@ internal fun TestGroupSuite.generateDecompiledTests() {
         }
 
         testClass<AbstractByDecompiledPsiStubBuilderK2CompilerTest> {
+            model("clsFileStubBuilder", extension = null, recursive = false)
+        }
+    }
+
+    testGroup(
+        "analysis/decompiled/native/tests",
+        "analysis/decompiled/decompiler-to-file-stubs/testData",
+    ) {
+        testClass<AbstractDecompiledKnmStubConsistencyK2Test> {
+            model("clsFileStubBuilder", extension = null, recursive = false)
+        }
+        testClass<AbstractDecompiledKnmStubConsistencyFe10Test> {
             model("clsFileStubBuilder", extension = null, recursive = false)
         }
     }

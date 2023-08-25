@@ -144,9 +144,7 @@ internal data class TestData(
     companion object {
         fun createFromDirectory(directory: Path): TestData {
             val allFiles = Files.list(directory).collect(Collectors.toList())
-            val mainKotlinFile = allFiles.single { path: Path ->
-                path.name.replaceFirstChar { Character.toUpperCase(it) } == "${directory.name.removeSuffix("Kt")}.kt"
-            }
+            val mainKotlinFile = findMainTestKotlinFile(directory)
             val fileText = mainKotlinFile.readText()
             val jvmFileName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "JVM_FILE_NAME:") ?: directory.name
             val additionalCompilerOptions = InTextDirectivesUtils.findListWithPrefixes(fileText, "// !LANGUAGE: ").map { "-XXLanguage:$it" }
@@ -179,3 +177,9 @@ internal data class TestData(
     }
 }
 
+fun findMainTestKotlinFile(directory: Path): Path {
+    val allFiles = Files.list(directory).collect(Collectors.toList())
+    return allFiles.singleOrNull { path: Path ->
+        path.name.replaceFirstChar { Character.toUpperCase(it) } == "${directory.name.removeSuffix("Kt")}.kt"
+    } ?: error("Test directory should contain a single primary kt source file")
+}

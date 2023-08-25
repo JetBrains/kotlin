@@ -1,3 +1,5 @@
+// Issue: KTIJ-26761
+// KNM_K2_IGNORE
 public class AnnotationsOnNullableTypes {
     fun B<@A C?>.receiverArgument() {}
 

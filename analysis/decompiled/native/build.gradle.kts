@@ -22,6 +22,10 @@ dependencies {
     api(project(":js:js.serializer"))
     api(project(":kotlin-util-klib-metadata"))
     compileOnly(intellijCore())
+
+    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
 }
 
 testsJar()

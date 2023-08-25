@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.impl.STUB_TO_STRING_PREFIX
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -40,7 +41,8 @@ abstract class AbstractStubBuilderTest : AbstractDecompiledClassTest() {
     protected abstract fun getStubToTest(classFile: VirtualFile): PsiFileStub<*>
 }
 
-private fun StubElement<out PsiElement>.serializeToString(): String {
+@TestOnly
+fun StubElement<out PsiElement>.serializeToString(): String {
     return serializeStubToString(this)
 }
 

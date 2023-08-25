@@ -9,6 +9,7 @@ import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.DecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.createIncompatibleAbiVersionDecompiledText
@@ -69,4 +70,7 @@ abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
             null -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), invalidBinaryVersion())
         }
     }
+
+    @TestOnly
+    internal fun buildDecompiledTextForTests(virtualFile: VirtualFile): DecompiledText = buildDecompiledText(virtualFile)
 }
