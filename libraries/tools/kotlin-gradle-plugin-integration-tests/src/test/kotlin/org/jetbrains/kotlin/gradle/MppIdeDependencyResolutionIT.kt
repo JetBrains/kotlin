@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.*
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.IdeaKotlinDependencyMatcher
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.getOrFail
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -350,6 +347,36 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
                 jvmMainDependencies.getOrFail(binaryCoordinates("org.jetbrains.sample:producer:1.0.0")).assertSingleSourcesJar()
                 jvmTestDependencies.getOrFail(binaryCoordinates("org.jetbrains.sample:producer:1.0.0")).assertSingleSourcesJar()
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test native project dependencies resolve leniently`(gradleVersion: GradleVersion) {
+        project("kt-61466-lenient-dependency-resolution", gradleVersion) {
+            resolveIdeDependencies(":consumer") { dependencies ->
+                dependencies["commonMain"].assertMatches(
+                    kotlinStdlibDependencies,
+                    kotlinNativeDistributionDependencies,
+                )
+
+                dependencies["linuxMain"].assertMatches(
+                    kotlinStdlibDependencies,
+                    kotlinNativeDistributionDependencies,
+                    dependsOnDependency(":consumer/commonMain"),
+                    dependsOnDependency(":consumer/nativeMain")
+                )
+
+                dependencies["linuxX64Main"].assertMatches(
+                    kotlinNativeDistributionDependencies,
+                    dependsOnDependency(":consumer/commonMain"),
+                    dependsOnDependency(":consumer/nativeMain"),
+                    dependsOnDependency(":consumer/linuxMain"),
+                    binaryCoordinates("this:does:not-exist"),
+                    IdeaKotlinDependencyMatcher("Project Dependency: producer") { dependency ->
+                        dependency is IdeaKotlinUnresolvedBinaryDependency && ":producer" in dependency.cause.orEmpty()
+                    }
+                )
             }
         }
     }
