@@ -11,8 +11,12 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorShallow
+import org.jetbrains.kotlin.name.Name
 
 internal val uniqueLoopLabelsPhase = makeIrFilePhase(
     ::UniqueLoopLabelsLowering,
@@ -27,13 +31,13 @@ private class UniqueLoopLabelsLowering(val context: JvmBackendContext) : FileLow
             private var counter = 0
             private val stack = ArrayList<Name>()
 
-            override fun visitElement(element: IrElement) {
+            override fun visitElement(element: IrElement, data: String) {
                 if (element is IrDeclarationWithName) {
                     stack.add(element.name)
-                    element.acceptChildrenVoid(this)
+                    element.acceptChildren(this, data)
                     stack.removeLast()
                 } else {
-                    element.acceptChildrenVoid(this)
+                    element.acceptChildren(this, data)
                 }
             }
 
@@ -41,7 +45,7 @@ private class UniqueLoopLabelsLowering(val context: JvmBackendContext) : FileLow
                 // Give all loops unique labels so that we can generate unambiguous instructions for non-local
                 // `break`/`continue` statements.
                 loop.label = stack.joinToString("$", postfix = (++counter).toString())
-                super.visitLoop(loop)
+                super.visitLoop(loop, data)
             }
 
             override fun visitWhileLoop(loop: IrWhileLoop, data: String) = visitLoop(loop, data)
