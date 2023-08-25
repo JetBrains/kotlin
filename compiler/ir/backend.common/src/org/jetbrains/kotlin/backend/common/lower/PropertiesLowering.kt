@@ -59,7 +59,7 @@ class PropertiesLowering : DeclarationTransformer {
     }
 }
 
-class LocalDelegatedPropertiesLowering : IrElementTransformerVoidShallow(), BodyLoweringPass {
+class LocalDelegatedPropertiesLowering : IrElementTransformerVoid(), BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.accept(this, null)
