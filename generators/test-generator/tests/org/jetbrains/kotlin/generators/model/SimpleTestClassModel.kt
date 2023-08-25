@@ -114,6 +114,13 @@ class SimpleTestClassModel(
                     if (file.isDirectory && excludeParentDirs && dirHasSubDirs(file)) {
                         continue
                     }
+                    if (file.isDirectory && !dirHasFilesInside(file)) {
+                        throw IllegalStateException(
+                            "testData directory $file is empty. " +
+                                    "This might be due to git branch switching removed the contents but left directory intact. " +
+                                    "Consider removing empty directory or revert removing of its' contents."
+                        )
+                    }
                     result.addAll(
                         methodModelLocator(
                             rootFile, file, filenamePattern,
