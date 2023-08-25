@@ -24,7 +24,6 @@ kotlin {
         optIn.addAll(
             listOf(
                 "kotlin.RequiresOptIn",
-                "org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AdvancedKotlinGradlePluginApi",
                 "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
                 "org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi",
                 "org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi",

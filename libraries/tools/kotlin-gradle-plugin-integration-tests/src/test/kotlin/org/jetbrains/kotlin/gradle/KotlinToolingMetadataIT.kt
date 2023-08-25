@@ -6,33 +6,22 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
-import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask.Companion.taskNameForKotlinModule
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
 import org.jetbrains.kotlin.tooling.parseJsonOrThrow
-import org.junit.Assume.assumeFalse
-import org.junit.AssumptionViolatedException
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class KotlinToolingMetadataMppIT : BaseGradleIT() {
     override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
 
-    private val defaultKotlinToolingMetadataJsonPath get() =
-        if (isKpmModelMappingEnabled) {
-            "build/kotlinToolingMetadata/main/kotlin-tooling-metadata.json"
-        } else {
-            "build/kotlinToolingMetadata/kotlin-tooling-metadata.json"
-        }
+    private val defaultKotlinToolingMetadataJsonPath
+        get() = "build/kotlinToolingMetadata/kotlin-tooling-metadata.json"
 
-    private val buildKotlinToolingMetadataTaskName get() =
-        if (isKpmModelMappingEnabled) {
-            taskNameForKotlinModule(GradleKpmModule.MAIN_MODULE_NAME)
-        } else {
-            BuildKotlinToolingMetadataTask.defaultTaskName
-        }
+
+    private val buildKotlinToolingMetadataTaskName
+        get() = BuildKotlinToolingMetadataTask.defaultTaskName
 
     @Test
     fun `new-mpp-published`() = with(transformProjectWithPluginsDsl("new-mpp-published")) {
@@ -46,7 +35,7 @@ class KotlinToolingMetadataMppIT : BaseGradleIT() {
             val metadata = KotlinToolingMetadata.parseJsonOrThrow(metadataJson)
             assertEquals(
                 listOfNotNull(
-                    KotlinPlatformType.common.name.takeIf { !isKpmModelMappingEnabled },
+                    KotlinPlatformType.common.name,
                     KotlinPlatformType.jvm.name,
                     KotlinPlatformType.js.name,
                     KotlinPlatformType.native.name,
@@ -107,47 +96,11 @@ class KotlinToolingMetadataMppIT : BaseGradleIT() {
 
     @Test
     fun `kotlin-js-browser-project`() = with(transformProjectWithPluginsDsl("kotlin-js-browser-project")) {
-        assumeFalse("KPM model mapping is not yet supported in single-platform projects", isKpmModelMappingEnabled)
         build(BuildKotlinToolingMetadataTask.defaultTaskName) {
             assertSuccessful()
             assertTasksExecuted(":app:$buildKotlinToolingMetadataTaskName")
             assertTasksExecuted(":base:$buildKotlinToolingMetadataTaskName")
             assertTasksExecuted(":lib:$buildKotlinToolingMetadataTaskName")
-        }
-    }
-
-    @Test
-    fun `kpm multiple modules`() {
-        // TODO: Move it to Integration Tests Container for pure KPM projects
-        if (isKpmModelMappingEnabled) throw AssumptionViolatedException("Pure KPM tests don't need KPM model mapping flag")
-
-        with(transformProjectWithPluginsDsl("kpm-multi-module-published")) {
-            val expectedMetadataByModule = mapOf<String, KotlinToolingMetadata.() -> Unit>(
-                GradleKpmModule.MAIN_MODULE_NAME to {
-                    val nativeTarget = projectTargets.single { it.platformType == KotlinPlatformType.native.name }
-                    assertEquals(KonanTarget.LINUX_X64.name, nativeTarget.extras.native?.konanTarget)
-                },
-                "secondaryModule" to {
-                    val nativeTarget = projectTargets.single { it.platformType == KotlinPlatformType.native.name }
-                    assertEquals(KonanTarget.LINUX_ARM64.name, nativeTarget.extras.native?.konanTarget)
-                },
-            )
-
-            // FIXME: Use `publish` task for Integration Tests.
-            //  However Publishing of multiple modules fails currently and need proper design & implementation KT-49704
-            build(BuildKotlinToolingMetadataTask.defaultTaskName) {
-                assertSuccessful()
-                expectedMetadataByModule.forEach { (moduleName, assertExpected) ->
-                    assertTasksExecuted(":${taskNameForKotlinModule(moduleName)}")
-
-                    val pathToMetadata = "build/kotlinToolingMetadata/$moduleName/kotlin-tooling-metadata.json"
-                    assertFileExists(pathToMetadata)
-                    val metadataJson = projectDir.resolve(pathToMetadata).readText()
-                    val metadata = KotlinToolingMetadata.parseJsonOrThrow(metadataJson)
-
-                    metadata.assertExpected()
-                }
-            }
         }
     }
 }
