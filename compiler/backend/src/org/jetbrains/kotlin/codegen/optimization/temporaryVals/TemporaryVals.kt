@@ -32,7 +32,7 @@ class TemporaryValsAnalyzer {
         val insnList = methodNode.instructions
         val insnArray = insnList.toArray()
 
-        val potentiallyTemporaryStores = insnList.filterTo(LinkedHashSet()) { it.isStoreOperation() }
+        val potentiallyTemporaryStores = insnList.filterIsInstance<VarInsnNode>().filterTo(LinkedHashSet()) { it.isStoreOperation() }
 
         for (lv in methodNode.localVariables) {
             // Exclude stores within LVT entry liveness ranges.
@@ -116,20 +116,16 @@ class TemporaryValsAnalyzer {
 
         return storeInsnToStoreData.values
             .filterNot { it.isDirty }
-            .map {
-                val storeInsn = it.storeInsn as VarInsnNode
-                val loadInsns = it.loads.map { load -> load as VarInsnNode }
-                TemporaryVal(storeInsn.`var`, storeInsn, loadInsns)
-            }
+            .map { TemporaryVal(it.storeInsn.`var`, it.storeInsn, it.loads.toList()) }
             .sortedBy { insnList.indexOf(it.storeInsn) }
     }
 
-    private class StoreData(val storeInsn: AbstractInsnNode) {
+    private class StoreData(val storeInsn: VarInsnNode) {
         var isDirty = false
 
         val value = StoredValue.Store(this)
 
-        val loads = LinkedHashSet<AbstractInsnNode>()
+        val loads = LinkedHashSet<VarInsnNode>()
     }
 
     private sealed class StoredValue : StoreLoadValue {
@@ -157,7 +153,7 @@ class TemporaryValsAnalyzer {
     }
 
     private class StoreTrackingInterpreter(
-        private val storeInsnToStoreData: Map<AbstractInsnNode, StoreData>
+        private val storeInsnToStoreData: Map<VarInsnNode, StoreData>
     ) : StoreLoadInterpreter<StoredValue>() {
 
         override fun newEmptyValue(local: Int): StoredValue = StoredValue.Unknown
@@ -175,7 +171,7 @@ class TemporaryValsAnalyzer {
                 value.temporaryVals.forEach { it.isDirty = true }
             } else if (value is StoredValue.Store) {
                 // Keep track of a load instruction
-                value.temporaryVal.loads.add(insn)
+                value.temporaryVal.loads.add(insn as VarInsnNode)
             }
             return StoredValue.Unknown
         }
