@@ -27,7 +27,10 @@ internal fun createStubBasedFirSymbolProviderForClassFiles(
     kotlinScopeProvider: FirKotlinScopeProvider,
 ): FirSymbolProvider = createStubBasedFirSymbolProviderForScopeLimitedByFiles(
     project, baseScope, session, moduleDataProvider, kotlinScopeProvider,
-    fileFilter = { file -> file.extension == JavaClassFileType.INSTANCE.defaultExtension },
+    fileFilter = { file ->
+        val extension = file.extension
+        extension == JavaClassFileType.INSTANCE.defaultExtension || extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION
+    },
 )
 
 internal fun createStubBasedFirSymbolProviderForCommonMetadataFiles(
