@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 interface InnerClassesSupport {
@@ -209,7 +210,7 @@ class InnerClassesMemberBodyLowering(val context: BackendContext, private val in
 
 class InnerClassConstructorCallsLowering(val context: BackendContext, val innerClassesSupport: InnerClassesSupport) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+        irBody.transformChildrenVoid(object : IrElementTransformerVoidShallow() {
             override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
                 expression.transformChildrenVoid(this)
 

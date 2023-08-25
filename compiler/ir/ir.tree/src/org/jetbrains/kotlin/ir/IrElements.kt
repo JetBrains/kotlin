@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
 
-fun IrStatement.transformStatement(transformer: IrElementTransformerVoid): IrStatement =
+fun IrStatement.transformStatement(transformer: IrElementTransformerVoidShallow): IrStatement =
     transform(transformer, null) as IrStatement

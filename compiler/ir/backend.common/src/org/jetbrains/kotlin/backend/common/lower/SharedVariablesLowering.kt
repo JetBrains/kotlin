@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -133,7 +134,7 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
         private fun rewriteSharedVariables() {
             val transformedSymbols = HashMap<IrValueSymbol, IrVariableSymbol>()
 
-            irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+            irBody.transformChildrenVoid(object : IrElementTransformerVoidShallow() {
                 override fun visitVariable(declaration: IrVariable): IrStatement {
                     declaration.transformChildrenVoid(this)
 
@@ -147,7 +148,7 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
                 }
             })
 
-            irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+            irBody.transformChildrenVoid(object : IrElementTransformerVoidShallow() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     expression.transformChildrenVoid(this)
 
