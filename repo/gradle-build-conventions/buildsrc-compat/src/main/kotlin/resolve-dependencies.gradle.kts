@@ -22,12 +22,6 @@ tasks.register("resolveDependencies") {
 
             configurations.findByName("commonCompileClasspath")?.resolve()
 
-            plugins.withId("java-base") {
-                val service = project.extensions.getByType<JavaToolchainService>()
-                val javaExtension = extensions.getByType<JavaPluginExtension>()
-                service.compilerFor(javaExtension.toolchain).get()
-            }
-
             project.extensions.findByType<SpdxSbomExtension>()?.run {
                 targets.forEach { target ->
                     target.configurations.get().forEach { configurationName ->
@@ -73,6 +67,17 @@ tasks.register("resolveDependencies") {
                     content { includeModule("com.yarnpkg", "yarn") }
                 }
             }
+        }
+    }
+}
+
+tasks.register("resolveToolchains") {
+    allprojects {
+        logger.info("Resolving toolchains in $this")
+        plugins.withId("java-base") {
+            val service = project.extensions.getByType<JavaToolchainService>()
+            val javaExtension = extensions.getByType<JavaPluginExtension>()
+            service.compilerFor(javaExtension.toolchain).get()
         }
     }
 }
