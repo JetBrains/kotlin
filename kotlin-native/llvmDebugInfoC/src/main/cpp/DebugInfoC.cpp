@@ -131,6 +131,25 @@ DIScopeOpaqueRef DICreateLexicalBlock(DIBuilderRef builderRef, DIScopeOpaqueRef 
   return llvm::wrap(llvm::unwrap(builderRef)->createLexicalBlock(llvm::unwrap(scopeRef), llvm::unwrap(fileRef), line, column));
 }
 
+//DICompositeTypeRef DICreateStringType(
+//    DIBuilderRef refBuilder,
+//) {
+//    auto builder = llvm::unwrap(refBuilder);
+//    builder->createBasicType("ObjHeader(String)", 64, llvm::)
+//    auto typePointer = builder->createPointerType()
+//
+//    auto kotlinStringType = builder->createStructType(
+//            nullptr, "KotlinString", nullptr, 0,
+//            /* sizeInBits = */ 64 * 2 + 42 * 2,
+//            /* alignment = */ 0,
+//            llvm::DINode::FlagZero, nullptr,
+//
+//    );
+//    builder->retainType(kotlinStringType);
+////    DblTy = DBuilder->createBasicType("double", 64, dwarf::DW_ATE_float);
+//    return DblTy;
+//}
+
 
 DICompositeTypeRef DICreateStructType(DIBuilderRef refBuilder,
                                       DIScopeOpaqueRef scope, const char *name,
