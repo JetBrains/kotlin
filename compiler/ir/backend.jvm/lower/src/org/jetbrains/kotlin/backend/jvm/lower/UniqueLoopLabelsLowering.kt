@@ -12,29 +12,40 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.Name
 
 internal val uniqueLoopLabelsPhase = makeIrFilePhase(
-    ::UniqueLoopLabelsLowering,
+    { _: JvmBackendContext -> UniqueLoopLabelsLowering() },
     name = "UniqueLoopLabels",
     description = "Label all loops for non-local break/continue"
 )
 
-private class UniqueLoopLabelsLowering(val context: JvmBackendContext) : FileLoweringPass {
+private class UniqueLoopLabelsLowering : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.accept(object : IrElementVisitor<Unit, String> {
+        irFile.acceptVoid(object : IrElementVisitorVoid {
             // This counter is intentionally not local to every declaration because their names might clash.
             private var counter = 0
+            private val stack = ArrayList<Name>()
 
-            override fun visitElement(element: IrElement, data: String) =
-                element.acceptChildren(this, if (element is IrDeclarationWithName) "$data${element.name}$" else data)
+            override fun visitElement(element: IrElement) {
+                if (element is IrDeclarationWithName) {
+                    stack.add(element.name)
+                    element.acceptChildrenVoid(this)
+                    stack.removeLast()
+                } else {
+                    element.acceptChildrenVoid(this)
+                }
+            }
 
-            override fun visitLoop(loop: IrLoop, data: String) {
+            override fun visitLoop(loop: IrLoop) {
                 // Give all loops unique labels so that we can generate unambiguous instructions for non-local
                 // `break`/`continue` statements.
-                loop.label = "$data${++counter}"
-                super.visitLoop(loop, data)
+                loop.label = stack.joinToString("$", postfix = (++counter).toString())
+                super.visitLoop(loop)
             }
-        }, "")
+        })
     }
 }
