@@ -53,7 +53,6 @@ open class StrictBasicValue(type: Type?) : BasicValue(type) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || other::class.java != this::class.java) return false
-        if (!super.equals(other)) return false
 
         other as StrictBasicValue
 
