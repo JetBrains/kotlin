@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.java.scopes.JavaClassMembersEnhancementScope
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -694,10 +695,18 @@ private class ElementsToShortenCollector(
 
         /**
          * Class use-site member scopes may contain classifiers which are not actually available without explicit import.
-         *
-         * See KTIJ-24684 and KTIJ-24662 for examples.
+         * And if the class is declared in Java, it can be represented with JavaClassMembersEnhancementScope.
          */
-        val scopes = positionScopes.filterNot { it is FirClassUseSiteMemberScope }
+        val scopes = positionScopes.filter {
+            when (it) {
+                // KTIJ-24684, KTIJ-24662
+                is FirClassUseSiteMemberScope -> false
+                // KTIJ-26785
+                is JavaClassMembersEnhancementScope -> false
+
+                else -> true
+            }
+        }
 
         val name = classId.shortClassName
         val availableClassifiers = shorteningContext.findClassifiersInScopesByName(scopes, name)
