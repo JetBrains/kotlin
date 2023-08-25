@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentInvoca
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -314,6 +315,19 @@ class FirCallCompleter(
                 else -> parameters
             }
             lambdaArgument.valueParameters.forEachIndexed { index, parameter ->
+                if (index >= theParameters.size) {
+                    // May happen in erroneous code, see KT-60450
+                    // In test forEachOnZip.kt we have two declared parameters, but in fact forEach expects only one
+                    parameter.replaceReturnTypeRef(
+                        buildErrorTypeRef {
+                            diagnostic = ConeCannotInferValueParameterType(
+                                parameter.symbol, "Lambda or anonymous function has more parameters than expected"
+                            )
+                            source = parameter.source
+                        }
+                    )
+                    return@forEachIndexed
+                }
                 val newReturnType = theParameters[index].approximateLambdaInputType(parameter.symbol)
                 val newReturnTypeRef = if (parameter.returnTypeRef is FirImplicitTypeRef) {
                     newReturnType.toFirResolvedTypeRef(parameter.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter))

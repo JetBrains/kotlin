@@ -6856,6 +6856,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
             }
 
             @Test
+            @TestMetadata("forEachOnZip.kt")
+            public void testForEachOnZip() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/forEachOnZip.kt");
+            }
+
+            @Test
             @TestMetadata("immutableName.kt")
             public void testImmutableName() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/immutableName.kt");
