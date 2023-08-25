@@ -38,7 +38,6 @@ class ArtifactsTest {
         "org.jetbrains.kotlin.gradle-subplugin-example.gradle.plugin",
         "gradle-warnings-detector",
         "kotlin-compiler-args-properties",
-        "kotlin-gradle-plugin-kpm-android",
         "kotlin-gradle-plugin-tcs-android",
         "kotlin-gradle-subplugin-example",
         "kotlin-java-example",

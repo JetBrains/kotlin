@@ -321,7 +321,6 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         implementation("com.android.tools.build:gradle-api:7.4.2")
         compileOnly("com.android.tools:common:30.2.1")
         implementation(gradleKotlinDsl())
-        implementation(project(":kotlin-gradle-plugin-kpm-android"))
         implementation(project(":kotlin-gradle-plugin-tcs-android"))
         implementation(project(":kotlin-tooling-metadata"))
         implementation(project.dependencies.testFixtures(project(":kotlin-gradle-plugin-idea")))
