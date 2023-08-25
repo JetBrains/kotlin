@@ -1702,4 +1702,39 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("test package.jsom skipped with main package.json was up-to-date")
+    @GradleTest
+    fun testPackageJsonSkippedWithUpToDatePackageJsons(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-library-project", gradleVersion) {
+            subProject("app").buildGradleKts.modify {
+                it + """
+                    
+                    tasks.named("testPackageJson") {
+                        enabled = false
+                    }
+
+                    tasks.named("testPublicPackageJson") {
+                        enabled = false
+                    }
+                """.trimIndent()
+            }
+
+            build("assemble") {
+                assertTasksExecuted(":app:packageJson")
+                assertTasksExecuted(":base:packageJson")
+                assertTasksExecuted(":lib:packageJson")
+            }
+
+            build("check") {
+                assertTasksUpToDate(":app:packageJson")
+                assertTasksUpToDate(":base:packageJson")
+                assertTasksUpToDate(":lib:packageJson")
+
+                assertTasksSkipped(":app:testPackageJson")
+                assertTasksExecuted(":lib:testPackageJson")
+                assertTasksExecuted(":base:testPackageJson")
+            }
+        }
+    }
 }

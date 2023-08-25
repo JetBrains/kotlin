@@ -112,12 +112,14 @@ abstract class KotlinPackageJsonTask :
 
     @TaskAction
     fun resolve() {
-        npmResolutionManager.get().resolution.get()[projectPath][compilationDisambiguatedName.get()]
+        val resolution = npmResolutionManager.get().resolution.get()[projectPath][compilationDisambiguatedName.get()]
+        val preparedResolution = resolution
             .prepareWithDependencies(
                 npmResolutionManager = npmResolutionManager.get(),
-                packageJsonHandlers = packageJsonHandlers,
                 logger = logger
             )
+
+        resolution.createPackageJson(preparedResolution, packageJsonHandlers)
     }
 
     companion object {
