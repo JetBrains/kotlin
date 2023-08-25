@@ -82,10 +82,14 @@ internal class KtFirPsiTypeProvider(
             KtTypeMappingMode.SUPER_TYPE -> TypeMappingMode.SUPER_TYPE
             KtTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
             KtTypeMappingMode.RETURN_TYPE_BOXED -> TypeMappingMode.RETURN_TYPE_BOXED
-            KtTypeMappingMode.RETURN_TYPE ->
-                rootModuleSession.jvmTypeMapper.typeContext.getOptimalModeForReturnType(type.coneType, isAnnotationMethod)
-            KtTypeMappingMode.VALUE_PARAMETER ->
-                rootModuleSession.jvmTypeMapper.typeContext.getOptimalModeForValueParameter(type.coneType)
+            KtTypeMappingMode.RETURN_TYPE -> {
+                val expandedType = type.coneType.fullyExpandedType(rootModuleSession)
+                rootModuleSession.jvmTypeMapper.typeContext.getOptimalModeForReturnType(expandedType, isAnnotationMethod)
+            }
+            KtTypeMappingMode.VALUE_PARAMETER -> {
+                val expandedType = type.coneType.fullyExpandedType(rootModuleSession)
+                rootModuleSession.jvmTypeMapper.typeContext.getOptimalModeForValueParameter(expandedType)
+            }
         }
     }
 }
