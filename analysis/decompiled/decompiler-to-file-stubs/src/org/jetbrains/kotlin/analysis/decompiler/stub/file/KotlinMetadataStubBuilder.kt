@@ -12,11 +12,17 @@ import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.analysis.decompiler.stub.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
@@ -56,7 +62,12 @@ open class KotlinMetadataStubBuilder(
                 val fileStub = createFileStub(packageFqName, isScript = false)
                 createPackageDeclarationsStubs(
                     fileStub, context,
-                    ProtoContainer.Package(packageFqName, context.nameResolver, context.typeTable, source = null),
+                    ProtoContainer.Package(
+                        packageFqName,
+                        context.nameResolver,
+                        context.typeTable,
+                        source = createCallableSource(file, content.fileName)
+                    ),
                     packageProto
                 )
                 for (classProto in file.classesToDecompile) {
@@ -68,6 +79,8 @@ open class KotlinMetadataStubBuilder(
             }
         }
     }
+
+    protected open fun createCallableSource(file: FileWithMetadata.Compatible, filename: String): SourceElement? = null
 
     sealed class FileWithMetadata {
         class Incompatible(val version: BinaryVersion) : FileWithMetadata()

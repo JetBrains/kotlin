@@ -6,10 +6,14 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -21,8 +25,26 @@ class KotlinBuiltInDecompiler : KotlinMetadataDecompiler<BuiltInsBinaryVersion>(
     FlexibleTypeDeserializer.ThrowException, { BuiltInsBinaryVersion.INSTANCE }, { BuiltInsBinaryVersion.INVALID_VERSION },
     KotlinStubVersions.BUILTIN_STUB_VERSION
 ) {
+    override val metadataStubBuilder: KotlinMetadataStubBuilder =
+        KotlinBuiltInMetadataStubBuilder(::readFileSafely)
+
     override fun readFile(bytes: ByteArray, file: VirtualFile): KotlinMetadataStubBuilder.FileWithMetadata? {
         return BuiltInDefinitionFile.read(bytes, file)
+    }
+}
+
+private class KotlinBuiltInMetadataStubBuilder(
+    readFile: (VirtualFile, ByteArray) -> FileWithMetadata?,
+) : KotlinMetadataStubBuilder(KotlinStubVersions.BUILTIN_STUB_VERSION, KotlinBuiltInFileType, { BuiltInSerializerProtocol }, readFile) {
+    override fun createCallableSource(file: FileWithMetadata.Compatible, filename: String): SourceElement? {
+        val fileNameForFacade = when (val withoutExtension = filename.removeSuffix(BuiltInSerializerProtocol.DOT_DEFAULT_EXTENSION)) {
+            // this is the filename used in stdlib, others should match
+            "kotlin" -> "library"
+            else -> withoutExtension
+        }
+
+        val facadeFqName = PackagePartClassUtils.getPackagePartFqName(file.packageFqName, fileNameForFacade)
+        return JvmPackagePartSource(JvmClassName.byClassId(ClassId.topLevel(facadeFqName)), null, file.proto.`package`, file.nameResolver)
     }
 }
 
@@ -30,7 +52,7 @@ class BuiltInDefinitionFile(
     proto: ProtoBuf.PackageFragment,
     version: BuiltInsBinaryVersion,
     val packageDirectory: VirtualFile,
-    val isMetadata: Boolean
+    val isMetadata: Boolean,
 ) : KotlinMetadataStubBuilder.FileWithMetadata.Compatible(proto, version, BuiltInSerializerProtocol) {
     override val classesToDecompile: List<ProtoBuf.Class>
         get() = super.classesToDecompile.let { classes ->

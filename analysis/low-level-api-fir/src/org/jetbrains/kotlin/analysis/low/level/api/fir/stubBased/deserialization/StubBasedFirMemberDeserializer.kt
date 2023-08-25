@@ -169,7 +169,7 @@ internal class StubBasedFirDeserializationContext(
                 callableId.packageName,
                 callableId.className,
                 parameterListOwner,
-                containerSource = containerSource.takeIf { initialOrigin != FirDeclarationOrigin.BuiltIns },
+                containerSource = containerSource,
                 outerClassSymbol = null,
                 symbol,
                 initialOrigin

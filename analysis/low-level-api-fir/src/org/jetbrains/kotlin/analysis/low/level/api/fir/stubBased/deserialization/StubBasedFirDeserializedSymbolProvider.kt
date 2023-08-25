@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import org.jetbrains.kotlin.fir.caches.getValue
 
 typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
 
@@ -124,7 +124,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
                 StubBasedAnnotationDeserializer(session),
                 kotlinScopeProvider,
                 parentContext = context,
-                containerSource = if (initialOrigin == FirDeclarationOrigin.BuiltIns) null else JvmStubDeserializedContainerSource(classId),
+                containerSource = JvmStubDeserializedContainerSource(classId),
                 deserializeNestedClass = this::getClass,
                 initialOrigin = initialOrigin
             )

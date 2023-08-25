@@ -36,7 +36,7 @@ object KotlinStubVersions {
 
     // BuiltIn stub version should be increased if changes are made to builtIn stub building subsystem (org.jetbrains.kotlin.idea.decompiler.builtIns)
     // Increasing this version will lead to reindexing of all builtIn files (see KotlinBuiltInFileType).
-    const val BUILTIN_STUB_VERSION = BINARY_STUB_VERSION + 3
+    const val BUILTIN_STUB_VERSION = BINARY_STUB_VERSION + 4
 
     // JS stub version should be increased if changes are made to js stub building subsystem (org.jetbrains.kotlin.idea.decompiler.js)
     // Increasing this version will lead to reindexing of js binary files (see KotlinJavaScriptMetaFileType).
