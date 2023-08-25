@@ -170,39 +170,26 @@ tasks.named("clean", Delete.class) {
     }
 }
 
-TaskCollection<Task> tasksOf(Class<? extends Task> type, Closure<Boolean> filter = { return true }) {
-    project.tasks.withType(type).matching { it.enabled && filter(it) }
-}
-
 tasks.named("run") {
-    dependsOn("sanity")
-    // Note: sanity contains subsets of the tests listed below.
-
-    dependsOn(tasksOf(KonanTest))
+    dependsOn(tasks.withType(KonanTest).matching { it.enabled })
     // Add framework tests
-    dependsOn(tasksOf(FrameworkTest))
-    dependsOn(tasksOf(FileCheckTest))
-}
-
-tasks.register("sanity") {
-    def platformLibsTasks =":distPlatformLibs" + ":kotlin-native:platformLibs"
-    dependsOn(tasksOf(KonanTest) { task ->
-        !UtilsKt.isDependsOnPlatformLibs(task)
-    })
+    dependsOn(tasks.withType(FrameworkTest).matching { it.enabled })
+    dependsOn(tasks.withType(FileCheckTest).matching { it.enabled })
+    dependsOn(tasks.withType(KonanTest).matching { it.enabled })
     // Add framework tests
-    dependsOn(tasksOf(FrameworkTest) { task ->
-        !UtilsKt.isDependsOnPlatformLibs(task)
-    })
+    dependsOn(tasks.withType(FrameworkTest).matching { it.enabled })
     // Add regular gradle test tasks
-    dependsOn(tasksOf(Test))
-    dependsOn(tasksOf(CoverageTest))
-    dependsOn(tasksOf(FileCheckTest) { task ->
-        // Avoid cross-compilation in a sanity run.
-        task.targetName == project.target.name
-    })
+    dependsOn(tasks.withType(Test).matching { it.enabled })
+    dependsOn(tasks.withType(CoverageTest).matching { it.enabled })
+    dependsOn(tasks.withType(FileCheckTest).matching { it.enabled })
     dependsOn(":kotlin-native:Interop:Indexer:check")
     dependsOn(":kotlin-native:Interop:StubGenerator:check")
     dependsOn(":native:kotlin-native-utils:check")
+}
+
+// Was a subset of tests.
+tasks.register("sanity") {
+    dependsOn("run")
 }
 
 boolean isExcluded(String dir) {
