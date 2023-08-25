@@ -115,11 +115,14 @@ class ForLoopsLowering(
         irBody.transformChildrenVoid(transformer)
 
         // Update references in break/continue.
-        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+        irBody.transformChildrenVoid(object : IrElementTransformerVoidShallow() {
             override fun visitBreakContinue(jump: IrBreakContinue): IrExpression {
                 oldLoopToNewLoop[jump.loop]?.let { jump.loop = it }
                 return jump
             }
+
+            override fun visitBreak(jump: IrBreak) = visitBreakContinue(jump)
+            override fun visitContinue(jump: IrContinue) = visitBreakContinue(jump)
         })
     }
 }

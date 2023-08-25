@@ -237,7 +237,7 @@ class FunctionInlining(
                 origin = null,
                 statements = listOf(inlinedBlock),
             ).apply {
-                transformChildrenVoid(object : IrElementTransformerVoid() {
+                transformChildrenVoid(object : IrElementTransformerVoidShallow() {
                     override fun visitReturn(expression: IrReturn): IrExpression {
                         expression.transformChildrenVoid(this)
 

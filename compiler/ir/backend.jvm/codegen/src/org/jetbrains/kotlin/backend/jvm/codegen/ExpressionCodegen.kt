@@ -43,10 +43,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
@@ -1231,7 +1228,7 @@ class ExpressionCodegen(
     // such as D8 will see locals information that makes no sense.
     private fun endUnreferencedDoWhileLocals(blockInfo: BlockInfo, loop: IrDoWhileLoop, continueLabel: Label) {
         val referencedValues = hashSetOf<IrValueSymbol>()
-        loop.condition.acceptVoid(object : IrElementVisitorVoid() {
+        loop.condition.acceptVoid(object : IrElementVisitorVoidShallow() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
