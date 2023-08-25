@@ -9,9 +9,12 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.component.BuildIdentifier
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.internal.build.BuildState
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 
+internal fun Project.currentBuildId(): BuildIdentifier =
+    (project as ProjectInternal).services.get(BuildState::class.java).buildIdentifier
 
 internal val Project.currentBuild: CurrentBuildIdentifier
     get() = extraProperties.getOrPut("org.jetbrains.kotlin.gradle.utils.currentBuild") { CurrentBuildIdentifierImpl(this.currentBuildId()) }

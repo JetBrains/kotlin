@@ -20,3 +20,16 @@ internal fun AttributeContainer.toMap(): Map<Attribute<*>, Any?> {
 
     return result
 }
+
+
+internal fun copyAttributes(from: AttributeContainer, to: AttributeContainer, keys: Iterable<Attribute<*>> = from.keySet()) {
+    // capture type argument T
+    fun <T : Any> copyOneAttribute(from: AttributeContainer, to: AttributeContainer, key: Attribute<T>) {
+        val value = checkNotNull(from.getAttribute(key))
+        to.attribute(key, value)
+    }
+    for (key in keys) {
+        copyOneAttribute(from, to, key)
+    }
+}
+

@@ -119,10 +119,6 @@ internal fun <T : Task> T.outputFilesProvider(provider: T.() -> Any): Configurab
     return project.filesProvider(this) { provider() }
 }
 
-internal fun <T : Task> T.outputFilesProvider(lazy: Lazy<Any>): ConfigurableFileCollection {
-    return project.filesProvider(this) { lazy.value }
-}
-
 internal inline fun <reified T> Project.listProperty(noinline itemsProvider: () -> Iterable<T>): ListProperty<T> =
     objects.listProperty(T::class.java).apply { set(provider(itemsProvider)) }
 
