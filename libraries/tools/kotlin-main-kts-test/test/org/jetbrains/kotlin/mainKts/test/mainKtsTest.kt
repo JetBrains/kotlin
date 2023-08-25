@@ -110,7 +110,7 @@ class MainKtsTest {
     @Test
     fun testUnresolvedJunit() {
         val res = evalFile(File("$TEST_DATA_ROOT/hello-unresolved-junit.main.kts"))
-        assertFailed("Unresolved reference: junit", res)
+        assertFailed("Unresolved reference 'junit'.", res)
     }
 
     @Test
