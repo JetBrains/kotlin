@@ -530,7 +530,7 @@ class Fir2IrConverter(
             }
         }
 
-        fun createModuleFragmentWithSignaturesIfNeeded(
+        fun createIrModuleFragment(
             session: FirSession,
             scopeSession: ScopeSession,
             firFiles: List<FirFile>,

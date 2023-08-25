@@ -45,7 +45,7 @@ data class ModuleCompilerAnalyzedOutput(
         visibilityConverter: Fir2IrVisibilityConverter,
         kotlinBuiltIns: KotlinBuiltIns,
     ): Fir2IrResult {
-        return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
+        return Fir2IrConverter.createIrModuleFragment(
             session, scopeSession, fir,
             fir2IrExtensions, fir2IrConfiguration,
             irMangler, IrFactoryImpl, visibilityConverter,

@@ -147,7 +147,7 @@ internal class KtFirCompilerFacility(
             allowNonCachedDeclarations = true
         )
 
-        val fir2IrResult = Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
+        val fir2IrResult = Fir2IrConverter.createIrModuleFragment(
             rootModuleSession,
             firResolveSession.getScopeSessionFor(rootModuleSession),
             firFilesToCompile,
