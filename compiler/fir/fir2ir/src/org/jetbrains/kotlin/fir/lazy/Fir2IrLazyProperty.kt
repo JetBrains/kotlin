@@ -115,7 +115,8 @@ class Fir2IrLazyProperty(
                     }
                     val initializer = fir.backingField?.initializer ?: fir.initializer
                     val visibility = fir.backingField?.visibility ?: fir.visibility
-                    createBackingField(
+                    callablesGenerator.createBackingField(
+                        this@Fir2IrLazyProperty,
                         fir,
                         IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
                         components.visibilityConverter.convertToDescriptorVisibility(visibility),
@@ -130,9 +131,14 @@ class Fir2IrLazyProperty(
             }
             fir.hasBackingField && origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
                 with(declarationStorage) {
-                    createBackingField(
-                        fir, IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-                        components.visibilityConverter.convertToDescriptorVisibility(fir.visibility), fir.name, fir.isVal, fir.initializer,
+                    callablesGenerator.createBackingField(
+                        this@Fir2IrLazyProperty,
+                        fir,
+                        IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
+                        components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
+                        fir.name,
+                        fir.isVal,
+                        fir.initializer,
                         type
                     ).also { field ->
                         field.initializer = toIrInitializer(fir.initializer)
@@ -141,10 +147,14 @@ class Fir2IrLazyProperty(
             }
             fir.delegate != null -> {
                 with(declarationStorage) {
-                    createBackingField(
-                        fir, IrDeclarationOrigin.PROPERTY_DELEGATE,
+                    callablesGenerator.createBackingField(
+                        this@Fir2IrLazyProperty,
+                        fir,
+                        IrDeclarationOrigin.PROPERTY_DELEGATE,
                         components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
-                        NameUtils.propertyDelegateName(fir.name), true, fir.delegate
+                        NameUtils.propertyDelegateName(fir.name),
+                        true,
+                        fir.delegate
                     )
                 }
             }

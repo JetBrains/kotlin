@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
-import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
-import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
-import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
+import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
@@ -40,16 +37,20 @@ class Fir2IrComponentsStorage(
     override val classifierStorage: Fir2IrClassifierStorage = Fir2IrClassifierStorage(this, commonMemberStorage)
     override val declarationStorage: Fir2IrDeclarationStorage = Fir2IrDeclarationStorage(this, moduleDescriptor, commonMemberStorage)
 
+    override val callablesGenerator: Fir2IrCallableDeclarationsGenerator = Fir2IrCallableDeclarationsGenerator(this)
+    override val lazyDeclarationsGenerator: Fir2IrLazyDeclarationsGenerator = Fir2IrLazyDeclarationsGenerator(this)
+
+    // builtins should go after storages and generators, because they use them during initialization
     override val irBuiltIns: IrBuiltInsOverFir = initializedIrBuiltIns ?: IrBuiltInsOverFir(
         this, configuration.languageVersionSettings, moduleDescriptor, irMangler
     )
-
     override val builtIns: Fir2IrBuiltIns = Fir2IrBuiltIns(this, specialSymbolProvider)
+
     override val irProviders: List<IrProvider> = listOf(FirIrProvider(this))
 
     override val typeConverter: Fir2IrTypeConverter = Fir2IrTypeConverter(this)
-
     private val conversionScope = Fir2IrConversionScope(configuration)
+
     val fir2IrVisitor: Fir2IrVisitor = Fir2IrVisitor(this, conversionScope)
 
     override val annotationGenerator: AnnotationGenerator = AnnotationGenerator(this)

@@ -102,17 +102,17 @@ class Fir2IrLazyConstructor(
         declarationStorage.enterScope(this.symbol)
 
         buildList {
-            declarationStorage.addContextReceiverParametersTo(
+            callablesGenerator.addContextReceiverParametersTo(
                 fir.contextReceivers,
                 this@Fir2IrLazyConstructor,
-                this@buildList,
+                this@buildList
             )
 
             fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
-                declarationStorage.createIrParameter(
+                callablesGenerator.createIrParameter(
                     valueParameter, index + contextReceiverParametersCount,
                     useStubForDefaultValueStub = (parent as? IrClass)?.name != Name.identifier("Enum"),
-                    forcedDefaultValueConversion = (parent as? IrClass)?.isAnnotationClass == true,
+                    forcedDefaultValueConversion = (parent as? IrClass)?.isAnnotationClass == true
                 ).apply {
                     this.parent = this@Fir2IrLazyConstructor
                 }

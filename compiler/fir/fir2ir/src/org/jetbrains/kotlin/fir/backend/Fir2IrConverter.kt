@@ -470,7 +470,7 @@ class Fir2IrConverter(
             }
             is FirField -> {
                 if (declaration.isSynthetic) {
-                    declarationStorage.createIrFieldAndDelegatedMembers(declaration, containingClass!!, parent as IrClass)
+                    callablesGenerator.createIrFieldAndDelegatedMembers(declaration, containingClass!!, parent as IrClass)
                 } else {
                     throw AssertionError("Unexpected non-synthetic field: ${declaration::class}")
                 }
@@ -486,7 +486,7 @@ class Fir2IrConverter(
                 classifierStorage.getIrEnumEntry(declaration, parent as IrClass)
             }
             is FirAnonymousInitializer -> {
-                declarationStorage.createIrAnonymousInitializer(declaration, parent as IrClass)
+                callablesGenerator.createIrAnonymousInitializer(declaration, parent as IrClass)
             }
             is FirTypeAlias -> {
                 // DO NOTHING

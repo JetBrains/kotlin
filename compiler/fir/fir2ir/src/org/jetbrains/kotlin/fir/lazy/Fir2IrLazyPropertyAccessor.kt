@@ -81,16 +81,16 @@ class Fir2IrLazyPropertyAccessor(
             declarationStorage.enterScope(this.symbol)
 
             buildList {
-                declarationStorage.addContextReceiverParametersTo(
+                callablesGenerator.addContextReceiverParametersTo(
                     fir.contextReceiversForFunctionOrContainingProperty(),
                     this@Fir2IrLazyPropertyAccessor,
-                    this@buildList,
+                    this@buildList
                 )
 
                 if (isSetter) {
                     val valueParameter = firAccessor?.valueParameters?.firstOrNull()
                     add(
-                        declarationStorage.createDefaultSetterParameter(
+                        callablesGenerator.createDefaultSetterParameter(
                             startOffset, endOffset,
                             (valueParameter?.returnTypeRef ?: firParentProperty.returnTypeRef).toIrType(
                                 typeConverter, conversionTypeContext

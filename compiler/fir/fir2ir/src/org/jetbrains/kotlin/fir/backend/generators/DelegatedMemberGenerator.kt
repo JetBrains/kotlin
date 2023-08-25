@@ -206,7 +206,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         delegateOverride: FirSimpleFunction
     ): IrSimpleFunction {
         val delegateFunction =
-            declarationStorage.createIrFunction(
+            callablesGenerator.createIrFunction(
                 delegateOverride, subClass, predefinedOrigin = IrDeclarationOrigin.DELEGATED_MEMBER,
                 fakeOverrideOwnerLookupTag = firSubClass.symbol.toLookupTag()
             )
@@ -297,7 +297,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         firDelegateProperty: FirProperty
     ): IrProperty {
         val delegateProperty =
-            declarationStorage.createIrProperty(
+            callablesGenerator.createIrProperty(
                 firDelegateProperty, subClass, predefinedOrigin = IrDeclarationOrigin.DELEGATED_MEMBER,
                 fakeOverrideOwnerLookupTag = firSubClass.symbol.toLookupTag()
             )

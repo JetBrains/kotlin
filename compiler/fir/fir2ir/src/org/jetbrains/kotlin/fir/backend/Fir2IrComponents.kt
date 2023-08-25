@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
-import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
-import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
-import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
+import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.IrLock
@@ -36,6 +33,9 @@ interface Fir2IrComponents {
     val typeConverter: Fir2IrTypeConverter
     val signatureComposer: FirBasedSignatureComposer
     val visibilityConverter: Fir2IrVisibilityConverter
+
+    val callablesGenerator: Fir2IrCallableDeclarationsGenerator
+    val lazyDeclarationsGenerator: Fir2IrLazyDeclarationsGenerator
 
     val annotationGenerator: AnnotationGenerator
     val callGenerator: CallAndReferenceGenerator

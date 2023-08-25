@@ -293,7 +293,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             isOperator: Boolean = false,
         ): IrFunction {
             val signature = if (klass.symbol.classId.isLocal) null else components.signatureComposer.composeSignature(syntheticCounterpart)
-            return components.declarationStorage.declareIrSimpleFunction(signature) { symbol ->
+            return components.callablesGenerator.declareIrSimpleFunction(signature) { symbol ->
                 components.irFactory.createSimpleFunction(
                     startOffset = UNDEFINED_OFFSET,
                     endOffset = UNDEFINED_OFFSET,

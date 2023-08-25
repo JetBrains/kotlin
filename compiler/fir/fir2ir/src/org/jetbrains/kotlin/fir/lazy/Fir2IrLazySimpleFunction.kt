@@ -69,14 +69,14 @@ class Fir2IrLazySimpleFunction(
         declarationStorage.enterScope(this.symbol)
 
         buildList {
-            declarationStorage.addContextReceiverParametersTo(
+            callablesGenerator.addContextReceiverParametersTo(
                 fir.contextReceiversForFunctionOrContainingProperty(),
                 this@Fir2IrLazySimpleFunction,
-                this@buildList,
+                this@buildList
             )
 
             fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
-                declarationStorage.createIrParameter(
+                callablesGenerator.createIrParameter(
                     valueParameter, index + contextReceiverParametersCount, skipDefaultParameter = isFakeOverride
                 ).apply {
                     this.parent = this@Fir2IrLazySimpleFunction

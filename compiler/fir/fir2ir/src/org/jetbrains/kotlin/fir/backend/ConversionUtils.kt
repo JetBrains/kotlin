@@ -583,7 +583,7 @@ fun Fir2IrComponents.createTemporaryVariable(
     conversionScope: Fir2IrConversionScope,
     nameHint: String? = null
 ): Pair<IrVariable, IrValueSymbol> {
-    val receiverVariable = declarationStorage.declareTemporaryVariable(receiverExpression, nameHint).apply {
+    val receiverVariable = callablesGenerator.declareTemporaryVariable(receiverExpression, nameHint).apply {
         parent = conversionScope.parentFromStack()
     }
     val variableSymbol = receiverVariable.symbol

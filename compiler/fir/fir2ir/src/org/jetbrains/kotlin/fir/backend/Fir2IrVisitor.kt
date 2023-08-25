@@ -220,7 +220,11 @@ class Fir2IrVisitor(
             declarationStorage.enterScope(irScript.symbol)
 
             irScript.explicitCallParameters = script.parameters.map { parameter ->
-                declarationStorage.createIrVariable(parameter, irScript, givenOrigin = IrDeclarationOrigin.SCRIPT_CALL_PARAMETER)
+                callablesGenerator.createIrVariable(
+                    parameter,
+                    irScript,
+                    givenOrigin = IrDeclarationOrigin.SCRIPT_CALL_PARAMETER
+                )
             }
 
             // NOTE: index should correspond to one generated in the collectTowerDataElementsForScript
@@ -274,7 +278,7 @@ class Fir2IrVisitor(
                                         irBuiltIns.unitType, IrStatementOrigin.DESTRUCTURING_DECLARATION
                                     ).also {
                                         it.statements.add(
-                                            declarationStorage.createIrVariable(statement, conversionScope.parentFromStack()).also {
+                                            callablesGenerator.createIrVariable(statement, conversionScope.parentFromStack()).also {
                                                 it.initializer = statement.initializer?.toIrStatement() as? IrExpression
                                             }
                                         )
@@ -392,7 +396,7 @@ class Fir2IrVisitor(
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): IrElement = whileAnalysing(session, simpleFunction) {
         val irFunction = if (simpleFunction.visibility == Visibilities.Local) {
-            declarationStorage.createIrFunction(
+            callablesGenerator.createIrFunction(
                 simpleFunction, irParent = conversionScope.parent(), predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION, isLocal = true
             )
         } else {
@@ -414,7 +418,7 @@ class Fir2IrVisitor(
         data: Any?
     ): IrElement = whileAnalysing(session, anonymousFunction) {
         return anonymousFunction.convertWithOffsets { startOffset, endOffset ->
-            val irFunction = declarationStorage.createIrFunction(
+            val irFunction = callablesGenerator.createIrFunction(
                 anonymousFunction,
                 irParent = conversionScope.parent(),
                 predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION,
@@ -438,7 +442,7 @@ class Fir2IrVisitor(
         assert(variable.isLocal)
         val delegate = variable.delegate
         if (delegate != null) {
-            val irProperty = declarationStorage.createIrLocalDelegatedProperty(variable, conversionScope.parentFromStack())
+            val irProperty = callablesGenerator.createIrLocalDelegatedProperty(variable, conversionScope.parentFromStack())
             irProperty.delegate.initializer = convertToIrExpression(delegate, isDelegate = true)
             conversionScope.withFunction(irProperty.getter) {
                 memberGenerator.convertFunctionContent(irProperty.getter, variable.getter, null)
@@ -454,7 +458,7 @@ class Fir2IrVisitor(
         val isNextVariable = initializer is FirFunctionCall &&
                 initializer.calleeReference.toResolvedNamedFunctionSymbol()?.callableId?.isIteratorNext() == true &&
                 variable.source?.isChildOfForLoop == true
-        val irVariable = declarationStorage.createIrVariable(
+        val irVariable = callablesGenerator.createIrVariable(
             variable, conversionScope.parentFromStack(),
             if (isNextVariable) {
                 if (variable.name.isSpecial && variable.name == SpecialNames.DESTRUCT) {
@@ -1260,7 +1264,7 @@ class Fir2IrVisitor(
         return when {
             subjectVariable != null -> subjectVariable.accept(this, null) as IrVariable
             subjectExpression != null -> {
-                applyParentFromStackTo(declarationStorage.declareTemporaryVariable(convertToIrExpression(subjectExpression), "subject"))
+                applyParentFromStackTo(callablesGenerator.declareTemporaryVariable(convertToIrExpression(subjectExpression), "subject"))
             }
             else -> null
         }
@@ -1419,7 +1423,7 @@ class Fir2IrVisitor(
 
     override fun visitCatch(catch: FirCatch, data: Any?): IrElement {
         return catch.convertWithOffsets { startOffset, endOffset ->
-            val catchParameter = declarationStorage.createIrVariable(
+            val catchParameter = callablesGenerator.createIrVariable(
                 catch.parameter, conversionScope.parentFromStack(), IrDeclarationOrigin.CATCH_PARAMETER
             )
             IrCatchImpl(startOffset, endOffset, catchParameter, catch.block.convertToIrBlock(forceUnitType = false))
