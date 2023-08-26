@@ -1010,6 +1010,52 @@ TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsWeaks) {
     }
 }
 
+TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsWeakNewObj) {
+    std_support::vector<Mutator> mutators(kDefaultThreadCount);
+
+    // Make sure all mutators are initialized.
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) {}).wait();
+    }
+
+    std_support::vector<std::future<void>> gcFutures;
+    auto epoch = mm::GlobalData::Instance().gc().Schedule();
+    std::atomic<bool> gcDone = false;
+
+    // Spin until thread suspension is requested.
+    while (!mm::IsThreadSuspensionRequested()) {
+    }
+
+    for (auto& mutator : mutators) {
+        gcFutures.emplace_back(mutator.Execute([&](mm::ThreadData& threadData, Mutator& mutator) noexcept {
+            mm::safePoint(threadData);
+
+            auto& object = AllocateObject(threadData);
+            auto& objectWeak = ([&threadData, &object]() -> test_support::RegularWeakReferenceImpl& {
+                ObjHolder holder;
+                return InstallWeakReference(threadData, object.header(), holder.slot());
+            })();
+            EXPECT_NE(objectWeak.get(), nullptr);
+
+            auto& extraObj = *mm::ExtraObjectData::Get(object.header());
+            extraObj.ClearRegularWeakReferenceImpl();
+            extraObj.Uninstall();
+            mm::GlobalData::Instance().gc().DestroyExtraObjectData(extraObj);
+
+            while (!gcDone.load(std::memory_order_relaxed)) {
+                mm::safePoint(threadData);
+            }
+        }));
+    }
+
+    mm::GlobalData::Instance().gc().WaitFinalizers(epoch);
+    gcDone.store(true, std::memory_order_relaxed);
+
+    for (auto& future : gcFutures) {
+        future.wait();
+    }
+}
+
 TEST_F(SameThreadMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
     std_support::vector<Mutator> mutators(kDefaultThreadCount);
     std_support::vector<ObjHeader*> globals(2 * kDefaultThreadCount);
@@ -1079,31 +1125,6 @@ TEST_F(SameThreadMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
         future.wait();
     }
 
-#ifndef CUSTOM_ALLOCATOR
-    // Old mutators don't even see alive objects from the new threads yet (as the latter ones have not published anything).
-
-    std_support::vector<ObjHeader*> expectedAlive;
-    for (int i = 0; i < kDefaultThreadCount; ++i) {
-        expectedAlive.push_back(globals[i]);
-        expectedAlive.push_back(locals[i]);
-        expectedAlive.push_back(reachables[i]);
-    }
-
-    for (auto& mutator : mutators) {
-        EXPECT_THAT(mutator.Alive(), testing::UnorderedElementsAreArray(expectedAlive));
-    }
-
-    for (int i = 0; i < kDefaultThreadCount; ++i) {
-        std_support::vector<ObjHeader*> aliveForThisThread(expectedAlive.begin(), expectedAlive.end());
-        aliveForThisThread.push_back(globals[kDefaultThreadCount + i]);
-        aliveForThisThread.push_back(locals[kDefaultThreadCount + i]);
-        aliveForThisThread.push_back(reachables[kDefaultThreadCount + i]);
-        // Unreachables for new threads were not collected.
-        aliveForThisThread.push_back(unreachables[kDefaultThreadCount + i]);
-        EXPECT_THAT(newMutators[i].Alive(), testing::UnorderedElementsAreArray(aliveForThisThread));
-    }
-#else
-    // Custom allocator does not have a notion of objects alive only for some thread
     std_support::vector<ObjHeader*> expectedAlive;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         expectedAlive.push_back(globals[i]);
@@ -1115,9 +1136,27 @@ TEST_F(SameThreadMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
         // Unreachables for new threads were not collected.
         expectedAlive.push_back(unreachables[kDefaultThreadCount + i]);
     }
-    // All threads see the same alive objects with the custom alloctor, enough to check a single mutator.
+
+#ifndef CUSTOM_ALLOCATOR
+    // Force mutators to publish their internal heaps
+    std_support::vector<std::future<void>> publishFutures;
+    for (auto& mutator: mutators) {
+        publishFutures.emplace_back(mutator.Execute([](mm::ThreadData& threadData, Mutator& mutator) {
+            threadData.gc().PublishObjectFactory();
+        }));
+    }
+    for (auto& mutator: newMutators) {
+        publishFutures.emplace_back(mutator.Execute([](mm::ThreadData& threadData, Mutator& mutator) {
+            threadData.gc().PublishObjectFactory();
+        }));
+    }
+    for (auto& future : publishFutures) {
+        future.wait();
+    }
+#endif
+
+    // All threads see the same alive objects, enough to check a single mutator.
     EXPECT_THAT(mutators[0].Alive(), testing::UnorderedElementsAreArray(expectedAlive));
-#endif // CUSTOM_ALLOCATOR
 }
 
 

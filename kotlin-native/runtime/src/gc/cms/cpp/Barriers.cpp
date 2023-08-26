@@ -18,6 +18,7 @@ using namespace kotlin;
 namespace {
 
 std::atomic<ObjHeader* (*)(ObjHeader*)> weakRefBarrier = nullptr;
+std::atomic<int64_t> weakProcessingEpoch = 0;
 
 ObjHeader* weakRefBarrierImpl(ObjHeader* weakReferee) noexcept {
     if (!weakReferee) return nullptr;
@@ -36,47 +37,62 @@ NO_INLINE ObjHeader* weakRefReadSlowPath(std::atomic<ObjHeader*>& weakReferee) n
     return barrier ? barrier(weak) : weak;
 }
 
-void waitForThreadsToReachCheckpoint() {
-    // Reset checkpoint on all threads.
-    for (auto& thr : mm::ThreadRegistry::Instance().LockForIter()) {
-        thr.gc().impl().gc().barriers().resetCheckpoint();
-    }
-
-    mm::SafePointActivator safePointActivator;
-
-    // Wait for all threads to either have passed safepoint or to be in the native state.
-    // Either of these mean that none of them are inside a weak reference accessing code.
-    mm::ThreadRegistry::Instance().waitAllThreads([](mm::ThreadData& thread) noexcept {
-        return thread.gc().impl().gc().barriers().visitedCheckpoint() || thread.suspensionData().suspendedOrNative();
-    });
-}
-
 } // namespace
 
-void gc::BarriersThreadData::onCheckpoint() noexcept {
-    visitedCheckpoint_.store(true, std::memory_order_release);
+void gc::BarriersThreadData::onThreadRegistration() noexcept {
+    if (weakRefBarrier.load(std::memory_order_acquire) != nullptr) {
+        startMarkingNewObjects(GCHandle::getByEpoch(weakProcessingEpoch.load(std::memory_order_relaxed)));
+    }
 }
 
-void gc::BarriersThreadData::resetCheckpoint() noexcept {
-    visitedCheckpoint_.store(false, std::memory_order_release);
+ALWAYS_INLINE void gc::BarriersThreadData::onSafePoint() noexcept {}
+
+void gc::BarriersThreadData::startMarkingNewObjects(gc::GCHandle gcHandle) noexcept {
+    RuntimeAssert(weakRefBarrier.load(std::memory_order_relaxed) != nullptr, "New allocations marking may only be requested by weak ref barriers");
+    markHandle_ = gcHandle.mark();
 }
 
-bool gc::BarriersThreadData::visitedCheckpoint() const noexcept {
-    return visitedCheckpoint_.load(std::memory_order_acquire);
+void gc::BarriersThreadData::stopMarkingNewObjects() noexcept {
+    RuntimeAssert(weakRefBarrier.load(std::memory_order_relaxed) == nullptr, "New allocations marking could only been requested by weak ref barriers");
+    markHandle_ = std::nullopt;
 }
 
-void gc::EnableWeakRefBarriers() noexcept {
+bool gc::BarriersThreadData::shouldMarkNewObjects() const noexcept {
+    return markHandle_.has_value();
+}
+
+ALWAYS_INLINE void gc::BarriersThreadData::onAllocation(ObjHeader* allocated) {
+    if (compiler::concurrentWeakSweep()) {
+        bool shouldMark = shouldMarkNewObjects();
+        bool barriersEnabled = weakRefBarrier.load(std::memory_order_relaxed) != nullptr;
+        RuntimeAssert(shouldMark == barriersEnabled, "New allocations marking must happen with and only with weak ref barriers");
+        if (shouldMark) {
+            auto& objectData = objectDataForObject(allocated);
+            bool wasUnmarked = objectData.tryMark();
+            RuntimeAssert(wasUnmarked, "No one else could mark this newly allocated object before");
+            markHandle_->addObject();
+        }
+    }
+}
+
+void gc::EnableWeakRefBarriers(int64_t epoch) noexcept {
+    auto mutators = mm::ThreadRegistry::Instance().LockForIter();
+    weakProcessingEpoch.store(epoch, std::memory_order_relaxed);
     weakRefBarrier.store(weakRefBarrierImpl, std::memory_order_seq_cst);
+    for (auto& mutator: mutators) {
+        mutator.gc().impl().gc().barriers().startMarkingNewObjects(GCHandle::getByEpoch(epoch));
+    }
 }
 
 void gc::DisableWeakRefBarriers() noexcept {
+    auto mutators = mm::ThreadRegistry::Instance().LockForIter();
     weakRefBarrier.store(nullptr, std::memory_order_seq_cst);
-    waitForThreadsToReachCheckpoint();
+    for (auto& mutator: mutators) {
+        mutator.gc().impl().gc().barriers().stopMarkingNewObjects();
+    }
 }
 
-OBJ_GETTER(kotlin::gc::WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexcept {
-    // TODO: Make this work with GCs that can stop thread at any point.
-
+OBJ_GETTER(gc::WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexcept {
     if (!compiler::concurrentWeakSweep()) {
         RETURN_OBJ(weakReferee.load(std::memory_order_relaxed));
     }

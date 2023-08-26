@@ -18,11 +18,13 @@ mm::ThreadRegistry& mm::ThreadRegistry::Instance() noexcept {
 }
 
 mm::ThreadRegistry::Node* mm::ThreadRegistry::RegisterCurrentThread() noexcept {
+    auto lock = list_.LockForIter();
     auto* threadDataNode = list_.Emplace(konan::currentThreadId());
     AssertThreadState(threadDataNode->Get(), ThreadState::kNative);
     Node*& currentDataNode = currentThreadDataNode_;
     RuntimeAssert(!IsCurrentThreadRegistered(), "This thread already had some data assigned to it.");
     currentDataNode = threadDataNode;
+    threadDataNode->Get()->gc().onThreadRegistration();
     return threadDataNode;
 }
 

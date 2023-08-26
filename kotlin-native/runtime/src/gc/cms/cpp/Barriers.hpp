@@ -10,23 +10,26 @@
 
 #include "Memory.h"
 #include "Utils.hpp"
+#include "GCStatistics.hpp"
 
 namespace kotlin::gc {
 
 class BarriersThreadData : private Pinned {
 public:
-    void onCheckpoint() noexcept;
-    void resetCheckpoint() noexcept;
-    bool visitedCheckpoint() const noexcept;
+    void onThreadRegistration() noexcept;
+    void onSafePoint() noexcept;
+    
+    void startMarkingNewObjects(GCHandle gcHandle) noexcept;
+    void stopMarkingNewObjects() noexcept;
+    bool shouldMarkNewObjects() const noexcept;
 
+    void onAllocation(ObjHeader* allocated);
 private:
-    std::atomic<bool> visitedCheckpoint_ = false;
+    std::optional<GCHandle::GCMarkScope> markHandle_{};
 };
 
 // Must be called during STW.
-void EnableWeakRefBarriers() noexcept;
-
-// Must be called outside STW.
+void EnableWeakRefBarriers(int64_t epoch) noexcept;
 void DisableWeakRefBarriers() noexcept;
 
 OBJ_GETTER(WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexcept;
