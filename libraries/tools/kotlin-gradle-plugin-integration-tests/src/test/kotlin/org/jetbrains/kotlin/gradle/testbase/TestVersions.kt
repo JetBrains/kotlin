@@ -26,7 +26,7 @@ interface TestVersions {
         const val G_8_0 = "8.0.2"
         const val G_8_1 = "8.1.1"
         const val G_8_2 = "8.2.1"
-        const val G_8_3 = "8.3-rc-1"
+        const val G_8_3 = "8.3"
         const val MIN_SUPPORTED = minSupportedGradleVersion
         const val MIN_SUPPORTED_KPM = G_7_0
         const val MAX_SUPPORTED = G_8_1
@@ -48,8 +48,8 @@ interface TestVersions {
         const val AGP_73 = "7.3.1"
         const val AGP_74 = "7.4.2"
         const val AGP_80 = "8.0.2"
-        const val AGP_81 = "8.1.0-rc01"
-        const val AGP_82 = "8.2.0-alpha13"
+        const val AGP_81 = "8.1.1"
+        const val AGP_82 = "8.2.0-beta01"
 
         const val MIN_SUPPORTED = AGP_42 // KotlinAndroidPlugin.minimalSupportedAgpVersion
         const val MAX_SUPPORTED = AGP_81 // Update once Gradle MAX_SUPPORTED version will be bumped
