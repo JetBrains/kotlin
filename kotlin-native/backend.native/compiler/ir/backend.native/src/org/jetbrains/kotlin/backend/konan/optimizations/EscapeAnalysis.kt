@@ -1353,7 +1353,7 @@ internal object EscapeAnalysis {
                 // (picking a leaf drain with only one incoming edge at a time).
                 // They can be removed because they don't add any relations between the parameters.
                 val reversedEdges = interestingDrains.associateWith {
-                    mutableListOf<Pair<PointsToGraphNode, PointsToGraphEdge>>()
+                    mutableListOf<PointsToGraphNode>()
                 }
                 val edgesCount = mutableMapOf<PointsToGraphNode, Int>()
                 val leaves = mutableListOf<PointsToGraphNode>()
@@ -1361,7 +1361,7 @@ internal object EscapeAnalysis {
                     var count = 0
                     for (edge in drain.edges) {
                         val nextDrain = edge.node.drain
-                        reversedEdges[nextDrain]!! += drain to edge
+                        reversedEdges[nextDrain]!! += drain
                         if (nextDrain in interestingDrains)
                             ++count
                     }
@@ -1383,10 +1383,10 @@ internal object EscapeAnalysis {
                     if (drain in parameterDrains)
                         continue
                     if (incomingEdges.size == 1
-                            && incomingEdges[0].let { (node, edge) -> escapes(node) || !escapes(edge.node) }
+                            && (escapes(incomingEdges[0]) || !escapes(drain))
                     ) {
                         interestingDrains.remove(drain)
-                        val prevDrain = incomingEdges[0].first
+                        val prevDrain = incomingEdges[0]
                         val count = edgesCount[prevDrain]!! - 1
                         edgesCount[prevDrain] = count
                         if (count == 0)
@@ -1523,19 +1523,24 @@ internal object EscapeAnalysis {
                         .filter { nodeIds[it] == null } // Was optimized away.
                         .forEach { drain ->
                             val referencingNodes = findReferencing(drain).filter { nodeIds[it] != null }
-                            var needDrain = false
-                            outerLoop@ for (i in referencingNodes.indices)
-                                for (j in i + 1 until referencingNodes.size) {
-                                    val firstNode = referencingNodes[i]
-                                    val secondNode = referencingNodes[j]
-                                    val pair = Pair(firstNode, secondNode)
-                                    if (pair !in connectedNodes) {
-                                        needDrain = true
-                                        break@outerLoop
-                                    }
-                                }
-                            if (needDrain)
+                            if (escapes(drain) && referencingNodes.all { !escapes(it) }) {
                                 nodeIds[drain] = drainFactory()
+                                escapeOrigins += drain
+                            } else {
+                                var needDrain = false
+                                outerLoop@ for (i in referencingNodes.indices)
+                                    for (j in i + 1 until referencingNodes.size) {
+                                        val firstNode = referencingNodes[i]
+                                        val secondNode = referencingNodes[j]
+                                        val pair = Pair(firstNode, secondNode)
+                                        if (pair !in connectedNodes) {
+                                            needDrain = true
+                                            break@outerLoop
+                                        }
+                                    }
+                                if (needDrain)
+                                    nodeIds[drain] = drainFactory()
+                            }
                         }
             }
 
