@@ -634,5 +634,7 @@ RUNTIME_NOTHROW extern "C" void DisposeRegularWeakReferenceImpl(ObjHeader* weakR
 }
 
 void kotlin::OnMemoryAllocation(size_t totalAllocatedBytes) noexcept {
+    // Prevents unsafe class publication (see KT-58995).
+    std::atomic_thread_fence(std::memory_order_release);
     mm::GlobalData::Instance().gcScheduler().setAllocatedBytes(totalAllocatedBytes);
 }
