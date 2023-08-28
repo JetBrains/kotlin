@@ -4,8 +4,6 @@
       <verify-metadata>true</verify-metadata>
       <verify-signatures>false</verify-signatures>
       <trusted-artifacts>
-         <trust version="211.7442.40" file="ivy-211.7442.40.xml"/>
-         <trust version="212.4746.92" file="ivy-212.4746.92.xml"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-common" version="1.4.0" reason="Cannot declare new component explicitly before bootstrap due to verification-metadata test considering it redundant"/>
          <trust file=".*-javadoc[.]jar" regex="true"/>
          <trust file=".*-sources[.]jar" regex="true"/>
