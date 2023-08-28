@@ -6,10 +6,12 @@ gradlePlugin-android = "4.2.2"
 gradlePlugin-dokka = "1.8.20"
 
 kotlinx-coroutines = "1.6.3"
+kotlinx-collections-immutable = "0.3.4"
 kotlinx-bcv = "0.12.1"
 
 ## Analysis
 kotlin-compiler = "1.9.0"
+kotlin-compiler-k2 = "1.9.0-release-358"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
@@ -56,6 +58,7 @@ eclipse-jgit = "5.12.0.202106070339-r"
 [libraries]
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm", version.ref = "kotlinx-collections-immutable" }
 
 #### Gradle plugins ####
 # The Maven coordinates of Gradle plugins that are either used in convention plugins, or in Dokka subprojects
@@ -67,6 +70,19 @@ gradlePlugin-gradlePublish= { module = "com.gradle.publish:plugin-publish-plugin
 
 #### Kotlin analysis ####
 kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-compiler" }
+
+###### K2 analysis ######
+kotlin-compiler-k2 = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-compiler-k2" }
+kotlin-high-level-api-api = { module = "org.jetbrains.kotlin:high-level-api-for-ide", version.ref = "kotlin-compiler-k2" }
+kotlin-high-level-api-impl = { module = "org.jetbrains.kotlin:high-level-api-impl-base-for-ide", version.ref = "kotlin-compiler-k2" }
+kotlin-high-level-api-fir = { module = "org.jetbrains.kotlin:high-level-api-fir-for-ide", version.ref = "kotlin-compiler-k2" }
+kotlin-high-level-api-fe10 = { module = "org.jetbrains.kotlin:high-level-api-fe10-for-ide", version.ref = "kotlin-compiler-k2" }
+kotlin-low-level-api-fir = { module = "org.jetbrains.kotlin:low-level-api-fir-for-ide", version.ref = "kotlin-compiler-k2" }
+kotlin-analysis-project-structure = { module = "org.jetbrains.kotlin:analysis-project-structure-for-ide", version.ref = "kotlin-compiler-k2" }
+kotlin-analysis-api-standalone = { module = "org.jetbrains.kotlin:analysis-api-standalone-for-ide", version.ref = "kotlin-compiler-k2" }
+kotlin-analysis-api-providers = { module = "org.jetbrains.kotlin:analysis-api-providers-for-ide", version.ref = "kotlin-compiler-k2" }
+kotlin-symbol-light-classes = { module = "org.jetbrains.kotlin:symbol-light-classes-for-ide", version.ref = "kotlin-compiler-k2" }
+
 
 #### Java analysis ####
 intellij-java-psi-api = { module = "com.jetbrains.intellij.java:java-psi", version.ref = "intellij-platform" }

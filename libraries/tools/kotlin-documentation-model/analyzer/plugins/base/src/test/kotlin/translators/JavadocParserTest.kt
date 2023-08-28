@@ -9,8 +9,10 @@ import org.jetbrains.dokka.model.firstChildOfType
 import org.jetbrains.dokka.model.firstMemberOfType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import utils.JavaCode
 import utils.text
 
+@JavaCode
 class JavadocParserTest : BaseAbstractTest() {
 
     private fun performJavadocTest(testOperation: (DModule) -> Unit) {

@@ -7,10 +7,12 @@ import org.jetbrains.dokka.model.InheritedMember
 import org.jetbrains.dokka.model.IsVar
 import org.jetbrains.dokka.model.KotlinVisibility
 import org.junit.jupiter.api.Test
+import utils.JavaCode
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
+@JavaCode
 class DescriptorSuperPropertiesTest : BaseAbstractTest() {
 
     private val commonTestConfiguration = dokkaConfiguration {
@@ -173,6 +175,7 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
         }
     }
 
+    // incorrect test https://github.com/Kotlin/dokka/issues/3128
     @Test
     fun `kotlin inheriting java should not append anything since field is public api`() {
         val configuration = dokkaConfiguration {

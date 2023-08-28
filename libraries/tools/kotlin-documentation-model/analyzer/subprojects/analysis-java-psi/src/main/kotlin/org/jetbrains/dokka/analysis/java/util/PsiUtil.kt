@@ -12,7 +12,8 @@ import org.jetbrains.dokka.utilities.firstIsInstanceOrNull
 internal val PsiElement.parentsWithSelf: Sequence<PsiElement>
     get() = generateSequence(this) { if (it is PsiFile) null else it.parent }
 
-internal fun DRI.Companion.from(psi: PsiElement) = psi.parentsWithSelf.run {
+@InternalDokkaApi
+fun DRI.Companion.from(psi: PsiElement) = psi.parentsWithSelf.run {
     val psiMethod = firstIsInstanceOrNull<PsiMethod>()
     val psiField = firstIsInstanceOrNull<PsiField>()
     val classes = filterIsInstance<PsiClass>().filterNot { it is PsiTypeParameter }
