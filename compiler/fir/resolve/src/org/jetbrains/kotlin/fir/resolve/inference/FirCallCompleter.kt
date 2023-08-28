@@ -87,7 +87,10 @@ class FirCallCompleter(
             //
             // Ideally, we should get rid of `shouldRunCompletion` once Builder inference is rewritten (see KT-61041 for tracking)
             if (it == ConstraintSystemCompletionMode.FULL && inferenceSession.shouldAvoidFullCompletion(call))
-                if (resolutionMode.forceFullCompletion) ConstraintSystemCompletionMode.PARTIAL_BI else ConstraintSystemCompletionMode.PARTIAL
+                if (inferenceSession is FirBuilderInferenceSession2 && resolutionMode.forceFullCompletion)
+                    ConstraintSystemCompletionMode.PARTIAL_BI
+                else
+                    ConstraintSystemCompletionMode.PARTIAL
             else
                 it
         }
@@ -99,10 +102,8 @@ class FirCallCompleter(
 
         return when (completionMode) {
             ConstraintSystemCompletionMode.FULL -> {
-                val shouldRunCompletion = inferenceSession.shouldRunCompletion(call)
-                runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-
-                if (shouldRunCompletion) {
+                if (inferenceSession.shouldRunCompletion(call)) {
+                    runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
                     val finalSubstitutor = candidate.system.asReadOnlyStorage()
                         .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
                     val completedCall = call.transformSingle(
@@ -124,10 +125,8 @@ class FirCallCompleter(
                 }
             }
 
-            ConstraintSystemCompletionMode.PARTIAL, ConstraintSystemCompletionMode.PARTIAL_BI -> {
-                if (inferenceSession !is FirBuilderInferenceSession2 || (inferenceSession as FirBuilderInferenceSession2).shouldRunCompletion2(call)) {
-                    runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-                }
+            ConstraintSystemCompletionMode.PARTIAL, ConstraintSystemCompletionMode.ONLY_LAMBDAS, ConstraintSystemCompletionMode.PARTIAL_BI -> {
+                runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
 
                 if (inferenceSession is FirDelegatedPropertyInferenceSession || inferenceSession is FirBuilderInferenceSession2) {
                     inferenceSession.processPartiallyResolvedCall(call, resolutionMode)

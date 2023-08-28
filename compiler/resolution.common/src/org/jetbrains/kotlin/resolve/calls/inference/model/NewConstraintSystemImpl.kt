@@ -75,20 +75,20 @@ class NewConstraintSystemImpl(
 
     override fun <R> withTypeVariablesFromOuter(typeVariables: Set<TypeConstructorMarker>, block: () -> R): R {
         // Cleaning cache is necessary because temporarily we change the meaning of what does "proper type" mean
-        properTypesCache.clear()
-        notProperTypesCache.clear()
-
-        require(typeVariablesFromOuter == null) {
-            "Currently there should be no nested withDisallowingOnlyThisTypeVariablesForProperTypes calls"
-        }
+//        properTypesCache.clear()
+//        notProperTypesCache.clear()
+//
+//        require(typeVariablesFromOuter == null) {
+//            "Currently there should be no nested withDisallowingOnlyThisTypeVariablesForProperTypes calls"
+//        }
 
         typeVariablesFromOuter = typeVariables
 
         val result = block()
 
         typeVariablesFromOuter = null
-        properTypesCache.clear()
-        notProperTypesCache.clear()
+//        properTypesCache.clear()
+//        notProperTypesCache.clear()
 
         return result
     }
@@ -388,9 +388,9 @@ class NewConstraintSystemImpl(
 
             if (!storage.allTypeVariables.containsKey(typeToCheck.typeConstructor())) return@contains false
 
-            if (typeVariablesFromOuter != null && typeVariablesFromOuter!!.contains(typeToCheck.typeConstructor())) {
-                return@contains false
-            }
+//            if (typeVariablesFromOuter != null && typeVariablesFromOuter!!.contains(typeToCheck.typeConstructor())) {
+//                return@contains false
+//            }
 
             return@contains true
         }

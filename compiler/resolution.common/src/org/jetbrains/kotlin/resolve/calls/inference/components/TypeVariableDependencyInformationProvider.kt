@@ -14,7 +14,8 @@ class TypeVariableDependencyInformationProvider(
     private val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>,
     private val postponedKtPrimitives: List<PostponedResolvedAtomMarker>,
     private val topLevelType: KotlinTypeMarker?,
-    private val typeSystemContext: TypeSystemInferenceExtensionContext
+    private val typeSystemContext: TypeSystemInferenceExtensionContext,
+    private val outerTypeVariables: Set<TypeConstructorMarker>? = null
 ) {
     /*
      * Not oriented edges
@@ -41,11 +42,17 @@ class TypeVariableDependencyInformationProvider(
         computeRelatedToTopLevelType()
     }
 
-    fun isVariableRelatedToTopLevelType(variable: TypeConstructorMarker) = relatedToTopLevelType.contains(variable)
+    fun isVariableRelatedToTopLevelType(variable: TypeConstructorMarker) = relatedToTopLevelType.contains(variable) || isRelatedToOuterType(variable)
     fun isVariableRelatedToAnyOutputType(variable: TypeConstructorMarker) = relatedToAllOutputTypes.contains(variable)
 
     fun getDeeplyDependentVariables(variable: TypeConstructorMarker) = deepTypeVariableDependencies[variable]
     fun getShallowlyDependentVariables(variable: TypeConstructorMarker) = shallowTypeVariableDependencies[variable]
+
+    private fun isRelatedToOuterType(variable: TypeConstructorMarker): Boolean {
+        val outerTypeVariables = outerTypeVariables ?: return false
+        val myDependent = getDeeplyDependentVariables(variable) ?: return false
+        return myDependent.any { it in outerTypeVariables }
+    }
 
     fun areVariablesDependentShallowly(a: TypeConstructorMarker, b: TypeConstructorMarker): Boolean {
         if (a == b) return true

@@ -28,10 +28,7 @@ class FirBuilderInferenceSession2(
 
     // Should write completion results
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement =
-        call.candidate()?.usedOuterCs != true
-
-    fun <T> shouldRunCompletion2(call: T): Boolean where T : FirResolvable, T : FirStatement =
-        call.candidate()?.usedOuterCs != true || call.candidate()!!.postponedAtoms.isNotEmpty()
+        (call.candidate()?.usedOuterCs != true).also { require(it) }
 
     override fun handleQualifiedAccess(qualifiedAccessExpression: FirExpression, data: ResolutionMode) {
         if (qualifiedAccessExpression.resultType.containsNotFixedTypeVariables() && (qualifiedAccessExpression as? FirResolvable)?.candidate() == null) {
