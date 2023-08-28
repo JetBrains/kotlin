@@ -55,7 +55,7 @@ method global$pkg_$incorrect_at_most_once(local$f: Ref) returns (ret$: Int)
 
 /calls_in_place.kt:(466,488): warning: Function incorrect_at_most_once may not satisfy its contract.
 
-/calls_in_place.kt:(518,572): warning: f: (Int) -> Int has wrong invocation kind: given AT_MOST_ONCE case, but AT_LEAST_ONCE case is possible
+/calls_in_place.kt:(518,572): warning: Wrong invocation kind 'AT_MOST_ONCE' for 'f: (Int) -> Int' specified, the actual invocation kind is 'AT_LEAST_ONCE'.
 
 /calls_in_place.kt:(647,659): info: Generated Viper text for exactly_once:
 method global$pkg_$exactly_once(local$f: Ref) returns (ret$: Int)
@@ -92,7 +92,7 @@ method global$pkg_$incorrect_exactly_once(local$f: Ref) returns (ret$: Int)
 
 /calls_in_place.kt:(804,826): warning: Function incorrect_exactly_once may not satisfy its contract.
 
-/calls_in_place.kt:(856,910): warning: f: (Int) -> Int has wrong invocation kind: given EXACTLY_ONCE case, but MORE_THAN_ONCE case is possible
+/calls_in_place.kt:(856,910): warning: Wrong invocation kind 'EXACTLY_ONCE' for 'f: (Int) -> Int' specified, the actual invocation kind is 'MORE_THAN_ONCE'.
 
 /calls_in_place.kt:(974,987): info: Generated Viper text for at_least_once:
 method global$pkg_$exactly_once(local$f: Ref) returns (ret$: Int)
@@ -145,4 +145,4 @@ method global$pkg_$incorrect_at_least_once(local$f: Ref)
 
 /calls_in_place.kt:(1144,1167): warning: Function incorrect_at_least_once may not satisfy its contract.
 
-/calls_in_place.kt:(1197,1252): warning: f: (Int) -> Int has wrong invocation kind: given AT_LEAST_ONCE case, but UNKNOWN case is possible
+/calls_in_place.kt:(1197,1252): warning: Wrong invocation kind 'AT_LEAST_ONCE' for 'f: (Int) -> Int' specified, the actual invocation kind is 'UNKNOWN'.

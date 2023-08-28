@@ -69,6 +69,6 @@ method global$pkg_$non_nullable_compared_to_null(local$x: Int, local$y: Int)
   ret$ := local$x
 }
 
-/returns_null.kt:(1216,1225): warning: Condition is always 'false'
+/returns_null.kt:(1216,1225): warning: Condition is always 'false'.
 
-/returns_null.kt:(1229,1238): warning: Condition is always 'true'
+/returns_null.kt:(1229,1238): warning: Condition is always 'true'.

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.viper.domains.NullableDomain
@@ -108,16 +109,10 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         data: StmtConversionContext,
     ): Exp {
         val symbol = propertyAccessExpression.calleeReference.toResolvedBaseSymbol()!!
-        val type = propertyAccessExpression.typeRef.coneTypeOrNull!!
+        val type = data.embedType(propertyAccessExpression)
         return when (symbol) {
-            is FirValueParameterSymbol -> VariableEmbedding(
-                symbol.callableId.embedName(),
-                data.embedType(type)
-            ).toLocalVar()
-            is FirPropertySymbol -> VariableEmbedding(
-                symbol.callableId.embedName(),
-                data.embedType(type)
-            ).toLocalVar()
+            is FirValueParameterSymbol -> VariableEmbedding(symbol.callableId.embedName(), type).toLocalVar()
+            is FirPropertySymbol -> VariableEmbedding(symbol.callableId.embedName(), type).toLocalVar()
             else -> TODO("Implement other property accesses")
         }
     }
