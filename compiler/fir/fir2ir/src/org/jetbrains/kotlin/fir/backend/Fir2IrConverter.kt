@@ -486,7 +486,7 @@ class Fir2IrConverter(
                 classifierStorage.getIrEnumEntry(declaration, parent as IrClass)
             }
             is FirAnonymousInitializer -> {
-                callablesGenerator.createIrAnonymousInitializer(declaration, parent as IrClass)
+                declarationStorage.getOrCreateIrAnonymousInitializer(declaration, parent as IrClass)
             }
             is FirTypeAlias -> {
                 // DO NOTHING

@@ -367,7 +367,6 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                 irParent.descriptor
             ).apply {
                 this.parent = irParent
-                initializerCache[anonymousInitializer] = this
             }
         }
     }

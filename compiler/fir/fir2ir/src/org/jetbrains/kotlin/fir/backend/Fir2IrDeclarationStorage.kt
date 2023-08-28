@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.addToStdlib.getOrPut
 import org.jetbrains.kotlin.utils.threadLocal
 import java.util.concurrent.ConcurrentHashMap
 
@@ -475,8 +476,14 @@ class Fir2IrDeclarationStorage(
         return irFunction
     }
 
-    fun getCachedIrAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer): IrAnonymousInitializer? =
-        initializerCache[anonymousInitializer]
+    fun getOrCreateIrAnonymousInitializer(
+        anonymousInitializer: FirAnonymousInitializer,
+        containingIrClass: IrClass,
+    ): IrAnonymousInitializer {
+        return initializerCache.computeIfAbsent(anonymousInitializer) {
+            callablesGenerator.createIrAnonymousInitializer(anonymousInitializer, containingIrClass)
+        }
+    }
 
     @OptIn(IrSymbolInternals::class)
     fun getCachedIrConstructor(

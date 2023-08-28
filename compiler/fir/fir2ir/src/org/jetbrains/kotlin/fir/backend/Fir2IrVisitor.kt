@@ -387,7 +387,7 @@ class Fir2IrVisitor(
         anonymousInitializer: FirAnonymousInitializer,
         data: Any?
     ): IrElement = whileAnalysing(session, anonymousInitializer) {
-        val irAnonymousInitializer = declarationStorage.getCachedIrAnonymousInitializer(anonymousInitializer)!!
+        val irAnonymousInitializer = declarationStorage.getOrCreateIrAnonymousInitializer(anonymousInitializer, conversionScope.lastClass()!!)
         declarationStorage.enterScope(irAnonymousInitializer.symbol)
         irAnonymousInitializer.body = convertToIrBlockBody(anonymousInitializer.body!!)
         declarationStorage.leaveScope(irAnonymousInitializer.symbol)
