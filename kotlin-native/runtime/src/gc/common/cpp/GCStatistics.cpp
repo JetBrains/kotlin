@@ -208,6 +208,11 @@ void GCHandle::finished() {
     if (auto* stat = statByEpoch(epoch_)) {
         stat->endTime = static_cast<KLong>(konan::getTimeNanos());
         stat->memoryUsageAfter.heap = currentHeapUsage();
+        if (stat->markStats && stat->sweepStats.heap) {
+            RuntimeAssert(stat->markStats->markedCount == stat->sweepStats.heap->keptCount,
+                          "Mismatch in statistics: marked %" PRId64 " objects, while %" PRId64 " are alive after sweep",
+                          stat->markStats->markedCount, stat->sweepStats.heap->keptCount);
+        }
         if (stat->rootSet) {
             GCLogInfo(
                     epoch_,
@@ -294,16 +299,6 @@ void GCHandle::threadsAreSuspended() {
         if (requestTime) {
             auto time = (startTime - *requestTime) / 1000;
             GCLogDebug(epoch_, "Suspended all threads in %" PRIu64 " microseconds", time);
-            return;
-        }
-    }
-    if (last.epoch) {
-        // Assisted sweeping from the last epoch must be completed before the check can be run.
-        if (last.markStats && last.sweepStats.heap) {
-            RuntimeAssert(
-                    last.markStats->markedCount == last.sweepStats.heap->keptCount,
-                    "Mismatch in statistics: marked %" PRId64 " objects, while %" PRId64 " are alive after sweep",
-                    last.markStats->markedCount, last.sweepStats.heap->keptCount);
         }
     }
 }
@@ -323,7 +318,6 @@ void GCHandle::threadsAreResumed() {
         if (startTime) {
             auto time = (endTime - *startTime) / 1000;
             GCLogDebug(epoch_, "Resume all threads. Total pause time is %" PRId64 " microseconds.", time);
-            return;
         }
     }
 }
@@ -334,7 +328,6 @@ void GCHandle::finalizersDone() {
         if (stat->endTime) {
             auto time = (*stat->finalizersDoneTime - *stat->endTime) / 1000;
             GCLogInfo(epoch_, "Finalization is done in %" PRId64 " microseconds after epoch end.", time);
-            return;
         } else {
             GCLogInfo(epoch_, "Finalization is done.");
         }
