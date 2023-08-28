@@ -19618,6 +19618,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeManglingJvmNameGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
+        @TestMetadata("nonImmediateInlineClassUpperBound.kt")
+        public void testNonImmediateInlineClassUpperBound() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/nonImmediateInlineClassUpperBound.kt");
+        }
+
         @TestMetadata("nullableEqeqNonNull.kt")
         public void testNullableEqeqNonNull() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNull.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());

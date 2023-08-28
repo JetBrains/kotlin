@@ -23486,6 +23486,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("nonImmediateInlineClassUpperBound.kt")
+        public void testNonImmediateInlineClassUpperBound() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/nonImmediateInlineClassUpperBound.kt");
+        }
+
+        @Test
         @TestMetadata("nullableEqeqNonNull.kt")
         public void testNullableEqeqNonNull() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNull.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());

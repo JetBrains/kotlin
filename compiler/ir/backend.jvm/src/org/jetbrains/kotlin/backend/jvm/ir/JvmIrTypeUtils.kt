@@ -44,21 +44,28 @@ fun IrType.eraseTypeParameters(): IrType = when (this) {
                 IrSimpleTypeImpl(classifier, nullability, emptyList(), annotations)
             }
             is IrClass -> IrSimpleTypeImpl(classifier, nullability, arguments.map { it.eraseTypeParameters() }, annotations)
-            is IrTypeParameter -> {
-                val upperBound = owner.erasedUpperBound
-                IrSimpleTypeImpl(
-                    upperBound.symbol,
-                    isNullable(),
-                    // Should not affect JVM signature, but may result in an invalid type object
-                    List(upperBound.typeParameters.size) { IrStarProjectionImpl },
-                    owner.annotations
-                )
-            }
+            is IrTypeParameter -> owner.erasedType(isNullable())
             else -> error("Unknown IrSimpleType classifier kind: $owner")
         }
     is IrErrorType ->
         this
     else -> error("Unknown IrType kind: $this")
+}
+
+fun IrType.eraseIfTypeParameter(): IrType {
+    val typeParameter = (this as? IrSimpleType)?.classifier?.owner as? IrTypeParameter ?: return this
+    return typeParameter.erasedType(isNullable())
+}
+
+private fun IrTypeParameter.erasedType(isNullable: Boolean): IrType {
+    val upperBound = erasedUpperBound
+    return IrSimpleTypeImpl(
+        upperBound.symbol,
+        isNullable,
+        // Should not affect JVM signature, but may result in an invalid type object
+        List(upperBound.typeParameters.size) { IrStarProjectionImpl },
+        annotations
+    )
 }
 
 private fun IrTypeArgument.eraseTypeParameters(): IrTypeArgument = when (this) {
