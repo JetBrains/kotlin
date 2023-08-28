@@ -173,7 +173,6 @@ dependencies {
     compilerApi project(":compiler:fir:fir-serialization")
     compilerApi project(":compiler:fir:native")
     compilerApi project(":compiler:ir.psi2ir")
-    compilerApi project(":kotlin-native-shared")
     use(IntellijDependenciesKt) {
         compilerApi(intellijCore())
         compileOnly(jpsModel())

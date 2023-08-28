@@ -26,11 +26,7 @@ dependencies {
     }
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
-        implementation(project(":kotlin-native-shared"))
-    } else {
-        implementation(project(":native:kotlin-native-utils"))
-    }
+    implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
 }
 
 group = "org.jetbrains.kotlin"

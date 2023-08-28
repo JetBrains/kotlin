@@ -57,8 +57,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
 
     implementation("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
-
-    implementation(project(":kotlin-native-shared"))
     implementation(project(":kotlin-native-executors"))
 }
 

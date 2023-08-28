@@ -26,9 +26,6 @@ buildscript {
     }
 }
 
-include(":kotlin-native-shared")
-project(":kotlin-native-shared").projectDir = File("$rootDir/../shared")
-
 // This code could potentially remove the need of bootstrapping code that use util-klib and util-io
 // by building them, but it's not possible right now, because they use buildSrc plugins (like JPS) and methods (like commonDependency).
 // This could be fixed by replacing the buildSrc with the composite build like build-tools, and splitting it to several parts.
