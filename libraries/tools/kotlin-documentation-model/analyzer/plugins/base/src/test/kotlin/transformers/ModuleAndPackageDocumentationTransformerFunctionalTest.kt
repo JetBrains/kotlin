@@ -5,11 +5,13 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import transformers.AbstractContextModuleAndPackageDocumentationReaderTest.Companion.texts
+import utils.OnlyDescriptorsMPP
 import java.nio.file.Path
 import kotlin.test.assertEquals
 
 class ModuleAndPackageDocumentationTransformerFunctionalTest : BaseAbstractTest() {
 
+    @OnlyDescriptorsMPP
     @Test
     fun `multiplatform project`(@TempDir tempDir: Path) {
         val include = tempDir.resolve("include.md").toFile()

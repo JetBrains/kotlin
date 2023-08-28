@@ -12,7 +12,9 @@ import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
 import org.jetbrains.dokka.DokkaConfiguration.Visibility
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import utils.JavaCode
 
+@JavaCode
 class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
         sourceSets {

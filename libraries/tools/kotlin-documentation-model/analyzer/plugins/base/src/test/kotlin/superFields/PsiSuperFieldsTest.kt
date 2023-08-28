@@ -9,9 +9,11 @@ import org.jetbrains.dokka.model.isJvmField
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import utils.JavaCode
 import kotlin.test.assertEquals
 
 
+@JavaCode
 class PsiSuperFieldsTest : BaseAbstractTest() {
 
     private val commonTestConfiguration = dokkaConfiguration {

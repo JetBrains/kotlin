@@ -8,6 +8,7 @@ import org.jetbrains.dokka.model.GenericTypeConstructor
 import org.jetbrains.dokka.model.Invariance
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import utils.OnlyDescriptors
 
 class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
     private val configuration = dokkaConfiguration {
@@ -157,6 +158,8 @@ class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
             }
         }
     }
+
+    @OnlyDescriptors("Fix module.contentScope in new Standalone API") // TODO fix module.contentScope [getKtModuleForKtElement]
     @Test
     fun `no jvm source set`() {
         val configurationWithNoJVM = dokkaConfiguration {

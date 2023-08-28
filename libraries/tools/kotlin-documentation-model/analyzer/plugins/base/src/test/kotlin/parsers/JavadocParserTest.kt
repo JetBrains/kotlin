@@ -10,10 +10,12 @@ import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.utilities.firstIsInstanceOrNull
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import utils.JavaCode
 import utils.docs
 import utils.text
 import kotlin.test.assertNotNull
 
+@JavaCode
 class JavadocParserTest : BaseAbstractTest() {
 
     private val configuration = dokkaConfiguration {
