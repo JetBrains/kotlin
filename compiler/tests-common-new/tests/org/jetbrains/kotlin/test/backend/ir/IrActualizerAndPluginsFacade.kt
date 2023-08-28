@@ -39,7 +39,7 @@ class IrActualizerAndPluginsFacade(
                 inputArtifact.irPluginContext.symbolTable as SymbolTable, // TODO: it's strange place to get it.
                 inputArtifact.irMangler,
                 mapOf(module.name to module.friendDependencies.map { it.moduleName }),
-                useIrFakeOverrideBuilder = false,
+                useIrFakeOverrideBuilder = CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION in module.directives,
             )
             inputArtifact.irActualizerResult = result
         }

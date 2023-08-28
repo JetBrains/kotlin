@@ -105,7 +105,8 @@ class Fir2IrJvmResultsConverter(
                 evaluatedConstTracker = compilerConfiguration
                     .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
                 inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
-                allowNonCachedDeclarations = false
+                allowNonCachedDeclarations = false,
+                useIrFakeOverrideBuilder = module.shouldUseIrFakeOverrideBuilderInConvertToIr(),
             )
             val (irModuleFragment, components, pluginContext) = firOutputPart.firAnalyzerFacade.result.outputs.single().convertToIr(
                 fir2IrExtensions,

@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.backend.ir.CodegenWithIrFakeOverrideGeneratorSuppressor
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
@@ -90,3 +92,16 @@ open class AbstractFirLightTreeBlackBoxCodegenTest : AbstractFirBlackBoxCodegenT
 
 @FirPsiCodegenTest
 open class AbstractFirPsiBlackBoxCodegenTest : AbstractFirBlackBoxCodegenTestBase(FirParser.Psi)
+
+open class AbstractFirLightTreeBlackBoxCodegenWithIrFakeOverrideGeneratorTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                +ENABLE_IR_FAKE_OVERRIDE_GENERATION
+            }
+
+            useAfterAnalysisCheckers(::CodegenWithIrFakeOverrideGeneratorSuppressor)
+        }
+    }
+}

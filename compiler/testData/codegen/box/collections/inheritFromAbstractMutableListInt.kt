@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-61370
 
 abstract class A : AbstractMutableList<Int>()
 

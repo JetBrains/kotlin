@@ -242,6 +242,19 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
             Ignore exceptions in AbstractFirLoadK2CompiledKotlin tests
         """.trimIndent()
     )
+
+    val ENABLE_IR_FAKE_OVERRIDE_GENERATION by directive(
+        description = """
+            Enables fake-override generation in FIR2IR using IR f/o generator. KT-61514
+        """.trimIndent()
+    )
+
+    // String to allow and enforce issue id. Value is not actually used.
+    val IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION by stringDirective(
+        description = """
+            Suppresses test if $ENABLE_IR_FAKE_OVERRIDE_GENERATION directive enabled
+        """.trimIndent()
+    )
 }
 
 fun extractIgnoredDirectiveForTargetBackend(

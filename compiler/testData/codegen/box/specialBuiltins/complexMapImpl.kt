@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-61370
 // WITH_STDLIB
 
 // binary representation of fractional part of phi = (sqrt(5) - 1) / 2

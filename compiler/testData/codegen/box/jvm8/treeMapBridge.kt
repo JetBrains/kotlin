@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-61370
 
 // java.lang.NoSuchMethodError: java.util.TreeMap.remove
 // IGNORE_BACKEND: ANDROID

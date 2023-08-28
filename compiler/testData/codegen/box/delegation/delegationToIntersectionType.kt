@@ -1,4 +1,5 @@
 // DUMP_IR
+// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-61386
 
 fun <T> select(a: T, b: T) : T = a
 
