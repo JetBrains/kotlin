@@ -1,0 +1,1 @@
+-: platform.ForceFeedback/FFDeviceGetForceFeedbackProperty|FFDeviceGetForceFeedbackProperty(kotlinx.cinterop.CPointer<platform.ForceFeedback.__FFDHIDDEN>?;kotlin.UInt;kotlinx.cinterop.CValuesRef<*>?;kotlin.ULong){}[100]
