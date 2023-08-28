@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.jvm
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -70,11 +71,13 @@ class ConeEquivalentCallConflictResolver(
         secondCandidate: Candidate
     ): Boolean {
         if (first.symbol.callableId != second.symbol.callableId) return false
-        // Emulate behavior from K1 where declarations from the same module are never equivalent.
+        // Emulate behavior from K1 where declarations from the same source module are never equivalent.
         // We expect REDECLARATION or CONFLICTING_OVERLOADS to be reported in those cases.
         // See a.containingDeclaration == b.containingDeclaration check in
         // org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent.
-        if (first.moduleData == second.moduleData) return false
+        // We can't rely on the fact that library declarations will have different moduleData, e.g. in Native metadata compilation,
+        // multiple stdlib declarations with the same moduleData can be present, see KT-61461.
+        if (first.moduleData == second.moduleData && first.moduleData.session.kind == FirSession.Kind.Source) return false
         if (first.isExpect != second.isExpect) return false
         if (first is FirVariable != second is FirVariable) {
             return false
