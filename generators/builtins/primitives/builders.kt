@@ -40,7 +40,7 @@ internal interface PrimitiveBuilder {
 internal abstract class AnnotatedAndDocumented {
     private var doc: String? = null
     val annotations: MutableList<String> = mutableListOf()
-    var additionalDoc: String? = null
+    var additionalComments: String? = null
 
     fun appendDoc(doc: String) {
         if (this.doc == null) {
@@ -55,14 +55,14 @@ internal abstract class AnnotatedAndDocumented {
             appendLine(doc!!.printAsDoc(forceMultiLineDoc))
         }
 
-        if (annotations.isNotEmpty()) {
-            appendLine(annotations.joinToString(separator = END_LINE) { "@$it" })
-        }
-
-        if (additionalDoc != null) {
-            additionalDoc!!.lines().forEach { line ->
+        if (additionalComments != null) {
+            additionalComments!!.lines().forEach { line ->
                 appendLine("// $line")
             }
+        }
+
+        if (annotations.isNotEmpty()) {
+            appendLine(annotations.joinToString(separator = END_LINE) { "@$it" })
         }
     }
 

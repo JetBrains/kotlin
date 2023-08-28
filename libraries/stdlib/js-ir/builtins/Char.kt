@@ -106,10 +106,10 @@ internal constructor(private val value: Int) : Comparable<Char> {
     @kotlin.internal.IntrinsicConstEvaluation
     public fun toDouble(): Double = value.toDouble()
 
+    // TODO implicit usages of toString and valueOf must be covered in DCE
     @kotlin.internal.IntrinsicConstEvaluation
     @Suppress("JS_NAME_PROHIBITED_FOR_OVERRIDE")
     @JsName("toString")
-    // TODO implicit usages of toString and valueOf must be covered in DCE
     public override fun toString(): String {
         return js("String").fromCharCode(value).unsafeCast<String>()
     }

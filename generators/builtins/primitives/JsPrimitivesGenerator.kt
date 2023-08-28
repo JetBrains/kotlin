@@ -146,7 +146,7 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
 
         if (thisKind == PrimitiveType.LONG) {
             method {
-                additionalDoc = """
+                additionalComments = """
                     This method is used by JavaScript to convert objects of type Long to primitives.
                     This is essential for the JavaScript interop.
                     JavaScript functions that expect `number` are imported in Kotlin as expecting `kotlin.Number`

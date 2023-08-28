@@ -120,7 +120,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
 
     override fun MethodBuilder.modifyGeneratedUnaryOperation(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.INT && methodName == "dec") {
-            additionalDoc = "TODO: Fix test compiler/testData/codegen/box/functions/invoke/invoke.kt with inline dec"
+            additionalComments = "TODO: Fix test compiler/testData/codegen/box/functions/invoke/invoke.kt with inline dec"
         } else {
             modifySignature { isInline = true }
         }

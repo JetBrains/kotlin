@@ -419,7 +419,7 @@ class JsCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     }
 
     override fun MethodBuilder.modifyGeneratedToString() {
-        additionalDoc = "TODO implicit usages of toString and valueOf must be covered in DCE"
+        additionalComments = "TODO implicit usages of toString and valueOf must be covered in DCE"
         annotations += "Suppress(\"JS_NAME_PROHIBITED_FOR_OVERRIDE\")"
         annotations += "JsName(\"toString\")"
         "return js(\"String\").fromCharCode(value).unsafeCast<String>()".addAsMultiLineBody()
