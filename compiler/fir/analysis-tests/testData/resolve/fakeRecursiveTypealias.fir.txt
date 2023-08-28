@@ -1,3 +1,3 @@
 FILE: fakeRecursiveTypealias.kt
-    public final typealias My = <ERROR TYPE REF: Symbol not found for incorrect.directory.My>
+    public final typealias My = <ERROR TYPE REF: Symbol not found for incorrect>
     public final typealias Your = <ERROR TYPE REF: Loop in supertype: /Your -> /Your>

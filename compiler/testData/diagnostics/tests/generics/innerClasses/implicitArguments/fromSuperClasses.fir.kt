@@ -7,14 +7,14 @@ open class Outer<X, Y> {
 
 class Derived : Outer<String, Int>() {
     fun foo(): Inner<Char> = null!!
-    fun baz(): <!UNRESOLVED_REFERENCE!>Alias<Char><!> = null!!
+    fun baz(): <!UNRESOLVED_REFERENCE!>Alias<!><Char> = null!!
 }
 
 
 class A : Outer<Double, Short>() {
     class B : Outer<Float, Long>() {
         fun bar(): Inner<String> = null!!
-        fun x(): <!UNRESOLVED_REFERENCE!>Alias<String><!> = null!!
+        fun x(): <!UNRESOLVED_REFERENCE!>Alias<!><String> = null!!
     }
 }
 

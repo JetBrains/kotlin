@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface I0<T : <!UNRESOLVED_REFERENCE!>Unresolved0<!><String>>
 interface I1<T> where T : <!UNRESOLVED_REFERENCE!>Unresolved1<!><String>
 interface I2<<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>T : <!UNRESOLVED_REFERENCE!>Unresolved2<!><String><!>> where T : <!UNRESOLVED_REFERENCE!>Unresolved3<!><String>

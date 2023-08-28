@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.recordTypeLookup
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolutionResult
 import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDefaultValueInFunctionType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeResolver
@@ -145,26 +146,7 @@ class FirSpecificTypeResolverTransformer(
     ): FirResolvedTypeRef {
         return when {
             resolvedType is ConeErrorType -> {
-                buildErrorTypeRef {
-                    val typeRefSourceKind = typeRef.source?.kind
-                    val diagnosticSource = (resolvedType.diagnostic as? ConeUnexpectedTypeArgumentsError)?.source
-
-                    source = if (diagnosticSource != null) {
-                        if (typeRefSourceKind is KtFakeSourceElementKind) {
-                            diagnosticSource.fakeElement(typeRefSourceKind)
-                        } else {
-                            diagnosticSource
-                        }
-                    } else {
-                        typeRef.source
-                    }
-
-                    delegatedTypeRef = typeRef
-                    type = resolvedType
-                    partiallyResolvedTypeRef = tryCalculatingPartiallyResolvedTypeRef(typeRef, scopeClassDeclaration)
-
-                    this.diagnostic = resolvedType.diagnostic
-                }
+                buildErrorType(typeRef, resolvedType, scopeClassDeclaration)
             }
             diagnostic != null -> {
                 buildErrorTypeRef {
@@ -186,6 +168,45 @@ class FirSpecificTypeResolverTransformer(
         }
     }
 
+    private fun buildErrorType(
+        typeRef: FirTypeRef,
+        resolvedType: ConeErrorType,
+        scopeClassDeclaration: ScopeClassDeclaration,
+    ): FirErrorTypeRef {
+        return buildErrorTypeRef {
+            var diagnostic = resolvedType.diagnostic
+            val typeRefSourceKind = typeRef.source?.kind
+            val diagnosticSource = (diagnostic as? ConeUnexpectedTypeArgumentsError)?.source
+
+            source = if (diagnosticSource != null) {
+                if (typeRefSourceKind is KtFakeSourceElementKind) {
+                    diagnosticSource.fakeElement(typeRefSourceKind)
+                } else {
+                    diagnosticSource
+                }
+            } else {
+                typeRef.source
+            }
+
+            delegatedTypeRef = typeRef
+            type = resolvedType
+            val partiallyResolvedTypeRef = tryCalculatingPartiallyResolvedTypeRef(typeRef, scopeClassDeclaration)
+            this.partiallyResolvedTypeRef = partiallyResolvedTypeRef
+
+            if (diagnostic is ConeUnresolvedTypeQualifierError) {
+                val totalQualifierCount = diagnostic.qualifiers.size
+                val resolvedQualifierCount = (partiallyResolvedTypeRef?.delegatedTypeRef as? FirUserTypeRef)?.qualifier?.size ?: 0
+                val unresolvedQualifierCount = totalQualifierCount - resolvedQualifierCount
+
+                if (unresolvedQualifierCount > 1) {
+                    diagnostic = ConeUnresolvedTypeQualifierError(diagnostic.qualifiers.dropLast(unresolvedQualifierCount - 1), false)
+                }
+            }
+
+            this.diagnostic = diagnostic
+        }
+    }
+
     /**
      * Tries to calculate a partially resolved type reference for a type reference which was resolved to an error type.
      * It will attempt to resolve the type with a decreasing number of qualifiers until it succeeds, allowing
@@ -197,7 +218,7 @@ class FirSpecificTypeResolverTransformer(
      * @param data The scope class declaration containing relevant information for resolving the reference.
      * @return A partially resolved type reference if it was resolved, or `null` otherwise.
      */
-    private fun tryCalculatingPartiallyResolvedTypeRef(typeRef: FirTypeRef, data: ScopeClassDeclaration): FirTypeRef? {
+    private fun tryCalculatingPartiallyResolvedTypeRef(typeRef: FirTypeRef, data: ScopeClassDeclaration): FirResolvedTypeRef? {
         if (typeRef !is FirUserTypeRef) return null
         val qualifiers = typeRef.qualifier
         if (qualifiers.size <= 1) {

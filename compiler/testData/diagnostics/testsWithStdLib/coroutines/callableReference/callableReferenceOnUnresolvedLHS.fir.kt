@@ -2,7 +2,7 @@
 interface Inv
 class Impl : Inv
 
-class Scope<InterfaceT, ImplementationT : InterfaceT>(private val implClass: <!UNRESOLVED_REFERENCE!>j.Class<ImplementationT><!>) {
+class Scope<InterfaceT, ImplementationT : InterfaceT>(private val implClass: <!UNRESOLVED_REFERENCE!>j<!>.Class<ImplementationT>) {
     fun foo(c: Collection<InterfaceT>) {
         val hm = c.asSequence()
             .filter(implClass::<!UNRESOLVED_REFERENCE!>isInstance<!>)

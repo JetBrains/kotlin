@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ProhibitSmartcastsOnLocalDelegatedProperty
 
 class AlternatingDelegate {

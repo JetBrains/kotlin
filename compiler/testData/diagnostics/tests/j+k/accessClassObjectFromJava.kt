@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Foo {
   companion object {
     val bar = 1

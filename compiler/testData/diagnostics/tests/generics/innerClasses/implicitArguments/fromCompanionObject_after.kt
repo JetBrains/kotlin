@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 open class Outer<E> {

@@ -38,7 +38,7 @@ fun ok4(): Outer.Obj.Nested2<A>.Inner5<B> = null!!
 fun ok5(): test.Outer.Obj.Nested2<A>.Inner5<B> = null!!
 
 // All arguments are resolved
-fun errorTypeWithArguments(): <!UNRESOLVED_REFERENCE!>Q<A>.W<B, C, D>.R.M<!> = null!!
+fun errorTypeWithArguments(): <!UNRESOLVED_REFERENCE!>Q<!><A>.W<B, C, D>.R.M = null!!
 
 fun error1(): Outer<A>.Inner<B>.Inner3<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><C, D><!> = null!!
 fun error2(): Outer<A>.Inner<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><B, C, D><!>.Inner2 = null!!

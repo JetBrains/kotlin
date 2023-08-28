@@ -10,7 +10,7 @@ open class BaseDerived2<X> : BaseDerived1<String, X>()
 
 class Derived : BaseDerived2<Int>() {
     fun foo(): Inner<Char> = null!!
-    fun baz(): <!UNRESOLVED_REFERENCE!>Alias<Char><!> = null!!
+    fun baz(): <!UNRESOLVED_REFERENCE!>Alias<!><Char> = null!!
 }
 
 fun foo() {

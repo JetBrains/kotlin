@@ -15,7 +15,7 @@ class A {
 
     // Does not work, could be Outer<String>.Inner<Int>
     // TODO: Should work?
-    fun foo(x: <!UNRESOLVED_REFERENCE!>Inner<Int><!>) {
+    fun foo(x: <!UNRESOLVED_REFERENCE!>Inner<!><Int>) {
         // Inner<Char>() call use companion as implicit receiver
         val y: Outer<String>.Inner<Char> = Inner<Char>()
     }
