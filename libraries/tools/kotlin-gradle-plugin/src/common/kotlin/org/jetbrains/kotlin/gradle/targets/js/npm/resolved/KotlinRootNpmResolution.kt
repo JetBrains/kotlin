@@ -16,7 +16,7 @@ import java.io.Serializable
 class KotlinRootNpmResolution(
     val projects: Map<String, KotlinProjectNpmResolution>,
     val rootProjectName: String,
-    val rootProjectVersion: String
+    val rootProjectVersion: String,
 ) : Serializable {
     operator fun get(project: String) = projects[project] ?: KotlinProjectNpmResolution.empty()
 
@@ -27,12 +27,20 @@ class KotlinRootNpmResolution(
         logger: Logger,
         npmEnvironment: NpmEnvironment,
         yarnEnvironment: YarnEnvironment,
-        npmResolutionManager: KotlinNpmResolutionManager
+        npmResolutionManager: KotlinNpmResolutionManager,
     ): Installation {
         synchronized(projects) {
             npmResolutionManager.parameters.gradleNodeModulesProvider.get().close()
 
-            val projectResolutions: List<PreparedKotlinCompilationNpmResolution> = projects.values.flatMap { it.npmProjects }.map { it.close() }
+            val projectResolutions: List<PreparedKotlinCompilationNpmResolution> = projects.values
+                .flatMap { it.npmProjects }
+                .map {
+                    it.close(
+                        npmResolutionManager,
+                        logger
+                    )
+                }
+
             npmEnvironment.packageManager.prepareRootProject(
                 npmEnvironment,
                 rootProjectName,
