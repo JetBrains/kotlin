@@ -1,5 +1,7 @@
 #include "ParallelMark.hpp"
 
+#include <utility>
+
 #include "MarkAndSweepUtils.hpp"
 #include "GCStatistics.hpp"
 #include "Utils.hpp"
@@ -18,6 +20,26 @@ void spinWait(Cond&& until) {
         std::this_thread::yield();
     }
 }
+
+#ifndef CUSTOM_ALLOCATOR
+// TODO move to common
+[[maybe_unused]] void checkMarkCorrectness() {
+    if (compiler::runtimeAssertsMode() == compiler::RuntimeAssertsMode::kIgnore) return;
+    auto& gc = mm::GlobalData::Instance().gc().impl();
+    for (auto objRef: gc.objectFactory().LockForIter()) {
+        auto obj = objRef.GetObjHeader();
+        auto& objData = objRef.ObjectData();
+        if (objData.marked()) {
+            traverseReferredObjects(obj, [obj](ObjHeader* field) {
+                if (field->heap()) {
+                    auto& fieldObjData = gc::ObjectFactory::NodeRef::From(field).ObjectData();
+                    RuntimeAssert(fieldObjData.marked(), "Field %p of an alive obj %p must be alive", field, obj);
+                }
+            });
+        }
+    }
+}
+#endif
 
 } // namespace
 
@@ -70,61 +92,29 @@ gc::mark::ParallelMark::ParallelMark(bool mutatorsCooperate) {
     setParallelismLevel(maxParallelism, mutatorsCooperate);
 }
 
-void gc::mark::ParallelMark::beginMarkingEpoch(gc::GCHandle gcHandle) {
-    gcHandle_ = gcHandle;
+gc::mark::ParallelMark::SweepableHeapHandle gc::mark::ParallelMark::runMain(gc::GCHandle gcHandle) {
+    beginMarkingEpoch(gcHandle);
 
-    lockedMutatorsList_ = mm::ThreadRegistry::Instance().LockForIter();
+    auto stwGuard = stopTheWorldInScope(gcHandle);
 
-    parallelProcessor_.construct();
-
-    if (!compiler::gcMarkSingleThreaded()) {
-        std::unique_lock guard(workerCreationMutex_);
-        pacer_.beginEpoch(gcHandle.getEpoch());
-        // main worker is always accounted, so others would not be able to exhaust all the parallelism before main is instantiated
-        activeWorkersCount_ = 1;
-    }
-}
-
-void gc::mark::ParallelMark::endMarkingEpoch() {
-    if (!compiler::gcMarkSingleThreaded()) {
-        // We must now wait for every worker to finish the Mark procedure:
-        // wake up from possible waiting, publish statistics, etc.
-        // Only then it's safe to destroy the parallelProcessor and proceed to other GC tasks such as sweep.
-        spinWait([=]() { return activeWorkersCount_.load(std::memory_order_relaxed) == 0; });
-
-        std::unique_lock guard(workerCreationMutex_);
-        RuntimeAssert(activeWorkersCount_ == 0, "All the workers must already finish");
-        pacer_.begin(MarkPacer::Phase::kIdle);
-    }
-    parallelProcessor_.destroy();
-    resetMutatorFlags();
-    lockedMutatorsList_ = std::nullopt;
-}
-
-void gc::mark::ParallelMark::runMainInSTW() {
     if (compiler::gcMarkSingleThreaded()) {
+        // TODO extract serial mark impl as separate class
         ParallelProcessor::Worker worker(*parallelProcessor_);
-        gc::collectRootSet<MarkTraits>(gcHandle(), worker, [] (mm::ThreadData&) { return true; });
-        gc::Mark<MarkTraits>(gcHandle(), worker);
+        gc::collectRootSet<MarkTraits>(gcHandle, worker, [] (mm::ThreadData&) { return true; });
+        gc::Mark<MarkTraits>(gcHandle, worker);
     } else {
-        RuntimeAssert(activeWorkersCount_ > 0, "Main worker must always be accounted");
-        ParallelProcessor::Worker mainWorker(*parallelProcessor_);
-        GCLogDebug(gcHandle().getEpoch(), "Creating main (#0) mark worker");
-
-        pacer_.begin(MarkPacer::Phase::kRootSet);
-        completeMutatorsRootSet(mainWorker);
-        spinWait([this] {
-            return allMutators([](mm::ThreadData& mut) { return mut.gc().impl().gc().published(); });
-        });
-        // global root set must be collected after all the mutator's global data have been published
-        collectRootSetGlobals<MarkTraits>(gcHandle(), mainWorker);
-
-        pacer_.begin(MarkPacer::Phase::kParallelMark);
-        parallelMark(mainWorker);
+        parallelMarkMain();
     }
+
+    endMarkingEpoch();
+
+    processWeak();
+
+    // the world will be resumed after the call finishes
+    return isolateMarkedHeapAndFinishMark();
 }
 
-void gc::mark::ParallelMark::runOnMutator(mm::ThreadData& mutatorThread) {
+void gc::mark::ParallelMark::onMutatorSuspension(mm::ThreadData& mutatorThread) {
     if (compiler::gcMarkSingleThreaded() || !mutatorsCooperate_) return;
 
     auto epoch = gcHandle().getEpoch();
@@ -138,7 +128,7 @@ void gc::mark::ParallelMark::runOnMutator(mm::ThreadData& mutatorThread) {
     }
 }
 
-void gc::mark::ParallelMark::runAuxiliary() {
+void gc::mark::ParallelMark::onAuxiliaryThread() {
     RuntimeAssert(!compiler::gcMarkSingleThreaded(), "Should not reach here during single threaded mark");
 
     pacer_.waitNewEpochReadyOrShutdown();
@@ -165,6 +155,93 @@ bool gc::mark::ParallelMark::shutdownRequested() const {
 gc::GCHandle& gc::mark::ParallelMark::gcHandle() {
     RuntimeAssert(gcHandle_.isValid(), "GCHandle must be initialized");
     return gcHandle_;
+}
+
+void gc::mark::ParallelMark::beginMarkingEpoch(gc::GCHandle gcHandle) {
+    gcHandle_ = gcHandle;
+
+    lockedMutatorsList_ = mm::ThreadRegistry::Instance().LockForIter();
+
+    parallelProcessor_.construct();
+
+    if (!compiler::gcMarkSingleThreaded()) {
+        std::unique_lock guard(workerCreationMutex_);
+        pacer_.beginEpoch(gcHandle.getEpoch());
+        // main worker is always accounted, so others would not be able to exhaust all the parallelism before main is instantiated
+        activeWorkersCount_ = 1;
+    }
+}
+
+void gc::mark::ParallelMark::parallelMarkMain() {
+    RuntimeAssert(activeWorkersCount_ > 0, "Main worker must always be accounted");
+    ParallelProcessor::Worker mainWorker(*parallelProcessor_);
+    GCLogDebug(gcHandle().getEpoch(), "Creating main (#0) mark worker");
+
+    pacer_.begin(MarkPacer::Phase::kRootSet);
+    completeMutatorsRootSet(mainWorker);
+    spinWait([this] {
+        return allMutators([](mm::ThreadData& mut) { return mut.gc().impl().gc().published(); });
+    });
+    // global root set must be collected after all the mutator's global data have been published
+    collectRootSetGlobals<MarkTraits>(gcHandle(), mainWorker);
+
+    pacer_.begin(MarkPacer::Phase::kParallelMark);
+    parallelMark(mainWorker);
+}
+
+void gc::mark::ParallelMark::endMarkingEpoch() {
+    if (!compiler::gcMarkSingleThreaded()) {
+        // We must now wait for every worker to finish the Mark procedure:
+        // wake up from possible waiting, publish statistics, etc.
+        // Only then it's safe to destroy the parallelProcessor and proceed to other GC tasks such as sweep.
+        spinWait([=]() { return activeWorkersCount_.load(std::memory_order_relaxed) == 0; });
+
+        std::unique_lock guard(workerCreationMutex_);
+        RuntimeAssert(activeWorkersCount_ == 0, "All the workers must already finish");
+        pacer_.begin(MarkPacer::Phase::kIdle);
+    }
+    parallelProcessor_.destroy();
+    resetMutatorFlags();
+    lockedMutatorsList_ = std::nullopt;
+}
+
+void gc::mark::ParallelMark::processWeak() {
+    if (compiler::concurrentWeakSweep()) {
+        gc::EnableWeakRefBarriers(gcHandle().getEpoch());
+        resumeTheWorld(gcHandle());
+    }
+
+    gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle(), mm::SpecialRefRegistry::instance());
+
+    if (compiler::concurrentWeakSweep()) {
+        stopTheWorld(gcHandle());
+        gc::DisableWeakRefBarriers();
+    }
+}
+
+gc::mark::ParallelMark::SweepableHeapHandle gc::mark::ParallelMark::isolateMarkedHeapAndFinishMark() {
+    // By this point all the alive heap must be marked.
+    // All the mutations (incl. allocations) after this method will be subject for the next GC.
+#ifdef CUSTOM_ALLOCATOR
+    // This should really be done by each individual thread while waiting
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        thread.gc().impl().alloc().PrepareForGC();
+    }
+    auto& heap = mm::GlobalData::Instance().gc().impl().gc().heap();
+    heap.PrepareForGC();
+    return {heap};
+#else
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        thread.gc().PublishObjectFactory();
+    }
+
+    checkMarkCorrectness();
+
+    auto& gc = mm::GlobalData::Instance().gc().impl();
+    // Taking the locks before the pause is completed. So that any destroying thread
+    // would not publish into the global state at an unexpected time.
+    return {gc.objectFactory().LockForIter(), gc.extraObjectDataFactory().LockForIter()};
+#endif
 }
 
 void gc::mark::ParallelMark::setParallelismLevel(size_t maxParallelism, bool mutatorsCooperate) {

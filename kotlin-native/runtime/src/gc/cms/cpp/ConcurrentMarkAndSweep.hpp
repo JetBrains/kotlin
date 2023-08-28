@@ -61,17 +61,7 @@ public:
         std::atomic<bool> published_ = false;
     };
 
-#ifdef CUSTOM_ALLOCATOR
-    explicit ConcurrentMarkAndSweep(gcScheduler::GCScheduler& scheduler,
-                                    bool mutatorsCooperate, std::size_t auxGCThreads) noexcept;
-#else
-    ConcurrentMarkAndSweep(
-            ObjectFactory& objectFactory,
-            mm::ExtraObjectDataFactory& extraObjectDataFactory,
-            gcScheduler::GCScheduler& scheduler,
-            bool mutatorsCooperate,
-            std::size_t auxGCThreads) noexcept;
-#endif
+    explicit ConcurrentMarkAndSweep(gcScheduler::GCScheduler& scheduler, bool mutatorsCooperate, std::size_t auxGCThreads) noexcept;
     ~ConcurrentMarkAndSweep();
 
     void StartFinalizerThreadIfNeeded() noexcept;
@@ -91,10 +81,7 @@ private:
     void auxiliaryGCThreadBody();
     void PerformFullGC(int64_t epoch) noexcept;
 
-#ifndef CUSTOM_ALLOCATOR
-    ObjectFactory& objectFactory_;
-    mm::ExtraObjectDataFactory& extraObjectDataFactory_;
-#else
+#ifdef CUSTOM_ALLOCATOR
     alloc::Heap heap_;
 #endif
     gcScheduler::GCScheduler& gcScheduler_;
@@ -102,7 +89,7 @@ private:
     GCStateHolder state_;
     FinalizerProcessor<FinalizerQueue, FinalizerQueueTraits> finalizerProcessor_;
 
-    mark::ParallelMark markDispatcher_;
+    mark::ParallelMark mark_;
     ScopedThread mainThread_;
     std_support::vector<ScopedThread> auxThreads_;
 };

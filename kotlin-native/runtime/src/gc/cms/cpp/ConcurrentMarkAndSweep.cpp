@@ -35,31 +35,11 @@ ScopedThread createGCThread(const char* name, Body&& body) {
     });
 }
 
-#ifndef CUSTOM_ALLOCATOR
-// TODO move to common
-[[maybe_unused]] inline void checkMarkCorrectness(gc::ObjectFactory::Iterable& heap) {
-    if (compiler::runtimeAssertsMode() == compiler::RuntimeAssertsMode::kIgnore) return;
-    for (auto objRef: heap) {
-        auto obj = objRef.GetObjHeader();
-        auto& objData = objRef.ObjectData();
-        if (objData.marked()) {
-            traverseReferredObjects(obj, [obj](ObjHeader* field) {
-                if (field->heap()) {
-                    auto& fieldObjData = gc::ObjectFactory::NodeRef::From(field).ObjectData();
-                    RuntimeAssert(fieldObjData.marked(), "Field %p of an alive obj %p must be alive", field, obj);
-                }
-            });
-        }
-    }
-}
-#endif
-
 } // namespace
 
 void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
     CallsCheckerIgnoreGuard guard;
-
-    gc_.markDispatcher_.runOnMutator(commonThreadData());
+    gc_.mark_.onMutatorSuspension(commonThreadData());
 }
 
 bool gc::ConcurrentMarkAndSweep::ThreadData::tryLockRootSet() {
@@ -89,26 +69,15 @@ mm::ThreadData& gc::ConcurrentMarkAndSweep::ThreadData::commonThreadData() const
     return threadData_;
 }
 
-#ifndef CUSTOM_ALLOCATOR
-gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
-        ObjectFactory& objectFactory,
-        mm::ExtraObjectDataFactory& extraObjectDataFactory,
-        gcScheduler::GCScheduler& gcScheduler,
-        bool mutatorsCooperate,
-        std::size_t auxGCThreads) noexcept :
-    objectFactory_(objectFactory),
-    extraObjectDataFactory_(extraObjectDataFactory),
-#else
 gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
         gcScheduler::GCScheduler& gcScheduler,
         bool mutatorsCooperate, std::size_t auxGCThreads) noexcept :
-#endif
     gcScheduler_(gcScheduler),
     finalizerProcessor_([this](int64_t epoch) {
         GCHandle::getByEpoch(epoch).finalizersDone();
         state_.finalized(epoch);
     }),
-    markDispatcher_(mutatorsCooperate),
+    mark_(mutatorsCooperate),
     mainThread_(createGCThread("Main GC thread", [this] { mainGCThreadBody(); })) {
     for (std::size_t i = 0; i < auxGCThreads; ++i) {
         auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));
@@ -144,13 +113,13 @@ void gc::ConcurrentMarkAndSweep::mainGCThreadBody() {
             break;
         }
     }
-    markDispatcher_.requestShutdown();
+    mark_.requestShutdown();
 }
 
 void gc::ConcurrentMarkAndSweep::auxiliaryGCThreadBody() {
     RuntimeAssert(!compiler::gcMarkSingleThreaded(), "Should not reach here during single threaded mark");
-    while (!markDispatcher_.shutdownRequested()) {
-        markDispatcher_.runAuxiliary();
+    while (!mark_.shutdownRequested()) {
+        mark_.onAuxiliaryThread();
     }
 }
 
@@ -158,67 +127,22 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     std::unique_lock mainGCLock(gcMutex);
     auto gcHandle = GCHandle::create(epoch);
 
-    markDispatcher_.beginMarkingEpoch(gcHandle);
-    GCLogDebug(epoch, "Main GC requested marking in mutators");
-
-    stopTheWorld(gcHandle);
-
     auto& scheduler = gcScheduler_;
     scheduler.onGCStart();
 
     state_.start(epoch);
 
-    markDispatcher_.runMainInSTW();
-
-    markDispatcher_.endMarkingEpoch();
-
-    if (compiler::concurrentWeakSweep()) {
-        // Expected to happen inside STW.
-        gc::EnableWeakRefBarriers(epoch);
-        resumeTheWorld(gcHandle);
-    }
-
-    gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
-
-    if (compiler::concurrentWeakSweep()) {
-        stopTheWorld(gcHandle);
-        gc::DisableWeakRefBarriers();
-    }
-
-    // TODO outline as mark_.isolateMarkedHeapAndFinishMark()
-    // By this point all the alive heap must be marked.
-    // All the mutations (incl. allocations) after this method will be subject for the next GC.
-#ifdef CUSTOM_ALLOCATOR
-    // This should really be done by each individual thread while waiting
-    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
-        thread.gc().impl().alloc().PrepareForGC();
-    }
-    auto& heap = mm::GlobalData::Instance().gc().impl().gc().heap();
-    heap.PrepareForGC();
-#else
-    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
-        thread.gc().PublishObjectFactory();
-    }
-
-    // Taking the locks before the pause is completed. So that any destroying thread
-    // would not publish into the global state at an unexpected time.
-    std::optional objectFactoryIterable = objectFactory_.LockForIter();
-    std::optional extraObjectFactoryIterable = extraObjectDataFactory_.LockForIter();
-
-    checkMarkCorrectness(*objectFactoryIterable);
-#endif
-
-    resumeTheWorld(gcHandle);
+    std::optional sweepableHeapHandle = mark_.runMain(gcHandle);
 
 #ifndef CUSTOM_ALLOCATOR
-    gc::SweepExtraObjects<DefaultSweepTraits<ObjectFactory>>(gcHandle, *extraObjectFactoryIterable);
-    extraObjectFactoryIterable = std::nullopt;
-    auto finalizerQueue = gc::Sweep<DefaultSweepTraits<ObjectFactory>>(gcHandle, *objectFactoryIterable);
-    objectFactoryIterable = std::nullopt;
+    gc::SweepExtraObjects<DefaultSweepTraits<ObjectFactory>>(gcHandle, sweepableHeapHandle->extraObjects_);
+    auto finalizerQueue = gc::Sweep<DefaultSweepTraits<ObjectFactory>>(gcHandle, sweepableHeapHandle->objects_);
+    // release the lock
+    sweepableHeapHandle = std::nullopt;
     kotlin::compactObjectPoolInMainThread();
 #else
     // also sweeps extraObjects
-    auto finalizerQueue = heap_.Sweep(gcHandle);
+    auto finalizerQueue = sweepableHeapHandle->heap_.Sweep(gcHandle);
     for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
         finalizerQueue.TransferAllFrom(thread.gc().impl().alloc().ExtractFinalizerQueue());
     }
@@ -241,7 +165,7 @@ void gc::ConcurrentMarkAndSweep::reconfigure(std::size_t maxParallelism, bool mu
         return;
     }
     std::unique_lock mainGCLock(gcMutex);
-    markDispatcher_.reset(maxParallelism, mutatorsCooperate, [this] { auxThreads_.clear(); });
+    mark_.reset(maxParallelism, mutatorsCooperate, [this] { auxThreads_.clear(); });
     for (std::size_t i = 0; i < auxGCThreads; ++i) {
         auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));
     }
