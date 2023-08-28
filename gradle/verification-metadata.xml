@@ -4,7 +4,6 @@
       <verify-metadata>true</verify-metadata>
       <verify-signatures>false</verify-signatures>
       <trusted-artifacts>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-common" version="1.4.0" reason="Cannot declare new component explicitly before bootstrap due to verification-metadata test considering it redundant"/>
          <trust file=".*-javadoc[.]jar" regex="true"/>
          <trust file=".*-sources[.]jar" regex="true"/>
          <trust file=".*[.]module" regex="true"/>
