@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import gnu.trove.TObjectIntHashMap
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContextShallow
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -257,7 +258,7 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
             }
         }
 
-        private inner class EnumClassCallTransformer : IrElementTransformerVoidWithContext() {
+        private inner class EnumClassCallTransformer : IrElementTransformerVoidWithContextShallow() {
             override fun visitClassNew(declaration: IrClass): IrStatement =
                 if (declaration.isEnumEntry) super.visitClassNew(declaration) else declaration
 

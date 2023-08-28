@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoidShallow
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -236,7 +237,7 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
             annotationProperties: List<IrProperty>,
             implClass: IrClass,
             generatedConstructor: IrConstructor,
-            defaultValueTransformer: IrElementTransformerVoid?
+            defaultValueTransformer: IrElementTransformerVoidShallow?
         ) {
             val ctorBodyBuilder = irBuiltIns.createIrBuilder(generatedConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
             val ctorBody = irFactory.createBlockBody(

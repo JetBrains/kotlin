@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContextShallow
 import org.jetbrains.kotlin.backend.common.lower.FlattenStringConcatenationLowering
 import org.jetbrains.kotlin.backend.common.lower.flattenStringConcatenationPhase
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
@@ -134,7 +135,7 @@ private const val MAX_STRING_CONCAT_DEPTH = 23
  * is that this pass also handles JVM specific optimizations, such as calling stringPlus
  * for two arguments, and properly handles inline classes.
  */
-private class JvmStringConcatenationLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+private class JvmStringConcatenationLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContextShallow() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     private val stringBuilder = context.ir.symbols.stringBuilder.owner

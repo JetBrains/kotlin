@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContextShallow
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -38,7 +39,7 @@ val jvmValueClassPhase = makeIrFilePhase(
     prerequisite = setOf(forLoopsPhase, jvmBuiltInsPhase, collectionStubMethodLowering, singleAbstractMethodPhase),
 )
 
-internal class JvmValueClassLoweringDispatcher(private val context: JvmBackendContext) : IrElementTransformerVoidWithContext(),
+internal class JvmValueClassLoweringDispatcher(private val context: JvmBackendContext) : IrElementTransformerVoidWithContextShallow(),
     FileLoweringPass {
     override val scopeStack: MutableList<ScopeWithIr> = mutableListOf()
     private val inlineClassLowering: JvmInlineClassLowering = JvmInlineClassLowering(context, scopeStack)
