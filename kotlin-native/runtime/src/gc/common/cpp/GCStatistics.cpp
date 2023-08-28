@@ -410,11 +410,17 @@ void GCHandle::sweptExtraObjects(gc::SweepStats stats) noexcept {
     }
 }
 
+GCHandle::GCSweepScope GCHandle::sweep() { return GCSweepScope(*this); }
+GCHandle::GCSweepExtraObjectsScope GCHandle::sweepExtraObjects() { return GCSweepExtraObjectsScope(*this); }
+GCHandle::GCGlobalRootSetScope GCHandle::collectGlobalRoots() { return GCGlobalRootSetScope(*this); }
+GCHandle::GCThreadRootSetScope GCHandle::collectThreadRoots(mm::ThreadData& threadData) { return GCThreadRootSetScope(*this, threadData); }
 GCHandle::GCMarkScope GCHandle::mark() { return GCMarkScope(*this); }
+GCHandle::GCProcessWeaksScope GCHandle::processWeaks() noexcept { return GCProcessWeaksScope(*this); }
 
-GCHandle::GCSweepScope::GCSweepScope(kotlin::gc::GCHandle& handle) : handle_(handle) {}
+GCHandle::GCSweepScope::GCSweepScope(kotlin::gc::GCHandle handle) : GCStageScopeBase(handle) {}
 
 GCHandle::GCSweepScope::~GCSweepScope() {
+    if (!handle_.isValid()) return;
     handle_.swept(stats_, markedCount_);
     GCLogDebug(
             handle_.getEpoch(),
@@ -423,9 +429,10 @@ GCHandle::GCSweepScope::~GCSweepScope() {
             stats_.sweptCount, getStageTime(), stats_.keptCount);
 }
 
-GCHandle::GCSweepExtraObjectsScope::GCSweepExtraObjectsScope(kotlin::gc::GCHandle& handle) : handle_(handle) {}
+GCHandle::GCSweepExtraObjectsScope::GCSweepExtraObjectsScope(kotlin::gc::GCHandle handle) : GCStageScopeBase(handle) {}
 
 GCHandle::GCSweepExtraObjectsScope::~GCSweepExtraObjectsScope() {
+    if (!handle_.isValid()) return;
     handle_.sweptExtraObjects(stats_);
     GCLogDebug(
             handle_.getEpoch(),
@@ -434,49 +441,39 @@ GCHandle::GCSweepExtraObjectsScope::~GCSweepExtraObjectsScope() {
             stats_.sweptCount, getStageTime(), stats_.keptCount);
 }
 
-GCHandle::GCGlobalRootSetScope::GCGlobalRootSetScope(kotlin::gc::GCHandle& handle) : handle_(handle) {}
+GCHandle::GCGlobalRootSetScope::GCGlobalRootSetScope(kotlin::gc::GCHandle handle) : GCStageScopeBase(handle) {}
 
 GCHandle::GCGlobalRootSetScope::~GCGlobalRootSetScope(){
+    if (!handle_.isValid()) return;
     handle_.globalRootSetCollected(globalRoots_, stableRoots_);
-    GCLogDebug(handle_.getEpoch(), "Collected global root set global=%" PRIu64 " stableRef=%" PRIu64 " in %" PRIu64" microseconds.",
-               globalRoots_, stableRoots_, getStageTime());
+    GCLogDebug(
+            handle_.getEpoch(), "Collected global root set global=%" PRIu64 " stableRef=%" PRIu64 " in %" PRIu64 " microseconds.",
+            globalRoots_, stableRoots_, getStageTime());
 }
 
-GCHandle::GCThreadRootSetScope::GCThreadRootSetScope(kotlin::gc::GCHandle& handle, mm::ThreadData& threadData) :
-    handle_(handle), threadData_(threadData) {}
+GCHandle::GCThreadRootSetScope::GCThreadRootSetScope(kotlin::gc::GCHandle handle, mm::ThreadData& threadData) :
+        GCStageScopeBase(handle), threadData_(threadData) {}
 
 GCHandle::GCThreadRootSetScope::~GCThreadRootSetScope(){
+    if (!handle_.isValid()) return;
     handle_.threadRootSetCollected(threadData_, threadLocalRoots_, stackRoots_);
-    GCLogDebug(handle_.getEpoch(), "Collected root set for thread #%d: stack=%" PRIu64 " tls=%" PRIu64 " in %" PRIu64" microseconds.",
-               threadData_.threadId(), stackRoots_, threadLocalRoots_, getStageTime());
+    GCLogDebug(
+            handle_.getEpoch(), "Collected root set for thread #%d: stack=%" PRIu64 " tls=%" PRIu64 " in %" PRIu64 " microseconds.",
+            threadData_.threadId(), stackRoots_, threadLocalRoots_, getStageTime());
 }
 
-void GCHandle::GCMarkScope::swap(GCHandle::GCMarkScope& other) noexcept {
-    std::swap(handle_, other.handle_);
-    std::swap(startTime_, other.startTime_);
-}
-
-GCHandle::GCMarkScope::GCMarkScope(kotlin::gc::GCHandle& handle) : handle_(handle) {}
-
-GCHandle::GCMarkScope::GCMarkScope(GCHandle::GCMarkScope&& that) noexcept {
-    swap(that);
-}
-
-GCHandle::GCMarkScope& GCHandle::GCMarkScope::operator=(GCHandle::GCMarkScope that) noexcept {
-    swap(that);
-    return *this;
-}
+GCHandle::GCMarkScope::GCMarkScope(kotlin::gc::GCHandle handle) : GCStageScopeBase(handle) {}
 
 GCHandle::GCMarkScope::~GCMarkScope() {
-    if (handle_.isValid()) {
-        handle_.marked(stats_);
-        GCLogDebug(handle_.getEpoch(), "Marked %" PRIu64 " objects in %" PRIu64 " microseconds.", stats_.markedCount, getStageTime());
-    }
+    if (!handle_.isValid()) return;
+    handle_.marked(stats_);
+    GCLogDebug(handle_.getEpoch(), "Marked %" PRIu64 " objects in %" PRIu64 " microseconds.", stats_.markedCount, getStageTime());
 }
 
-gc::GCHandle::GCProcessWeaksScope::GCProcessWeaksScope(gc::GCHandle& handle) noexcept : handle_(handle) {}
+GCHandle::GCProcessWeaksScope::GCProcessWeaksScope(gc::GCHandle handle) noexcept : GCStageScopeBase(handle) {}
 
-gc::GCHandle::GCProcessWeaksScope::~GCProcessWeaksScope() {
+GCHandle::GCProcessWeaksScope::~GCProcessWeaksScope() {
+    if (!handle_.isValid()) return;
     GCLogDebug(
             handle_.getEpoch(),
             "Processed special refs in %" PRIu64 " microseconds. %" PRIu64 " are undisposed, %" PRIu64 " are alive, %" PRIu64
