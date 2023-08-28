@@ -79,7 +79,7 @@ class KotlinCallCompleter(
                     )
                 }
             }
-            ConstraintSystemCompletionMode.PARTIAL, ConstraintSystemCompletionMode.PARTIAL_BI -> {
+            ConstraintSystemCompletionMode.PARTIAL, ConstraintSystemCompletionMode.ONLY_LAMBDAS, ConstraintSystemCompletionMode.PARTIAL_BI -> {
                 candidate.runCompletion(completionMode, diagnosticHolder, resolutionCallbacks)
                 candidate.asCallResolutionResult(completionMode, diagnosticHolder)
             }
