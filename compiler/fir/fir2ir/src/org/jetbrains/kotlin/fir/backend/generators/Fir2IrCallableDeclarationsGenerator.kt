@@ -410,7 +410,8 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                     metadata = FirMetadataSource.Function(constructor)
                     // Add to cache before generating parameters to prevent an infinite loop when an annotation value parameter is annotated
                     // with the annotation itself.
-                    constructorCache[constructor] = this
+                    @OptIn(LeakedDeclarationCaches::class)
+                    declarationStorage.cacheIrConstructor(constructor, this)
                     declarationStorage.withScope(symbol) {
                         setAndModifyParent(this, irParent)
                         declareParameters(constructor, irParent, dispatchReceiverType = null, isStatic = false, forSetter = false)

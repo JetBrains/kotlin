@@ -509,6 +509,11 @@ class Fir2IrDeclarationStorage(
         return callablesGenerator.createIrConstructor(constructor, irParent, predefinedOrigin, isLocal)
     }
 
+    @LeakedDeclarationCaches
+    internal fun cacheIrConstructor(constructor: FirConstructor, irConstructor: IrConstructor) {
+        constructorCache[constructor] = irConstructor
+    }
+
     fun getOrCreateIrProperty(
         property: FirProperty,
         irParent: IrDeclarationParent?,
@@ -1068,3 +1073,10 @@ internal fun FirCallableDeclaration.isFakeOverride(fakeOverrideOwnerLookupTag: C
 private object IsStubPropertyForPureFieldKey : FirDeclarationDataKey()
 
 internal var FirProperty.isStubPropertyForPureField: Boolean? by FirDeclarationDataRegistry.data(IsStubPropertyForPureFieldKey)
+
+/**
+ * Opt-in to this annotation indicates that some code uses annotated function but it actually shouldn't
+ * See KT-61513
+ */
+@RequiresOptIn
+annotation class LeakedDeclarationCaches
