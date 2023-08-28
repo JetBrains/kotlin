@@ -295,6 +295,13 @@ object PublishableArtifacts {
     val k2UnimplementedDiagnostics = publishable {
         build.child("k2-unimplemented-diagnostics.md")
     }
+
+    val containmentRedToPureGreen = publishable {
+        build.child("containment-red-to-pure-green.md")
+    }
+    val containmentPureGreenToRed = publishable {
+        build.child("containment-pure-green-to-red.md")
+    }
 }
 
 val status = StatusPrinter()
@@ -1120,6 +1127,8 @@ fun main() {
         equivalence: Writer,
         similarity: Writer,
         containment: Writer,
+        containmentRedToPureGreen: Writer,
+        containmentPureGreenToRed: Writer,
     ) {
         status.loading("Checking $testPath", probability = 0.01)
         val test = File(testPath)
@@ -1180,6 +1189,14 @@ fun main() {
                 containmentStatistics.recordDiagnosticsStatistics(test, result)
                 logPossibleEquivalences(result, containment)
 
+                when {
+                    allK1MetaInfos.isNotEmpty() && allK2MetaInfos.isEmpty() -> containmentRedToPureGreen
+                    allK1MetaInfos.isEmpty() && allK2MetaInfos.isNotEmpty() -> containmentPureGreenToRed
+                    else -> null
+                }?.let {
+                    reportEquivalenceDifference(it, result, relativeK1TestPath)
+                }
+
                 recordCandidateForBoxTestIfNeeded(
                     test.analogousK2File, result, shouldCheckManually = allK2MetaInfos.isNotEmpty() || "expect " in k2Text,
                     candidatesForAdditionalBoxTests, candidatesForManualChecking,
@@ -1194,13 +1211,18 @@ fun main() {
         )
     }
 
-    PublishableArtifacts.similarityReport.bufferedWriter().use { similarity ->
-        PublishableArtifacts.equivalenceReport.bufferedWriter().use { equivalence ->
-            PublishableArtifacts.containmentReport.bufferedWriter().use { containment ->
-                for (testPath in tests.alongsideNonIdenticalTests) {
-                    checkTest(testPath, equivalence, similarity, containment)
-                }
-            }
+    val similarityWriter = PublishableArtifacts.similarityReport.bufferedWriter()
+    val equivalenceWriter = PublishableArtifacts.equivalenceReport.bufferedWriter()
+    val containmentWriter = PublishableArtifacts.containmentReport.bufferedWriter()
+    val containmentRedToPureGreenWriter = PublishableArtifacts.containmentRedToPureGreen.bufferedWriter()
+    val containmentPureGreenToRedWriter = PublishableArtifacts.containmentPureGreenToRed.bufferedWriter()
+
+    useAll(similarityWriter, equivalenceWriter, containmentWriter, containmentRedToPureGreenWriter, containmentPureGreenToRedWriter) {
+        for (testPath in tests.alongsideNonIdenticalTests) {
+            checkTest(
+                testPath, equivalenceWriter, similarityWriter, containmentWriter,
+                containmentRedToPureGreenWriter, containmentPureGreenToRedWriter,
+            )
         }
     }
 

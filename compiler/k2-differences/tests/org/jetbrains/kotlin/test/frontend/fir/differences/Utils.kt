@@ -12,6 +12,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
+import java.io.Closeable
 import java.io.File
 
 inline fun <reified T> deserializeOrGenerate(file: File, block: () -> T): T {
@@ -54,4 +55,18 @@ fun File.forEachChildRecursively(
             else -> action(it)
         }
     }
+}
+
+fun useAll(vararg closeables: Closeable?, block: () -> Unit) {
+    val usages = mutableListOf(block)
+
+    for (it in closeables.indices) {
+        usages += {
+            closeables[it].use { _ ->
+                usages[it]()
+            }
+        }
+    }
+
+    usages.last()()
 }
