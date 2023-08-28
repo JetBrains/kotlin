@@ -53,8 +53,6 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             return false
         }
 
-        if (!optionsBuilder.checkOptions(logger, configuration)) return false
-
         val oldLanguageVersionSettings = configuration.languageVersionSettings
         val updatedConfiguration = configuration.copy().apply {
             languageVersionSettings = object : LanguageVersionSettings by oldLanguageVersionSettings {
@@ -89,6 +87,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
         }
 
+        if (!optionsBuilder.checkOptions(logger, configuration)) return false
         val options = optionsBuilder.build()
         if (options[KaptFlag.VERBOSE]) {
             logger.info(options.logString())
