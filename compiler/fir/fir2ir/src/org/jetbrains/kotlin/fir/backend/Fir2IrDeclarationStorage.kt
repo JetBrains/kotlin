@@ -517,10 +517,12 @@ class Fir2IrDeclarationStorage(
     fun getOrCreateIrProperty(
         property: FirProperty,
         irParent: IrDeclarationParent?,
+        predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
     ): IrProperty {
         getCachedIrProperty(property)?.let { return it }
-        return callablesGenerator.createIrProperty(property, irParent, isLocal = isLocal)
+        return createAndCacheIrProperty(property, irParent, predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
     }
 
     fun getOrCreateIrPropertyByPureField(
@@ -529,12 +531,44 @@ class Fir2IrDeclarationStorage(
     ): IrProperty {
         return fieldToPropertyCache.getOrPut(field to irParent) {
             val containingClassId = (irParent as? IrClass)?.classId
-            callablesGenerator.createIrProperty(
+            createAndCacheIrProperty(
                 field.toStubProperty(),
                 irParent,
                 fakeOverrideOwnerLookupTag = containingClassId?.toLookupTag()
             )
         }
+    }
+
+    private fun createAndCacheIrProperty(
+        property: FirProperty,
+        irParent: IrDeclarationParent?,
+        predefinedOrigin: IrDeclarationOrigin? = null,
+        isLocal: Boolean = false,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
+    ): IrProperty {
+        val irProperty = callablesGenerator.createIrProperty(property, irParent, predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
+        val irPropertySymbol = irProperty.symbol
+        irProperty.backingField?.symbol?.let {
+            backingFieldForPropertyCache[irPropertySymbol] = it
+            propertyForBackingFieldCache[it] = irPropertySymbol
+        }
+        irProperty.getter?.let {
+            getterForPropertyCache[irPropertySymbol] = it.symbol
+        }
+        irProperty.setter?.let {
+            setterForPropertyCache[irPropertySymbol] = it.symbol
+        }
+        if (property.isFakeOverride(fakeOverrideOwnerLookupTag)) {
+            val originalProperty = property.unwrapFakeOverrides()
+            val key = FakeOverrideIdentifier(
+                originalProperty.symbol,
+                fakeOverrideOwnerLookupTag ?: property.containingClassLookupTag()!!
+            )
+            irFakeOverridesForFirFakeOverrideMap[key] = irProperty
+        } else {
+            propertyCache[property] = irProperty
+        }
+        return irProperty
     }
 
     private fun FirField.toStubProperty(): FirProperty {
@@ -817,7 +851,7 @@ class Fir2IrDeclarationStorage(
             fakeOverrideOwnerLookupTag = this,
             getCachedIrDeclaration = ::getCachedIrProperty,
             createIrDeclaration = { parent, origin ->
-                callablesGenerator.createIrProperty(
+                createAndCacheIrProperty(
                     fir, parent, predefinedOrigin = origin, fakeOverrideOwnerLookupTag = fakeOverrideOwnerLookupTag,
                 )
             },
@@ -1006,9 +1040,7 @@ class Fir2IrDeclarationStorage(
                 propertyCache[fir]?.let { return it.backingField!!.symbol }
                 val irParent = findIrParent(fir)
                 val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
-                callablesGenerator.createIrProperty(fir, irParent, predefinedOrigin = parentOrigin).also {
-                    callablesGenerator.setAndModifyParent(it, irParent)
-                }.backingField!!.symbol
+                createAndCacheIrProperty(fir, irParent, predefinedOrigin = parentOrigin).backingField!!.symbol
             }
             else -> {
                 getIrVariableSymbol(fir)

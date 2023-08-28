@@ -661,10 +661,6 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                                     }
                                 }
                             }
-                            backingField.symbol.let {
-                                backingFieldForPropertyCache[symbol] = it
-                                propertyForBackingFieldCache[it] = symbol
-                            }
                             this.backingField = backingField
                         }
                         if (irParent != null) {
@@ -684,9 +680,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                             startOffset, endOffset,
                             dontUseSignature = signature == null, fakeOverrideOwnerLookupTag,
                             property.unwrapFakeOverrides().getter,
-                        ).also {
-                            getterForPropertyCache[symbol] = it.symbol
-                        }
+                        )
                         if (property.isVar) {
                             this.setter = createIrPropertyAccessor(
                                 setter, property, this, type, irParent, true,
@@ -700,22 +694,10 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                                 startOffset, endOffset,
                                 dontUseSignature = signature == null, fakeOverrideOwnerLookupTag,
                                 property.unwrapFakeOverrides().setter,
-                            ).also {
-                                setterForPropertyCache[symbol] = it.symbol
-                            }
+                            )
                         }
                     }
                 }
-            }
-            if (property.isFakeOverride(fakeOverrideOwnerLookupTag)) {
-                val originalProperty = property.unwrapFakeOverrides()
-                val key = Fir2IrDeclarationStorage.FakeOverrideIdentifier(
-                    originalProperty.symbol,
-                    fakeOverrideOwnerLookupTag ?: property.containingClassLookupTag()!!
-                )
-                irFakeOverridesForFirFakeOverrideMap[key] = result
-            } else {
-                propertyCache[property] = result
             }
             result
         }

@@ -295,11 +295,10 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         firSubClass: FirClass,
         firDelegateProperty: FirProperty
     ): IrProperty {
-        val delegateProperty =
-            callablesGenerator.createIrProperty(
-                firDelegateProperty, subClass, predefinedOrigin = IrDeclarationOrigin.DELEGATED_MEMBER,
-                fakeOverrideOwnerLookupTag = firSubClass.symbol.toLookupTag()
-            )
+        val delegateProperty = declarationStorage.getOrCreateIrProperty(
+            firDelegateProperty, subClass, predefinedOrigin = IrDeclarationOrigin.DELEGATED_MEMBER,
+            fakeOverrideOwnerLookupTag = firSubClass.symbol.toLookupTag()
+        )
         // the overridden symbols should be collected only after all fake overrides for all superclases are created and bound to their
         // overridden symbols, otherwise in some cases they will be left in inconsistent state leading to the errors in IR
         val baseSymbols = mutableListOf<FirPropertySymbol>()
