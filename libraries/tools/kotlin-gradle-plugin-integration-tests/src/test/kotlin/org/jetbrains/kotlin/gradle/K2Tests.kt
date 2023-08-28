@@ -89,6 +89,18 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
+    @Disabled("disable until kotlin/native dependency is updated to include KT-61461")
+    @GradleTest
+    @DisplayName("Native metadata of intermediate with multiple targets. KT-61461")
+    fun nativeMetadataOfIntermediateWithMultipleTargets(gradleVersion: GradleVersion) {
+        with(project("k2-native-intermediate-multiple-targets", gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"))) {
+            val taskToExecute = ":compileNativeMainKotlinMetadata"
+            build(taskToExecute) {
+                assertTasksExecuted(taskToExecute)
+            }
+        }
+    }
+
     @Disabled("disable until kotlin/native dependency is updated to include KT-58145")
     @GradleTest
     @DisplayName("Compiling shared native source with FirFakeOverrideGenerator referencing a common entity. KT-58145")
