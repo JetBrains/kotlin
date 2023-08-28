@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.base.kapt3.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
@@ -79,10 +78,6 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             projectBaseDir = projectBaseDir ?: module.project.basePath?.let(::File)
             val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
-            compileClasspath.addAll(module.directRegularDependencies
-                                        .filterIsInstance<KtLibraryModule>()
-                                        .flatMap { it.getBinaryRoots() }
-                                        .map { it.toFile() })
             javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
             classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
         }
