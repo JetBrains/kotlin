@@ -53,7 +53,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             return false
         }
 
-        if (!optionsBuilder.checkAndUpdateOptions(logger, configuration)) return false
+        if (!optionsBuilder.checkOptions(logger, configuration)) return false
 
         val oldLanguageVersionSettings = configuration.languageVersionSettings
         val updatedConfiguration = configuration.copy().apply {
@@ -168,14 +168,10 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         }
     }
 
-    private fun KaptOptions.Builder.checkAndUpdateOptions(logger: KaptLogger, configuration: CompilerConfiguration): Boolean {
-        if (classesOutputDir == null) {
-            if (configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
-                logger.error("Kapt does not support specifying JAR file outputs. Please specify the classes output directory explicitly.")
-                return false
-            } else {
-                classesOutputDir = configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
-            }
+    private fun KaptOptions.Builder.checkOptions(logger: KaptLogger, configuration: CompilerConfiguration): Boolean {
+        if (classesOutputDir == null && configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
+            logger.error("Kapt does not support specifying JAR file outputs. Please specify the classes output directory explicitly.")
+            return false
         }
 
         if (processingClasspath.isEmpty()) {
