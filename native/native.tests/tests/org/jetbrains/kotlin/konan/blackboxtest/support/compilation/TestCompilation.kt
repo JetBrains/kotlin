@@ -277,7 +277,8 @@ internal class SwiftArtifactCompilation(
     freeCompilerArgs = freeCompilerArgs,
     sourceModules = sourceModules,
     dependencies = CategorizedDependencies(dependencies),
-    expectedArtifact = expectedArtifact
+    expectedArtifact = expectedArtifact,
+    compilerPlugins = settings.get(),
 ) {
     override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting
 
