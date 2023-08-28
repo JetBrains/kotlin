@@ -774,12 +774,6 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                 )
             }.apply {
                 metadata = FirMetadataSource.Field(field)
-                val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(field, containingClassLookupTag)
-                if (staticFakeOverrideKey == null) {
-                    fieldCache[field] = this
-                } else {
-                    fieldStaticOverrideCache[staticFakeOverrideKey] = this
-                }
                 val initializer = field.unwrapFakeOverrides().initializer
                 if (initializer is FirConstExpression<*>) {
                     this.initializer = factory.createExpressionBody(initializer.toIrConst(irType))

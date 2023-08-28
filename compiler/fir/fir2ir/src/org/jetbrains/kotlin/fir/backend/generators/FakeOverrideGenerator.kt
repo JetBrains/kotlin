@@ -180,7 +180,7 @@ class FakeOverrideGenerator(
                         firClass, irClass, isLocal, propertyOrFieldSymbol,
                         { field, _, _ -> declarationStorage.getCachedIrFieldStaticFakeOverrideByDeclaration(field) },
                         { field, irParent, _, _ ->
-                            callablesGenerator.createIrField(field, irParent)
+                            declarationStorage.getOrCreateIrField(field, irParent)
                         },
                         createFakeOverrideSymbol = { firField, _ ->
                             FirFakeOverrideGenerator.createSubstitutionOverrideField(

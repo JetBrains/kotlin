@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.utils.addToStdlib.getOrPut
 import org.jetbrains.kotlin.utils.threadLocal
 import java.util.concurrent.ConcurrentHashMap
 
@@ -737,14 +736,29 @@ class Fir2IrDeclarationStorage(
                 }
             }
         }
-        return callablesGenerator.createIrField(
+        return createAndCacheIrField(
             field,
             irParent = irClass,
             type = initializer?.resolvedType ?: field.returnTypeRef.coneType,
             origin = IrDeclarationOrigin.DELEGATE
-        ).apply {
-            metadata = FirMetadataSource.Field(field)
+        )
+    }
+
+    private fun createAndCacheIrField(
+        field: FirField,
+        irParent: IrDeclarationParent?,
+        type: ConeKotlinType = field.returnTypeRef.coneType,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+    ): IrField {
+        val irField = callablesGenerator.createIrField(field, irParent, type, origin)
+        val containingClassLookupTag = (irParent as IrClass?)?.classId?.toLookupTag()
+        val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(field, containingClassLookupTag)
+        if (staticFakeOverrideKey == null) {
+            fieldCache[field] = irField
+        } else {
+            fieldStaticOverrideCache[staticFakeOverrideKey] = irField
         }
+        return irField
     }
 
     // This function returns null if this field/ownerClassId combination does not describe static fake override
@@ -1002,7 +1016,24 @@ class Fir2IrDeclarationStorage(
         if (unwrapped !== fir) {
             return getIrFieldSymbol(unwrapped.symbol)
         }
-        return callablesGenerator.createIrField(fir, irParent).symbol
+        return createAndCacheIrField(fir, irParent).symbol
+    }
+
+    // TODO: there is a mess with methods for fields
+    //   we have three (!) different functions to getOrCreate field in different circumstances
+    fun getOrCreateIrField(field: FirField, irParent: IrDeclarationParent?): IrField {
+        getCachedIrField(field, irParent)?.let { return it }
+        return createAndCacheIrField(field, irParent)
+    }
+
+    private fun getCachedIrField(field: FirField, irParent: IrDeclarationParent?): IrField? {
+        val containingClassLookupTag = (irParent as IrClass?)?.classId?.toLookupTag()
+        val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(field, containingClassLookupTag)
+        return if (staticFakeOverrideKey == null) {
+            fieldCache[field]
+        } else {
+            fieldStaticOverrideCache[staticFakeOverrideKey]
+        }
     }
 
     fun getIrBackingFieldSymbol(firBackingFieldSymbol: FirBackingFieldSymbol): IrSymbol {
