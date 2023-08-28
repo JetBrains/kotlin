@@ -1046,7 +1046,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         val result = variableAssignment.transformRValue(
             transformer,
-            withExpectedType(variableAssignment.lValue.typeRef, expectedTypeMismatchIsReportedInChecker = true),
+            if (variableAssignment.lValue.typeRef.coneTypeOrNull?.contains { it is ConeTypeVariableType } == true)
+                ResolutionMode.ContextIndependent
+            else
+                withExpectedType(variableAssignment.lValue.typeRef, expectedTypeMismatchIsReportedInChecker = true),
         )
 
         (result as? FirVariableAssignment)?.let { dataFlowAnalyzer.exitVariableAssignment(it) }
