@@ -82,7 +82,7 @@ public actual inline fun println(message: Any?) {
 
 /** Prints the given [message] and the line separator to the standard output stream. */
 @kotlin.internal.InlineOnly
-public inline fun println(message: Int) {
+public actual inline fun println(message: Int) {
     System.out.println(message)
 }
 

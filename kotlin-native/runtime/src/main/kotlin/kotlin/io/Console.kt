@@ -30,6 +30,9 @@ internal external fun printlnToStdErr(message: String)
 public actual fun println(message: Any?) {
     println(message.toString())
 }
+public actual fun println(message: Int) {
+    println(message.toString())
+}
 
 /** Prints the line separator to the standard output stream. */
 @GCUnsafeCall("Kotlin_io_Console_println0")

@@ -99,6 +99,9 @@ public actual fun println() {
 public actual fun println(message: Any?) {
     output.println(message)
 }
+public actual fun println(message: Int) {
+    output.println(message)
+}
 
 /** Prints the given [message] to the standard output stream. */
 public actual fun print(message: Any?) {
