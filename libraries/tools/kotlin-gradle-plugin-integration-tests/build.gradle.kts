@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.jvm.toolchain.internal.NoToolchainAvailableException
 import org.jetbrains.kotlin.pill.PillExtension
 import java.nio.file.Paths
 
@@ -386,6 +387,12 @@ tasks.withType<Test> {
         systemProperty("jdk11Home", jdk11Provider.get())
         systemProperty("jdk16Home", jdk16Provider.get())
         systemProperty("jdk17Home", jdk17Provider.get())
+        // jdk21Provider.isPresent throws NoToolchainAvailableException, so, we have to check for the exception
+        // Storing jdk21Provider in a field leads to "Configuration cache state could not be cached" error,
+        // since it tries to resolve the toolchain as well.
+        try {
+            systemProperty("jdk21Home", project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_21_0).get())
+        } catch (_: NoToolchainAvailableException) {}
         if (mavenLocalRepo != null) {
             systemProperty("maven.repo.local", mavenLocalRepo)
         }
