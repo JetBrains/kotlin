@@ -1,9 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-
-// KT-61141: `println (message: kotlin.Any?)` instead of `println (message: kotlin.Int)`
-// IGNORE_BACKEND: NATIVE
 
 fun testEmpty(ss: List<String>) {
     for (s in ss);

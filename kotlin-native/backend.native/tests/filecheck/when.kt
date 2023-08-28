@@ -20,5 +20,5 @@ fun main() {
 // CHECK: when_case3
 // CHECK: when_next4
 // CHECK: when_exit
-// CHECK: call void @"kfun:kotlin.io#println(kotlin.Any?)
+// CHECK: call void @"kfun:kotlin.io#println(kotlin.Int)
 // CHECK: ret void

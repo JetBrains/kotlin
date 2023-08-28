@@ -11,6 +11,8 @@ public expect fun println()
 
 /** Prints the given [message] and the line separator to the standard output stream. */
 public expect fun println(message: Any?)
+/** Prints the given [message] and the line separator to the standard output stream. */
+public expect fun println(message: Int)
 
 /** Prints the given [message] to the standard output stream. */
 public expect fun print(message: Any?)

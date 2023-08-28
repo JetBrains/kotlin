@@ -27,6 +27,10 @@ public actual fun println() {
 public actual fun println(message: Any?) {
     printlnImpl(message?.toString())
 }
+/** Prints the given [message] and the line separator to the standard output stream. */
+public actual fun println(message: Int) {
+    printlnImpl(message.toString())
+}
 
 /** Prints the given [message] to the standard output stream. */
 public actual fun print(message: Any?) {
