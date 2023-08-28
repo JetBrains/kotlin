@@ -1,3 +1,5 @@
 expression: a
+expressionType: A & B
 isStable: true
+originalType: kotlin.Any
 smartCastType: A & B

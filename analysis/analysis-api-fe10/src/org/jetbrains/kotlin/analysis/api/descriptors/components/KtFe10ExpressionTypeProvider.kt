@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class KtFe10ExpressionTypeProvider(
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisSession: KtFe10AnalysisSession,
 ) : KtExpressionTypeProvider(), Fe10KtAnalysisSessionComponent {
     private companion object {
         val NON_EXPRESSION_CONTAINERS = arrayOf(
@@ -61,9 +61,11 @@ class KtFe10ExpressionTypeProvider(
         }
 
         val bindingContext = analysisContext.analyze(unwrapped, AnalysisMode.PARTIAL)
-        val smartCastType = when (val smartCastType = bindingContext[BindingContext.SMARTCAST, expression]) {
-            is SingleSmartCast -> smartCastType.type
-            is MultipleSmartCasts -> intersectWrappedTypes(smartCastType.map.values)
+        val smartCast = bindingContext[BindingContext.SMARTCAST, expression]
+            ?: bindingContext[BindingContext.UNSTABLE_SMARTCAST, expression]
+        val smartCastType = when (smartCast) {
+            is SingleSmartCast -> smartCast.type
+            is MultipleSmartCasts -> intersectWrappedTypes(smartCast.map.values)
             else -> null
         }
         val kotlinType = smartCastType ?: expression.getType(bindingContext) ?: analysisContext.builtIns.unitType

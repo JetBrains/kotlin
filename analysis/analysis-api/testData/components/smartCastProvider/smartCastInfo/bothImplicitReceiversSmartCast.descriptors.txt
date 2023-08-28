@@ -1,5 +1,5 @@
 expression: foo
-expressionType: null
+expressionType: kotlin.Unit
 isStable: null
 originalType: null
 smartCastType: null

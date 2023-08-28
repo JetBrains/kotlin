@@ -40,12 +40,14 @@ public interface KtSmartCastProviderMixIn : KtAnalysisSessionMixIn {
 }
 
 public data class KtSmartCastInfo(
-    private val _smartCastType: KtType,
+    private val _originalType: KtType,
+    private val _smartCastedTo: KtType,
     private val _isStable: Boolean,
     override val token: KtLifetimeToken
 ) : KtLifetimeOwner {
     public val isStable: Boolean get() = withValidityAssertion { _isStable }
-    public val smartCastType: KtType get() = withValidityAssertion { _smartCastType }
+    public val originalType: KtType get() = withValidityAssertion { _originalType }
+    public val smartCastedTo: KtType get() = withValidityAssertion { _smartCastedTo }
 }
 
 public data class KtImplicitReceiverSmartCast(

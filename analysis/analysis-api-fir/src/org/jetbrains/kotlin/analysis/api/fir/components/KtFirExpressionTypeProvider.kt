@@ -92,6 +92,7 @@ internal class KtFirExpressionTypeProvider(
                 analysisSession.builtinTypes.UNIT
             }
         }
+        is FirSmartCastExpression -> fir.smartcastType.coneType.asKtType()
         is FirExpression -> fir.resolvedType.asKtType()
         is FirNamedReference -> fir.getCorrespondingTypeIfPossible()?.asKtType()
         is FirStatement -> with(analysisSession) { builtinTypes.UNIT }

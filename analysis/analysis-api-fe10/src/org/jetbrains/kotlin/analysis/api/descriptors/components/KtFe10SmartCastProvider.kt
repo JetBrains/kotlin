@@ -18,11 +18,12 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ExplicitSmartCasts
 import org.jetbrains.kotlin.resolve.calls.smartcasts.MultipleSmartCasts
+import org.jetbrains.kotlin.resolve.calls.util.getType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 
 internal class KtFe10SmartCastProvider(
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisSession: KtFe10AnalysisSession,
 ) : KtSmartCastProvider(), Fe10KtAnalysisSessionComponent {
     override val token: KtLifetimeToken
         get() = analysisSession.token
@@ -31,15 +32,16 @@ internal class KtFe10SmartCastProvider(
         val bindingContext = analysisContext.analyze(expression)
         val stableSmartCasts = bindingContext[BindingContext.SMARTCAST, expression]
         val unstableSmartCasts = bindingContext[BindingContext.UNSTABLE_SMARTCAST, expression]
+        val originalType = expression.getType(bindingContext)?.toKtType(analysisContext) ?: return null
 
         return when {
             stableSmartCasts != null -> {
                 val type = stableSmartCasts.getKtType() ?: return null
-                KtSmartCastInfo(type, true, token)
+                KtSmartCastInfo(originalType, type, true, token)
             }
             unstableSmartCasts != null -> {
                 val type = unstableSmartCasts.getKtType() ?: return null
-                KtSmartCastInfo(type, false, token)
+                KtSmartCastInfo(originalType, type, false, token)
             }
             else -> null
         }

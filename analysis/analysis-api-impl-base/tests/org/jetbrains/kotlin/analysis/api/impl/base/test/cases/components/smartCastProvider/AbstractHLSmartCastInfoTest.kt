@@ -23,8 +23,10 @@ abstract class AbstractHLSmartCastInfoTest : AbstractAnalysisApiSingleFileTest()
                 val smartCastInfo = expression.getSmartCastInfo()
                 buildString {
                     appendLine("expression: ${expression.text}")
+                    appendLine("expressionType: ${expression.getKtType()?.render(position = Variance.INVARIANT)}")
                     appendLine("isStable: ${smartCastInfo?.isStable}")
-                    appendLine("smartCastType: ${smartCastInfo?.smartCastType?.render(position = Variance.INVARIANT)}")
+                    appendLine("originalType: ${smartCastInfo?.originalType?.render(position = Variance.INVARIANT)}")
+                    appendLine("smartCastType: ${smartCastInfo?.smartCastedTo?.render(position = Variance.INVARIANT)}")
 
                     val receiverSmartCasts = expression.getImplicitReceiverSmartCast()
                     for (receiverSmartCast in receiverSmartCasts) {

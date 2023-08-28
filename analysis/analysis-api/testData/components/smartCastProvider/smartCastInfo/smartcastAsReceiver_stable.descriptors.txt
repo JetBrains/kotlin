@@ -1,5 +1,5 @@
 expression: a
 expressionType: kotlin.String
-isStable: false
-originalType: kotlin.Any
+isStable: true
+originalType: kotlin.String
 smartCastType: kotlin.String
