@@ -17,11 +17,6 @@ import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
-
 @FirBuilderDsl
 class FirErrorTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
