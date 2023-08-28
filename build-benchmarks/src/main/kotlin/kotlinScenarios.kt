@@ -32,6 +32,8 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
             "--info",
             "--no-build-cache",
             "--watch-fs",
+            "-x", "compileKotlinWasm",
+            "-x", "serializeJvm",
             *additionalDefaultProperties
         )
 
@@ -68,7 +70,7 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
 
             scenario("$jdkPrefix${prefix}parallel clean compile to warmup daemon") {
                 jdk = jdkPath
-                arguments(*parallelRerunBuild, "-x", "compileKotlinWasm")
+                arguments(*parallelRerunBuild)
                 expectSlowBuild("clean build")
                 step {
                     doNotMeasure()
@@ -94,7 +96,7 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
 
             scenario("$jdkPrefix${prefix}clean build") {
                 jdk = jdkPath
-                arguments(*nonParallelRerunBuild, "-x", "compileKotlinWasm")
+                arguments(*nonParallelRerunBuild)
                 expectSlowBuild("clean build")
                 k2CompatibleTasks = kotlinK2CompatibleTasks
                 step {
@@ -108,7 +110,7 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
 
             scenario("$jdkPrefix${prefix}clean build parallel") {
                 jdk = jdkPath
-                arguments(*parallelRerunBuild, "-x", "compileKotlinWasm")
+                arguments(*parallelRerunBuild)
                 expectSlowBuild("clean build")
                 k2CompatibleTasks = kotlinK2CompatibleTasks
                 step {
