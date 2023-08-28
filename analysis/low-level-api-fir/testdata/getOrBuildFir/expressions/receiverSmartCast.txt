@@ -1,0 +1,17 @@
+KT element: KtNameReferenceExpression
+FIR element: FirSmartCastExpressionImpl
+FIR source kind: SmartCastExpression
+
+FIR element rendered:
+R|<local>/a|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] receiverSmartCast.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| is R|kotlin/String|) ->  {
+                R|<local>/a|.R|kotlin/String.get|(Int(0))
+            }
+        }
+
+    }

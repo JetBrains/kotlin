@@ -1,0 +1,24 @@
+KT element: KtNameReferenceExpression
+FIR element: FirSmartCastExpressionImpl
+FIR source kind: SmartCastExpression
+
+FIR element rendered:
+R|/a|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] nonReceiverMultiSmartCast.kt
+    public? final? [ResolvedTo(TYPES)] interface A : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(TYPES)] interface B : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(CONTRACTS)] var a: R|kotlin/Any| = IntegerLiteral(1)
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Any|
+        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: R|kotlin/Any|): R|kotlin/Unit|
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        when () {
+            (R|/a| is R|A|) && (R|/a| is R|B|) ->  {
+                R|/a|
+            }
+        }
+
+    }

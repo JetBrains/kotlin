@@ -756,6 +756,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         }
 
         @Test
+        @TestMetadata("nonReceiverMultiSmartCast.kt")
+        public void testNonReceiverMultiSmartCast() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/nonReceiverMultiSmartCast.kt");
+        }
+
+        @Test
+        @TestMetadata("nonReceiverSmartCast.kt")
+        public void testNonReceiverSmartCast() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/nonReceiverSmartCast.kt");
+        }
+
+        @Test
         @TestMetadata("objectLiteralExpression.kt")
         public void testObjectLiteralExpression() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/objectLiteralExpression.kt");
@@ -771,6 +783,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         @TestMetadata("propertyReferenceExpression.kt")
         public void testPropertyReferenceExpression() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/propertyReferenceExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("receiverSmartCast.kt")
+        public void testReceiverSmartCast() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/receiverSmartCast.kt");
         }
 
         @Test
