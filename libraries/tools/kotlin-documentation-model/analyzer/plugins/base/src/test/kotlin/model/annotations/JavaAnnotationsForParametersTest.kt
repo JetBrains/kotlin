@@ -6,9 +6,11 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.utilities.cast
 import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
+import utils.JavaCode
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@JavaCode
 class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
 
     @Test

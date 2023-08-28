@@ -9,12 +9,11 @@ import org.jetbrains.dokka.model.doc.Param
 import org.jetbrains.dokka.model.doc.Text
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import utils.AbstractModelTest
+import utils.*
 import utils.assertContains
-import utils.assertNotNull
-import utils.name
 import kotlin.test.assertEquals
 
+@JavaCode
 class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
     val configuration = dokkaConfiguration {
         sourceSets {

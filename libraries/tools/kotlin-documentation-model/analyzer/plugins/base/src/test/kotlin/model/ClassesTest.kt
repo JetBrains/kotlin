@@ -7,10 +7,7 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.KotlinModifier.*
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-import utils.AbstractModelTest
-import utils.assertNotNull
-import utils.name
-import utils.supers
+import utils.*
 
 
 class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "classes") {
@@ -411,6 +408,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
         }
     }
 
+    @OnlyDescriptors("Bug in descriptors, DRI of entry should have [EnumEntryDRIExtra]")
     @Test
     fun javaAnnotationClass() {
         inlineModelTest(
@@ -523,6 +521,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
         }
     }
 
+    @UsingJDK
     @Test
     fun doublyTypealiasedException() {
         inlineModelTest(

@@ -3,10 +3,7 @@ package model
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.junit.jupiter.api.Test
-import utils.AbstractModelTest
-import utils.assertNotNull
-import utils.comments
-import utils.name
+import utils.*
 
 class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "function") {
 
@@ -213,6 +210,7 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
         }
     }
 
+    @OnlyDescriptors("Bug in descriptors, DRI of entry should have [EnumEntryDRIExtra]")
     @Test
     fun functionWithAnnotatedParam() {
         inlineModelTest(
@@ -274,6 +272,7 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
         }
     }
 
+    @OnlyDescriptors("Bug in descriptors, DRI of entry should have [EnumEntryDRIExtra]")
     @Test
     fun annotatedFunctionWithAnnotationParameters() {
         inlineModelTest(
