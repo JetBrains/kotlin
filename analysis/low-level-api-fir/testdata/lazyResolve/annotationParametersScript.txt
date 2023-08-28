@@ -519,12 +519,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
         }
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A>): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A> = R|<local>/args|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A>
 
         }
 
@@ -544,7 +544,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
@@ -565,12 +565,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
         }
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A>): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A> = R|<local>/args|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A>
 
         }
 
@@ -590,7 +590,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationParametersScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] enum class X : R|kotlin/Enum<X>| {
@@ -611,12 +611,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationParametersScript.kts
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A>): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A> = R|<local>/args|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A>
 
         }
 

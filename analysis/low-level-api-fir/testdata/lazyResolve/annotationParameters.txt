@@ -437,12 +437,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
     }
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A>): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A> = R|<local>/args|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A>
 
     }
     public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
@@ -476,12 +476,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
     }
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A>): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A> = R|<local>/args|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A>
 
     }
     public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
@@ -515,12 +515,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationParameters.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A>): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A> = R|<local>/args|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A>
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] class B : R|kotlin/Any| {

@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.fir.resolve.FirTypeResolutionResult
 import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDefaultValueInFunctionType
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PrivateForInline
 
 class FirSpecificTypeResolverTransformer(
@@ -195,7 +197,9 @@ class FirSpecificTypeResolverTransformer(
 
             if (diagnostic is ConeUnresolvedTypeQualifierError) {
                 val totalQualifierCount = diagnostic.qualifiers.size
-                val resolvedQualifierCount = (partiallyResolvedTypeRef?.delegatedTypeRef as? FirUserTypeRef)?.qualifier?.size ?: 0
+                val resolvedQualifierCount = (partiallyResolvedTypeRef?.delegatedTypeRef as? FirUserTypeRef)?.qualifier?.size
+                    ?: calculatePartiallyResolvablePackageSegments(diagnostic.qualifiers)
+
                 val unresolvedQualifierCount = totalQualifierCount - resolvedQualifierCount
 
                 if (unresolvedQualifierCount > 1) {
@@ -206,6 +210,7 @@ class FirSpecificTypeResolverTransformer(
             this.diagnostic = diagnostic
         }
     }
+
 
     /**
      * Tries to calculate a partially resolved type reference for a type reference which was resolved to an error type.
@@ -240,6 +245,32 @@ class FirSpecificTypeResolverTransformer(
             }
         }
         return null
+    }
+
+
+    /**
+     * If the given [qualifiers] are interpreted as a fully qualified name,
+     * calculates how many segments (from the left) can be resolved to an existing package.
+     *
+     * This is useful for providing better IDE support when resolving partially incorrect types.
+     *
+     * The last segment is never considered, i.e., if [qualifiers] is not empty, the result is always `< qualifiers.size`.
+     */
+    private fun calculatePartiallyResolvablePackageSegments(qualifiers: List<FirQualifierPart>): Int {
+        if (qualifiers.size <= 1) {
+            return 0
+        }
+
+        val packageSegmentsToTry = qualifiers.mapTo(mutableListOf()) { it.name.asString() }
+
+        while (packageSegmentsToTry.size > 1) {
+            packageSegmentsToTry.removeLast()
+            if (session.symbolProvider.getPackage(FqName.fromSegments(packageSegmentsToTry)) != null) {
+                return packageSegmentsToTry.size
+            }
+        }
+
+        return 0
     }
 
     private fun ConeKotlinType.takeIfAcceptable(): ConeKotlinType? = this.takeUnless {
