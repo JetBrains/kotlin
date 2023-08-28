@@ -1,0 +1,26 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.kotlin.kapt'
+    id 'idea'
+}
+
+dependencies {
+	implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    implementation project(":annotation-processors")
+    kapt project(":annotation-processors")
+
+    testImplementation'junit:junit:4.13.2'
+}
+
+idea {
+    module {
+        sourceDirs += files('build/generated/source/kapt/main', 'build/generated/source/kaptKotlin/main')
+        generatedSourceDirs += files('build/generated/source/kapt/main', 'build/generated/source/kaptKotlin/main')
+    }
+}
+
+kapt {
+    // The "reverse" order requires three passes
+    annotationProcessors("processors.AnnotationProcessor3", "processors.AnnotationProcessor2", "processors.AnnotationProcessor1")
+}

@@ -1388,4 +1388,19 @@ open class Kapt3IT : Kapt3BaseIT() {
             }
         }
     }
+
+    @DisplayName("Application of annotation processors is repeated as long as new source files are generated")
+    @GradleTest
+    open fun testMultipleProcessingPasses(gradleVersion: GradleVersion) {
+        project("multipass".withPrefix, gradleVersion) {
+            build("build") {
+                assertKaptSuccessful()
+                assertOutputContains("No elements for AnnotationProcessor3")
+                assertOutputContains("No elements for AnnotationProcessor2")
+                assertFileInProjectExists("example/build/generated/source/kapt/main/generated/TestClass1.java")
+                assertFileInProjectExists("example/build/generated/source/kapt/main/generated/TestClass12.java")
+                assertFileInProjectExists("example/build/generated/source/kapt/main/generated/TestClass123.java")
+            }
+        }
+    }
 }
