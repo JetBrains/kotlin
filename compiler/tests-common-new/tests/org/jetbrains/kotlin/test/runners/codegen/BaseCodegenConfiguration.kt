@@ -155,7 +155,7 @@ fun <InputArtifactKind> HandlersStepBuilder<IrBackendInput, InputArtifactKind>.d
         where InputArtifactKind : BackendKind<IrBackendInput> {
     useHandlers(
         ::IrTreeVerifierHandler,
-        ::IrTextDumpHandler,
+        ::IrTextDumpHandler.bind() { it },
         ::IrMangledNameAndSignatureDumpHandler,
     )
 }

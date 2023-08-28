@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURES
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
@@ -41,6 +42,7 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
     abstract val converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
 
     open fun TestConfigurationBuilder.applyConfigurators() {}
+    open val irDumpTransformer: (String) -> String = { it }
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
@@ -92,7 +94,7 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
 
         irHandlersStep {
             useHandlers(
-                ::IrTextDumpHandler,
+                ::IrTextDumpHandler.bind(irDumpTransformer),
                 ::IrTreeVerifierHandler,
                 ::IrPrettyKotlinDumpHandler,
                 ::IrMangledNameAndSignatureDumpHandler,

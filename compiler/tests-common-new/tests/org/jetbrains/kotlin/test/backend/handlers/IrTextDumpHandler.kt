@@ -35,6 +35,7 @@ import java.io.File
 class IrTextDumpHandler(
     testServices: TestServices,
     artifactKind: BackendKind<IrBackendInput>,
+    private val dumpTransformer: (String) -> String,
 ) : AbstractIrHandler(testServices, artifactKind) {
     companion object {
         const val DUMP_EXTENSION = "ir.txt"
@@ -104,7 +105,7 @@ class IrTextDumpHandler(
                     val classDump = info.irPluginContext.findExternalClass(externalClassId).dump()
                     val suffix = ".__${externalClassId.replace("/", ".")}"
                     val expectedFile = baseFile.withSuffixAndExtension(suffix, module.getDumpExtension(ignoreFirIdentical = true))
-                    assertions.assertEqualsToFile(expectedFile, classDump)
+                    assertions.assertEqualsToFile(expectedFile, classDump, dumpTransformer)
                 }
             }
         )
@@ -125,7 +126,7 @@ class IrTextDumpHandler(
 
     private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
         if (actualDump.isNotEmpty()) {
-            assertions.assertEqualsToFile(expectedFile, actualDump)
+            assertions.assertEqualsToFile(expectedFile, actualDump, dumpTransformer)
         }
     }
 

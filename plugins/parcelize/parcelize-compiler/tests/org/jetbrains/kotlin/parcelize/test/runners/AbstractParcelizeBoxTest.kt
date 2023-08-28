@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
+import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
@@ -68,7 +69,7 @@ abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput
         }
 
         configureIrHandlersStep {
-            useHandlers(::IrTextDumpHandler)
+            useHandlers(::IrTextDumpHandler.bind() { it })
         }
 
         configureCommonHandlersForBoxTest()

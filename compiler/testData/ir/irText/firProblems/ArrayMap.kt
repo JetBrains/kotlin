@@ -1,11 +1,5 @@
 // WITH_STDLIB
 // SKIP_KLIB_TEST
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-
-// KT-61141: `set()` throws kotlin.IllegalStateException instead of java.lang.IllegalStateException
-// IGNORE_BACKEND: NATIVE
-
 sealed class ArrayMap<T : Any> : Iterable<T> {
     abstract val size: Int
 

@@ -22,6 +22,16 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 abstract class AbstractJsIrTextTestBase<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
     AbstractIrTextTest<FrontendOutput>(JsPlatforms.defaultJsPlatform, TargetBackend.JS_IR) {
 
+    override val irDumpTransformer: (String) -> String = { text ->
+        text.replace("kotlin.collections.HashMap<", "java.util.HashMap<")
+            .replace("kotlin.NoSuchElementException", "java.util.NoSuchElementException")
+            .replace("kotlin.Comparator", "java.util.Comparator")
+            .replace("kotlin.AssertionError", "java.lang.AssertionError")
+            .replace("kotlin.Exception", "java.lang.Exception")
+            .replace("kotlin.RuntimeException", "java.lang.RuntimeException")
+            .replace("kotlin.IllegalStateException", "java.lang.IllegalStateException")
+    }
+
     final override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(
             ::CommonEnvironmentConfigurator,

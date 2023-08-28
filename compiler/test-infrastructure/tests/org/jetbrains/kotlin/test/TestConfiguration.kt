@@ -56,6 +56,12 @@ fun <T1, T2, R> Constructor3<T1, T2, R>.bind(value1: T1, value2: T2): Constructo
     return { this.invoke(it, value1, value2) }
 }
 
+fun <T1, T2, R> Constructor3<T1, T2, R>.bind(value2: T2): Constructor2<T1, R> {
+    return { testServices: TestServices, value1: T1 ->
+        this.invoke(testServices, value1, value2)
+    }
+}
+
 fun <R> (() -> R).coerce(): Constructor<R> {
     return { this.invoke() }
 }

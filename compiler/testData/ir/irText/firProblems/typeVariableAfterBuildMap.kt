@@ -1,8 +1,7 @@
 // WITH_STDLIB
+// KT-61141: no @[FlexibleNullability] annotation
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-
-// KT-61141: mustCheckInImports throws kotlin.IllegalStateException instead of java.lang.IllegalStateException
 // IGNORE_BACKEND: NATIVE
 
 abstract class Visibility(val name: String, val isPublicAPI: Boolean) {

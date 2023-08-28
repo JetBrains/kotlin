@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.handlers.generatedTestClassLoader
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
+import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirIdenticalChecker
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.net.URLClassLoader
@@ -60,7 +59,7 @@ open class AbstractFirScriptCodegenTest : AbstractKotlinCompilerWithTargetBacken
         facadeStep(::Fir2IrResultsConverter)
         irHandlersStep {
             useHandlers(
-                ::IrTextDumpHandler,
+                ::IrTextDumpHandler.bind() { it },
                 ::IrPrettyKotlinDumpHandler,
             )
         }
