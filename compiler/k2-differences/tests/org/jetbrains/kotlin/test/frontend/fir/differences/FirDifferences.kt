@@ -286,10 +286,10 @@ object PublishableArtifacts {
     }
 
     val similarityDiagnosticsStats = publishable {
-        build.child("similarity-diagnostics-stats.md")
+        build.child("similarity-diagnostics-stats.csv")
     }
     val containmentDiagnosticsStats = publishable {
-        build.child("containment-diagnostics-stats.md")
+        build.child("containment-diagnostics-stats.csv")
     }
 
     val k2UnimplementedDiagnostics = publishable {
@@ -485,6 +485,8 @@ val String.lineStartOffsets: IntArray
     }
 
 class EquivalenceTestResult(
+    val isK1PureGreen: Boolean,
+    val isK2PureGreen: Boolean,
     val significantK1MetaInfo: MutableList<ParsedCodeMetaInfo> = mutableListOf(),
     val significantK2MetaInfo: MutableList<ParsedCodeMetaInfo> = mutableListOf(),
 )
@@ -561,7 +563,7 @@ fun analyseEquivalencesAmong(
         }
     }
 
-    return EquivalenceTestResult(significantK1MetaInfo, significantK2MetaInfo)
+    return EquivalenceTestResult(allK1MetaInfos.isEmpty(), allK2MetaInfos.isEmpty(), significantK1MetaInfo, significantK2MetaInfo)
 }
 
 fun analyseEquivalencesAsHierarchyAmong(
@@ -588,7 +590,7 @@ fun analyseEquivalencesAsHierarchyAmong(
         commonK2MetaInfos.overlapsWith(it)
     }
 
-    return EquivalenceTestResult(significantK1MetaInfo, significantK2MetaInfo)
+    return EquivalenceTestResult(allK1MetaInfos.isEmpty(), allK2MetaInfos.isEmpty(), significantK1MetaInfo, significantK2MetaInfo)
 }
 
 fun collectLanguageFeatures(
@@ -695,11 +697,15 @@ typealias DiagnosticsStatistics = MutableMap<String, MutableMap<File, Equivalenc
 
 fun DiagnosticsStatistics.recordDiagnosticsStatistics(test: File, result: EquivalenceTestResult) {
     for (it in result.significantK1MetaInfo) {
-        getOrPut(it.tag) { mutableMapOf() }.getOrPut(test) { EquivalenceTestResult() }.significantK1MetaInfo.add(it)
+        getOrPut(it.tag) { mutableMapOf() }.getOrPut(test) {
+            EquivalenceTestResult(result.isK1PureGreen, result.isK2PureGreen)
+        }.significantK1MetaInfo.add(it)
     }
 
     for (it in result.significantK2MetaInfo) {
-        getOrPut(it.tag) { mutableMapOf() }.getOrPut(test) { EquivalenceTestResult() }.significantK2MetaInfo.add(it)
+        getOrPut(it.tag) { mutableMapOf() }.getOrPut(test) {
+            EquivalenceTestResult(result.isK1PureGreen, result.isK2PureGreen)
+        }.significantK2MetaInfo.add(it)
     }
 }
 
@@ -724,7 +730,7 @@ fun logPossibleEquivalences(result: EquivalenceTestResult, writer: Writer) {
     }
 }
 
-fun printDiagnosticsStatistics(
+fun printSimpleDiagnosticsStatistics(
     title: String? = null,
     diagnostics: Map<String, Set<File>>,
     writer: Writer,
@@ -750,6 +756,52 @@ fun printDiagnosticsStatistics(
     }
 }
 
+val statsColumns = listOf(
+    "Diagnostic",
+    "Red->Green", // "# of files it disappeared from",
+    "Green->Red", // "# of files where it's introduced into",
+    "Red->Pure Green", // "# of files it disappeared from that are now pure-green",
+    "Pure Green->Red", // "# of pure-green files where it's introduced into",
+    "Dis.", // "Disappearance issue",
+    "Int.", // "Introduction issue",
+    "Mis.", // "Missing issue",
+)
+
+private fun List<*>.toCsvColumns() = joinToString(",") { "\"$it\"" }
+
+private fun List<*>.toCsvLine() = toCsvColumns() + "\n"
+
+fun printCsvDiagnosticsStatistics(
+    diagnosticsStatistics: DiagnosticsStatistics,
+    writer: Writer,
+) {
+    writer.write(statsColumns.toCsvLine())
+
+    val sorted = diagnosticsStatistics.entries.sortedByDescending { it.value.size }
+
+    for ((diagnostic, filesToStats) in sorted) {
+        val disappearances = filesToStats.filter { it.value.significantK1MetaInfo.isNotEmpty() }
+        val introductions = filesToStats.filter { it.value.significantK2MetaInfo.isNotEmpty() }
+
+        val pureDisappearances = disappearances.filter { it.value.isK2PureGreen }
+        val pureIntroductions = introductions.filter { it.value.isK1PureGreen }
+
+        val disappearanceIssue = knownDisappearedDiagnostics[diagnostic]
+        val introductionIssue = knownIntroducedDiagnostics[diagnostic]
+        val missingIssue = knownMissingDiagnostics[diagnostic]
+
+        writer.write(
+            listOf(
+                diagnostic, disappearances.size, introductions.size,
+                pureDisappearances.size, pureIntroductions.size,
+                disappearanceIssue?.ktNumber ?: "--",
+                introductionIssue?.ktNumber ?: "--",
+                missingIssue?.ktNumber ?: "--",
+            ).toCsvLine()
+        )
+    }
+}
+
 fun DiagnosticsStatistics.extractDisappearances() =
     mapValues { (_, filesToStats) ->
         filesToStats.filter { it.value.significantK1MetaInfo.isNotEmpty() }.keys
@@ -765,24 +817,6 @@ fun DiagnosticsStatistics.extractIntroductions() =
     }
 
 const val MOST_COMMON_REASONS_OF_BREAKING_CHANGES = "Most common reasons of breaking changes"
-
-fun File.renderDiagnosticsStatistics(diagnosticsStatistics: DiagnosticsStatistics) {
-    bufferedWriter().use { writer ->
-        printDiagnosticsStatistics(
-            "Most common reasons of potential features (by the number of files) include:",
-            diagnosticsStatistics.extractDisappearances(),
-            writer,
-            knownDisappearedDiagnostics,
-        )
-        writer.write("\n")
-        printDiagnosticsStatistics(
-            "$MOST_COMMON_REASONS_OF_BREAKING_CHANGES (by the number of files) include:",
-            diagnosticsStatistics.extractIntroductions(),
-            writer,
-            knownIntroducedDiagnostics,
-        )
-    }
-}
 
 val KT_ISSUE_PATTERN = """KT-?\d+""".toRegex(RegexOption.IGNORE_CASE)
 
@@ -972,14 +1006,24 @@ fun updateKnownIssuesDescriptions(statistics: DiagnosticsStatistics) {
         knownDisappearedDiagnostics[diagnostic]?.let { knownIssue ->
             val disappearancesOnly = filesToEntries
                 .filterValues { it.significantK1MetaInfo.isNotEmpty() }
-                .mapValues { EquivalenceTestResult(significantK1MetaInfo = it.value.significantK1MetaInfo) }
+                .mapValues {
+                    EquivalenceTestResult(
+                        it.value.isK1PureGreen, it.value.isK2PureGreen,
+                        significantK1MetaInfo = it.value.significantK1MetaInfo,
+                    )
+                }
             updateIssueDescription(knownIssue, disappearancesOnly)
         }
 
         knownIntroducedDiagnostics[diagnostic]?.let { knownIssue ->
             val introductionsOnly = filesToEntries
                 .filterValues { it.significantK2MetaInfo.isNotEmpty() }
-                .mapValues { EquivalenceTestResult(significantK2MetaInfo = it.value.significantK2MetaInfo) }
+                .mapValues {
+                    EquivalenceTestResult(
+                        it.value.isK1PureGreen, it.value.isK2PureGreen,
+                        significantK2MetaInfo = it.value.significantK2MetaInfo,
+                    )
+                }
             updateIssueDescription(knownIssue, introductionsOnly)
         }
     }
@@ -1231,20 +1275,24 @@ fun main() {
     status.done("Found ${alongsideNonContainedTests.size} non-containment-s among alongside tests (~${alongsideNonContainedTests.size.outOfAllAlongsideTests()}% of all alongside tests). That is ${tests.alongsideNonIdenticalTests.size - alongsideNonContainedTests.size} tests are similar (~${(tests.alongsideNonIdenticalTests.size - alongsideNonContainedTests.size).outOfAllAlongsideTests()}% of all alongside tests)")
     status.done("Found ${alongsideNonContainedTestsWithIssues.size} non-contained tests referencing some KT-XXXX tickets, but possibly not the ones describing the differences!")
 
-    PublishableArtifacts.similarityDiagnosticsStats.renderDiagnosticsStatistics(similarityStatistics)
-    PublishableArtifacts.containmentDiagnosticsStats.renderDiagnosticsStatistics(containmentStatistics)
+    PublishableArtifacts.similarityDiagnosticsStats.bufferedWriter().use {
+        printCsvDiagnosticsStatistics(similarityStatistics, it)
+    }
+    PublishableArtifacts.containmentDiagnosticsStats.bufferedWriter().use {
+        printCsvDiagnosticsStatistics(containmentStatistics, it)
+    }
 
     PublishableArtifacts.k2UnimplementedDiagnostics.writer().use { writer ->
         val missingDiagnostics = containmentStatistics.extractDisappearances().filterKeys { it !in k2KnownErrors }
         val (withKnownIssues, newDiagnostics) = missingDiagnostics.entries.partition { it.key in knownMissingDiagnostics }
 
-        printDiagnosticsStatistics(
+        printSimpleDiagnosticsStatistics(
             "These diagnostics are present in K1 files, but are missing in K2 altogether:",
             newDiagnostics.associate { it.key to it.value },
             writer,
         )
 
-        printDiagnosticsStatistics(
+        printSimpleDiagnosticsStatistics(
             title = null,
             diagnostics = withKnownIssues.associate { it.key to it.value },
             writer = writer,

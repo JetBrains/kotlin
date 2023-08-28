@@ -9,6 +9,8 @@ import java.io.File
 
 class IssueInfo(val id: String, val numberInProject: Long)
 
+val IssueInfo.ktNumber get() = "KT-$numberInProject"
+
 val MISSING_DIAGNOSTICS_UMBRELLA = IssueInfo("25-4537231", 59443)
 val DISAPPEARED_DIAGNOSTICS_UMBRELLA = IssueInfo("25-4612474", 59870)
 val INTRODUCED_DIAGNOSTICS_UMBRELLA = IssueInfo("25-4612482", 59871)

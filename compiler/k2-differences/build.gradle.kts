@@ -33,7 +33,7 @@ dependencies {
 
     // Errors.java have some ImmutableSet fields which we
     // don't need here, but otherwise getDeclaredFields fails
-    testRuntimeOnly(commonDependency("com.google.guava:guava"))
+    testRuntimeOnly(commonDependency("com.google.guava:guava:12.0"))
 
     testApiJUnit5()
 }
