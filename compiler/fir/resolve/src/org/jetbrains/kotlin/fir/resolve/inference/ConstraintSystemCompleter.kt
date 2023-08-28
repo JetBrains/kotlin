@@ -86,6 +86,13 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                 )
             ) return
 
+            if (completionMode == ConstraintSystemCompletionMode.ONLY_LAMBDAS) {
+                if (analyzeNextReadyPostponedArgument(languageVersionSettings, postponedArguments, completionMode, analyze))
+                    continue
+
+                break
+            }
+
             // Stage 1: analyze postponed arguments with fixed parameter types
             if (analyzeArgumentWithFixedParameterTypes(languageVersionSettings, postponedArguments, analyze))
                 continue
@@ -217,7 +224,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         postponedArguments: List<PostponedResolvedAtom>,
         analyze: (PostponedResolvedAtom) -> Unit
     ): Boolean {
-        if (completionMode != ConstraintSystemCompletionMode.FULL) return false
+        if (completionMode != ConstraintSystemCompletionMode.FULL && completionMode != ConstraintSystemCompletionMode.PARTIAL_BI) return false
 
         // If we use the builder inference anyway (if the annotation is presented), then we are already analysed builder inference lambdas
         if (!languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)) return false
