@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.annotations.getAnnotationStringValue
 import org.jetbrains.kotlin.resolve.annotations.getArgumentValueOrNull
-import org.jetbrains.kotlin.resolve.constants.BooleanValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
@@ -89,21 +88,11 @@ fun IrClass.isObjCProtocolClass(): Boolean = hasEqualFqName(objCProtocolFqName)
 fun ClassDescriptor.isObjCProtocolClass(): Boolean =
         this.fqNameSafe == objCProtocolFqName
 
-fun FunctionDescriptor.isObjCClassMethod() =
-        this.containingDeclaration.let { it is ClassDescriptor && it.isObjCClass() }
-
 fun IrFunction.isObjCClassMethod() =
         this.parent.let { it is IrClass && it.isObjCClass() }
 
-fun FunctionDescriptor.isExternalObjCClassMethod() =
-        this.containingDeclaration.let { it is ClassDescriptor && it.isExternalObjCClass() }
-
 fun IrFunction.isExternalObjCClassMethod() =
     this.parent.let {it is IrClass && it.isExternalObjCClass()}
-
-// Special case: methods from Kotlin Objective-C classes can be called virtually from bridges.
-fun FunctionDescriptor.canObjCClassMethodBeCalledVirtually(overriddenDescriptor: FunctionDescriptor) =
-        overriddenDescriptor.isOverridable && this.kind.isReal && !this.isExternalObjCClassMethod()
 
 fun IrFunction.canObjCClassMethodBeCalledVirtually(overridden: IrFunction) =
     overridden.isOverridable && !this.isFakeOverride && !this.isExternalObjCClassMethod()
@@ -142,13 +131,6 @@ private fun IrFunction.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
 
     return methodInfo
 }
-
-private fun objCMethodInfo(annotation: AnnotationDescriptor) = ObjCMethodInfo(
-        selector = annotation.getStringValue("selector"),
-        encoding = annotation.getStringValue("encoding"),
-        isStret = annotation.getArgumentValueOrNull<Boolean>("isStret") ?: false,
-        directSymbol = null,
-)
 
 private fun objCMethodInfo(annotation: IrConstructorCall) = ObjCMethodInfo(
         selector = annotation.getAnnotationStringValue("selector"),
@@ -274,13 +256,6 @@ fun IrConstructor.objCConstructorIsDesignated(): Boolean =
     this.getAnnotationArgumentValue<Boolean>(objCConstructorFqName, "designated")
         ?: error("Could not find 'designated' argument")
 
-fun ConstructorDescriptor.objCConstructorIsDesignated(): Boolean {
-    val annotation = this.annotations.findAnnotation(objCConstructorFqName)!!
-    val value = annotation.allValueArguments[Name.identifier("designated")]!!
-
-    return (value as BooleanValue).value
-}
-
 
 val IrConstructor.isObjCConstructor get() = this.annotations.hasAnnotation(objCConstructorFqName)
 val ConstructorDescriptor.isObjCConstructor get() = this.annotations.hasAnnotation(objCConstructorFqName)
@@ -316,17 +291,6 @@ fun ConstructorDescriptor.getObjCInitMethod(): FunctionDescriptor? {
         }
         error("Cannot find ObjInitMethod for $this")
     }
-}
-
-val IrFunction.hasObjCFactoryAnnotation get() = this.annotations.hasAnnotation(objCFactoryFqName)
-val FunctionDescriptor.hasObjCFactoryAnnotation get() = this.annotations.hasAnnotation(objCFactoryFqName)
-
-val IrFunction.hasObjCMethodAnnotation get() = this.annotations.hasAnnotation(objCMethodFqName)
-val FunctionDescriptor.hasObjCMethodAnnotation get() = this.annotations.hasAnnotation(objCMethodFqName)
-
-fun FunctionDescriptor.getObjCFactoryInitMethodInfo(): ObjCMethodInfo? {
-    val factoryAnnotation = this.annotations.findAnnotation(objCFactoryFqName) ?: return null
-    return objCMethodInfo(factoryAnnotation)
 }
 
 fun IrFunction.getObjCFactoryInitMethodInfo(): ObjCMethodInfo? {
