@@ -87,7 +87,7 @@ kotlinNativeInterop {
             // For some reason, this worked fine before macOS 12.3.
             //
             // To enforce linking with proper libc++, pass the default path explicitly:
-            linkerOpts "-L${platformManager.hostPlatform.absoluteTargetSysRoot}/usr/lib"
+            linkerOpts "-L${hostPlatform.absoluteTargetSysRoot}/usr/lib"
         }
         linkerOpts "-L$llvmDir/lib", "-L${rootProject.project(':kotlin-native:llvmDebugInfoC').buildDir}", "-L${rootProject.project(':kotlin-native:libllvmext').buildDir}"
     }

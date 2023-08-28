@@ -25,6 +25,8 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.cpp.*
+import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
+import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.SanitizerKind
 import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
@@ -207,6 +209,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
 
         private val compilationDatabase = project.extensions.getByType<CompilationDatabaseExtension>()
         private val execClang = project.extensions.getByType<ExecClang>()
+        private val nativeDependencies = project.extensions.getByType<NativeDependenciesExtension>()
 
         /**
          * Compiles source files into bitcode files.
@@ -228,8 +231,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 this.inputFiles.setIncludes(this@SourceSet.inputFiles.includes)
                 this.inputFiles.setExcludes(this@SourceSet.inputFiles.excludes)
                 this.workingDirectory.set(module.compilerWorkingDirectory)
-                // TODO: Should depend only on the toolchain needed to build for the _target
-                dependsOn(":kotlin-native:dependencies:update")
+                dependsOn(nativeDependencies.llvmDependency)
+                dependsOn(nativeDependencies.targetDependency(_target))
                 dependsOn(this@SourceSet.dependencies)
                 onlyIf {
                     this@SourceSet.onlyIf.get().all { it.isSatisfiedBy(this@SourceSet) }
@@ -249,8 +252,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                     // Compile task depends on the toolchain (including headers) and on the source code (e.g. googletest).
                     // compdb task should also have these dependencies. This way the generated database will point to the
                     // code that actually exists.
-                    // TODO: Should depend only on the toolchain needed to build for the _target
-                    dependsOn(":kotlin-native:dependencies:update")
+                    dependsOn(nativeDependencies.llvmDependency)
+                    dependsOn(nativeDependencies.targetDependency(_target))
                     dependsOn(this@SourceSet.dependencies)
                 }
             }
@@ -662,6 +665,7 @@ open class CompileToBitcodePlugin : Plugin<Project> {
         project.apply<CppConsumerPlugin>()
         project.apply<CompilationDatabasePlugin>()
         project.apply<GitClangFormatPlugin>()
+        project.apply<NativeDependenciesPlugin>()
         project.extensions.create<CompileToBitcodeExtension>("bitcode", project)
     }
 }

@@ -8,12 +8,17 @@ package org.jetbrains.kotlin.cpp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
+import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
 
 /**
  * Plugin for [GitClangFormat] that creates a task `clangFormat` that will format project sources in the current branch.
  */
 open class GitClangFormatPlugin : Plugin<Project> {
     override fun apply(target: Project) {
+        target.apply<NativeDependenciesPlugin>()
+        val nativeDependencies = target.extensions.getByType<NativeDependenciesExtension>()
+
         val directory = target.layout.projectDirectory.toString()
         target.tasks.register<GitClangFormat>("clangFormat") {
             description = "Run clang-format in $directory"
@@ -22,8 +27,7 @@ open class GitClangFormatPlugin : Plugin<Project> {
             this.directory.convention(directory)
             interactive.convention(false)
             // Needs LLVM toolchain.
-            // TODO: It does not need every dependency ever, only LLVM toolchain for the host.
-            dependsOn(":kotlin-native:dependencies:update")
+            dependsOn(nativeDependencies.llvmDependency)
         }
     }
 

@@ -25,6 +25,7 @@ buildscript {
 apply plugin: 'konan'
 apply plugin: 'kotlin'
 apply plugin: 'kotlin.native.build-tools-conventions'
+apply plugin: 'native-dependencies'
 
 configurations {
     cli_bc
@@ -258,7 +259,7 @@ Task linkTest(String name, Closure<KonanLinkTest> configureClosure) {
  * Creates a task for a dynamic test. Configures runner and adds library and test build tasks.
  */
 Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
-    return KotlinNativeTestKt.createTest(project, name, KonanDynamicTest) { task ->
+    return KotlinNativeTestKt.createTest(project, name, KonanDynamicTest) { KonanDynamicTest task ->
         task.configure(configureClosure)
         if (task.enabled) {
             konanArtifacts {
@@ -284,6 +285,8 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
             }
             def buildTask = UtilsKt.findKonanBuildTask(project, name, target)
             UtilsKt.dependsOnDist(buildTask)
+            task.dependsOn(nativeDependencies.llvmDependency)
+            task.dependsOn(nativeDependencies.targetDependency(target))
         }
     }
 }
@@ -3737,6 +3740,8 @@ int customCompare(const char* str1, const char* str2) {
 void createInterop(String name, Closure conf) {
     konanArtifacts {
         interop(name, targets: [target.name]) {
+            dependsOn(nativeDependencies.llvmDependency)
+            dependsOn(nativeDependencies.targetDependency(target))
             conf(it)
             noDefaultLibs(true)
             noEndorsedLibs(true)
@@ -4126,7 +4131,7 @@ createInterop("exceptions_cCallback") {
  * Creates a task for the interop test. Configures runner and adds library and test build tasks.
  */
 Task interopTestBase(String name, boolean multiFile, boolean interop2ForMainOnly, Closure<KonanInteropTest> configureClosure) {
-    return KotlinNativeTestKt.createTest(project, name, KonanInteropTest) { task ->
+    return KotlinNativeTestKt.createTest(project, name, KonanInteropTest) { KonanInteropTest task ->
         task.configure(configureClosure)
         if (task.enabled) {
             konanArtifacts {
@@ -4167,6 +4172,8 @@ Task interopTestBase(String name, boolean multiFile, boolean interop2ForMainOnly
                     extraOpts project.globalTestArgs
                 }
             }
+            task.dependsOn(nativeDependencies.llvmDependency)
+            task.dependsOn(nativeDependencies.targetDependency(target))
         }
     }
 }
@@ -5846,7 +5853,7 @@ pluginTest("runtime_basic_init", "nopPlugin") {
 
 
 Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
-    return project.tasks.create(name, FileCheckTest) { task ->
+    return project.tasks.create(name, FileCheckTest) { FileCheckTest task ->
         task.configure(configureClosure)
         task.llvmIr = project.file("$testOutputFileCheck/$name/$target/out.${task.phaseToCheck}.ll")
 
@@ -5904,6 +5911,7 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
                 }
                 UtilsKt.dependsOnKonanBuildingTask(task, name, target)
             }
+            task.dependsOn(nativeDependencies.llvmDependency)
         }
     }
 }

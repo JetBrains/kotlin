@@ -27,6 +27,8 @@ import org.gradle.api.internal.CollectionCallbackActionDecorator
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSet
 import org.gradle.internal.reflect.Instantiator
+import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
+import org.jetbrains.kotlin.konan.target.Platform
 
 class NamedNativeInteropConfig implements Named {
 
@@ -155,6 +157,14 @@ class NamedNativeInteropConfig implements Named {
         return new File(project.buildDir, "interopTemp")
     }
 
+    String getLlvmDir() {
+        return project.extensions.nativeDependencies.llvmPath
+    }
+
+    Platform getHostPlatform() {
+        return project.extensions.nativeDependencies.hostPlatform
+    }
+
     NamedNativeInteropConfig(Project project, String name, String target = null, String flavor = 'jvm') {
         this.name = name
         this.project = project
@@ -194,7 +204,8 @@ class NamedNativeInteropConfig implements Named {
         }
 
         genTask.configure {
-            dependsOn ":kotlin-native:dependencies:update"
+            dependsOn project.extensions.nativeDependencies.hostPlatformDependency
+            dependsOn project.extensions.nativeDependencies.llvmDependency
             dependsOn ":kotlin-native:Interop:Indexer:nativelibs"
             dependsOn ":kotlin-native:Interop:Runtime:nativelibs"
             classpath = project.configurations.interopStubGenerator
@@ -293,6 +304,8 @@ class NativeInteropPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project prj) {
+        prj.plugins.apply("native-dependencies")
+
         prj.extensions.add("kotlinNativeInterop", new NativeInteropExtension(prj))
 
         prj.configurations {

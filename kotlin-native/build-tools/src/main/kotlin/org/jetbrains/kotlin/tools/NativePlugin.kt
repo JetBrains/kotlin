@@ -11,9 +11,10 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.withType
+import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
+import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMingw
 import java.io.File
@@ -35,6 +36,7 @@ import kotlin.collections.toTypedArray
 open class NativePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.apply<BasePlugin>()
+        project.apply<NativeDependenciesPlugin>()
         project.extensions.create("native", NativeToolsExtension::class.java, project)
     }
 }
@@ -84,7 +86,9 @@ class ToolPatternImpl(val extension: NativeToolsExtension, val output:String, va
         task.input = input.map {
             extension.project.file(it)
         }
-        task.dependsOn(":kotlin-native:dependencies:update")
+        val nativeDependenciesExtension = extension.project.extensions.getByType<NativeDependenciesExtension>()
+        task.dependsOn(nativeDependenciesExtension.hostPlatformDependency)
+        task.dependsOn(nativeDependenciesExtension.llvmDependency)
         if (configureDepencies)
             task.input.forEach { task.dependsOn(it.name) }
         val file = extension.project.file(output)
@@ -183,6 +187,11 @@ class ToolConfigurationPatterns(
 
 
 open class NativeToolsExtension(val project: Project) {
+    private val nativeDependenciesExtension = project.extensions.getByType<NativeDependenciesExtension>()
+
+    val llvmDir by nativeDependenciesExtension::llvmPath
+    val hostPlatform by nativeDependenciesExtension::hostPlatform
+
     val sourceSets = SourceSets(project, this, mutableMapOf<String, SourceSet>())
     val toolPatterns = ToolConfigurationPatterns(this, mutableMapOf<Pair<String, String>, ToolPatternConfiguration>())
     val cleanupFiles = mutableListOf<String>()

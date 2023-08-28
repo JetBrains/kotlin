@@ -10,19 +10,18 @@ import org.jetbrains.kotlin.*
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("native")
+    id("native-dependencies")
 }
 
 native {
     val isWindows = PlatformInfo.isWindows()
     val obj = if (isWindows) "obj" else "o"
     val lib = if (isWindows) "lib" else "a"
-    val host = rootProject.project(":kotlin-native").extra["hostName"]
-    val hostLibffiDir = rootProject.project(":kotlin-native").extra["${host}LibffiDir"]
-    val cflags = mutableListOf("-I$hostLibffiDir/include",
-                               *platformManager.hostPlatform.clangForJni.hostCompilerArgsForJni)
+    val cflags = mutableListOf("-I${nativeDependencies.libffiPath}/include",
+                               *hostPlatform.clangForJni.hostCompilerArgsForJni)
     suffixes {
         (".c" to ".$obj") {
-            tool(*platformManager.hostPlatform.clangForJni.clangC("").toTypedArray())
+            tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
             flags( *cflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
         }
     }
@@ -34,15 +33,16 @@ native {
     val objSet = sourceSets["callbacks"]!!.transform(".c" to ".$obj")
 
     target(solib("callbacks"), objSet) {
-        tool(*platformManager.hostPlatform.clangForJni.clangCXX("").toTypedArray())
+        tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
         flags("-shared",
               "-o",ruleOut(), *ruleInAll(),
               "-L${project(":kotlin-native:libclangext").buildDir}",
-              "$hostLibffiDir/lib/libffi.$lib",
+              "${nativeDependencies.libffiPath}/lib/libffi.$lib",
               "-lclangext")
     }
     tasks.named(solib("callbacks")).configure {
         dependsOn(":kotlin-native:libclangext:${lib("clangext")}")
+        dependsOn(nativeDependencies.libffiDependency)
     }
 }
 
