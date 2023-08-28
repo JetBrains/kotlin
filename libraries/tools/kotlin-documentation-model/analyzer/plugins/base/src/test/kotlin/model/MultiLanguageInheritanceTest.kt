@@ -9,9 +9,11 @@ import org.jetbrains.dokka.model.withDescendants
 import org.jetbrains.dokka.utilities.firstIsInstanceOrNull
 import org.junit.jupiter.api.Test
 import translators.documentationOf
+import utils.JavaCode
 import utils.docs
 import kotlin.test.assertEquals
 
+@JavaCode
 class MultiLanguageInheritanceTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
         suppressObviousFunctions = false

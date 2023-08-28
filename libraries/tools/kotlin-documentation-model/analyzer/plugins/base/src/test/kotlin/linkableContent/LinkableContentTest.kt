@@ -10,6 +10,8 @@ import org.jetbrains.dokka.pages.*
 import org.jsoup.Jsoup
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import utils.OnlyDescriptors
+import utils.OnlyDescriptorsMPP
 import utils.TestOutputWriterPlugin
 import utils.assertNotNull
 import java.net.URL
@@ -18,6 +20,7 @@ import kotlin.test.assertEquals
 
 class LinkableContentTest : BaseAbstractTest() {
 
+    @OnlyDescriptorsMPP
     @Test
     fun `Include module and package documentation`() {
 
@@ -143,6 +146,7 @@ class LinkableContentTest : BaseAbstractTest() {
         }
     }
 
+    @OnlyDescriptorsMPP
     @Test
     fun `Samples multiplatform documentation`() {
 

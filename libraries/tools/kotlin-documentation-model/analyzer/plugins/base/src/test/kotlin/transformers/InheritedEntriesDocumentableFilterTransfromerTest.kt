@@ -3,6 +3,7 @@ package transformers
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.DEnum
 import org.junit.jupiter.api.Test
+import utils.OnlyDescriptors
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -133,6 +134,7 @@ class InheritedEntriesDocumentableFilterTransformerTest : BaseAbstractTest() {
         }
     }
 
+    @OnlyDescriptors("Entry does not have `name` and `ordinal`") // TODO
     @Test
     fun `should work with enum entries when not suppressing`(){
         testInline(

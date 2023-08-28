@@ -7,9 +7,11 @@ import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import utils.JavaCode
 import org.jetbrains.dokka.model.doc.Deprecated as DokkaDeprecatedTag
 import org.jetbrains.dokka.model.doc.Throws as DokkaThrowsTag
 
+@JavaCode
 class JavadocInheritedDocTagsTest : BaseAbstractTest() {
     @Suppress("DEPRECATION") // for includeNonPublic
     private val configuration = dokkaConfiguration {
