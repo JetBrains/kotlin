@@ -329,16 +329,16 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                     containerSource = simpleFunction?.containerSource,
                 ).apply {
                     metadata = FirMetadataSource.Function(function)
-                    enterScope(this.symbol)
-                    setAndModifyParent(this, irParent)
-                    declareParameters(
-                        function, irParent,
-                        dispatchReceiverType = computeDispatchReceiverType(this, simpleFunction, irParent),
-                        isStatic = simpleFunction?.isStatic == true,
-                        forSetter = false,
-                    )
-                    convertAnnotationsForNonDeclaredMembers(function, origin)
-                    leaveScope(this.symbol)
+                    declarationStorage.withScope(symbol) {
+                        setAndModifyParent(this, irParent)
+                        declareParameters(
+                            function, irParent,
+                            dispatchReceiverType = computeDispatchReceiverType(this, simpleFunction, irParent),
+                            isStatic = simpleFunction?.isStatic == true,
+                            forSetter = false,
+                        )
+                        convertAnnotationsForNonDeclaredMembers(function, origin)
+                    }
                 }
             }
             result
@@ -423,10 +423,10 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                     // Add to cache before generating parameters to prevent an infinite loop when an annotation value parameter is annotated
                     // with the annotation itself.
                     constructorCache[constructor] = this
-                    enterScope(this.symbol)
-                    setAndModifyParent(this, irParent)
-                    declareParameters(constructor, irParent, dispatchReceiverType = null, isStatic = false, forSetter = false)
-                    leaveScope(this.symbol)
+                    declarationStorage.withScope(symbol) {
+                        setAndModifyParent(this, irParent)
+                        declareParameters(constructor, irParent, dispatchReceiverType = null, isStatic = false, forSetter = false)
+                    }
                 }
             }
         }
@@ -501,23 +501,23 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                         property, if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
                     )
                 }
+                val dispatchReceiverType = computeDispatchReceiverType(this, property, irParent)
                 // NB: we should enter accessor' scope before declaring its parameters
                 // (both setter default and receiver ones, if any)
-                enterScope(this.symbol)
-                if (propertyAccessor == null && isSetter) {
-                    declareDefaultSetterParameter(
-                        property.returnTypeRef.toIrType(ConversionTypeOrigin.SETTER),
-                        firValueParameter = null
+                declarationStorage.withScope(symbol) {
+                    if (propertyAccessor == null && isSetter) {
+                        declareDefaultSetterParameter(
+                            property.returnTypeRef.toIrType(ConversionTypeOrigin.SETTER),
+                            firValueParameter = null
+                        )
+                    }
+                    setAndModifyParent(this, irParent)
+                    declareParameters(
+                        propertyAccessor, irParent, dispatchReceiverType,
+                        isStatic = irParent !is IrClass || propertyAccessor?.isStatic == true, forSetter = isSetter,
+                        parentPropertyReceiver = property.receiverParameter,
                     )
                 }
-                setAndModifyParent(this, irParent)
-                val dispatchReceiverType = computeDispatchReceiverType(this, property, irParent)
-                declareParameters(
-                    propertyAccessor, irParent, dispatchReceiverType,
-                    isStatic = irParent !is IrClass || propertyAccessor?.isStatic == true, forSetter = isSetter,
-                    parentPropertyReceiver = property.receiverParameter,
-                )
-                leaveScope(this.symbol)
                 if (correspondingProperty is Fir2IrLazyProperty && correspondingProperty.containingClass != null && !isFakeOverride && dispatchReceiverType != null) {
                     this.overriddenSymbols = correspondingProperty.fir.generateOverriddenAccessorSymbols(
                         correspondingProperty.containingClass, !isSetter
@@ -626,96 +626,96 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                 ).apply {
                     metadata = FirMetadataSource.Property(property)
                     convertAnnotationsForNonDeclaredMembers(property, origin)
-                    enterScope(this.symbol)
-                    if (irParent != null) {
-                        parent = irParent
-                    }
-                    val type = property.returnTypeRef.toIrType()
-                    val delegate = property.delegate
-                    val getter = property.getter
-                    val setter = property.setter
-                    if (delegate != null || property.hasBackingField) {
-                        val backingField = if (delegate != null) {
-                            ((delegate as? FirQualifiedAccessExpression)?.calleeReference?.toResolvedBaseSymbol()?.fir as? FirTypeParameterRefsOwner)?.let {
-                                classifierStorage.preCacheTypeParameters(it, symbol)
-                            }
-                            createBackingField(
-                                this,
-                                property,
-                                IrDeclarationOrigin.PROPERTY_DELEGATE,
-                                components.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
-                                NameUtils.propertyDelegateName(property.name),
-                                true,
-                                delegate
-                            )
-                        } else {
-                            val initializer = getEffectivePropertyInitializer(property, resolveIfNeeded = true)
-                            // There are cases when we get here for properties
-                            // that have no backing field. For example, in the
-                            // funExpression.kt test there's an attempt
-                            // to access the `javaClass` property of the `foo0`'s
-                            // `block` argument
-                            val typeToUse = property.backingField?.returnTypeRef?.toIrType() ?: type
-                            createBackingField(
-                                this,
-                                property,
-                                IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-                                components.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
-                                property.name,
-                                property.isVal,
-                                initializer,
-                                typeToUse
-                            ).also { field ->
-                                if (initializer is FirConstExpression<*>) {
-                                    val constType = initializer.resolvedType.toIrType()
-                                    field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
+                    declarationStorage.withScope(symbol) {
+                        if (irParent != null) {
+                            parent = irParent
+                        }
+                        val type = property.returnTypeRef.toIrType()
+                        val delegate = property.delegate
+                        val getter = property.getter
+                        val setter = property.setter
+                        if (delegate != null || property.hasBackingField) {
+                            val backingField = if (delegate != null) {
+                                ((delegate as? FirQualifiedAccessExpression)?.calleeReference?.toResolvedBaseSymbol()?.fir as? FirTypeParameterRefsOwner)?.let {
+                                    classifierStorage.preCacheTypeParameters(it, symbol)
+                                }
+                                createBackingField(
+                                    this,
+                                    property,
+                                    IrDeclarationOrigin.PROPERTY_DELEGATE,
+                                    components.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
+                                    NameUtils.propertyDelegateName(property.name),
+                                    true,
+                                    delegate
+                                )
+                            } else {
+                                val initializer = getEffectivePropertyInitializer(property, resolveIfNeeded = true)
+                                // There are cases when we get here for properties
+                                // that have no backing field. For example, in the
+                                // funExpression.kt test there's an attempt
+                                // to access the `javaClass` property of the `foo0`'s
+                                // `block` argument
+                                val typeToUse = property.backingField?.returnTypeRef?.toIrType() ?: type
+                                createBackingField(
+                                    this,
+                                    property,
+                                    IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
+                                    components.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
+                                    property.name,
+                                    property.isVal,
+                                    initializer,
+                                    typeToUse
+                                ).also { field ->
+                                    if (initializer is FirConstExpression<*>) {
+                                        val constType = initializer.resolvedType.toIrType()
+                                        field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
+                                    }
                                 }
                             }
+                            backingField.symbol.let {
+                                backingFieldForPropertyCache[symbol] = it
+                                propertyForBackingFieldCache[it] = symbol
+                            }
+                            this.backingField = backingField
                         }
-                        backingField.symbol.let {
-                            backingFieldForPropertyCache[symbol] = it
-                            propertyForBackingFieldCache[it] = symbol
+                        if (irParent != null) {
+                            backingField?.parent = irParent
                         }
-                        this.backingField = backingField
-                    }
-                    if (irParent != null) {
-                        backingField?.parent = irParent
-                    }
-                    this.getter = createIrPropertyAccessor(
-                        getter, property, this, type, irParent, false,
-                        when {
-                            origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
-                            origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> origin
-                            delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                            origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
-                            origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
-                            getter == null || getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-                            else -> origin
-                        },
-                        startOffset, endOffset,
-                        dontUseSignature = signature == null, fakeOverrideOwnerLookupTag,
-                        property.unwrapFakeOverrides().getter,
-                    ).also {
-                        getterForPropertyCache[symbol] = it.symbol
-                    }
-                    if (property.isVar) {
-                        this.setter = createIrPropertyAccessor(
-                            setter, property, this, type, irParent, true,
+                        this.getter = createIrPropertyAccessor(
+                            getter, property, this, type, irParent, false,
                             when {
+                                origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
+                                origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> origin
                                 delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
                                 origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
                                 origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
-                                setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                                getter == null || getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                                 else -> origin
                             },
                             startOffset, endOffset,
                             dontUseSignature = signature == null, fakeOverrideOwnerLookupTag,
-                            property.unwrapFakeOverrides().setter,
+                            property.unwrapFakeOverrides().getter,
                         ).also {
-                            setterForPropertyCache[symbol] = it.symbol
+                            getterForPropertyCache[symbol] = it.symbol
+                        }
+                        if (property.isVar) {
+                            this.setter = createIrPropertyAccessor(
+                                setter, property, this, type, irParent, true,
+                                when {
+                                    delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                                    origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                                    origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
+                                    setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                                    else -> origin
+                                },
+                                startOffset, endOffset,
+                                dontUseSignature = signature == null, fakeOverrideOwnerLookupTag,
+                                property.unwrapFakeOverrides().setter,
+                            ).also {
+                                setterForPropertyCache[symbol] = it.symbol
+                            }
                         }
                     }
-                    leaveScope(this.symbol)
                 }
             }
             if (property.isFakeOverride(fakeOverrideOwnerLookupTag)) {
@@ -956,31 +956,31 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         }.apply {
             parent = irParent
             metadata = FirMetadataSource.Property(property)
-            enterScope(this.symbol)
-            delegate = declareIrVariable(
-                startOffset, endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,
-                NameUtils.propertyDelegateName(property.name), property.delegate!!.resolvedType.toIrType(),
-                isVar = false, isConst = false, isLateinit = false
-            ).also {
-                delegateVariableForPropertyCache[symbol] = it.symbol
-            }
-            delegate.parent = irParent
-            getter = createIrPropertyAccessor(
-                property.getter, property, this, type, irParent, false,
-                IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR, startOffset, endOffset, dontUseSignature = true
-            ).also {
-                getterForPropertyCache[symbol] = it.symbol
-            }
-            if (property.isVar) {
-                setter = createIrPropertyAccessor(
-                    property.setter, property, this, type, irParent, true,
+            declarationStorage.withScope(symbol) {
+                delegate = declareIrVariable(
+                    startOffset, endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,
+                    NameUtils.propertyDelegateName(property.name), property.delegate!!.resolvedType.toIrType(),
+                    isVar = false, isConst = false, isLateinit = false
+                ).also {
+                    delegateVariableForPropertyCache[symbol] = it.symbol
+                }
+                delegate.parent = irParent
+                getter = createIrPropertyAccessor(
+                    property.getter, property, this, type, irParent, false,
                     IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR, startOffset, endOffset, dontUseSignature = true
                 ).also {
-                    setterForPropertyCache[symbol] = it.symbol
+                    getterForPropertyCache[symbol] = it.symbol
                 }
+                if (property.isVar) {
+                    setter = createIrPropertyAccessor(
+                        property.setter, property, this, type, irParent, true,
+                        IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR, startOffset, endOffset, dontUseSignature = true
+                    ).also {
+                        setterForPropertyCache[symbol] = it.symbol
+                    }
+                }
+                annotationGenerator.generate(this, property)
             }
-            annotationGenerator.generate(this, property)
-            leaveScope(this.symbol)
         }
         localStorage.putDelegatedProperty(property, irProperty)
         return irProperty
