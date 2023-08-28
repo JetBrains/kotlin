@@ -127,7 +127,7 @@ class PostponedArgumentsAnalyzer(
         val notFixedTypeVariablesInInputTypes =
             lambda.inputTypes
                 .flatMap {
-                    with(c) { it.extractTypeVariables() }
+                    with(c) { it.extractTypeVariables(includeTypeItself = true) }
                 }.filterTo(mutableSetOf()) { it in c.notFixedTypeVariables }
 
         val results = lambdaAnalyzer.analyzeAndGetLambdaReturnArguments(
