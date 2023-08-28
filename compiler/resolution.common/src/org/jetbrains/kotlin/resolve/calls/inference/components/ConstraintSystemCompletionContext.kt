@@ -16,15 +16,11 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Context, ResultTypeResolver.Context {
-    abstract val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
     abstract override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
     abstract override val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
     abstract override val postponedTypeVariables: List<TypeVariableMarker>
 
-    /**
-     * See [org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.outerSystemVariablesPrefixSize]
-     */
-    abstract val outerSystemVariablesPrefixSize: Int
+
 
     abstract fun getBuilder(): ConstraintSystemBuilder
 

@@ -27,6 +27,12 @@ class VariableFixationFinder(
         val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
         val postponedTypeVariables: List<TypeVariableMarker>
         val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>>
+        val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
+
+        /**
+         * See [org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.outerSystemVariablesPrefixSize]
+         */
+        val outerSystemVariablesPrefixSize: Int
 
         /**
          * If not null, that property means that we should assume temporary
@@ -155,7 +161,8 @@ class VariableFixationFinder(
         if (allTypeVariables.isEmpty()) return null
 
         val dependencyProvider = TypeVariableDependencyInformationProvider(
-            notFixedTypeVariables, postponedArguments, topLevelType.takeIf { completionMode == PARTIAL }, this
+            notFixedTypeVariables, postponedArguments, topLevelType.takeIf { completionMode == PARTIAL }, this,
+            typeVariablesFromOuter,
         )
 
         val candidate =
