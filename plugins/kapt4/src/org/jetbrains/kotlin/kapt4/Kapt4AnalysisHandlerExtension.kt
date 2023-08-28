@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.kapt4
 
 import com.sun.tools.javac.tree.JCTree
-import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
@@ -151,14 +150,13 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                 }
         }
 
-        val loaderWithJavac = Context::class.java.classLoader ?: ClassLoader.getSystemClassLoader()
         while (sourcesToProcess.isNotEmpty()) {
             val processingContext = KaptContext(
                 options,
                 withJdk = false,
                 logger
             )
-            val processors = processorLoader.loadProcessors(loaderWithJavac)
+            val processors = processorLoader.loadProcessors()
             processingContext.doAnnotationProcessing(
                 sourcesToProcess,
                 processors.processors,
