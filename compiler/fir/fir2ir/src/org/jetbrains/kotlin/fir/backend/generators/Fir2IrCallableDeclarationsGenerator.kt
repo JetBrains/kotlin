@@ -345,23 +345,12 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         }
 
         if (visibility == Visibilities.Local) {
-            localStorage.putLocalFunction(function, created)
             return created
         }
         if (function.symbol.callableId.isKFunctionInvoke()) {
             (function.symbol.originalForSubstitutionOverride as? FirNamedFunctionSymbol)?.let {
                 created.overriddenSymbols += declarationStorage.getIrFunctionSymbol(it) as IrSimpleFunctionSymbol
             }
-        }
-        if (function.isFakeOverride(fakeOverrideOwnerLookupTag)) {
-            val originalFunction = function.unwrapFakeOverrides()
-            val key = Fir2IrDeclarationStorage.FakeOverrideIdentifier(
-                originalFunction.symbol,
-                fakeOverrideOwnerLookupTag ?: function.containingClassLookupTag()!!
-            )
-            irFakeOverridesForFirFakeOverrideMap[key] = created
-        } else {
-            functionCache[function] = created
         }
         return created
     }

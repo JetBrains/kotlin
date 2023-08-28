@@ -429,17 +429,50 @@ class Fir2IrDeclarationStorage(
     fun originalDeclarationForDelegated(irDeclaration: IrDeclaration): FirDeclaration? = delegatedReverseCache[irDeclaration]
 
     fun getOrCreateIrFunction(
-        function: FirSimpleFunction,
+        function: FirFunction,
         irParent: IrDeclarationParent?,
+        predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
     ): IrSimpleFunction {
         getCachedIrFunction(function)?.let { return it }
-        return callablesGenerator.createIrFunction(
+        return createAndCacheIrFunction(function, irParent, predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
+    }
+
+    private fun createAndCacheIrFunction(
+        function: FirFunction,
+        irParent: IrDeclarationParent?,
+        predefinedOrigin: IrDeclarationOrigin? = null,
+        isLocal: Boolean = false,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
+    ): IrSimpleFunction {
+        val irFunction = callablesGenerator.createIrFunction(
             function,
             irParent,
+            predefinedOrigin,
             isLocal = isLocal,
-            fakeOverrideOwnerLookupTag = function.containingClassLookupTag()
+            fakeOverrideOwnerLookupTag = fakeOverrideOwnerLookupTag
         )
+        when {
+            irFunction.visibility == DescriptorVisibilities.LOCAL -> {
+                localStorage.putLocalFunction(function, irFunction)
+            }
+
+            function.isFakeOverride(fakeOverrideOwnerLookupTag) -> {
+                val originalFunction = function.unwrapFakeOverrides()
+                val key = FakeOverrideIdentifier(
+                    originalFunction.symbol,
+                    fakeOverrideOwnerLookupTag ?: function.containingClassLookupTag()!!
+                )
+                irFakeOverridesForFirFakeOverrideMap[key] = irFunction
+            }
+
+            else -> {
+                functionCache[function] = irFunction
+            }
+        }
+
+        return irFunction
     }
 
     fun getCachedIrAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer): IrAnonymousInitializer? =
@@ -715,7 +748,7 @@ class Fir2IrDeclarationStorage(
                 val irParent = findIrParent(fir)
                 val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
                 val declarationOrigin = computeDeclarationOrigin(firFunctionSymbol, parentOrigin)
-                callablesGenerator.createIrFunction(fir, irParent, predefinedOrigin = declarationOrigin).symbol
+                createAndCacheIrFunction(fir, irParent, predefinedOrigin = declarationOrigin).symbol
             }
             is FirSimpleFunction -> {
                 val unmatchedOwner = fakeOverrideOwnerLookupTag != firFunctionSymbol.containingClassLookupTag()
@@ -727,7 +760,7 @@ class Fir2IrDeclarationStorage(
                     fakeOverrideOwnerLookupTag,
                     getCachedIrDeclaration = ::getCachedIrFunction,
                     createIrDeclaration = { parent, origin ->
-                        callablesGenerator.createIrFunction(
+                        createAndCacheIrFunction(
                             fir, parent,
                             predefinedOrigin = origin,
                             fakeOverrideOwnerLookupTag = fakeOverrideOwnerLookupTag,

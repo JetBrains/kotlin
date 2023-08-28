@@ -396,7 +396,7 @@ class Fir2IrVisitor(
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): IrElement = whileAnalysing(session, simpleFunction) {
         val irFunction = if (simpleFunction.visibility == Visibilities.Local) {
-            callablesGenerator.createIrFunction(
+            declarationStorage.getOrCreateIrFunction(
                 simpleFunction, irParent = conversionScope.parent(), predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION, isLocal = true
             )
         } else {
@@ -418,7 +418,7 @@ class Fir2IrVisitor(
         data: Any?
     ): IrElement = whileAnalysing(session, anonymousFunction) {
         return anonymousFunction.convertWithOffsets { startOffset, endOffset ->
-            val irFunction = callablesGenerator.createIrFunction(
+            val irFunction = declarationStorage.getOrCreateIrFunction(
                 anonymousFunction,
                 irParent = conversionScope.parent(),
                 predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION,
