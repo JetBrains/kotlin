@@ -1258,7 +1258,7 @@ class LightTreeRawFirDeclarationBuilder(
                 this.isLocal = true
                 val delegateBuilder = delegateExpression?.let {
                     FirWrappedDelegateExpressionBuilder().apply {
-                        source = delegateSource
+                        source = delegateSource?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
                         expression = expressionConverter.getAsFirExpression(it, "Incorrect delegate expression")
                     }
                 }
@@ -1283,7 +1283,7 @@ class LightTreeRawFirDeclarationBuilder(
 
                     val delegateBuilder = delegateExpression?.let {
                         FirWrappedDelegateExpressionBuilder().apply {
-                            source = delegateSource
+                            source = delegateSource?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
                             expression = expressionConverter.getAsFirExpression(it, "Should have delegate")
                         }
                     }
