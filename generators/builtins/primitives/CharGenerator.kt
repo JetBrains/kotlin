@@ -3,11 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package primitives
+package org.jetbrains.kotlin.generators.builtins.numbers.primitives
 
 import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsGenerator
-import org.jetbrains.kotlin.generators.builtins.numbers.primitives.*
 import org.jetbrains.kotlin.generators.builtins.numbers.primitives.NativePrimitivesGenerator.Companion.setAsExternal
 import java.io.PrintWriter
 
@@ -17,7 +16,7 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
     }
 
     private fun generateFile(): FileBuilder {
-        return file { generateClass() }.apply { this.modifyGeneratedFile() }
+        return file(this::class) { generateClass() }.apply { this.modifyGeneratedFile() }
     }
 
     private fun FileBuilder.generateClass() {

@@ -234,7 +234,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
     }
 
     private fun generateFile(): FileBuilder {
-        return file { generateClasses() }.apply { this.modifyGeneratedFile() }
+        return file(this::class) { generateClasses() }.apply { this.modifyGeneratedFile() }
     }
 
     private fun FileBuilder.generateClasses() {
