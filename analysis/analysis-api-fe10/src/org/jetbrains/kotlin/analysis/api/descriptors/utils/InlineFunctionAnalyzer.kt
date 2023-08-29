@@ -5,16 +5,23 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.references.fe10.util.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 
+@OptIn(KtAnalysisNonPublicApi::class) // used in IDEA K1 evaluator
+@Suppress("unused")
+fun KtAnalysisSession.getInlineFunctionAnalyzer(analyzeOnlyReifiedInlineFunctions: Boolean): InlineFunctionAnalyzer {
+    require(this is KtFe10AnalysisSession) {
+        "K2 implementation shouldn't call this code"
+    }
+    return InlineFunctionAnalyzer(analysisContext, analyzeOnlyReifiedInlineFunctions)
+}
+
+@OptIn(KtAnalysisNonPublicApi::class)
 class InlineFunctionAnalyzer(
     private val analysisContext: Fe10AnalysisContext,
     private val analyzeOnlyReifiedInlineFunctions: Boolean,
@@ -28,6 +35,12 @@ class InlineFunctionAnalyzer(
     fun analyze(element: KtElement) {
         val project = element.project
         val nextInlineFunctions = HashSet<KtDeclarationWithBody>()
+        val collector = InlineFunctionsCollector(project, analyzeOnlyReifiedInlineFunctions) { declaration ->
+            if (!analyzedElements.contains(declaration)) {
+                nextInlineFunctions.add(declaration)
+            }
+        }
+        val propertyAccessor = InlineDelegatedPropertyAccessorsAnalyzer(analysisContext, collector)
 
         element.accept(object : KtTreeVisitorVoid() {
             override fun visitExpression(expression: KtExpression) {
@@ -36,7 +49,7 @@ class InlineFunctionAnalyzer(
                 val bindingContext = analysisContext.analyze(expression)
                 val call = bindingContext.get(BindingContext.CALL, expression) ?: return
                 val resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, call)
-                checkResolveCall(resolvedCall)
+                collector.checkResolveCall(resolvedCall)
             }
 
             override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) {
@@ -46,7 +59,7 @@ class InlineFunctionAnalyzer(
 
                 for (entry in destructuringDeclaration.entries) {
                     val resolvedCall = bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, entry)
-                    checkResolveCall(resolvedCall)
+                    collector.checkResolveCall(resolvedCall)
                 }
             }
 
@@ -55,36 +68,14 @@ class InlineFunctionAnalyzer(
 
                 val bindingContext = analysisContext.analyze(expression)
 
-                checkResolveCall(bindingContext.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, expression.loopRange))
-                checkResolveCall(bindingContext.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression.loopRange))
-                checkResolveCall(bindingContext.get(BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, expression.loopRange))
+                collector.checkResolveCall(bindingContext.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, expression.loopRange))
+                collector.checkResolveCall(bindingContext.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression.loopRange))
+                collector.checkResolveCall(bindingContext.get(BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, expression.loopRange))
             }
 
-            private fun checkResolveCall(resolvedCall: ResolvedCall<*>?) {
-                if (resolvedCall == null) return
-
-                val descriptor = resolvedCall.resultingDescriptor
-                if (descriptor is DeserializedSimpleFunctionDescriptor) return
-
-                analyzeNextIfInline(descriptor)
-
-                if (descriptor is PropertyDescriptor) {
-                    for (accessor in descriptor.accessors) {
-                        analyzeNextIfInline(accessor)
-                    }
-                }
-            }
-
-            private fun analyzeNextIfInline(descriptor: CallableDescriptor) {
-                if (!InlineUtil.isInline(descriptor) || analyzeOnlyReifiedInlineFunctions && !hasReifiedTypeParameters(descriptor)) {
-                    return
-                }
-
-                val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
-                if (declaration != null && declaration is KtDeclarationWithBody && !analyzedElements.contains(declaration)) {
-                    nextInlineFunctions.add(declaration)
-                    return
-                }
+            override fun visitProperty(property: KtProperty) {
+                super.visitProperty(property)
+                propertyAccessor.visitProperty(property)
             }
         })
 
@@ -99,10 +90,6 @@ class InlineFunctionAnalyzer(
             }
             analyzedElements.addAll(nextInlineFunctions)
         }
-    }
-
-    private fun hasReifiedTypeParameters(descriptor: CallableDescriptor): Boolean {
-        return descriptor.typeParameters.any { it.isReified }
     }
 
     /**

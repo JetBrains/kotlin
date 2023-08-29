@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.Analysis
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.InlineFunctionAnalyzer
+import org.jetbrains.kotlin.analysis.api.descriptors.utils.collectReachableInlineDelegatedPropertyAccessors
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KtCompiledFileForOutputFile
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
@@ -73,7 +74,7 @@ internal class KtFe10CompilerFacility(
         val inlineAnalyzer = InlineFunctionAnalyzer(analysisContext, analyzeOnlyReifiedInlineFunctions = disableInline)
         inlineAnalyzer.analyze(file)
 
-        val filesToCompile = inlineAnalyzer.allFiles()
+        val filesToCompile = inlineAnalyzer.allFiles().collectReachableInlineDelegatedPropertyAccessors()
         val bindingContext = analysisContext.analyze(filesToCompile, AnalysisMode.ALL_COMPILER_CHECKS)
 
         val frontendErrors = computeErrors(bindingContext.diagnostics, allowedErrorFilter)
