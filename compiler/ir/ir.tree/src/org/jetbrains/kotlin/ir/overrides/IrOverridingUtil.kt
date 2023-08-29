@@ -627,63 +627,64 @@ class IrOverridingUtil(
         checkIsInlineFlag: Boolean,
         checkReturnType: Boolean
     ): OverrideCompatibilityInfo {
-        return isOverridableByWithoutExternalConditions(superMember, subMember, checkIsInlineFlag, checkReturnType)
+        return typeSystem.isOverridableByWithoutExternalConditions(superMember, subMember, checkIsInlineFlag, checkReturnType)
         // The frontend goes into external overridability condition details here, but don't deal with them in IR (yet?).
     }
+}
 
-    private fun isOverridableByWithoutExternalConditions(
-        superMember: IrOverridableMember,
-        subMember: IrOverridableMember,
-        checkIsInlineFlag: Boolean,
-        checkReturnType: Boolean
-    ): OverrideCompatibilityInfo {
-        val superTypeParameters: List<IrTypeParameter>
-        val subTypeParameters: List<IrTypeParameter>
+fun IrTypeSystemContext.isOverridableByWithoutExternalConditions(
+    superMember: IrOverridableMember,
+    subMember: IrOverridableMember,
+    checkIsInlineFlag: Boolean,
+    checkReturnType: Boolean
+): OverrideCompatibilityInfo {
+    val superTypeParameters: List<IrTypeParameter>
+    val subTypeParameters: List<IrTypeParameter>
 
-        val superValueParameters: List<IrValueParameter>
-        val subValueParameters: List<IrValueParameter>
+    val superValueParameters: List<IrValueParameter>
+    val subValueParameters: List<IrValueParameter>
 
-        when (superMember) {
-            is IrSimpleFunction -> when {
-                subMember !is IrSimpleFunction -> return incompatible("Member kind mismatch")
-                superMember.hasExtensionReceiver != subMember.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
-                superMember.isSuspend != subMember.isSuspend -> return incompatible("Incompatible suspendability")
-                checkIsInlineFlag && superMember.isInline -> return incompatible("Inline function can't be overridden")
+    when (superMember) {
+        is IrSimpleFunction -> when {
+            subMember !is IrSimpleFunction -> return incompatible("Member kind mismatch")
+            superMember.hasExtensionReceiver != subMember.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
+            superMember.isSuspend != subMember.isSuspend -> return incompatible("Incompatible suspendability")
+            checkIsInlineFlag && superMember.isInline -> return incompatible("Inline function can't be overridden")
 
-                else -> {
-                    superTypeParameters = superMember.typeParameters
-                    subTypeParameters = subMember.typeParameters
-                    superValueParameters = superMember.compiledValueParameters
-                    subValueParameters = subMember.compiledValueParameters
-                }
+            else -> {
+                superTypeParameters = superMember.typeParameters
+                subTypeParameters = subMember.typeParameters
+                superValueParameters = superMember.compiledValueParameters
+                subValueParameters = subMember.compiledValueParameters
             }
-            is IrProperty -> when {
-                subMember !is IrProperty -> return incompatible("Member kind mismatch")
-                superMember.getter.hasExtensionReceiver != subMember.getter.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
-                checkIsInlineFlag && superMember.isInline -> return incompatible("Inline property can't be overridden")
+        }
+        is IrProperty -> when {
+            subMember !is IrProperty -> return incompatible("Member kind mismatch")
+            superMember.getter.hasExtensionReceiver != subMember.getter.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
+            checkIsInlineFlag && superMember.isInline -> return incompatible("Inline property can't be overridden")
 
-                else -> {
-                    superTypeParameters = superMember.typeParameters
-                    subTypeParameters = subMember.typeParameters
-                    superValueParameters = superMember.compiledValueParameters
-                    subValueParameters = subMember.compiledValueParameters
-                }
+            else -> {
+                superTypeParameters = superMember.typeParameters
+                subTypeParameters = subMember.typeParameters
+                superValueParameters = superMember.compiledValueParameters
+                subValueParameters = subMember.compiledValueParameters
             }
-            else -> error("Unexpected type of declaration: ${superMember::class.java}, $superMember")
+        }
+        else -> error("Unexpected type of declaration: ${superMember::class.java}, $superMember")
+    }
+
+    when {
+        superMember.name != subMember.name -> {
+            // Check name after member kind checks. This way FO builder will first check types of overridable members and crash
+            // if member types are not supported (ex: IrConstructor).
+            return incompatible("Name mismatch")
         }
 
-        when {
-            superMember.name != subMember.name -> {
-                // Check name after member kind checks. This way FO builder will first check types of overridable members and crash
-                // if member types are not supported (ex: IrConstructor).
-                return incompatible("Name mismatch")
-            }
+        superTypeParameters.size != subTypeParameters.size -> return incompatible("Type parameter number mismatch")
+        superValueParameters.size != subValueParameters.size -> return incompatible("Value parameter number mismatch")
+    }
 
-            superTypeParameters.size != subTypeParameters.size -> return incompatible("Type parameter number mismatch")
-            superValueParameters.size != subValueParameters.size -> return incompatible("Value parameter number mismatch")
-        }
-
-        // TODO: check the bounds. See OverridingUtil.areTypeParametersEquivalent()
+    // TODO: check the bounds. See OverridingUtil.areTypeParametersEquivalent()
 //        superTypeParameters.forEachIndexed { index, parameter ->
 //            if (!AbstractTypeChecker.areTypeParametersEquivalent(
 //                    typeCheckerContext as AbstractTypeCheckerContext,
@@ -693,34 +694,33 @@ class IrOverridingUtil(
 //            ) return OverrideCompatibilityInfo.incompatible("Type parameter bounds mismatch")
 //        }
 
-        val typeCheckerState = createIrTypeCheckerState(
-            IrTypeSystemContextWithAdditionalAxioms(
-                typeSystem,
-                superTypeParameters,
-                subTypeParameters
-            )
+    val typeCheckerState = createIrTypeCheckerState(
+        IrTypeSystemContextWithAdditionalAxioms(
+            this,
+            superTypeParameters,
+            subTypeParameters
         )
+    )
 
-        superValueParameters.forEachIndexed { index, parameter ->
-            if (!AbstractTypeChecker.equalTypes(
-                    typeCheckerState,
-                    subValueParameters[index].type,
-                    parameter.type
-                )
-            ) return incompatible("Value parameter type mismatch")
-        }
-
-        if (checkReturnType) {
-            if (!AbstractTypeChecker.isSubtypeOf(
-                    typeCheckerState,
-                    subMember.returnType,
-                    superMember.returnType
-                )
-            ) return conflict("Return type mismatch")
-        }
-
-        return success()
+    superValueParameters.forEachIndexed { index, parameter ->
+        if (!AbstractTypeChecker.equalTypes(
+                typeCheckerState,
+                subValueParameters[index].type,
+                parameter.type
+            )
+        ) return incompatible("Value parameter type mismatch")
     }
+
+    if (checkReturnType) {
+        if (!AbstractTypeChecker.isSubtypeOf(
+                typeCheckerState,
+                subMember.returnType,
+                superMember.returnType
+            )
+        ) return conflict("Return type mismatch")
+    }
+
+    return success()
 }
 
 private val IrSimpleFunction?.hasExtensionReceiver: Boolean

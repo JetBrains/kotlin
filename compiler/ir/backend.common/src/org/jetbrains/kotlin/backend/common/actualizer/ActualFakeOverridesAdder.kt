@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.overrides.isOverridableByWithoutExternalConditions
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.OverridingUtil
 
 /**
  * It adds fake overrides to non-expect classes inside common or multi-platform module,
@@ -79,6 +81,32 @@ internal class ActualFakeOverridesAdder(
     ) {
         for (symbolFromSupertype in membersFromSupertype) {
             val memberFromSupertype = symbolFromSupertype.owner as IrDeclaration
+
+            if (memberFromSupertype is IrOverridableMember) {
+                // We can land here because of a hierarchy like
+                // actual A -> common B -> actual C
+                // where C defines a member x and A overrides the member x.
+                // We will first add a fake-override x to B and then land here.
+                // In this case we don't want to add a fake-override on top of the real override to A.
+                // Instead, we add the fake-override x to the overridden symbols of A.x.
+
+                @Suppress("UNCHECKED_CAST")
+                val override = klass.declarations.firstOrNull {
+                    it is IrOverridableMember &&
+                            typeSystemContext.isOverridableByWithoutExternalConditions(
+                                superMember = memberFromSupertype,
+                                subMember = it,
+                                checkIsInlineFlag = false,
+                                checkReturnType = false
+                            ).result == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
+                } as? IrOverridableDeclaration<IrSymbol>
+
+                if (override != null) {
+                    override.overriddenSymbols += symbolFromSupertype
+                    continue
+                }
+            }
+
             val newMember = createFakeOverrideMember(listOf(memberFromSupertype), klass)
             val matchingFakeOverrides = collectActualCallablesMatchingToSpecificExpect(
                 newMember.symbol,
