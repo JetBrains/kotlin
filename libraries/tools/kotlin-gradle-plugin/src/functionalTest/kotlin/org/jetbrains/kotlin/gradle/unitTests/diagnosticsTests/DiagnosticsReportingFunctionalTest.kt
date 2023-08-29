@@ -169,7 +169,7 @@ class DiagnosticsReportingFunctionalTest {
             reportTestDiagnostic()
             evaluate()
 
-            val diagnostics = project!!.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(rootProject)
+            val diagnostics = project!!.kotlinToolingDiagnosticsCollector.getDiagnosticsForLocation(rootProject.toLocation())
 
             val projectDiagnostic = diagnostics.single()
             assertNotNull(projectDiagnostic, "Project diagnostic hasn't been reported")
@@ -299,6 +299,6 @@ internal object MockPerBuildChecker : KotlinGradleProjectChecker {
 }
 
 private val ProjectInternal.diagnostics: Collection<ToolingDiagnostic>
-    get() = project!!.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project!!)
+    get() = project!!.kotlinToolingDiagnosticsCollector.getDiagnosticsForLocation(project!!.toLocation())
 
 private fun String.countOccurrencesIn(other: String) = other.split(this).size - 1

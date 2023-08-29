@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.K
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinSourceSetDependsOnDefaultCompilationSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toLocation
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import kotlin.test.*
@@ -33,7 +34,7 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
             KotlinSourceSetDependsOnDefaultCompilationSourceSet.id
         )
         return project.kotlinToolingDiagnosticsCollector
-            .getDiagnosticsForProject(project)
+            .getDiagnosticsForLocation(project.toLocation())
             .filter { it.factoryId in expectedDiagnosticsIds } // ignore other diagnostics that can appear as well
     }
 

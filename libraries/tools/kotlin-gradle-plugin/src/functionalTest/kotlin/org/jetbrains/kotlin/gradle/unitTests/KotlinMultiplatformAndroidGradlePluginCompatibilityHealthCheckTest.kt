@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toLocation
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
 import org.junit.Test
@@ -316,7 +317,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     }
 
     private fun Project.assertNoWarningMessage() {
-        val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
+        val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForLocation(this.toLocation())
         if (diagnostics.isNotEmpty()) {
             fail("Expected no warning messages to be emitted. Found: $diagnostics")
         }

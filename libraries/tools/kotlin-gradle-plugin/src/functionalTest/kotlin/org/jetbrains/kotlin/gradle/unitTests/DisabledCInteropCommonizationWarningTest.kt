@@ -13,6 +13,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toLocation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
@@ -115,7 +116,7 @@ private fun Project.setupNativeTargetsWithCInterops(): List<KotlinNativeTarget> 
 }
 
 private fun Project.getWarningMessage(): String? {
-    val diagnostics = project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filter {
+    val diagnostics = project.kotlinToolingDiagnosticsCollector.getDiagnosticsForLocation(this.toLocation()).filter {
         it.factoryId == KotlinToolingDiagnostics.DisabledCinteropsCommonizationInHmppProject.id
     }
 

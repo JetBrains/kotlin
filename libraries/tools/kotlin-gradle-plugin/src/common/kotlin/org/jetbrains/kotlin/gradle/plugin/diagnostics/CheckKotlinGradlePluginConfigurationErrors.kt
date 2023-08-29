@@ -19,17 +19,16 @@ import org.jetbrains.kotlin.gradle.tasks.withType
 @DisableCachingByDefault(
     because = "This task renders reported diagnostics; caching this task will hide diagnostics and obscure issues in the build"
 )
-internal abstract class CheckKotlinGradlePluginConfigurationErrors : DefaultTask() {
-    @get:Input
-    abstract val errorDiagnostics: ListProperty<ToolingDiagnostic>
-
+internal abstract class CheckKotlinGradlePluginConfigurationErrors : DefaultTask(), UsesKotlinToolingDiagnostics {
     @get:Internal
-    abstract val renderingOptions: Property<ToolingDiagnosticRenderingOptions>
+    abstract val fromProject: Property<ToolingDiagnostic.Location.GradleProject>
 
     @TaskAction
     fun checkNoErrors() {
-        if (errorDiagnostics.get().isNotEmpty()) {
-            renderReportedDiagnostics(errorDiagnostics.get(), logger, renderingOptions.get())
+        val errorDiagnostics = toolingDiagnosticsCollector.get().getDiagnosticsForLocation(fromProject.get())
+            .filter { it.severity >= ToolingDiagnostic.Severity.ERROR }
+        if (errorDiagnostics.isNotEmpty()) {
+            renderReportedDiagnostics(errorDiagnostics, logger, diagnosticRenderingOptions.get())
             throw InvalidUserCodeException("Kotlin Gradle Plugin reported errors. Check the log for details")
         }
     }
@@ -48,15 +47,7 @@ internal fun Project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(): TaskPr
         CheckKotlinGradlePluginConfigurationErrors.TASK_NAME,
         CheckKotlinGradlePluginConfigurationErrors::class.java
     ) { task ->
-        task.errorDiagnostics.set(
-            provider {
-                kotlinToolingDiagnosticsCollector
-                    .getDiagnosticsForProject(this).asSequence()
-                    .filter { it.severity == ToolingDiagnostic.Severity.ERROR }
-                    .toList()
-            }
-        )
-        task.renderingOptions.set(ToolingDiagnosticRenderingOptions.forProject(this))
+        task.fromProject.set(this@locateOrRegisterCheckKotlinGradlePluginErrorsTask.toLocation())
         task.description = DESCRIPTION
         task.group = LifecycleBasePlugin.VERIFICATION_GROUP
     }

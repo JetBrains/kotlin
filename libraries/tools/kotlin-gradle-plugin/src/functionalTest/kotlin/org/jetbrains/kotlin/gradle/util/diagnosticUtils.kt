@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toLocation
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.nio.file.Path
@@ -29,7 +30,7 @@ internal fun checkDiagnosticsWithMppProject(projectName: String, projectConfigur
  */
 internal fun Project.checkDiagnostics(testDataName: String, compactRendering: Boolean = true) {
     val diagnosticsPerProject = rootProject.allprojects.mapNotNull {
-        val diagnostics = it.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(it)
+        val diagnostics = it.kotlinToolingDiagnosticsCollector.getDiagnosticsForLocation(it.toLocation())
         if (diagnostics.isEmpty() && compactRendering)
             null
         else
@@ -61,7 +62,7 @@ internal fun Project.checkDiagnostics(testDataName: String, compactRendering: Bo
 }
 
 internal fun Project.assertNoDiagnostics() {
-    val actualDiagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
+    val actualDiagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForLocation(this.toLocation())
     assertTrue(
         actualDiagnostics.isEmpty(), "Expected to have no diagnostics, but some were reported:\n ${actualDiagnostics.render()}"
     )
@@ -72,11 +73,11 @@ internal fun Project.assertNoDiagnostics() {
  * are ignored. If you need to compare the parameters, refer to the overload accepting [ToolingDiagnostic]
  */
 internal fun Project.assertContainsDiagnostic(factory: ToolingDiagnosticFactory) {
-    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertContainsDiagnostic(factory)
+    kotlinToolingDiagnosticsCollector.getDiagnosticsForLocation(this.toLocation()).assertContainsDiagnostic(factory)
 }
 
 internal fun Project.assertContainsDiagnostic(diagnostic: ToolingDiagnostic) {
-    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertContainsDiagnostic(diagnostic)
+    kotlinToolingDiagnosticsCollector.getDiagnosticsForLocation(this.toLocation()).assertContainsDiagnostic(diagnostic)
 }
 
 private fun Any.withIndent() = this.toString().prependIndent("    ")
@@ -115,7 +116,7 @@ internal fun Collection<ToolingDiagnostic>.assertDiagnostics(vararg diagnostics:
 }
 
 internal fun Project.assertNoDiagnostics(factory: ToolingDiagnosticFactory) {
-    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertNoDiagnostics(factory.id)
+    kotlinToolingDiagnosticsCollector.getDiagnosticsForLocation(this.toLocation()).assertNoDiagnostics(factory.id)
 }
 
 internal fun Collection<ToolingDiagnostic>.assertNoDiagnostics(id: String) {

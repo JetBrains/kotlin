@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.AndroidSourceSetLayoutV1SourceSetsNotFoundError
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toLocation
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.util.androidApplication
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
@@ -68,6 +69,6 @@ class AndroidSourceSetLayoutV1SourceSetsNotFoundErrorTest {
         }
 
         assertFails { project.evaluate() }
-        return project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project).toList()
+        return project.kotlinToolingDiagnosticsCollector.getDiagnosticsForLocation(project.toLocation()).toList()
     }
 }
