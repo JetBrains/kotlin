@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.receiverType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtLoopExpression
 import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtStatementExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -112,7 +114,11 @@ internal class KtFirCompletionCandidateChecker(
      * @receiver PSI receiver expression in some qualified expression (e.g. `foo` in `foo?.bar()`, `a` in `a.b`)
      * @return A FIR expression which most precisely represents the receiver for the corresponding FIR call.
      */
-    private fun KtExpression.getMatchingFirExpressionForCallReceiver(): FirExpression {
+    private fun KtExpression.getMatchingFirExpressionForCallReceiver(): FirExpression? {
+        // FIR for KtStatementExpression is not FirExpression
+        if (this is KtStatementExpression) {
+            return null
+        }
         val psiWholeCall = this.getQualifiedExpressionForReceiver()
         if (psiWholeCall !is KtSafeQualifiedExpression) return this.getOrBuildFirOfType<FirExpression>(firResolveSession)
 
