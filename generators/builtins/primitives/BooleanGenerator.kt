@@ -224,12 +224,10 @@ class WasmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
     }
 
     override fun MethodBuilder.modifyGeneratedToString() {
-        modifySignature { visibility = null }
         "if (this) \"true\" else \"false\"".setAsExpressionBody()
     }
 
     override fun MethodBuilder.modifyGeneratedEquals() {
-        modifySignature { visibility = null }
         """
             return if (other !is Boolean) {
                 false
@@ -237,10 +235,6 @@ class WasmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
                 wasm_i32_eq(this.toInt(), other.toInt())
             }
         """.trimIndent().setAsBlockBody()
-    }
-
-    override fun MethodBuilder.modifyGeneratedHashCode() {
-        modifySignature { visibility = null }
     }
 
     override fun ClassBuilder.generateAdditionalMethods() {
@@ -305,10 +299,6 @@ class NativeBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
 
             "kotlin.native.internal.areEqualByValue(this, other)".setAsExpressionBody()
         }
-    }
-
-    override fun MethodBuilder.modifyGeneratedHashCode() {
-        modifySignature { visibility = MethodVisibility.PUBLIC }
     }
 
     override fun ClassBuilder.generateAdditionalMethods() {

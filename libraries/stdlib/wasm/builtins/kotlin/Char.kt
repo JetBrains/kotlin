@@ -118,7 +118,7 @@ public class Char private constructor(private val value: Char) : Comparable<Char
         this.code.toDouble()
 
     @kotlin.internal.IntrinsicConstEvaluation
-    override fun toString(): String {
+    public override fun toString(): String {
         val array = WasmCharArray(1)
         array.set(0, this)
         return array.createString()
@@ -131,7 +131,7 @@ public class Char private constructor(private val value: Char) : Comparable<Char
         return false
     }
 
-    override fun hashCode(): Int =
+    public override fun hashCode(): Int =
         this.code.hashCode()
 
     public companion object {

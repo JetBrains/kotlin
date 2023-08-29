@@ -265,7 +265,7 @@ internal class SecondaryConstructorBuilder : AnnotatedAndDocumented(), Primitive
 
 internal class MethodSignatureBuilder : PrimitiveBuilder {
     var isExternal: Boolean = false
-    var visibility: MethodVisibility? = MethodVisibility.PUBLIC
+    var visibility: MethodVisibility = MethodVisibility.PUBLIC
     var isOverride: Boolean = false
     var isInline: Boolean = false
     var isInfix: Boolean = false
@@ -293,7 +293,7 @@ internal class MethodSignatureBuilder : PrimitiveBuilder {
         throwIfWasNotInitialized(returnType, "returnType", "MethodSignatureBuilder")
 
         return buildString {
-            visibility?.let { append("${it.name.lowercase()} ") }
+            append("${visibility.name.lowercase()} ")
             if (isExternal) append("external ")
             if (isOverride) append("override ")
             if (isInline) append("inline ")

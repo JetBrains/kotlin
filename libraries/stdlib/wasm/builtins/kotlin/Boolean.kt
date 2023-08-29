@@ -53,11 +53,11 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
         wasm_i32_compareTo(this.toInt(), other.toInt())
 
     @kotlin.internal.IntrinsicConstEvaluation
-    override fun toString(): String =
+    public override fun toString(): String =
         if (this) "true" else "false"
 
     @kotlin.internal.IntrinsicConstEvaluation
-    override fun equals(other: Any?): Boolean {
+    public override fun equals(other: Any?): Boolean {
         return if (other !is Boolean) {
             false
         } else {
@@ -65,7 +65,7 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
         }
     }
 
-    override fun hashCode(): Int =
+    public override fun hashCode(): Int =
         if (this) 1231 else 1237
 
     @WasmNoOpCast

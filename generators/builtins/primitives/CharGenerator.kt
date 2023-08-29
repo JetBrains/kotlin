@@ -547,7 +547,6 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     }
 
     override fun MethodBuilder.modifyGeneratedToString() {
-        modifySignature { visibility = null }
         """
             val array = WasmCharArray(1)
             array.set(0, this)
@@ -556,7 +555,6 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     }
 
     override fun MethodBuilder.modifyGeneratedHashCode() {
-        modifySignature { visibility = null }
         "this.code.hashCode()".setAsExpressionBody()
     }
 }
