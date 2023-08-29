@@ -186,4 +186,19 @@ class CustomK2Tests : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    @DisplayName("Common metadata compilation (expect actual discrimination). KT-61540")
+    fun kt60438MetadataExpectActualDiscrimination(gradleVersion: GradleVersion) {
+        project(
+            "k2-kt-61540-expect-actual-discrimination", gradleVersion,
+            buildOptions = defaultBuildOptions.copy(languageVersion = "2.0")
+        ) {
+            build("assemble") {
+                assertTasksExecuted(":compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":compileNativeMainKotlinMetadata")
+                assertTasksExecuted(":compileLinuxMainKotlinMetadata")
+            }
+        }
+    }
 }
