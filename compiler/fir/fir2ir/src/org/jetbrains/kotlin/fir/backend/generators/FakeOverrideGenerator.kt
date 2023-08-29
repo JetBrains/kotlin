@@ -119,10 +119,11 @@ class FakeOverrideGenerator(
     ) {
         val isLocal = firClass !is FirRegularClass || firClass.isLocal
         useSiteOrStaticScope.processFunctionsByName(name) { functionSymbol ->
+            @OptIn(LeakedDeclarationCaches::class)
             createFakeOverriddenIfNeeded(
                 firClass, irClass, isLocal, functionSymbol,
                 declarationStorage::getCachedIrFunction,
-                declarationStorage::getOrCreateIrFunction,
+                declarationStorage::createAndCacheIrFunction,
                 createFakeOverrideSymbol = { firFunction, callableSymbol ->
                     val symbol = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(callableSymbol, firClass.symbol.classId)
                     FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
@@ -147,10 +148,11 @@ class FakeOverrideGenerator(
         useSiteOrStaticScope.processPropertiesByName(name) { propertyOrFieldSymbol ->
             when (propertyOrFieldSymbol) {
                 is FirPropertySymbol -> {
+                    @OptIn(LeakedDeclarationCaches::class)
                     createFakeOverriddenIfNeeded(
                         firClass, irClass, isLocal, propertyOrFieldSymbol,
                         declarationStorage::getCachedIrProperty,
-                        declarationStorage::getOrCreateIrProperty,
+                        declarationStorage::createAndCacheIrProperty,
                         createFakeOverrideSymbol = { firProperty, callableSymbol ->
                             val symbolForOverride =
                                 FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(callableSymbol, firClass.symbol.classId)

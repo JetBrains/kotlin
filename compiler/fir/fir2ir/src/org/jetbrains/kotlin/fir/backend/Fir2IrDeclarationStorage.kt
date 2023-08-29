@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.utils.threadLocal
 import java.util.concurrent.ConcurrentHashMap
 
+@OptIn(LeakedDeclarationCaches::class)
 class Fir2IrDeclarationStorage(
     private val components: Fir2IrComponents,
     private val moduleDescriptor: FirModuleDescriptor,
@@ -440,7 +441,8 @@ class Fir2IrDeclarationStorage(
         return createAndCacheIrFunction(function, irParent, predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
     }
 
-    private fun createAndCacheIrFunction(
+    @LeakedDeclarationCaches
+    fun createAndCacheIrFunction(
         function: FirFunction,
         irParent: IrDeclarationParent?,
         predefinedOrigin: IrDeclarationOrigin? = null,
@@ -543,7 +545,8 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun createAndCacheIrProperty(
+    @LeakedDeclarationCaches
+    fun createAndCacheIrProperty(
         property: FirProperty,
         irParent: IrDeclarationParent?,
         predefinedOrigin: IrDeclarationOrigin? = null,
