@@ -34160,6 +34160,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
                 }
 
                 @Test
+                @TestMetadata("expectAndCommonFunctionOverloads.kt")
+                public void testExpectAndCommonFunctionOverloads() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectAndCommonFunctionOverloads.kt");
+                }
+
+                @Test
                 @TestMetadata("expectInterfaceInSupertypes.kt")
                 public void testExpectInterfaceInSupertypes() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectInterfaceInSupertypes.kt");

@@ -61,9 +61,6 @@ abstract class AbstractConeCallConflictResolver(
             if (isGeneric1 && isGeneric2) return false
         }
 
-        if (!call1.isExpect && call2.isExpect) return true
-        if (call1.isExpect && !call2.isExpect) return false
-
         if (call1.contextReceiverCount > call2.contextReceiverCount) return true
         if (call1.contextReceiverCount < call2.contextReceiverCount) return false
 
