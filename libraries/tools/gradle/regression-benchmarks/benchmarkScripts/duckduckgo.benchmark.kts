@@ -4,8 +4,8 @@
 @file:BenchmarkProject(
     name = "duckduckgo",
     gitUrl = "https://github.com/duckduckgo/Android.git",
-    gitCommitSha = "3df1c07fad63f238f5e02050320c06abde732f58",
-    stableKotlinVersion = "1.8.21",
+    gitCommitSha = "db1dce8f09935a2bef27cd790f5581aafdcbb0a6",
+    stableKotlinVersion = "1.9.10",
 )
 
 import java.io.File
@@ -33,7 +33,7 @@ runBenchmarks(
             useGradleArgs("--no-build-cache")
 
             runTasks(":app:assemblePlayDebug")
-            applyAbiChangeTo("common/src/main/java/com/duckduckgo/app/global/VpnViewModelFactory.kt")
+            applyAbiChangeTo("common/common-utils/src/main/java/com/duckduckgo/app/global/VpnViewModelFactory.kt")
         }
 
         scenario {
@@ -58,7 +58,7 @@ runBenchmarks(
 
             runTasks(":app:assemblePlayDebug")
 
-            applyAndroidResourceValueChange("common/src/main/res/values/strings-common.xml")
+            applyAndroidResourceValueChange("common/common-utils/src/main/res/values/strings-common.xml")
         }
 
         scenario {

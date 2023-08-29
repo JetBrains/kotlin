@@ -90,7 +90,7 @@ fun JavaExec.usesAndroidSdk() {
 addBenchmarkTask(
     taskName = "benchmarkRegressionDuckduckgo",
     script = "duckduckgo.benchmark.kts",
-    JavaLanguageVersion.of(11)
+    JavaLanguageVersion.of(17)
 ) {
     usesAndroidSdk()
 }
