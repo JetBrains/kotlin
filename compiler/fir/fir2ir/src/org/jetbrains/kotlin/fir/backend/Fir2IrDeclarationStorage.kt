@@ -397,16 +397,7 @@ class Fir2IrDeclarationStorage(
                 callablesGenerator.createIrConstructor(fir, parent as IrClass, predefinedOrigin = origin)
             },
             createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
-                val symbol = Fir2IrConstructorSymbol(signature)
-                val irConstructor = fir.convertWithOffsets { startOffset, endOffset ->
-                    symbolTable.declareConstructor(signature, { symbol }) {
-                        Fir2IrLazyConstructor(
-                            components, startOffset, endOffset, declarationOrigin, fir, symbol
-                        ).apply {
-                            parent = lazyParent
-                        }
-                    }
-                }
+                val irConstructor = lazyDeclarationsGenerator.createIrLazyConstructor(fir, signature, declarationOrigin, lazyParent)
                 constructorCache[fir] = irConstructor
                 // NB: this is needed to prevent recursions in case of self bounds
                 (irConstructor as Fir2IrLazyConstructor).prepareTypeParameters()
@@ -414,6 +405,7 @@ class Fir2IrDeclarationStorage(
             },
         ) as IrConstructorSymbol
     }
+
 
     // ------------------------------------ properties ------------------------------------
 
