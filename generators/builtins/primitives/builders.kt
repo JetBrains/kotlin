@@ -133,7 +133,6 @@ internal class FileBuilder(private val builtBy: String) : PrimitiveBuilder {
 }
 
 internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
-    var isFinal: Boolean = false
     var name: String = ""
     private var primaryConstructor: PrimaryConstructorBuilder = PrimaryConstructorBuilder()
     private var secondaryConstructor: SecondaryConstructorBuilder? = null
@@ -175,7 +174,6 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
             this.printDocumentationAndAnnotations()
 
             append("public ")
-            if (isFinal) append("final ")
             appendLine("class $name ${primaryConstructor.build()}: ${superTypes.joinToString()} {")
 
             secondaryConstructor?.let {

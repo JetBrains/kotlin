@@ -13,7 +13,7 @@ package kotlin
 import kotlin.native.internal.*
 
 /** Represents a 8-bit signed integer. */
-public final class Byte private constructor() : Number(), Comparable<Byte> {
+public class Byte private constructor() : Number(), Comparable<Byte> {
     @CanBePrecreated
     companion object {
         /**
@@ -446,7 +446,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
 }
 
 /** Represents a 16-bit signed integer. */
-public final class Short private constructor() : Number(), Comparable<Short> {
+public class Short private constructor() : Number(), Comparable<Short> {
     @CanBePrecreated
     companion object {
         /**
@@ -877,7 +877,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
 }
 
 /** Represents a 32-bit signed integer. */
-public final class Int private constructor() : Number(), Comparable<Int> {
+public class Int private constructor() : Number(), Comparable<Int> {
     @CanBePrecreated
     companion object {
         /**
@@ -1361,7 +1361,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
 }
 
 /** Represents a 64-bit signed integer. */
-public final class Long private constructor() : Number(), Comparable<Long> {
+public class Long private constructor() : Number(), Comparable<Long> {
     @CanBePrecreated
     companion object {
         /**
@@ -1848,7 +1848,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
 }
 
 /** Represents a single-precision 32-bit IEEE 754 floating point number. */
-public final class Float private constructor() : Number(), Comparable<Float> {
+public class Float private constructor() : Number(), Comparable<Float> {
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
@@ -2259,7 +2259,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
 }
 
 /** Represents a double-precision 64-bit IEEE 754 floating point number. */
-public final class Double private constructor() : Number(), Comparable<Double> {
+public class Double private constructor() : Number(), Comparable<Double> {
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.

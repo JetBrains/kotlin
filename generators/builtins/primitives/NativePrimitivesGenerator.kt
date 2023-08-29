@@ -16,10 +16,6 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
         import("kotlin.native.internal.*")
     }
 
-    override fun ClassBuilder.modifyGeneratedClass(thisKind: PrimitiveType) {
-        this.isFinal = true
-    }
-
     override fun CompanionObjectBuilder.modifyGeneratedCompanionObject(thisKind: PrimitiveType) {
         if (thisKind !in PrimitiveType.floatingPoint) {
             annotations += "CanBePrecreated"
