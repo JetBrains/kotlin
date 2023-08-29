@@ -346,7 +346,7 @@ class KotlinMetadataTargetConfigurator :
         val artifacts = sourceSet.internal.resolvableMetadataConfiguration.incoming.artifacts.getResolvedArtifactsCompat(project)
 
         // Metadata from visible source sets within dependsOn closure
-        compilation.compileDependencyFiles += sourceSet.dependsOnClassesDirs
+        compilation.compileDependencyFiles += sourceSet.dependsOnClosureCompilePath
 
         // Requested dependencies that are not Multiplatform Libraries. for example stdlib-common
         compilation.compileDependencyFiles += project.files(artifacts.map { it.filterNot { it.isMpp }.map { it.file } })
@@ -361,13 +361,6 @@ class KotlinMetadataTargetConfigurator :
 
     private val ResolvedArtifactResult.isMpp: Boolean get() = variant.attributes.containsMultiplatformAttributes
 
-    private val KotlinSourceSet.dependsOnClassesDirs: FileCollection
-        get() = project.filesProvider {
-            internal.dependsOnClosure.mapNotNull { hierarchySourceSet ->
-                val compilation = project.future { findMetadataCompilation(hierarchySourceSet) }.getOrThrow() ?: return@mapNotNull null
-                compilation.output.classesDirs
-            }
-        }
 
     private fun createCommonMainElementsConfiguration(target: KotlinMetadataTarget) {
         val project = target.project
@@ -508,3 +501,44 @@ internal suspend fun Project.findMetadataCompilation(sourceSet: KotlinSourceSet)
     metadataTarget.awaitMetadataCompilationsCreated()
     return metadataTarget.compilations.findByName(sourceSet.name) as KotlinMetadataCompilation<*>?
 }
+
+
+/**
+ * Contains all 'klibs' produced by compiling 'dependsOn' SourceSet's metadata.
+ * The compile path can be passed to another metadata compilation as list of dependencies.
+ *
+ * Note: The compile path is ordered and will provide klibs containing corresponding actuals before providing
+ * the klibs defining expects. This ordering is necessary for K2 as the compiler will not implement
+ * its own 'actual over expect' discrimination anymore. K2 will use the first matching symbol of a given compile path.
+ *
+ * e.g.
+ * When compiling a 'iosMain' source set, using the default hierarchy, we expect the order of the compile path:
+ * ```
+ * appleMain.klib, nativeMain.klib, commonMain.klib
+ * ```
+ *
+ * Further details: https://youtrack.jetbrains.com/issue/KT-61540
+ *
+ */
+internal val KotlinSourceSet.dependsOnClosureCompilePath: FileCollection
+    get() = project.filesProvider {
+        val topologicallySortedDependsOnClosure = internal.dependsOnClosure.sortedWith(Comparator { a, b ->
+            when {
+                a in b.internal.dependsOnClosure -> 1
+                b in a.internal.dependsOnClosure -> -1
+                /*
+                SourceSet 'a' and SourceSet 'b' are not refining on each other,
+                therefore no re-ordering is necessary (no requirements in this case).
+
+                The original order of the 'dependsOnClosure' will be preserved, which will depend
+                on the order of 'KotlinSourceSet.dependsOn' calls
+                 */
+                else -> 0
+            }
+        })
+
+        topologicallySortedDependsOnClosure.mapNotNull { hierarchySourceSet ->
+            val compilation = project.future { findMetadataCompilation(hierarchySourceSet) }.getOrThrow() ?: return@mapNotNull null
+            compilation.output.classesDirs
+        }
+    }
