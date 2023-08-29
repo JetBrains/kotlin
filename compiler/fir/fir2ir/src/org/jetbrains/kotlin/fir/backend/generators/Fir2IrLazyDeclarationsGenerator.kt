@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.convertWithOffsets
 import org.jetbrains.kotlin.fir.backend.irOrigin
 import org.jetbrains.kotlin.fir.backend.isStubPropertyForPureField
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
@@ -18,11 +21,10 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.symbols.Fir2IrConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.Fir2IrPropertySymbol
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertyPublicSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -57,7 +59,7 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         lazyParent: IrDeclarationParent,
         declarationOrigin: IrDeclarationOrigin
     ): IrProperty {
-        val symbol = Fir2IrPropertySymbol(signature)
+        val symbol = IrPropertyPublicSymbolImpl(signature)
         val firPropertySymbol = fir.symbol
 
         fun create(startOffset: Int, endOffset: Int): Fir2IrLazyProperty {
@@ -95,7 +97,7 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         declarationOrigin: IrDeclarationOrigin,
         lazyParent: IrDeclarationParent,
     ): IrConstructor = fir.convertWithOffsets { startOffset, endOffset ->
-        symbolTable.declareConstructor(signature, { Fir2IrConstructorSymbol(signature) }) { symbol ->
+        symbolTable.declareConstructor(signature, { IrConstructorPublicSymbolImpl(signature) }) { symbol ->
             Fir2IrLazyConstructor(components, startOffset, endOffset, declarationOrigin, fir, symbol).apply {
                 parent = lazyParent
             }

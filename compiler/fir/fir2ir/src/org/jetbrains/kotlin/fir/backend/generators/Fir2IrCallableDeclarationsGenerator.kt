@@ -24,8 +24,9 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -73,7 +74,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         return if (signature == null) {
             factory(IrSimpleFunctionSymbolImpl())
         } else {
-            symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature) }, factory)
+            symbolTable.declareSimpleFunction(signature, { IrSimpleFunctionPublicSymbolImpl(signature) }, factory)
         }
     }
 
@@ -178,7 +179,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         return if (signature == null)
             factory(IrConstructorSymbolImpl())
         else
-            symbolTable.declareConstructor(signature, { Fir2IrConstructorSymbol(signature) }, factory)
+            symbolTable.declareConstructor(signature, { IrConstructorPublicSymbolImpl(signature) }, factory)
     }
 
     fun createIrConstructor(
@@ -233,7 +234,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         return if (signature == null)
             factory(IrPropertySymbolImpl())
         else
-            symbolTable.declareProperty(signature, { Fir2IrPropertySymbol(signature) }, factory)
+            symbolTable.declareProperty(signature, { IrPropertyPublicSymbolImpl(signature) }, factory)
     }
 
     fun createIrProperty(
@@ -387,16 +388,6 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
 
     // ------------------------------------ property accessors ------------------------------------
 
-    private fun declareIrAccessor(
-        signature: IdSignature?,
-        factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction
-    ): IrSimpleFunction {
-        return if (signature == null)
-            factory(IrSimpleFunctionSymbolImpl())
-        else
-            symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature) }, factory)
-    }
-
     private fun createIrPropertyAccessor(
         propertyAccessor: FirPropertyAccessor?,
         property: FirProperty,
@@ -417,9 +408,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                 signatureComposer.composeAccessorSignature(property, isSetter, fakeOverrideOwnerLookupTag)
             }
         val containerSource = (correspondingProperty as? IrProperty)?.containerSource
-        return declareIrAccessor(
-            signature
-        ) { symbol ->
+        return declareIrSimpleFunction(signature) { symbol ->
             val accessorReturnType = if (isSetter) irBuiltIns.unitType else propertyType
             val visibility = propertyAccessor?.visibility?.let {
                 components.visibilityConverter.convertToDescriptorVisibility(it)
@@ -925,7 +914,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
 
     fun createIrScript(script: FirScript): IrScript = script.convertWithOffsets { startOffset, endOffset ->
         val signature = signatureComposer.composeSignature(script)!!
-        symbolTable.declareScript(signature, { Fir2IrScriptSymbol(signature) }) { symbol ->
+        symbolTable.declareScript(signature, { IrScriptPublicSymbolImpl(signature) }) { symbol ->
             IrScriptImpl(symbol, script.name, irFactory, startOffset, endOffset).also { irScript ->
                 irScript.origin = SCRIPT_K2_ORIGIN
                 irScript.metadata = FirMetadataSource.Script(script)

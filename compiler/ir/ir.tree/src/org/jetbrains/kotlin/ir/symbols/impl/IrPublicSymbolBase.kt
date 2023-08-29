@@ -107,3 +107,6 @@ class IrFieldPublicSymbolImpl(sig: IdSignature, descriptor: PropertyDescriptor? 
 class IrTypeParameterPublicSymbolImpl(sig: IdSignature, descriptor: TypeParameterDescriptor? = null) :
     IrBindablePublicSymbolBase<TypeParameterDescriptor, IrTypeParameter>(sig, descriptor),
     IrTypeParameterSymbol
+
+class IrScriptPublicSymbolImpl(sig: IdSignature, descriptor: ScriptDescriptor? = null) :
+    IrBindablePublicSymbolBase<ScriptDescriptor, IrScript>(sig, descriptor), IrScriptSymbol
