@@ -1,67 +1,25 @@
- diff --git a/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/ContributesRemoteFeatureCodeGenerator.kt b/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/ContributesRemoteFeatureCodeGenerator.kt
-index 483cc75b1..d24e836ab 100644
---- a/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/ContributesRemoteFeatureCodeGenerator.kt
-+++ b/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/ContributesRemoteFeatureCodeGenerator.kt
-@@ -827,7 +827,7 @@ class ContributesRemoteFeatureCodeGenerator : CodeGenerator {
-         }
- 
-         // validate functions must be annotated with DefaultValue
--        if (boundType.declaredFunctions().any { !it.isAnnotatedWith(Toggle.DefaultValue::class.fqName) }) {
-+        if (boundType.declaredFunctions().any { !it.isAnnotatedWith(listOf(Toggle.DefaultValue::class.fqName)) }) {
-             throw AnvilCompilationException(
-                 "All functions in ${boundType.fqName} must be annotated with [Toggle.DefaultValue]",
-                 element = vmClass.clazz.identifyingElement,
-diff --git a/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/Extensions.kt b/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/Extensions.kt
-index 8b38dd9a3..20dd1f342 100644
---- a/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/Extensions.kt
-+++ b/anvil/anvil-compiler/src/main/java/com/duckduckgo/anvil/compiler/Extensions.kt
-@@ -17,9 +17,11 @@
- package com.duckduckgo.anvil.compiler
- 
- import com.squareup.anvil.annotations.ExperimentalAnvilApi
-+import com.squareup.anvil.compiler.internal.fqNameOrNull
- import com.squareup.anvil.compiler.internal.reference.AnnotatedReference
- import com.squareup.anvil.compiler.internal.reference.AnnotationReference
- import com.squareup.anvil.compiler.internal.reference.ClassReference
-+import com.squareup.anvil.compiler.internal.reference.FunctionReference
- import com.squareup.anvil.compiler.internal.reference.argumentAt
- import org.jetbrains.kotlin.name.FqName
- 
-@@ -31,6 +33,18 @@ internal fun AnnotatedReference.isAnnotatedWith(fqName: List<FqName>): Boolean {
-     return annotations.any { it.fqName in fqName }
- }
- 
-+@OptIn(ExperimentalAnvilApi::class)
-+internal fun FunctionReference.isAnnotatedWith(fqNames: List<FqName>): Boolean {
-+    return when (this) {
-+        is FunctionReference.Psi -> function.annotations.any { annotation ->
-+            fqNames.any { annotation.fqNameOrNull(module) == it }
-+        }
-+        is FunctionReference.Descriptor  -> fqNames.any { fqName ->
-+            function.annotations.any { it.fqName == fqName }
-+        }
-+    }
-+}
-+
- @OptIn(ExperimentalAnvilApi::class)
- internal fun AnnotatedReference.fqNameIntersect(fqName: List<FqName>): List<FqName> {
-     annotations.map { it.fqName }.intersect(fqName.toSet()).let {
 diff --git a/build.gradle b/build.gradle
-index 1a1c2897c..768116f6f 100644
+index b445a8d6a..851f36283 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -3,9 +3,8 @@
+@@ -3,20 +3,20 @@
  buildscript {
  
      ext {
--        kotlin_version = '1.7.10'
-         spotless = "6.1.2"
--        anvil_version = "2.4.1"
-+        anvil_version = "2.4.5"
-         gradle_plugin = "7.2.2" // When updating, also update lint_version
-         lint_version = "30.2.2" // This value must always be gradle_plugin + 23
+-        kotlin_version = '1.8.10'
+         spotless = '6.1.2'
+-        anvil_version = '2.4.4'
+-        gradle_plugin = '7.4.2' // When updating, also update lint_version
++        anvil_version = '2.4.7'
++        gradle_plugin = '8.1.1' // When updating, also update lint_version
+         lint_version = '30.4.2' // This value must always be gradle_plugin + 23
          min_sdk = 23
-@@ -16,6 +15,7 @@ buildscript {
+         target_sdk = 33
+-        compile_sdk = 33
++        compile_sdk = 34
+         fladle_version = '0.17.4'
+         kotlinter_version = '3.12.0'
+         dokka_version = '1.8.20'
      }
  
      repositories {
@@ -69,7 +27,7 @@ index 1a1c2897c..768116f6f 100644
          google()
          mavenCentral()
          maven { url "https://plugins.gradle.org/m2/" }
-@@ -24,7 +24,7 @@ buildscript {
+@@ -25,7 +25,7 @@ buildscript {
          classpath "com.android.tools.build:gradle:$gradle_plugin"
          classpath "com.diffplug.spotless:spotless-plugin-gradle:$spotless"
          classpath "com.squareup.anvil:gradle-plugin:$anvil_version"
@@ -78,7 +36,7 @@ index 1a1c2897c..768116f6f 100644
  
          // NOTE: Do not place your application dependencies here; they belong
          // in the individual module build.gradle files
-@@ -38,6 +38,7 @@ plugins {
+@@ -40,6 +40,7 @@ plugins {
  
  allprojects {
      repositories {
@@ -86,7 +44,7 @@ index 1a1c2897c..768116f6f 100644
          google()
          mavenCentral()
      }
-@@ -138,4 +139,4 @@ fladle {
+@@ -148,4 +149,4 @@ fladle {
      }
  }
  
@@ -97,9 +55,9 @@ diff --git a/gradle.properties b/gradle.properties
 index 709ee46cd..272c1dd8f 100644
 --- a/gradle.properties
 +++ b/gradle.properties
-@@ -21,3 +21,4 @@ org.gradle.caching=true
- org.gradle.parallel=true
- org.gradle.configureondemand=true
+@@ -23,3 +23,4 @@ org.gradle.caching=true
+ android.defaults.buildfeatures.buildconfig=true
+ android.nonFinalResIds=false
  
 +kotlinVersion=<kotlin_version>
 diff --git a/versions.properties b/versions.properties
@@ -111,7 +69,7 @@ index b6fea38be..fcd8cdb7b 100644
  version.androidx.lifecycle=2.5.1
  
 -version.androidx.room=2.5.0
-+version.androidx.room=2.6.0-alpha01
++version.androidx.room=2.6.0-beta01
  
  version.androidx.swiperefreshlayout=1.1.0
  
@@ -119,8 +77,799 @@ index b6fea38be..fcd8cdb7b 100644
  
  version.google.android.material=1.7.0
  
--version.google.dagger=2.44.2
-+version.google.dagger=2.46.1
+-version.google.dagger=2.46.1
++version.google.dagger=2.47
  
  version.jakewharton.rxrelay2=2.0.0
-
+ 
+diff --git a/ad-click/ad-click-store/build.gradle b/ad-click/ad-click-store/build.gradle
+index 6e316a4a6..459044b4b 100644
+--- a/ad-click/ad-click-store/build.gradle
++++ b/ad-click/ad-click-store/build.gradle
+@@ -22,6 +22,8 @@ plugins {
+ 
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
++android.namespace = "com.duckduckgo.adclick.store"
++
+ dependencies {
+     implementation project(path: ':common-utils')
+     implementation project(path: ':ad-click-api')
+@@ -58,4 +60,4 @@ dependencies {
+     testImplementation 'app.cash.turbine:turbine:_'
+     testImplementation Testing.robolectric
+     testImplementation project(path: ':common-test')
+-}
+\ No newline at end of file
++}
+diff --git a/ad-click/ad-click-store/src/main/AndroidManifest.xml b/ad-click/ad-click-store/src/main/AndroidManifest.xml
+index 9e79cda18..8074ffc9f 100644
+--- a/ad-click/ad-click-store/src/main/AndroidManifest.xml
++++ b/ad-click/ad-click-store/src/main/AndroidManifest.xml
+@@ -15,7 +15,4 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.adclick.store">
+-
+-</manifest>
+\ No newline at end of file
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"/>
+diff --git a/app-tracking-protection/vpn-impl/build.gradle b/app-tracking-protection/vpn-impl/build.gradle
+index cfdbf2a68..6878cd5d0 100644
+--- a/app-tracking-protection/vpn-impl/build.gradle
++++ b/app-tracking-protection/vpn-impl/build.gradle
+@@ -24,6 +24,7 @@ plugins {
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
+ android {
++    namespace = "com.duckduckgo.mobile.android.vpn"
+     lintOptions {
+         baseline file("lint-baseline.xml")
+     }
+@@ -132,4 +133,4 @@ dependencies {
+     testImplementation Testing.robolectric
+     testImplementation project(':common-test')
+     testImplementation project(':vpn-api-test')
+-}
+\ No newline at end of file
++}
+diff --git a/app-tracking-protection/vpn-impl/src/main/AndroidManifest.xml b/app-tracking-protection/vpn-impl/src/main/AndroidManifest.xml
+index fc9ebbc6d..91c6c81c7 100644
+--- a/app-tracking-protection/vpn-impl/src/main/AndroidManifest.xml
++++ b/app-tracking-protection/vpn-impl/src/main/AndroidManifest.xml
+@@ -1,6 +1,5 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.mobile.android.vpn">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+@@ -134,4 +133,4 @@
+ 
+     </application>
+ 
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/app-tracking-protection/vpn-internal/build.gradle b/app-tracking-protection/vpn-internal/build.gradle
+index 79a28f03e..10eedfdd2 100644
+--- a/app-tracking-protection/vpn-internal/build.gradle
++++ b/app-tracking-protection/vpn-internal/build.gradle
+@@ -23,6 +23,7 @@ plugins {
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
+ android {
++    namespace = "com.duckduckgo.mobile.android.vpn"
+     lintOptions {
+         baseline file("lint-baseline.xml")
+     }
+@@ -89,4 +90,4 @@ dependencies {
+         exclude group: "org.jetbrains.kotlinx", module: "kotlinx-coroutines-debug"
+     }
+     testImplementation Testing.junit4
+-}
+\ No newline at end of file
++}
+diff --git a/app-tracking-protection/vpn-internal/src/main/AndroidManifest.xml b/app-tracking-protection/vpn-internal/src/main/AndroidManifest.xml
+index 334cd9396..cefa04a4f 100644
+--- a/app-tracking-protection/vpn-internal/src/main/AndroidManifest.xml
++++ b/app-tracking-protection/vpn-internal/src/main/AndroidManifest.xml
+@@ -1,6 +1,5 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.vpn.internal">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+     <application>
+@@ -14,4 +13,4 @@
+ 
+     </application>
+ 
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/app/build.gradle b/app/build.gradle
+index 2c2f0d413..74b7e7c93 100644
+--- a/app/build.gradle
++++ b/app/build.gradle
+@@ -12,6 +12,7 @@ ext {
+ }
+ 
+ android {
++    namespace = "com.duckduckgo.app.browser"
+     defaultConfig {
+         if (project.hasProperty('internal-testing')) {
+             applicationId "com.quackquackgo.mobile"
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+index ca4c830b1..87dd5f113 100644
+--- a/app/src/main/AndroidManifest.xml
++++ b/app/src/main/AndroidManifest.xml
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools"
+-    package="com.duckduckgo.app.browser">
++    >
+ 
+     <uses-permission android:name="android.permission.INTERNET" />
+     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+diff --git a/app/src/main/java/com/duckduckgo/app/cta/ui/CtaViewModel.kt b/app/src/main/java/com/duckduckgo/app/cta/ui/CtaViewModel.kt
+index beb37d2cc..1ebbf42cc 100644
+--- a/app/src/main/java/com/duckduckgo/app/cta/ui/CtaViewModel.kt
++++ b/app/src/main/java/com/duckduckgo/app/cta/ui/CtaViewModel.kt
+@@ -49,7 +49,6 @@ import javax.inject.Inject
+ import kotlin.coroutines.CoroutineContext
+ import kotlinx.coroutines.ExperimentalCoroutinesApi
+ import kotlinx.coroutines.FlowPreview
+-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+ import kotlinx.coroutines.flow.*
+ import kotlinx.coroutines.withContext
+ import timber.log.Timber
+@@ -76,12 +75,12 @@ class CtaViewModel @Inject constructor(
+ 
+     @ExperimentalCoroutinesApi
+     @VisibleForTesting
+-    val isFireButtonPulseAnimationFlowEnabled = ConflatedBroadcastChannel(true)
++    val isFireButtonPulseAnimationFlowEnabled = MutableStateFlow(true)
+ 
+     @FlowPreview
+     @ExperimentalCoroutinesApi
+     val showFireButtonPulseAnimation: Flow<Boolean> =
+-        isFireButtonPulseAnimationFlowEnabled.asFlow()
++        isFireButtonPulseAnimationFlowEnabled
+             .flatMapLatest {
+                 when (it) {
+                     true -> getShowFireButtonPulseAnimationFlow()
+@@ -350,7 +349,7 @@ class CtaViewModel @Inject constructor(
+         .onEach { (_, forceStopAnimation) ->
+             withContext(dispatchers.io()) {
+                 if (pulseAnimationDisabled()) {
+-                    isFireButtonPulseAnimationFlowEnabled.send(false)
++                    isFireButtonPulseAnimationFlowEnabled.emit(false)
+                 }
+                 if (forceStopAnimation) {
+                     dismissPulseAnimation()
+diff --git a/app/src/main/java/com/duckduckgo/app/onboarding/ui/page/WelcomePage.kt b/app/src/main/java/com/duckduckgo/app/onboarding/ui/page/WelcomePage.kt
+index 34b9808f1..f9595dc95 100644
+--- a/app/src/main/java/com/duckduckgo/app/onboarding/ui/page/WelcomePage.kt
++++ b/app/src/main/java/com/duckduckgo/app/onboarding/ui/page/WelcomePage.kt
+@@ -38,7 +38,6 @@ import com.duckduckgo.di.scopes.FragmentScope
+ import com.duckduckgo.mobile.android.ui.viewbinding.viewBinding
+ import javax.inject.Inject
+ import kotlinx.coroutines.ExperimentalCoroutinesApi
+-import kotlinx.coroutines.channels.BroadcastChannel
+ import kotlinx.coroutines.flow.*
+ import kotlinx.coroutines.launch
+ 
+@@ -68,7 +67,7 @@ class WelcomePage : OnboardingPageFragment(R.layout.content_onboarding_welcome)
+     private var welcomeAnimationFinished = false
+ 
+     // we use a BroadcastChannel because we don't want to emit the last value upon subscription
+-    private val events = BroadcastChannel<WelcomePageView.Event>(1)
++    private val events = MutableSharedFlow<WelcomePageView.Event>(1)
+ 
+     private val welcomePageViewModel: WelcomePageViewModel by lazy {
+         ViewModelProvider(this, viewModelFactory).get(WelcomePageViewModel::class.java)
+@@ -87,7 +86,7 @@ class WelcomePage : OnboardingPageFragment(R.layout.content_onboarding_welcome)
+         setSkipAnimationListener()
+ 
+         lifecycleScope.launch {
+-            events.asFlow()
++            events
+                 .flatMapLatest { welcomePageViewModel.reduce(it) }
+                 .collect(::render)
+         }
+@@ -116,7 +115,7 @@ class WelcomePage : OnboardingPageFragment(R.layout.content_onboarding_welcome)
+ 
+     private fun event(event: WelcomePageView.Event) {
+         lifecycleScope.launch {
+-            events.send(event)
++            events.emit(event)
+         }
+     }
+ 
+diff --git a/autoconsent/autoconsent-impl/build.gradle b/autoconsent/autoconsent-impl/build.gradle
+index 03aa1317b..903f5783c 100644
+--- a/autoconsent/autoconsent-impl/build.gradle
++++ b/autoconsent/autoconsent-impl/build.gradle
+@@ -22,6 +22,8 @@ plugins {
+ 
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
++android.namespace = "com.duckduckgo.autoconsent.impl"
++
+ dependencies {
+     anvil project(path: ':anvil-compiler')
+     implementation project(path: ':anvil-annotations')
+@@ -91,4 +93,4 @@ android {
+             includeAndroidResources = true
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/autoconsent/autoconsent-impl/src/main/AndroidManifest.xml b/autoconsent/autoconsent-impl/src/main/AndroidManifest.xml
+index 59799ae04..b9acb93b8 100644
+--- a/autoconsent/autoconsent-impl/src/main/AndroidManifest.xml
++++ b/autoconsent/autoconsent-impl/src/main/AndroidManifest.xml
+@@ -14,8 +14,7 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.autoconsent.impl">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+     <application android:supportsRtl="true">
+         <activity
+             android:name=".ui.AutoconsentSettingsActivity"
+@@ -23,4 +22,4 @@
+             android:label="@string/autoconsentTitle"
+             android:parentActivityName="com.duckduckgo.app.settings.SettingsActivity" />
+     </application>
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/autofill/autofill-impl/build.gradle b/autofill/autofill-impl/build.gradle
+index fc3858c2f..bd0a0a759 100644
+--- a/autofill/autofill-impl/build.gradle
++++ b/autofill/autofill-impl/build.gradle
+@@ -22,6 +22,8 @@ plugins {
+ 
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
++android.namespace = "com.duckduckgo.autofill.impl"
++
+ dependencies {
+     implementation project(path: ':app-build-config-api')
+     implementation project(path: ':privacy-config-api')
+diff --git a/autofill/autofill-impl/src/main/AndroidManifest.xml b/autofill/autofill-impl/src/main/AndroidManifest.xml
+index 8a18ef859..148e24fba 100644
+--- a/autofill/autofill-impl/src/main/AndroidManifest.xml
++++ b/autofill/autofill-impl/src/main/AndroidManifest.xml
+@@ -14,8 +14,7 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.autofill.impl">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+     <application>
+         <activity
+@@ -26,4 +25,4 @@
+     </application>
+ 
+ 
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/common/common-test/build.gradle b/common/common-test/build.gradle
+index 0d7ec015d..b4ef05e64 100644
+--- a/common/common-test/build.gradle
++++ b/common/common-test/build.gradle
+@@ -5,6 +5,8 @@ plugins {
+ 
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
++android.namespace = "com.duckduckgo.app.test"
++
+ dependencies {
+ 
+     // Dependencies for this Module
+@@ -22,4 +24,4 @@ dependencies {
+     }
+     implementation Testing.junit4
+ 
+-}
+\ No newline at end of file
++}
+diff --git a/common/common-test/src/main/AndroidManifest.xml b/common/common-test/src/main/AndroidManifest.xml
+index 5ddb1f65b..b271bf909 100644
+--- a/common/common-test/src/main/AndroidManifest.xml
++++ b/common/common-test/src/main/AndroidManifest.xml
+@@ -15,8 +15,7 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.app.test">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+     <instrumentation
+         android:name="androidx.test.runner.AndroidJUnitRunner"
+@@ -24,4 +23,4 @@
+         android:label="Test for common"
+         />
+ 
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/common/common-ui/build.gradle b/common/common-ui/build.gradle
+index 2de7f9661..60bb54b46 100644
+--- a/common/common-ui/build.gradle
++++ b/common/common-ui/build.gradle
+@@ -23,6 +23,7 @@ plugins {
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
+ android {
++    namespace = "com.duckduckgo.mobile.android"
+     anvil {
+         generateDaggerFactories = true // default is false
+     }
+@@ -63,4 +64,4 @@ dependencies {
+     testImplementation 'app.cash.turbine:turbine:_'
+     testImplementation Testing.robolectric
+     testImplementation project(path: ':common-test')
+-}
+\ No newline at end of file
++}
+diff --git a/common/common-ui/src/main/AndroidManifest.xml b/common/common-ui/src/main/AndroidManifest.xml
+index 3051093c4..69e22b019 100644
+--- a/common/common-ui/src/main/AndroidManifest.xml
++++ b/common/common-ui/src/main/AndroidManifest.xml
+@@ -14,8 +14,7 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.mobile.android">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+     <application>
+ 
+@@ -28,4 +27,4 @@
+             android:resource="@array/preloaded_fonts" />
+     </application>
+ 
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/common/common-utils/build.gradle b/common/common-utils/build.gradle
+index 85586cccb..3839b239e 100644
+--- a/common/common-utils/build.gradle
++++ b/common/common-utils/build.gradle
+@@ -24,6 +24,7 @@ plugins {
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
+ android {
++    namespace = "com.duckduckgo.app.global"
+     lintOptions {
+         baseline file("lint-baseline.xml")
+     }
+diff --git a/common/common-utils/src/main/AndroidManifest.xml b/common/common-utils/src/main/AndroidManifest.xml
+index 918e07788..6c9af1677 100644
+--- a/common/common-utils/src/main/AndroidManifest.xml
++++ b/common/common-utils/src/main/AndroidManifest.xml
+@@ -15,8 +15,7 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.app.global">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+     <instrumentation
+         android:name="androidx.test.runner.AndroidJUnitRunner"
+@@ -24,4 +23,4 @@
+         android:label="Test for common"
+         />
+ 
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/element-hiding/element-hiding-store/build.gradle b/element-hiding/element-hiding-store/build.gradle
+index 136b0011a..d5907c9f4 100644
+--- a/element-hiding/element-hiding-store/build.gradle
++++ b/element-hiding/element-hiding-store/build.gradle
+@@ -22,6 +22,8 @@ plugins {
+ 
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
++android.namespace = "com.duckduckgo.elementhiding.store"
++
+ dependencies {
+     implementation project(path: ':common-utils')
+     implementation Kotlin.stdlib.jdk7
+@@ -54,4 +56,4 @@ dependencies {
+     testImplementation 'app.cash.turbine:turbine:_'
+     testImplementation Testing.robolectric
+     testImplementation project(path: ':common-test')
+-}
+\ No newline at end of file
++}
+diff --git a/element-hiding/element-hiding-store/src/main/AndroidManifest.xml b/element-hiding/element-hiding-store/src/main/AndroidManifest.xml
+index 58f99753e..8074ffc9f 100644
+--- a/element-hiding/element-hiding-store/src/main/AndroidManifest.xml
++++ b/element-hiding/element-hiding-store/src/main/AndroidManifest.xml
+@@ -15,7 +15,4 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.elementhiding.store">
+-
+-</manifest>
+\ No newline at end of file
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"/>
+diff --git a/fingerprint-protection/fingerprint-protection-store/build.gradle b/fingerprint-protection/fingerprint-protection-store/build.gradle
+index 7d4c939e3..29749aa51 100644
+--- a/fingerprint-protection/fingerprint-protection-store/build.gradle
++++ b/fingerprint-protection/fingerprint-protection-store/build.gradle
+@@ -22,6 +22,8 @@ plugins {
+ 
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
++android.namespace = "com.duckduckgo.fingerprintprotection.store"
++
+ dependencies {
+     implementation project(path: ':common-utils')
+     implementation project(path: ':fingerprint-protection-api')
+@@ -58,4 +60,4 @@ dependencies {
+     testImplementation 'app.cash.turbine:turbine:_'
+     testImplementation Testing.robolectric
+     testImplementation project(path: ':common-test')
+-}
+\ No newline at end of file
++}
+diff --git a/fingerprint-protection/fingerprint-protection-store/src/main/AndroidManifest.xml b/fingerprint-protection/fingerprint-protection-store/src/main/AndroidManifest.xml
+index 917eee29a..311bf3593 100644
+--- a/fingerprint-protection/fingerprint-protection-store/src/main/AndroidManifest.xml
++++ b/fingerprint-protection/fingerprint-protection-store/src/main/AndroidManifest.xml
+@@ -15,7 +15,4 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.fingerprintprotection.store">
+-
+-</manifest>
+\ No newline at end of file
++<manifest xmlns:android="http://schemas.android.com/apk/res/android" />
+diff --git a/macos/macos-impl/build.gradle b/macos/macos-impl/build.gradle
+index 63a9de7f6..f5c7b0f1d 100644
+--- a/macos/macos-impl/build.gradle
++++ b/macos/macos-impl/build.gradle
+@@ -22,6 +22,8 @@ plugins {
+ 
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
++android.namespace = "com.duckduckgo.macos_impl"
++
+ dependencies {
+     anvil project(path: ':anvil-compiler')
+     implementation project(path: ':anvil-annotations')
+diff --git a/macos/macos-impl/src/main/AndroidManifest.xml b/macos/macos-impl/src/main/AndroidManifest.xml
+index c54d4aa07..65859660d 100644
+--- a/macos/macos-impl/src/main/AndroidManifest.xml
++++ b/macos/macos-impl/src/main/AndroidManifest.xml
+@@ -14,8 +14,7 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.macos_impl">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+     <application android:supportsRtl="true">
+         <activity
+@@ -27,4 +26,4 @@
+             android:name=".MacOsLinkShareBroadcastReceiver"
+             android:exported="false" />
+     </application>
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/network-protection/network-protection-internal/build.gradle b/network-protection/network-protection-internal/build.gradle
+index cacfd8d4f..2ae79ed78 100644
+--- a/network-protection/network-protection-internal/build.gradle
++++ b/network-protection/network-protection-internal/build.gradle
+@@ -23,6 +23,7 @@ plugins {
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
+ android {
++    namespace = "com.duckduckgo.networkprotection.internal"
+     lintOptions {
+         baseline file("lint-baseline.xml")
+     }
+@@ -88,4 +89,4 @@ dependencies {
+         exclude group: "org.jetbrains.kotlinx", module: "kotlinx-coroutines-debug"
+     }
+     testImplementation Testing.junit4
+-}
+\ No newline at end of file
++}
+diff --git a/network-protection/network-protection-internal/src/main/AndroidManifest.xml b/network-protection/network-protection-internal/src/main/AndroidManifest.xml
+index 2864be38b..245555caf 100644
+--- a/network-protection/network-protection-internal/src/main/AndroidManifest.xml
++++ b/network-protection/network-protection-internal/src/main/AndroidManifest.xml
+@@ -1,6 +1,5 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+-          package="com.duckduckgo.networkprotection.internal">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+ 
+     <!-- This is also in the :app module, so it is not a new permission. We add it so that lint doesn't blow   -->
+     <uses-permission
+@@ -25,4 +24,4 @@
+             android:exported="false" />
+     </application>
+ 
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/privacy-config/privacy-config-internal/build.gradle b/privacy-config/privacy-config-internal/build.gradle
+index 77133a6cf..a698d9350 100644
+--- a/privacy-config/privacy-config-internal/build.gradle
++++ b/privacy-config/privacy-config-internal/build.gradle
+@@ -23,6 +23,7 @@ plugins {
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
+ android {
++    namespace = "com.duckduckgo.privacy.config.internal"
+     anvil {
+         generateDaggerFactories = true // default is false
+     }
+@@ -48,4 +49,4 @@ dependencies {
+     
+     // Dagger
+     implementation Google.dagger
+-}
+\ No newline at end of file
++}
+diff --git a/privacy-config/privacy-config-internal/src/main/AndroidManifest.xml b/privacy-config/privacy-config-internal/src/main/AndroidManifest.xml
+index 79e806000..ec94fcb12 100644
+--- a/privacy-config/privacy-config-internal/src/main/AndroidManifest.xml
++++ b/privacy-config/privacy-config-internal/src/main/AndroidManifest.xml
+@@ -1,9 +1,8 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.privacy.config.internal">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+     <application>
+         <activity android:name="PrivacyConfigInternalSettingsActivity" android:exported="false"/>
+     </application>
+ 
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/privacy-dashboard/privacy-dashboard-impl/build.gradle b/privacy-dashboard/privacy-dashboard-impl/build.gradle
+index fc809ba2b..eb7001ec1 100644
+--- a/privacy-dashboard/privacy-dashboard-impl/build.gradle
++++ b/privacy-dashboard/privacy-dashboard-impl/build.gradle
+@@ -22,6 +22,8 @@ plugins {
+ 
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
++android.namespace = "com.duckduckgo.privacy.dashboard.impl"
++
+ dependencies {
+     anvil project(':anvil-compiler')
+     implementation project(':anvil-annotations')
+@@ -88,4 +90,4 @@ fulladleModuleConfig {
+ 
+ tasks.register('androidTestsBuild') {
+     dependsOn 'assembleDebugAndroidTest'
+-}
+\ No newline at end of file
++}
+diff --git a/privacy-dashboard/privacy-dashboard-impl/src/main/AndroidManifest.xml b/privacy-dashboard/privacy-dashboard-impl/src/main/AndroidManifest.xml
+index 787089a36..8d387592a 100644
+--- a/privacy-dashboard/privacy-dashboard-impl/src/main/AndroidManifest.xml
++++ b/privacy-dashboard/privacy-dashboard-impl/src/main/AndroidManifest.xml
+@@ -15,8 +15,7 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.privacy.dashboard.impl">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+     <application>
+         <activity
+             android:name="com.duckduckgo.privacy.dashboard.impl.ui.PrivacyDashboardHybridActivity"
+@@ -25,4 +24,4 @@
+             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+             android:parentActivityName=".BrowserActivity" />
+     </application>
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/runtime-checks/runtime-checks-store/build.gradle b/runtime-checks/runtime-checks-store/build.gradle
+index 2d9ad2e90..94c342bd2 100644
+--- a/runtime-checks/runtime-checks-store/build.gradle
++++ b/runtime-checks/runtime-checks-store/build.gradle
+@@ -22,6 +22,8 @@ plugins {
+ 
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
++android.namespace = "com.duckduckgo.runtimechecks.store"
++
+ dependencies {
+     implementation project(path: ':common-utils')
+     implementation Kotlin.stdlib.jdk7
+@@ -54,4 +56,4 @@ dependencies {
+     testImplementation 'app.cash.turbine:turbine:_'
+     testImplementation Testing.robolectric
+     testImplementation project(path: ':common-test')
+-}
+\ No newline at end of file
++}
+diff --git a/runtime-checks/runtime-checks-store/src/main/AndroidManifest.xml b/runtime-checks/runtime-checks-store/src/main/AndroidManifest.xml
+index 0af574d93..75e2ad68e 100644
+--- a/runtime-checks/runtime-checks-store/src/main/AndroidManifest.xml
++++ b/runtime-checks/runtime-checks-store/src/main/AndroidManifest.xml
+@@ -15,7 +15,4 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.runtimechecks.store">
+-
+-</manifest>
+\ No newline at end of file
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"/>
+diff --git a/subscriptions/subscriptions-impl/build.gradle b/subscriptions/subscriptions-impl/build.gradle
+index 0bca5288a..0e9f42326 100644
+--- a/subscriptions/subscriptions-impl/build.gradle
++++ b/subscriptions/subscriptions-impl/build.gradle
+@@ -22,6 +22,8 @@ plugins {
+ 
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
++android.namespace = "com.duckduckgo.subscriptions.impl"
++
+ dependencies {
+     testImplementation 'junit:junit:4.13.1'
+     anvil project(path: ':anvil-compiler')
+@@ -76,4 +78,4 @@ android {
+             includeAndroidResources = true
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/subscriptions/subscriptions-impl/src/main/AndroidManifest.xml b/subscriptions/subscriptions-impl/src/main/AndroidManifest.xml
+index 17acd697d..735f972e5 100644
+--- a/subscriptions/subscriptions-impl/src/main/AndroidManifest.xml
++++ b/subscriptions/subscriptions-impl/src/main/AndroidManifest.xml
+@@ -14,8 +14,7 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.subscriptions.impl">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+     <application android:supportsRtl="true">
+         <activity
+                 android:name="com.duckduckgo.subscriptions.impl.SubscriptionsActivity"
+@@ -24,4 +23,4 @@
+                 android:parentActivityName="com.duckduckgo.app.settings.SettingsActivity"
+                 android:screenOrientation="portrait" />
+     </application>
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/sync/sync-impl/build.gradle b/sync/sync-impl/build.gradle
+index 7168d7e18..52e0e6b22 100644
+--- a/sync/sync-impl/build.gradle
++++ b/sync/sync-impl/build.gradle
+@@ -22,6 +22,8 @@ plugins {
+ 
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
++android.namespace = "com.duckduckgo.sync.impl"
++
+ dependencies {
+     implementation project(path: ':di')
+     implementation project(path: ':common-utils')
+diff --git a/sync/sync-impl/src/main/AndroidManifest.xml b/sync/sync-impl/src/main/AndroidManifest.xml
+index 25c4b626f..ea2e8042c 100644
+--- a/sync/sync-impl/src/main/AndroidManifest.xml
++++ b/sync/sync-impl/src/main/AndroidManifest.xml
+@@ -14,7 +14,7 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest package="com.duckduckgo.sync.impl"
++<manifest
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools">
+ 
+@@ -78,4 +78,4 @@
+             android:screenOrientation="portrait"
+             tools:replace="screenOrientation" />
+     </application>
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/traces/traces-impl/build.gradle b/traces/traces-impl/build.gradle
+index 2c5ab2d63..df95c58c2 100644
+--- a/traces/traces-impl/build.gradle
++++ b/traces/traces-impl/build.gradle
+@@ -23,6 +23,7 @@ plugins {
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
+ android {
++    namespace = "com.duckduckgo.app.traces"
+     anvil {
+         generateDaggerFactories = true // default is false
+     }
+diff --git a/traces/traces-impl/src/main/AndroidManifest.xml b/traces/traces-impl/src/main/AndroidManifest.xml
+index 1d6155ca4..ef5a9e403 100644
+--- a/traces/traces-impl/src/main/AndroidManifest.xml
++++ b/traces/traces-impl/src/main/AndroidManifest.xml
+@@ -15,8 +15,7 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-          package="com.duckduckgo.app.traces">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+     <application>
+         <provider
+@@ -26,4 +25,4 @@
+             android:exported="false" />
+     </application>
+ 
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/windows/windows-impl/build.gradle b/windows/windows-impl/build.gradle
+index 0fc212a9a..8ada81187 100644
+--- a/windows/windows-impl/build.gradle
++++ b/windows/windows-impl/build.gradle
+@@ -22,6 +22,8 @@ plugins {
+ 
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+ 
++android.namespace = "com.duckduckgo.windows.impl"
++
+ dependencies {
+     anvil project(':anvil-compiler')
+     implementation project(':anvil-annotations')
+diff --git a/windows/windows-impl/src/main/AndroidManifest.xml b/windows/windows-impl/src/main/AndroidManifest.xml
+index 1dbe65989..6e68259cb 100644
+--- a/windows/windows-impl/src/main/AndroidManifest.xml
++++ b/windows/windows-impl/src/main/AndroidManifest.xml
+@@ -14,8 +14,7 @@
+   ~ limitations under the License.
+   -->
+ 
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.duckduckgo.windows.impl">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+     <application>
+         <activity
+             android:name=".ui.WindowsActivity"
+@@ -27,4 +26,4 @@
+             android:name=".WindowsLinkShareBroadcastReceiver"
+             android:exported="false" />
+     </application>
+-</manifest>
+\ No newline at end of file
++</manifest>
