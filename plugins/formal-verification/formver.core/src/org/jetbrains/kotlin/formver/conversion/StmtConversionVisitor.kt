@@ -14,18 +14,20 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.viper.ast.AccessPredicate
+import org.jetbrains.kotlin.formver.viper.ast.Exp
+import org.jetbrains.kotlin.formver.viper.ast.PermExp
+import org.jetbrains.kotlin.formver.viper.ast.Stmt
 import org.jetbrains.kotlin.formver.viper.domains.NullableDomain
 import org.jetbrains.kotlin.formver.viper.domains.UnitDomain
-import org.jetbrains.kotlin.formver.viper.ast.Exp
-import org.jetbrains.kotlin.formver.viper.ast.Stmt
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -112,7 +114,29 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         val type = data.embedType(propertyAccessExpression)
         return when (symbol) {
             is FirValueParameterSymbol -> VariableEmbedding(symbol.callableId.embedName(), type).toLocalVar()
-            is FirPropertySymbol -> VariableEmbedding(symbol.callableId.embedName(), type).toLocalVar()
+
+            is FirPropertySymbol -> {
+                val varEmbedding = VariableEmbedding(symbol.callableId.embedName(), type)
+                if (symbol.isLocal) {
+                    return varEmbedding.toLocalVar()
+                } else {
+
+                    val receiver = propertyAccessExpression.dispatchReceiver.accept(this, data)
+
+                    val fieldAccess = Exp.FieldAccess(receiver, varEmbedding.toField())
+                    val accPred = AccessPredicate.FieldAccessPredicate(fieldAccess, PermExp.FullPerm())
+                    val anon = data.newAnonVar(varEmbedding.type)
+
+                    data.addDeclaration(anon.toLocalVarDecl())
+                    // Inhale permission for the field before reading it.
+                    data.addStatement(Stmt.Inhale(accPred))
+                    // Access the field and assign the value to a newly created anonymous variable.
+                    data.addStatement(Stmt.assign(anon.toLocalVar(), fieldAccess))
+                    // Exhale permission for the field and return the anonymous variable value
+                    data.addStatement(Stmt.Exhale(accPred))
+                    return anon.toLocalVar()
+                }
+            }
             else -> TODO("Implement other property accesses")
         }
     }
@@ -164,13 +188,19 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
             return specialFunc.convertCall(getArgs(), data)
         }
 
-        val symbol = functionCall.calleeReference.resolved!!.resolvedSymbol as FirNamedFunctionSymbol
-        val calleeSig = data.add(symbol)
+        val symbol = functionCall.calleeReference.resolved!!.resolvedSymbol
+        val calleeSig = when (symbol) {
+            is FirNamedFunctionSymbol -> data.add(symbol)
+            is FirConstructorSymbol -> data.add(symbol)
+            else -> TODO("Are there any other possible cases?")
+        }
+
         val returnVar = data.newAnonVar(calleeSig.returnType)
         val returnExp = returnVar.toLocalVar()
         val args = getArgs().zip(calleeSig.params).map { (arg, param) -> arg.withType(param.viperType) }
         data.addDeclaration(returnVar.toLocalVarDecl())
         data.addStatement(Stmt.MethodCall(calleeSig.name.mangled, args, listOf(returnExp)))
+
         return returnExp
     }
 

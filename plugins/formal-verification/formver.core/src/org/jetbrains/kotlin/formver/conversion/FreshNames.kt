@@ -8,6 +8,11 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.formver.viper.MangledName
 
 /**
+ * This file contains classes/objects representing new names
+ * for Viper's specific declarations.
+ */
+
+/**
  * Representation for names not present in the original source,
  * e.g. storage for the result of subexpressions.
  */

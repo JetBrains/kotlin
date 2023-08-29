@@ -6,17 +6,22 @@
 package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.formver.viper.domains.NullableDomain
-import org.jetbrains.kotlin.formver.viper.domains.UnitDomain
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Method
 import org.jetbrains.kotlin.formver.viper.ast.Program
 import org.jetbrains.kotlin.formver.viper.domains.CastingDomain
+import org.jetbrains.kotlin.formver.viper.domains.NullableDomain
+import org.jetbrains.kotlin.formver.viper.domains.UnitDomain
 
 /**
  * Tracks the top-level information about the program.
@@ -25,21 +30,38 @@ import org.jetbrains.kotlin.formver.viper.domains.CastingDomain
  * We need the FirSession to get access to the TypeContext.
  */
 class ProgramConverter(val session: FirSession) : ProgramConversionContext {
+
     private val methods: MutableMap<MangledName, Method> = mutableMapOf()
+    private val classes: MutableMap<ClassName, ClassEmbedding> = mutableMapOf()
 
     val program: Program
         get() = Program(
-            listOf(UnitDomain, NullableDomain, CastingDomain), /* Domains */
-            SpecialFields.all, /* Fields */
-            SpecialMethods.all + methods.values.toList(), /* Methods */
+            domains = listOf(UnitDomain, NullableDomain, CastingDomain), /* Domains */
+            fields = SpecialFields.all + classes.values.flatMap { it.fields }.map { it.toField() }, /* Fields */
+            methods = SpecialMethods.all + methods.values.toList(), /* Methods */
         )
 
     fun addWithBody(declaration: FirSimpleFunction) {
         processFunction(declaration.symbol, declaration.body)
     }
 
-    override fun add(symbol: FirNamedFunctionSymbol): MethodSignatureEmbedding {
+    override fun add(symbol: FirFunctionSymbol<*>): MethodSignatureEmbedding {
         return processFunction(symbol, null)
+    }
+
+    override fun add(symbol: FirRegularClassSymbol): ClassEmbedding {
+
+        val className = ClassName(symbol.classId.packageFqName, symbol.classId.shortClassName)
+        // If the class name is not contained in the classes hashmap, then add a new embedding.
+        return classes.getOrPut(className) {
+            // Get classes fields
+            val concreteFields = symbol.declarationSymbols
+                .filterIsInstance<FirPropertySymbol>()
+                .filter { it.hasBackingField }
+                .map { VariableEmbedding(it.callableId.embedName(), embedType(it.resolvedReturnType)) }
+
+            ClassEmbedding(className, concreteFields)
+        }
     }
 
     override fun embedType(type: ConeKotlinType): TypeEmbedding = when {
@@ -49,10 +71,21 @@ class ProgramConverter(val session: FirSession) : ProgramConversionContext {
         type.isNothing -> NothingTypeEmbedding
         type.isSomeFunctionType(session) -> FunctionTypeEmbedding
         type.isNullable -> NullableTypeEmbedding(embedType(type.withNullability(ConeNullability.NOT_NULL, session.typeContext)))
-        else -> throw NotImplementedError("The embedding for type $type is not yet implemented.")
+        else -> {
+            // For the moment, to create classes' embeddings, we fall
+            // back on the else branch. Notice that is not permanent,
+            // and it will be modified in the future to handle more cases (e.g., type variables)
+            val classId = type.classId!!
+            val classLikeSymbol = session.symbolProvider.getClassLikeSymbolByClassId(classId)
+            if (classLikeSymbol is FirRegularClassSymbol) {
+                add(classLikeSymbol)
+            } else {
+                TODO("Implement other class symbols")
+            }
+        }
     }
 
-    private fun embedSignature(symbol: FirNamedFunctionSymbol): MethodSignatureEmbedding {
+    private fun <D : FirFunction> embedSignature(symbol: FirFunctionSymbol<D>): MethodSignatureEmbedding {
         val retType = symbol.resolvedReturnTypeRef.type
         val params = symbol.valueParameterSymbols.map {
             VariableEmbedding(it.embedName(), embedType(it.resolvedReturnType))
@@ -64,7 +97,7 @@ class ProgramConverter(val session: FirSession) : ProgramConversionContext {
         )
     }
 
-    private fun processFunction(symbol: FirNamedFunctionSymbol, body: FirBlock?): MethodSignatureEmbedding {
+    private fun <D : FirFunction> processFunction(symbol: FirFunctionSymbol<D>, body: FirBlock?): MethodSignatureEmbedding {
         val signature = embedSignature(symbol)
         // NOTE: we have a problem here if we initially specify a method without a body,
         // and then later decide to add a body anyway.  It's not a problem for now, but

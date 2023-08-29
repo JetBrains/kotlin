@@ -1,0 +1,28 @@
+/classes.kt:(4,13): info: Generated Viper text for createFoo:
+field $pkg_$class$Foo$member$a: Int
+
+field $pkg_$class$Foo$member$b: Int
+
+method $pkg_$class$Foo$member$Foo(local$a: Int, local$b: Int)
+  returns (ret$: Ref)
+
+
+method global$pkg_$createFoo() returns (ret$: dom$Unit)
+{
+  var anonymous$1: Ref
+  var local$f: Ref
+  var anonymous$2: Int
+  var local$fa: Int
+  var anonymous$3: Int
+  var local$fb: Int
+  anonymous$1 := $pkg_$class$Foo$member$Foo(10, 20)
+  local$f := anonymous$1
+  inhale acc(local$f.$pkg_$class$Foo$member$a, write)
+  anonymous$2 := local$f.$pkg_$class$Foo$member$a
+  exhale acc(local$f.$pkg_$class$Foo$member$a, write)
+  local$fa := anonymous$2
+  inhale acc(local$f.$pkg_$class$Foo$member$b, write)
+  anonymous$3 := local$f.$pkg_$class$Foo$member$b
+  exhale acc(local$f.$pkg_$class$Foo$member$b, write)
+  local$fb := anonymous$3
+}
