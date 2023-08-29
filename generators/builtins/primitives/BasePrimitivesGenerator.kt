@@ -451,7 +451,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
                 }
                 val thisCasted = "this${thisKind.castToIfNecessary(opReturnType)}"
                 val otherCasted = "other${otherKind.castToIfNecessary(opReturnType)}"
-                "${returnType}($thisCasted, $otherCasted)".addAsSingleLineBody(bodyOnNewLine = true)
+                "${returnType}($thisCasted, $otherCasted)".setAsExpressionBody()
             }.modifyGeneratedRangeTo(thisKind, otherKind, opReturnType)
         }
     }
@@ -482,7 +482,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
                     }
                     returnType = "${opReturnType.capitalized}Range"
                 }
-                "this until $parameterName".addAsSingleLineBody(bodyOnNewLine = false)
+                "this until $parameterName".setAsExpressionBody()
             }.modifyGeneratedRangeUntil(thisKind, otherKind, opReturnType)
         }
     }

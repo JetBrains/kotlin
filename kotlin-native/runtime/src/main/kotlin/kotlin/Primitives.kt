@@ -322,7 +322,8 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Byte): IntRange = this until other
+    public operator fun rangeUntil(other: Byte): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -331,7 +332,8 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Short): IntRange = this until other
+    public operator fun rangeUntil(other: Short): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -340,7 +342,8 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Int): IntRange = this until other
+    public operator fun rangeUntil(other: Int): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -349,7 +352,8 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Long): LongRange = this until other
+    public operator fun rangeUntil(other: Long): LongRange =
+        this until other
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -434,9 +438,11 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
 
     @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Byte): Boolean = kotlin.native.internal.areEqualByValue(this, other)
+    public fun equals(other: Byte): Boolean =
+        kotlin.native.internal.areEqualByValue(this, other)
 
-    public override fun hashCode(): Int = this.toInt()
+    public override fun hashCode(): Int =
+        this.toInt()
 }
 
 /** Represents a 16-bit signed integer. */
@@ -749,7 +755,8 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Byte): IntRange = this until other
+    public operator fun rangeUntil(other: Byte): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -758,7 +765,8 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Short): IntRange = this until other
+    public operator fun rangeUntil(other: Short): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -767,7 +775,8 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Int): IntRange = this until other
+    public operator fun rangeUntil(other: Int): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -776,7 +785,8 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Long): LongRange = this until other
+    public operator fun rangeUntil(other: Long): LongRange =
+        this until other
 
     /**
      * Converts this [Short] value to [Byte].
@@ -859,9 +869,11 @@ public final class Short private constructor() : Number(), Comparable<Short> {
 
     @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Short): Boolean = kotlin.native.internal.areEqualByValue(this, other)
+    public fun equals(other: Short): Boolean =
+        kotlin.native.internal.areEqualByValue(this, other)
 
-    public override fun hashCode(): Int = this.toInt()
+    public override fun hashCode(): Int =
+        this.toInt()
 }
 
 /** Represents a 32-bit signed integer. */
@@ -1174,7 +1186,8 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Byte): IntRange = this until other
+    public operator fun rangeUntil(other: Byte): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1183,7 +1196,8 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Short): IntRange = this until other
+    public operator fun rangeUntil(other: Short): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1192,7 +1206,8 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Int): IntRange = this until other
+    public operator fun rangeUntil(other: Int): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1201,7 +1216,8 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Long): LongRange = this until other
+    public operator fun rangeUntil(other: Long): LongRange =
+        this until other
 
     /**
      * Shifts this value left by the [bitCount] number of bits.
@@ -1337,9 +1353,11 @@ public final class Int private constructor() : Number(), Comparable<Int> {
 
     @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Int): Boolean = kotlin.native.internal.areEqualByValue(this, other)
+    public fun equals(other: Int): Boolean =
+        kotlin.native.internal.areEqualByValue(this, other)
 
-    public override fun hashCode(): Int = this
+    public override fun hashCode(): Int =
+        this
 }
 
 /** Represents a 64-bit signed integer. */
@@ -1652,7 +1670,8 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Byte): LongRange = this until other
+    public operator fun rangeUntil(other: Byte): LongRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1661,7 +1680,8 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Short): LongRange = this until other
+    public operator fun rangeUntil(other: Short): LongRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1670,7 +1690,8 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Int): LongRange = this until other
+    public operator fun rangeUntil(other: Int): LongRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1679,7 +1700,8 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Long): LongRange = this until other
+    public operator fun rangeUntil(other: Long): LongRange =
+        this until other
 
     /**
      * Shifts this value left by the [bitCount] number of bits.
@@ -1818,9 +1840,11 @@ public final class Long private constructor() : Number(), Comparable<Long> {
 
     @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Long): Boolean = kotlin.native.internal.areEqualByValue(this, other)
+    public fun equals(other: Long): Boolean =
+        kotlin.native.internal.areEqualByValue(this, other)
 
-    public override fun hashCode(): Int = ((this ushr 32) xor this).toInt()
+    public override fun hashCode(): Int =
+        ((this ushr 32) xor this).toInt()
 }
 
 /** Represents a single-precision 32-bit IEEE 754 floating point number. */
@@ -2144,7 +2168,8 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", ReplaceWith("toInt().toByte()"))
     @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toByte(): Byte = this.toInt().toByte()
+    public override fun toByte(): Byte =
+        this.toInt().toByte()
 
     /**
      * Converts this [Float] value to [Char].
@@ -2154,7 +2179,8 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toChar(): Char = this.toInt().toChar()
+    public override fun toChar(): Char =
+        this.toInt().toChar()
 
     /**
      * Converts this [Float] value to [Short].
@@ -2164,7 +2190,8 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", ReplaceWith("toInt().toShort()"))
     @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toShort(): Short = this.toInt().toShort()
+    public override fun toShort(): Short =
+        this.toInt().toShort()
 
     /**
      * Converts this [Float] value to [Int].
@@ -2211,7 +2238,8 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      * The exact bit pattern of a `NaN` float is not guaranteed to be preserved though.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String = NumberConverter.convert(this)
+    public override fun toString(): String =
+        NumberConverter.convert(this)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
@@ -2219,9 +2247,11 @@ public final class Float private constructor() : Number(), Comparable<Float> {
 
     @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Float): Boolean = toBits() == other.toBits()
+    public fun equals(other: Float): Boolean =
+        toBits() == other.toBits()
 
-    public override fun hashCode(): Int = toBits()
+    public override fun hashCode(): Int =
+        toBits()
 
     @TypedIntrinsic(IntrinsicType.REINTERPRET)
     @PublishedApi
@@ -2549,7 +2579,8 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", ReplaceWith("toInt().toByte()"))
     @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toByte(): Byte = this.toInt().toByte()
+    public override fun toByte(): Byte =
+        this.toInt().toByte()
 
     /**
      * Converts this [Double] value to [Char].
@@ -2559,7 +2590,8 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toChar(): Char = this.toInt().toChar()
+    public override fun toChar(): Char =
+        this.toInt().toChar()
 
     /**
      * Converts this [Double] value to [Short].
@@ -2569,7 +2601,8 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", ReplaceWith("toInt().toShort()"))
     @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toShort(): Short = this.toInt().toShort()
+    public override fun toShort(): Short =
+        this.toInt().toShort()
 
     /**
      * Converts this [Double] value to [Int].
@@ -2618,7 +2651,8 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      * The exact bit pattern of a `NaN` double is not guaranteed to be preserved though.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String = NumberConverter.convert(this)
+    public override fun toString(): String =
+        NumberConverter.convert(this)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
@@ -2626,9 +2660,11 @@ public final class Double private constructor() : Number(), Comparable<Double> {
 
     @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Double): Boolean = toBits() == other.toBits()
+    public fun equals(other: Double): Boolean =
+        toBits() == other.toBits()
 
-    public override fun hashCode(): Int = toBits().hashCode()
+    public override fun hashCode(): Int =
+        toBits().hashCode()
 
     @TypedIntrinsic(IntrinsicType.REINTERPRET)
     @PublishedApi

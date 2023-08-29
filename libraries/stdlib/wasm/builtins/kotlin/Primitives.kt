@@ -322,7 +322,8 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Byte): IntRange = this until other
+    public operator fun rangeUntil(other: Byte): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -331,7 +332,8 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Short): IntRange = this until other
+    public operator fun rangeUntil(other: Short): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -340,7 +342,8 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Int): IntRange = this until other
+    public operator fun rangeUntil(other: Int): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -349,7 +352,8 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Long): LongRange = this until other
+    public operator fun rangeUntil(other: Long): LongRange =
+        this until other
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -367,7 +371,8 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toChar(): Char = reinterpretAsInt().reinterpretAsChar()
+    public override fun toChar(): Char =
+        reinterpretAsInt().reinterpretAsChar()
 
     /**
      * Converts this [Byte] value to [Short].
@@ -378,7 +383,8 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * whereas the most significant 8 bits are filled with the sign bit of this value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toShort(): Short = reinterpretAsInt().reinterpretAsShort()
+    public override fun toShort(): Short =
+        reinterpretAsInt().reinterpretAsShort()
 
     /**
      * Converts this [Byte] value to [Int].
@@ -389,7 +395,8 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * whereas the most significant 24 bits are filled with the sign bit of this value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toInt(): Int = reinterpretAsInt()
+    public override fun toInt(): Int =
+        reinterpretAsInt()
 
     /**
      * Converts this [Byte] value to [Long].
@@ -400,7 +407,8 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * whereas the most significant 56 bits are filled with the sign bit of this value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toLong(): Long = wasm_i64_extend_i32_s(this.toInt())
+    public override fun toLong(): Long =
+        wasm_i64_extend_i32_s(this.toInt())
 
     /**
      * Converts this [Byte] value to [Float].
@@ -408,7 +416,8 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * The resulting `Float` value represents the same numerical value as this `Byte`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toFloat(): Float = wasm_f32_convert_i32_s(this.toInt())
+    public override fun toFloat(): Float =
+        wasm_f32_convert_i32_s(this.toInt())
 
     /**
      * Converts this [Byte] value to [Double].
@@ -416,7 +425,8 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * The resulting `Double` value represents the same numerical value as this `Byte`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toDouble(): Double = wasm_f64_convert_i32_s(this.toInt())
+    public override fun toDouble(): Double =
+        wasm_f64_convert_i32_s(this.toInt())
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString(): String =
@@ -426,7 +436,8 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
     public override fun equals(other: Any?): Boolean =
         other is Byte && wasm_i32_eq(this.toInt(), other.toInt())
 
-    public override fun hashCode(): Int = this.toInt()
+    public override fun hashCode(): Int =
+        this.toInt()
 
     @WasmNoOpCast
     @PublishedApi
@@ -744,7 +755,8 @@ public class Short private constructor(private val value: Short) : Number(), Com
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Byte): IntRange = this until other
+    public operator fun rangeUntil(other: Byte): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -753,7 +765,8 @@ public class Short private constructor(private val value: Short) : Number(), Com
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Short): IntRange = this until other
+    public operator fun rangeUntil(other: Short): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -762,7 +775,8 @@ public class Short private constructor(private val value: Short) : Number(), Com
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Int): IntRange = this until other
+    public operator fun rangeUntil(other: Int): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -771,7 +785,8 @@ public class Short private constructor(private val value: Short) : Number(), Com
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Long): LongRange = this until other
+    public operator fun rangeUntil(other: Long): LongRange =
+        this until other
 
     /**
      * Converts this [Short] value to [Byte].
@@ -782,7 +797,8 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * The resulting `Byte` value is represented by the least significant 8 bits of this `Short` value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override inline fun toByte(): Byte = this.toInt().toByte()
+    public override inline fun toByte(): Byte =
+        this.toInt().toByte()
 
     /**
      * Converts this [Short] value to [Char].
@@ -793,7 +809,8 @@ public class Short private constructor(private val value: Short) : Number(), Com
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toChar(): Char = reinterpretAsInt().reinterpretAsChar()
+    public override fun toChar(): Char =
+        reinterpretAsInt().reinterpretAsChar()
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -809,7 +826,8 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * whereas the most significant 16 bits are filled with the sign bit of this value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toInt(): Int = reinterpretAsInt()
+    public override fun toInt(): Int =
+        reinterpretAsInt()
 
     /**
      * Converts this [Short] value to [Long].
@@ -820,7 +838,8 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * whereas the most significant 48 bits are filled with the sign bit of this value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toLong(): Long = wasm_i64_extend_i32_s(this.toInt())
+    public override fun toLong(): Long =
+        wasm_i64_extend_i32_s(this.toInt())
 
     /**
      * Converts this [Short] value to [Float].
@@ -828,7 +847,8 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * The resulting `Float` value represents the same numerical value as this `Short`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toFloat(): Float = wasm_f32_convert_i32_s(this.toInt())
+    public override fun toFloat(): Float =
+        wasm_f32_convert_i32_s(this.toInt())
 
     /**
      * Converts this [Short] value to [Double].
@@ -836,7 +856,8 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * The resulting `Double` value represents the same numerical value as this `Short`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toDouble(): Double = wasm_f64_convert_i32_s(this.toInt())
+    public override fun toDouble(): Double =
+        wasm_f64_convert_i32_s(this.toInt())
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString(): String =
@@ -846,7 +867,8 @@ public class Short private constructor(private val value: Short) : Number(), Com
     public override fun equals(other: Any?): Boolean =
         other is Short && wasm_i32_eq(this.toInt(), other.toInt())
 
-    public override fun hashCode(): Int = this.toInt()
+    public override fun hashCode(): Int =
+        this.toInt()
 
     @WasmNoOpCast
     @PublishedApi
@@ -1169,7 +1191,8 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Byte): IntRange = this until other
+    public operator fun rangeUntil(other: Byte): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1178,7 +1201,8 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Short): IntRange = this until other
+    public operator fun rangeUntil(other: Short): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1187,7 +1211,8 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Int): IntRange = this until other
+    public operator fun rangeUntil(other: Int): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1196,7 +1221,8 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Long): LongRange = this until other
+    public operator fun rangeUntil(other: Long): LongRange =
+        this until other
 
     /**
      * Shifts this value left by the [bitCount] number of bits.
@@ -1263,7 +1289,8 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * The resulting `Byte` value is represented by the least significant 8 bits of this `Int` value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toByte(): Byte = ((this shl 24) shr 24).reinterpretAsByte()
+    public override fun toByte(): Byte =
+        ((this shl 24) shr 24).reinterpretAsByte()
 
     /**
      * Converts this [Int] value to [Char].
@@ -1275,7 +1302,8 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      */
     @Suppress("OVERRIDE_DEPRECATION")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toChar(): Char = (this and 0xFFFF).reinterpretAsChar()
+    public override fun toChar(): Char =
+        (this and 0xFFFF).reinterpretAsChar()
 
     /**
      * Converts this [Int] value to [Short].
@@ -1286,7 +1314,8 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * The resulting `Short` value is represented by the least significant 16 bits of this `Int` value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toShort(): Short = ((this shl 16) shr 16).reinterpretAsShort()
+    public override fun toShort(): Short =
+        ((this shl 16) shr 16).reinterpretAsShort()
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1302,7 +1331,8 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * whereas the most significant 32 bits are filled with the sign bit of this value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toLong(): Long = wasm_i64_extend_i32_s(this)
+    public override fun toLong(): Long =
+        wasm_i64_extend_i32_s(this)
 
     /**
      * Converts this [Int] value to [Float].
@@ -1312,7 +1342,8 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * the one with zero at least significant bit of mantissa is selected.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toFloat(): Float = wasm_f32_convert_i32_s(this)
+    public override fun toFloat(): Float =
+        wasm_f32_convert_i32_s(this)
 
     /**
      * Converts this [Int] value to [Double].
@@ -1320,7 +1351,8 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * The resulting `Double` value represents the same numerical value as this `Int`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toDouble(): Double = wasm_f64_convert_i32_s(this)
+    public override fun toDouble(): Double =
+        wasm_f64_convert_i32_s(this)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString(): String =
@@ -1330,7 +1362,8 @@ public class Int private constructor(private val value: Int) : Number(), Compara
     public override fun equals(other: Any?): Boolean =
         other is Int && wasm_i32_eq(this, other)
 
-    public override fun hashCode(): Int = this
+    public override fun hashCode(): Int =
+        this
 
     @WasmNoOpCast
     @PublishedApi
@@ -1667,7 +1700,8 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Byte): LongRange = this until other
+    public operator fun rangeUntil(other: Byte): LongRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1676,7 +1710,8 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Short): LongRange = this until other
+    public operator fun rangeUntil(other: Short): LongRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1685,7 +1720,8 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Int): LongRange = this until other
+    public operator fun rangeUntil(other: Int): LongRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1694,7 +1730,8 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Long): LongRange = this until other
+    public operator fun rangeUntil(other: Long): LongRange =
+        this until other
 
     /**
      * Shifts this value left by the [bitCount] number of bits.
@@ -1758,7 +1795,8 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * The resulting `Byte` value is represented by the least significant 8 bits of this `Long` value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override inline fun toByte(): Byte = this.toInt().toByte()
+    public override inline fun toByte(): Byte =
+        this.toInt().toByte()
 
     /**
      * Converts this [Long] value to [Char].
@@ -1771,7 +1809,8 @@ public class Long private constructor(private val value: Long) : Number(), Compa
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override inline fun toChar(): Char = this.toInt().toChar()
+    public override inline fun toChar(): Char =
+        this.toInt().toChar()
 
     /**
      * Converts this [Long] value to [Short].
@@ -1782,7 +1821,8 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * The resulting `Short` value is represented by the least significant 16 bits of this `Long` value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override inline fun toShort(): Short = this.toInt().toShort()
+    public override inline fun toShort(): Short =
+        this.toInt().toShort()
 
     /**
      * Converts this [Long] value to [Int].
@@ -1793,7 +1833,8 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * The resulting `Int` value is represented by the least significant 32 bits of this `Long` value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toInt(): Int = wasm_i32_wrap_i64(this)
+    public override fun toInt(): Int =
+        wasm_i32_wrap_i64(this)
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1808,7 +1849,8 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * the one with zero at least significant bit of mantissa is selected.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toFloat(): Float = wasm_f32_convert_i64_s(this)
+    public override fun toFloat(): Float =
+        wasm_f32_convert_i64_s(this)
 
     /**
      * Converts this [Long] value to [Double].
@@ -1818,7 +1860,8 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * the one with zero at least significant bit of mantissa is selected.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toDouble(): Double = wasm_f64_convert_i64_s(this)
+    public override fun toDouble(): Double =
+        wasm_f64_convert_i64_s(this)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString(): String =
@@ -1828,7 +1871,8 @@ public class Long private constructor(private val value: Long) : Number(), Compa
     public override fun equals(other: Any?): Boolean =
         other is Long && wasm_i64_eq(this, other)
 
-    public override fun hashCode(): Int = ((this ushr 32) xor this).toInt()
+    public override fun hashCode(): Int =
+        ((this ushr 32) xor this).toInt()
 }
 
 /** Represents a single-precision 32-bit IEEE 754 floating point number. */
@@ -2158,7 +2202,8 @@ public class Float private constructor(private val value: Float) : Number(), Com
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", ReplaceWith("toInt().toByte()"))
     @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override inline fun toByte(): Byte = this.toInt().toByte()
+    public override inline fun toByte(): Byte =
+        this.toInt().toByte()
 
     /**
      * Converts this [Float] value to [Char].
@@ -2168,7 +2213,8 @@ public class Float private constructor(private val value: Float) : Number(), Com
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override inline fun toChar(): Char = this.toInt().toChar()
+    public override inline fun toChar(): Char =
+        this.toInt().toChar()
 
     /**
      * Converts this [Float] value to [Short].
@@ -2178,7 +2224,8 @@ public class Float private constructor(private val value: Float) : Number(), Com
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", ReplaceWith("toInt().toShort()"))
     @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override inline fun toShort(): Short = this.toInt().toShort()
+    public override inline fun toShort(): Short =
+        this.toInt().toShort()
 
     /**
      * Converts this [Float] value to [Int].
@@ -2188,7 +2235,8 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * [Int.MAX_VALUE] if it's bigger than `Int.MAX_VALUE`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toInt(): Int = wasm_i32_trunc_sat_f32_s(this)
+    public override fun toInt(): Int =
+        wasm_i32_trunc_sat_f32_s(this)
 
     /**
      * Converts this [Float] value to [Long].
@@ -2198,7 +2246,8 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toLong(): Long = wasm_i64_trunc_sat_f32_s(this)
+    public override fun toLong(): Long =
+        wasm_i64_trunc_sat_f32_s(this)
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2211,7 +2260,8 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * The resulting `Double` value represents the same numerical value as this `Float`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toDouble(): Double = wasm_f64_promote_f32(this)
+    public override fun toDouble(): Double =
+        wasm_f64_promote_f32(this)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString(): String =
@@ -2221,7 +2271,8 @@ public class Float private constructor(private val value: Float) : Number(), Com
     public override fun equals(other: Any?): Boolean =
         other is Float && this.toBits() == other.toBits()
 
-    public override fun hashCode(): Int = toBits()
+    public override fun hashCode(): Int =
+        toBits()
 }
 
 /** Represents a double-precision 64-bit IEEE 754 floating point number. */
@@ -2551,7 +2602,8 @@ public class Double private constructor(private val value: Double) : Number(), C
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", ReplaceWith("toInt().toByte()"))
     @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override inline fun toByte(): Byte = this.toInt().toByte()
+    public override inline fun toByte(): Byte =
+        this.toInt().toByte()
 
     /**
      * Converts this [Double] value to [Char].
@@ -2561,7 +2613,8 @@ public class Double private constructor(private val value: Double) : Number(), C
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override inline fun toChar(): Char = this.toInt().toChar()
+    public override inline fun toChar(): Char =
+        this.toInt().toChar()
 
     /**
      * Converts this [Double] value to [Short].
@@ -2571,7 +2624,8 @@ public class Double private constructor(private val value: Double) : Number(), C
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", ReplaceWith("toInt().toShort()"))
     @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override inline fun toShort(): Short = this.toInt().toShort()
+    public override inline fun toShort(): Short =
+        this.toInt().toShort()
 
     /**
      * Converts this [Double] value to [Int].
@@ -2581,7 +2635,8 @@ public class Double private constructor(private val value: Double) : Number(), C
      * [Int.MAX_VALUE] if it's bigger than `Int.MAX_VALUE`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toInt(): Int = wasm_i32_trunc_sat_f64_s(this)
+    public override fun toInt(): Int =
+        wasm_i32_trunc_sat_f64_s(this)
 
     /**
      * Converts this [Double] value to [Long].
@@ -2591,7 +2646,8 @@ public class Double private constructor(private val value: Double) : Number(), C
      * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toLong(): Long = wasm_i64_trunc_sat_f64_s(this)
+    public override fun toLong(): Long =
+        wasm_i64_trunc_sat_f64_s(this)
 
     /**
      * Converts this [Double] value to [Float].
@@ -2601,7 +2657,8 @@ public class Double private constructor(private val value: Double) : Number(), C
      * the one with zero at least significant bit of mantissa is selected.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toFloat(): Float = wasm_f32_demote_f64(this)
+    public override fun toFloat(): Float =
+        wasm_f32_demote_f64(this)
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2616,5 +2673,6 @@ public class Double private constructor(private val value: Double) : Number(), C
     public override fun equals(other: Any?): Boolean =
         other is Double && this.toBits() == other.toBits()
 
-    public override fun hashCode(): Int = toBits().hashCode()
+    public override fun hashCode(): Int =
+        toBits().hashCode()
 }

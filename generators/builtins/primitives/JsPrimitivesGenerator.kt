@@ -54,10 +54,10 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
                     "rem" -> "modulo"
                     else -> error("Unsupported binary operation: $methodName")
                 }
-                "this.$implMethod(other)".addAsSingleLineBody(false)
+                "this.$implMethod(other)".setAsExpressionBody()
             } else {
                 modifySignature { isInline = true }
-                "this${thisKind.castToIfNecessary(otherKind)}.${methodName}(other${otherKind.castToIfNecessary(thisKind)})".addAsSingleLineBody(false)
+                "this${thisKind.castToIfNecessary(otherKind)}.${methodName}(other${otherKind.castToIfNecessary(thisKind)})".setAsExpressionBody()
             }
         }
     }
@@ -73,7 +73,7 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
                     "this"
                 }
                 else -> error(methodName)
-            }.addAsSingleLineBody(false)
+            }.setAsExpressionBody()
         }
     }
 
@@ -91,16 +91,16 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
                 "ushr" -> "shiftRightUnsigned"
                 else -> error(methodName)
             }
-            "$implMethod(bitCount)".addAsSingleLineBody(bodyOnNewLine = false)
+            "$implMethod(bitCount)".setAsExpressionBody()
         }
     }
 
     override fun MethodBuilder.modifyGeneratedBitwiseOperators(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
             if (methodName == "inv") {
-                "Long(low.inv(), high.inv())".addAsSingleLineBody(bodyOnNewLine = false)
+                "Long(low.inv(), high.inv())".setAsExpressionBody()
             } else {
-                "Long(this.low $methodName other.low, this.high $methodName other.high)".addAsSingleLineBody(bodyOnNewLine = false)
+                "Long(this.low $methodName other.low, this.high $methodName other.high)".setAsExpressionBody()
             }
         }
     }
@@ -116,19 +116,19 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
                 PrimitiveType.FLOAT -> "toDouble().toFloat()"
                 PrimitiveType.DOUBLE -> "toNumber()"
                 else -> error("Unsupported type $otherKind for Long conversion")
-            }.addAsSingleLineBody(bodyOnNewLine = false)
+            }.setAsExpressionBody()
         }
     }
 
     override fun MethodBuilder.modifyGeneratedEquals(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
-            "other is Long && equalsLong(other)".addAsSingleLineBody(false)
+            "other is Long && equalsLong(other)".setAsExpressionBody()
         }
     }
 
     override fun MethodBuilder.modifyGeneratedToString(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
-            "this.toStringImpl(radix = 10)".addAsSingleLineBody(false)
+            "this.toStringImpl(radix = 10)".setAsExpressionBody()
         }
     }
 
@@ -140,7 +140,7 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
                 returnType = PrimitiveType.INT.capitalized
             }
             if (thisKind == PrimitiveType.LONG) {
-                "hashCode(this)".addAsSingleLineBody(bodyOnNewLine = false)
+                "hashCode(this)".setAsExpressionBody()
             }
         }
 
@@ -160,7 +160,7 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
                     methodName = "valueOf"
                     returnType = PrimitiveType.DOUBLE.capitalized
                 }
-                "toDouble()".addAsSingleLineBody(bodyOnNewLine = false)
+                "toDouble()".setAsExpressionBody()
             }
         }
     }

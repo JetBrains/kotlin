@@ -275,7 +275,8 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Byte): IntRange = this until other
+    public operator fun rangeUntil(other: Byte): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -284,7 +285,8 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Short): IntRange = this until other
+    public operator fun rangeUntil(other: Short): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -293,7 +295,8 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Int): IntRange = this until other
+    public operator fun rangeUntil(other: Int): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -302,7 +305,8 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Long): LongRange = this until other
+    public operator fun rangeUntil(other: Long): LongRange =
+        this until other
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -644,7 +648,8 @@ public class Short private constructor() : Number(), Comparable<Short> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Byte): IntRange = this until other
+    public operator fun rangeUntil(other: Byte): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -653,7 +658,8 @@ public class Short private constructor() : Number(), Comparable<Short> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Short): IntRange = this until other
+    public operator fun rangeUntil(other: Short): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -662,7 +668,8 @@ public class Short private constructor() : Number(), Comparable<Short> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Int): IntRange = this until other
+    public operator fun rangeUntil(other: Int): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -671,7 +678,8 @@ public class Short private constructor() : Number(), Comparable<Short> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Long): LongRange = this until other
+    public operator fun rangeUntil(other: Long): LongRange =
+        this until other
 
     /**
      * Converts this [Short] value to [Byte].
@@ -1011,7 +1019,8 @@ public class Int private constructor() : Number(), Comparable<Int> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Byte): IntRange = this until other
+    public operator fun rangeUntil(other: Byte): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1020,7 +1029,8 @@ public class Int private constructor() : Number(), Comparable<Int> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Short): IntRange = this until other
+    public operator fun rangeUntil(other: Short): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1029,7 +1039,8 @@ public class Int private constructor() : Number(), Comparable<Int> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Int): IntRange = this until other
+    public operator fun rangeUntil(other: Int): IntRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1038,7 +1049,8 @@ public class Int private constructor() : Number(), Comparable<Int> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Long): LongRange = this until other
+    public operator fun rangeUntil(other: Long): LongRange =
+        this until other
 
     /**
      * Shifts this value left by the [bitCount] number of bits.
@@ -1192,7 +1204,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun compareTo(other: Byte): Int = this.compareTo(other.toLong())
+    public inline operator fun compareTo(other: Byte): Int =
+        this.compareTo(other.toLong())
 
     /**
      * Compares this value with the specified value for order.
@@ -1200,7 +1213,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun compareTo(other: Short): Int = this.compareTo(other.toLong())
+    public inline operator fun compareTo(other: Short): Int =
+        this.compareTo(other.toLong())
 
     /**
      * Compares this value with the specified value for order.
@@ -1208,7 +1222,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun compareTo(other: Int): Int = this.compareTo(other.toLong())
+    public inline operator fun compareTo(other: Int): Int =
+        this.compareTo(other.toLong())
 
     /**
      * Compares this value with the specified value for order.
@@ -1216,7 +1231,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override operator fun compareTo(other: Long): Int = this.compare(other)
+    public override operator fun compareTo(other: Long): Int =
+        this.compare(other)
 
     /**
      * Compares this value with the specified value for order.
@@ -1224,7 +1240,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun compareTo(other: Float): Int = this.toFloat().compareTo(other)
+    public inline operator fun compareTo(other: Float): Int =
+        this.toFloat().compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
@@ -1232,103 +1249,128 @@ public class Long internal constructor(internal val low: Int, internal val high:
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun compareTo(other: Double): Int = this.toDouble().compareTo(other)
+    public inline operator fun compareTo(other: Double): Int =
+        this.toDouble().compareTo(other)
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun plus(other: Byte): Long = this.plus(other.toLong())
+    public inline operator fun plus(other: Byte): Long =
+        this.plus(other.toLong())
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun plus(other: Short): Long = this.plus(other.toLong())
+    public inline operator fun plus(other: Short): Long =
+        this.plus(other.toLong())
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun plus(other: Int): Long = this.plus(other.toLong())
+    public inline operator fun plus(other: Int): Long =
+        this.plus(other.toLong())
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public operator fun plus(other: Long): Long = this.add(other)
+    public operator fun plus(other: Long): Long =
+        this.add(other)
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun plus(other: Float): Float = this.toFloat().plus(other)
+    public inline operator fun plus(other: Float): Float =
+        this.toFloat().plus(other)
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun plus(other: Double): Double = this.toDouble().plus(other)
+    public inline operator fun plus(other: Double): Double =
+        this.toDouble().plus(other)
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun minus(other: Byte): Long = this.minus(other.toLong())
+    public inline operator fun minus(other: Byte): Long =
+        this.minus(other.toLong())
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun minus(other: Short): Long = this.minus(other.toLong())
+    public inline operator fun minus(other: Short): Long =
+        this.minus(other.toLong())
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun minus(other: Int): Long = this.minus(other.toLong())
+    public inline operator fun minus(other: Int): Long =
+        this.minus(other.toLong())
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public operator fun minus(other: Long): Long = this.subtract(other)
+    public operator fun minus(other: Long): Long =
+        this.subtract(other)
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun minus(other: Float): Float = this.toFloat().minus(other)
+    public inline operator fun minus(other: Float): Float =
+        this.toFloat().minus(other)
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun minus(other: Double): Double = this.toDouble().minus(other)
+    public inline operator fun minus(other: Double): Double =
+        this.toDouble().minus(other)
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun times(other: Byte): Long = this.times(other.toLong())
+    public inline operator fun times(other: Byte): Long =
+        this.times(other.toLong())
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun times(other: Short): Long = this.times(other.toLong())
+    public inline operator fun times(other: Short): Long =
+        this.times(other.toLong())
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun times(other: Int): Long = this.times(other.toLong())
+    public inline operator fun times(other: Int): Long =
+        this.times(other.toLong())
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public operator fun times(other: Long): Long = this.multiply(other)
+    public operator fun times(other: Long): Long =
+        this.multiply(other)
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun times(other: Float): Float = this.toFloat().times(other)
+    public inline operator fun times(other: Float): Float =
+        this.toFloat().times(other)
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun times(other: Double): Double = this.toDouble().times(other)
+    public inline operator fun times(other: Double): Double =
+        this.toDouble().times(other)
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun div(other: Byte): Long = this.div(other.toLong())
+    public inline operator fun div(other: Byte): Long =
+        this.div(other.toLong())
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun div(other: Short): Long = this.div(other.toLong())
+    public inline operator fun div(other: Short): Long =
+        this.div(other.toLong())
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun div(other: Int): Long = this.div(other.toLong())
+    public inline operator fun div(other: Int): Long =
+        this.div(other.toLong())
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public operator fun div(other: Long): Long = this.divide(other)
+    public operator fun div(other: Long): Long =
+        this.divide(other)
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun div(other: Float): Float = this.toFloat().div(other)
+    public inline operator fun div(other: Float): Float =
+        this.toFloat().div(other)
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun div(other: Double): Double = this.toDouble().div(other)
+    public inline operator fun div(other: Double): Double =
+        this.toDouble().div(other)
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1337,7 +1379,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      */
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun rem(other: Byte): Long = this.rem(other.toLong())
+    public inline operator fun rem(other: Byte): Long =
+        this.rem(other.toLong())
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1346,7 +1389,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      */
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun rem(other: Short): Long = this.rem(other.toLong())
+    public inline operator fun rem(other: Short): Long =
+        this.rem(other.toLong())
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1355,7 +1399,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      */
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun rem(other: Int): Long = this.rem(other.toLong())
+    public inline operator fun rem(other: Int): Long =
+        this.rem(other.toLong())
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1364,7 +1409,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      */
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
-    public operator fun rem(other: Long): Long = this.modulo(other)
+    public operator fun rem(other: Long): Long =
+        this.modulo(other)
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1373,7 +1419,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      */
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun rem(other: Float): Float = this.toFloat().rem(other)
+    public inline operator fun rem(other: Float): Float =
+        this.toFloat().rem(other)
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1382,29 +1429,34 @@ public class Long internal constructor(internal val low: Int, internal val high:
      */
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun rem(other: Double): Double = this.toDouble().rem(other)
+    public inline operator fun rem(other: Double): Double =
+        this.toDouble().rem(other)
 
     /**
      * Returns this value incremented by one.
      *
      * @sample samples.misc.Builtins.inc
      */
-    public operator fun inc(): Long = this + 1L
+    public operator fun inc(): Long =
+        this + 1L
 
     /**
      * Returns this value decremented by one.
      *
      * @sample samples.misc.Builtins.dec
      */
-    public operator fun dec(): Long = this - 1L
+    public operator fun dec(): Long =
+        this - 1L
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun unaryPlus(): Long = this
+    public inline operator fun unaryPlus(): Long =
+        this
 
     /** Returns the negative of this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public operator fun unaryMinus(): Long = this.inv() + 1L
+    public operator fun unaryMinus(): Long =
+        this.inv() + 1L
 
     /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Byte): LongRange =
@@ -1429,7 +1481,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Byte): LongRange = this until other
+    public operator fun rangeUntil(other: Byte): LongRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1438,7 +1491,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Short): LongRange = this until other
+    public operator fun rangeUntil(other: Short): LongRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1447,7 +1501,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Int): LongRange = this until other
+    public operator fun rangeUntil(other: Int): LongRange =
+        this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1456,7 +1511,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Long): LongRange = this until other
+    public operator fun rangeUntil(other: Long): LongRange =
+        this until other
 
     /**
      * Shifts this value left by the [bitCount] number of bits.
@@ -1465,7 +1521,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      * The shift distance actually used is therefore always in the range `0..63`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public infix fun shl(bitCount: Int): Long = shiftLeft(bitCount)
+    public infix fun shl(bitCount: Int): Long =
+        shiftLeft(bitCount)
 
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
@@ -1474,7 +1531,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      * The shift distance actually used is therefore always in the range `0..63`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public infix fun shr(bitCount: Int): Long = shiftRight(bitCount)
+    public infix fun shr(bitCount: Int): Long =
+        shiftRight(bitCount)
 
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
@@ -1483,23 +1541,28 @@ public class Long internal constructor(internal val low: Int, internal val high:
      * The shift distance actually used is therefore always in the range `0..63`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public infix fun ushr(bitCount: Int): Long = shiftRightUnsigned(bitCount)
+    public infix fun ushr(bitCount: Int): Long =
+        shiftRightUnsigned(bitCount)
 
     /** Performs a bitwise AND operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public infix fun and(other: Long): Long = Long(this.low and other.low, this.high and other.high)
+    public infix fun and(other: Long): Long =
+        Long(this.low and other.low, this.high and other.high)
 
     /** Performs a bitwise OR operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public infix fun or(other: Long): Long = Long(this.low or other.low, this.high or other.high)
+    public infix fun or(other: Long): Long =
+        Long(this.low or other.low, this.high or other.high)
 
     /** Performs a bitwise XOR operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public infix fun xor(other: Long): Long = Long(this.low xor other.low, this.high xor other.high)
+    public infix fun xor(other: Long): Long =
+        Long(this.low xor other.low, this.high xor other.high)
 
     /** Inverts the bits in this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public fun inv(): Long = Long(low.inv(), high.inv())
+    public fun inv(): Long =
+        Long(low.inv(), high.inv())
 
     /**
      * Converts this [Long] value to [Byte].
@@ -1510,7 +1573,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      * The resulting `Byte` value is represented by the least significant 8 bits of this `Long` value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toByte(): Byte = low.toByte()
+    public override fun toByte(): Byte =
+        low.toByte()
 
     /**
      * Converts this [Long] value to [Char].
@@ -1523,7 +1587,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toChar(): Char = low.toChar()
+    public override fun toChar(): Char =
+        low.toChar()
 
     /**
      * Converts this [Long] value to [Short].
@@ -1534,7 +1599,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      * The resulting `Short` value is represented by the least significant 16 bits of this `Long` value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toShort(): Short = low.toShort()
+    public override fun toShort(): Short =
+        low.toShort()
 
     /**
      * Converts this [Long] value to [Int].
@@ -1545,11 +1611,13 @@ public class Long internal constructor(internal val low: Int, internal val high:
      * The resulting `Int` value is represented by the least significant 32 bits of this `Long` value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toInt(): Int = low
+    public override fun toInt(): Int =
+        low
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toLong(): Long = this
+    public override fun toLong(): Long =
+        this
 
     /**
      * Converts this [Long] value to [Float].
@@ -1559,7 +1627,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
      * the one with zero at least significant bit of mantissa is selected.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toFloat(): Float = toDouble().toFloat()
+    public override fun toFloat(): Float =
+        toDouble().toFloat()
 
     /**
      * Converts this [Long] value to [Double].
@@ -1569,15 +1638,19 @@ public class Long internal constructor(internal val low: Int, internal val high:
      * the one with zero at least significant bit of mantissa is selected.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toDouble(): Double = toNumber()
+    public override fun toDouble(): Double =
+        toNumber()
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String = this.toStringImpl(radix = 10)
+    public override fun toString(): String =
+        this.toStringImpl(radix = 10)
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean = other is Long && equalsLong(other)
+    public override fun equals(other: Any?): Boolean =
+        other is Long && equalsLong(other)
 
-    public override fun hashCode(): Int = hashCode(this)
+    public override fun hashCode(): Int =
+        hashCode(this)
 
     // This method is used by JavaScript to convert objects of type Long to primitives.
     // This is essential for the JavaScript interop.
@@ -1586,7 +1659,8 @@ public class Long internal constructor(internal val low: Int, internal val high:
     // Because `kotlin.Number` is a supertype of `Long` too, there has to be a way for JS to know how to handle Longs.
     // See KT-50202
     @JsName("valueOf")
-    internal fun valueOf(): Double = toDouble()
+    internal fun valueOf(): Double =
+        toDouble()
 }
 
 /** Represents a single-precision 32-bit IEEE 754 floating point number. */

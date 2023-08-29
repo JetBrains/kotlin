@@ -47,7 +47,8 @@ public class Boolean private constructor() : Comparable<Boolean> {
     public external override fun compareTo(other: Boolean): Int
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String = if (this) "true" else "false"
+    public override fun toString(): String =
+        if (this) "true" else "false"
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
@@ -58,5 +59,6 @@ public class Boolean private constructor() : Comparable<Boolean> {
 
     @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Boolean): Boolean = kotlin.native.internal.areEqualByValue(this, other)
+    public fun equals(other: Boolean): Boolean =
+        kotlin.native.internal.areEqualByValue(this, other)
 }
