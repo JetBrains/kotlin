@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.writeText
@@ -54,6 +55,45 @@ class KotlinJvmApiTest : KGPBaseTest() {
 
             build("foo") {
                 assertFileExists(expectedOutput)
+            }
+        }
+    }
+
+
+    @DisplayName("KT-60541: checks that configuring custom KotlinCompile does not require using internals")
+    @JvmGradlePluginTests
+    @GradleTest
+    internal fun kotlinCompileCustomTask(gradleVersion: GradleVersion) {
+        project(projectName = "jvm-with-common", gradleVersion = gradleVersion) {
+
+            val customModuleName = "customModuleName"
+            val customTaskName = "customTask"
+            val outputDirName = "customTaskOutput"
+            buildGradleKts.appendText(
+                """
+                val compileKotlin = tasks.getByName("compileKotlinJvm") as KotlinCompile
+
+                apply<KotlinBaseApiPlugin>()
+
+                val myCustomTask = plugins
+                    .findPlugin(KotlinBaseApiPlugin::class)!!
+                    .registerKotlinJvmCompileTask("$customTaskName", moduleName = "$customModuleName")
+                    
+                myCustomTask {
+                    source("src/jvmMain", "src/commonMain")
+                    libraries.from(compileKotlin.libraries)
+                    useModuleDetection.set(false)
+                    multiPlatformEnabled.set(false)
+                    destinationDirectory.set(File(project.buildDir, "$outputDirName"))
+                }
+                """.trimIndent()
+            )
+
+            build(customTaskName) {
+                assertOutputDoesNotContain("No value has been specified for property 'ownModuleName'")
+                assertFileInProjectExists("build/$outputDirName/org/example/application/MainKt.class")
+                assertFileInProjectExists("build/$outputDirName/org/example/Lib.class")
+                assertFileInProjectExists("build/$outputDirName/META-INF/$customModuleName.kotlin_module")
             }
         }
     }

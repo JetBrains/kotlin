@@ -38,8 +38,24 @@ interface KotlinJvmFactory {
 
     fun createCompilerJvmOptions(): KotlinJvmCompilerOptions
 
-    /** Creates a Kotlin compile task. */
+    /**
+     * Creates a Kotlin compile task.
+     */
+    @Deprecated(
+        message = "Replaced by registerKotlinJvmCompileTask with module name",
+        replaceWith = ReplaceWith("registerKotlinJvmCompileTask(taskName: String, moduleName: String)")
+    )
     fun registerKotlinJvmCompileTask(taskName: String): TaskProvider<out KotlinJvmCompile>
+
+
+    /**
+     * Creates a Kotlin JVM compile task.
+     *
+     * @param taskName The name of the task to be created.
+     * @param moduleName The name of the module for which the task is being created.
+     * @return The task provider for the Kotlin JVM compile task.
+     */
+    fun registerKotlinJvmCompileTask(taskName: String, moduleName: String): TaskProvider<out KotlinJvmCompile>
 
     /** Creates a stub generation task which creates Java sources stubs from Kotlin sources. */
     fun registerKaptGenerateStubsTask(taskName: String): TaskProvider<out KaptGenerateStubs>

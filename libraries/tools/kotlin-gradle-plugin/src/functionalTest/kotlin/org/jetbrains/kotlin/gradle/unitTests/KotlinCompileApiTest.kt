@@ -31,13 +31,14 @@ class KotlinCompileApiTest {
 
     companion object {
         private const val TASK_NAME = "kotlinCompile"
+        private const val MODULE_NAME = "customModuleName"
     }
 
     @Before
     fun setUpProject() {
         project = buildProject {}
         plugin = project.plugins.apply(KotlinApiPlugin::class.java)
-        plugin.registerKotlinJvmCompileTask(TASK_NAME).configure { task ->
+        plugin.registerKotlinJvmCompileTask(TASK_NAME, MODULE_NAME).configure { task ->
             taskApi = task
         }
         taskImpl = project.tasks.getByName(TASK_NAME) as KotlinCompile
