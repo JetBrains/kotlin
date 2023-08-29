@@ -193,7 +193,7 @@ private fun MemberScope.extractNonPrivateCallables(): Sequence<CallableMemberDes
         getFunctionNames().asSequence().flatMap { getContributedFunctions(it, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS) }
     val properties =
         getVariableNames().asSequence().flatMap { getContributedVariables(it, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS) }
-    return (functions + properties).filter { !Visibilities.isPrivate(it.visibility.delegate) }.map { descriptor -> descriptor }
+    return (functions + properties).filter { !Visibilities.isPrivate(it.visibility.delegate) }
 }
 
 private enum class Kind { FUNCTION, PROPERTY }
