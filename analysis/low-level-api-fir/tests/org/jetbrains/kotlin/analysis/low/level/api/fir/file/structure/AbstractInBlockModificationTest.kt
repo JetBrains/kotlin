@@ -6,20 +6,25 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.extapi.psi.ASTDelegatePsiElement
+import com.intellij.openapi.util.Disposer
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazyResolveRenderer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithCaches
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
+import org.jetbrains.kotlin.analysis.providers.topics.KotlinModuleOutOfBlockModificationListener
+import org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -41,19 +46,12 @@ abstract class AbstractInBlockModificationTest : AbstractLowLevelApiSingleFileTe
             module = moduleStructure.modules.last(),
         )
 
-        val declaration = selectedElement.getNonLocalReanalyzableContainingDeclaration()
-        val actual = if (declaration != null) {
-            val (before, after) = testInBlockModification(
-                file = ktFile,
-                declaration = declaration,
-                testServices = testServices,
-                dumpFirFile = Directives.DUMP_FILE in moduleStructure.allDirectives,
-            )
-
-            "BEFORE MODIFICATION:\n$before\nAFTER MODIFICATION:\n$after"
-        } else {
-            "IN-BLOCK MODIFICATION IS NOT APPLICABLE FOR THIS PLACE"
-        }
+        val actual = testInBlockModification(
+            file = ktFile,
+            elementToModify = selectedElement,
+            testServices = testServices,
+            dumpFirFile = Directives.DUMP_FILE in moduleStructure.allDirectives,
+        )
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
@@ -65,10 +63,11 @@ abstract class AbstractInBlockModificationTest : AbstractLowLevelApiSingleFileTe
 
 internal fun testInBlockModification(
     file: KtFile,
-    declaration: KtAnnotated,
+    elementToModify: PsiElement,
     testServices: TestServices,
     dumpFirFile: Boolean,
-): Pair<String, String> = resolveWithCaches(file) { firSession ->
+): String = resolveWithCaches(file) { firSession ->
+    val declaration = elementToModify.getNonLocalContainingOrThisDeclaration() ?: file
     val firDeclarationBefore = declaration.getOrBuildFirOfType<FirDeclaration>(firSession)
     val declarationToRender = if (dumpFirFile) {
         file.getOrBuildFirFile(firSession).also { it.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE) }
@@ -78,8 +77,12 @@ internal fun testInBlockModification(
 
     val textBefore = declarationToRender.render()
 
-    declaration.modifyBody()
-    invalidateAfterInBlockModification(declaration)
+    val isOutOfBlock = LLFirDeclarationModificationService.getInstance(elementToModify.project).modifyElement(elementToModify)
+    if (isOutOfBlock) {
+        return "IN-BLOCK MODIFICATION IS NOT APPLICABLE FOR THIS PLACE"
+    }
+
+    elementToModify.modify()
 
     val textAfterModification = declarationToRender.render()
     testServices.assertions.assertNotEquals(textBefore, textAfterModification) {
@@ -105,13 +108,33 @@ internal fun testInBlockModification(
         "The declaration must have the same in the resolved state"
     }
 
-    Pair(textBefore, textAfterModification)
+    "BEFORE MODIFICATION:\n$textBefore\nAFTER MODIFICATION:\n$textAfterModification"
+}
+
+/**
+ * @return **true** if out-of-block happens
+ */
+private fun LLFirDeclarationModificationService.modifyElement(element: PsiElement): Boolean {
+    val disposable = Disposer.newDisposable()
+    var isOutOfBlock = false
+    try {
+        project.analysisMessageBus.connect(disposable).subscribe(
+            KotlinTopics.MODULE_OUT_OF_BLOCK_MODIFICATION,
+            KotlinModuleOutOfBlockModificationListener { isOutOfBlock = true },
+        )
+
+        elementModified(element)
+    } finally {
+        Disposer.dispose(disposable)
+    }
+
+    return isOutOfBlock
 }
 
 /**
  * Emulate modification inside the body
  */
-private fun KtAnnotated.modifyBody() {
+private fun PsiElement.modify() {
     for (parent in parentsWithSelf) {
         when (parent) {
             is ASTDelegatePsiElement -> parent.subtreeChanged()

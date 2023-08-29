@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.JvmFirDeserializedSymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
@@ -60,6 +61,8 @@ object FirStandaloneServiceRegistrar : AnalysisApiStandaloneServiceRegistrar {
 
             registerService(LLFirSessionInvalidationService::class.java)
             LLFirSessionInvalidationService.getInstance(project).subscribeToModificationEvents()
+
+            registerService(LLFirDeclarationModificationService::class.java)
         }
     }
 

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
@@ -26,23 +25,11 @@ import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
 
-@Deprecated(
-    "Temporarily left for binary compatibility. Use invalidateAfterInBlockModification(KtElement) instead.",
-    replaceWith = ReplaceWith("invalidateAfterInBlockModification(declaration)", "org.jetbrains.kotlin.psi.KtElement"),
-    level = DeprecationLevel.HIDDEN,
-)
-@LLFirInternals
-@Suppress("unused")
-fun invalidateAfterInBlockModification(declaration: KtDeclaration): Boolean {
-    return invalidateAfterInBlockModification(declaration as KtAnnotated)
-}
-
 /**
  * Must be called in a write action.
  * @return **false** if it is not in-block modification
  */
-@LLFirInternals
-fun invalidateAfterInBlockModification(declaration: KtAnnotated): Boolean {
+internal fun invalidateAfterInBlockModification(declaration: KtAnnotated): Boolean {
     ApplicationManager.getApplication().assertIsWriteThread()
 
     val project = declaration.project
