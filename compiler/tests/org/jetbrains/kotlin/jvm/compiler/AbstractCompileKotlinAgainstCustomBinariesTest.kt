@@ -249,20 +249,19 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir)
     }
 
-//    https://youtrack.jetbrains.com/issue/KT-54905
-//    fun testReleaseCompilerAgainstPreReleaseLibraryJs() {
-//        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
-//    }
+    // KT-60780 K2: missing PRE_RELEASE_CLASS
+    fun testReleaseCompilerAgainstPreReleaseLibraryJs() = muteForK2 {
+        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
+    }
 
     // KT-60780 K2: missing PRE_RELEASE_CLASS
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() = muteForK2 {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-prerelease-check")
     }
 
-//    https://youtrack.jetbrains.com/issue/KT-54905
-//    fun testReleaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck() {
-//        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), "-Xskip-prerelease-check")
-//    }
+    fun testReleaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck() {
+        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), "-Xskip-prerelease-check")
+    }
 
     // KT-60780 K2: missing PRE_RELEASE_CLASS
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipMetadataVersionCheck() = muteForK2 {
