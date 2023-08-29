@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.*
 import org.jetbrains.kotlin.gradle.utils.Future
-import org.jetbrains.kotlin.gradle.utils.getOrPut
 import kotlin.coroutines.*
 
 /*
@@ -106,10 +105,9 @@ internal fun Project.launchInRequiredStage(stage: Stage, block: suspend KotlinPl
  * Universal way of retrieving the current lifecycle
  * Also: See [currentKotlinPluginLifecycle]
  */
-internal val Project.kotlinPluginLifecycle: KotlinPluginLifecycle
-    get() = extraProperties.getOrPut(KotlinPluginLifecycle::class.java.name) {
-        KotlinPluginLifecycleImpl(project)
-    }
+internal val Project.kotlinPluginLifecycle: KotlinPluginLifecycle by kotlinPluginService {
+    KotlinPluginLifecycleImpl(project)
+}
 
 /**
  * Future that will be completed once the project is considered 'Configured'
