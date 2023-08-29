@@ -21,13 +21,16 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.YA
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_6
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.DisabledIf
 import java.nio.file.Files
 import java.util.zip.ZipFile
 import kotlin.io.path.*
 import kotlin.streams.toList
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @JsGradlePluginTests
 class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
@@ -544,6 +547,26 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
             build("assemble")
             build("compileDevelopmentExecutableKotlinJs")
+        }
+    }
+
+    @DisplayName("Not existed friend dependencies does not affect compileKotlinJs UTD")
+    @GradleTest
+    fun testFriendDependenciesDoesNotExist(gradleVersion: GradleVersion) {
+        project("kotlin-js-with-friend-paths", gradleVersion) {
+            build("assemble")
+
+            val oldFriendPaths = "friendPaths.from(project(\":lib\").buildDir.resolve(\"libs/lib.klib\"))"
+            val appModuleGradleBuildKts = subProject("app").buildGradleKts
+            assertFileInProjectContains(appModuleGradleBuildKts.absolutePathString(), oldFriendPaths)
+            appModuleGradleBuildKts.replaceText(
+                oldFriendPaths,
+                "friendPaths.from(project(\":lib\").buildDir.resolve(\"libs/lib.klib\"), project(\":lib\").buildDir.resolve(\"libs/not_existed_lib.klib\"))"
+            )
+
+            build("assemble") {
+                assertTasksUpToDate(":app:compileKotlinJs")
+            }
         }
     }
 
