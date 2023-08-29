@@ -215,7 +215,6 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                     parent.declarations += this
                 }
             }
-            typeAliasCache[typeAlias] = irTypeAlias
             irTypeAlias
         }
     }
@@ -265,11 +264,6 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
             }
         }
         irClass.parent = parent
-        if (regularClass.visibility == Visibilities.Local) {
-            localStorage[regularClass] = irClass
-        } else {
-            classCache[regularClass] = irClass
-        }
         return irClass
     }
 
@@ -298,7 +292,6 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         if (irParent != null) {
             irAnonymousObject.parent = irParent
         }
-        localStorage[anonymousObject] = irAnonymousObject
         return irAnonymousObject
     }
 
@@ -336,33 +329,17 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                 }
             }
         }
-        codeFragmentCache[codeFragment] = irClass
         return irClass
     }
 
-    private fun getIrAnonymousObjectForEnumEntry(anonymousObject: FirAnonymousObject, name: Name, irParent: IrClass?): IrClass {
-        localStorage[anonymousObject]?.let { return it }
-        val irAnonymousObject = classifierStorage.createAndCacheAnonymousObject(anonymousObject, Visibilities.Private, name, irParent)
-        processClassHeader(anonymousObject, irAnonymousObject)
-        return irAnonymousObject
-    }
-
-    fun createIrTypeParameterWithBounds(
-        typeParameter: FirTypeParameter,
-        index: Int,
-        ownerSymbol: IrSymbol,
-        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
-    ): IrTypeParameter {
-        val irTypeParameter = createIrTypeParameterWithoutBounds(typeParameter, index, ownerSymbol, typeOrigin)
+    fun initializeTypeParameterBounds(typeParameter: FirTypeParameter, irTypeParameter: IrTypeParameter) {
         irTypeParameter.superTypes = typeParameter.bounds.map { it.toIrType() }
-        return irTypeParameter
     }
 
     fun createIrTypeParameterWithoutBounds(
         typeParameter: FirTypeParameter,
         index: Int,
         ownerSymbol: IrSymbol,
-        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
     ): IrTypeParameter {
         require(index >= 0)
         val origin = typeParameter.computeIrOrigin()
@@ -417,13 +394,6 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                 )
             }
         }
-
-        // Cache the type parameter BEFORE processing its bounds/supertypes, to properly handle recursive type bounds.
-        if (typeOrigin.forSetter) {
-            typeParameterCacheForSetter[typeParameter] = irTypeParameter
-        } else {
-            typeParameterCache[typeParameter] = irTypeParameter
-        }
         annotationGenerator.generate(irTypeParameter, typeParameter)
         return irTypeParameter
     }
@@ -442,7 +412,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
     ): IrEnumEntry {
         return enumEntry.convertWithOffsets { startOffset, endOffset ->
             val signature = signatureComposer.composeSignature(enumEntry)
-            val result = declareIrEnumEntry(signature) { symbol ->
+            declareIrEnumEntry(signature) { symbol ->
                 val origin = enumEntry.computeIrOrigin(predefinedOrigin)
                 irFactory.createEnumEntry(
                     startOffset = startOffset,
@@ -459,7 +429,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                         // An enum entry with its own members requires an anonymous object generated.
                         // Otherwise, this is a default-ish enum entry whose initializer would be a delegating constructor call,
                         // which will be translated via visitor later.
-                        val klass = getIrAnonymousObjectForEnumEntry(
+                        val klass = classifierStorage.getIrAnonymousObjectForEnumEntry(
                             (enumEntry.initializer as FirAnonymousObjectExpression).anonymousObject, enumEntry.name, irParent
                         )
                         this.correspondingClass = klass
@@ -467,8 +437,6 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                     declarationStorage.leaveScope(this.symbol)
                 }
             }
-            enumEntryCache[enumEntry] = result
-            result
         }
     }
 
@@ -506,44 +474,6 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                 parent = irParent
             }
         }
-    }
-
-    // TODO: should be decomposed
-    fun createIrClassSymbolByFirSymbol(firClassSymbol: FirClassSymbol<*>): IrClassSymbol {
-        val firClass = firClassSymbol.fir
-        classifierStorage.getCachedIrClass(firClass)?.let { return it.symbol }
-        if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.Local) {
-            return createLocalIrClassOnTheFly(firClass).symbol
-        }
-        firClass as FirRegularClass
-        val classId = firClassSymbol.classId
-        val parentId = classId.outerClassId
-        val parentClass = parentId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it) }
-        val irParent = declarationStorage.findIrParent(classId.packageFqName, parentClass?.toLookupTag(), firClassSymbol, firClass.origin)!!
-
-        // firClass may be referenced by some parent's type parameters as a bound. In that case, getIrClassSymbol will be called recursively.
-        classifierStorage.getCachedIrClass(firClass)?.let { return it.symbol }
-
-        val irClass = lazyDeclarationsGenerator.createIrLazyClass(firClass, irParent)
-        classCache[firClass] = irClass
-        // NB: this is needed to prevent recursions in case of self bounds
-        (irClass as Fir2IrLazyClass).prepareTypeParameters()
-
-        return irClass.symbol
-    }
-
-
-    fun createIrTypeParameterForNonCachedDeclaration(firTypeParameter: FirTypeParameter): IrTypeParameterSymbol {
-        val firTypeParameterOwnerSymbol = firTypeParameter.containingDeclarationSymbol
-        val firTypeParameterOwner = firTypeParameterOwnerSymbol.fir as FirTypeParameterRefsOwner
-        val index = firTypeParameterOwner.typeParameters.indexOf(firTypeParameter).also { check(it >= 0) }
-
-        val isSetter = firTypeParameterOwner is FirPropertyAccessor && firTypeParameterOwner.isSetter
-        val conversionTypeOrigin = if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
-
-        return createIrTypeParameterWithoutBounds(firTypeParameter, index, IrTypeParameterSymbolImpl(), conversionTypeOrigin).apply {
-            superTypes = firTypeParameter.bounds.map { it.toIrType(typeConverter) }
-        }.symbol
     }
 
     private val temporaryParent by lazy {

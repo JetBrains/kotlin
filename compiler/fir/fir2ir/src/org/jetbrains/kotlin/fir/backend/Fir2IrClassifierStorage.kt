@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -80,13 +79,29 @@ class Fir2IrClassifierStorage(
         for ((index, typeParameter) in owner.typeParameters.withIndex()) {
             val original = typeParameter.symbol.fir
             getCachedIrTypeParameter(original)
-                ?: classifiersGenerator.createIrTypeParameterWithoutBounds(original, index, irOwnerSymbol)
+                ?: createAndCacheIrTypeParameter(original, index, irOwnerSymbol)
             if (owner is FirProperty && owner.isVar) {
                 val context = ConversionTypeOrigin.SETTER
                 getCachedIrTypeParameter(original, context)
-                    ?: classifiersGenerator.createIrTypeParameterWithoutBounds(original, index, irOwnerSymbol, context)
+                    ?: createAndCacheIrTypeParameter(original, index, irOwnerSymbol, context)
             }
         }
+    }
+
+    private fun createAndCacheIrTypeParameter(
+        typeParameter: FirTypeParameter,
+        index: Int,
+        ownerSymbol: IrSymbol,
+        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
+    ): IrTypeParameter {
+        val irTypeParameter = classifiersGenerator.createIrTypeParameterWithoutBounds(typeParameter, index, ownerSymbol)
+        // Cache the type parameter BEFORE processing its bounds/supertypes, to properly handle recursive type bounds.
+        if (typeOrigin.forSetter) {
+            typeParameterCacheForSetter[typeParameter] = irTypeParameter
+        } else {
+            typeParameterCache[typeParameter] = irTypeParameter
+        }
+        return irTypeParameter
     }
 
     internal fun setTypeParameters(
@@ -140,7 +155,9 @@ class Fir2IrClassifierStorage(
         typeAlias: FirTypeAlias,
         parent: IrDeclarationParent
     ): IrTypeAlias {
-        return classifiersGenerator.createIrTypeAlias(typeAlias, parent)
+        return classifiersGenerator.createIrTypeAlias(typeAlias, parent).also {
+            typeAliasCache[typeAlias] = it
+        }
     }
 
     internal fun getCachedTypeAlias(firTypeAlias: FirTypeAlias): IrTypeAlias? = typeAliasCache[firTypeAlias]
@@ -150,7 +167,13 @@ class Fir2IrClassifierStorage(
         parent: IrDeclarationParent,
         predefinedOrigin: IrDeclarationOrigin? = null
     ): IrClass {
-        return classifiersGenerator.createIrClass(regularClass, parent, predefinedOrigin)
+        return classifiersGenerator.createIrClass(regularClass, parent, predefinedOrigin).also {
+            if (regularClass.visibility == Visibilities.Local) {
+                localStorage[regularClass] = it
+            } else {
+                classCache[regularClass] = it
+            }
+        }
     }
 
     fun createAndCacheAnonymousObject(
@@ -159,11 +182,22 @@ class Fir2IrClassifierStorage(
         name: Name = SpecialNames.NO_NAME_PROVIDED,
         irParent: IrDeclarationParent? = null
     ): IrClass {
-        return classifiersGenerator.createAnonymousObject(anonymousObject, visibility, name, irParent)
+        return classifiersGenerator.createAnonymousObject(anonymousObject, visibility, name, irParent).also {
+            localStorage[anonymousObject] = it
+        }
     }
 
     fun createAndCacheCodeFragmentClass(codeFragment: FirCodeFragment, containingFile: IrFile): IrClass {
-        return classifiersGenerator.createCodeFragmentClass(codeFragment, containingFile)
+        return classifiersGenerator.createCodeFragmentClass(codeFragment, containingFile).also {
+            codeFragmentCache[codeFragment] = it
+        }
+    }
+
+    fun getIrAnonymousObjectForEnumEntry(anonymousObject: FirAnonymousObject, name: Name, irParent: IrClass?): IrClass {
+        localStorage[anonymousObject]?.let { return it }
+        val irAnonymousObject = classifierStorage.createAndCacheAnonymousObject(anonymousObject, Visibilities.Private, name, irParent)
+        classifiersGenerator.processClassHeader(anonymousObject, irAnonymousObject)
+        return irAnonymousObject
     }
 
     internal fun getCachedIrTypeParameter(
@@ -183,7 +217,9 @@ class Fir2IrClassifierStorage(
         typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
     ): IrTypeParameter {
         getCachedIrTypeParameter(typeParameter, typeOrigin)?.let { return it }
-        return classifiersGenerator.createIrTypeParameterWithBounds(typeParameter, index, ownerSymbol, typeOrigin)
+        val irTypeParameter = createAndCacheIrTypeParameter(typeParameter, index, ownerSymbol, typeOrigin)
+        classifiersGenerator.initializeTypeParameterBounds(typeParameter, irTypeParameter)
+        return irTypeParameter
     }
 
     fun putEnumEntryClassInScope(enumEntry: FirEnumEntry, correspondingClass: IrClass) {
@@ -212,7 +248,9 @@ class Fir2IrClassifierStorage(
             enumEntry,
             irParent = irParent,
             predefinedOrigin = predefinedOrigin
-        )
+        ).also {
+            enumEntryCache[enumEntry] = it
+        }
     }
 
     @OptIn(IrSymbolInternals::class)
@@ -247,9 +285,23 @@ class Fir2IrClassifierStorage(
         }
 
         if (components.configuration.allowNonCachedDeclarations) {
-            return classifiersGenerator.createIrTypeParameterForNonCachedDeclaration(firTypeParameter)
+            return createIrTypeParameterForNonCachedDeclaration(firTypeParameter)
         }
 
         error("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name} of the owner: ${firTypeParameter.containingDeclarationSymbol}")
     }
+
+    private fun createIrTypeParameterForNonCachedDeclaration(firTypeParameter: FirTypeParameter): IrTypeParameterSymbol {
+        val firTypeParameterOwnerSymbol = firTypeParameter.containingDeclarationSymbol
+        val firTypeParameterOwner = firTypeParameterOwnerSymbol.fir as FirTypeParameterRefsOwner
+        val index = firTypeParameterOwner.typeParameters.indexOf(firTypeParameter).also { check(it >= 0) }
+
+        val isSetter = firTypeParameterOwner is FirPropertyAccessor && firTypeParameterOwner.isSetter
+        val conversionTypeOrigin = if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
+
+        return createAndCacheIrTypeParameter(firTypeParameter, index, IrTypeParameterSymbolImpl(), conversionTypeOrigin).also {
+            classifiersGenerator.initializeTypeParameterBounds(firTypeParameter, it)
+        }.symbol
+    }
+
 }
