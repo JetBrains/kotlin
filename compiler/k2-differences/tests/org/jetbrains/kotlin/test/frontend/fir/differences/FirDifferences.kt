@@ -758,6 +758,7 @@ fun printSimpleDiagnosticsStatistics(
 
 val statsColumns = listOf(
     "Diagnostic",
+    "Group",
     "Red->Green", // "# of files it disappeared from",
     "Green->Red", // "# of files where it's introduced into",
     "Red->Pure Green", // "# of files it disappeared from that are now pure-green",
@@ -780,6 +781,8 @@ fun printCsvDiagnosticsStatistics(
     val sorted = diagnosticsStatistics.entries.sortedByDescending { it.value.size }
 
     for ((diagnostic, filesToStats) in sorted) {
+        val group = diagnosticToSmallClass[diagnostic]?.group
+
         val disappearances = filesToStats.filter { it.value.significantK1MetaInfo.isNotEmpty() }
         val introductions = filesToStats.filter { it.value.significantK2MetaInfo.isNotEmpty() }
 
@@ -792,7 +795,8 @@ fun printCsvDiagnosticsStatistics(
 
         writer.write(
             listOf(
-                diagnostic, disappearances.size, introductions.size,
+                diagnostic, group ?: "--",
+                disappearances.size, introductions.size,
                 pureDisappearances.size, pureIntroductions.size,
                 disappearanceIssue?.ktNumber ?: "--",
                 introductionIssue?.ktNumber ?: "--",
@@ -1143,6 +1147,20 @@ inline fun <reified T, R> JsonArray.mapChildrenAs(transform: (T) -> R): List<R> 
     transform(it as? T ?: error("Expected ${T::class.simpleName}, but was: $it"))
 }
 
+fun printDiagnosticsGroupsStatistics() {
+    val groupsLoading = diagnosticToSmallClass
+        .mapValues { it.value.group }
+        .entries.groupingBy { it.value }
+        .eachCount().entries.sortedByDescending { it.value }
+
+    status.doneSilently("Diagnostic Groups Loading. In total there are ${diagnosticToSmallClass.size} diagnostics")
+
+    groupsLoading.withIndex().joinToString("\n") { (index, groupingEntry) ->
+        val (group, count) = groupingEntry
+        "- ${index + 1}: $group contains $count diagnostics"
+    }.let(::println)
+}
+
 fun main() {
     val tests = deserializeOrGenerate(build.child("testsStats.json")) {
         collectTestsStats(projectDirectory)
@@ -1302,6 +1320,8 @@ fun main() {
 
     generateAdditionalBoxTestsAndLogManuals(candidatesForAdditionalBoxTests, candidatesForManualChecking)
 //    doNonLocalThings(containmentStatistics)
+
+    printDiagnosticsGroupsStatistics()
 
     @Suppress("UNUSED_VARIABLE") val a = 10 + 1
     println("")
