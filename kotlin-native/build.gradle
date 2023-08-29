@@ -495,7 +495,18 @@ tasks.register("bundle") {
     dependsOn 'bundleRegular', 'bundlePrebuilt'
 }
 
+def sbomBundleRegular = SbomKt.configureSbom(project, "BundleRegular", "Kotlin/Native bundle", [].toSet(), null)
+
+def sbomBundleRegularForPublish = tasks.register("sbomBundleRegularForPublish", Copy) {
+    dependsOn(sbomBundleRegular)
+    destinationDir = file("$buildDir/spdx/regular")
+    from(sbomBundleRegular.map { it.outputDirectory.file("BundleRegular.spdx.json") }) {
+        rename(".*", "kotlin-native-${HostManager.platformName()}-${kotlinVersion}.spdx.json")
+    }
+}
+
 tasks.register("bundleRegular", (isWindows()) ? Zip : Tar) {
+    dependsOn(sbomBundleRegularForPublish)
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-$simpleOsName")
     archiveVersion.set(kotlinVersion)
@@ -511,7 +522,19 @@ tasks.register("bundleRegular", (isWindows()) ? Zip : Tar) {
     }
 }
 
+def sbomBundlePrebuilt = SbomKt.configureSbom(project,
+        "BundlePrebuilt", "Kotlin/Native bundle (prebuilt platform libs)", [].toSet(), null)
+
+def sbomBundlePrebuiltForPublish = tasks.register("sbomBundlePrebuiltForPublish", Copy) {
+    dependsOn(sbomBundlePrebuilt)
+    destinationDir = file("$buildDir/spdx/prebuilt")
+    from(sbomBundlePrebuilt.map { it.outputDirectory.file("BundlePrebuilt.spdx.json") }) {
+        rename(".*", "kotlin-native-prebuilt-${HostManager.platformName()}-${kotlinVersion}.spdx.json")
+    }
+}
+
 tasks.register("bundlePrebuilt", (isWindows()) ? Zip : Tar) {
+    dependsOn(sbomBundlePrebuiltForPublish)
     dependsOn("crossDistPlatformLibs")
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName")
@@ -742,12 +765,16 @@ publishing {
 
             if (publishBundlesFromLocation) {
                 def bundleArchives = bundlesLocationFiles
-                        .findAll { it.name.startsWith("kotlin-native") && !it.name.contains("prebuilt") }
+                        .findAll { it.name.startsWith("kotlin-native") && !it.name.contains("prebuilt") && !it.name.endsWith("spdx.json") }
                 def bundleConfigs = createConfigurations(bundleArchives)
                 bundleConfigs.forEach { target, file ->
                     mvn.artifact(file) {
                         classifier = platformName(target)
                         extension = (target.family == Family.MINGW) ? 'zip' : 'tar.gz'
+                    }
+                    mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-${platformName(target)}-${kotlinVersion}.spdx.json") {
+                        classifier = platformName(target)
+                        extension = "spdx.json"
                     }
                 }
             } else {
@@ -771,12 +798,16 @@ publishing {
 
             if (publishBundlesFromLocation) {
                 def prebuiltBundleArchives = bundlesLocationFiles
-                        .findAll { it.name.startsWith("kotlin-native-prebuilt") }
+                        .findAll { it.name.startsWith("kotlin-native-prebuilt") && !it.name.endsWith("spdx.json") }
                 def bundlePrebuiltConfigs = createConfigurations(prebuiltBundleArchives)
                 bundlePrebuiltConfigs.forEach { target, file ->
                     mvn.artifact(file) {
                         classifier = platformName(target)
                         extension = (target.family == Family.MINGW) ? 'zip' : 'tar.gz'
+                    }
+                    mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-prebuilt-${platformName(target)}-${kotlinVersion}.spdx.json") {
+                        classifier = platformName(target)
+                        extension = "spdx.json"
                     }
                 }
             } else {
