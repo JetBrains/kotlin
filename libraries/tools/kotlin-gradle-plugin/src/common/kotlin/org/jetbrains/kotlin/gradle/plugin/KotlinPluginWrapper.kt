@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePlugin
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticRenderingOptions
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollectorProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollectorForConfiguration
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.launchKotlinGradleProjectCheckers
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
@@ -274,13 +274,13 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
 }
 
 private fun Project.setupDiagnosticsChecksAndReporting() {
-    val collectorProvider = kotlinToolingDiagnosticsCollectorProvider
+    val collectorProvider = kotlinToolingDiagnosticsCollectorForConfiguration
     val diagnosticRenderingOptions = ToolingDiagnosticRenderingOptions.forProject(this)
 
     // Setup reporting from tasks
     tasks.withType(UsesKotlinToolingDiagnostics::class.java).configureEach {
-        it.usesService(collectorProvider)
-        it.toolingDiagnosticsCollector.value(collectorProvider)
+        it.usesService(kotlinToolingDiagnosticsCollectorForExecution)
+        it.toolingDiagnosticsCollector.value(kotlinToolingDiagnosticsCollectorForExecution)
         it.diagnosticRenderingOptions.set(diagnosticRenderingOptions)
     }
 

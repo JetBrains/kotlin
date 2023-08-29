@@ -155,6 +155,21 @@ class MppDiagnosticsIt : KGPBaseTest() {
     }
 
     @GradleTest
+    fun testDiagnosticReportsFromTasksWithCC(gradleVersion: GradleVersion) {
+        project("diagnosticReportsFromTasksWithCC", gradleVersion) {
+            build("assemble", "--rerun-tasks", buildOptions = buildOptions.copy(configurationCache = true)) {
+                assertConfigurationCacheStored()
+                assertEqualsToFile(expectedOutputFile("first-run"), extractProjectsAndTheirDiagnostics())
+            }
+
+            build("assemble", "--rerun-tasks", buildOptions = buildOptions.copy(configurationCache = true)) {
+                assertConfigurationCacheReused()
+                assertEqualsToFile(expectedOutputFile("cache-reused"), extractProjectsAndTheirDiagnostics())
+            }
+        }
+    }
+
+    @GradleTest
     fun testEarlyTasksMaterializationDoesntBreakReports(gradleVersion: GradleVersion) {
         project("earlyTasksMaterializationDoesntBreakReports", gradleVersion) {
             buildAndFail("assemble") {

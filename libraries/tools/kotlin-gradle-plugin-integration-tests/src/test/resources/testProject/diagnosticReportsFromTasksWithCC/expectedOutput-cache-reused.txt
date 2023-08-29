@@ -1,0 +1,6 @@
+> Task :checkKotlinGradlePluginConfigurationErrors
+w: [InconsistentTargetCompatibilityForKotlinAndJavaTasks | WARNING] Inconsistent JVM-target compatibility detected for tasks 'compileJava' (11) and 'compileKotlin' (17).
+This will become an error in Gradle 8.0.
+Consider using JVM Toolchain: https://kotl.in/gradle/jvm/toolchain
+Learn more about JVM-target validation: https://kotl.in/gradle/jvm/target-validation
+#diagnostic-end

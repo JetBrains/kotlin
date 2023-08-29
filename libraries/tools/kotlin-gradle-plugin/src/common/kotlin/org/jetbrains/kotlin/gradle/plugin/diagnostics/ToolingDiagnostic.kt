@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import java.io.Serializable
 
 /**
  * Represents a reported instance of a diagnostic.
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 @InternalKotlinGradlePluginApi // used in integration tests
 data class ToolingDiagnostic(
     val factoryId: String, val message: String, val severity: Severity
-) {
+) : Serializable {
     /**
      * Stacktrace pointing where the original cause of the diagnostic happened. Note that it is not necessarily
      * the stacktrace of where the diagnostic has been reported
@@ -92,7 +93,7 @@ data class ToolingDiagnostic(
     /**
      * [path] is a standard fully qualified Gradle path
      */
-    sealed class Location {
+    sealed class Location : Serializable {
         data class GradleProject(val path: String) : Location()
         data class GradleTask(val path: String) : Location()
     }
