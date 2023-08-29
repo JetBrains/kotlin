@@ -31,6 +31,7 @@ import com.intellij.util.io.URLUtil.JAR_PROTOCOL
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.analysis.api.impl.base.java.source.JavaElementSourceWithSmartPointerFactory
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProviderCliImpl
@@ -327,6 +328,26 @@ object StandaloneProjectFactory {
     ): List<JavaRoot> = withAllTransitiveDependencies(modules)
         .filterIsInstance<KtBinaryModule>()
         .flatMap { it.getJavaRoots(environment) }
+
+    fun createSearchScopeByLibraryRoots(
+        roots: Collection<Path>,
+        environment: KotlinCoreProjectEnvironment,
+    ): GlobalSearchScope {
+        if (roots.isEmpty()) return GlobalSearchScope.EMPTY_SCOPE
+        val virtualFiles = getVirtualFilesForLibraryRootsRecursively(roots, environment)
+        return GlobalSearchScope.filesScope(environment.project, virtualFiles)
+    }
+
+    fun getVirtualFilesForLibraryRootsRecursively(
+        roots: Collection<Path>,
+        environment: KotlinCoreProjectEnvironment,
+    ): Collection<VirtualFile> {
+        val virtualFilesByRoots = getVirtualFilesForLibraryRoots(roots, environment)
+        return buildList {
+            addAll(virtualFilesByRoots)
+            virtualFilesByRoots.flatMapTo(this) { LibraryUtils.getAllVirtualFilesFromRoot(it, includeRoot = true) }
+        }
+    }
 
     fun getVirtualFilesForLibraryRoots(
         roots: Collection<Path>,

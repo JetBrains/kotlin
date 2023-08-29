@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
@@ -131,7 +130,7 @@ object TestModuleStructureFactory {
         return KtLibraryModuleImpl(
             libraryName,
             JvmPlatforms.defaultJvmPlatform,
-            getScopeForLibraryByRoots(listOf(jar), project, testServices),
+            getScopeForLibraryByRoots(listOf(jar), testServices),
             project,
             listOf(jar),
             librarySources = null,
@@ -168,23 +167,16 @@ object TestModuleStructureFactory {
         return KtJdkModuleImpl(
             "jdk",
             JvmPlatforms.defaultJvmPlatform,
-            getScopeForLibraryByRoots(jdkSourceRoots, project, testServices),
+            getScopeForLibraryByRoots(jdkSourceRoots, testServices),
             project,
             jdkSourceRoots
         )
     }
 
-    fun getScopeForLibraryByRoots(roots: Collection<Path>, project: Project, testServices: TestServices): GlobalSearchScope {
-        val virtualFileRoots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
+    fun getScopeForLibraryByRoots(roots: Collection<Path>, testServices: TestServices): GlobalSearchScope {
+        return StandaloneProjectFactory.createSearchScopeByLibraryRoots(
             roots,
             testServices.environmentManager.getProjectEnvironment()
-        )
-        return GlobalSearchScope.filesScope(
-            project,
-            buildList {
-                addAll(virtualFileRoots)
-                virtualFileRoots.flatMapTo(this) { LibraryUtils.getAllVirtualFilesFromRoot(it, includeRoot = true) }
-            }
         )
     }
 

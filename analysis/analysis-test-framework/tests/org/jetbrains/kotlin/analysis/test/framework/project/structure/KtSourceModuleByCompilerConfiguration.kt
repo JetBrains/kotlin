@@ -56,7 +56,7 @@ abstract class KtModuleByCompilerConfiguration(
 
     private fun createJdkFromConfiguration(): KtSdkModule? = configuration.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
         val jdkHomePaths = StandaloneProjectFactory.getDefaultJdkModulePaths(project, jdkHome.toPath())
-        val scope = TestModuleStructureFactory.getScopeForLibraryByRoots(jdkHomePaths, project, testServices)
+        val scope = TestModuleStructureFactory.getScopeForLibraryByRoots(jdkHomePaths, testServices)
 
         KtJdkModuleImpl(
             "jdk",
@@ -146,7 +146,7 @@ private class LibraryByRoot(
     override val project: Project,
     testServices: TestServices,
 ) : KtLibraryModule {
-    override val contentScope: GlobalSearchScope = TestModuleStructureFactory.getScopeForLibraryByRoots(listOf(root), project, testServices)
+    override val contentScope: GlobalSearchScope = TestModuleStructureFactory.getScopeForLibraryByRoots(listOf(root), testServices)
     override val libraryName: String get() = "Test Library $root"
     override val directRegularDependencies: List<KtModule> get() = emptyList()
     override val directDependsOnDependencies: List<KtModule> get() = emptyList()
