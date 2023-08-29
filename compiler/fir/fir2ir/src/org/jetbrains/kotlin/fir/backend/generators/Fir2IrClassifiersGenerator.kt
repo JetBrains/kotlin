@@ -385,7 +385,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
 
     fun createIrEnumEntry(
         enumEntry: FirEnumEntry,
-        irParent: IrClass?,
+        irParent: IrClass,
         predefinedOrigin: IrDeclarationOrigin? = null,
     ): IrEnumEntry {
         return enumEntry.convertWithOffsets { startOffset, endOffset ->
@@ -400,9 +400,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                     symbol = symbol,
                 ).apply {
                     declarationStorage.enterScope(this.symbol)
-                    if (irParent != null) {
-                        this.parent = irParent
-                    }
+                    this.parent = irParent
                     if (isEnumEntryWhichRequiresSubclass(enumEntry)) {
                         // An enum entry with its own members requires an anonymous object generated.
                         // Otherwise, this is a default-ish enum entry whose initializer would be a delegating constructor call,

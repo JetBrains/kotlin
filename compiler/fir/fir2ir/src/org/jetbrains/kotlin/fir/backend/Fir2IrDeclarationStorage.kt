@@ -795,16 +795,15 @@ class Fir2IrDeclarationStorage(
         return when (val firDeclaration = firVariableSymbol.fir) {
             is FirEnumEntry -> {
                 classifierStorage.getCachedIrEnumEntry(firDeclaration)?.let { return it.symbol }
-                val irParentClass = firDeclaration.containingClassLookupTag()?.let { classifierStorage.findIrClass(it) }
+                val irParentClass = firDeclaration.containingClassLookupTag()?.let { classifierStorage.findIrClass(it) }!!
 
                 val firProviderForSymbol = firVariableSymbol.moduleData.session.firProvider
                 val containingFile = firProviderForSymbol.getFirCallableContainerFile(firVariableSymbol)
 
-                classifierStorage.createIrEnumEntry(
+                classifierStorage.getIrEnumEntry(
                     firDeclaration,
                     irParent = irParentClass,
-                    predefinedOrigin = if (containingFile != null) IrDeclarationOrigin.DEFINED else
-                        irParentClass?.origin ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+                    predefinedOrigin = if (containingFile != null) IrDeclarationOrigin.DEFINED else irParentClass.origin
                 ).symbol
             }
             is FirValueParameter -> {
