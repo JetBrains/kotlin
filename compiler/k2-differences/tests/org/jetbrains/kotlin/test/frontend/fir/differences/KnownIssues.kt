@@ -197,10 +197,30 @@ private fun generateIntroducedDiagnosticsIssues(containmentStatistics: Diagnosti
     status.doneSilently("${newIntroducedDiagnostics.size} new introduced issues created")
 }
 
+/**
+ * This is done in a separate step (YT limitation?),
+ * so something somewhere may break, and this would
+ * have to be fixed manually.
+ */
+fun reassignParentIssuesToExistingOnes() {
+    knownMissingDiagnostics.values.forEach {
+        it.makeSubtaskOf(MISSING_DIAGNOSTICS_UMBRELLA.numberInProject)
+    }
+
+    knownDisappearedDiagnostics.values.forEach {
+        it.makeSubtaskOf(DISAPPEARED_DIAGNOSTICS_UMBRELLA.numberInProject)
+    }
+
+    knownIntroducedDiagnostics.values.forEach {
+        it.makeSubtaskOf(INTRODUCED_DIAGNOSTICS_UMBRELLA.numberInProject)
+    }
+}
+
 fun generateMissingIssues(containmentStatistics: DiagnosticsStatistics) {
     generateMissingDiagnosticsIssues(containmentStatistics)
     generateDisappearedDiagnosticsIssues(containmentStatistics)
     generateIntroducedDiagnosticsIssues(containmentStatistics)
+    reassignParentIssuesToExistingOnes()
 }
 
 private val mutableKnownMissingDiagnostics = mutableMapOf(
@@ -894,3 +914,20 @@ val diagnosticToSmallClass: Map<String, DiagnosticSmallClass> = mapOf(
 )
 
 val DiagnosticSmallClass.group get() = parent?.toString() ?: toString()
+
+// Assignee: Unassigned -Resolved and created by: me and (Subtask of: KT-59443 or Subtask of: KT-59870 or Subtask of: KT-59871)
+val unresolvedUnassignedIssuesResponse by lazy {
+    getJson(
+        "https://youtrack.jetbrains.com/api/issues?fields=summary&query=Assignee%3A%20Unassigned%20-Resolved%20and%20created%20by%3A%20me%20and%20%28Subtask%20of%3A%20KT-59443%20or%20Subtask%20of%3A%20KT-59870%20or%20Subtask%20of%3A%20KT-59871%29",
+        API_HEADERS,
+    )
+}
+
+val unresolvedUnassignedIssues by lazy {
+    Regex("""summary":"[^"]*\s(\w+)""")
+        .findAll(unresolvedUnassignedIssuesResponse)
+        .map { it.groupValues.last() }
+        .toSet()
+}
+
+val String.isUnresolvedUnassignedDiagnostic get() = this in unresolvedUnassignedIssues

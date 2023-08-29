@@ -781,6 +781,11 @@ fun printCsvDiagnosticsStatistics(
     val sorted = diagnosticsStatistics.entries.sortedByDescending { it.value.size }
 
     for ((diagnostic, filesToStats) in sorted) {
+        // This report should help us distribute further work
+        if (!diagnostic.isUnresolvedUnassignedDiagnostic) {
+            continue
+        }
+
         val group = diagnosticToSmallClass[diagnostic]?.group
 
         val disappearances = filesToStats.filter { it.value.significantK1MetaInfo.isNotEmpty() }
@@ -1148,12 +1153,14 @@ inline fun <reified T, R> JsonArray.mapChildrenAs(transform: (T) -> R): List<R> 
 }
 
 fun printDiagnosticsGroupsStatistics() {
-    val groupsLoading = diagnosticToSmallClass
+    val unresolvedUnassignedDiagnosticToSmallClass = diagnosticToSmallClass.filterKeys { it.isUnresolvedUnassignedDiagnostic }
+
+    val groupsLoading = unresolvedUnassignedDiagnosticToSmallClass
         .mapValues { it.value.group }
         .entries.groupingBy { it.value }
         .eachCount().entries.sortedByDescending { it.value }
 
-    status.doneSilently("Diagnostic Groups Loading. In total there are ${diagnosticToSmallClass.size} diagnostics")
+    status.doneSilently("Diagnostic Groups Loading. In total there are ${unresolvedUnassignedDiagnosticToSmallClass.size} diagnostics")
 
     groupsLoading.withIndex().joinToString("\n") { (index, groupingEntry) ->
         val (group, count) = groupingEntry
