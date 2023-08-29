@@ -26,6 +26,12 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
     }
 
     @Test
+    @TestMetadata("builtins.kt")
+    public void testBuiltins() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/box/builtins.kt");
+    }
+
+    @Test
     @TestMetadata("classWithAllPropertiesConstructor.kt")
     public void testClassWithAllPropertiesConstructor() throws Exception {
         runTest("plugins/fir-plugin-prototype/testData/box/classWithAllPropertiesConstructor.kt");
@@ -53,6 +59,12 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
     @TestMetadata("expectComposableFunction.kt")
     public void testExpectComposableFunction() throws Exception {
         runTest("plugins/fir-plugin-prototype/testData/box/expectComposableFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("extendsJava.kt")
+    public void testExtendsJava() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/box/extendsJava.kt");
     }
 
     @Test

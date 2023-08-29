@@ -21,6 +21,7 @@ class GeneratedDeclarationsIrBodyFiller : IrGenerationExtension {
             TransformerForAddingAnnotations(pluginContext),
             ComposableFunctionsTransformer(pluginContext),
             BodyWithDefaultValueReplacer(),
+            SourceElementChecker(pluginContext),
         )
 
         for (transformer in transformers) {

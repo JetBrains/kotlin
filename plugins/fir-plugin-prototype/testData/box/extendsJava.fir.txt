@@ -1,0 +1,13 @@
+FILE: extendsJava.kt
+    public final class A : R|java/io/File| {
+        public constructor(): R|A| {
+            super<R|java/io/File|>(String(A))
+        }
+
+    }
+    public final fun foo(): R|A| {
+        ^foo R|kotlin/TODO|()
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }
