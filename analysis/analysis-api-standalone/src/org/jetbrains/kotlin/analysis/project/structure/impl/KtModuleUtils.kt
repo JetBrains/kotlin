@@ -63,7 +63,7 @@ internal fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServ
 internal fun getSourceFilePaths(
     compilerConfig: CompilerConfiguration,
     includeDirectoryRoot: Boolean = false,
-): Set<String> {
+): Set<Path> {
     return buildSet {
         compilerConfig.javaSourceRoots.forEach { srcRoot ->
             val path = Paths.get(srcRoot)
@@ -71,11 +71,11 @@ internal fun getSourceFilePaths(
                 // E.g., project/app/src
                 collectSourceFilePaths(path, this)
                 if (includeDirectoryRoot) {
-                    add(srcRoot)
+                    add(path)
                 }
             } else {
                 // E.g., project/app/src/some/pkg/main.kt
-                add(srcRoot)
+                add(path)
             }
         }
     }
@@ -91,7 +91,7 @@ internal fun getSourceFilePaths(
  */
 private fun collectSourceFilePaths(
     root: Path,
-    result: MutableSet<String>
+    result: MutableSet<Path>
 ) {
     // NB: [Files#walk] throws an exception if there is an issue during IO.
     // With [Files#walkFileTree] with a custom visitor, we can take control of exception handling.
@@ -113,7 +113,7 @@ private fun collectSourceFilePaths(
                     ext == KotlinParserDefinition.STD_SCRIPT_SUFFIX ||
                     ext == JavaFileType.DEFAULT_EXTENSION
                 ) {
-                    result.add(file.toString())
+                    result.add(file)
                 }
                 return FileVisitResult.CONTINUE
             }
@@ -131,13 +131,13 @@ private fun collectSourceFilePaths(
 
 internal inline fun <reified T : PsiFileSystemItem> getPsiFilesFromPaths(
     project: Project,
-    paths: Collection<String>,
+    paths: Collection<Path>,
 ): List<T> {
     val fs = StandardFileSystems.local()
     val psiManager = PsiManager.getInstance(project)
     return buildList {
         for (path in paths) {
-            val vFile = fs.findFileByPath(path) ?: continue
+            val vFile = fs.findFileByPath(path.toString()) ?: continue
             val psiFileSystemItem =
                 if (vFile.isDirectory)
                     psiManager.findDirectory(vFile) as? T
