@@ -441,10 +441,9 @@ context(Fir2IrComponents)
 internal fun FirProperty.processOverriddenPropertySymbols(
     containingClass: FirClass,
     processor: (FirPropertySymbol) -> Unit
-): List<IrPropertySymbol> {
+) {
     val scope = containingClass.unsubstitutedScope()
     scope.processPropertiesByName(name) {}
-    val overriddenSet = mutableSetOf<IrPropertySymbol>()
     scope.processOverriddenPropertiesFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
         if (!session.visibilityChecker.isVisibleForOverriding(
                 candidateInDerivedClass = symbol.fir, candidateInBaseClass = overriddenSymbol.fir
@@ -456,8 +455,6 @@ internal fun FirProperty.processOverriddenPropertySymbols(
 
         ProcessorAction.NEXT
     }
-
-    return overriddenSet.toList()
 }
 
 private val nameToOperationConventionOrigin = mutableMapOf(
