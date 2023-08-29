@@ -156,18 +156,19 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
             val isTopLevel = parentContainer is IrFile || (parentContainer is IrClass && parentContainer.kind == ClassKind.OBJECT)
             when {
                 atomicProperty.isAtomic() -> {
+                    atomicProperty.checkIsFinal(isArray = false)
+                    atomicProperty.checkVisibility(isArray = false)
                     if (isTopLevel) {
-                        atomicProperty.checkVisibility()
                         parentContainer.addTransformedStaticAtomic(atomicProperty, index)
                     } else {
-                        atomicProperty.checkVisibility()
                         (parentContainer as IrClass).addTransformedInClassAtomic(atomicProperty, index)
                     }.also {
                         declarationsToBeRemoved.add(atomicProperty)
                     }
                 }
                 atomicProperty.isAtomicArray() -> {
-                    atomicProperty.checkVisibility()
+                    atomicProperty.checkIsFinal(isArray = true)
+                    atomicProperty.checkVisibility(isArray = true)
                     parentContainer.addTransformedAtomicArray(atomicProperty, index).also {
                         declarationsToBeRemoved.add(atomicProperty)
                     }
@@ -448,18 +449,28 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
             )
         }
 
-        private fun IrProperty.checkVisibility() =
+        private fun IrProperty.checkIsFinal(isArray: Boolean) =
+            check(!isVar) {
+                "Please consider declaring [${this.atomicfuRender()}] from [${this.parent.render()}] as a private val or internal val.\n" +
+                if (!isArray) "If you need to declare a variable with accessors delegated to the atomic property value, you can use a delegated property declared within the same scope, e.g:\n" +
+                "```\n" +
+                "private val _a = atomic<T>(initial) \n" +
+                "public var a: T by _a \n" +
+                "```\n" else ""
+            }
+
+        private fun IrProperty.checkVisibility(isArray: Boolean) =
             check((visibility == DescriptorVisibilities.PRIVATE || visibility == DescriptorVisibilities.INTERNAL) ||
                         (parent is IrClass &&
                                 (parentAsClass.visibility == DescriptorVisibilities.PRIVATE || parentAsClass.visibility == DescriptorVisibilities.INTERNAL))) {
                 "To ensure that atomic properties are not accessed out of the current Kotlin module, it is necessary to declare atomic properties as private or internal.\n" +
                 "Please consider declaring [${this.atomicfuRender()}] from [${this.parent.render()}] as a private or internal property.\n" +
                         (if (parent is IrClass) "You may also make the containing class [${parentAsClass.render()}] private or internal.\n" else "") +
-                "Alternatively, if you need to expose the atomic property value to the public, you can use a delegated property declared within the same scope, e.g:\n" +
+                if (!isArray) "Alternatively, if you need to expose the atomic property value to the public, you can use a delegated property declared within the same scope, e.g:\n" +
                 "```\n" +
                 "private val _a = atomic<T>(initial) \n" +
                 "public var a: T by _a \n" +
-                "```\n"
+                "```\n" else ""
             }
 
         protected fun IrProperty.getMinVisibility(): DescriptorVisibility {
@@ -1141,5 +1152,5 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
     protected fun IrType.isObject() = classOrNull?.owner?.kind == ClassKind.OBJECT
 
     protected fun IrProperty.atomicfuRender(): String =
-        "val " + name.asString() + ": " + backingField?.type?.render()
+        (if (isVar) "var" else "val") + " " + name.asString() + ": " + backingField?.type?.render()
 }
