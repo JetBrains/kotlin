@@ -19,7 +19,7 @@ private const val INSERTION_MARKER = "//<::>"
 
 const val NEW_ISSUE_STATE = "Open"
 const val NEW_ISSUE_PRIORITY = "Minor"
-val NEW_ISSUE_TARGET_VERSIONS = listOf("2.0-M1")
+val NEW_ISSUE_TARGET_VERSIONS = listOf("2.0-Beta1")
 val NEW_ISSUE_SUBSYSTEMS = listOf("Frontend. Checkers")
 
 fun buildIssueCustomFields(
@@ -443,6 +443,7 @@ private val mutableKnownDisappearedDiagnostics = mutableMapOf(
     "NO_CONSTRUCTOR" to IssueInfo("25-4702764", 60683),
     "SUPERTYPE_INITIALIZED_IN_INTERFACE" to IssueInfo("25-4702766", 60684),
     "DEPRECATION" to IssueInfo("25-4702763", 60682),
+    "MISSING_DEPENDENCY_CLASS" to IssueInfo("25-4767673", 61536),
     //<::>knownDisappearedDiagnostics
 )
 
@@ -555,6 +556,9 @@ private val mutableKnownIntroducedDiagnostics = mutableMapOf(
     "VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION" to IssueInfo("25-4763781", 61484),
     "COMPONENT_FUNCTION_AMBIGUITY" to IssueInfo("25-4763783", 61485),
     "DATA_CLASS_OVERRIDE_DEFAULT_VALUES" to IssueInfo("25-4763784", 61486),
+    "MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_DEPRECATION_ERROR" to IssueInfo("25-4767674", 61537),
+    "WRONG_NUMBER_OF_TYPE_ARGUMENTS" to IssueInfo("25-4767675", 61538),
+    "INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION_ERROR" to IssueInfo("25-4767676", 61539),
     //<::>knownIntroducedDiagnostics
 )
 
