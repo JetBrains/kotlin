@@ -52,7 +52,7 @@ std_support::vector<T> collectFromThreadData(F extractFunction) {
 
 std_support::vector<bool> collectSuspended() {
     return collectFromThreadData<bool>(
-            [](mm::ThreadData* threadData) { return threadData->suspensionData().suspended(); });
+            [](mm::ThreadData* threadData) { return threadData->suspensionData().suspendedOrNative(); });
 }
 
 void reportProgress(size_t currentIteration, size_t totalIterations) {
@@ -116,9 +116,9 @@ TEST_F(ThreadSuspensionTest, SimpleStartStop) {
             while(!shouldStop) {
                 waitUntilCanStart(i);
 
-                EXPECT_FALSE(suspensionData.suspended());
+                EXPECT_FALSE(suspensionData.suspendedOrNative());
                 suspensionData.suspendIfRequested();
-                EXPECT_FALSE(suspensionData.suspended());
+                EXPECT_FALSE(suspensionData.suspendedOrNative());
            }
         });
     }
@@ -201,10 +201,10 @@ TEST_F(ThreadSuspensionTest, ConcurrentSuspend) {
                 successCount++;
                 auto allThreadData = collectThreadData();
                 auto isCurrentOrSuspended = [currentThreadData](mm::ThreadData* data) {
-                    return data == currentThreadData || data->suspensionData().suspended();
+                    return data == currentThreadData || data->suspensionData().suspendedOrNative();
                 };
                 EXPECT_THAT(allThreadData, testing::Each(testing::Truly(isCurrentOrSuspended)));
-                EXPECT_FALSE(currentThreadData->suspensionData().suspended());
+                EXPECT_FALSE(currentThreadData->suspensionData().suspendedOrNative());
                 mm::ResumeThreads();
             } else {
                 EXPECT_TRUE(mm::IsThreadSuspensionRequested());

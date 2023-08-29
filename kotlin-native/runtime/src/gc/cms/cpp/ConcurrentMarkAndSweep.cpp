@@ -71,14 +71,6 @@ bool gc::ConcurrentMarkAndSweep::ThreadData::tryLockRootSet() {
     return locked;
 }
 
-void gc::ConcurrentMarkAndSweep::ThreadData::beginCooperation() {
-    cooperative_.store(true, std::memory_order_release);
-}
-
-bool gc::ConcurrentMarkAndSweep::ThreadData::cooperative() const {
-    return cooperative_.load(std::memory_order_relaxed);
-}
-
 void gc::ConcurrentMarkAndSweep::ThreadData::publish() {
     threadData_.Publish();
     published_.store(true, std::memory_order_release);
@@ -90,7 +82,6 @@ bool gc::ConcurrentMarkAndSweep::ThreadData::published() const {
 
 void gc::ConcurrentMarkAndSweep::ThreadData::clearMarkFlags() {
     published_.store(false, std::memory_order_relaxed);
-    cooperative_.store(false, std::memory_order_relaxed);
     rootSetLocked_.store(false, std::memory_order_release);
 }
 
@@ -170,14 +161,7 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     markDispatcher_.beginMarkingEpoch(gcHandle);
     GCLogDebug(epoch, "Main GC requested marking in mutators");
 
-    // Request STW
-    bool didSuspend = mm::RequestThreadsSuspension();
-    RuntimeAssert(didSuspend, "Only GC thread can request suspension");
-    gcHandle.suspensionRequested();
-
-    markDispatcher_.waitForThreadsPauseMutation();
-    GCLogDebug(epoch, "All threads have paused mutation");
-    gcHandle.threadsAreSuspended();
+    stopTheWorld(gcHandle);
 
     auto& scheduler = gcScheduler_;
     scheduler.onGCStart();
@@ -188,26 +172,17 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     markDispatcher_.endMarkingEpoch();
 
-    mm::WaitForThreadsSuspension();
-
     if (compiler::concurrentWeakSweep()) {
-        EnableWeakRefBarriers(epoch);
-
-        mm::ResumeThreads();
-        gcHandle.threadsAreResumed();
+        // Expected to happen inside STW.
+        gc::EnableWeakRefBarriers(epoch);
+        resumeTheWorld(gcHandle);
     }
 
     gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
 
     if (compiler::concurrentWeakSweep()) {
-        bool didSuspend = mm::RequestThreadsSuspension();
-        RuntimeAssert(didSuspend, "Only GC thread can request suspension");
-        gcHandle.suspensionRequested();
-
-        mm::WaitForThreadsSuspension();
-        GCLogDebug(gcHandle.getEpoch(), "All threads have paused mutation");
-        gcHandle.threadsAreSuspended();
-        DisableWeakRefBarriers();
+        stopTheWorld(gcHandle);
+        gc::DisableWeakRefBarriers();
     }
 
     // TODO outline as mark_.isolateMarkedHeapAndFinishMark()
@@ -233,8 +208,7 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     checkMarkCorrectness(*objectFactoryIterable);
 #endif
 
-    mm::ResumeThreads();
-    gcHandle.threadsAreResumed();
+    resumeTheWorld(gcHandle);
 
 #ifndef CUSTOM_ALLOCATOR
     gc::SweepExtraObjects<DefaultSweepTraits<ObjectFactory>>(gcHandle, *extraObjectFactoryIterable);

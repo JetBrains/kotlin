@@ -16,8 +16,7 @@ void gcScheduler::internal::MutatorAssists::ThreadData::safePoint() noexcept {
     Epoch epoch = owner_.assistsEpoch_.load(std::memory_order_acquire);
     auto noNeedToWait = [this, epoch] { return owner_.completedEpoch_.load(std::memory_order_acquire) >= epoch; };
     if (noNeedToWait()) return;
-    auto prevState = thread_.suspensionData().setStateNoSafePoint(ThreadState::kNative);
-    RuntimeAssert(prevState == ThreadState::kRunnable, "Expected runnable state");
+    auto pauseHandle = thread_.suspensionData().pauseMutationInScope("assisting GC");
     startedWaiting_.store(epoch * 2, std::memory_order_release);
     {
         std::unique_lock guard(owner_.m_);
@@ -27,8 +26,6 @@ void gcScheduler::internal::MutatorAssists::ThreadData::safePoint() noexcept {
     }
     startedWaiting_.store(epoch * 2 + 1, std::memory_order_release);
     // Not doing a safe point. We're a safe point.
-    prevState = thread_.suspensionData().setStateNoSafePoint(ThreadState::kRunnable);
-    RuntimeAssert(prevState == ThreadState::kNative, "Expected native state");
 }
 
 bool gcScheduler::internal::MutatorAssists::ThreadData::completedEpoch(Epoch epoch) const noexcept {

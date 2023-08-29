@@ -45,8 +45,6 @@ public:
         BarriersThreadData& barriers() noexcept { return barriers_; }
 
         bool tryLockRootSet();
-        void beginCooperation();
-        bool cooperative() const;
         void publish();
         bool published() const;
         void clearMarkFlags();
@@ -61,7 +59,6 @@ public:
 
         std::atomic<bool> rootSetLocked_ = false;
         std::atomic<bool> published_ = false;
-        std::atomic<bool> cooperative_ = false;
     };
 
 #ifdef CUSTOM_ALLOCATOR

@@ -7,14 +7,11 @@
 #include "ThreadSuspension.hpp"
 
 #include <condition_variable>
-#include <thread>
-#include <mutex>
 
 #include "CallsChecker.hpp"
 #include "Logging.hpp"
 #include "Porting.h"
 #include "SafePoint.hpp"
-#include "StackTrace.hpp"
 
 using namespace kotlin;
 
@@ -26,12 +23,29 @@ namespace {
 
 } // namespace
 
-bool kotlin::mm::isSuspendedOrNative(kotlin::mm::ThreadData& thread) noexcept {
-    auto& suspensionData = thread.suspensionData();
-    return suspensionData.suspended() || suspensionData.state() == kotlin::ThreadState::kNative;
+std::atomic<bool> kotlin::mm::internal::gSuspensionRequested = false;
+
+ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::MutatorPauseHandle(const char* reason, mm::ThreadData& threadData) noexcept
+    : reason_(reason), threadData_(threadData), pauseStartTimeMicros_(konan::getTimeMicros())
+{
+    auto prevState = threadData_.suspensionData().setStateNoSafePoint(ThreadState::kNative);
+    // no special reason, fill free to implement pause from native if needed
+    RuntimeAssert(prevState == ThreadState::kRunnable, "Expected runnable state");
+    RuntimeLogDebug({kTagPause}, "Suspending mutation (%s)", reason_);
 }
 
-std::atomic<bool> kotlin::mm::internal::gSuspensionRequested = false;
+ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::~MutatorPauseHandle() noexcept {
+    if (!resumed) resume();
+}
+
+ALWAYS_INLINE void mm::ThreadSuspensionData::MutatorPauseHandle::resume() noexcept {
+    RuntimeAssert(!resumed, "Must not be resumed yet");
+    auto prevState = threadData_.suspensionData().setStateNoSafePoint(ThreadState::kRunnable);
+    RuntimeAssert(prevState == ThreadState::kNative, "Expected native state");
+    auto pauseTimeMicros = konan::getTimeMicros() - pauseStartTimeMicros_;
+    RuntimeLogInfo({kTagPause}, "Resuming mutation after %" PRIu64 " microseconds of suspension (%s)", pauseTimeMicros, reason_);
+    resumed = true;
+}
 
 kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadState newState) noexcept {
     ThreadState oldState = state_.exchange(newState);
@@ -51,17 +65,19 @@ kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadSta
 
 NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequested() noexcept {
     if (IsThreadSuspensionRequested()) {
-        auto suspendStartMs = konan::getTimeMicros();
+        auto pauseHandle = pauseMutationInScope("stop the world");
+
         threadData_.gc().OnSuspendForGC();
         std::unique_lock lock(gSuspensionMutex);
-        auto threadId = konan::currentThreadId();
-        RuntimeLogDebug({kTagGC, kTagMM}, "Suspending thread %d", threadId);
-        AutoReset scopedAssignSuspended(&suspended_, true);
         gSuspensionCondVar.wait(lock, []() { return !IsThreadSuspensionRequested(); });
-        auto suspendEndMs = konan::getTimeMicros();
-        RuntimeLogDebug({kTagGC, kTagMM}, "Resuming thread %d after %" PRIu64 " microseconds of suspension",
-                        threadId, suspendEndMs - suspendStartMs);
+
+        // Must return to running state under the lock.
+        pauseHandle.resume();
     }
+}
+
+ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle mm::ThreadSuspensionData::pauseMutationInScope(const char* reason) noexcept {
+    return MutatorPauseHandle(reason, threadData_);
 }
 
 bool kotlin::mm::RequestThreadsSuspension() noexcept {

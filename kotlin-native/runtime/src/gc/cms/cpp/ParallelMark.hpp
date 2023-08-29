@@ -110,7 +110,6 @@ public:
     ParallelMark(bool mutatorsCooperate);
 
     void beginMarkingEpoch(gc::GCHandle gcHandle);
-    void waitForThreadsPauseMutation() noexcept;
     void endMarkingEpoch();
 
     /** To be run by a single "main" GC thread during STW. */

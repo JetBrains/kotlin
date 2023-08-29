@@ -71,13 +71,8 @@ bool gc::SameThreadMarkAndSweep::FinalizersThreadIsRunning() noexcept {
 
 void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     auto gcHandle = GCHandle::create(epoch);
-    bool didSuspend = mm::RequestThreadsSuspension();
-    RuntimeAssert(didSuspend, "Only GC thread can request suspension");
-    gcHandle.suspensionRequested();
 
-    RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "GC must run on unregistered thread");
-    mm::WaitForThreadsSuspension();
-    gcHandle.threadsAreSuspended();
+    stopTheWorld(gcHandle);
 
     auto& scheduler = gcScheduler_;
     scheduler.onGCStart();
@@ -124,8 +119,8 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     scheduler.onGCFinish(epoch, allocatedBytes());
 
-    mm::ResumeThreads();
-    gcHandle.threadsAreResumed();
+    resumeTheWorld(gcHandle);
+
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();

@@ -28,8 +28,21 @@ inline bool IsThreadSuspensionRequested() noexcept {
 }
 
 class ThreadSuspensionData : private Pinned {
+private:
+    class MutatorPauseHandle : private Pinned {
+    public:
+        explicit MutatorPauseHandle(const char* reason, ThreadData& threadData) noexcept;
+        ~MutatorPauseHandle() noexcept;
+        void resume() noexcept;
+    private:
+        const char* reason_;
+        ThreadData& threadData_;
+        uint64_t pauseStartTimeMicros_;
+        bool resumed = false;
+    };
+
 public:
-    explicit ThreadSuspensionData(ThreadState initialState, mm::ThreadData& threadData) noexcept : state_(initialState), threadData_(threadData), suspended_(false) {}
+    explicit ThreadSuspensionData(ThreadState initialState, mm::ThreadData& threadData) noexcept : state_(initialState), threadData_(threadData) {}
 
     ~ThreadSuspensionData() = default;
 
@@ -38,21 +51,28 @@ public:
     ThreadState setState(ThreadState newState) noexcept;
     ThreadState setStateNoSafePoint(ThreadState newState) noexcept { return state_.exchange(newState, std::memory_order_acq_rel); }
 
-    bool suspended() noexcept { return suspended_; }
-    bool suspendedOrNative() noexcept { return suspended() || state() == kotlin::ThreadState::kNative; }
+    bool suspendedOrNative() noexcept { return state() == kotlin::ThreadState::kNative; }
 
     void suspendIfRequested() noexcept;
+
+    /**
+     * Signals that the thread would not mutate a heap during a relatively long time.
+     * For example while waiting for or participating in the GC.
+     * Effectively sets the thread's state to `kNative`.
+     *
+     * The pause is considered completed upon destruction of a returned pause-handle object.
+     *
+     * NOTE: the safe point actions will NOT be automatically executed after the pause.
+     */
+    [[nodiscard]] MutatorPauseHandle pauseMutationInScope(const char* reason) noexcept;
 
 private:
     std::atomic<ThreadState> state_;
     mm::ThreadData& threadData_;
-    std::atomic<bool> suspended_;
 };
 
 bool RequestThreadsSuspension() noexcept;
 void WaitForThreadsSuspension() noexcept;
-
-bool isSuspendedOrNative(kotlin::mm::ThreadData& thread) noexcept;
 
 /**
  * Suspends all threads registered in ThreadRegistry except threads that are in the Native state.

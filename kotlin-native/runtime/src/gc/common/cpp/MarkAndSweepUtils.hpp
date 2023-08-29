@@ -254,6 +254,13 @@ struct DefaultProcessWeaksTraits {
     static bool IsMarked(ObjHeader* obj) noexcept { return gc::isMarked(obj); }
 };
 
+void stopTheWorld(GCHandle gcHandle) noexcept;
+void resumeTheWorld(GCHandle gcHandle) noexcept;
+
+[[nodiscard]] inline auto stopTheWorldInScope(GCHandle gcHandle) noexcept {
+    return ScopeGuard([=]() { stopTheWorld(gcHandle); }, [=]() { resumeTheWorld(gcHandle); });
+}
+
 } // namespace gc
 } // namespace kotlin
 

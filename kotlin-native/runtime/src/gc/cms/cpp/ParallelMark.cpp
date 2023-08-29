@@ -85,15 +85,6 @@ void gc::mark::ParallelMark::beginMarkingEpoch(gc::GCHandle gcHandle) {
     }
 }
 
-void gc::mark::ParallelMark::waitForThreadsPauseMutation() noexcept {
-    RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "Dispatcher thread must not be registered");
-    spinWait([this] {
-        return allMutators([](mm::ThreadData& mut) {
-            return mm::isSuspendedOrNative(mut) || mut.gc().impl().gc().cooperative();
-        });
-    });
-}
-
 void gc::mark::ParallelMark::endMarkingEpoch() {
     if (!compiler::gcMarkSingleThreaded()) {
         // We must now wait for every worker to finish the Mark procedure:
@@ -139,8 +130,6 @@ void gc::mark::ParallelMark::runOnMutator(mm::ThreadData& mutatorThread) {
     auto epoch = gcHandle().getEpoch();
     auto parallelWorker = createWorker();
     if (parallelWorker) {
-        auto& gcData = mutatorThread.gc().impl().gc();
-        gcData.beginCooperation();
         GCLogDebug(epoch, "Mutator thread cooperates in marking");
 
         tryCollectRootSet(mutatorThread, *parallelWorker);
