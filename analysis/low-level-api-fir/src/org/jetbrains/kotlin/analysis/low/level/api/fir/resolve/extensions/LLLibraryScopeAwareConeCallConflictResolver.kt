@@ -96,7 +96,29 @@ private class LLLibraryScopeAwareConeCallConflictResolver(
     }
 
     private fun getSymbolRootFile(virtualFile: VirtualFile, packageFqName: FqName): VirtualFile? {
-        val nestingLevel = packageFqName.pathSegments().size
-        return generateSequence(virtualFile) { it.parent }.drop(nestingLevel + 1).firstOrNull()
+        val packageFqNameSegments = packageFqName.pathSegments().asReversed()
+        val nestingLevel = packageFqNameSegments.size
+
+        var current = virtualFile
+        var index = 0
+
+        while (true) {
+            assert(index <= nestingLevel)
+
+            val parent = current.parent ?: return null
+
+            if (index == nestingLevel) {
+                // Parent containing the root package is a class file root
+                return parent
+            }
+
+            if (parent.name != packageFqNameSegments[index].asString()) {
+                // Unexpected directory structure, the class is in a non-conventional root
+                return null
+            }
+
+            current = parent
+            index += 1
+        }
     }
 }
