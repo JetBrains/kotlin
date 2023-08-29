@@ -136,6 +136,11 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectActual.kt");
         }
 
+        @TestMetadata("expectClassesAndFunctions.kt")
+        public void testExpectClassesAndFunctions() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectClassesAndFunctions.kt");
+        }
+
         @TestMetadata("external.kt")
         public void testExternal() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/external.kt");

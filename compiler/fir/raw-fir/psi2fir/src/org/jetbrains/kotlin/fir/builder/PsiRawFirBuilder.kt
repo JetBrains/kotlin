@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -1033,34 +1034,34 @@ open class PsiRawFirBuilder(
                 ?: owner.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
             fun buildDelegatedCall(superTypeCallEntry: KtSuperTypeCallEntry?, delegatedTypeRef: FirTypeRef): FirDelegatedConstructorCall? {
                 val constructorCall = superTypeCallEntry?.toFirSourceElement()
-                return if (containingClassIsExpectClass) null else {
-                    val constructedTypeRef = if (copyConstructedTypeRefWithImplicitSource) {
-                        delegatedTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
-                    } else {
-                        delegatedTypeRef
-                    }
-                    buildOrLazyDelegatedConstructorCall(isThis = false, constructedTypeRef) {
-                        buildDelegatedConstructorCall {
-                            source = constructorCall ?: constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                            this.constructedTypeRef = constructedTypeRef
-                            isThis = false
-                            calleeReference = buildExplicitSuperReference {
-                                source =
-                                    superTypeCallEntry?.calleeExpression?.toFirSourceElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                                        ?: this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                                superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
-                            }
-                            superTypeCallEntry?.extractArgumentsTo(this)
+                val constructedTypeRef = if (copyConstructedTypeRefWithImplicitSource) {
+                    delegatedTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+                } else {
+                    delegatedTypeRef
+                }
+                return buildOrLazyDelegatedConstructorCall(isThis = false, constructedTypeRef) {
+                    buildDelegatedConstructorCall {
+                        source = constructorCall ?: constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                        this.constructedTypeRef = constructedTypeRef
+                        isThis = false
+                        calleeReference = buildExplicitSuperReference {
+                            source =
+                                superTypeCallEntry?.calleeExpression?.toFirSourceElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                                    ?: this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                            superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
                         }
+                        superTypeCallEntry?.extractArgumentsTo(this)
                     }
                 }
             }
-            val firDelegatedCall = if (allSuperTypeCallEntries.size <= 1 ) {
-                buildDelegatedCall(superTypeCallEntry, delegatedSuperTypeRef!!)
-            } else {
-                buildMultiDelegatedConstructorCall {
-                    allSuperTypeCallEntries.mapTo(delegatedConstructorCalls) { (superTypeCallEntry, delegatedTypeRef) ->
-                        buildDelegatedCall(superTypeCallEntry, delegatedTypeRef)!!
+            val firDelegatedCall = runUnless(containingClassIsExpectClass) {
+                if (allSuperTypeCallEntries.size <= 1) {
+                    buildDelegatedCall(superTypeCallEntry, delegatedSuperTypeRef!!)
+                } else {
+                    buildMultiDelegatedConstructorCall {
+                        allSuperTypeCallEntries.mapTo(delegatedConstructorCalls) { (superTypeCallEntry, delegatedTypeRef) ->
+                            buildDelegatedCall(superTypeCallEntry, delegatedTypeRef)!!
+                        }
                     }
                 }
             }

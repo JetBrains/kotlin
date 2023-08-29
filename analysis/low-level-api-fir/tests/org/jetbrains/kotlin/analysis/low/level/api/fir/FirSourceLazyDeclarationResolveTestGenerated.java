@@ -235,6 +235,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("expectClass.kt")
+    public void testExpectClass() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/expectClass.kt");
+    }
+
+    @Test
     @TestMetadata("fakeOverride.kt")
     public void testFakeOverride() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/fakeOverride.kt");

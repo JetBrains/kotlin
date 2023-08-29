@@ -1,0 +1,69 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] expectClass.kt
+    public? final? expect [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] expectClass.kt
+    public? final? expect [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] expectClass.kt
+    public? final? expect [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo : R|kotlin/Any| {
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] expectClass.kt
+    public? final? expect [ResolvedTo(COMPANION_GENERATION)] class Foo : R|kotlin/Any| {
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] expectClass.kt
+    public? final? expect [ResolvedTo(SUPER_TYPES)] class Foo : R|kotlin/Any| {
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] expectClass.kt
+    public? final? expect [ResolvedTo(TYPES)] class Foo : R|kotlin/Any| {
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] expectClass.kt
+    public final expect [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] expectClass.kt
+    public final expect [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Foo : R|kotlin/Any| {
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] expectClass.kt
+    public final expect [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class Foo : R|kotlin/Any| {
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] expectClass.kt
+    public final expect [ResolvedTo(CONTRACTS)] class Foo : R|kotlin/Any| {
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] expectClass.kt
+    public final expect [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] expectClass.kt
+    public final expect [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class Foo : R|kotlin/Any| {
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] expectClass.kt
+    public final expect [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] expectClass.kt
+    public final expect [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+    }

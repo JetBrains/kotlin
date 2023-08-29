@@ -148,6 +148,12 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("expectClassesAndFunctions.kt")
+        public void testExpectClassesAndFunctions() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectClassesAndFunctions.kt");
+        }
+
+        @Test
         @TestMetadata("external.kt")
         public void testExternal() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/external.kt");
