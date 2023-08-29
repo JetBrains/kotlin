@@ -27,8 +27,7 @@ public abstract class ProjectStructureProvider {
     public abstract fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule
 
     /**
-     * Project-global [LanguageVersionSettings]. For source modules lacking [LanguageVersionSettings]
-     * (such as [KtNotUnderContentRootModule]), the default settings apply.
+     * Project-global [LanguageVersionSettings] for source modules lacking explicit settings (such as [KtNotUnderContentRootModule]).
      */
     public open val globalLanguageVersionSettings: LanguageVersionSettings
         get() = LanguageVersionSettingsImpl.DEFAULT
