@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
  * that refers to location, not just the same value, and so introducing
  * a temporary variable for the result is not acceptable in those cases.
  */
-class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
+object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
     // Note that in some cases we don't expect to ever implement it: we are only
     // translating statements here, after all.  It isn't 100% clear how best to
     // communicate this.
@@ -52,7 +52,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         handleUnimplementedElement("Not yet implemented for $element (${element.source.text})", data)
 
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: StmtConversionContext): Exp {
-        val expr = returnExpression.result.accept(this, data)
+        val expr = data.convert(returnExpression.result)
         // TODO: respect return-based control flow
         val returnVar = data.signature.returnVar
         data.addStatement(Stmt.LocalVarAssign(returnVar.toLocalVar(), expr.withType(returnVar.viperType)))
@@ -61,7 +61,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
 
     override fun visitBlock(block: FirBlock, data: StmtConversionContext): Exp =
         // We ignore the accumulator: we just want to get the result of the last expression.
-        block.statements.fold<FirStatement, Exp>(UnitDomain.element) { _, it -> it.accept(this, data) }
+        block.statements.fold<FirStatement, Exp>(UnitDomain.element) { _, it -> data.convert(it) }
 
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: StmtConversionContext): Exp =
         when (constExpression.kind) {
@@ -73,9 +73,9 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
 
     override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: StmtConversionContext): Exp =
         // TODO: find a way to not evaluate subject multiple times if it is a function call
-        whenSubjectExpression.whenRef.value.subject!!.accept(this, data)
+        data.convert(whenSubjectExpression.whenRef.value.subject!!)
 
-    private fun convertWhenBranches(whenBranches: Iterator<FirWhenBranch>, data: StmtConversionContext, cvar: VariableEmbedding?) {
+    private fun convertWhenBranches(whenBranches: Iterator<FirWhenBranch>, data: StmtConversionContext) {
         // NOTE: I think that this will also work with "in" or "is" conditions when implemented, but I'm not 100% sure
         if (!whenBranches.hasNext()) return
 
@@ -83,28 +83,26 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
 
         // Note that only the last condition can be a FirElseIfTrue
         if (branch.condition is FirElseIfTrueCondition) {
-            val result = branch.result.accept(this, data)
-            cvar?.let { data.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), result.withType(cvar.viperType))) }
+            data.convertAndCapture(branch.result)
         } else {
-            val cond = branch.condition.accept(this, data)
-            val thenCtx = StmtConverter(data)
-            val thenResult = branch.result.accept(this, thenCtx)
-            cvar?.let { thenCtx.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), thenResult.withType(cvar.viperType))) }
-            val elseCtx = StmtConverter(data)
-            convertWhenBranches(whenBranches, elseCtx, cvar)
+            val cond = data.convert(branch.condition)
+            val thenCtx = data.newBlockShareResult()
+            thenCtx.convertAndCapture(branch.result)
+            val elseCtx = data.newBlockShareResult()
+            convertWhenBranches(whenBranches, elseCtx)
             data.addStatement(Stmt.If(cond, thenCtx.block, elseCtx.block))
         }
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: StmtConversionContext): Exp {
-        val cvar = if (whenExpression.usedAsExpression) {
-            data.newAnonVar(data.embedType(whenExpression))
+        val ctx = if (whenExpression.usedAsExpression) {
+            data.withResult(data.embedType(whenExpression))
         } else {
-            null
+            data
         }
-        cvar?.let { data.addDeclaration(cvar.toLocalVarDecl()) }
-        convertWhenBranches(whenExpression.branches.iterator(), data, cvar)
-        return cvar?.toLocalVar() ?: UnitDomain.element
+        convertWhenBranches(whenExpression.branches.iterator(), ctx)
+
+        return ctx.resultExpr
     }
 
     override fun visitPropertyAccessExpression(
@@ -120,19 +118,15 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
                 if (symbol.isLocal) {
                     return varEmbedding.toLocalVar()
                 } else {
-                    val receiver = propertyAccessExpression.dispatchReceiver.accept(this, data)
+                    val receiver = data.convert(propertyAccessExpression.dispatchReceiver)
                     val fieldAccess = Exp.FieldAccess(receiver, varEmbedding.toField())
                     val accPred = AccessPredicate.FieldAccessPredicate(fieldAccess, PermExp.FullPerm())
-                    val anon = data.newAnonVar(varEmbedding.type)
-
-                    data.addDeclaration(anon.toLocalVarDecl())
-                    // Inhale permission for the field before reading it.
-                    data.addStatement(Stmt.Inhale(accPred))
-                    // Access the field and assign the value to a newly created anonymous variable.
-                    data.addStatement(Stmt.assign(anon.toLocalVar(), fieldAccess))
-                    // Exhale permission for the field and return the anonymous variable value
-                    data.addStatement(Stmt.Exhale(accPred))
-                    return anon.toLocalVar()
+                    return data.withResult(varEmbedding.type) {
+                        // We do not track permissions over time and thus have to inhale and exhale the permission when reading a field.
+                        data.addStatement(Stmt.Inhale(accPred))
+                        data.addStatement(Stmt.assign(resultVar.toLocalVar(), fieldAccess))
+                        data.addStatement(Stmt.Exhale(accPred))
+                    }
                 }
             }
             else -> handleUnimplementedElement("Property access ${propertyAccessExpression.source} not implemented", data)
@@ -143,8 +137,8 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         if (equalityOperatorCall.arguments.size != 2) {
             throw IllegalArgumentException("Invalid equality comparison $equalityOperatorCall, can only compare 2 elements.")
         }
-        val left = equalityOperatorCall.arguments[0].accept(this, data)
-        val right = equalityOperatorCall.arguments[1].accept(this, data)
+        val left = data.convert(equalityOperatorCall.arguments[0])
+        val right = data.convert(equalityOperatorCall.arguments[1])
 
         val leftType = data.embedType(equalityOperatorCall.arguments[0])
         val rightType = data.embedType(equalityOperatorCall.arguments[1])
@@ -180,7 +174,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext): Exp {
         val id = functionCall.calleeReference.toResolvedCallableSymbol()!!.callableId
         val specialFunc = SpecialFunctions.byCallableId[id]
-        val getArgs = { getFunctionCallArguments(functionCall).map { it.accept(this, data) } }
+        val getArgs = { getFunctionCallArguments(functionCall).map(data::convert) }
         if (specialFunc != null) {
             if (specialFunc !is SpecialFunctionImplementation) return UnitDomain.element
             return specialFunc.convertCall(getArgs(), data)
@@ -193,25 +187,20 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
             else -> TODO("Are there any other possible cases?")
         }
 
-        val returnVar = data.newAnonVar(calleeSig.returnType)
-        val returnExp = returnVar.toLocalVar()
-        val args = getArgs().zip(calleeSig.formalArgs).map { (arg, formalArg) -> arg.withType(formalArg.viperType) }
-        data.addDeclaration(returnVar.toLocalVarDecl())
-        data.addStatement(Stmt.MethodCall(calleeSig.name.mangled, args, listOf(returnExp)))
-
-        return returnExp
+        return data.withResult(calleeSig.returnType) {
+            val args = getArgs().zip(calleeSig.formalArgs).map { (arg, formalArg) -> arg.withType(formalArg.viperType) }
+            data.addStatement(Stmt.MethodCall(calleeSig.name.mangled, args, listOf(this.resultVar.toLocalVar())))
+        }
     }
 
     override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: StmtConversionContext): Exp {
-        val args = getFunctionCallArguments(implicitInvokeCall).map { it.accept(this, data) }
+        val args = getFunctionCallArguments(implicitInvokeCall).map(data::convert)
         val retType = implicitInvokeCall.calleeReference.toResolvedCallableSymbol()!!.resolvedReturnType
-        val returnVar = data.newAnonVar(data.embedType(retType))
-        val returnExp = returnVar.toLocalVar()
-        data.addDeclaration(returnVar.toLocalVarDecl())
-        // NOTE: Since it is only relevant to update the number of times that a function object is called,
-        // the function call invocation is intentionally not assigned to the return variable
-        data.addStatement(Stmt.MethodCall(InvokeFunctionObjectName.mangled, args.take(1), listOf()))
-        return returnExp
+        return data.withResult(data.embedType(retType)) {
+            // NOTE: Since it is only relevant to update the number of times that a function object is called,
+            // the function call invocation is intentionally not assigned to the return variable
+            data.addStatement(Stmt.MethodCall(InvokeFunctionObjectName.mangled, args.take(1), listOf()))
+        }
     }
 
     private fun getFunctionCallArguments(functionCall: FirFunctionCall): List<FirExpression> {
@@ -231,24 +220,21 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         }
         val cvar = VariableEmbedding(symbol.callableId.embedName(), data.embedType(type))
         val propInitializer = property.initializer
-        val initializer = propInitializer?.accept(this, data)
+        val initializer = propInitializer?.let { data.convert(it) }
         data.addDeclaration(cvar.toLocalVarDecl())
         initializer?.let { data.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), it.withType(cvar.viperType))) }
         return UnitDomain.element
     }
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: StmtConversionContext): Exp {
-        val condVar = data.newAnonVar(BooleanTypeEmbedding)
-        data.addDeclaration(condVar.toLocalVarDecl())
-        val cond = whileLoop.condition.accept(this, data)
-        data.addStatement(Stmt.LocalVarAssign(condVar.toLocalVar(), cond))
+        val condCtx = data.withResult(BooleanTypeEmbedding)
+        condCtx.convertAndCapture(whileLoop.condition)
 
-        val bodyStmtConversionContext = StmtConverter(data)
-        bodyStmtConversionContext.convertAndAppend(whileLoop.block)
-        val updatedCond = whileLoop.condition.accept(this, bodyStmtConversionContext)
-        bodyStmtConversionContext.addStatement(Stmt.LocalVarAssign(condVar.toLocalVar(), updatedCond))
+        val bodyCtx = condCtx.newBlockShareResult()
+        bodyCtx.convert(whileLoop.block)
+        bodyCtx.convertAndCapture(whileLoop.condition)
 
-        data.addStatement(Stmt.While(condVar.toLocalVar(), invariants = emptyList(), bodyStmtConversionContext.block))
+        data.addStatement(Stmt.While(condCtx.resultVar.toLocalVar(), invariants = emptyList(), bodyCtx.block))
         return UnitDomain.element
     }
 
@@ -256,44 +242,36 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         // It is not entirely clear whether we can get away with ignoring the distinction between
         // lvalues and rvalues, but let's try to at first, and we'll fix it later if it turns out
         // not to work.
-        val convertedLValue = variableAssignment.lValue.accept(this, data)
-        val convertedRValue = variableAssignment.rValue.accept(this, data)
+        val convertedLValue = data.convert(variableAssignment.lValue)
+        val convertedRValue = data.convert(variableAssignment.rValue)
         data.addStatement(Stmt.assign(convertedLValue, convertedRValue.withType(convertedLValue.type)))
         return UnitDomain.element
     }
 
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: StmtConversionContext): Exp {
-        val exp = smartCastExpression.originalExpression.accept(this, data)
+        val exp = data.convert(smartCastExpression.originalExpression)
         val newType = smartCastExpression.smartcastType.coneType
         return exp.withType(data.embedType(newType).type)
     }
 
     override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: StmtConversionContext): Exp {
-        val returnVar = data.newAnonVar(BooleanTypeEmbedding)
-        data.addDeclaration(returnVar.toLocalVarDecl())
-        val left = binaryLogicExpression.leftOperand.accept(this, data)
-        val rightSubStmt = StmtConverter(data)
-        val right = binaryLogicExpression.rightOperand.accept(this, rightSubStmt)
-        rightSubStmt.addStatement(Stmt.LocalVarAssign(returnVar.toLocalVar(), right))
-        when (binaryLogicExpression.kind) {
-            LogicOperationKind.AND ->
-                data.addStatement(
-                    Stmt.If(
-                        left,
-                        rightSubStmt.block,
-                        Stmt.Seqn(listOf(Stmt.LocalVarAssign(returnVar.toLocalVar(), Exp.BoolLit(false))), listOf())
-                    )
-                )
-            LogicOperationKind.OR ->
-                data.addStatement(
-                    Stmt.If(
-                        left,
-                        Stmt.Seqn(listOf(Stmt.LocalVarAssign(returnVar.toLocalVar(), Exp.BoolLit(true))), listOf()),
-                        rightSubStmt.block
-                    )
-                )
+        val left = data.convert(binaryLogicExpression.leftOperand)
+        return data.withResult(BooleanTypeEmbedding) {
+            val rightCtx = newBlockShareResult()
+            rightCtx.convertAndCapture(binaryLogicExpression.rightOperand)
+            when (binaryLogicExpression.kind) {
+                LogicOperationKind.AND -> {
+                    val constCtx = newBlockShareResult()
+                    constCtx.captureResult(Exp.BoolLit(false))
+                    data.addStatement(Stmt.If(left, rightCtx.block, constCtx.block))
+                }
+                LogicOperationKind.OR -> {
+                    val constCtx = newBlockShareResult()
+                    constCtx.captureResult(Exp.BoolLit(true))
+                    data.addStatement(Stmt.If(left, constCtx.block, rightCtx.block))
+                }
+            }
         }
-        return returnVar.toLocalVar()
     }
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: StmtConversionContext): Exp =

@@ -25,14 +25,14 @@ method global$pkg_$conjunction_side_effects(local$x: Bool, local$y: Bool)
 {
   var anonymous$1: Bool
   var anonymous$2: Bool
-  anonymous$2 := global$pkg_$negation(local$x)
-  if (anonymous$2) {
+  anonymous$1 := global$pkg_$negation(local$x)
+  if (anonymous$1) {
     var anonymous$3: Bool
     anonymous$3 := global$pkg_$negation(local$y)
-    anonymous$1 := anonymous$3
+    anonymous$2 := anonymous$3
   } else {
-    anonymous$1 := false}
-  ret$ := anonymous$1
+    anonymous$2 := false}
+  ret$ := anonymous$2
 }
 
 /boolean_logic.kt:(324,335): info: Generated Viper text for disjunction:

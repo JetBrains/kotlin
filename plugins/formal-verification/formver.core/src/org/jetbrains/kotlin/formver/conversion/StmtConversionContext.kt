@@ -6,12 +6,39 @@
 package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.formver.viper.ast.Declaration
-import org.jetbrains.kotlin.formver.viper.ast.Stmt
+import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.formver.viper.ast.Exp
 
-interface StmtConversionContext : MethodConversionContext {
-    val block: Stmt.Seqn
-    fun addStatement(stmt: Stmt)
-    fun addDeclaration(declaration: Declaration)
-    fun convertAndAppend(stmt: FirStatement)
+interface StmtConversionContext : MethodConversionContext, SeqnBuildContext {
+    val resultExpr: Exp
+    fun convert(stmt: FirStatement): Exp
+
+    fun convertAndCapture(stmt: FirStatement) {
+        convert(stmt)
+    }
+
+    fun newBlock(): StmtConversionContext
+    fun newBlockShareResult(): StmtConversionContext = newBlock()
+    fun withResult(type: TypeEmbedding): StmtWithResultConversionContext
+
+    fun withResult(type: TypeEmbedding, action: StmtWithResultConversionContext.() -> Unit): Exp {
+        val ctx = withResult(type)
+        ctx.action()
+        return ctx.resultVar.toLocalVar()
+    }
+}
+
+interface StmtWithResultConversionContext : StmtConversionContext {
+    val resultVar: VariableEmbedding
+    override val resultExpr: Exp
+        get() = resultVar.toLocalVar()
+
+    fun captureResult(exp: Exp)
+
+    override fun convertAndCapture(stmt: FirStatement) {
+        captureResult(convert(stmt))
+    }
+
+    override fun newBlockShareResult(): StmtWithResultConversionContext
 }

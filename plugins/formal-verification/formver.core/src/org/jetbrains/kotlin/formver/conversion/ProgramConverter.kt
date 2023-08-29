@@ -122,8 +122,8 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             }
 
             val seqn = body?.let {
-                val ctx = StmtConverter(methodCtx)
-                ctx.convertAndAppend(body)
+                val ctx = StmtConverter(methodCtx, SeqnBuilder())
+                ctx.convert(body)
                 ctx.block
             }
 

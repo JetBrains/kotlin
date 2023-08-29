@@ -6,8 +6,24 @@
 package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.formver.viper.ast.Declaration
+import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
+import org.jetbrains.kotlin.formver.viper.domains.UnitDomain
+
+abstract class BaseStmtConverter(
+    private val methodCtx: MethodConversionContext,
+    private val seqnCtx: SeqnBuildContext,
+) : StmtConversionContext, SeqnBuildContext by seqnCtx, MethodConversionContext by methodCtx {
+    override fun convert(stmt: FirStatement): Exp = stmt.accept(StmtConversionVisitor, this)
+    override fun newBlock(): StmtConverter = StmtConverter(this, SeqnBuilder())
+    override fun withResult(type: TypeEmbedding): StmtWithAnonResultConverter {
+        val newResultVar = newAnonVar(type)
+        addDeclaration(newResultVar.toLocalVarDecl())
+        return StmtWithAnonResultConverter(this, seqnCtx, newResultVar)
+    }
+}
 
 /**
  * Tracks the results of converting a block of statements.
@@ -16,20 +32,21 @@ import org.jetbrains.kotlin.formver.viper.ast.Stmt
  * intermediate results, which requires introducing new names.  We thus need a
  * shared context for finding fresh variable names.
  */
-class StmtConverter(private val methodCtx: MethodConversionContext) : StmtConversionContext, MethodConversionContext by methodCtx {
-    private val statements: MutableList<Stmt> = mutableListOf()
-    private val declarations: MutableList<Declaration> = mutableListOf()
-    override val block = Stmt.Seqn(statements, declarations)
+class StmtConverter(
+    methodCtx: MethodConversionContext,
+    seqnCtx: SeqnBuildContext,
+) : BaseStmtConverter(methodCtx, seqnCtx) {
+    override val resultExpr: Exp = UnitDomain.element
+}
 
-    override fun addStatement(stmt: Stmt) {
-        statements.add(stmt)
+class StmtWithAnonResultConverter(
+    methodCtx: MethodConversionContext,
+    seqnCtx: SeqnBuildContext,
+    override val resultVar: VariableEmbedding,
+) : BaseStmtConverter(methodCtx, seqnCtx), StmtWithResultConversionContext {
+    override fun captureResult(exp: Exp) {
+        addStatement(Stmt.assign(resultVar.toLocalVar(), exp.withType(resultVar.viperType)))
     }
 
-    override fun addDeclaration(declaration: Declaration) {
-        declarations.add(declaration)
-    }
-
-    override fun convertAndAppend(stmt: FirStatement) {
-        stmt.accept(StmtConversionVisitor(), this)
-    }
+    override fun newBlockShareResult(): StmtWithResultConversionContext = StmtWithAnonResultConverter(this, SeqnBuilder(), resultVar)
 }
