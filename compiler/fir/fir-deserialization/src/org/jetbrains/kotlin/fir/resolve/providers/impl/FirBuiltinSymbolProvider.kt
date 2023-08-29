@@ -35,6 +35,18 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import java.io.InputStream
 
+/**
+ * This provider allows to get symbols for so-called built-in classes.
+ *
+ * Built-in classes are the classes which are considered mandatory for compiling any Kotlin code.
+ * For this reason these classes must be provided even in a case when no standard library exists in classpath.
+ * One can find a set of these classes inside core/builtins directory (look at both src/kotlin and native/kotlin subdirectories).
+ * In particular: all primitives, all arrays, collection-like interfaces, Any, Nothing, Unit, etc.
+ *
+ * For non-JVM platforms, all / almost all built-in classes exist also in the standard library, so this provider works as a fallback.
+ * For the JVM platform, some classes are mapped to Java classes and do not exist themselves,
+ * so this provider is mandatory for the JVM compiler to work properly even with the standard library in classpath.
+ */
 @ThreadSafeMutableState
 open class FirBuiltinSymbolProvider(
     session: FirSession,
