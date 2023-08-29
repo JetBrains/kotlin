@@ -194,6 +194,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
     }
 
     @Test
+    @TestMetadata("enumConstructorCallWithErrorType.kt")
+    public void testEnumConstructorCallWithErrorType() throws Exception {
+        runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/enumConstructorCallWithErrorType.kt");
+    }
+
+    @Test
     @TestMetadata("enumImports.kt")
     public void testEnumImports() throws Exception {
         runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/enumImports.kt");
