@@ -112,6 +112,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("member_functions.kt")
+        public void testMember_functions() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/member_functions.kt");
+        }
+
+        @Test
         @TestMetadata("nullable.kt")
         public void testNullable() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/nullable.kt");

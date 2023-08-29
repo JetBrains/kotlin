@@ -120,9 +120,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
                 if (symbol.isLocal) {
                     return varEmbedding.toLocalVar()
                 } else {
-
                     val receiver = propertyAccessExpression.dispatchReceiver.accept(this, data)
-
                     val fieldAccess = Exp.FieldAccess(receiver, varEmbedding.toField())
                     val accPred = AccessPredicate.FieldAccessPredicate(fieldAccess, PermExp.FullPerm())
                     val anon = data.newAnonVar(varEmbedding.type)
@@ -197,7 +195,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
 
         val returnVar = data.newAnonVar(calleeSig.returnType)
         val returnExp = returnVar.toLocalVar()
-        val args = getArgs().zip(calleeSig.params).map { (arg, param) -> arg.withType(param.viperType) }
+        val args = getArgs().zip(calleeSig.formalArgs).map { (arg, formalArg) -> arg.withType(formalArg.viperType) }
         data.addDeclaration(returnVar.toLocalVarDecl())
         data.addStatement(Stmt.MethodCall(calleeSig.name.mangled, args, listOf(returnExp)))
 
@@ -297,4 +295,8 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         }
         return returnVar.toLocalVar()
     }
+
+    override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: StmtConversionContext): Exp =
+        data.signature.receiver?.toLocalVar()
+            ?: throw IllegalArgumentException("Can't resolve the 'this' receiver since the function does not have one.")
 }

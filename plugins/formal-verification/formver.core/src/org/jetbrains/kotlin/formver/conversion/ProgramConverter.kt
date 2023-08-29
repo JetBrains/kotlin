@@ -90,8 +90,10 @@ class ProgramConverter(val session: FirSession) : ProgramConversionContext {
         val params = symbol.valueParameterSymbols.map {
             VariableEmbedding(it.embedName(), embedType(it.resolvedReturnType))
         }
+        val receiver = symbol.dispatchReceiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it)) }
         return MethodSignatureEmbedding(
             symbol.callableId.embedName(),
+            receiver,
             params,
             embedType(retType)
         )

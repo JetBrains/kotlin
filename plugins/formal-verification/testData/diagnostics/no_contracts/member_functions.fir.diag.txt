@@ -1,0 +1,56 @@
+/member_functions.kt:(32,42): info: Generated Viper text for member_fun:
+field $pkg_$class$Foo$member$x: Int
+
+method $pkg_$class$Foo$member$member_fun(this$: Ref) returns (ret$: Int)
+{
+  var anonymous$1: Int
+  inhale acc(this$.$pkg_$class$Foo$member$x, write)
+  anonymous$1 := this$.$pkg_$class$Foo$member$x
+  exhale acc(this$.$pkg_$class$Foo$member$x, write)
+  ret$ := anonymous$1
+}
+
+/member_functions.kt:(84,99): info: Generated Viper text for call_member_fun:
+field $pkg_$class$Foo$member$x: Int
+
+method $pkg_$class$Foo$member$member_fun(this$: Ref) returns (ret$: Int)
+
+
+method $pkg_$class$Foo$member$call_member_fun(this$: Ref)
+  returns (ret$: dom$Unit)
+{
+  var anonymous$1: Int
+  anonymous$1 := $pkg_$class$Foo$member$member_fun(this$)
+}
+
+/member_functions.kt:(140,152): info: Generated Viper text for sibling_call:
+field $pkg_$class$Foo$member$x: Int
+
+method $pkg_$class$Foo$member$member_fun(this$: Ref) returns (ret$: Int)
+
+
+method $pkg_$class$Foo$member$sibling_call(this$: Ref, local$other: Ref)
+  returns (ret$: dom$Unit)
+{
+  var anonymous$1: Int
+  anonymous$1 := $pkg_$class$Foo$member$member_fun(local$other)
+}
+
+/member_functions.kt:(207,228): info: Generated Viper text for outer_member_fun_call:
+field $pkg_$class$Foo$member$x: Int
+
+method $pkg_$class$Foo$member$Foo(local$x: Int) returns (ret$: Ref)
+
+
+method $pkg_$class$Foo$member$member_fun(this$: Ref) returns (ret$: Int)
+
+
+method global$pkg_$outer_member_fun_call() returns (ret$: dom$Unit)
+{
+  var anonymous$1: Ref
+  var local$f: Ref
+  var anonymous$2: Int
+  anonymous$1 := $pkg_$class$Foo$member$Foo(3)
+  local$f := anonymous$1
+  anonymous$2 := $pkg_$class$Foo$member$member_fun(local$f)
+}

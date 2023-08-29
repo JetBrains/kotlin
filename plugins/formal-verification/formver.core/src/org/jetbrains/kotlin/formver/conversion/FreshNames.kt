@@ -26,6 +26,11 @@ data object ReturnVariableName : MangledName {
         get() = "ret\$"
 }
 
+data object ThisReceiverName : MangledName {
+    override val mangled: String
+        get() = "this\$"
+}
+
 data class SpecialFieldName(val name: String) : MangledName {
     override val mangled: String
         get() = "special\$$name"
