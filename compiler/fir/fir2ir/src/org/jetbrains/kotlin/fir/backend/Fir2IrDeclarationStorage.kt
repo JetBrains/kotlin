@@ -454,6 +454,12 @@ class Fir2IrDeclarationStorage(
             isLocal = isLocal,
             fakeOverrideOwnerLookupTag = fakeOverrideOwnerLookupTag
         )
+        cacheIrFunction(function, irFunction, fakeOverrideOwnerLookupTag)
+
+        return irFunction
+    }
+
+    private fun cacheIrFunction(function: FirFunction, irFunction: IrSimpleFunction, fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?) {
         when {
             irFunction.visibility == DescriptorVisibilities.LOCAL -> {
                 localStorage.putLocalFunction(function, irFunction)
@@ -472,8 +478,6 @@ class Fir2IrDeclarationStorage(
                 functionCache[function] = irFunction
             }
         }
-
-        return irFunction
     }
 
     fun getOrCreateIrAnonymousInitializer(
@@ -547,6 +551,15 @@ class Fir2IrDeclarationStorage(
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
     ): IrProperty {
         val irProperty = callablesGenerator.createIrProperty(property, irParent, predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
+        cacheIrProperty(property, irProperty, fakeOverrideOwnerLookupTag)
+        return irProperty
+    }
+
+    private fun cacheIrProperty(
+        property: FirProperty,
+        irProperty: IrProperty,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
+    ) {
         val irPropertySymbol = irProperty.symbol
         irProperty.backingField?.symbol?.let {
             backingFieldForPropertyCache[irPropertySymbol] = it
@@ -568,7 +581,6 @@ class Fir2IrDeclarationStorage(
         } else {
             propertyCache[property] = irProperty
         }
-        return irProperty
     }
 
     private fun FirField.toStubProperty(): FirProperty {
@@ -828,7 +840,9 @@ class Fir2IrDeclarationStorage(
                         )
                     },
                     createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
-                        lazyDeclarationsGenerator.createIrLazyFunction(fir, signature, lazyParent, declarationOrigin)
+                        lazyDeclarationsGenerator.createIrLazyFunction(fir, signature, lazyParent, declarationOrigin).also {
+                            cacheIrFunction(fir, it, fakeOverrideOwnerLookupTag = null)
+                        }
                     },
                 ) as IrFunctionSymbol
                 if (unmatchedOwner && fakeOverrideOwnerLookupTag is ConeClassLookupTagWithFixedSymbol) {
@@ -871,7 +885,9 @@ class Fir2IrDeclarationStorage(
                 )
             },
             createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
-                lazyDeclarationsGenerator.createIrLazyProperty(fir, signature, lazyParent, declarationOrigin)
+                lazyDeclarationsGenerator.createIrLazyProperty(fir, signature, lazyParent, declarationOrigin).also {
+                    cacheIrProperty(fir, it, fakeOverrideOwnerLookupTag = null)
+                }
             },
         )
 

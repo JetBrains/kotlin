@@ -43,7 +43,6 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
                 }
             }
         }
-        functionCache[fir] = irFunction
         // NB: this is needed to prevent recursions in case of self bounds
         (irFunction as Fir2IrLazySimpleFunction).prepareTypeParameters()
         return irFunction
@@ -84,13 +83,6 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
                     create(startOffset, endOffset)
                 }
             }
-        }
-        propertyCache[fir] = irProperty
-        irProperty.getter?.symbol?.let { getterForPropertyCache[symbol] = it }
-        irProperty.setter?.symbol?.let { setterForPropertyCache[symbol] = it }
-        irProperty.backingField?.symbol?.let {
-            backingFieldForPropertyCache[symbol] = it
-            propertyForBackingFieldCache[it] = symbol
         }
         return irProperty
     }
