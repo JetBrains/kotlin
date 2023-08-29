@@ -58,7 +58,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                                 name = name,
                                 symbol = symbol,
                                 variance = variance,
-                                index = if (index < 0) 0 else index,
+                                index = index,
                                 isReified = isReified,
                             )
                         }
@@ -74,7 +74,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                                 name = name,
                                 symbol = symbol,
                                 variance = variance,
-                                index = if (index < 0) 0 else index,
+                                index = index,
                                 isReified = isReified,
                             )
                         }
@@ -87,7 +87,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                     name = name,
                     symbol = IrTypeParameterSymbolImpl(),
                     variance = variance,
-                    index = if (index < 0) 0 else index,
+                    index = index,
                     isReified = isReified,
                 )
             }
