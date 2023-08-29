@@ -32,287 +32,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
-    internal fun setTypeParameters(
-        irOwner: IrTypeParametersContainer,
-        owner: FirTypeParameterRefsOwner,
-        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
-    ) {
-        irOwner.typeParameters = owner.typeParameters.mapIndexedNotNull { index, typeParameter ->
-            if (typeParameter !is FirTypeParameter) return@mapIndexedNotNull null
-            classifierStorage.getIrTypeParameter(typeParameter, index, irOwner.symbol, typeOrigin).apply {
-                parent = irOwner
-                if (superTypes.isEmpty()) {
-                    superTypes = typeParameter.bounds.map { it.toIrType(typeOrigin) }
-                }
-            }
-        }
-    }
-
-    private fun IrClass.declareTypeParameters(klass: FirClass) {
-        classifierStorage.preCacheTypeParameters(klass, symbol)
-        setTypeParameters(this, klass)
-        if (klass is FirRegularClass) {
-            val fieldsForContextReceiversOfCurrentClass = classifierStorage.getFieldsWithContextReceiversForClass(this, klass)
-            declarations.addAll(fieldsForContextReceiversOfCurrentClass)
-        }
-    }
-
-    private fun IrClass.declareSupertypes(klass: FirClass) {
-        superTypes = klass.superTypeRefs.map { superTypeRef -> superTypeRef.toIrType() }
-    }
-
-    private fun IrClass.declareValueClassRepresentation(klass: FirRegularClass) {
-        if (this !is Fir2IrLazyClass) {
-            valueClassRepresentation = computeValueClassRepresentation(klass)
-        }
-    }
-
-    private fun FirRegularClass.enumClassModality(): Modality {
-        return when {
-            declarations.any { it is FirCallableDeclaration && it.modality == Modality.ABSTRACT } -> {
-                Modality.ABSTRACT
-            }
-            declarations.none {
-                it is FirEnumEntry && isEnumEntryWhichRequiresSubclass(it)
-            } -> {
-                Modality.FINAL
-            }
-            hasAbstractMembersInScope() -> {
-                Modality.ABSTRACT
-            }
-            else -> {
-                Modality.OPEN
-            }
-        }
-    }
-
-    private fun FirRegularClass.hasAbstractMembersInScope(): Boolean {
-        val scope = unsubstitutedScope()
-        val names = scope.getCallableNames()
-        var hasAbstract = false
-        for (name in names) {
-            scope.processFunctionsByName(name) {
-                if (it.isAbstract) {
-                    hasAbstract = true
-                }
-            }
-            if (hasAbstract) return true
-            scope.processPropertiesByName(name) {
-                if (it.isAbstract) {
-                    hasAbstract = true
-                }
-            }
-            if (hasAbstract) return true
-        }
-        return false
-    }
-
-    data class LocalIrClassInfo(
-        val irClass: IrClass,
-        val firClassOrLocalParent: FirClass,
-        val irClassOrLocalParent: IrClass,
-    )
-
-    // This function is called when we refer local class earlier than we reach its declaration
-    // This can happen e.g. when implicit return type has a local class constructor
-    fun createLocalIrClassOnTheFly(klass: FirClass, processMembersOfClassesOnTheFlyImmediately: Boolean): LocalIrClassInfo {
-        // finding the parent class that actually contains the [klass] in the tree - it is the root one that should be created on the fly
-        val classOrLocalParent = generateSequence(klass) { c ->
-            (c as? FirRegularClass)?.containingClassForLocalAttr?.let { lookupTag ->
-                (session.firProvider.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirClass)?.takeIf {
-                    it.declarations.contains(c)
-                }
-            }
-        }.last()
-        val result = converter.processLocalClassAndNestedClassesOnTheFly(classOrLocalParent, temporaryParent)
-        // Note: usually member creation and f/o binding is delayed till non-local classes are processed in Fir2IrConverter
-        // If non-local classes are already created (this means we are in body translation) we do everything immediately
-        // The last variant is possible for local variables like 'val a = object : Any() { ... }'
-        if (processMembersOfClassesOnTheFlyImmediately) {
-            converter.processClassMembers(classOrLocalParent, result)
-            converter.bindFakeOverridesInClass(result)
-        }
-        val irClass = if (classOrLocalParent === klass) {
-            result
-        } else {
-            classifierStorage.getCachedIrClass(klass)
-                ?: error("Assuming that all nested classes of ${classOrLocalParent.classId.asString()} should already be cached")
-        }
-        return LocalIrClassInfo(irClass, classOrLocalParent, result)
-    }
-
-    fun processClassHeader(klass: FirClass, irClass: IrClass = classifierStorage.getCachedIrClass(klass)!!): IrClass {
-        irClass.declareTypeParameters(klass)
-        irClass.setThisReceiver(klass.typeParameters)
-        irClass.declareSupertypes(klass)
-        if (klass is FirRegularClass) {
-            irClass.declareValueClassRepresentation(klass)
-        }
-        return irClass
-    }
-
-    private fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameterRef>) {
-        symbolTable.enterScope(this)
-        val typeArguments = typeParameters.map {
-            IrSimpleTypeImpl(classifierStorage.getIrTypeParameterSymbol(it.symbol, ConversionTypeOrigin.DEFAULT), false, emptyList(), emptyList())
-        }
-        thisReceiver = declareThisReceiverParameter(
-            thisType = IrSimpleTypeImpl(symbol, false, typeArguments, emptyList()),
-            thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
-        )
-        symbolTable.leaveScope(this)
-    }
-
-
-    private fun declareIrTypeAlias(signature: IdSignature?, factory: (IrTypeAliasSymbol) -> IrTypeAlias): IrTypeAlias =
-        if (signature == null)
-            factory(IrTypeAliasSymbolImpl())
-        else
-            symbolTable.declareTypeAlias(signature, { Fir2IrTypeAliasSymbol(signature) }, factory)
-
-    fun createIrTypeAlias(
-        typeAlias: FirTypeAlias,
-        parent: IrDeclarationParent
-    ): IrTypeAlias = typeAlias.convertWithOffsets { startOffset, endOffset ->
-        val signature = signatureComposer.composeSignature(typeAlias)
-        declareIrTypeAlias(signature) { symbol ->
-            classifierStorage.preCacheTypeParameters(typeAlias, symbol)
-            val irTypeAlias = irFactory.createTypeAlias(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = IrDeclarationOrigin.DEFINED,
-                name = typeAlias.name,
-                visibility = components.visibilityConverter.convertToDescriptorVisibility(typeAlias.visibility),
-                symbol = symbol,
-                isActual = typeAlias.isActual,
-                expandedType = typeAlias.expandedTypeRef.toIrType(),
-            ).apply {
-                this.parent = parent
-                setTypeParameters(this, typeAlias)
-                if (parent is IrFile) {
-                    parent.declarations += this
-                }
-            }
-            irTypeAlias
-        }
-    }
-
-    fun declareIrClass(signature: IdSignature?, factory: (IrClassSymbol) -> IrClass): IrClass {
-        return if (signature == null)
-            factory(IrClassSymbolImpl())
-        else
-            symbolTable.declareClass(signature, { Fir2IrClassSymbol(signature) }, factory)
-    }
-
-    fun createIrClass(
-        regularClass: FirRegularClass,
-        parent: IrDeclarationParent,
-        predefinedOrigin: IrDeclarationOrigin? = null
-    ): IrClass {
-        val visibility = regularClass.visibility
-        val modality = when (regularClass.classKind) {
-            ClassKind.ENUM_CLASS -> regularClass.enumClassModality()
-            ClassKind.ANNOTATION_CLASS -> Modality.OPEN
-            else -> regularClass.modality ?: Modality.FINAL
-        }
-        val signature = runUnless(regularClass.isLocal || !configuration.linkViaSignatures) {
-            signatureComposer.composeSignature(regularClass)
-        }
-        val irClass = regularClass.convertWithOffsets { startOffset, endOffset ->
-            declareIrClass(signature) { symbol ->
-                irFactory.createClass(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    origin = regularClass.computeIrOrigin(predefinedOrigin),
-                    name = regularClass.name,
-                    visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
-                    symbol = symbol,
-                    kind = regularClass.classKind,
-                    modality = modality,
-                    isExternal = regularClass.isExternal,
-                    isCompanion = regularClass.isCompanion,
-                    isInner = regularClass.isInner,
-                    isData = regularClass.isData,
-                    isValue = regularClass.isInline,
-                    isExpect = regularClass.isExpect,
-                    isFun = regularClass.isFun
-                ).apply {
-                    metadata = FirMetadataSource.Class(regularClass)
-                }
-            }
-        }
-        irClass.parent = parent
-        return irClass
-    }
-
-    fun createAnonymousObject(
-        anonymousObject: FirAnonymousObject,
-        visibility: Visibility = Visibilities.Local,
-        name: Name = SpecialNames.NO_NAME_PROVIDED,
-        irParent: IrDeclarationParent? = null
-    ): IrClass {
-        val origin = IrDeclarationOrigin.DEFINED
-        val modality = Modality.FINAL
-        val irAnonymousObject = anonymousObject.convertWithOffsets { startOffset, endOffset ->
-            irFactory.createClass(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = name,
-                visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
-                symbol = IrClassSymbolImpl(),
-                kind = anonymousObject.classKind,
-                modality = modality,
-            ).apply {
-                metadata = FirMetadataSource.Class(anonymousObject)
-            }
-        }
-        if (irParent != null) {
-            irAnonymousObject.parent = irParent
-        }
-        return irAnonymousObject
-    }
-
-    fun createCodeFragmentClass(codeFragment: FirCodeFragment, containingFile: IrFile): IrClass {
-        val conversionData = codeFragment.conversionData
-        val signature = signatureComposer.composeSignature(codeFragment)
-
-        val irClass = codeFragment.convertWithOffsets { startOffset, endOffset ->
-            declareIrClass(signature) { symbol ->
-                irFactory.createClass(
-                    startOffset,
-                    endOffset,
-                    IrDeclarationOrigin.DEFINED,
-                    conversionData.classId.shortClassName,
-                    DescriptorVisibilities.PUBLIC,
-                    symbol,
-                    ClassKind.CLASS,
-                    Modality.FINAL,
-                    isExternal = false,
-                    isCompanion = false,
-                    isInner = false,
-                    isData = false,
-                    isValue = false,
-                    isExpect = false,
-                    isFun = false
-                ).apply {
-                    metadata = FirMetadataSource.CodeFragment(codeFragment)
-                    parent = containingFile
-                    typeParameters = emptyList()
-                    thisReceiver = declareThisReceiverParameter(
-                        thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
-                        thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
-                    )
-                    superTypes = listOf(irBuiltIns.anyType)
-                }
-            }
-        }
-        return irClass
-    }
-
-    fun initializeTypeParameterBounds(typeParameter: FirTypeParameter, irTypeParameter: IrTypeParameter) {
-        irTypeParameter.superTypes = typeParameter.bounds.map { it.toIrType() }
-    }
+    // ------------------------------------ type parameters ------------------------------------
 
     fun createIrTypeParameterWithoutBounds(
         typeParameter: FirTypeParameter,
@@ -376,6 +96,306 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         return irTypeParameter
     }
 
+    fun initializeTypeParameterBounds(typeParameter: FirTypeParameter, irTypeParameter: IrTypeParameter) {
+        irTypeParameter.superTypes = typeParameter.bounds.map { it.toIrType() }
+    }
+
+    // ------------------------------------ classes ------------------------------------
+
+    fun declareIrClass(signature: IdSignature?, factory: (IrClassSymbol) -> IrClass): IrClass {
+        return if (signature == null)
+            factory(IrClassSymbolImpl())
+        else
+            symbolTable.declareClass(signature, { Fir2IrClassSymbol(signature) }, factory)
+    }
+
+    fun createIrClass(
+        regularClass: FirRegularClass,
+        parent: IrDeclarationParent,
+        predefinedOrigin: IrDeclarationOrigin? = null
+    ): IrClass {
+        val visibility = regularClass.visibility
+        val modality = when (regularClass.classKind) {
+            ClassKind.ENUM_CLASS -> regularClass.enumClassModality()
+            ClassKind.ANNOTATION_CLASS -> Modality.OPEN
+            else -> regularClass.modality ?: Modality.FINAL
+        }
+        val signature = runUnless(regularClass.isLocal || !configuration.linkViaSignatures) {
+            signatureComposer.composeSignature(regularClass)
+        }
+        val irClass = regularClass.convertWithOffsets { startOffset, endOffset ->
+            declareIrClass(signature) { symbol ->
+                irFactory.createClass(
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = regularClass.computeIrOrigin(predefinedOrigin),
+                    name = regularClass.name,
+                    visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
+                    symbol = symbol,
+                    kind = regularClass.classKind,
+                    modality = modality,
+                    isExternal = regularClass.isExternal,
+                    isCompanion = regularClass.isCompanion,
+                    isInner = regularClass.isInner,
+                    isData = regularClass.isData,
+                    isValue = regularClass.isInline,
+                    isExpect = regularClass.isExpect,
+                    isFun = regularClass.isFun
+                ).apply {
+                    metadata = FirMetadataSource.Class(regularClass)
+                }
+            }
+        }
+        irClass.parent = parent
+        return irClass
+    }
+
+    fun processClassHeader(klass: FirClass, irClass: IrClass = classifierStorage.getCachedIrClass(klass)!!): IrClass {
+        irClass.declareTypeParameters(klass)
+        irClass.setThisReceiver(klass.typeParameters)
+        irClass.declareSupertypes(klass)
+        if (klass is FirRegularClass) {
+            irClass.declareValueClassRepresentation(klass)
+        }
+        return irClass
+    }
+
+    private fun IrClass.declareTypeParameters(klass: FirClass) {
+        classifierStorage.preCacheTypeParameters(klass, symbol)
+        setTypeParameters(this, klass)
+        if (klass is FirRegularClass) {
+            val fieldsForContextReceiversOfCurrentClass = classifierStorage.getFieldsWithContextReceiversForClass(this, klass)
+            declarations.addAll(fieldsForContextReceiversOfCurrentClass)
+        }
+    }
+
+    private fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameterRef>) {
+        symbolTable.enterScope(this)
+        val typeArguments = typeParameters.map {
+            IrSimpleTypeImpl(classifierStorage.getIrTypeParameterSymbol(it.symbol, ConversionTypeOrigin.DEFAULT), false, emptyList(), emptyList())
+        }
+        thisReceiver = declareThisReceiverParameter(
+            thisType = IrSimpleTypeImpl(symbol, false, typeArguments, emptyList()),
+            thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
+        )
+        symbolTable.leaveScope(this)
+    }
+
+    private fun IrClass.declareSupertypes(klass: FirClass) {
+        superTypes = klass.superTypeRefs.map { superTypeRef -> superTypeRef.toIrType() }
+    }
+
+    private fun IrClass.declareValueClassRepresentation(klass: FirRegularClass) {
+        if (this !is Fir2IrLazyClass) {
+            valueClassRepresentation = computeValueClassRepresentation(klass)
+        }
+    }
+
+    private fun FirRegularClass.enumClassModality(): Modality {
+        return when {
+            declarations.any { it is FirCallableDeclaration && it.modality == Modality.ABSTRACT } -> {
+                Modality.ABSTRACT
+            }
+            declarations.none {
+                it is FirEnumEntry && isEnumEntryWhichRequiresSubclass(it)
+            } -> {
+                Modality.FINAL
+            }
+            hasAbstractMembersInScope() -> {
+                Modality.ABSTRACT
+            }
+            else -> {
+                Modality.OPEN
+            }
+        }
+    }
+
+    private fun FirRegularClass.hasAbstractMembersInScope(): Boolean {
+        val scope = unsubstitutedScope()
+        val names = scope.getCallableNames()
+        var hasAbstract = false
+        for (name in names) {
+            scope.processFunctionsByName(name) {
+                if (it.isAbstract) {
+                    hasAbstract = true
+                }
+            }
+            if (hasAbstract) return true
+            scope.processPropertiesByName(name) {
+                if (it.isAbstract) {
+                    hasAbstract = true
+                }
+            }
+            if (hasAbstract) return true
+        }
+        return false
+    }
+
+    // ------------------------------------ local classes ------------------------------------
+
+    data class LocalIrClassInfo(
+        val irClass: IrClass,
+        val firClassOrLocalParent: FirClass,
+        val irClassOrLocalParent: IrClass,
+    )
+
+    // This function is called when we refer local class earlier than we reach its declaration
+    // This can happen e.g. when implicit return type has a local class constructor
+    fun createLocalIrClassOnTheFly(klass: FirClass, processMembersOfClassesOnTheFlyImmediately: Boolean): LocalIrClassInfo {
+        // finding the parent class that actually contains the [klass] in the tree - it is the root one that should be created on the fly
+        val classOrLocalParent = generateSequence(klass) { c ->
+            (c as? FirRegularClass)?.containingClassForLocalAttr?.let { lookupTag ->
+                (session.firProvider.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirClass)?.takeIf {
+                    it.declarations.contains(c)
+                }
+            }
+        }.last()
+        val result = converter.processLocalClassAndNestedClassesOnTheFly(classOrLocalParent, temporaryParent)
+        // Note: usually member creation and f/o binding is delayed till non-local classes are processed in Fir2IrConverter
+        // If non-local classes are already created (this means we are in body translation) we do everything immediately
+        // The last variant is possible for local variables like 'val a = object : Any() { ... }'
+        if (processMembersOfClassesOnTheFlyImmediately) {
+            converter.processClassMembers(classOrLocalParent, result)
+            converter.bindFakeOverridesInClass(result)
+        }
+        val irClass = if (classOrLocalParent === klass) {
+            result
+        } else {
+            classifierStorage.getCachedIrClass(klass)
+                ?: error("Assuming that all nested classes of ${classOrLocalParent.classId.asString()} should already be cached")
+        }
+        return LocalIrClassInfo(irClass, classOrLocalParent, result)
+    }
+
+    private val temporaryParent by lazy {
+        irFactory.createSimpleFunction(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = IrDeclarationOrigin.DEFINED,
+            name = Name.special("<stub>"),
+            visibility = DescriptorVisibilities.PRIVATE,
+            isInline = false,
+            isExpect = false,
+            returnType = irBuiltIns.unitType,
+            modality = Modality.FINAL,
+            symbol = IrSimpleFunctionSymbolImpl(),
+            isTailrec = false,
+            isSuspend = false,
+            isOperator = false,
+            isInfix = false,
+            isExternal = false,
+        ).apply {
+            parent = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName.ROOT)
+        }
+    }
+
+    // ------------------------------------ anonymous objects ------------------------------------
+
+    fun createAnonymousObject(
+        anonymousObject: FirAnonymousObject,
+        visibility: Visibility = Visibilities.Local,
+        name: Name = SpecialNames.NO_NAME_PROVIDED,
+        irParent: IrDeclarationParent? = null
+    ): IrClass {
+        val origin = IrDeclarationOrigin.DEFINED
+        val modality = Modality.FINAL
+        val irAnonymousObject = anonymousObject.convertWithOffsets { startOffset, endOffset ->
+            irFactory.createClass(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
+                symbol = IrClassSymbolImpl(),
+                kind = anonymousObject.classKind,
+                modality = modality,
+            ).apply {
+                metadata = FirMetadataSource.Class(anonymousObject)
+            }
+        }
+        if (irParent != null) {
+            irAnonymousObject.parent = irParent
+        }
+        return irAnonymousObject
+    }
+
+    // ------------------------------------ typealiases ------------------------------------
+
+    private fun declareIrTypeAlias(signature: IdSignature?, factory: (IrTypeAliasSymbol) -> IrTypeAlias): IrTypeAlias {
+        return if (signature == null)
+            factory(IrTypeAliasSymbolImpl())
+        else
+            symbolTable.declareTypeAlias(signature, { Fir2IrTypeAliasSymbol(signature) }, factory)
+    }
+
+    fun createIrTypeAlias(
+        typeAlias: FirTypeAlias,
+        parent: IrDeclarationParent
+    ): IrTypeAlias = typeAlias.convertWithOffsets { startOffset, endOffset ->
+        val signature = signatureComposer.composeSignature(typeAlias)
+        declareIrTypeAlias(signature) { symbol ->
+            classifierStorage.preCacheTypeParameters(typeAlias, symbol)
+            val irTypeAlias = irFactory.createTypeAlias(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = IrDeclarationOrigin.DEFINED,
+                name = typeAlias.name,
+                visibility = components.visibilityConverter.convertToDescriptorVisibility(typeAlias.visibility),
+                symbol = symbol,
+                isActual = typeAlias.isActual,
+                expandedType = typeAlias.expandedTypeRef.toIrType(),
+            ).apply {
+                this.parent = parent
+                setTypeParameters(this, typeAlias)
+                if (parent is IrFile) {
+                    parent.declarations += this
+                }
+            }
+            irTypeAlias
+        }
+    }
+
+    // ------------------------------------ code fragments ------------------------------------
+
+    fun createCodeFragmentClass(codeFragment: FirCodeFragment, containingFile: IrFile): IrClass {
+        val conversionData = codeFragment.conversionData
+        val signature = signatureComposer.composeSignature(codeFragment)
+
+        val irClass = codeFragment.convertWithOffsets { startOffset, endOffset ->
+            declareIrClass(signature) { symbol ->
+                irFactory.createClass(
+                    startOffset,
+                    endOffset,
+                    IrDeclarationOrigin.DEFINED,
+                    conversionData.classId.shortClassName,
+                    DescriptorVisibilities.PUBLIC,
+                    symbol,
+                    ClassKind.CLASS,
+                    Modality.FINAL,
+                    isExternal = false,
+                    isCompanion = false,
+                    isInner = false,
+                    isData = false,
+                    isValue = false,
+                    isExpect = false,
+                    isFun = false
+                ).apply {
+                    metadata = FirMetadataSource.CodeFragment(codeFragment)
+                    parent = containingFile
+                    typeParameters = emptyList()
+                    thisReceiver = declareThisReceiverParameter(
+                        thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
+                        thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
+                    )
+                    superTypes = listOf(irBuiltIns.anyType)
+                }
+            }
+        }
+        return irClass
+    }
+
+    // ------------------------------------ enum entries ------------------------------------
+
     private fun declareIrEnumEntry(signature: IdSignature?, factory: (IrEnumEntrySymbol) -> IrEnumEntry): IrEnumEntry {
         return if (signature == null)
             factory(IrEnumEntrySymbolImpl())
@@ -421,6 +441,24 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         return initializer is FirAnonymousObjectExpression && initializer.anonymousObject.declarations.any { it !is FirConstructor }
     }
 
+    // ------------------------------------ utilities ------------------------------------
+
+    internal fun setTypeParameters(
+        irOwner: IrTypeParametersContainer,
+        owner: FirTypeParameterRefsOwner,
+        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
+    ) {
+        irOwner.typeParameters = owner.typeParameters.mapIndexedNotNull { index, typeParameter ->
+            if (typeParameter !is FirTypeParameter) return@mapIndexedNotNull null
+            classifierStorage.getIrTypeParameter(typeParameter, index, irOwner.symbol, typeOrigin).apply {
+                parent = irOwner
+                if (superTypes.isEmpty()) {
+                    superTypes = typeParameter.bounds.map { it.toIrType(typeOrigin) }
+                }
+            }
+        }
+    }
+
     @OptIn(IrSymbolInternals::class)
     fun createIrClassSymbolForNotFoundClass(classLikeLookupTag: ConeClassLikeLookupTag): IrClassSymbol {
         val classId = classLikeLookupTag.classId
@@ -452,25 +490,4 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         }
     }
 
-    private val temporaryParent by lazy {
-        irFactory.createSimpleFunction(
-            startOffset = UNDEFINED_OFFSET,
-            endOffset = UNDEFINED_OFFSET,
-            origin = IrDeclarationOrigin.DEFINED,
-            name = Name.special("<stub>"),
-            visibility = DescriptorVisibilities.PRIVATE,
-            isInline = false,
-            isExpect = false,
-            returnType = irBuiltIns.unitType,
-            modality = Modality.FINAL,
-            symbol = IrSimpleFunctionSymbolImpl(),
-            isTailrec = false,
-            isSuspend = false,
-            isOperator = false,
-            isInfix = false,
-            isExternal = false,
-        ).apply {
-            parent = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName.ROOT)
-        }
-    }
 }
