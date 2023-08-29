@@ -38,35 +38,42 @@ object SMAPParser {
     private class SMAPTokenizer(private val text: String, private val headerString: String) : Iterator<String> {
 
         private var pos = 0
-        private var currentLine: String? = null
+        private var currentStart = -1
+        private var currentEnd = -1
+        private val headerLen = headerString.length
+
+        private fun matchesWithHeader() =
+            currentStart != -1 && currentEnd - currentStart == headerLen
+                    && text.regionMatches(currentStart, headerString, 0, headerLen)
 
         init {
             advance()
-            while (currentLine != null && currentLine != headerString) {
+            while (currentStart != -1 && !matchesWithHeader()) {
                 advance()
             }
-            if (currentLine == headerString) {
+            if (matchesWithHeader()) {
                 advance()
             }
         }
 
         private fun advance() {
             if (pos >= text.length) {
-                currentLine = null
+                currentStart = -1
                 return
             }
             val fromPos = pos
             while (pos < text.length && text[pos] != '\n' && text[pos] != '\r') pos++
-            currentLine = text.substring(fromPos, pos)
+            currentStart = fromPos
+            currentEnd = pos
             pos++
         }
 
         override fun hasNext(): Boolean {
-            return currentLine != null
+            return currentStart != -1
         }
 
         override fun next(): String {
-            val res = currentLine ?: throw NoSuchElementException()
+            val res = if (currentStart != -1) text.substring(currentStart, currentEnd) else throw NoSuchElementException()
             advance()
             return res
         }
