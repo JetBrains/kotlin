@@ -18,7 +18,7 @@ public class Boolean private constructor() : Comparable<Boolean> {
     /** Returns the inverse of this boolean. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.NOT)
-    external public operator fun not(): Boolean
+    public external operator fun not(): Boolean
 
     /**
      * Performs a logical `and` operation between this Boolean and the [other] one. Unlike the `&&` operator,
@@ -26,7 +26,7 @@ public class Boolean private constructor() : Comparable<Boolean> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.AND)
-    external public infix fun and(other: Boolean): Boolean
+    public external infix fun and(other: Boolean): Boolean
 
     /**
      * Performs a logical `or` operation between this Boolean and the [other] one. Unlike the `||` operator,
@@ -34,16 +34,16 @@ public class Boolean private constructor() : Comparable<Boolean> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.OR)
-    external public infix fun or(other: Boolean): Boolean
+    public external infix fun or(other: Boolean): Boolean
 
     /** Performs a logical `xor` operation between this Boolean and the [other] one. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.XOR)
-    external public infix fun xor(other: Boolean): Boolean
+    public external infix fun xor(other: Boolean): Boolean
 
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.UNSIGNED_COMPARE_TO)
-    external public override fun compareTo(other: Boolean): Int
+    public external override fun compareTo(other: Boolean): Int
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString(): String = if (this) "true" else "false"

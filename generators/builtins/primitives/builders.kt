@@ -246,7 +246,7 @@ internal class SecondaryConstructorBuilder : AnnotatedAndDocumented(), Primitive
     }
 
     fun argument(arg: String) {
-         argumentsToPrimaryContructor += arg
+        argumentsToPrimaryContructor += arg
     }
 
     override fun build(): String {
@@ -291,8 +291,8 @@ internal class MethodSignatureBuilder : PrimitiveBuilder {
         throwIfWasNotInitialized(returnType, "returnType", "MethodSignatureBuilder")
 
         return buildString {
-            if (isExternal) append("external ")
             visibility?.let { append("${it.name.lowercase()} ") }
+            if (isExternal) append("external ")
             if (isOverride) append("override ")
             if (isInline) append("inline ")
             if (isInfix) append("infix ")

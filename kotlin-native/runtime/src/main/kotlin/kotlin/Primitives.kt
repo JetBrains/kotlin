@@ -45,7 +45,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_COMPARE_TO)
-    external public override operator fun compareTo(other: Byte): Int
+    public external override operator fun compareTo(other: Byte): Int
 
     /**
      * Compares this value with the specified value for order.
@@ -278,7 +278,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      * @sample samples.misc.Builtins.inc
      */
     @TypedIntrinsic(IntrinsicType.INC)
-    external public operator fun inc(): Byte
+    public external operator fun inc(): Byte
 
     /**
      * Returns this value decremented by one.
@@ -286,7 +286,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      * @sample samples.misc.Builtins.dec
      */
     @TypedIntrinsic(IntrinsicType.DEC)
-    external public operator fun dec(): Byte
+    public external operator fun dec(): Byte
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -367,7 +367,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGN_EXTEND)
-    external public override fun toChar(): Char
+    public external override fun toChar(): Char
 
     /**
      * Converts this [Byte] value to [Short].
@@ -379,7 +379,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGN_EXTEND)
-    external public override fun toShort(): Short
+    public external override fun toShort(): Short
 
     /**
      * Converts this [Byte] value to [Int].
@@ -391,7 +391,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGN_EXTEND)
-    external public override fun toInt(): Int
+    public external override fun toInt(): Int
 
     /**
      * Converts this [Byte] value to [Long].
@@ -403,7 +403,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGN_EXTEND)
-    external public override fun toLong(): Long
+    public external override fun toLong(): Long
 
     /**
      * Converts this [Byte] value to [Float].
@@ -412,7 +412,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_TO_FLOAT)
-    external public override fun toFloat(): Float
+    public external override fun toFloat(): Float
 
     /**
      * Converts this [Byte] value to [Double].
@@ -421,11 +421,11 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_TO_FLOAT)
-    external public override fun toDouble(): Double
+    public external override fun toDouble(): Double
 
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Byte_toString")
-    external public override fun toString(): String
+    public external override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
@@ -481,7 +481,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_COMPARE_TO)
-    external public override operator fun compareTo(other: Short): Int
+    public external override operator fun compareTo(other: Short): Int
 
     /**
      * Compares this value with the specified value for order.
@@ -705,7 +705,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      * @sample samples.misc.Builtins.inc
      */
     @TypedIntrinsic(IntrinsicType.INC)
-    external public operator fun inc(): Short
+    public external operator fun inc(): Short
 
     /**
      * Returns this value decremented by one.
@@ -713,7 +713,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      * @sample samples.misc.Builtins.dec
      */
     @TypedIntrinsic(IntrinsicType.DEC)
-    external public operator fun dec(): Short
+    public external operator fun dec(): Short
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -787,7 +787,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.INT_TRUNCATE)
-    external public override fun toByte(): Byte
+    public external override fun toByte(): Byte
 
     /**
      * Converts this [Short] value to [Char].
@@ -799,7 +799,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.ZERO_EXTEND)
-    external public override fun toChar(): Char
+    public external override fun toChar(): Char
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -816,7 +816,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGN_EXTEND)
-    external public override fun toInt(): Int
+    public external override fun toInt(): Int
 
     /**
      * Converts this [Short] value to [Long].
@@ -828,7 +828,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGN_EXTEND)
-    external public override fun toLong(): Long
+    public external override fun toLong(): Long
 
     /**
      * Converts this [Short] value to [Float].
@@ -837,7 +837,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_TO_FLOAT)
-    external public override fun toFloat(): Float
+    public external override fun toFloat(): Float
 
     /**
      * Converts this [Short] value to [Double].
@@ -846,11 +846,11 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_TO_FLOAT)
-    external public override fun toDouble(): Double
+    public external override fun toDouble(): Double
 
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Short_toString")
-    external public override fun toString(): String
+    public external override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
@@ -915,7 +915,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_COMPARE_TO)
-    external public override operator fun compareTo(other: Int): Int
+    public external override operator fun compareTo(other: Int): Int
 
     /**
      * Compares this value with the specified value for order.
@@ -957,7 +957,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.PLUS)
-    external public operator fun plus(other: Int): Int
+    public external operator fun plus(other: Int): Int
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -987,7 +987,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.MINUS)
-    external public operator fun minus(other: Int): Int
+    public external operator fun minus(other: Int): Int
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1017,7 +1017,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.TIMES)
-    external public operator fun times(other: Int): Int
+    public external operator fun times(other: Int): Int
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1047,7 +1047,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_DIV)
-    external public operator fun div(other: Int): Int
+    public external operator fun div(other: Int): Int
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1092,7 +1092,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_REM)
-    external public operator fun rem(other: Int): Int
+    public external operator fun rem(other: Int): Int
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1130,7 +1130,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      * @sample samples.misc.Builtins.inc
      */
     @TypedIntrinsic(IntrinsicType.INC)
-    external public operator fun inc(): Int
+    public external operator fun inc(): Int
 
     /**
      * Returns this value decremented by one.
@@ -1138,17 +1138,17 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      * @sample samples.misc.Builtins.dec
      */
     @TypedIntrinsic(IntrinsicType.DEC)
-    external public operator fun dec(): Int
+    public external operator fun dec(): Int
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.UNARY_PLUS)
-    external public operator fun unaryPlus(): Int
+    public external operator fun unaryPlus(): Int
 
     /** Returns the negative of this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.UNARY_MINUS)
-    external public operator fun unaryMinus(): Int
+    public external operator fun unaryMinus(): Int
 
     /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Byte): IntRange =
@@ -1210,7 +1210,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SHL)
-    external public infix fun shl(bitCount: Int): Int
+    public external infix fun shl(bitCount: Int): Int
 
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
@@ -1220,7 +1220,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SHR)
-    external public infix fun shr(bitCount: Int): Int
+    public external infix fun shr(bitCount: Int): Int
 
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
@@ -1230,27 +1230,27 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.USHR)
-    external public infix fun ushr(bitCount: Int): Int
+    public external infix fun ushr(bitCount: Int): Int
 
     /** Performs a bitwise AND operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.AND)
-    external public infix fun and(other: Int): Int
+    public external infix fun and(other: Int): Int
 
     /** Performs a bitwise OR operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.OR)
-    external public infix fun or(other: Int): Int
+    public external infix fun or(other: Int): Int
 
     /** Performs a bitwise XOR operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.XOR)
-    external public infix fun xor(other: Int): Int
+    public external infix fun xor(other: Int): Int
 
     /** Inverts the bits in this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.INV)
-    external public fun inv(): Int
+    public external fun inv(): Int
 
     /**
      * Converts this [Int] value to [Byte].
@@ -1262,7 +1262,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.INT_TRUNCATE)
-    external public override fun toByte(): Byte
+    public external override fun toByte(): Byte
 
     /**
      * Converts this [Int] value to [Char].
@@ -1275,7 +1275,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     @Suppress("OVERRIDE_DEPRECATION")
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.INT_TRUNCATE)
-    external public override fun toChar(): Char
+    public external override fun toChar(): Char
 
     /**
      * Converts this [Int] value to [Short].
@@ -1287,7 +1287,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.INT_TRUNCATE)
-    external public override fun toShort(): Short
+    public external override fun toShort(): Short
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1304,7 +1304,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGN_EXTEND)
-    external public override fun toLong(): Long
+    public external override fun toLong(): Long
 
     /**
      * Converts this [Int] value to [Float].
@@ -1315,7 +1315,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_TO_FLOAT)
-    external public override fun toFloat(): Float
+    public external override fun toFloat(): Float
 
     /**
      * Converts this [Int] value to [Double].
@@ -1324,11 +1324,11 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_TO_FLOAT)
-    external public override fun toDouble(): Double
+    public external override fun toDouble(): Double
 
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Int_toString")
-    external public override fun toString(): String
+    public external override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
@@ -1402,7 +1402,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_COMPARE_TO)
-    external public override operator fun compareTo(other: Long): Int
+    public external override operator fun compareTo(other: Long): Int
 
     /**
      * Compares this value with the specified value for order.
@@ -1440,7 +1440,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.PLUS)
-    external public operator fun plus(other: Long): Long
+    public external operator fun plus(other: Long): Long
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1470,7 +1470,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.MINUS)
-    external public operator fun minus(other: Long): Long
+    public external operator fun minus(other: Long): Long
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1500,7 +1500,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.TIMES)
-    external public operator fun times(other: Long): Long
+    public external operator fun times(other: Long): Long
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1530,7 +1530,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_DIV)
-    external public operator fun div(other: Long): Long
+    public external operator fun div(other: Long): Long
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1580,7 +1580,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_REM)
-    external public operator fun rem(other: Long): Long
+    public external operator fun rem(other: Long): Long
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1608,7 +1608,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      * @sample samples.misc.Builtins.inc
      */
     @TypedIntrinsic(IntrinsicType.INC)
-    external public operator fun inc(): Long
+    public external operator fun inc(): Long
 
     /**
      * Returns this value decremented by one.
@@ -1616,7 +1616,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      * @sample samples.misc.Builtins.dec
      */
     @TypedIntrinsic(IntrinsicType.DEC)
-    external public operator fun dec(): Long
+    public external operator fun dec(): Long
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1626,7 +1626,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     /** Returns the negative of this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.UNARY_MINUS)
-    external public operator fun unaryMinus(): Long
+    public external operator fun unaryMinus(): Long
 
     /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Byte): LongRange =
@@ -1688,7 +1688,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SHL)
-    external public infix fun shl(bitCount: Int): Long
+    public external infix fun shl(bitCount: Int): Long
 
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
@@ -1698,7 +1698,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SHR)
-    external public infix fun shr(bitCount: Int): Long
+    public external infix fun shr(bitCount: Int): Long
 
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
@@ -1708,27 +1708,27 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.USHR)
-    external public infix fun ushr(bitCount: Int): Long
+    public external infix fun ushr(bitCount: Int): Long
 
     /** Performs a bitwise AND operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.AND)
-    external public infix fun and(other: Long): Long
+    public external infix fun and(other: Long): Long
 
     /** Performs a bitwise OR operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.OR)
-    external public infix fun or(other: Long): Long
+    public external infix fun or(other: Long): Long
 
     /** Performs a bitwise XOR operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.XOR)
-    external public infix fun xor(other: Long): Long
+    public external infix fun xor(other: Long): Long
 
     /** Inverts the bits in this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.INV)
-    external public fun inv(): Long
+    public external fun inv(): Long
 
     /**
      * Converts this [Long] value to [Byte].
@@ -1740,7 +1740,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.INT_TRUNCATE)
-    external public override fun toByte(): Byte
+    public external override fun toByte(): Byte
 
     /**
      * Converts this [Long] value to [Char].
@@ -1754,7 +1754,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.INT_TRUNCATE)
-    external public override fun toChar(): Char
+    public external override fun toChar(): Char
 
     /**
      * Converts this [Long] value to [Short].
@@ -1766,7 +1766,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.INT_TRUNCATE)
-    external public override fun toShort(): Short
+    public external override fun toShort(): Short
 
     /**
      * Converts this [Long] value to [Int].
@@ -1778,7 +1778,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.INT_TRUNCATE)
-    external public override fun toInt(): Int
+    public external override fun toInt(): Int
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1794,7 +1794,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_TO_FLOAT)
-    external public override fun toFloat(): Float
+    public external override fun toFloat(): Float
 
     /**
      * Converts this [Long] value to [Double].
@@ -1805,11 +1805,11 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_TO_FLOAT)
-    external public override fun toDouble(): Double
+    public external override fun toDouble(): Double
 
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Long_toString")
-    external public override fun toString(): String
+    public external override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
@@ -1952,7 +1952,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.PLUS)
-    external public operator fun plus(other: Float): Float
+    public external operator fun plus(other: Float): Float
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1982,7 +1982,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.MINUS)
-    external public operator fun minus(other: Float): Float
+    public external operator fun minus(other: Float): Float
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2012,7 +2012,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.TIMES)
-    external public operator fun times(other: Float): Float
+    public external operator fun times(other: Float): Float
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2042,7 +2042,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_DIV)
-    external public operator fun div(other: Float): Float
+    public external operator fun div(other: Float): Float
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2097,7 +2097,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_REM)
-    external public operator fun rem(other: Float): Float
+    public external operator fun rem(other: Float): Float
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -2115,7 +2115,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      * @sample samples.misc.Builtins.inc
      */
     @TypedIntrinsic(IntrinsicType.INC)
-    external public operator fun inc(): Float
+    public external operator fun inc(): Float
 
     /**
      * Returns this value decremented by one.
@@ -2123,17 +2123,17 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      * @sample samples.misc.Builtins.dec
      */
     @TypedIntrinsic(IntrinsicType.DEC)
-    external public operator fun dec(): Float
+    public external operator fun dec(): Float
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.UNARY_PLUS)
-    external public operator fun unaryPlus(): Float
+    public external operator fun unaryPlus(): Float
 
     /** Returns the negative of this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.UNARY_MINUS)
-    external public operator fun unaryMinus(): Float
+    public external operator fun unaryMinus(): Float
 
     /**
      * Converts this [Float] value to [Byte].
@@ -2174,7 +2174,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Float_toInt")
-    external public override fun toInt(): Int
+    public external override fun toInt(): Int
 
     /**
      * Converts this [Float] value to [Long].
@@ -2185,7 +2185,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Float_toLong")
-    external public override fun toLong(): Long
+    public external override fun toLong(): Long
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2199,7 +2199,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.FLOAT_EXTEND)
-    external public override fun toDouble(): Double
+    public external override fun toDouble(): Double
 
     /**
      * Returns the string representation of this [Float] value.
@@ -2224,7 +2224,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
 
     @TypedIntrinsic(IntrinsicType.REINTERPRET)
     @PublishedApi
-    external internal fun bits(): Int
+    internal external fun bits(): Int
 }
 
 /** Represents a double-precision 64-bit IEEE 754 floating point number. */
@@ -2362,7 +2362,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.PLUS)
-    external public operator fun plus(other: Double): Double
+    public external operator fun plus(other: Double): Double
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2392,7 +2392,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.MINUS)
-    external public operator fun minus(other: Double): Double
+    public external operator fun minus(other: Double): Double
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2422,7 +2422,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.TIMES)
-    external public operator fun times(other: Double): Double
+    public external operator fun times(other: Double): Double
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2452,7 +2452,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_DIV)
-    external public operator fun div(other: Double): Double
+    public external operator fun div(other: Double): Double
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -2512,7 +2512,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.SIGNED_REM)
-    external public operator fun rem(other: Double): Double
+    public external operator fun rem(other: Double): Double
 
     /**
      * Returns this value incremented by one.
@@ -2520,7 +2520,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      * @sample samples.misc.Builtins.inc
      */
     @TypedIntrinsic(IntrinsicType.INC)
-    external public operator fun inc(): Double
+    public external operator fun inc(): Double
 
     /**
      * Returns this value decremented by one.
@@ -2528,17 +2528,17 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      * @sample samples.misc.Builtins.dec
      */
     @TypedIntrinsic(IntrinsicType.DEC)
-    external public operator fun dec(): Double
+    public external operator fun dec(): Double
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.UNARY_PLUS)
-    external public operator fun unaryPlus(): Double
+    public external operator fun unaryPlus(): Double
 
     /** Returns the negative of this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.UNARY_MINUS)
-    external public operator fun unaryMinus(): Double
+    public external operator fun unaryMinus(): Double
 
     /**
      * Converts this [Double] value to [Byte].
@@ -2579,7 +2579,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Double_toInt")
-    external public override fun toInt(): Int
+    public external override fun toInt(): Int
 
     /**
      * Converts this [Double] value to [Long].
@@ -2590,7 +2590,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Double_toLong")
-    external public override fun toLong(): Long
+    public external override fun toLong(): Long
 
     /**
      * Converts this [Double] value to [Float].
@@ -2601,7 +2601,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.FLOAT_TRUNCATE)
-    external public override fun toFloat(): Float
+    public external override fun toFloat(): Float
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2631,5 +2631,5 @@ public final class Double private constructor() : Number(), Comparable<Double> {
 
     @TypedIntrinsic(IntrinsicType.REINTERPRET)
     @PublishedApi
-    external internal fun bits(): Long
+    internal external fun bits(): Long
 }
