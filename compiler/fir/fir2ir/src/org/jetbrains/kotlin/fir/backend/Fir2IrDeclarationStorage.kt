@@ -1040,18 +1040,9 @@ class Fir2IrDeclarationStorage(
     }
 
     fun getOrCreateIrScript(script: FirScript): IrScript {
-        return getCachedIrScript(script) ?: script.convertWithOffsets { startOffset, endOffset ->
-            val signature = signatureComposer.composeSignature(script)!!
-            symbolTable.declareScript(signature, { Fir2IrScriptSymbol(signature) }) { symbol ->
-                IrScriptImpl(symbol, script.name, irFactory, startOffset, endOffset).also { irScript ->
-                    irScript.origin = SCRIPT_K2_ORIGIN
-                    irScript.metadata = FirMetadataSource.Script(script)
-                    irScript.implicitReceiversParameters = emptyList()
-                    irScript.providedProperties = emptyList()
-                    irScript.providedPropertiesParameters = emptyList()
-                    scriptCache[script] = irScript
-                }
-            }
+        getCachedIrScript(script)?.let { return it }
+        return callablesGenerator.createIrScript(script).also {
+            scriptCache[script] = it
         }
     }
 

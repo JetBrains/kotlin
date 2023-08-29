@@ -32,7 +32,9 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.declarations.impl.SCRIPT_K2_ORIGIN
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -924,6 +926,20 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
     }
 
     // ------------------------------------ scripts ------------------------------------
+
+    fun createIrScript(script: FirScript): IrScript = script.convertWithOffsets { startOffset, endOffset ->
+        val signature = signatureComposer.composeSignature(script)!!
+        symbolTable.declareScript(signature, { Fir2IrScriptSymbol(signature) }) { symbol ->
+            IrScriptImpl(symbol, script.name, irFactory, startOffset, endOffset).also { irScript ->
+                irScript.origin = SCRIPT_K2_ORIGIN
+                irScript.metadata = FirMetadataSource.Script(script)
+                irScript.implicitReceiversParameters = emptyList()
+                irScript.providedProperties = emptyList()
+                irScript.providedPropertiesParameters = emptyList()
+            }
+        }
+    }
+
     // ------------------------------------ utilities ------------------------------------
 
     /**
