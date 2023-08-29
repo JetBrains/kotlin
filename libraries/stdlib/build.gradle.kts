@@ -278,7 +278,11 @@ kotlin {
                 srcDir(files("src").builtBy(prepareCommonSources))
                 srcDir("unsigned/src")
                 if (!kotlinBuildProperties.isInIdeaSync) {
-                    srcDir("$rootDir/core/builtins/src/kotlin/internal")
+                    srcDir("$builtinsDir/src/kotlin/internal")
+                }
+                if (kotlinBuildProperties.isInIdeaSync) {
+                    // required for correct resolution of builtin classes in common code in K2 IDE
+                    srcDir("$builtinsDir/src")
                 }
             }
         }
@@ -303,13 +307,13 @@ kotlin {
             dependencies {
                 api("org.jetbrains:annotations:13.0")
             }
-            val jvmSrcDirs = arrayOf(
+            val jvmSrcDirs = listOfNotNull(
                 "jvm/src",
                 "jvm/runtime",
-                "$builtinsDir/src"
+                "$builtinsDir/src".takeUnless { kotlinBuildProperties.isInIdeaSync }
             )
-            project.sourceSets["main"].java.srcDirs(*jvmSrcDirs)
-            kotlin.setSrcDirs(jvmSrcDirs.toList())
+            project.sourceSets["main"].java.srcDirs(*jvmSrcDirs.toTypedArray())
+            kotlin.setSrcDirs(jvmSrcDirs)
         }
 
         val jvmMainJdk7 by getting {
