@@ -317,7 +317,7 @@ val CallableDescriptor.arity: Int
             (if (extensionReceiverParameter != null) 1 else 0) +
             (if (dispatchReceiverParameter != null) 1 else 0)
 
-fun FqName.topLevelClassInternalName() = JvmClassName.byClassId(ClassId(parent(), shortName())).internalName
+fun FqName.topLevelClassInternalName() = JvmClassName.internalNameByClassId(ClassId(parent(), shortName()))
 fun FqName.topLevelClassAsmType(): Type = Type.getObjectType(topLevelClassInternalName())
 
 fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodegen, valueParameters: List<ValueParameterDescriptor>, endLabel: Label?) {

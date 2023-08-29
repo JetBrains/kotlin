@@ -93,7 +93,7 @@ internal fun CallableDescriptor.computeJvmSignature(): String? = signatures {
 internal val ClassDescriptor.internalName: String
     get() {
         JavaToKotlinClassMap.mapKotlinToJava(fqNameSafe.toUnsafe())?.let {
-            return JvmClassName.byClassId(it).internalName
+            return JvmClassName.internalNameByClassId(it)
         }
 
         return computeInternalName(this)

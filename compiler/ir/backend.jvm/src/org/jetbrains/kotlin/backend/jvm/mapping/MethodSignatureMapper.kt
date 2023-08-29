@@ -79,7 +79,12 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         if (property != null) {
             val propertyName = property.name.asString()
             val propertyParent = property.parentAsClass
-            if (propertyParent.isAnnotationClass || propertyParent.superTypes.any { it.isJavaLangRecord() }) return propertyName
+
+            if (propertyParent.isAnnotationClass) return propertyName
+
+            for (i in propertyParent.superTypes.indices) {
+                if (propertyParent.superTypes[i].isJavaLangRecord()) return propertyName
+            }
 
             // The enum property getters <get-name> and <get-ordinal> have special names which also
             // apply to their fake overrides. Unfortunately, getJvmMethodNameIfSpecial does not handle
@@ -248,8 +253,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         sw.writeParametersStart()
 
-        val contextReceivers = function.valueParameters.subList(0, function.contextReceiverParametersCount)
-        for (contextReceiver in contextReceivers) {
+        for (i in 0 until function.contextReceiverParametersCount) {
+            val contextReceiver = function.valueParameters[i]
             writeParameter(sw, JvmMethodParameterKind.CONTEXT_RECEIVER, contextReceiver.type, function)
         }
 
@@ -258,9 +263,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.type, function)
         }
 
-        val regularValueParameters =
-            function.valueParameters.subList(function.contextReceiverParametersCount, function.valueParameters.size)
-        for (parameter in regularValueParameters) {
+        for (i in function.contextReceiverParametersCount until function.valueParameters.size) {
+            val parameter = function.valueParameters[i]
             val kind = when (parameter.origin) {
                 JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> JvmMethodParameterKind.OUTER
                 JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER -> JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL
@@ -468,11 +472,10 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         if (!isBuiltIn) return null
         return allOverridden(includeSelf = true)
             .filter { it.isBuiltIn }
-            .mapNotNull {
+            .firstNotNullOfOrNull {
                 val signature = it.computeJvmSignature()
                 SpecialGenericSignatures.SIGNATURE_TO_JVM_REPRESENTATION_NAME[signature]?.asString()
             }
-            .firstOrNull()
     }
 
     private fun IrSimpleFunction.getBuiltinSpecialPropertyGetterName(): String? {

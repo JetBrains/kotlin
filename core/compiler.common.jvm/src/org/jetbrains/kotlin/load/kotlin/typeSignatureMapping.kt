@@ -55,7 +55,7 @@ fun <T : Any> TypeSystemCommonBackendContext.mapBuiltInType(
             if (!mode.kotlinCollectionsToJavaCollections && JavaToKotlinClassMap.mutabilityMappings.any { it.javaClass == classId })
                 return null
 
-            return typeFactory.createObjectType(JvmClassName.byClassId(classId).internalName)
+            return typeFactory.createObjectType(JvmClassName.internalNameByClassId(classId))
         }
     }
 
