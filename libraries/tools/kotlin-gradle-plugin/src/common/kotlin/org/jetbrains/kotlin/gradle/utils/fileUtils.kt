@@ -129,3 +129,19 @@ internal fun Provider<RegularFile>.getFile(): File = get().asFile
 
 @JvmName("getDirectoryAsFile") // avoids jvm signature clash
 internal fun Provider<Directory>.getFile(): File = get().asFile
+
+
+/**
+ * Checks if the file exists, taking into account compatibility with different versions of Gradle.
+ * It should be used instead of [File.exists] in checking UPD inputs. See KT-54232 for more info.
+ *
+ * @return `true` if the file exists, `false` otherwise.
+ *
+ * NOTE: You can remove this method and all its usages since the minimal supported version of gradle become 8.0
+ */
+internal fun File.existsCompat(): Boolean =
+    if (isGradleVersionAtLeast(8, 0)) {
+        true
+    } else {
+        exists()
+    }

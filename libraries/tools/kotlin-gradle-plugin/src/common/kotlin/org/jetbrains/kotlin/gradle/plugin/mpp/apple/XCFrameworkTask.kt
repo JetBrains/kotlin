@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosti
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.utils.existsCompat
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -181,7 +182,9 @@ internal constructor(
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:SkipWhenEmpty
     val inputFrameworkFiles: Collection<File>
-        get() = groupedFrameworkFiles.values.flatten().map { it.file }.filter { it.exists() }
+        get() = groupedFrameworkFiles.values.flatten().map { it.file }.filter {
+            it.existsCompat()
+        }
 
     /**
      * A parent directory for the XCFramework.

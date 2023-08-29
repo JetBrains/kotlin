@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_UNZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_ZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.existsCompat
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
@@ -220,9 +221,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     internal val friendDependencies: FileCollection = objectFactory
         .fileCollection()
         .from(friendPaths)
-        .filter {
-            it.exists() && libraryFilter(it)
-        }
+        .filter { libraryFilter(it) }
 
     @get:Internal
     internal val sourceMapBaseDir: Property<Directory> = objectFactory
