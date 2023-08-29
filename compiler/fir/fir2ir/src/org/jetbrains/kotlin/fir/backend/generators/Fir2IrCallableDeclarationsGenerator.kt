@@ -452,11 +452,9 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                 if (propertyAccessorForAnnotations != null) {
                     convertAnnotationsForNonDeclaredMembers(propertyAccessorForAnnotations, origin)
                 }
-                with(classifierStorage) {
-                    setTypeParameters(
-                        property, if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
-                    )
-                }
+                classifiersGenerator.setTypeParameters(
+                    this, property, if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
+                )
                 val dispatchReceiverType = computeDispatchReceiverType(this, property, irParent)
                 // NB: we should enter accessor' scope before declaring its parameters
                 // (both setter default and receiver ones, if any)
@@ -686,9 +684,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         val containingClass = computeContainingClass(irParent)
         val parent = this
         if (function is FirSimpleFunction || function is FirConstructor) {
-            with(classifierStorage) {
-                setTypeParameters(function)
-            }
+            classifiersGenerator.setTypeParameters(this, function)
         }
         val typeOrigin = if (forSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
         if (function is FirDefaultPropertySetter) {

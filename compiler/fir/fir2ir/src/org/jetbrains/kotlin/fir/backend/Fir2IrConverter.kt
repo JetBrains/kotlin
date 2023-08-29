@@ -92,7 +92,7 @@ class Fir2IrConverter(
         postponedDeclarationsForFakeOverridesBinding.clear()
 
         //   Do (3) and (4) for local classes encountered during (3)
-        classifierStorage.processMembersOfClassesCreatedOnTheFly()
+        classifiersGenerator.processMembersOfClassesCreatedOnTheFly()
 
         //   5. Body processing
         //   If we encounter local class / anonymous object here, then we perform all (1)-(5) stages immediately
@@ -156,7 +156,7 @@ class Fir2IrConverter(
         for (declaration in file.declarations) {
             when (declaration) {
                 is FirRegularClass -> registerClassAndNestedClasses(declaration, irFile)
-                is FirCodeFragment -> classifierStorage.registerCodeFragmentClass(declaration, irFile)
+                is FirCodeFragment -> classifierStorage.createAndCacheCodeFragmentClass(declaration, irFile)
                 else -> {}
             }
         }
@@ -167,7 +167,7 @@ class Fir2IrConverter(
         file.declarations.forEach {
             when (it) {
                 is FirRegularClass -> processClassAndNestedClassHeaders(it)
-                is FirTypeAlias -> classifierStorage.registerTypeAlias(it, declarationStorage.getIrFile(file))
+                is FirTypeAlias -> classifierStorage.createAndCacheIrTypeAlias(it, declarationStorage.getIrFile(file))
                 else -> {}
             }
         }
@@ -373,8 +373,8 @@ class Fir2IrConverter(
             classifierStorage.getCachedIrClass(klass)?.apply {
                 this.parent = parent
             } ?: when (klass) {
-                is FirRegularClass -> classifierStorage.registerIrClass(klass, parent)
-                is FirAnonymousObject -> classifierStorage.registerIrAnonymousObject(klass, irParent = parent)
+                is FirRegularClass -> classifierStorage.createAndCacheIrClass(klass, parent)
+                is FirAnonymousObject -> classifierStorage.createAndCacheAnonymousObject(klass, irParent = parent)
             }
         registerNestedClasses(klass, irClass)
         return irClass
@@ -396,7 +396,7 @@ class Fir2IrConverter(
     }
 
     private fun processClassAndNestedClassHeaders(klass: FirClass) {
-        classifierStorage.processClassHeader(klass)
+        classifiersGenerator.processClassHeader(klass)
         processNestedClassHeaders(klass)
     }
 
@@ -437,7 +437,7 @@ class Fir2IrConverter(
                                 registerClassAndNestedClasses(scriptStatement, irScript)
                                 processClassAndNestedClassHeaders(scriptStatement)
                             }
-                            is FirTypeAlias -> classifierStorage.registerTypeAlias(scriptStatement, irScript)
+                            is FirTypeAlias -> classifierStorage.createAndCacheIrTypeAlias(scriptStatement, irScript)
                             else -> {}
                         }
                     }

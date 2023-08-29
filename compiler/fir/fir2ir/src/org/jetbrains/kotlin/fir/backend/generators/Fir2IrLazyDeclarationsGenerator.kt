@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.convertWithOffsets
+import org.jetbrains.kotlin.fir.backend.irOrigin
 import org.jetbrains.kotlin.fir.backend.isStubPropertyForPureField
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
@@ -16,13 +19,13 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.Fir2IrPropertySymbol
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
     internal fun createIrLazyFunction(
@@ -87,4 +90,18 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         return irProperty
     }
 
+    fun createIrLazyClass(
+        firClass: FirRegularClass,
+        irParent: IrDeclarationParent,
+    ): IrClass = firClass.convertWithOffsets { startOffset, endOffset ->
+        val firClassOrigin = firClass.irOrigin(session.firProvider)
+        val signature = runIf(configuration.linkViaSignatures) {
+            signatureComposer.composeSignature(firClass)
+        }
+        classifiersGenerator.declareIrClass(signature) { symbol ->
+            Fir2IrLazyClass(components, startOffset, endOffset, firClassOrigin, firClass, symbol).apply {
+                parent = irParent
+            }
+        }
+    }
 }

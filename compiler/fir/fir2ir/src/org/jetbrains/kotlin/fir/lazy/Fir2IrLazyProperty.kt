@@ -191,11 +191,7 @@ class Fir2IrLazyProperty(
         }.apply {
             parent = this@Fir2IrLazyProperty.parent
             correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
-            with(classifierStorage) {
-                setTypeParameters(
-                    this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.DEFAULT
-                )
-            }
+            classifiersGenerator.setTypeParameters(this, this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.DEFAULT)
         }
     }
 
@@ -222,11 +218,7 @@ class Fir2IrLazyProperty(
                 ).apply {
                     parent = this@Fir2IrLazyProperty.parent
                     correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
-                    with(classifierStorage) {
-                        setTypeParameters(
-                            this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.SETTER
-                        )
-                    }
+                    classifiersGenerator.setTypeParameters(this, this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.SETTER)
                 }
             }
         }

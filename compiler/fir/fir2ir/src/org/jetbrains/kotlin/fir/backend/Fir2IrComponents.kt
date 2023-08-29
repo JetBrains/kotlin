@@ -35,6 +35,7 @@ interface Fir2IrComponents {
     val visibilityConverter: Fir2IrVisibilityConverter
 
     val callablesGenerator: Fir2IrCallableDeclarationsGenerator
+    val classifiersGenerator: Fir2IrClassifiersGenerator
     val lazyDeclarationsGenerator: Fir2IrLazyDeclarationsGenerator
 
     val annotationGenerator: AnnotationGenerator
