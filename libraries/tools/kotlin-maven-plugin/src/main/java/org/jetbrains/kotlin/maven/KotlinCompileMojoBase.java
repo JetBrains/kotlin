@@ -203,7 +203,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                 " (JRE " + System.getProperty("java.runtime.version") + ")");
 
         if (!hasKotlinFilesInSources()) {
-            getLog().warn("No sources found skipping Kotlin compile");
+            getLog().info("No sources found skipping Kotlin compile");
             return;
         }
 
@@ -439,7 +439,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             }
             // unfortunately there is no good way to detect generated sources directory so we simply keep hardcoded value
             else if (!sourceDir.getPath().contains("generated-sources")) {
-                getLog().warn("Source root doesn't exist: " + sourceDir);
+                getLog().info("Source root doesn't exist: " + sourceDir);
             }
         }
         if (sourceRoots.isEmpty()) {
