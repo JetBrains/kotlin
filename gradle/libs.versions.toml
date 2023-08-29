@@ -18,6 +18,7 @@ kotlinx-metadataJvm = "0.6.2"
 gson = { strictly = "2.8.9" } # should be in sync with version.properties
 jetbrains-ideaExt = "1.0.1"
 jackson = "2.15.2"
+jgit = "6.6.0.202305301015-r"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -48,6 +49,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
 jdom2 = { module = "org.jdom:jdom2", version.ref = "jdom2" }
+jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
 
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
