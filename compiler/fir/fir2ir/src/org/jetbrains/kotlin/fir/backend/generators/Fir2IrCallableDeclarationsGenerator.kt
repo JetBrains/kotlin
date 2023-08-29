@@ -197,7 +197,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                 addContextReceiverParametersTo(contextReceivers, parent, this)
 
                 function.valueParameters.mapIndexedTo(this) { index, valueParameter ->
-                    createIrParameter(
+                    declarationStorage.createAndCacheParameter(
                         valueParameter, index + contextReceiverParametersCount,
                         useStubForDefaultValueStub = function !is FirConstructor || containingClass?.name != Name.identifier("Enum"),
                         typeOrigin,
@@ -830,7 +830,6 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                 annotationGenerator.generate(this, valueParameter)
             }
         }
-        localStorage.putParameter(valueParameter, irParameter)
         return irParameter
     }
 
@@ -879,7 +878,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
     fun createIrVariable(
         variable: FirVariable,
         irParent: IrDeclarationParent,
-        givenOrigin: IrDeclarationOrigin? = null
+        givenOrigin: IrDeclarationOrigin?
     ): IrVariable = convertCatching(variable) {
         val type = variable.irTypeForPotentiallyComponentCall()
         // Some temporary variables are produced in RawFirBuilder, but we consistently use special names for them.
@@ -897,7 +896,6 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             )
         }
         irVariable.parent = irParent
-        localStorage.putVariable(variable, irVariable)
         return irVariable
     }
 
@@ -926,28 +924,21 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                     startOffset, endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,
                     NameUtils.propertyDelegateName(property.name), property.delegate!!.resolvedType.toIrType(),
                     isVar = false, isConst = false, isLateinit = false
-                ).also {
-                    delegateVariableForPropertyCache[symbol] = it.symbol
-                }
+                )
                 delegate.parent = irParent
                 getter = createIrPropertyAccessor(
                     property.getter, property, this, type, irParent, false,
                     IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR, startOffset, endOffset, dontUseSignature = true
-                ).also {
-                    getterForPropertyCache[symbol] = it.symbol
-                }
+                )
                 if (property.isVar) {
                     setter = createIrPropertyAccessor(
                         property.setter, property, this, type, irParent, true,
                         IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR, startOffset, endOffset, dontUseSignature = true
-                    ).also {
-                        setterForPropertyCache[symbol] = it.symbol
-                    }
+                    )
                 }
                 annotationGenerator.generate(this, property)
             }
         }
-        localStorage.putDelegatedProperty(property, irProperty)
         return irProperty
     }
 

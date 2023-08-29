@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
@@ -1111,6 +1112,53 @@ class Fir2IrDeclarationStorage(
                 getIrVariableSymbol(firDeclaration)
             }
         }
+    }
+
+    fun createAndCacheParameter(
+        valueParameter: FirValueParameter,
+        index: Int = UNDEFINED_PARAMETER_INDEX,
+        useStubForDefaultValueStub: Boolean = true,
+        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
+        skipDefaultParameter: Boolean = false,
+        // Use this parameter if you want to insert the actual default value instead of the stub (overrides useStubForDefaultValueStub parameter).
+        // This parameter is intended to be used for default values of annotation parameters where they are needed and
+        // may produce incorrect results for values that may be encountered outside annotations.
+        // Does not do anything if valueParameter.defaultValue is already FirExpressionStub.
+        forcedDefaultValueConversion: Boolean = false,
+    ): IrValueParameter {
+        return callablesGenerator.createIrParameter(
+            valueParameter,
+            index,
+            useStubForDefaultValueStub,
+            typeOrigin,
+            skipDefaultParameter,
+            forcedDefaultValueConversion
+        ).also {
+            localStorage.putParameter(valueParameter, it)
+        }
+    }
+
+    fun createAndCacheIrVariable(
+        variable: FirVariable,
+        irParent: IrDeclarationParent,
+        givenOrigin: IrDeclarationOrigin? = null
+    ): IrVariable {
+        return callablesGenerator.createIrVariable(variable, irParent, givenOrigin).also {
+            localStorage.putVariable(variable, it)
+        }
+    }
+
+    fun createAndCacheIrLocalDelegatedProperty(
+        property: FirProperty,
+        irParent: IrDeclarationParent
+    ): IrLocalDelegatedProperty {
+        val irProperty = callablesGenerator.createIrLocalDelegatedProperty(property, irParent)
+        val symbol = irProperty.symbol
+        delegateVariableForPropertyCache[symbol] = irProperty.delegate.symbol
+        getterForPropertyCache[symbol] = irProperty.getter.symbol
+        irProperty.setter?.let { setterForPropertyCache[symbol] = it.symbol }
+        localStorage.putDelegatedProperty(property, irProperty)
+        return irProperty
     }
 
 

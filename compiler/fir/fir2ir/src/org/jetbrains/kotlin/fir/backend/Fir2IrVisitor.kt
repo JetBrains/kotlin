@@ -220,7 +220,7 @@ class Fir2IrVisitor(
             declarationStorage.enterScope(irScript.symbol)
 
             irScript.explicitCallParameters = script.parameters.map { parameter ->
-                callablesGenerator.createIrVariable(
+                declarationStorage.createAndCacheIrVariable(
                     parameter,
                     irScript,
                     givenOrigin = IrDeclarationOrigin.SCRIPT_CALL_PARAMETER
@@ -278,7 +278,7 @@ class Fir2IrVisitor(
                                         irBuiltIns.unitType, IrStatementOrigin.DESTRUCTURING_DECLARATION
                                     ).also {
                                         it.statements.add(
-                                            callablesGenerator.createIrVariable(statement, conversionScope.parentFromStack()).also {
+                                            declarationStorage.createAndCacheIrVariable(statement, conversionScope.parentFromStack()).also {
                                                 it.initializer = statement.initializer?.toIrStatement() as? IrExpression
                                             }
                                         )
@@ -442,7 +442,7 @@ class Fir2IrVisitor(
         assert(variable.isLocal)
         val delegate = variable.delegate
         if (delegate != null) {
-            val irProperty = callablesGenerator.createIrLocalDelegatedProperty(variable, conversionScope.parentFromStack())
+            val irProperty = declarationStorage.createAndCacheIrLocalDelegatedProperty(variable, conversionScope.parentFromStack())
             irProperty.delegate.initializer = convertToIrExpression(delegate, isDelegate = true)
             conversionScope.withFunction(irProperty.getter) {
                 memberGenerator.convertFunctionContent(irProperty.getter, variable.getter, null)
@@ -458,7 +458,7 @@ class Fir2IrVisitor(
         val isNextVariable = initializer is FirFunctionCall &&
                 initializer.calleeReference.toResolvedNamedFunctionSymbol()?.callableId?.isIteratorNext() == true &&
                 variable.source?.isChildOfForLoop == true
-        val irVariable = callablesGenerator.createIrVariable(
+        val irVariable = declarationStorage.createAndCacheIrVariable(
             variable, conversionScope.parentFromStack(),
             if (isNextVariable) {
                 if (variable.name.isSpecial && variable.name == SpecialNames.DESTRUCT) {
@@ -1423,7 +1423,7 @@ class Fir2IrVisitor(
 
     override fun visitCatch(catch: FirCatch, data: Any?): IrElement {
         return catch.convertWithOffsets { startOffset, endOffset ->
-            val catchParameter = callablesGenerator.createIrVariable(
+            val catchParameter = declarationStorage.createAndCacheIrVariable(
                 catch.parameter, conversionScope.parentFromStack(), IrDeclarationOrigin.CATCH_PARAMETER
             )
             IrCatchImpl(startOffset, endOffset, catchParameter, catch.block.convertToIrBlock(forceUnitType = false))
