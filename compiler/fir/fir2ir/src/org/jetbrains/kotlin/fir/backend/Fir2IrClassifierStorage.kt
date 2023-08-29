@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -19,8 +23,12 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -48,6 +56,10 @@ class Fir2IrClassifierStorage(
         // Using existing cache is necessary here to be able to serialize local classes from common code in expression codegen
         commonMemberStorage.localClassCache
     )
+
+    private val localClassesCreatedOnTheFly: MutableMap<FirClass, IrClass> = mutableMapOf()
+
+    private var processMembersOfClassesOnTheFlyImmediately = false
 
     private fun FirTypeRef.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType =
         with(typeConverter) { toIrType(typeOrigin) }
@@ -268,7 +280,57 @@ class Fir2IrClassifierStorage(
     }
 
     fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>): IrClassSymbol {
-        return classifiersGenerator.createIrClassSymbolByFirSymbol(firClassSymbol)
+        val firClass = firClassSymbol.fir
+        classifierStorage.getCachedIrClass(firClass)?.let { return it.symbol }
+        if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.Local) {
+            return createAndCacheLocalIrClassOnTheFly(firClass).symbol
+        }
+        firClass as FirRegularClass
+        val classId = firClassSymbol.classId
+        val parentId = classId.outerClassId
+        val parentClass = parentId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it) }
+        val irParent = declarationStorage.findIrParent(classId.packageFqName, parentClass?.toLookupTag(), firClassSymbol, firClass.origin)!!
+
+        // firClass may be referenced by some parent's type parameters as a bound. In that case, getIrClassSymbol will be called recursively.
+        classifierStorage.getCachedIrClass(firClass)?.let { return it.symbol }
+
+        val irClass = lazyDeclarationsGenerator.createIrLazyClass(firClass, irParent)
+        classCache[firClass] = irClass
+        // NB: this is needed to prevent recursions in case of self bounds
+        (irClass as Fir2IrLazyClass).prepareTypeParameters()
+
+        return irClass.symbol
+    }
+
+    private fun createAndCacheLocalIrClassOnTheFly(klass: FirClass): IrClass {
+        val (irClass, firClassOrLocalParent, irClassOrLocalParent) = classifiersGenerator.createLocalIrClassOnTheFly(klass, processMembersOfClassesOnTheFlyImmediately)
+        if (!processMembersOfClassesOnTheFlyImmediately) {
+            localClassesCreatedOnTheFly[firClassOrLocalParent] = irClassOrLocalParent
+        }
+        return irClass
+    }
+
+    // Note: this function is called exactly once, right after Fir2IrConverter finished f/o binding for regular classes
+    fun processMembersOfClassesCreatedOnTheFly() {
+        // After the call of this function, members of local classes may be processed immediately
+        // Before the call it's not possible, because f/o binding for regular classes isn't done yet
+        processMembersOfClassesOnTheFlyImmediately = true
+        for ((klass, irClass) in localClassesCreatedOnTheFly) {
+            converter.processClassMembers(klass, irClass)
+            // See the problem from KT-57441
+//            class Wrapper {
+//                private val dummy = object: Bar {}
+//                private val bar = object: Bar by dummy {}
+//            }
+//            interface Bar {
+//                val foo: String
+//                    get() = ""
+//            }
+            // When we are building bar.foo fake override, we should call dummy.foo,
+            // so we should have object : Bar.foo fake override to be built and bound.
+            converter.bindFakeOverridesInClass(irClass)
+        }
+        localClassesCreatedOnTheFly.clear()
     }
 
     fun getIrTypeParameterSymbol(

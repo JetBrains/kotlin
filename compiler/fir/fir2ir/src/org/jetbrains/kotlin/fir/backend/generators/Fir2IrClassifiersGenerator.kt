@@ -14,12 +14,10 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
 import org.jetbrains.kotlin.fir.symbols.Fir2IrEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.Fir2IrTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -34,10 +32,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
-    private val localClassesCreatedOnTheFly: MutableMap<FirClass, IrClass> = mutableMapOf()
-
-    private var processMembersOfClassesOnTheFlyImmediately = false
-
     internal fun setTypeParameters(
         irOwner: IrTypeParametersContainer,
         owner: FirTypeParameterRefsOwner,
@@ -113,10 +107,15 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         return false
     }
 
-    // TODO: it's worth to move this onTheFly stuff back to classifier storage
+    data class LocalIrClassInfo(
+        val irClass: IrClass,
+        val firClassOrLocalParent: FirClass,
+        val irClassOrLocalParent: IrClass,
+    )
+
     // This function is called when we refer local class earlier than we reach its declaration
     // This can happen e.g. when implicit return type has a local class constructor
-    private fun createLocalIrClassOnTheFly(klass: FirClass): IrClass {
+    fun createLocalIrClassOnTheFly(klass: FirClass, processMembersOfClassesOnTheFlyImmediately: Boolean): LocalIrClassInfo {
         // finding the parent class that actually contains the [klass] in the tree - it is the root one that should be created on the fly
         val classOrLocalParent = generateSequence(klass) { c ->
             (c as? FirRegularClass)?.containingClassForLocalAttr?.let { lookupTag ->
@@ -132,35 +131,14 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         if (processMembersOfClassesOnTheFlyImmediately) {
             converter.processClassMembers(classOrLocalParent, result)
             converter.bindFakeOverridesInClass(result)
+        }
+        val irClass = if (classOrLocalParent === klass) {
+            result
         } else {
-            localClassesCreatedOnTheFly[classOrLocalParent] = result
+            classifierStorage.getCachedIrClass(klass)
+                ?: error("Assuming that all nested classes of ${classOrLocalParent.classId.asString()} should already be cached")
         }
-        return if (classOrLocalParent === klass) result
-        else (classifierStorage.getCachedIrClass(klass)
-            ?: error("Assuming that all nested classes of ${classOrLocalParent.classId.asString()} should already be cached"))
-    }
-
-    // Note: this function is called exactly once, right after Fir2IrConverter finished f/o binding for regular classes
-    fun processMembersOfClassesCreatedOnTheFly() {
-        // After the call of this function, members of local classes may be processed immediately
-        // Before the call it's not possible, because f/o binding for regular classes isn't done yet
-        processMembersOfClassesOnTheFlyImmediately = true
-        for ((klass, irClass) in localClassesCreatedOnTheFly) {
-            converter.processClassMembers(klass, irClass)
-            // See the problem from KT-57441
-//            class Wrapper {
-//                private val dummy = object: Bar {}
-//                private val bar = object: Bar by dummy {}
-//            }
-//            interface Bar {
-//                val foo: String
-//                    get() = ""
-//            }
-            // When we are building bar.foo fake override, we should call dummy.foo,
-            // so we should have object : Bar.foo fake override to be built and bound.
-            converter.bindFakeOverridesInClass(irClass)
-        }
-        localClassesCreatedOnTheFly.clear()
+        return LocalIrClassInfo(irClass, classOrLocalParent, result)
     }
 
     fun processClassHeader(klass: FirClass, irClass: IrClass = classifierStorage.getCachedIrClass(klass)!!): IrClass {

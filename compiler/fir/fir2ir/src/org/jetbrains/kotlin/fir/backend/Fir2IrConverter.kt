@@ -92,7 +92,7 @@ class Fir2IrConverter(
         postponedDeclarationsForFakeOverridesBinding.clear()
 
         //   Do (3) and (4) for local classes encountered during (3)
-        classifiersGenerator.processMembersOfClassesCreatedOnTheFly()
+        classifierStorage.processMembersOfClassesCreatedOnTheFly()
 
         //   5. Body processing
         //   If we encounter local class / anonymous object here, then we perform all (1)-(5) stages immediately
