@@ -37,12 +37,12 @@ private class LLLibraryScopeAwareConeCallConflictResolver(
     private val bodyResolveComponents: BodyResolveComponents
 ) : ConeCallConflictResolver() {
     override fun chooseMaximallySpecificCandidates(candidates: Set<Candidate>, discriminateAbstracts: Boolean): Set<Candidate> {
-        if (candidates.size > 1 && bodyResolveComponents.file.psi is KtCodeFragment) {
-            val filteredCandidates = filterCodeFragmentCandidates(candidates)
-            return delegate.chooseMaximallySpecificCandidates(filteredCandidates, discriminateAbstracts)
+        val filteredCandidates = when {
+            candidates.size > 1 && bodyResolveComponents.file.psi is KtCodeFragment -> filterCodeFragmentCandidates(candidates)
+            else -> candidates
         }
 
-        return delegate.chooseMaximallySpecificCandidates(candidates, discriminateAbstracts)
+        return delegate.chooseMaximallySpecificCandidates(filteredCandidates, discriminateAbstracts)
     }
 
     // In complex projects, there might be several library copies (with the same or different versions).
