@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtLibrarySourceModuleImpl
@@ -19,6 +20,7 @@ public class KtLibrarySourceModuleBuilder(
 ) : KtModuleBuilder() {
     public lateinit var libraryName: String
     public lateinit var binaryLibrary: KtLibraryModule
+    public lateinit var contentScope: GlobalSearchScope
 
     override fun build(): KtLibrarySourceModule {
         return KtLibrarySourceModuleImpl(

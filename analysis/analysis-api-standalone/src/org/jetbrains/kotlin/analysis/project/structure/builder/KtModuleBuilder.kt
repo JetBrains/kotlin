@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.platform.TargetPlatform
 
@@ -27,7 +26,6 @@ public abstract class KtModuleBuilder {
         directFriendDependencies.add(module)
     }
 
-    public lateinit var contentScope: GlobalSearchScope
     public lateinit var platform: TargetPlatform
 
     public abstract fun build(): KtModule

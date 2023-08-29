@@ -9,11 +9,8 @@ import com.google.common.io.Files.getFileExtension
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
@@ -163,22 +160,18 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
         val libraryRoots = compilerConfig.jvmModularRoots + compilerConfig.jvmClasspathRoots
         addRegularDependency(
             buildKtLibraryModule {
-                contentScope = ProjectScope.getLibrariesScope(kotlinCoreProjectEnvironment.project)
                 this.platform = platform
                 binaryRoots = libraryRoots.map { it.toPath() }
                 libraryName = "Library for $moduleName"
             }
         )
         compilerConfig.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
-            val vfm = VirtualFileManager.getInstance()
             val jdkHomePath = jdkHome.toPath()
-            val jdkHomeVirtualFile = vfm.findFileByNioPath(jdkHomePath)
             val binaryRoots = LibraryUtils.findClassesFromJdkHome(jdkHomePath).map {
                 Paths.get(URLUtil.extractPath(it))
             }
             addRegularDependency(
                 buildKtSdkModule {
-                    contentScope = GlobalSearchScope.fileScope(kotlinCoreProjectEnvironment.project, jdkHomeVirtualFile)
                     this.platform = platform
                     this.binaryRoots = binaryRoots
                     sdkName = "JDK for $moduleName"

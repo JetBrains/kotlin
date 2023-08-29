@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import com.intellij.psi.PsiFileSystemItem
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtSourceModuleImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
@@ -19,11 +20,13 @@ import kotlin.contracts.contract
 
 @KtModuleBuilderDsl
 public class KtSourceModuleBuilder(
-    private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment
+    private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
 ) : KtModuleBuilder() {
     public lateinit var moduleName: String
     public var languageVersionSettings: LanguageVersionSettings =
         LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST)
+    public lateinit var contentScope: GlobalSearchScope
+
     private val sourceRoots: MutableList<PsiFileSystemItem> = mutableListOf()
 
     public fun addSourceRoot(file: PsiFileSystemItem) {

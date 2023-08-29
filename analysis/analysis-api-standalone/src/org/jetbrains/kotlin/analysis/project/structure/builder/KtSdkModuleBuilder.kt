@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtSdkModuleImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
@@ -19,6 +20,8 @@ public class KtSdkModuleBuilder(
     public lateinit var sdkName: String
 
     override fun build(): KtSdkModule {
+        val contentScope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(binaryRoots, kotlinCoreProjectEnvironment)
+
         return KtSdkModuleImpl(
             directRegularDependencies,
             directDependsOnDependencies,

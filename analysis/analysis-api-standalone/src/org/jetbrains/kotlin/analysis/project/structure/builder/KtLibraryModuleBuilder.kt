@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtLibraryModuleImpl
@@ -21,6 +22,7 @@ public class KtLibraryModuleBuilder(
     public var librarySources: KtLibrarySourceModule? = null
 
     override fun build(): KtLibraryModule {
+        val contentScope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(binaryRoots, kotlinCoreProjectEnvironment)
         return KtLibraryModuleImpl(
             directRegularDependencies,
             directDependsOnDependencies,
