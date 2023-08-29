@@ -20,8 +20,12 @@ extern "C" {
 void Kotlin_Internal_GC_GCInfoBuilder_setEpoch(KRef thiz, KLong value);
 void Kotlin_Internal_GC_GCInfoBuilder_setStartTime(KRef thiz, KLong value);
 void Kotlin_Internal_GC_GCInfoBuilder_setEndTime(KRef thiz, KLong value);
-void Kotlin_Internal_GC_GCInfoBuilder_setPauseStartTime(KRef thiz, KLong value);
-void Kotlin_Internal_GC_GCInfoBuilder_setPauseEndTime(KRef thiz, KLong value);
+void Kotlin_Internal_GC_GCInfoBuilder_setFirstPauseRequestTime(KRef thiz, KLong value);
+void Kotlin_Internal_GC_GCInfoBuilder_setFirstPauseStartTime(KRef thiz, KLong value);
+void Kotlin_Internal_GC_GCInfoBuilder_setFirstPauseEndTime(KRef thiz, KLong value);
+void Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseRequestTime(KRef thiz, KLong value);
+void Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseStartTime(KRef thiz, KLong value);
+void Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseEndTime(KRef thiz, KLong value);
 void Kotlin_Internal_GC_GCInfoBuilder_setPostGcCleanupTime(KRef thiz, KLong value);
 void Kotlin_Internal_GC_GCInfoBuilder_setRootSet(KRef thiz,
                                                  KLong threadLocalReferences, KLong stackReferences,
@@ -77,8 +81,15 @@ struct GCInfo {
     std::optional<uint64_t> epoch;
     std::optional<KLong> startTime; // time since process start
     std::optional<KLong> endTime;
-    std::optional<KLong> pauseStartTime;
-    std::optional<KLong> pauseEndTime;
+
+    std::optional<KLong> firstPauseRequestTime;
+    std::optional<KLong> firstPauseStartTime;
+    std::optional<KLong> firstPauseEndTime;
+
+    std::optional<KLong> secondPauseRequestTime;
+    std::optional<KLong> secondPauseStartTime;
+    std::optional<KLong> secondPauseEndTime;
+
     std::optional<KLong> finalizersDoneTime;
     std::optional<RootSetStatistics> rootSet;
     std::optional<kotlin::gc::MarkStats> markStats;
@@ -91,8 +102,12 @@ struct GCInfo {
         Kotlin_Internal_GC_GCInfoBuilder_setEpoch(builder, static_cast<KLong>(*epoch));
         if (startTime) Kotlin_Internal_GC_GCInfoBuilder_setStartTime(builder, *startTime);
         if (endTime) Kotlin_Internal_GC_GCInfoBuilder_setEndTime(builder, *endTime);
-        if (pauseStartTime) Kotlin_Internal_GC_GCInfoBuilder_setPauseStartTime(builder, *pauseStartTime);
-        if (pauseEndTime) Kotlin_Internal_GC_GCInfoBuilder_setPauseEndTime(builder, *pauseEndTime);
+        if (firstPauseRequestTime) Kotlin_Internal_GC_GCInfoBuilder_setFirstPauseRequestTime(builder, *firstPauseRequestTime);
+        if (firstPauseStartTime) Kotlin_Internal_GC_GCInfoBuilder_setFirstPauseStartTime(builder, *firstPauseStartTime);
+        if (firstPauseEndTime) Kotlin_Internal_GC_GCInfoBuilder_setFirstPauseEndTime(builder, *firstPauseEndTime);
+        if (secondPauseRequestTime) Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseRequestTime(builder, *secondPauseRequestTime);
+        if (secondPauseStartTime) Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseStartTime(builder, *secondPauseStartTime);
+        if (secondPauseEndTime) Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseEndTime(builder, *secondPauseEndTime);
         if (finalizersDoneTime) Kotlin_Internal_GC_GCInfoBuilder_setPostGcCleanupTime(builder, *finalizersDoneTime);
         if (rootSet)
             Kotlin_Internal_GC_GCInfoBuilder_setRootSet(
@@ -223,9 +238,21 @@ void GCHandle::finished() {
                     epoch_, "Heap memory usage: before %" PRIu64 " bytes, after %" PRIu64 " bytes", stat->memoryUsageBefore.heap->sizeBytes,
                     stat->memoryUsageAfter.heap->sizeBytes);
         }
-        if (stat->pauseStartTime && stat->pauseEndTime) {
-            auto time = (*stat->pauseEndTime - *stat->pauseStartTime) / 1000;
-            GCLogInfo(epoch_, "Mutators pause time: %" PRIu64 " microseconds.", time);
+        if (stat->firstPauseRequestTime && stat->firstPauseStartTime) {
+            auto time = (*stat->firstPauseStartTime - *stat->firstPauseRequestTime) / 1000;
+            GCLogInfo(epoch_, "Time to pause #1: %" PRIu64 " microseconds.", time);
+        }
+        if (stat->firstPauseRequestTime && stat->firstPauseEndTime) {
+            auto time = (*stat->firstPauseEndTime - *stat->firstPauseRequestTime) / 1000;
+            GCLogInfo(epoch_, "Mutators pause time #1: %" PRIu64 " microseconds.", time);
+        }
+        if (stat->secondPauseRequestTime && stat->secondPauseStartTime) {
+            auto time = (*stat->secondPauseStartTime - *stat->secondPauseRequestTime) / 1000;
+            GCLogInfo(epoch_, "Time to pause #2: %" PRIu64 " microseconds.", time);
+        }
+        if (stat->secondPauseRequestTime && stat->secondPauseEndTime) {
+            auto time = (*stat->secondPauseEndTime - *stat->secondPauseRequestTime) / 1000;
+            GCLogInfo(epoch_, "Mutators pause time #2: %" PRIu64 " microseconds.", time);
         }
         if (stat->startTime) {
             auto time = (*current.endTime - *current.startTime) / 1000;
@@ -242,14 +269,30 @@ void GCHandle::suspensionRequested() {
     std::lock_guard guard(lock);
     GCLogDebug(epoch_, "Requested thread suspension");
     if (auto* stat = statByEpoch(epoch_)) {
-        stat->pauseStartTime = static_cast<KLong>(konan::getTimeNanos());
+        auto requestTime = static_cast<KLong>(konan::getTimeNanos());
+        if (!stat->firstPauseRequestTime) {
+            stat->firstPauseRequestTime = requestTime;
+        } else {
+            RuntimeAssert(!stat->secondPauseRequestTime, "GCStatistics support max two pauses per GC epoch");
+            stat->secondPauseRequestTime = requestTime;
+        }
     }
 }
 void GCHandle::threadsAreSuspended() {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
-        if (stat->pauseStartTime) {
-            auto time = (konan::getTimeNanos() - *stat->pauseStartTime) / 1000;
+        auto startTime = static_cast<KLong>(konan::getTimeNanos());
+        std::optional<KLong> requestTime;
+        if (!stat->firstPauseStartTime) {
+            stat->firstPauseStartTime = startTime;
+            requestTime = stat->firstPauseRequestTime;
+        } else {
+            RuntimeAssert(!stat->secondPauseStartTime, "GCStatistics support max two pauses per GC epoch");
+            stat->secondPauseStartTime = startTime;
+            requestTime = stat->secondPauseRequestTime;
+        }
+        if (requestTime) {
+            auto time = (startTime - *requestTime) / 1000;
             GCLogDebug(epoch_, "Suspended all threads in %" PRIu64 " microseconds", time);
             return;
         }
@@ -267,9 +310,18 @@ void GCHandle::threadsAreSuspended() {
 void GCHandle::threadsAreResumed() {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
-        stat->pauseEndTime = static_cast<KLong>(konan::getTimeNanos());
-        if (stat->pauseStartTime) {
-            auto time = (*stat->pauseEndTime - *stat->pauseStartTime) / 1000;
+        auto endTime = static_cast<KLong>(konan::getTimeNanos());
+        std::optional<KLong> startTime;
+        if (!stat->firstPauseEndTime) {
+            stat->firstPauseEndTime = endTime;
+            startTime = stat->firstPauseStartTime;
+        } else {
+            RuntimeAssert(!stat->secondPauseEndTime, "GCStatistics support max two pauses per GC epoch");
+            stat->secondPauseEndTime = endTime;
+            startTime = stat->secondPauseStartTime;
+        }
+        if (startTime) {
+            auto time = (endTime - *startTime) / 1000;
             GCLogDebug(epoch_, "Resume all threads. Total pause time is %" PRId64 " microseconds.", time);
             return;
         }
@@ -358,6 +410,8 @@ void GCHandle::sweptExtraObjects(gc::SweepStats stats) noexcept {
     }
 }
 
+GCHandle::GCMarkScope GCHandle::mark() { return GCMarkScope(*this); }
+
 GCHandle::GCSweepScope::GCSweepScope(kotlin::gc::GCHandle& handle) : handle_(handle) {}
 
 GCHandle::GCSweepScope::~GCSweepScope() {
@@ -397,11 +451,27 @@ GCHandle::GCThreadRootSetScope::~GCThreadRootSetScope(){
                threadData_.threadId(), stackRoots_, threadLocalRoots_, getStageTime());
 }
 
-GCHandle::GCMarkScope::GCMarkScope(kotlin::gc::GCHandle& handle) : handle_(handle){}
+void GCHandle::GCMarkScope::swap(GCHandle::GCMarkScope& other) noexcept {
+    std::swap(handle_, other.handle_);
+    std::swap(startTime_, other.startTime_);
+}
+
+GCHandle::GCMarkScope::GCMarkScope(kotlin::gc::GCHandle& handle) : handle_(handle) {}
+
+GCHandle::GCMarkScope::GCMarkScope(GCHandle::GCMarkScope&& that) noexcept {
+    swap(that);
+}
+
+GCHandle::GCMarkScope& GCHandle::GCMarkScope::operator=(GCHandle::GCMarkScope that) noexcept {
+    swap(that);
+    return *this;
+}
 
 GCHandle::GCMarkScope::~GCMarkScope() {
-    handle_.marked(stats_);
-    GCLogDebug(handle_.getEpoch(), "Marked %" PRIu64 " objects in %" PRIu64 " microseconds.", stats_.markedCount, getStageTime());
+    if (handle_.isValid()) {
+        handle_.marked(stats_);
+        GCLogDebug(handle_.getEpoch(), "Marked %" PRIu64 " objects in %" PRIu64 " microseconds.", stats_.markedCount, getStageTime());
+    }
 }
 
 gc::GCHandle::GCProcessWeaksScope::GCProcessWeaksScope(gc::GCHandle& handle) noexcept : handle_(handle) {}

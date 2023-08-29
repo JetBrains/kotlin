@@ -248,10 +248,22 @@ void Kotlin_Internal_GC_GCInfoBuilder_setStartTime(KRef thiz, KLong value) {
 void Kotlin_Internal_GC_GCInfoBuilder_setEndTime(KRef thiz, KLong value) {
     throw std::runtime_error("Not implemented for tests");
 }
-void Kotlin_Internal_GC_GCInfoBuilder_setPauseStartTime(KRef thiz, KLong value) {
+void Kotlin_Internal_GC_GCInfoBuilder_setFirstPauseRequestTime(KRef thiz, KLong value) {
     throw std::runtime_error("Not implemented for tests");
 }
-void Kotlin_Internal_GC_GCInfoBuilder_setPauseEndTime(KRef thiz, KLong value) {
+void Kotlin_Internal_GC_GCInfoBuilder_setFirstPauseStartTime(KRef thiz, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setFirstPauseEndTime(KRef thiz, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseRequestTime(KRef thiz, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseStartTime(KRef thiz, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseEndTime(KRef thiz, KLong value) {
     throw std::runtime_error("Not implemented for tests");
 }
 void Kotlin_Internal_GC_GCInfoBuilder_setPostGcCleanupTime(KRef thiz, KLong value) {

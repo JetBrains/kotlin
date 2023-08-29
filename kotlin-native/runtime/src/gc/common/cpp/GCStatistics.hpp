@@ -95,16 +95,7 @@ public:
         void addThreadLocalRoot() { threadLocalRoots_++; }
     };
 
-    class GCMarkScope : GCStageScopeUsTimer, Pinned {
-        GCHandle& handle_;
-        MarkStats stats_;
-
-    public:
-        explicit GCMarkScope(GCHandle& handle);
-        ~GCMarkScope();
-
-        void addObject() noexcept { ++stats_.markedCount; }
-    };
+    class GCMarkScope;
 
     class GCProcessWeaksScope : GCStageScopeUsTimer, Pinned {
         GCHandle& handle_;
@@ -151,9 +142,24 @@ public:
     GCSweepExtraObjectsScope sweepExtraObjects() { return GCSweepExtraObjectsScope(*this); }
     GCGlobalRootSetScope collectGlobalRoots() { return GCGlobalRootSetScope(*this); }
     GCThreadRootSetScope collectThreadRoots(mm::ThreadData& threadData) { return GCThreadRootSetScope(*this, threadData); }
-    GCMarkScope mark() { return GCMarkScope(*this); }
+    GCMarkScope mark();
     GCProcessWeaksScope processWeaks() noexcept { return GCProcessWeaksScope(*this); }
 
     MarkStats getMarked();
+};
+
+class GCHandle::GCMarkScope : GCStageScopeUsTimer {
+    GCHandle handle_ = GCHandle::invalid();
+    MarkStats stats_;
+
+    void swap(GCMarkScope& other) noexcept;
+
+public:
+    explicit GCMarkScope(GCHandle& handle);
+    GCMarkScope(GCMarkScope&& that) noexcept;
+    GCMarkScope& operator=(GCMarkScope that) noexcept;
+    ~GCMarkScope();
+
+    void addObject() noexcept { ++stats_.markedCount; }
 };
 }

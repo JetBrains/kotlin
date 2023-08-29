@@ -35,7 +35,7 @@ public:
 
         Impl& impl() noexcept { return *impl_; }
 
-        void Publish() noexcept;
+        void PublishObjectFactory() noexcept;
         void ClearForTests() noexcept;
 
         ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept;
@@ -46,6 +46,8 @@ public:
         void OnSuspendForGC() noexcept;
 
         void safePoint() noexcept;
+
+        void onThreadRegistration() noexcept;
 
     private:
         std_support::unique_ptr<Impl> impl_;

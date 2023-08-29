@@ -54,7 +54,9 @@ public:
 
         void OnSuspendForGC() noexcept;
 
-        void safePoint() noexcept { barriers_.onCheckpoint(); }
+        void safePoint() noexcept { barriers_.onSafePoint(); }
+
+        void onThreadRegistration() noexcept { barriers_.onThreadRegistration(); }
 
         Allocator CreateAllocator() noexcept { return Allocator(gc::Allocator(), *this); }
 
