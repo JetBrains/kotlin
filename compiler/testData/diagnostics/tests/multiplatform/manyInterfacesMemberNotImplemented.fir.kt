@@ -8,7 +8,7 @@
 expect interface S1
 expect interface S2
 
-<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED{JVM}!>open class A : S1, S2<!>
+open class A : S1, S2
 
 class B : A()
 

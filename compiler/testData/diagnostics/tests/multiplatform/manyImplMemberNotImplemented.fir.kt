@@ -9,7 +9,7 @@ expect open class C1()
 expect interface I1
 
 open class A : C1(), I1
-<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>open class B : I1, C1()<!>
+open class B : I1, C1()
 
 expect abstract class C2()
 expect interface I2
