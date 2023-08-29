@@ -1,0 +1,9 @@
+FILE: recursiveProblemWithSyntaxError.kt
+    public final val foo: <ERROR TYPE REF: Unresolved name: bar> = bar@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: bar> <inline=Unknown>  {
+        ^ <Unresolved name: bar>#
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: <ERROR TYPE REF: Unresolved name: bar>><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function0.invoke>#|(ERROR_EXPR(Argument is absent)).<Unresolved name: bar>#(<Call has no callee>#(<L> = <Call has no callee>@fun <anonymous>(): <ERROR TYPE REF: cycle> <inline=Unknown>  {
+        ^ R|/foo|
+    }
+    ))
+        public get(): <ERROR TYPE REF: Unresolved name: bar>

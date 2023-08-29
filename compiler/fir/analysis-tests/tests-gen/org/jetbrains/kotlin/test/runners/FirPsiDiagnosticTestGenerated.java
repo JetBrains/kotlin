@@ -1926,6 +1926,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             }
 
             @Test
+            @TestMetadata("recursiveProblemWithSyntaxError.kt")
+            public void testRecursiveProblemWithSyntaxError() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/recursiveProblemWithSyntaxError.kt");
+            }
+
+            @Test
             @TestMetadata("redundantModifier.kt")
             public void testRedundantModifier() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/redundantModifier.kt");
