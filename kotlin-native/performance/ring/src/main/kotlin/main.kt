@@ -236,9 +236,9 @@ class RingLauncher : Launcher() {
                     "GenericArrayView.inlined" to BenchmarkEntryWithInit.create(::GenericArrayViewBenchmark, { inlined() }),
                     "GenericArrayView.specialized" to BenchmarkEntryWithInit.create(::GenericArrayViewBenchmark, { specialized() }),
                     "GenericArrayView.manual" to BenchmarkEntryWithInit.create(::GenericArrayViewBenchmark, { manual() }),
-                    "WeakRefBenchmark.aliveReference" to BenchmarkEntryWithInit.create(::WeakRefBenchmark, { aliveReference() }),
-                    "WeakRefBenchmark.deadReference" to BenchmarkEntryWithInit.create(::WeakRefBenchmark, { deadReference() }),
-                    "WeakRefBenchmark.dyingReference" to BenchmarkEntryWithInit.create(::WeakRefBenchmark, { dyingReference() }),
+                    "WeakRefBenchmark.aliveReference" to BenchmarkEntryWithInitAndValidation.create(::WeakRefBenchmark, { aliveReference() }, { clean() }),
+                    "WeakRefBenchmark.deadReference" to BenchmarkEntryWithInitAndValidation.create(::WeakRefBenchmark, { deadReference() }, { clean() }),
+                    "WeakRefBenchmark.dyingReference" to BenchmarkEntryWithInitAndValidation.create(::WeakRefBenchmark, { dyingReference() }, { clean() }),
             )
 
     init {

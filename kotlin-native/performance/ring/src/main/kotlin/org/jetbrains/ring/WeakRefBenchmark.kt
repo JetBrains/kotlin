@@ -51,6 +51,8 @@ private fun ReferenceWrapper.stress() = (1..REPEAT_COUNT).sumOf {
 
 @OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 open class WeakRefBenchmark {
+    private val weight = Array(BENCHMARK_SIZE) { ReferenceWrapper.create() }
+
     private val aliveRef = ReferenceWrapper.create()
     private val deadRef = ReferenceWrapper.create().apply {
         dispose()
@@ -75,5 +77,9 @@ open class WeakRefBenchmark {
         GC.schedule()
 
         Blackhole.consume(ref.stress())
+    }
+
+    fun clean() {
+        weight.forEach { it.dispose() }
     }
 }
