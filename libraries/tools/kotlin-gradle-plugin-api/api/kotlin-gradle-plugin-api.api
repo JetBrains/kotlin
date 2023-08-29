@@ -1026,6 +1026,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinJvmFact
 	public abstract fun registerKaptGenerateStubsTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun registerKaptTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun registerKotlinJvmCompileTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun registerKotlinJvmCompileTask (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinPlatformType : java/lang/Enum, java/io/Serializable, org/gradle/api/Named {
