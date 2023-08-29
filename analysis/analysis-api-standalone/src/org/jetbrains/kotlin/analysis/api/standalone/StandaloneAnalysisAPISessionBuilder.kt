@@ -75,7 +75,7 @@ public class StandaloneAnalysisAPISessionBuilder(
     private lateinit var projectStructureProvider: KtStaticProjectStructureProvider
 
     public fun buildKtModuleProvider(init: KtModuleProviderBuilder.() -> Unit) {
-        projectStructureProvider = buildProjectStructureProvider(init)
+        projectStructureProvider = buildProjectStructureProvider(kotlinCoreProjectEnvironment, init)
     }
 
     @Deprecated(
@@ -87,8 +87,8 @@ public class StandaloneAnalysisAPISessionBuilder(
     ) {
         val project = kotlinCoreProjectEnvironment.project
         projectStructureProvider = buildKtModuleProviderByCompilerConfiguration(
+            kotlinCoreProjectEnvironment,
             compilerConfiguration,
-            project,
             getPsiFilesFromPaths(project, getSourceFilePaths(compilerConfiguration)),
         )
     }

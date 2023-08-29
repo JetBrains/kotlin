@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import org.jetbrains.kotlin.analysis.project.structure.KtScriptModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtScriptModuleImpl
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -17,7 +18,9 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KtModuleBuilderDsl
-public class KtScriptModuleBuilder : KtModuleBuilder() {
+public class KtScriptModuleBuilder(
+    private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment
+) : KtModuleBuilder() {
     public lateinit var file: KtFile
 
     public var languageVersionSettings: LanguageVersionSettings =
@@ -29,7 +32,7 @@ public class KtScriptModuleBuilder : KtModuleBuilder() {
             directDependsOnDependencies,
             directFriendDependencies,
             platform,
-            project,
+            kotlinCoreProjectEnvironment.project,
             file,
             languageVersionSettings
         )
@@ -37,9 +40,9 @@ public class KtScriptModuleBuilder : KtModuleBuilder() {
 }
 
 @OptIn(ExperimentalContracts::class)
-public inline fun buildKtScriptModule(init: KtScriptModuleBuilder.() -> Unit): KtScriptModule {
+public inline fun KtModuleProviderBuilder.buildKtScriptModule(init: KtScriptModuleBuilder.() -> Unit): KtScriptModule {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtScriptModuleBuilder().apply(init).build()
+    return KtScriptModuleBuilder(kotlinCoreProjectEnvironment).apply(init).build()
 }

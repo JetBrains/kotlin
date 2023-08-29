@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtModuleProviderImpl
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.platform.TargetPlatform
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 
-@KtModuleBuilderDsl
-public class KtModuleProviderBuilder {
+public class KtModuleProviderBuilder(
+    public val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment
+) {
     private val mainModules: MutableList<KtModule> = mutableListOf()
 
     public fun addModule(module: KtModule) {
@@ -23,21 +24,23 @@ public class KtModuleProviderBuilder {
     }
 
     public lateinit var platform: TargetPlatform
-    public lateinit var project: Project
 
     public fun build(): KtStaticProjectStructureProvider {
         return KtModuleProviderImpl(
             platform,
-            project,
+            kotlinCoreProjectEnvironment.project,
             mainModules,
         )
     }
 }
 
 @OptIn(ExperimentalContracts::class)
-public inline fun buildProjectStructureProvider(init: KtModuleProviderBuilder.() -> Unit): KtStaticProjectStructureProvider {
+internal inline fun buildProjectStructureProvider(
+    kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
+    init: KtModuleProviderBuilder.() -> Unit,
+): KtStaticProjectStructureProvider {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtModuleProviderBuilder().apply(init).build()
+    return KtModuleProviderBuilder(kotlinCoreProjectEnvironment).apply(init).build()
 }

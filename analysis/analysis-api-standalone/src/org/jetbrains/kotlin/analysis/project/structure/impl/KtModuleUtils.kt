@@ -16,8 +16,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.builder.*
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
@@ -43,7 +45,6 @@ import org.jetbrains.kotlin.wasm.resolve.WasmJsPlatformAnalyzerServices
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 
 internal fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServices {
     return when {
@@ -151,10 +152,10 @@ internal inline fun <reified T : PsiFileSystemItem> getPsiFilesFromPaths(
 }
 
 internal fun buildKtModuleProviderByCompilerConfiguration(
+    kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
     compilerConfig: CompilerConfiguration,
-    project: Project,
     ktFiles: List<KtFile>,
-): KtStaticProjectStructureProvider = buildProjectStructureProvider {
+): KtStaticProjectStructureProvider = buildProjectStructureProvider(kotlinCoreProjectEnvironment) {
     val (scriptFiles, ordinaryFiles) = ktFiles.partition { it.isScript() }
     val platform = JvmPlatforms.defaultJvmPlatform
 
@@ -162,9 +163,8 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
         val libraryRoots = compilerConfig.jvmModularRoots + compilerConfig.jvmClasspathRoots
         addRegularDependency(
             buildKtLibraryModule {
-                contentScope = ProjectScope.getLibrariesScope(project)
+                contentScope = ProjectScope.getLibrariesScope(kotlinCoreProjectEnvironment.project)
                 this.platform = platform
-                this.project = project
                 binaryRoots = libraryRoots.map { it.toPath() }
                 libraryName = "Library for $moduleName"
             }
@@ -178,9 +178,8 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
             }
             addRegularDependency(
                 buildKtSdkModule {
-                    contentScope = GlobalSearchScope.fileScope(project, jdkHomeVirtualFile)
+                    contentScope = GlobalSearchScope.fileScope(kotlinCoreProjectEnvironment.project, jdkHomeVirtualFile)
                     this.platform = platform
-                    this.project = project
                     this.binaryRoots = binaryRoots
                     sdkName = "JDK for $moduleName"
                 }
@@ -193,7 +192,6 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
     for (scriptFile in scriptFiles) {
         buildKtScriptModule {
             configLanguageVersionSettings?.let { this.languageVersionSettings = it }
-            this.project = project
             this.platform = platform
             this.file = scriptFile
 
@@ -203,16 +201,15 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
 
     buildKtSourceModule {
         configLanguageVersionSettings?.let { this.languageVersionSettings = it }
-        this.project = project
         this.platform = platform
         this.moduleName = compilerConfig.get(CommonConfigurationKeys.MODULE_NAME) ?: "<no module name provided>"
 
         addModuleDependencies(moduleName)
 
-        contentScope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ordinaryFiles)
+        contentScope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(kotlinCoreProjectEnvironment.project, ordinaryFiles)
         addSourceRoots(
             getPsiFilesFromPaths(
-                project,
+                kotlinCoreProjectEnvironment.project,
                 getSourceFilePaths(compilerConfig, includeDirectoryRoot = true)
             )
         )
@@ -220,5 +217,4 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
 
 
     this.platform = platform
-    this.project = project
 }

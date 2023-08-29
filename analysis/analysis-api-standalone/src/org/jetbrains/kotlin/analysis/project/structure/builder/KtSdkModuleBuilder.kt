@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import org.jetbrains.kotlin.analysis.project.structure.KtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtSdkModuleImpl
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KtModuleBuilderDsl
-public class KtSdkModuleBuilder : KtBinaryModuleBuilder() {
+public class KtSdkModuleBuilder(
+    private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment
+) : KtBinaryModuleBuilder() {
     public lateinit var sdkName: String
 
     override fun build(): KtSdkModule {
@@ -22,7 +25,7 @@ public class KtSdkModuleBuilder : KtBinaryModuleBuilder() {
             directFriendDependencies,
             contentScope,
             platform,
-            project,
+            kotlinCoreProjectEnvironment.project,
             binaryRoots,
             sdkName
         )
@@ -30,9 +33,9 @@ public class KtSdkModuleBuilder : KtBinaryModuleBuilder() {
 }
 
 @OptIn(ExperimentalContracts::class)
-public inline fun buildKtSdkModule(init: KtSdkModuleBuilder.() -> Unit): KtSdkModule {
+public inline fun KtModuleProviderBuilder.buildKtSdkModule(init: KtSdkModuleBuilder.() -> Unit): KtSdkModule {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtSdkModuleBuilder().apply(init).build()
+    return KtSdkModuleBuilder(kotlinCoreProjectEnvironment).apply(init).build()
 }

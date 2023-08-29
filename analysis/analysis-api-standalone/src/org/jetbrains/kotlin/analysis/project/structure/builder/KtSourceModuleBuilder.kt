@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 import com.intellij.psi.PsiFileSystemItem
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtSourceModuleImpl
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -17,7 +18,9 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KtModuleBuilderDsl
-public class KtSourceModuleBuilder : KtModuleBuilder() {
+public class KtSourceModuleBuilder(
+    private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment
+) : KtModuleBuilder() {
     public lateinit var moduleName: String
     public var languageVersionSettings: LanguageVersionSettings =
         LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST)
@@ -38,7 +41,7 @@ public class KtSourceModuleBuilder : KtModuleBuilder() {
             directFriendDependencies,
             contentScope,
             platform,
-            project,
+            kotlinCoreProjectEnvironment.project,
             moduleName,
             languageVersionSettings,
             sourceRoots,
@@ -47,9 +50,9 @@ public class KtSourceModuleBuilder : KtModuleBuilder() {
 }
 
 @OptIn(ExperimentalContracts::class)
-public inline fun buildKtSourceModule(init: KtSourceModuleBuilder.() -> Unit): KtSourceModule {
+public inline fun KtModuleProviderBuilder.buildKtSourceModule(init: KtSourceModuleBuilder.() -> Unit): KtSourceModule {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtSourceModuleBuilder().apply(init).build()
+    return KtSourceModuleBuilder(kotlinCoreProjectEnvironment).apply(init).build()
 }

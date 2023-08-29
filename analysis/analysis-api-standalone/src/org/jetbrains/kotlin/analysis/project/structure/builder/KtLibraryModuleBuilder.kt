@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtLibraryModuleImpl
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KtModuleBuilderDsl
-public class KtLibraryModuleBuilder : KtBinaryModuleBuilder() {
+public class KtLibraryModuleBuilder(
+    private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment
+) : KtBinaryModuleBuilder() {
     public lateinit var libraryName: String
     public var librarySources: KtLibrarySourceModule? = null
 
@@ -24,7 +27,7 @@ public class KtLibraryModuleBuilder : KtBinaryModuleBuilder() {
             directFriendDependencies,
             contentScope,
             platform,
-            project,
+            kotlinCoreProjectEnvironment.project,
             binaryRoots,
             libraryName,
             librarySources,
@@ -33,9 +36,9 @@ public class KtLibraryModuleBuilder : KtBinaryModuleBuilder() {
 }
 
 @OptIn(ExperimentalContracts::class)
-public inline fun buildKtLibraryModule(init: KtLibraryModuleBuilder.() -> Unit): KtLibraryModule {
+public inline fun KtModuleProviderBuilder.buildKtLibraryModule(init: KtLibraryModuleBuilder.() -> Unit): KtLibraryModule {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtLibraryModuleBuilder().apply(init).build()
+    return KtLibraryModuleBuilder(kotlinCoreProjectEnvironment).apply(init).build()
 }
