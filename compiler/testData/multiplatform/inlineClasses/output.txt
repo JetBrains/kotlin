@@ -12,7 +12,7 @@ expect inline class Foo2(val y: String)
 Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/inlineClasses/jvm.kt:5:1: error: actual class 'Foo2' has no corresponding expected declaration
-The following declaration is incompatible because modifiers are different (companion, inner, inline):
+The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
     public final expect inline class Foo2
 
 actual class Foo2 actual constructor(actual val y: String)
@@ -22,7 +22,7 @@ actual class Foo2 actual constructor(actual val y: String)
 Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/inlineClasses/js.kt:5:1: error: actual class 'Foo2' has no corresponding expected declaration
-The following declaration is incompatible because modifiers are different (companion, inner, inline):
+The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
     public final expect inline class Foo2
 
 actual class Foo2 actual constructor(actual val y: String)
