@@ -144,6 +144,7 @@ abstract class BooleanGenerator(private val writer: PrintWriter) : BuiltInsGener
                 methodName = "hashCode"
                 returnType = PrimitiveType.INT.capitalized
             }
+            "if (this) 1231 else 1237".setAsExpressionBody()
         }.modifyGeneratedHashCode()
     }
 
@@ -165,12 +166,20 @@ class JvmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
     override fun ClassBuilder.modifyGeneratedClass() {
         appendDoc("On the JVM, non-nullable values of this type are represented as values of the primitive type `boolean`.")
     }
+
+    override fun MethodBuilder.modifyGeneratedHashCode() {
+        noBody()
+    }
 }
 
 class JsBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
     override fun FileBuilder.modifyGeneratedFile() {
         suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
         suppress("UNUSED_PARAMETER")
+    }
+
+    override fun MethodBuilder.modifyGeneratedHashCode() {
+        noBody()
     }
 }
 
@@ -232,7 +241,6 @@ class WasmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
 
     override fun MethodBuilder.modifyGeneratedHashCode() {
         modifySignature { visibility = null }
-        "if (this) 1231 else 1237".setAsExpressionBody()
     }
 
     override fun ClassBuilder.generateAdditionalMethods() {
@@ -301,7 +309,6 @@ class NativeBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
 
     override fun MethodBuilder.modifyGeneratedHashCode() {
         modifySignature { visibility = MethodVisibility.PUBLIC }
-        "if (this) 1231 else 1237".setAsExpressionBody()
     }
 
     override fun ClassBuilder.generateAdditionalMethods() {
