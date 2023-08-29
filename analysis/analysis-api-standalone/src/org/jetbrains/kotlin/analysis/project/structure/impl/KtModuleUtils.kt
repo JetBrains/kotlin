@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import com.google.common.io.Files.getFileExtension
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import com.intellij.util.io.URLUtil
@@ -130,11 +128,11 @@ private fun collectSourceFilePaths(
 }
 
 internal inline fun <reified T : PsiFileSystemItem> getPsiFilesFromPaths(
-    project: Project,
+    kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
     paths: Collection<Path>,
 ): List<T> {
-    val fs = StandardFileSystems.local()
-    val psiManager = PsiManager.getInstance(project)
+    val fs = kotlinCoreProjectEnvironment.environment.localFileSystem
+    val psiManager = PsiManager.getInstance(kotlinCoreProjectEnvironment.project)
     return buildList {
         for (path in paths) {
             val vFile = fs.findFileByPath(path.toString()) ?: continue
@@ -202,7 +200,7 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
         contentScope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(kotlinCoreProjectEnvironment.project, ordinaryFiles)
         addSourceRoots(
             getPsiFilesFromPaths(
-                kotlinCoreProjectEnvironment.project,
+                kotlinCoreProjectEnvironment,
                 getSourceFilePaths(compilerConfig, includeDirectoryRoot = true)
             )
         )

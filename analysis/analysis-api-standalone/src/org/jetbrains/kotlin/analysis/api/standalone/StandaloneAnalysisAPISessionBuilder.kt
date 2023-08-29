@@ -85,11 +85,10 @@ public class StandaloneAnalysisAPISessionBuilder(
     public fun buildKtModuleProviderByCompilerConfiguration(
         compilerConfiguration: CompilerConfiguration,
     ) {
-        val project = kotlinCoreProjectEnvironment.project
         projectStructureProvider = buildKtModuleProviderByCompilerConfiguration(
             kotlinCoreProjectEnvironment,
             compilerConfiguration,
-            getPsiFilesFromPaths(project, getSourceFilePaths(compilerConfiguration)),
+            getPsiFilesFromPaths(kotlinCoreProjectEnvironment, getSourceFilePaths(compilerConfiguration)),
         )
     }
 
