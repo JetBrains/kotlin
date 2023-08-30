@@ -464,6 +464,38 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
+    @Disabled
+    @DisplayName("Should incrementally rebuild on annotation processor arguments change")
+    @GradleTest
+    fun testChangeAPArgumentsICRebuild(gradleVersion: GradleVersion) {
+        project("arguments".withPrefix, gradleVersion) {
+            build("build") {
+                assertKaptSuccessful()
+                assertOutputContains("AP options: {suffix=Customized,")
+                assertFileInProjectExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
+                assertFileExists(kotlinClassesDir().resolve("example/TestClass.class"))
+                assertFileExists(javaClassesDir().resolve("example/TestClassCustomized.class"))
+            }
+
+            buildGradle.modify {
+                it.replace("arg(\"suffix\", \"Customized\")", "arg(\"suffix\", \"Changed\")")
+            }
+            javaSourcesDir().resolve("test.kt").modify {
+                it.replace("TestClassCustomized::class.java", "TestClassChanged::class.java")
+            }
+
+            build("build") {
+                assertKaptSuccessful()
+                assertOutputContains("AP options: {suffix=Changed,")
+                assertFileInProjectExists("build/generated/source/kapt/main/example/TestClassChanged.java")
+                assertFileInProjectNotExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
+                assertFileExists(kotlinClassesDir().resolve("example/TestClass.class"))
+                assertFileExists(javaClassesDir().resolve("example/TestClassChanged.class"))
+                assertFileNotExists(javaClassesDir().resolve("example/TestClassCustomized.class"))
+            }
+        }
+    }
+
     // tests all output directories are cleared when IC rebuilds
     private fun testICRebuild(
         gradleVersion: GradleVersion,
