@@ -1,0 +1,57 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtNamedClassOrObjectSymbol:
+          annotationsList: []
+          classIdIfNonLocal: test/A
+          classKind: CLASS
+          companionObject: null
+          contextReceivers: []
+          isActual: false
+          isData: false
+          isExpect: false
+          isExternal: false
+          isFun: false
+          isInline: false
+          isInner: false
+          modality: FINAL
+          name: A
+          origin: SOURCE
+          superTypes: [
+            KtUsualClassType:
+              annotationsList: []
+              ownTypeArguments: []
+              type: kotlin/Any
+          ]
+          symbolKind: TOP_LEVEL
+          typeParameters: []
+          visibility: Public
+        type = test.A
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/A.foo(<dispatch receiver>: test.A): kotlin.Unit
+        valueParameters = []
+        callableIdIfNonLocal = test/A.foo
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = true
+
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/foo(): kotlin.Unit
+        valueParameters = []
+        callableIdIfNonLocal = test/foo
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = false

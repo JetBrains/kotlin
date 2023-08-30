@@ -68,8 +68,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
     ): List<OverloadCandidate> {
         initializeBodyResolveContext(firResolveSession, element)
 
-        val firFile = element.containingKtFile.getOrBuildFirFile(firResolveSession)
-        return bodyResolveComponents.context.withFile(firFile, bodyResolveComponents) {
+        return run {
             bodyResolveComponents.callResolver
                 .collectAllCandidates(qualifiedAccess, calleeName, bodyResolveComponents.context.containers, resolutionContext)
                 .apply { postProcessCandidates() }
@@ -84,9 +83,8 @@ class AllCandidatesResolver(private val firSession: FirSession) {
     ): List<OverloadCandidate> {
         initializeBodyResolveContext(firResolveSession, element)
 
-        val firFile = element.containingKtFile.getOrBuildFirFile(firResolveSession)
         val constructedType = delegatedConstructorCall.constructedTypeRef.coneType as ConeClassLikeType
-        return bodyResolveComponents.context.withFile(firFile, bodyResolveComponents) {
+        return run {
             bodyResolveComponents.callResolver
                 .resolveDelegatingConstructorCall(delegatedConstructorCall, constructedType, derivedClassLookupTag)
             bodyResolveComponents.collector.allCandidates
@@ -103,6 +101,11 @@ class AllCandidatesResolver(private val firSession: FirSession) {
         val containingDeclarations =
             element.parentsOfType<KtDeclaration>().map { it.resolveToFirSymbol(firResolveSession).fir }.toList().asReversed()
         bodyResolveComponents.context.containers.addAll(containingDeclarations)
+
+        // `towerContext` from above should already contain all the scopes for the file,
+        // so we just set it manually without calling `withFile`
+        val firFile = element.containingKtFile.getOrBuildFirFile(firResolveSession)
+        bodyResolveComponents.context.file = firFile
     }
 
     private fun List<OverloadCandidate>.postProcessCandidates() {
