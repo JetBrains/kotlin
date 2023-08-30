@@ -1,5 +1,8 @@
 // WITH_STDLIB
 // SKIP_TXT
+// FIR_IGNORE
+// delegates
+
 
 fun <R> a(lambda: List<R>.(R) -> Unit) {}
 

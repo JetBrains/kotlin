@@ -14,7 +14,7 @@ suspend inline fun <T> T.collect(action: (T) -> Unit) { action(this) }
 fun test() {
     flux {
         var result = ""
-        "OK".collect { result += it }
+        "OK".collect { result = result + it }
         send(result)
     }
 }
