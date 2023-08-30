@@ -270,7 +270,7 @@ open class FirSupertypeResolverVisitor(
     }
 
     private fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? {
-        return symbol.moduleData.session.firProvider.getFirClassifierContainerFileIfAny(symbol.classId)
+        return symbol.moduleData.session.firProvider.getFirClassifierContainerFileIfAny(symbol)
     }
 
     private fun getFirClassifierByFqName(moduleSession: FirSession, classId: ClassId): FirClassLikeDeclaration? {
