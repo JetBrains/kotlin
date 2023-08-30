@@ -10,7 +10,7 @@ import llvm.*
 import org.jetbrains.kotlin.ir.util.inlineFunction
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
-import org.jetbrains.kotlin.backend.common.lower.inline.InlinerExpressionLocationHint
+import org.jetbrains.kotlin.backend.common.lower.inline.INLINER_EXPRESSION_LOCATION_HINT
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
@@ -1435,9 +1435,10 @@ internal class CodeGeneratorVisitor(
 
     private fun generateVariable(variable: IrVariable) {
         context.log{"generateVariable               : ${ir2string(variable)}"}
-        val value = variable.initializer?.let {
-            val callSiteOrigin = (it as? IrBlock)?.origin as? InlinerExpressionLocationHint
-            val inlineAtFunctionSymbol = callSiteOrigin?.inlineAtSymbol as? IrFunctionSymbol
+        val value = (variable.initializer as? IrBlock)?.let {
+            val inlineAtFunctionSymbol = if (it.origin == INLINER_EXPRESSION_LOCATION_HINT)
+                (it.statements[0] as IrFunctionReference).symbol
+            else null
             inlineAtFunctionSymbol?.run {
                 switchSymbolizationContextTo(inlineAtFunctionSymbol) {
                     evaluateExpression(it)

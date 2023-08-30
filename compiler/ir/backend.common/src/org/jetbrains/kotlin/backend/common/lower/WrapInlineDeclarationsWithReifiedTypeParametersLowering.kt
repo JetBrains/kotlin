@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isInlineFunWithReifiedParameter
+import org.jetbrains.kotlin.backend.common.lower.inline.INLINER_EXPRESSION_LOCATION_HINT
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -47,7 +48,7 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                 val owner = expression.symbol.owner as? IrSimpleFunction
                     ?: return expression
 
-                if (!owner.isInlineFunWithReifiedParameter()) {
+                if (expression.origin == INLINER_EXPRESSION_LOCATION_HINT || !owner.isInlineFunWithReifiedParameter()) {
                     return expression
                 }
                 val substitutionMap = expression.typeSubstitutionMap

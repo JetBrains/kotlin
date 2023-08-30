@@ -858,13 +858,26 @@ class FunctionInlining(
             isDefaultArg: Boolean,
             callee: IrFunction
         ): IrVariable {
+            val functionSymbol = (currentScope.irElement as IrSymbolOwner).symbol as? IrFunctionSymbol
             val variable = currentScope.scope.createTemporaryVariable(
                 irExpression = IrBlockImpl(
                     if (isDefaultArg) variableInitializer.startOffset else UNDEFINED_OFFSET,
                     if (isDefaultArg) variableInitializer.endOffset else UNDEFINED_OFFSET,
                     if (inlineArgumentsWithTheirOriginalTypeAndOffset) parameter.getOriginalType() else variableInitializer.type,
-                    InlinerExpressionLocationHint((currentScope.irElement as IrSymbolOwner).symbol)
+                    if (functionSymbol != null) INLINER_EXPRESSION_LOCATION_HINT else null
                 ).apply {
+                    if (functionSymbol != null) {
+                        // TODO: Add a parameter and do only for K/N.
+                        statements.add(
+                            IrFunctionReferenceImpl(
+                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                                context.irBuiltIns.anyType,
+                                functionSymbol,
+                                0, 0,
+                                origin = INLINER_EXPRESSION_LOCATION_HINT
+                            )
+                        )
+                    }
                     statements.add(variableInitializer)
                 },
                 nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers(),
@@ -909,13 +922,4 @@ object INLINED_FUNCTION_REFERENCE : IrStatementOriginImpl("INLINED_FUNCTION_REFE
 object INLINED_FUNCTION_ARGUMENTS : IrStatementOriginImpl("INLINED_FUNCTION_ARGUMENTS")
 object INLINED_FUNCTION_DEFAULT_ARGUMENTS : IrStatementOriginImpl("INLINED_FUNCTION_DEFAULT_ARGUMENTS")
 
-class InlinerExpressionLocationHint(val inlineAtSymbol: IrSymbol) : IrStatementOrigin {
-    override fun toString(): String =
-        "(${this.javaClass.simpleName} : $functionNameOrDefaultToString @${functionFileOrNull?.fileEntry?.name})"
-
-    private val functionFileOrNull: IrFile?
-        get() = (inlineAtSymbol as? IrFunction)?.file
-
-    private val functionNameOrDefaultToString: String
-        get() = (inlineAtSymbol as? IrFunction)?.name?.asString() ?: inlineAtSymbol.toString()
-}
+object INLINER_EXPRESSION_LOCATION_HINT : IrStatementOriginImpl("INLINER_EXPRESSION_LOCATION_HINT")
