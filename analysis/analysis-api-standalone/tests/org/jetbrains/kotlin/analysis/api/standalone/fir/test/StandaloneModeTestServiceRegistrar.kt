@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticModuleProvider
-import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.JvmFirDeserializedSymbolProviderFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -19,11 +21,15 @@ import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.services.TestServices
 
+@OptIn(KtAnalysisApiInternals::class)
 public object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
     }
 
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
+        project.apply {
+            registerService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider::class.java)
+        }
     }
 
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {

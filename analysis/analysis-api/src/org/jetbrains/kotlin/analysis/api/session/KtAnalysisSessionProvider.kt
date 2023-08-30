@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.psi.KtFile
 @OptIn(KtAnalysisApiInternals::class)
 public abstract class KtAnalysisSessionProvider(public val project: Project) : Disposable {
     @KtAnalysisApiInternals
-    public val tokenFactory: KtLifetimeTokenFactory = KtLifetimeTokenProvider.getService(project).getLifetimeTokenFactory()
+    public val tokenFactory: KtLifetimeTokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KtLifetimeTokenProvider.getService(project).getLifetimeTokenFactory()
+    }
 
     @Suppress("LeakingThis")
     public val noWriteActionInAnalyseCallChecker: NoWriteActionInAnalyseCallChecker = NoWriteActionInAnalyseCallChecker(this)
