@@ -2,11 +2,11 @@ package transformers
 
 import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import transformers.AbstractContextModuleAndPackageDocumentationReaderTest.Companion.texts
 import utils.OnlyDescriptorsMPP
 import java.nio.file.Path
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ModuleAndPackageDocumentationTransformerFunctionalTest : BaseAbstractTest() {

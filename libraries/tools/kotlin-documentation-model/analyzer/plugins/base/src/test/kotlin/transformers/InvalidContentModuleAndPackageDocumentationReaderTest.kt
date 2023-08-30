@@ -1,15 +1,15 @@
 package transformers
 
+import org.jetbrains.dokka.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.plugin
 import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.LoggingLevel
-import org.jetbrains.dokka.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import testApi.testRunner.TestDokkaConfigurationBuilder
 import testApi.testRunner.dModule
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -19,7 +19,7 @@ class InvalidContentModuleAndPackageDocumentationReaderTest : AbstractContextMod
     private val includeA by lazy { temporaryDirectory.resolve("includeA.md").toFile() }
     private val includeB by lazy { temporaryDirectory.resolve("includeB.md").toFile() }
 
-    @BeforeEach
+    @BeforeTest
     fun materializeInclude() {
         includeA.writeText(
             """
