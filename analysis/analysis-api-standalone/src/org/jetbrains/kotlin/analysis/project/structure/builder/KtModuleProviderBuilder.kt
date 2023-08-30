@@ -15,12 +15,13 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 public class KtModuleProviderBuilder(
-    public val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment
+    public val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
 ) {
     private val mainModules: MutableList<KtModule> = mutableListOf()
 
-    public fun addModule(module: KtModule) {
+    public fun <M : KtModule> addModule(module: M): M {
         mainModules.add(module)
+        return module
     }
 
     public lateinit var platform: TargetPlatform
