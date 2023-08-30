@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentInvocationKinds
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -47,7 +48,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirCallCompleter(
     private val transformer: FirAbstractBodyResolveTransformerDispatcher,
-    private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
+    private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
 ) {
     private val session = components.session
     private val inferenceSession
@@ -88,10 +89,17 @@ class FirCallCompleter(
             // delegate inference where it's assumed to have partially completed intermediate calls.
             //
             // Ideally, we should get rid of `shouldRunCompletion` once Builder inference is rewritten (see KT-61041 for tracking)
-            if (it == ConstraintSystemCompletionMode.FULL && inferenceSession.shouldAvoidFullCompletion(call))
-                if (resolutionMode.forceFullCompletion) ConstraintSystemCompletionMode.PARTIAL_BI else ConstraintSystemCompletionMode.PARTIAL
-            else
-                it
+
+            when {
+                inferenceSession is FirBuilderInferenceSession2 -> when {
+                    inferenceSession.shouldAvoidFullCompletion(call) -> ConstraintSystemCompletionMode.ONLY_LAMBDAS
+                    else -> it
+                }
+                else -> when {
+                    it == ConstraintSystemCompletionMode.FULL && inferenceSession.shouldAvoidFullCompletion(call) -> ConstraintSystemCompletionMode.PARTIAL
+                    else -> it
+                }
+            }
         }
 
         val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
@@ -101,10 +109,8 @@ class FirCallCompleter(
 
         return when (completionMode) {
             ConstraintSystemCompletionMode.FULL -> {
-                val shouldRunCompletion = inferenceSession.shouldRunCompletion(call)
-                runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-
-                if (shouldRunCompletion) {
+                if (inferenceSession.shouldRunCompletion(call)) {
+                    runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
                     val finalSubstitutor = candidate.system.asReadOnlyStorage()
                         .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
                     val completedCall = call.transformSingle(
@@ -127,10 +133,8 @@ class FirCallCompleter(
                 }
             }
 
-            ConstraintSystemCompletionMode.PARTIAL, ConstraintSystemCompletionMode.PARTIAL_BI -> {
-                if (inferenceSession !is FirBuilderInferenceSession2 || (inferenceSession as FirBuilderInferenceSession2).shouldRunCompletion2(call)) {
-                    runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-                }
+            ConstraintSystemCompletionMode.PARTIAL, ConstraintSystemCompletionMode.PARTIAL_BI, ConstraintSystemCompletionMode.ONLY_LAMBDAS -> {
+                runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
 
                 if (inferenceSession is FirDelegatedPropertyInferenceSession || inferenceSession is FirBuilderInferenceSession2) {
                     inferenceSession.processPartiallyResolvedCall(call, resolutionMode)
@@ -153,7 +157,13 @@ class FirCallCompleter(
 
         val position = ConeExpectedTypeConstraintPosition(candidate.callInfo.callSite)
 
-        val system = candidate.system
+        val isCandidateSimpleVariable = (candidate.symbol as? FirVariableSymbol)?.typeParameterSymbols?.isEmpty() == true
+
+        val system = when {
+            inferenceSession is FirBuilderInferenceSession2 && isCandidateSimpleVariable ->
+                (inferenceSession as FirBuilderInferenceSession2).outerCandidate.system
+            else -> candidate.system
+        }
         when {
             // If type mismatch is assumed to be reported in the checker, we should not add a subtyping constraint that leads to error.
             // Because it might make resulting type correct while, it's hopefully would be more clear if we let the call be inferred without
@@ -190,7 +200,7 @@ class FirCallCompleter(
         completionMode: ConstraintSystemCompletionMode,
         call: T,
         initialType: ConeKotlinType,
-        analyzer: PostponedArgumentsAnalyzer? = null
+        analyzer: PostponedArgumentsAnalyzer? = null,
     ) where T : FirResolvable, T : FirStatement {
         @Suppress("NAME_SHADOWING")
         val analyzer = analyzer ?: createPostponedArgumentsAnalyzer(transformer.resolutionContext)
@@ -207,7 +217,7 @@ class FirCallCompleter(
 
     fun prepareLambdaAtomForFactoryPattern(
         atom: ResolvedLambdaAtom,
-        candidate: Candidate
+        candidate: Candidate,
     ) {
         val returnVariable = ConeTypeVariableForLambdaReturnType(atom.atom, "_R")
         val csBuilder = candidate.system.getBuilder()
@@ -228,7 +238,7 @@ class FirCallCompleter(
 
     fun createCompletionResultsWriter(
         substitutor: ConeSubstitutor,
-        mode: FirCallCompletionResultsWriterTransformer.Mode = FirCallCompletionResultsWriterTransformer.Mode.Normal
+        mode: FirCallCompletionResultsWriterTransformer.Mode = FirCallCompletionResultsWriterTransformer.Mode.Normal,
     ): FirCallCompletionResultsWriterTransformer {
         return FirCallCompletionResultsWriterTransformer(
             session, components.scopeSession, substitutor, components.returnTypeCalculator,
@@ -374,7 +384,7 @@ class FirCallCompleter(
                 val builderInferenceSession =
                     // TODO: Think of delegation+PCLA combination
                     runIf(notFixedTypeVariablesInInputTypes.isNotEmpty() /*&& transformer.context.inferenceSession !is FirBuilderInferenceSession2*/) {
-                        FirBuilderInferenceSession2(candidate)
+                        FirBuilderInferenceSession2(candidate, session.inferenceComponents)
                     }
 
                 if (builderInferenceSession != null) {

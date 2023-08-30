@@ -105,6 +105,11 @@ class PostponedArgumentsAnalyzer(
             return ReturnArgumentsAnalysisResult(lambda.returnStatements, inferenceSession = null)
         }
 
+        (resolutionContext.bodyResolveContext.inferenceSession as? FirBuilderInferenceSession2)?.let { builderInferenceSession ->
+            lambda.receiver?.let { builderInferenceSession.fixVariablesForMemberScope(it, candidate) }
+            // TODO: context receivers
+        }
+
         val unitType = components.session.builtinTypes.unitType.type
         val currentSubstitutor = c.buildCurrentSubstitutor(emptyMap()) as ConeSubstitutor
 

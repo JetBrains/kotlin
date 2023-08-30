@@ -726,7 +726,7 @@ class NewConstraintSystemImpl(
         return buildCurrentSubstitutor(emptyMap())
     }
 
-    override fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, StubTypeMarker>): TypeSubstitutorMarker {
+    override fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         return storage.buildCurrentSubstitutor(this, additionalBindings)
     }
