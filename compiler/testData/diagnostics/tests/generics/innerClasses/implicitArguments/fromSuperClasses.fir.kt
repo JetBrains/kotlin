@@ -20,7 +20,7 @@ class A : Outer<Double, Short>() {
 
 fun foo() {
     Derived().foo() checkType { _<Outer<String, Int>.Inner<Char>>() }
-    Derived().baz() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Map<Char, String>>() }
+    Derived().baz() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Map<Char, String><!>>() }
     A.B().bar() checkType { _<Outer<Float, Long>.Inner<String>>() }
-    A.B().x() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Map<String, Float>>() }
+    A.B().x() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Map<String, Float><!>>() }
 }
