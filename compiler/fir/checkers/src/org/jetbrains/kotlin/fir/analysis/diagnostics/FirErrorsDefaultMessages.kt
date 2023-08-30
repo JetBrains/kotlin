@@ -1524,7 +1524,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE_DEPRECATION,
-            multipleDefaultsMessage + multipleDefaultsNotAllowed,
+            multipleDefaultsMessage + multipleDefaultsDiscouraged,
             SYMBOL
         )
 
