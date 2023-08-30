@@ -56,7 +56,7 @@ abstract class KaptTask @Inject constructor(
     @get:InputFiles
     abstract val classpathStructure: ConfigurableFileCollection
 
-    @get:Internal
+    @get:Nested
     abstract val kaptPluginOptions: ListProperty<CompilerPluginConfig>
 
     @get:Nested
