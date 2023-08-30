@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -21,10 +22,12 @@ object FirLocalEntityNotAllowedChecker : FirRegularClassChecker() {
             return
         }
 
+        val container = context.containingDeclarations.lastOrNull()
+
         when {
             declaration.classKind == ClassKind.OBJECT && !declaration.isCompanion ->
                 reporter.reportOn(declaration.source, FirErrors.LOCAL_OBJECT_NOT_ALLOWED, declaration.name, context)
-            declaration.classKind == ClassKind.INTERFACE ->
+            declaration.classKind == ClassKind.INTERFACE && container !is FirClass ->
                 reporter.reportOn(declaration.source, FirErrors.LOCAL_INTERFACE_NOT_ALLOWED, declaration.name, context)
             else -> {
             }
