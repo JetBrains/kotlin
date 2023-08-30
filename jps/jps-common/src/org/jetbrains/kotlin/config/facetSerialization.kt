@@ -429,7 +429,7 @@ fun KotlinFacetSettings.serializeFacetSettings(element: Element) = when (version
 }
 
 
-private fun TargetPlatform.serializeComponentPlatforms(): String {
+fun TargetPlatform.serializeComponentPlatforms(): String {
     val componentPlatforms = componentPlatforms
     val componentPlatformNames = componentPlatforms.mapTo(ArrayList()) { it.serializeToString() }
 
@@ -440,7 +440,7 @@ private fun TargetPlatform.serializeComponentPlatforms(): String {
     return componentPlatformNames.sorted().joinToString("/")
 }
 
-private fun String?.deserializeTargetPlatformByComponentPlatforms(): TargetPlatform? {
+fun String?.deserializeTargetPlatformByComponentPlatforms(): TargetPlatform? {
     val componentPlatformNames = this?.split('/')?.toSet()?.takeIf { it.isNotEmpty() } ?: return null
 
     val knownComponentPlatforms = HashMap<String, SimplePlatform>() // "serialization presentation" to "simple platform name"
