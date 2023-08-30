@@ -46,7 +46,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         candidateReturnType: ConeKotlinType,
         context: ResolutionContext,
         collectVariablesFromContext: Boolean = false,
-        analyze: (PostponedResolvedAtom) -> Unit
+        analyze: (PostponedResolvedAtom) -> Unit,
     ) = with(c) {
         val allTypeVariables = getOrderedAllTypeVariables(
             collectVariablesFromContext,
@@ -68,7 +68,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         topLevelType: ConeKotlinType,
         context: ResolutionContext,
         collectVariablesFromContext: Boolean = false,
-        analyze: (PostponedResolvedAtom) -> Unit
+        analyze: (PostponedResolvedAtom) -> Unit,
     ) {
         val topLevelTypeVariables = topLevelType.extractTypeVariables()
 
@@ -222,7 +222,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
     private fun tryToCompleteWithBuilderInference(
         completionMode: ConstraintSystemCompletionMode,
         postponedArguments: List<PostponedResolvedAtom>,
-        analyze: (PostponedResolvedAtom) -> Unit
+        analyze: (PostponedResolvedAtom) -> Unit,
     ): Boolean {
         if (completionMode != ConstraintSystemCompletionMode.FULL && completionMode != ConstraintSystemCompletionMode.PARTIAL_BI) return false
 
@@ -333,7 +333,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
     private fun ConstraintSystemCompletionContext.getOrderedAllTypeVariables(
         collectVariablesFromContext: Boolean,
-        topLevelAtoms: List<FirStatement>
+        topLevelAtoms: List<FirStatement>,
     ): List<TypeConstructorMarker> {
         if (collectVariablesFromContext) {
             return notFixedTypeVariables.keys.toList()
@@ -409,7 +409,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
     private fun fixVariable(
         c: ConstraintSystemCompletionContext,
-        variableWithConstraints: VariableWithConstraints
+        variableWithConstraints: VariableWithConstraints,
     ) {
         val resultType = inferenceComponents.resultTypeResolver.findResultType(
             c,
@@ -440,7 +440,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
         private fun findResolvedAtomBy(
             typeVariable: TypeVariableMarker,
-            topLevelAtoms: List<FirStatement>
+            topLevelAtoms: List<FirStatement>,
         ): FirStatement? {
 
             fun FirStatement.findFirstAtomContainingVariable(): FirStatement? {
@@ -476,7 +476,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         private fun createCannotInferErrorType(
             typeParameterSymbol: FirTypeParameterSymbol?,
             message: String,
-            isUninferredParameter: Boolean = false
+            isUninferredParameter: Boolean = false,
         ): ConeErrorType {
             val diagnostic = when (typeParameterSymbol) {
                 null -> ConeSimpleDiagnostic(message, DiagnosticKind.CannotInferParameterType)
@@ -485,7 +485,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                     message,
                 )
             }
-            return ConeErrorType(diagnostic, isUninferredParameter,)
+            return ConeErrorType(diagnostic, isUninferredParameter)
         }
 
 
@@ -555,7 +555,7 @@ fun FirStatement.processAllContainingCallCandidates(processBlocks: Boolean, proc
 
 private fun FirResolvable.processCandidateIfApplicable(
     processor: (Candidate) -> Unit,
-    processBlocks: Boolean
+    processBlocks: Boolean,
 ) {
     val candidate = (calleeReference as? FirNamedReferenceWithCandidate)?.candidate ?: return
     processor(candidate)
