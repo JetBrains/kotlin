@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
-import kotlin.math.exp
 
 internal typealias TypeArgumentsMap = Map<IrTypeParameterSymbol, DeepCopyIrTreeWithSymbolsForInliner.TypeReplacement?>
 
