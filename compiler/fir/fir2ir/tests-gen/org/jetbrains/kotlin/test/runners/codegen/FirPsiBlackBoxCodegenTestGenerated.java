@@ -3327,6 +3327,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             }
 
             @Test
+            @TestMetadata("kt61548.kt")
+            public void testKt61548() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/kt61548.kt");
+            }
+
+            @Test
             @TestMetadata("mapEntry.kt")
             public void testMapEntry() throws Exception {
                 runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/mapEntry.kt");
