@@ -161,7 +161,7 @@ class FirCallCompleter(
 
         val system = when {
             inferenceSession is FirBuilderInferenceSession2 && isCandidateSimpleVariable ->
-                (inferenceSession as FirBuilderInferenceSession2).outerCandidate.system
+                (inferenceSession as FirBuilderInferenceSession2).outerSystem
             else -> candidate.system
         }
         when {

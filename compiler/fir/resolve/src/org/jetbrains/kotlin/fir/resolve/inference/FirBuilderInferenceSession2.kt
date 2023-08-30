@@ -18,12 +18,16 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.defaultType
 
+
+
 class FirBuilderInferenceSession2(
-    val outerCandidate: Candidate,
+    private val outerCandidate: Candidate,
     private val inferenceComponents: InferenceComponents,
 ) : FirInferenceSession() {
 
-    private val outerCS: ConstraintStorage = outerCandidate.system.currentStorage()
+    val outerSystem = outerCandidate.system
+
+    private val outerCS: ConstraintStorage = outerSystem.currentStorage()
     private val qualifiedAccessesToProcess = mutableSetOf<FirExpression>()
 
     override fun <T> shouldAvoidFullCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement {
@@ -59,7 +63,7 @@ class FirBuilderInferenceSession2(
         outerCandidate.postponedCalls += call
 
         (resolutionMode as? ResolutionMode.ContextIndependent.ForDeclaration)?.declaration?.let(outerCandidate.updateDeclarations::add)
-        outerCandidate.system.addOtherSystem(candidate.system.currentStorage())
+        outerSystem.addOtherSystem(candidate.system.currentStorage())
 
         if (call is FirExpression) {
             call.updateReturnTypeWithCurrentSubstitutor(resolutionMode)
@@ -75,7 +79,7 @@ class FirBuilderInferenceSession2(
         }
 
         val updatedType =
-            (outerCandidate.system.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor).substituteOrNull(typeRef.coneType)
+            (outerSystem.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor).substituteOrNull(typeRef.coneType)
         if (updatedType != null) {
             resultType = resultType.withReplacedConeType(updatedType)
         }
@@ -144,7 +148,7 @@ class FirBuilderInferenceSession2(
 
     private fun FirTypeRef.containsNotFixedTypeVariables(): Boolean =
         coneTypeOrNull?.contains {
-            it is ConeTypeVariableType && it.lookupTag in outerCandidate.system.allTypeVariables
+            it is ConeTypeVariableType && it.lookupTag in outerSystem.allTypeVariables
         } == true
 
     // TODO: Get rid of them
