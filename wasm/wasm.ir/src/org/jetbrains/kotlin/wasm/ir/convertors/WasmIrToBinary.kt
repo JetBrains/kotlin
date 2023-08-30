@@ -63,7 +63,7 @@ class WasmIrToBinary(
 
     // "Stack" of offsets waiting initialization. 
     // Since blocks has as a prefix variable length number encoding its size we can't calculate absolute offsets inside those blocks 
-    // until we generate whole block and generate size. So, we put them into "stack" and initialize as soo as we have all required data.
+    // until we generate whole block and generate size. So, we put them into "stack" and initialize as soon as we have all required data.
     private var offsets = persistentListOf<Box>()
 
     fun appendWasmModule() {
@@ -76,12 +76,16 @@ class WasmIrToBinary(
                 val numRecGroups = if (recGroupTypes.isEmpty()) 0 else 1
                 appendVectorSize(functionTypes.size + numRecGroups)
                 functionTypes.forEach { appendFunctionTypeDeclaration(it) }
-                if (!recGroupTypes.isEmpty()) {
+                if (recGroupTypes.isNotEmpty()) {
                     b.writeVarInt7(WasmBinary.REC_GROUP)
                     appendVectorSize(recGroupTypes.size)
+                    val structsWithSubtypes = recGroupTypes.asSequence()
+                        .filterIsInstance<WasmStructDeclaration>()
+                        .mapNotNull { it.superType?.owner }
+                        .toSet()
                     recGroupTypes.forEach {
                         when (it) {
-                            is WasmStructDeclaration -> appendStructTypeDeclaration(it)
+                            is WasmStructDeclaration -> appendStructTypeDeclaration(it, it in structsWithSubtypes)
                             is WasmArrayDeclaration -> appendArrayTypeDeclaration(it)
                             is WasmFunctionType -> appendFunctionTypeDeclaration(it)
                         }
@@ -360,19 +364,22 @@ class WasmIrToBinary(
         b.writeVarUInt1(field.isMutable)
     }
 
-    private fun appendStructTypeDeclaration(type: WasmStructDeclaration) {
-        b.writeVarInt7(WasmBinary.SUB_TYPE)
-
+    private fun appendStructTypeDeclaration(type: WasmStructDeclaration, hasSubtypes: Boolean) {
         val superType = type.superType
-        if (superType != null) {
-            appendVectorSize(1)
-            appendModuleFieldReference(superType.owner)
-        } else {
-            appendVectorSize(0)
+        
+        if (hasSubtypes || superType != null) {
+            this.b.writeVarInt7(WasmBinary.SUB_TYPE)
+            if (superType != null) {
+                appendVectorSize(1)
+                appendModuleFieldReference(superType.owner)
+            } else {
+                appendVectorSize(0)
+            }
         }
 
-        b.writeVarInt7(WasmBinary.STRUCT_TYPE)
-        b.writeVarUInt32(type.fields.size)
+
+        this.b.writeVarInt7(WasmBinary.STRUCT_TYPE)
+        this.b.writeVarUInt32(type.fields.size)
         type.fields.forEach {
             appendFiledType(it)
         }
