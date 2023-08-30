@@ -5,8 +5,8 @@ import org.jetbrains.dokka.links.TypeConstructor
 import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.KotlinModifier.*
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Test
+import kotlin.test.assertNull
+import kotlin.test.Test
 import utils.*
 
 

@@ -7,10 +7,10 @@ import org.jetbrains.dokka.PackageOptionsImpl
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.model.DModule
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import testApi.testRunner.dokkaConfiguration
+import kotlin.test.Test
 import utils.JavaCode
 import kotlin.test.assertEquals
 
@@ -303,3 +303,4 @@ class JavaVisibilityFilterTest : BaseAbstractTest() {
             }
     }
 }
+

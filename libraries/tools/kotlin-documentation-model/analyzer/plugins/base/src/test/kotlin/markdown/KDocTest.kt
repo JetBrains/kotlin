@@ -4,7 +4,7 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.DPackage
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.pages.ModulePageNode
-import org.junit.jupiter.api.Assertions.assertEquals
+import kotlin.test.assertEquals
 
 abstract class KDocTest : BaseAbstractTest() {
 

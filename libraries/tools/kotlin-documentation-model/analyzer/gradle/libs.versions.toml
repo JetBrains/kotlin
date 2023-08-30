@@ -52,7 +52,6 @@ gradlePlugin-gradleNode = "3.5.1"
 
 ## Test
 junit = "5.9.2"
-assertk = "0.25"
 eclipse-jgit = "5.12.0.202106070339-r"
 
 [libraries]
@@ -115,11 +114,11 @@ apacheMaven-artifact = { module = "org.apache.maven:maven-artifact", version.ref
 kotlinx-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli-jvm", version.ref = "kotlinx-cli" }
 
 #### Test dependencies  ####
-assertk = { module = "com.willowtreeapps.assertk:assertk", version.ref = "assertk" }
 eclipse-jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "eclipse-jgit" }
 
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+junit-jupiterApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-jupiterParams = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
 
 [plugins]
 # Gradle Plugins that are applied directly to subprojects

@@ -7,10 +7,10 @@ import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.DInterface
 import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
 import utils.assertNotNull
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", "inheritors") {
 

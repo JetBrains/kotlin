@@ -1,8 +1,8 @@
 package model
 
 import org.jetbrains.dokka.model.DPackage
-import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
+import kotlin.test.Test
 
 class PackagesTest : AbstractModelTest("/src/main/kotlin/packages/Test.kt", "packages") {
 

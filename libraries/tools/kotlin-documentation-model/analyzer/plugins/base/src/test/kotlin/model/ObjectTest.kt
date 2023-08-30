@@ -3,8 +3,8 @@ package model
 import org.jetbrains.dokka.model.AdditionalModifiers
 import org.jetbrains.dokka.model.DObject
 import org.jetbrains.dokka.model.ExtraModifiers
-import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
+import kotlin.test.Test
 
 class ObjectTest : AbstractModelTest("/src/main/kotlin/objects/Test.kt", "objects") {
 

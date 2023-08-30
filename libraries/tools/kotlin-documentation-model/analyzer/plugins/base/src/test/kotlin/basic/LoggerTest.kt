@@ -3,7 +3,7 @@ package basic
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.LoggingLevel
 import org.jetbrains.dokka.utilities.MessageEmitter
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
