@@ -368,7 +368,7 @@ class WasmIrToBinary(
         val superType = type.superType
         
         if (hasSubtypes || superType != null) {
-            this.b.writeVarInt7(WasmBinary.SUB_TYPE)
+            b.writeVarInt7(WasmBinary.SUB_TYPE)
             if (superType != null) {
                 appendVectorSize(1)
                 appendModuleFieldReference(superType.owner)
@@ -378,8 +378,8 @@ class WasmIrToBinary(
         }
 
 
-        this.b.writeVarInt7(WasmBinary.STRUCT_TYPE)
-        this.b.writeVarUInt32(type.fields.size)
+        b.writeVarInt7(WasmBinary.STRUCT_TYPE)
+        b.writeVarUInt32(type.fields.size)
         type.fields.forEach {
             appendFiledType(it)
         }
