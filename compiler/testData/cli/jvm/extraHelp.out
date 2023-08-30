@@ -178,6 +178,8 @@ where advanced options include:
                              The corresponding calls' declarations may not be marked with @BuilderInference.
   -Xklib-enable-signature-clash-checks
                              Enable the checks on uniqueness of signatures
+  -Xexpect-actual-classes    The expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature.
+                             Kotlin reports a warning every time you use them. You can use this flag to mute the warning.
   -Xexpect-actual-linker     Enable experimental expect/actual linker
   -Xexplicit-api={strict|warning|disable}
                              Force compiler to report errors on all public API declarations without explicit visibility or return type.

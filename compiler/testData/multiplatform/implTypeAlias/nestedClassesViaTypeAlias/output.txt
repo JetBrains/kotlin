@@ -1,7 +1,22 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class ByTypeAlias {
+^
+compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias/common.kt:2:15: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+    interface Nested
+              ^
 
 -- JVM --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class ByTypeAlias {
+^
+compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias/common.kt:2:15: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+    interface Nested
+              ^
+compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias/jvm.kt:5:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual typealias ByTypeAlias = ByTypeAliasImpl
+^

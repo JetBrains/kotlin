@@ -31,6 +31,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.effectSystem = from.effectSystem
     to.enableBuilderInference = from.enableBuilderInference
     to.enableSignatureClashChecks = from.enableSignatureClashChecks
+    to.expectActualClasses = from.expectActualClasses
     to.expectActualLinker = from.expectActualLinker
     to.experimental = from.experimental?.copyOf()
     to.explicitApi = from.explicitApi

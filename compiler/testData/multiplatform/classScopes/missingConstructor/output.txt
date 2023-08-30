@@ -1,6 +1,9 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/classScopes/missingConstructor/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class Foo {
+^
 
 -- JVM --
 Exit code: COMPILATION_ERROR

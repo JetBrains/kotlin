@@ -1,10 +1,19 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/implTypeAlias/discriminateHeaderClassInFavorOfTypeAlias/common.kt:3:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class A
+^
 
 -- JVM --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/implTypeAlias/discriminateHeaderClassInFavorOfTypeAlias/common.kt:3:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class A
+^
+compiler/testData/multiplatform/implTypeAlias/discriminateHeaderClassInFavorOfTypeAlias/jvm.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual typealias A = AImpl
+^
 
 -- JVM (2) --
 Exit code: OK

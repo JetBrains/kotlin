@@ -1,6 +1,18 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/genericDeclarations/common.kt:9:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class C1<A>
+^
+compiler/testData/multiplatform/genericDeclarations/common.kt:10:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class C2<B : C2<B>>
+^
+compiler/testData/multiplatform/genericDeclarations/common.kt:11:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class C3<D, E : MutableList<in D>>
+^
+compiler/testData/multiplatform/genericDeclarations/common.kt:13:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect abstract class AbstractList<F> : MutableList<F>
+^
 
 -- JVM --
 Exit code: COMPILATION_ERROR

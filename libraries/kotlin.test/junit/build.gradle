@@ -32,6 +32,7 @@ RepoArtifacts.javadocJar(project)
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
         "-Xallow-kotlin-package",
+        "-Xexpect-actual-classes",
     ]
     kotlinOptions.moduleName = project.name
 }

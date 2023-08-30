@@ -9,4 +9,10 @@ as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
 warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
+compiler/testData/cli/jvm/firMultiplatformCompilationWithoutErrors/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect interface A {
+^
+compiler/testData/cli/jvm/firMultiplatformCompilationWithoutErrors/jvm.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual interface A {
+^
 OK

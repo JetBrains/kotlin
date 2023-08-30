@@ -633,6 +633,17 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
 
     @Argument(
+        value = "-Xexpect-actual-classes",
+        description = "The expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature.\n" +
+                "Kotlin reports a warning every time you use them. You can use this flag to mute the warning."
+    )
+    var expectActualClasses = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xunrestricted-builder-inference",
         description = "Eliminate builder inference restrictions like allowance of returning type variables of a builder inference call"
     )
@@ -796,6 +807,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
             put(AnalysisFlags.builtInsFromSources, builtInsFromSources)
+            put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
             put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
         }

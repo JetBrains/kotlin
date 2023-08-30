@@ -1,7 +1,25 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect abstract class Base {
+^
+compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod/common.kt:5:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class DerivedImplicit : Base {
+^
 
 -- JVM --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect abstract class Base {
+^
+compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod/common.kt:5:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class DerivedImplicit : Base {
+^
+compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod/jvm.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual abstract class Base {
+^
+compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod/jvm.kt:5:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual class DerivedImplicit : Base() {
+^

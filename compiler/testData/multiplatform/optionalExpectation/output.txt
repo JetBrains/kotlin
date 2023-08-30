@@ -1,11 +1,23 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/optionalExpectation/common.kt:5:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect annotation class A()
+^
 
 -- JVM --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/optionalExpectation/common.kt:5:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect annotation class A()
+^
+compiler/testData/multiplatform/optionalExpectation/jvm.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual annotation class A
+^
 
 -- JS --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/optionalExpectation/common.kt:5:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect annotation class A()
+^

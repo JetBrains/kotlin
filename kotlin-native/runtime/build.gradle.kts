@@ -512,6 +512,7 @@ konanArtifacts {
         extraOpts(project.globalBuildArgs)
         extraOpts(
                 "-Werror",
+                "-Xexpect-actual-classes",
                 "-module-name", "stdlib",
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=kotlin.contracts.ExperimentalContracts",

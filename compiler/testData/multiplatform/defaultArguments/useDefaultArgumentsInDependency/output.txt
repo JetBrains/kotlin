@@ -1,10 +1,37 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency/common.kt:5:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class C(x: Int, y: String = "OK")
+^
+compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency/common.kt:7:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect annotation class Anno1(val x: Int, val y: String = "OK")
+^
+compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency/common.kt:9:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect annotation class Anno2(val x: Int, val y: String = "OK")
+^
 
 -- JVM --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency/common.kt:5:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class C(x: Int, y: String = "OK")
+^
+compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency/common.kt:7:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect annotation class Anno1(val x: Int, val y: String = "OK")
+^
+compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency/common.kt:9:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect annotation class Anno2(val x: Int, val y: String = "OK")
+^
+compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency/jvm.kt:5:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual class C actual constructor(x: Int, y: String) {}
+^
+compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency/jvm.kt:7:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual annotation class Anno1(actual val x: Int, actual val y: String = "OK")
+^
+compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency/jvm.kt:9:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual annotation class Anno2(actual val x: Int, actual val y: String)
+^
 
 -- JVM (2) --
 Exit code: OK

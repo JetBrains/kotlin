@@ -1,6 +1,12 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNullableType/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class E01
+^
+compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNullableType/common.kt:2:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class E02
+^
 
 -- JVM --
 Exit code: COMPILATION_ERROR

@@ -1,7 +1,25 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/classScopes/fakeOverrides/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect open class Base {
+^
+compiler/testData/multiplatform/classScopes/fakeOverrides/common.kt:5:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class Derived : Base {
+^
 
 -- JVM --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/classScopes/fakeOverrides/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect open class Base {
+^
+compiler/testData/multiplatform/classScopes/fakeOverrides/common.kt:5:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class Derived : Base {
+^
+compiler/testData/multiplatform/classScopes/fakeOverrides/jvm.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual open class Base {
+^
+compiler/testData/multiplatform/classScopes/fakeOverrides/jvm.kt:5:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual class Derived : Base() {
+^

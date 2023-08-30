@@ -55,6 +55,9 @@ object AnalysisFlags {
     val builtInsFromSources by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
+    val muteExpectActualClassesWarning by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
     val allowFullyQualifiedNameInKClass by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic

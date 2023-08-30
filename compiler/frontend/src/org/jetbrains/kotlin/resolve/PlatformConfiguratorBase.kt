@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings
 private val DEFAULT_DECLARATION_CHECKERS = listOf(
     ExpectActualInTheSameModuleChecker,
     ActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker,
+    ExpectActualClassifiersAreExperimentalChecker,
     DataClassDeclarationChecker(),
     ConstModifierChecker,
     UnderscoreChecker,

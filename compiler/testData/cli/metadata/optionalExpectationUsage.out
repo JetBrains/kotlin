@@ -1,1 +1,4 @@
+compiler/testData/cli/metadata/optionalExpectationUsage.kt:3:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect annotation class Ann()
+^
 OK

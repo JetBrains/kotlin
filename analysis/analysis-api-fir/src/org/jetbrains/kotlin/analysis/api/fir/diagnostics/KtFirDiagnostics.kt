@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
@@ -2563,6 +2564,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface ActualMissing : KtFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ActualMissing::class
+    }
+
+    interface ExpectActualClassifiersAreExperimentalWarning : KtFirDiagnostic<KtClassLikeDeclaration> {
+        override val diagnosticClass get() = ExpectActualClassifiersAreExperimentalWarning::class
     }
 
     interface NotAMultiplatformCompilation : KtFirDiagnostic<PsiElement> {
