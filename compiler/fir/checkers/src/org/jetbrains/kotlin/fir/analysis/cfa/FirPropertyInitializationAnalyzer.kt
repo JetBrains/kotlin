@@ -93,7 +93,7 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
     scopes: MutableMap<FirPropertySymbol, FirDeclaration?>
 ) {
     fun FirQualifiedAccessExpression.hasCorrectReceiver() =
-        (dispatchReceiver.unwrapSmartcastExpression() as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver
+        (dispatchReceiver?.unwrapSmartcastExpression() as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver
 
     for (node in graph.nodes) {
         when {

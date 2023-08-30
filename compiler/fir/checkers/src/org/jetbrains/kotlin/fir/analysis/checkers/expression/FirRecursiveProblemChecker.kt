@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.psi.KtLambdaArgument
 
@@ -23,8 +22,7 @@ object FirRecursiveProblemChecker : FirBasicExpressionChecker() {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         if (
             expression !is FirExpression ||
-            expression.source?.kind is KtFakeSourceElementKind ||
-            expression.isExpressionWithAlwaysImplicitTypeRef
+            expression.source?.kind is KtFakeSourceElementKind
         ) {
             return
         }
@@ -42,6 +40,4 @@ object FirRecursiveProblemChecker : FirBasicExpressionChecker() {
 
         checkConeType(expression.resolvedType)
     }
-
-    private val FirStatement.isExpressionWithAlwaysImplicitTypeRef get() = this is FirNoReceiverExpression
 }

@@ -146,7 +146,7 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
             && property.requiresInitialization(isForClassInitialization = false)
         ) return
         if (
-            isInOwnersInitializer(expression.dispatchReceiver.unwrapSmartcastExpression(), context)
+            isInOwnersInitializer(expression.dispatchReceiver?.unwrapSmartcastExpression(), context)
             && property.requiresInitialization(isForClassInitialization = true)
         ) return
 
@@ -167,7 +167,7 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
         return containingGraph != null
     }
 
-    private fun isInOwnersInitializer(receiver: FirExpression, context: CheckerContext): Boolean {
+    private fun isInOwnersInitializer(receiver: FirExpression?, context: CheckerContext): Boolean {
         val uninitializedThisSymbol = (receiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol ?: return false
         val containingDeclarations = context.containingDeclarations
 

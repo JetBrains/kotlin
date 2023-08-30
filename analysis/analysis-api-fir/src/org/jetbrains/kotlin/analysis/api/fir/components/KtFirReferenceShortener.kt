@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassMembersEnhancementScope
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -1103,7 +1102,7 @@ private class ElementsToShortenCollector(
         if (qualifiedAccess.explicitReceiver !is FirResolvedQualifier) return false
 
         // if there is no extension receiver necessary, then it can be removed
-        return qualifiedAccess.extensionReceiver is FirNoReceiverExpression
+        return qualifiedAccess.extensionReceiver == null
     }
 
     private fun findUnambiguousReferencedCallableId(namedReference: FirNamedReference): FirCallableSymbol<*>? {

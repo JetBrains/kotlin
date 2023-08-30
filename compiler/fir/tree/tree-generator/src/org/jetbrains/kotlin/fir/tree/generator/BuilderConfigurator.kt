@@ -212,8 +212,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             default("argumentList") {
                 value = "FirEmptyArgumentList"
             }
-            default("dispatchReceiver", "FirNoReceiverExpression")
-            useTypes(noReceiverExpressionType)
+            defaultNull("dispatchReceiver")
             useTypes(emptyArgumentListType)
         }
 

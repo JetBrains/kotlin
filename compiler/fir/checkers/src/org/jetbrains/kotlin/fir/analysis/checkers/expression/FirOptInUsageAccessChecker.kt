@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.calleeReference
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -37,8 +36,7 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker() {
                         loadExperimentalitiesFromTypeArguments(context, emptyList())
                 reportNotAcceptedExperimentalities(experimentalities, expression.lValue, context, reporter)
             } else if (expression is FirQualifiedAccessExpression) {
-                val dispatchReceiverType =
-                    expression.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }?.resolvedType?.fullyExpandedType(context.session)
+                val dispatchReceiverType = expression.dispatchReceiver?.resolvedType?.fullyExpandedType(context.session)
 
                 val experimentalities = resolvedSymbol.loadExperimentalities(context, fromSetter = false, dispatchReceiverType) +
                         loadExperimentalitiesFromTypeArguments(context, expression.typeArguments)

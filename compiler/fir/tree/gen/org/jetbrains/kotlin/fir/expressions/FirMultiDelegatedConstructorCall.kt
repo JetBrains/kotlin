@@ -22,7 +22,7 @@ abstract class FirMultiDelegatedConstructorCall : FirDelegatedConstructorCall() 
     abstract override val argumentList: FirArgumentList
     abstract override val contextReceiverArguments: List<FirExpression>
     abstract override val constructedTypeRef: FirTypeRef
-    abstract override val dispatchReceiver: FirExpression
+    abstract override val dispatchReceiver: FirExpression?
     abstract override val calleeReference: FirReference
     abstract override val isThis: Boolean
     abstract override val isSuper: Boolean
@@ -42,7 +42,7 @@ abstract class FirMultiDelegatedConstructorCall : FirDelegatedConstructorCall() 
 
     abstract override fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef)
 
-    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -412,7 +411,7 @@ class CallAndReferenceGenerator(
 
             return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
                 if (calleeReference is FirSuperReference) {
-                    if (dispatchReceiver !is FirNoReceiverExpression) {
+                    if (dispatchReceiver != null) {
                         return@convertWithOffsets visitor.convertToIrExpression(dispatchReceiver)
                     }
                 }
@@ -435,7 +434,7 @@ class CallAndReferenceGenerator(
                             typeArgumentsCount = firSymbol.typeParameterSymbols.size,
                             valueArgumentsCount = valueParametersNumber,
                             origin = calleeReference.statementOrigin(),
-                            superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
+                            superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
                         )
                     }
 
@@ -446,7 +445,7 @@ class CallAndReferenceGenerator(
                             typeArgumentsCount = calleeReference.toResolvedCallableSymbol()!!.fir.typeParameters.size,
                             valueArgumentsCount = 0,
                             origin = IrStatementOrigin.GET_LOCAL_PROPERTY,
-                            superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
+                            superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
                         )
                     }
 
@@ -462,13 +461,13 @@ class CallAndReferenceGenerator(
                                     typeArgumentsCount = property.typeParameters.size,
                                     valueArgumentsCount = property.contextReceivers.size,
                                     origin = IrStatementOrigin.GET_PROPERTY,
-                                    superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
+                                    superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
                                 )
                             }
 
                             backingFieldSymbol != null -> IrGetFieldImpl(
                                 startOffset, endOffset, backingFieldSymbol, irType,
-                                superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
+                                superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
                             )
 
                             else -> IrErrorCallExpressionImpl(
@@ -488,7 +487,7 @@ class CallAndReferenceGenerator(
                         IrGetFieldImpl(
                             startOffset, endOffset, symbol, irType,
                             origin = IrStatementOrigin.GET_PROPERTY.takeIf { calleeReference !is FirDelegateFieldReference },
-                            superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
+                            superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
                         )
                     }
 
@@ -618,7 +617,7 @@ class CallAndReferenceGenerator(
                                 typeArgumentsCount = firProperty.typeParameters.size,
                                 valueArgumentsCount = 1 + firProperty.contextReceivers.size,
                                 origin = origin,
-                                superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol()
+                                superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbol()
                             ).apply {
                                 putContextReceiverArguments(lValue)
                                 putValueArgument(0, assignedValue)
@@ -645,7 +644,7 @@ class CallAndReferenceGenerator(
                                 typeArgumentsCount = firProperty.typeParameters.size,
                                 valueArgumentsCount = 1 + firProperty.contextReceivers.size,
                                 origin = origin,
-                                superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol()
+                                superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbol()
                             ).apply {
                                 putValueArgument(putContextReceiverArguments(lValue), assignedValue)
                             }
@@ -653,7 +652,7 @@ class CallAndReferenceGenerator(
                             backingFieldSymbol != null -> IrSetFieldImpl(
                                 startOffset, endOffset, backingFieldSymbol, type,
                                 origin = null, // NB: to be consistent with PSI2IR, origin should be null here
-                                superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol()
+                                superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbol()
                             ).apply {
                                 value = assignedValue
                             }
@@ -1202,7 +1201,7 @@ class CallAndReferenceGenerator(
             return explicitReceiverExpression
         }
 
-        return firReceiver.takeIf { it !is FirNoReceiverExpression }
+        return firReceiver
             ?.let { visitor.convertToIrReceiverExpression(it, calleeReference, this as? FirCallableReferenceAccess) }
             ?: explicitReceiverExpression
     }
@@ -1216,7 +1215,7 @@ class CallAndReferenceGenerator(
                 val resolvedFirSymbol = qualifiedAccess.toResolvedCallableSymbol()
                 if (resolvedFirSymbol?.dispatchReceiverType != null) {
                     val baseDispatchReceiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
-                    var firDispatchReceiver = qualifiedAccess.dispatchReceiver.takeUnless { it is FirNoReceiverExpression }
+                    var firDispatchReceiver = qualifiedAccess.dispatchReceiver
                     if (firDispatchReceiver is FirPropertyAccessExpression && firDispatchReceiver.calleeReference is FirSuperReference) {
                         firDispatchReceiver = firDispatchReceiver.dispatchReceiver
                     }
@@ -1247,9 +1246,10 @@ class CallAndReferenceGenerator(
                             ?: error("Symbol for call ${qualifiedAccess.render()} not found")
                         symbol.fir.receiverParameter?.typeRef?.let { receiverType ->
                             with(visitor.implicitCastInserter) {
+                                val extensionReceiver = qualifiedAccess.extensionReceiver!!
                                 it.cast(
-                                    qualifiedAccess.extensionReceiver,
-                                    qualifiedAccess.extensionReceiver.resolvedType,
+                                    extensionReceiver,
+                                    extensionReceiver.resolvedType,
                                     receiverType.coneType,
                                 )
                             }

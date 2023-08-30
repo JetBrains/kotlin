@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.*
@@ -58,6 +57,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -70,8 +70,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -391,8 +393,8 @@ internal class KtFirCallResolver(
         } ?: KtSubstitutor.Empty(token)
 
         fun createKtPartiallyAppliedSymbolForImplicitInvoke(
-            dispatchReceiver: FirExpression,
-            extensionReceiver: FirExpression,
+            dispatchReceiver: FirExpression?,
+            extensionReceiver: FirExpression?,
             explicitReceiverKind: ExplicitReceiverKind
         ): KtPartiallyAppliedSymbol<KtCallableSymbol, KtCallableSignature<KtCallableSymbol>> {
             isImplicitInvoke = true
@@ -413,24 +415,54 @@ internal class KtFirCallResolver(
                 }
 
             // Specially handle @ExtensionFunctionType
-            if (dispatchReceiver.coneTypeSafe<ConeKotlinType>()?.isExtensionFunctionType == true) {
+            if (dispatchReceiver?.coneTypeSafe<ConeKotlinType>()?.isExtensionFunctionType == true) {
                 firstArgIsExtensionReceiver = true
             }
 
             val dispatchReceiverValue: KtReceiverValue?
             val extensionReceiverValue: KtReceiverValue?
-            if (explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER) {
-                dispatchReceiverValue =
-                    KtExplicitReceiverValue(explicitReceiverPsi, dispatchReceiver.resolvedType.asKtType(), false, token)
-                if (firstArgIsExtensionReceiver) {
-                    extensionReceiverValue = (fir as FirFunctionCall).arguments.firstOrNull()?.toKtReceiverValue()
-                } else {
-                    extensionReceiverValue = extensionReceiver.toKtReceiverValue()
+            when (explicitReceiverKind) {
+                ExplicitReceiverKind.DISPATCH_RECEIVER -> {
+                    checkWithAttachment(
+                        dispatchReceiver != null,
+                        { "Dispatch receiver must be not null if explicitReceiverKind is DISPATCH_RECEIVER" }
+                    ) {
+                        withPsiEntry("explicitReceiverPsi", explicitReceiverPsi)
+                        extensionReceiver?.let { withFirEntry("extensionReceiver", it) }
+                        withFirSymbolEntry("target", targetSymbol)
+                    }
+                    dispatchReceiverValue =
+                        KtExplicitReceiverValue(explicitReceiverPsi, dispatchReceiver.resolvedType.asKtType(), false, token)
+                    if (firstArgIsExtensionReceiver) {
+                        extensionReceiverValue = (fir as FirFunctionCall).arguments.firstOrNull()?.toKtReceiverValue()
+                    } else {
+                        extensionReceiverValue = extensionReceiver?.toKtReceiverValue()
+                    }
                 }
-            } else {
-                dispatchReceiverValue = dispatchReceiver.toKtReceiverValue()
-                extensionReceiverValue =
-                    KtExplicitReceiverValue(explicitReceiverPsi, extensionReceiver.resolvedType.asKtType(), false, token)
+
+                ExplicitReceiverKind.EXTENSION_RECEIVER -> {
+                    checkWithAttachment(
+                        extensionReceiver != null,
+                        { "Extension receiver must be not null if explicitReceiverKind is EXTENSION_RECEIVER" }
+                    ) {
+                        withPsiEntry("explicitReceiverPsi", explicitReceiverPsi)
+                        dispatchReceiver?.let { withFirEntry("dispatchReceiver", it) }
+                        withFirSymbolEntry("target", targetSymbol)
+                    }
+
+                    dispatchReceiverValue = dispatchReceiver?.toKtReceiverValue()
+                    extensionReceiverValue =
+                        KtExplicitReceiverValue(explicitReceiverPsi, extensionReceiver.resolvedType.asKtType(), false, token)
+                }
+
+                else -> {
+                    errorWithAttachment("Implicit invoke call can not have no explicit receiver") {
+                        withPsiEntry("explicitReceiverPsi", explicitReceiverPsi)
+                        withFirSymbolEntry("targetSymbol", targetSymbol)
+                        dispatchReceiver?.let { withFirEntry("dispatchReceiver", it) }
+                        extensionReceiver?.let { withFirEntry("extensionReceiver", it) }
+                    }
+                }
             }
             return KtPartiallyAppliedSymbol(
                 with(analysisSession) { unsubstitutedKtSignature.substitute(substitutor) },
@@ -445,8 +477,8 @@ internal class KtFirCallResolver(
             ) {
                 // Implicit invoke (e.g., `x()`) will have a different callee symbol (e.g., `x`) than the candidate (e.g., `invoke`).
                 createKtPartiallyAppliedSymbolForImplicitInvoke(
-                    candidate.dispatchReceiver ?: FirNoReceiverExpression,
-                    candidate.chosenExtensionReceiver ?: FirNoReceiverExpression,
+                    candidate.dispatchReceiver,
+                    candidate.chosenExtensionReceiver,
                     candidate.explicitReceiverKind
                 )
             } else {
@@ -466,14 +498,14 @@ internal class KtFirCallResolver(
         } else if (fir is FirQualifiedAccessExpression) {
             KtPartiallyAppliedSymbol(
                 with(analysisSession) { unsubstitutedKtSignature.substitute(substitutor) },
-                fir.dispatchReceiver.toKtReceiverValue(),
-                fir.extensionReceiver.toKtReceiverValue()
+                fir.dispatchReceiver?.toKtReceiverValue(),
+                fir.extensionReceiver?.toKtReceiverValue()
             )
         } else if (fir is FirVariableAssignment) {
             KtPartiallyAppliedSymbol(
                 with(analysisSession) { unsubstitutedKtSignature.substitute(substitutor) },
-                fir.dispatchReceiver.toKtReceiverValue(),
-                fir.extensionReceiver.toKtReceiverValue()
+                fir.dispatchReceiver?.toKtReceiverValue(),
+                fir.extensionReceiver?.toKtReceiverValue()
             )
         } else {
             KtPartiallyAppliedSymbol(unsubstitutedKtSignature, _dispatchReceiver = null, _extensionReceiver = null)
@@ -765,8 +797,8 @@ internal class KtFirCallResolver(
         val ktSignature = variableSymbol.toKtSignature()
         return KtPartiallyAppliedSymbol(
             with(analysisSession) { ktSignature.substitute(substitutor.toKtSubstitutor()) },
-            dispatchReceiver.toKtReceiverValue(),
-            extensionReceiver.toKtReceiverValue(),
+            dispatchReceiver?.toKtReceiverValue(),
+            extensionReceiver?.toKtReceiverValue(),
         )
     }
 
@@ -776,15 +808,31 @@ internal class KtFirCallResolver(
         val operationSymbol =
             (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol ?: return null
         val substitutor = createConeSubstitutorFromTypeArguments() ?: return null
+        val explicitReceiver = this.explicitReceiver
+        val dispatchReceiver = this.dispatchReceiver
+        val extensionReceiver = this.extensionReceiver
+
+        checkWithAttachment(
+            (explicitReceiver != null) == (explicitReceiverPsiSupplement != null),
+            { "FIR and PSI for explicit receiver are inconsistent (one of them is null)" }
+        ) {
+            withPsiEntry("explicitReceiverPsi", explicitReceiverPsiSupplement)
+            if (explicitReceiver != null) {
+                withFirEntry("explicitReceiverFir", explicitReceiver)
+            } else {
+                withEntry("explicitReceiverFir", "null")
+            }
+        }
+
         val dispatchReceiverValue = if (explicitReceiverPsiSupplement != null && explicitReceiver == dispatchReceiver) {
-            explicitReceiverPsiSupplement.toExplicitReceiverValue(dispatchReceiver.resolvedType.asKtType())
+            explicitReceiverPsiSupplement.toExplicitReceiverValue(dispatchReceiver!!.resolvedType.asKtType())
         } else {
-            dispatchReceiver.toKtReceiverValue()
+            dispatchReceiver?.toKtReceiverValue()
         }
         val extensionReceiverValue = if (explicitReceiverPsiSupplement != null && explicitReceiver == extensionReceiver) {
-            explicitReceiverPsiSupplement.toExplicitReceiverValue(extensionReceiver.resolvedType.asKtType())
+            explicitReceiverPsiSupplement.toExplicitReceiverValue(extensionReceiver!!.resolvedType.asKtType())
         } else {
-            extensionReceiver.toKtReceiverValue()
+            extensionReceiver?.toKtReceiverValue()
         }
         val ktSignature = operationSymbol.toKtSignature()
         return KtPartiallyAppliedSymbol(

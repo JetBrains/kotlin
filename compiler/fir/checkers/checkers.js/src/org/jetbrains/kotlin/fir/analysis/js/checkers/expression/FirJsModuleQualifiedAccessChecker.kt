@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessE
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.js.checkers.checkJsModuleUsage
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
@@ -36,7 +35,7 @@ object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker()
         }
 
         return when (val receiver = expression.dispatchReceiver) {
-            is FirNoReceiverExpression -> listOfNotNull(calleeSymbol?.to(expression.calleeReference.source))
+            null -> listOfNotNull(calleeSymbol?.to(expression.calleeReference.source))
             is FirResolvedQualifier -> {
                 val classSymbol = receiver.symbol
                 if (expression is FirCallableReferenceAccess) {

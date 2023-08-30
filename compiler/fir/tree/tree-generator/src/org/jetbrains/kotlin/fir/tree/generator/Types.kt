@@ -56,7 +56,6 @@ val referenceToSimpleExpressionType = generatedType("", "FirExpressionRef<FirExp
 val safeCallCheckedSubjectReferenceType = generatedType("", "FirExpressionRef<FirCheckedSafeCallSubject>")
 
 val firModuleDataType = type("fir", "FirModuleData")
-val noReceiverExpressionType = generatedType("expressions.impl", "FirNoReceiverExpression", firType = true)
 val firImplicitTypeWithoutSourceType = generatedType("types.impl", "FirImplicitTypeRefImplWithoutSource")
 val firQualifierPartType = type("fir.types", "FirQualifierPart")
 val simpleNamedReferenceType = generatedType("references.impl", "FirSimpleNamedReference")

@@ -29,8 +29,8 @@ interface FirQualifiedAccessExpressionBuilder {
     abstract val contextReceiverArguments: MutableList<FirExpression>
     abstract val typeArguments: MutableList<FirTypeProjection>
     abstract var explicitReceiver: FirExpression?
-    abstract var dispatchReceiver: FirExpression
-    abstract var extensionReceiver: FirExpression
+    abstract var dispatchReceiver: FirExpression?
+    abstract var extensionReceiver: FirExpression?
     abstract var source: KtSourceElement?
     abstract val nonFatalDiagnostics: MutableList<ConeDiagnostic>
 

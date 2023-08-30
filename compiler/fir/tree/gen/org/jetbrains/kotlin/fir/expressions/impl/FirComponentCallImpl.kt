@@ -36,8 +36,8 @@ internal class FirComponentCallImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
-    override var dispatchReceiver: FirExpression,
-    override var extensionReceiver: FirExpression,
+    override var dispatchReceiver: FirExpression?,
+    override var extensionReceiver: FirExpression?,
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var argumentList: FirArgumentList,
@@ -55,10 +55,10 @@ internal class FirComponentCallImpl(
         calleeReference.accept(visitor, data)
         explicitReceiver.accept(visitor, data)
         if (dispatchReceiver !== explicitReceiver) {
-            dispatchReceiver.accept(visitor, data)
+            dispatchReceiver?.accept(visitor, data)
         }
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-            extensionReceiver.accept(visitor, data)
+            extensionReceiver?.accept(visitor, data)
         }
     }
 
@@ -70,10 +70,10 @@ internal class FirComponentCallImpl(
         transformCalleeReference(transformer, data)
         explicitReceiver = explicitReceiver.transform(transformer, data)
         if (dispatchReceiver !== explicitReceiver) {
-            dispatchReceiver = dispatchReceiver.transform(transformer, data)
+            dispatchReceiver = dispatchReceiver?.transform(transformer, data)
         }
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-            extensionReceiver = extensionReceiver.transform(transformer, data)
+            extensionReceiver = extensionReceiver?.transform(transformer, data)
         }
         return this
     }
@@ -114,11 +114,11 @@ internal class FirComponentCallImpl(
         typeArguments = newTypeArguments.toMutableOrEmpty()
     }
 
-    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?) {
         dispatchReceiver = newDispatchReceiver
     }
 
-    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
+    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression?) {
         extensionReceiver = newExtensionReceiver
     }
 

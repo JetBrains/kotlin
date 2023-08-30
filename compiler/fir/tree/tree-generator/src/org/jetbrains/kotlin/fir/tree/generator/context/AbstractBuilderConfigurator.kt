@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.tree.generator.context
 
 import org.jetbrains.kotlin.fir.tree.generator.model.*
-import org.jetbrains.kotlin.fir.tree.generator.noReceiverExpressionType
 import org.jetbrains.kotlin.fir.tree.generator.util.DummyDelegate
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -27,9 +26,7 @@ abstract class AbstractBuilderConfigurator<T : AbstractFirTreeBuilder>(val firTr
             if (!notNullExplicitReceiver) {
                 defaultNull("explicitReceiver")
             }
-            default("dispatchReceiver", "FirNoReceiverExpression")
-            default("extensionReceiver", "FirNoReceiverExpression")
-            useTypes(noReceiverExpressionType)
+            defaultNull("dispatchReceiver", "extensionReceiver")
         }
 
         fun default(field: String, value: String) {

@@ -391,7 +391,7 @@ private val FirQualifiedAccessExpression.dispatchedWithoutImport: Boolean
     get() = when {
         isQualifiedWithPackage -> true
         dispatchReceiver is FirThisReceiverExpression -> true
-        dispatchReceiver == explicitReceiver -> true
+        explicitReceiver != null && dispatchReceiver == explicitReceiver -> true
         else -> false
     }
 

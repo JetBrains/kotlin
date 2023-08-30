@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.tree.generator.context
 
 import org.jetbrains.kotlin.fir.tree.generator.constructClassLikeTypeImport
 import org.jetbrains.kotlin.fir.tree.generator.model.*
-import org.jetbrains.kotlin.fir.tree.generator.noReceiverExpressionType
 import org.jetbrains.kotlin.fir.tree.generator.printer.call
 import org.jetbrains.kotlin.fir.tree.generator.standardClassIdsType
 
@@ -109,10 +108,7 @@ abstract class AbstractFirTreeImplementationConfigurator {
         }
 
         fun defaultNoReceivers() {
-            defaultNull("explicitReceiver")
-            default("dispatchReceiver", "FirNoReceiverExpression")
-            default("extensionReceiver", "FirNoReceiverExpression")
-            useTypes(noReceiverExpressionType)
+            defaultNull("explicitReceiver", "dispatchReceiver", "extensionReceiver")
         }
 
         fun default(field: String, value: String) {

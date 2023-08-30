@@ -31,7 +31,7 @@ internal class FirDelegatedConstructorCallImpl(
     override var argumentList: FirArgumentList,
     override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
     override var constructedTypeRef: FirTypeRef,
-    override var dispatchReceiver: FirExpression,
+    override var dispatchReceiver: FirExpression?,
     override var calleeReference: FirReference,
     override val isThis: Boolean,
 ) : FirDelegatedConstructorCall() {
@@ -60,7 +60,7 @@ internal class FirDelegatedConstructorCallImpl(
     }
 
     override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
-        dispatchReceiver = dispatchReceiver.transform(transformer, data)
+        dispatchReceiver = dispatchReceiver?.transform(transformer, data)
         return this
     }
 
@@ -85,7 +85,7 @@ internal class FirDelegatedConstructorCallImpl(
         constructedTypeRef = newConstructedTypeRef
     }
 
-    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?) {
         dispatchReceiver = newDispatchReceiver
     }
 

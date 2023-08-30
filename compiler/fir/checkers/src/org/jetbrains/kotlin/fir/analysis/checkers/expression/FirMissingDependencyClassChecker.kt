@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -48,7 +47,7 @@ object FirMissingDependencyClassChecker : FirFunctionCallChecker() {
         }
 
         expression.coneTypeOrNull?.let(::consider)
-        expression.extensionReceiver.takeIf { it !is FirNoReceiverExpression }?.coneTypeOrNull?.let(::consider)
+        expression.extensionReceiver?.coneTypeOrNull?.let(::consider)
         expression.argumentList.arguments.forEach { it.coneTypeOrNull?.let(::consider) }
     }
 

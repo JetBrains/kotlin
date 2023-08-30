@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -33,9 +32,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 fun ConeKotlinType.canBeUsedForConstVal(): Boolean = with(lowerBoundIfFlexible()) { isPrimitive || isString || isUnsignedType }
 
 internal fun checkConstantArguments(
-    expression: FirExpression,
+    expression: FirExpression?,
     session: FirSession,
 ): ConstantArgumentKind? {
+    if (expression == null) return null
     val expressionSymbol = expression.toReference()?.toResolvedCallableSymbol(discardErrorReference = true)
     val classKindOfParent = (expressionSymbol?.getReferencedClassSymbol(session) as? FirRegularClassSymbol)?.classKind
     val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
@@ -139,7 +139,7 @@ internal fun checkConstantArguments(
             }
 
             for (exp in expression.arguments.plus(expression.dispatchReceiver).plus(expression.extensionReceiver)) {
-                if (exp is FirNoReceiverExpression) continue
+                if (exp == null) continue
                 val expClassId = exp.resolvedType.lowerBoundIfFlexible().classId
                 // TODO, KT-59823: add annotation for allowed constant types
                 if (expClassId !in StandardClassIds.constantAllowedTypes) {
@@ -166,8 +166,7 @@ internal fun checkConstantArguments(
             val property = propertySymbol.fir
             when {
                 property.unwrapFakeOverrides().symbol.canBeEvaluated() || property.isCompileTimeBuiltinProperty() -> {
-                    val receiver =
-                        listOf(expression.dispatchReceiver, expression.extensionReceiver).single { it != FirNoReceiverExpression }
+                    val receiver = listOf(expression.dispatchReceiver, expression.extensionReceiver).single { it != null }!!
                     return checkConstantArguments(receiver, session)
                 }
                 propertySymbol.isLocal || propertySymbol.callableId.className?.isRoot == false -> return ConstantArgumentKind.NOT_CONST
@@ -238,7 +237,7 @@ private fun FirFunctionCall.isCompileTimeBuiltinCall(): Boolean {
     val symbol = calleeReference.resolvedSymbol as? FirCallableSymbol
     if (!symbol.fromKotlin()) return false
 
-    val coneType = this.dispatchReceiver.coneTypeSafe<ConeKotlinType>()
+    val coneType = this.dispatchReceiver?.coneTypeSafe<ConeKotlinType>()
     val receiverClassId = coneType?.lowerBoundIfFlexible()?.classId
 
     if (receiverClassId in StandardClassIds.unsignedTypes) return false

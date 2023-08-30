@@ -26,8 +26,8 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirResolvable, Fi
     abstract override val contextReceiverArguments: List<FirExpression>
     abstract val typeArguments: List<FirTypeProjection>
     abstract val explicitReceiver: FirExpression?
-    abstract val dispatchReceiver: FirExpression
-    abstract val extensionReceiver: FirExpression
+    abstract val dispatchReceiver: FirExpression?
+    abstract val extensionReceiver: FirExpression?
     abstract override val source: KtSourceElement?
     abstract val nonFatalDiagnostics: List<ConeDiagnostic>
 
@@ -49,9 +49,9 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirResolvable, Fi
 
     abstract fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
-    abstract fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+    abstract fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?)
 
-    abstract fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+    abstract fun replaceExtensionReceiver(newExtensionReceiver: FirExpression?)
 
     @FirImplementationDetail
     abstract fun replaceSource(newSource: KtSourceElement?)

@@ -1287,7 +1287,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             .resolveDelegatingConstructorCall(delegatedConstructorCall, constructorType, containingClass.symbol.toLookupTag())
 
         if (reference is FirThisReference && reference.boundSymbol == null) {
-            resolvedCall.dispatchReceiver.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toSymbol(session)?.let {
+            resolvedCall.dispatchReceiver?.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toSymbol(session)?.let {
                 reference.replaceBoundSymbol(it)
             }
         }

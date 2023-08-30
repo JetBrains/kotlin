@@ -102,7 +102,7 @@ internal class KtFirSmartcastProvider(
             KtImplicitReceiverSmartCastKind.EXTENSION -> firExpression.extensionReceiver
         }
 
-        if (receiver == firExpression.explicitReceiver) return null
+        if (receiver == null || receiver == firExpression.explicitReceiver) return null
         if (!receiver.isStableSmartcast()) return null
 
         val type = receiver.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return null

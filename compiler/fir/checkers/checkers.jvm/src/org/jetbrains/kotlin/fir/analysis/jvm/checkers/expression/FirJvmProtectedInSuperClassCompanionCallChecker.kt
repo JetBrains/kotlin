@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -37,7 +36,6 @@ object FirJvmProtectedInSuperClassCompanionCallChecker : FirBasicExpressionCheck
             else -> null
         } ?: return
 
-        if (dispatchReceiver is FirNoReceiverExpression) return
         val dispatchClassSymbol = dispatchReceiver.resolvedType.toRegularClassSymbol(context.session) ?: return
         val calleeReference = expression.calleeReference
         val resolvedSymbol = calleeReference?.toResolvedCallableSymbol() ?: return

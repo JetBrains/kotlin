@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclarati
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.*
@@ -836,9 +835,9 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun FirStatement.orderedArguments(callee: FirFunction): Array<out FirExpression?>? {
-        fun FirQualifiedAccessExpression.firstReceiver(): FirExpression? =
-            (extensionReceiver.takeIf { it != FirNoReceiverExpression }
-                ?: dispatchReceiver.takeIf { it != FirNoReceiverExpression })
+        fun FirQualifiedAccessExpression.firstReceiver(): FirExpression? {
+            return extensionReceiver ?: dispatchReceiver
+        }
 
         val receiver = when (this) {
             is FirQualifiedAccessExpression -> firstReceiver()
@@ -1066,7 +1065,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun exitBooleanNot(flow: MutableFlow, expression: FirFunctionCall) {
-        val argumentVariable = variableStorage.get(flow, expression.dispatchReceiver) ?: return
+        val argumentVariable = variableStorage.get(flow, expression.dispatchReceiver!!) ?: return
         val expressionVariable = variableStorage.createSynthetic(expression)
         // Alternatively: (expression == true => argument == false) && (expression == false => argument == true)
         // Which implementation is faster and/or consumes less memory is an open question.

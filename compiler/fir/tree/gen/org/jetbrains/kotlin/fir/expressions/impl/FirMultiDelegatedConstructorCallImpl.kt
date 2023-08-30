@@ -33,7 +33,7 @@ class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
     override val argumentList: FirArgumentList get() = delegatedConstructorCalls.last().argumentList
     override val contextReceiverArguments: List<FirExpression> get() = delegatedConstructorCalls.last().contextReceiverArguments
     override val constructedTypeRef: FirTypeRef get() = delegatedConstructorCalls.last().constructedTypeRef
-    override val dispatchReceiver: FirExpression get() = delegatedConstructorCalls.last().dispatchReceiver
+    override val dispatchReceiver: FirExpression? get() = delegatedConstructorCalls.last().dispatchReceiver
     override val calleeReference: FirReference get() = delegatedConstructorCalls.last().calleeReference
     override val isThis: Boolean get() = delegatedConstructorCalls.last().isThis
     override val isSuper: Boolean get() = !isThis
@@ -72,7 +72,7 @@ class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
 
     override fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef) {}
 
-    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {}
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?) {}
 
     override fun replaceCalleeReference(newCalleeReference: FirReference) {}
 

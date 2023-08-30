@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -558,18 +557,21 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
 
             var withExtensionFunctionType = false
+
+            val extensionReceiver = call.extensionReceiver
+            val dispatchReceiver = call.dispatchReceiver
             when {
-                call.extensionReceiver !is FirNoReceiverExpression -> {
+                extensionReceiver != null -> {
                     // render type from symbol because this way it will be consistent with psi render
                     fir.receiverParameter?.accept(this, data)
                     data.append(".").append(callableName)
                 }
-                call.dispatchReceiver.resolvedType.isExtensionFunctionType -> {
+                dispatchReceiver?.resolvedType?.isExtensionFunctionType == true-> {
                     withExtensionFunctionType = true
                     fir.valueParameters.first().returnTypeRef.accept(this, data)
                     data.append(".").append(callableName)
                 }
-                call.dispatchReceiver !is FirNoReceiverExpression -> {
+                dispatchReceiver != null -> {
                     data.append("(")
                     val dispatch = fir.dispatchReceiverType!!.tryToRenderConeAsFunctionTypeString()
                         .let { if (it.endsWith("!")) it.dropLast(1) else it } // this hack drop flexible annotation for receiver

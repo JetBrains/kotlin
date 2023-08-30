@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -38,8 +37,8 @@ internal class FirThisReceiverExpressionImpl(
     override val isImplicit: Boolean,
 ) : FirThisReceiverExpression() {
     override var explicitReceiver: FirExpression? = null
-    override var dispatchReceiver: FirExpression = FirNoReceiverExpression
-    override var extensionReceiver: FirExpression = FirNoReceiverExpression
+    override var dispatchReceiver: FirExpression? = null
+    override var extensionReceiver: FirExpression? = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -47,10 +46,10 @@ internal class FirThisReceiverExpressionImpl(
         typeArguments.forEach { it.accept(visitor, data) }
         explicitReceiver?.accept(visitor, data)
         if (dispatchReceiver !== explicitReceiver) {
-            dispatchReceiver.accept(visitor, data)
+            dispatchReceiver?.accept(visitor, data)
         }
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-            extensionReceiver.accept(visitor, data)
+            extensionReceiver?.accept(visitor, data)
         }
         calleeReference.accept(visitor, data)
     }
@@ -61,10 +60,10 @@ internal class FirThisReceiverExpressionImpl(
         transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transform(transformer, data)
         if (dispatchReceiver !== explicitReceiver) {
-            dispatchReceiver = dispatchReceiver.transform(transformer, data)
+            dispatchReceiver = dispatchReceiver?.transform(transformer, data)
         }
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-            extensionReceiver = extensionReceiver.transform(transformer, data)
+            extensionReceiver = extensionReceiver?.transform(transformer, data)
         }
         transformCalleeReference(transformer, data)
         return this
@@ -110,11 +109,11 @@ internal class FirThisReceiverExpressionImpl(
         explicitReceiver = newExplicitReceiver
     }
 
-    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?) {
         dispatchReceiver = newDispatchReceiver
     }
 
-    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
+    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression?) {
         extensionReceiver = newExtensionReceiver
     }
 

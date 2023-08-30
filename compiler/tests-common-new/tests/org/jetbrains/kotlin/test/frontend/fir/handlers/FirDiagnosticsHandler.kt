@@ -212,7 +212,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 val calleeDeclaration = element.calleeReference.toResolvedCallableSymbol() ?: return
                 val isInvokeCallWithDynamicReceiver = calleeDeclaration.name == OperatorNameConventions.INVOKE
                         && element is FirQualifiedAccessExpression
-                        && element.dispatchReceiver.coneTypeOrNull?.isFunctionTypeWithDynamicReceiver(firFile.moduleData.session) == true
+                        && element.dispatchReceiver?.coneTypeOrNull?.isFunctionTypeWithDynamicReceiver(firFile.moduleData.session) == true
 
                 if (calleeDeclaration.origin !is FirDeclarationOrigin.DynamicScope && !isInvokeCallWithDynamicReceiver) {
                     return

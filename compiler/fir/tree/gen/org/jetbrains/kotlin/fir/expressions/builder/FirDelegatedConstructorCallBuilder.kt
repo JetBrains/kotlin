@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirDelegatedConstructorCallImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
@@ -38,7 +37,7 @@ class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContaine
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
     lateinit var constructedTypeRef: FirTypeRef
-    var dispatchReceiver: FirExpression = FirNoReceiverExpression
+    var dispatchReceiver: FirExpression? = null
     lateinit var calleeReference: FirReference
     var isThis: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 

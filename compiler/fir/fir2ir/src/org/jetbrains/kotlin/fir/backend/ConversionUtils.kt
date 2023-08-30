@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -163,7 +162,7 @@ fun FirClassifierSymbol<*>.toSymbol(
 
 context(Fir2IrComponents)
 private fun FirBasedSymbol<*>.toSymbolForCall(
-    dispatchReceiver: FirExpression,
+    dispatchReceiver: FirExpression?,
     preferGetter: Boolean,
     explicitReceiver: FirExpression? = null,
     isDelegate: Boolean = false,
@@ -184,7 +183,7 @@ private fun FirBasedSymbol<*>.toSymbolForCall(
 context(Fir2IrComponents)
 @OptIn(ExperimentalContracts::class)
 fun FirReference.toSymbolForCall(
-    dispatchReceiver: FirExpression,
+    dispatchReceiver: FirExpression?,
     explicitReceiver: FirExpression?,
     preferGetter: Boolean = true,
     isDelegate: Boolean = false,
@@ -220,7 +219,7 @@ private fun FirResolvedQualifier.toLookupTag(session: FirSession): ConeClassLike
 
 context(Fir2IrComponents)
 private fun FirCallableSymbol<*>.toSymbolForCall(
-    dispatchReceiver: FirExpression,
+    dispatchReceiver: FirExpression?,
     preferGetter: Boolean,
     // Note: in fact LHS for callable references and explicit receiver for normal qualified accesses
     explicitReceiver: FirExpression? = null,
@@ -233,7 +232,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
             (dispatchReceiver as? FirResolvedQualifier)?.toLookupTag(session)
         }
         // Member fake override or bound callable reference
-        dispatchReceiver !is FirNoReceiverExpression -> {
+        dispatchReceiver != null -> {
             val callSiteDispatchReceiverType = dispatchReceiver.resolvedType
             val declarationSiteDispatchReceiverType = dispatchReceiverType
             val type = if (callSiteDispatchReceiverType is ConeDynamicType && declarationSiteDispatchReceiverType != null) {

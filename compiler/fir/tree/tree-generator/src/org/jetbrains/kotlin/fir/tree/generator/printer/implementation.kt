@@ -223,7 +223,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                     println(
                                         """
                                     |if (dispatchReceiver !== explicitReceiver) {
-                                    |            dispatchReceiver = dispatchReceiver.transform(transformer, data)
+                                    |            dispatchReceiver = dispatchReceiver?.transform(transformer, data)
                                     |        }
                                 """.trimMargin(),
                                     )
@@ -232,7 +232,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                     println(
                                         """
                                     |if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-                                    |            extensionReceiver = extensionReceiver.transform(transformer, data)
+                                    |            extensionReceiver = extensionReceiver?.transform(transformer, data)
                                     |        }
                                 """.trimMargin(),
                                     )

@@ -39,8 +39,8 @@ internal class FirIntegerLiteralOperatorCallImpl(
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
     override val origin: FirFunctionCallOrigin,
-    override var dispatchReceiver: FirExpression,
-    override var extensionReceiver: FirExpression,
+    override var dispatchReceiver: FirExpression?,
+    override var extensionReceiver: FirExpression?,
 ) : FirIntegerLiteralOperatorCall() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -48,10 +48,10 @@ internal class FirIntegerLiteralOperatorCallImpl(
         typeArguments.forEach { it.accept(visitor, data) }
         explicitReceiver?.accept(visitor, data)
         if (dispatchReceiver !== explicitReceiver) {
-            dispatchReceiver.accept(visitor, data)
+            dispatchReceiver?.accept(visitor, data)
         }
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-            extensionReceiver.accept(visitor, data)
+            extensionReceiver?.accept(visitor, data)
         }
         argumentList.accept(visitor, data)
         calleeReference.accept(visitor, data)
@@ -63,10 +63,10 @@ internal class FirIntegerLiteralOperatorCallImpl(
         transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transform(transformer, data)
         if (dispatchReceiver !== explicitReceiver) {
-            dispatchReceiver = dispatchReceiver.transform(transformer, data)
+            dispatchReceiver = dispatchReceiver?.transform(transformer, data)
         }
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-            extensionReceiver = extensionReceiver.transform(transformer, data)
+            extensionReceiver = extensionReceiver?.transform(transformer, data)
         }
         argumentList = argumentList.transform(transformer, data)
         transformCalleeReference(transformer, data)
@@ -94,12 +94,12 @@ internal class FirIntegerLiteralOperatorCallImpl(
     }
 
     override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCallImpl {
-        dispatchReceiver = dispatchReceiver.transform(transformer, data)
+        dispatchReceiver = dispatchReceiver?.transform(transformer, data)
         return this
     }
 
     override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCallImpl {
-        extensionReceiver = extensionReceiver.transform(transformer, data)
+        extensionReceiver = extensionReceiver?.transform(transformer, data)
         return this
     }
 
@@ -145,11 +145,11 @@ internal class FirIntegerLiteralOperatorCallImpl(
         replaceCalleeReference(newCalleeReference)
     }
 
-    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?) {
         dispatchReceiver = newDispatchReceiver
     }
 
-    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
+    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression?) {
         extensionReceiver = newExtensionReceiver
     }
 }

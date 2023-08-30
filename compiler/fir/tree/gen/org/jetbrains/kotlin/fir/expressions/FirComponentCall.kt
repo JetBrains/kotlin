@@ -25,8 +25,8 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override val annotations: List<FirAnnotation>
     abstract override val contextReceiverArguments: List<FirExpression>
     abstract override val typeArguments: List<FirTypeProjection>
-    abstract override val dispatchReceiver: FirExpression
-    abstract override val extensionReceiver: FirExpression
+    abstract override val dispatchReceiver: FirExpression?
+    abstract override val extensionReceiver: FirExpression?
     abstract override val source: KtSourceElement?
     abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
     abstract override val argumentList: FirArgumentList
@@ -49,9 +49,9 @@ abstract class FirComponentCall : FirFunctionCall() {
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
-    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?)
 
-    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression?)
 
     @FirImplementationDetail
     abstract override fun replaceSource(newSource: KtSourceElement?)

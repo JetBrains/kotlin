@@ -277,7 +277,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
     candidate: Candidate,
     info: CallInfo,
     invokeBuiltinExtensionMode: Boolean,
-    extensionReceiverExpression: FirExpression
+    extensionReceiverExpression: FirExpression?
 ): FirExpression? {
     return when (val symbol = candidate.symbol) {
         is FirCallableSymbol<*> -> createExplicitReceiverForInvokeByCallable(
@@ -300,7 +300,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
     candidate: Candidate,
     info: CallInfo,
     invokeBuiltinExtensionMode: Boolean,
-    extensionReceiverExpression: FirExpression,
+    extensionReceiverExpression: FirExpression?,
     symbol: FirCallableSymbol<*>
 ): FirExpression {
     return FirPropertyAccessExpressionBuilder().apply {

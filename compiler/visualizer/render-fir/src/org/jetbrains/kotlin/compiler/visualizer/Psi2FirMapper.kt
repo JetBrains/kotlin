@@ -25,8 +25,8 @@ class Psi2FirMapper(val map: MutableMap<PsiElement, MutableList<FirElement>>) : 
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {
-        visitElement(callableReferenceAccess.extensionReceiver)
-        visitElement(callableReferenceAccess.dispatchReceiver)
+        callableReferenceAccess.extensionReceiver?.let { visitElement(it) }
+        callableReferenceAccess.dispatchReceiver?.let { visitElement(it) }
         callableReferenceAccess.explicitReceiver?.let { visitElement(it) }
 
         val psi = (callableReferenceAccess.calleeReference.psi as? KtCallableReferenceExpression)?.children?.last()

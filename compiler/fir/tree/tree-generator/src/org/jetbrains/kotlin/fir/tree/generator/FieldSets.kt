@@ -26,8 +26,8 @@ object FieldSets {
     val receivers by lazy {
         fieldSet(
             field("explicitReceiver", expression, nullable = true, withReplace = true).withTransform(),
-            field("dispatchReceiver", expression, withReplace = true),
-            field("extensionReceiver", expression, withReplace = true)
+            field("dispatchReceiver", expression, nullable = true, withReplace = true),
+            field("extensionReceiver", expression, nullable = true, withReplace = true)
         )
     }
 

@@ -158,11 +158,12 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
 
         private fun checkReceiver(
             qualifiedAccessExpression: FirQualifiedAccessExpression,
-            receiverExpression: FirExpression,
+            receiverExpression: FirExpression?,
             targetSymbol: FirBasedSymbol<*>?,
             context: CheckerContext,
             reporter: DiagnosticReporter,
         ) {
+            if (receiverExpression == null) return
             val receiverSymbol = receiverExpression.toResolvedCallableSymbol() ?: return
             if (receiverSymbol in inlinableParameters) {
                 if (!isInvokeOrInlineExtension(targetSymbol)) {
@@ -287,8 +288,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             } as? FirQualifiedAccessExpression ?: return
 
             if (receiver.calleeReference is FirSuperReference) {
-                val dispatchReceiverType = receiver.dispatchReceiver.resolvedType
-                val classSymbol = dispatchReceiverType.toSymbol(session) ?: return
+                val dispatchReceiverType = receiver.dispatchReceiver?.resolvedType
+                val classSymbol = dispatchReceiverType?.toSymbol(session) ?: return
                 if (!classSymbol.isDefinedInInlineFunction()) {
                     reporter.reportOn(
                         receiver.source,

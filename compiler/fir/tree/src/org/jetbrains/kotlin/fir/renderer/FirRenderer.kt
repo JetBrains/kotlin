@@ -662,7 +662,6 @@ class FirRenderer(
                     is FirExpressionStub -> "STUB"
                     is FirUnitExpression -> "Unit"
                     is FirElseIfTrueCondition -> "else"
-                    is FirNoReceiverExpression -> ""
                     else -> "??? ${expression.javaClass}"
                 }
             )
@@ -748,7 +747,7 @@ class FirRenderer(
         override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
             if (delegatedConstructorCall !is FirLazyDelegatedConstructorCall) {
                 val dispatchReceiver = delegatedConstructorCall.dispatchReceiver
-                if (dispatchReceiver !is FirNoReceiverExpression) {
+                if (dispatchReceiver != null) {
                     dispatchReceiver.accept(this)
                     print(".")
                 }
@@ -996,17 +995,17 @@ class FirRenderer(
             val extensionReceiver = qualifiedAccess.extensionReceiver
             var hasSomeReceiver = true
             when {
-                dispatchReceiver !is FirNoReceiverExpression && extensionReceiver !is FirNoReceiverExpression -> {
+                dispatchReceiver != null && extensionReceiver != null -> {
                     print("(")
                     dispatchReceiver.accept(this)
                     print(", ")
                     extensionReceiver.accept(this)
                     print(")")
                 }
-                dispatchReceiver !is FirNoReceiverExpression -> {
+                dispatchReceiver != null -> {
                     dispatchReceiver.accept(this)
                 }
-                extensionReceiver !is FirNoReceiverExpression -> {
+                extensionReceiver != null -> {
                     extensionReceiver.accept(this)
                 }
                 explicitReceiver != null -> {

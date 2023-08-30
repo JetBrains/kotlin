@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
@@ -220,8 +219,9 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         session: FirSession,
         calledDeclarationSymbol: FirCallableSymbol<*>
     ): Triple<FirExpression?, FirExpression?, ConeKotlinType?> {
+        val dispatchReceiver = dispatchReceiver
         if (this is FirImplicitInvokeCall &&
-            dispatchReceiver != FirNoReceiverExpression && dispatchReceiver.resolvedType.isSuspendOrKSuspendFunctionType(session)
+            dispatchReceiver != null && dispatchReceiver.resolvedType.isSuspendOrKSuspendFunctionType(session)
         ) {
             val variableForInvoke = dispatchReceiver
             val variableForInvokeType = variableForInvoke.resolvedType
@@ -237,8 +237,8 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         }
 
         return Triple(
-            dispatchReceiver.takeIf { it !is FirNoReceiverExpression },
-            extensionReceiver.takeIf { it !is FirNoReceiverExpression },
+            dispatchReceiver,
+            extensionReceiver,
             calledDeclarationSymbol.resolvedReceiverTypeRef?.coneType,
         )
     }

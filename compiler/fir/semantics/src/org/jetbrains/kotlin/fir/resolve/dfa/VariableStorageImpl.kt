@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -108,8 +107,8 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         // TODO: don't create receiver variables if not going to create the composed variable either?
         return Identifier(
             symbol,
-            expression?.dispatchReceiver?.takeIf { it != FirNoReceiverExpression }?.let { getOrCreate(flow, it) },
-            expression?.extensionReceiver?.takeIf { it != FirNoReceiverExpression }?.let { getOrCreate(flow, it) }
+            expression?.dispatchReceiver?.let { getOrCreate(flow, it) },
+            expression?.extensionReceiver?.let { getOrCreate(flow, it) }
         )
     }
 

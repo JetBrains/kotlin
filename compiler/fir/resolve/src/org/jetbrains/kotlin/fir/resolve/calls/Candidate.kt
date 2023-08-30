@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.PostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -118,13 +117,13 @@ class Candidate(
     private var sourcesWereUpdated = false
 
     // FirExpressionStub can be located here in case of callable reference resolution
-    fun dispatchReceiverExpression(): FirExpression {
-        return dispatchReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
+    fun dispatchReceiverExpression(): FirExpression? {
+        return dispatchReceiver?.takeIf { it !is FirExpressionStub }
     }
 
     // FirExpressionStub can be located here in case of callable reference resolution
-    fun chosenExtensionReceiverExpression(): FirExpression {
-        return chosenExtensionReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
+    fun chosenExtensionReceiverExpression(): FirExpression? {
+        return chosenExtensionReceiver?.takeIf { it !is FirExpressionStub }
     }
 
     fun contextReceiverArguments(): List<FirExpression> {

@@ -366,7 +366,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         var dispatchReceiverType = dispatchReceiver.resolvedType
         if (dispatchReceiver is FirPropertyAccessExpression && dispatchReceiver.calleeReference is FirSuperReference) {
             // Special 'super' case: type of this, not of super, should be taken for the check below
-            dispatchReceiverType = dispatchReceiver.dispatchReceiver.resolvedType
+            dispatchReceiverType = dispatchReceiver.dispatchReceiver!!.resolvedType
         }
         val typeCheckerState = session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,

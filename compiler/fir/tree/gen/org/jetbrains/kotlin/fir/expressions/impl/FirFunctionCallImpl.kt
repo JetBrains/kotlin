@@ -34,8 +34,8 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
     override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
-    override var dispatchReceiver: FirExpression,
-    override var extensionReceiver: FirExpression,
+    override var dispatchReceiver: FirExpression?,
+    override var extensionReceiver: FirExpression?,
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var argumentList: FirArgumentList,
@@ -48,10 +48,10 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
         typeArguments.forEach { it.accept(visitor, data) }
         explicitReceiver?.accept(visitor, data)
         if (dispatchReceiver !== explicitReceiver) {
-            dispatchReceiver.accept(visitor, data)
+            dispatchReceiver?.accept(visitor, data)
         }
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-            extensionReceiver.accept(visitor, data)
+            extensionReceiver?.accept(visitor, data)
         }
         argumentList.accept(visitor, data)
         calleeReference.accept(visitor, data)
@@ -63,10 +63,10 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
         transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transform(transformer, data)
         if (dispatchReceiver !== explicitReceiver) {
-            dispatchReceiver = dispatchReceiver.transform(transformer, data)
+            dispatchReceiver = dispatchReceiver?.transform(transformer, data)
         }
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-            extensionReceiver = extensionReceiver.transform(transformer, data)
+            extensionReceiver = extensionReceiver?.transform(transformer, data)
         }
         argumentList = argumentList.transform(transformer, data)
         transformCalleeReference(transformer, data)
@@ -113,11 +113,11 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
         explicitReceiver = newExplicitReceiver
     }
 
-    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?) {
         dispatchReceiver = newDispatchReceiver
     }
 
-    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
+    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression?) {
         extensionReceiver = newExtensionReceiver
     }
 

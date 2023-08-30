@@ -39,7 +39,7 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker() {
 
     private fun checkPropertyAsOperator(
         callExpression: FirFunctionCall,
-        receiver: FirExpression,
+        receiver: FirExpression?,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
@@ -48,7 +48,7 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker() {
             sourceKind !is KtFakeSourceElementKind.GeneratedComparisonExpression &&
             sourceKind !is KtFakeSourceElementKind.DesugaredCompoundAssignment
         ) return
-        val unwrapped = receiver.unwrapSmartcastExpression()
+        val unwrapped = receiver?.unwrapSmartcastExpression()
         if (unwrapped !is FirPropertyAccessExpression) return
         val diagnostic = unwrapped.nonFatalDiagnostics.firstIsInstanceOrNull<ConePropertyAsOperator>() ?: return
         reporter.reportOn(callExpression.calleeReference.source, FirErrors.PROPERTY_AS_OPERATOR, diagnostic.symbol, context)

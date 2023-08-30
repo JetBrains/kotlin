@@ -234,8 +234,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         integerLiteralOperatorCall.configure {
             // we need methods for transformation of receivers
-            +field("dispatchReceiver", expression, withReplace = true).withTransform()
-            +field("extensionReceiver", expression, withReplace = true).withTransform()
+            +field("dispatchReceiver", expression, nullable = true, withReplace = true).withTransform()
+            +field("extensionReceiver", expression, nullable = true, withReplace = true).withTransform()
         }
 
         comparisonExpression.configure {
@@ -411,7 +411,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         delegatedConstructorCall.configure {
             +field("constructedTypeRef", typeRef, withReplace = true)
-            +field("dispatchReceiver", expression, withReplace = true).withTransform()
+            +field("dispatchReceiver", expression, nullable = true, withReplace = true).withTransform()
             +field("calleeReference", reference, withReplace = true)
             generateBooleanFields("this", "super")
         }

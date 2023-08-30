@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorLoop
 import org.jetbrains.kotlin.fir.expressions.impl.FirBlockImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.*
@@ -135,9 +134,9 @@ private fun FirExpression.unwrapAndFlattenArgumentTo(list: MutableList<FirExpres
 
 val FirVariableAssignment.explicitReceiver: FirExpression? get() = unwrapLValue()?.explicitReceiver
 
-val FirVariableAssignment.dispatchReceiver: FirExpression get() = unwrapLValue()?.dispatchReceiver ?: FirNoReceiverExpression
+val FirVariableAssignment.dispatchReceiver: FirExpression? get() = unwrapLValue()?.dispatchReceiver
 
-val FirVariableAssignment.extensionReceiver: FirExpression get() = unwrapLValue()?.extensionReceiver ?: FirNoReceiverExpression
+val FirVariableAssignment.extensionReceiver: FirExpression? get() = unwrapLValue()?.extensionReceiver
 
 val FirVariableAssignment.calleeReference: FirReference? get() = lValue.toReference()
 
@@ -160,11 +159,11 @@ fun FirExpression.unwrapSmartcastExpression(): FirExpression =
 
 /**
  * A callable reference is bound iff
- * - one of [dispatchReceiver] or [extensionReceiver] is **not** [FirNoReceiverExpression] and
+ * - one of [dispatchReceiver] or [extensionReceiver] is **not** null and
  * - it's not referring to a static member.
  */
 val FirCallableReferenceAccess.isBound: Boolean
-    get() = (dispatchReceiver != FirNoReceiverExpression || extensionReceiver != FirNoReceiverExpression) &&
+    get() = (dispatchReceiver != null || extensionReceiver != null) &&
             calleeReference.toResolvedCallableSymbol()?.isStatic != true
 
 val FirQualifiedAccessExpression.allReceiverExpressions: List<FirExpression>

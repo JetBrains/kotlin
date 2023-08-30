@@ -31,8 +31,8 @@ abstract class FirIntegerLiteralOperatorCall : FirFunctionCall() {
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirNamedReference
     abstract override val origin: FirFunctionCallOrigin
-    abstract override val dispatchReceiver: FirExpression
-    abstract override val extensionReceiver: FirExpression
+    abstract override val dispatchReceiver: FirExpression?
+    abstract override val extensionReceiver: FirExpression?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitIntegerLiteralOperatorCall(this, data)
 
@@ -61,9 +61,9 @@ abstract class FirIntegerLiteralOperatorCall : FirFunctionCall() {
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
-    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?)
 
-    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall
 

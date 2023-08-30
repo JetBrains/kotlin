@@ -167,7 +167,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
                 if (callableName !in constantIntrinsicCalls) return null
 
                 val dispatchReceiver = qualifiedAccessExpression.dispatchReceiver
-                val dispatchReceiverValue = dispatchReceiver.toConstantValue(data) ?: return null
+                val dispatchReceiverValue = dispatchReceiver?.toConstantValue(data) ?: return null
                 when (callableName) {
                     "toByte" -> ByteValue((dispatchReceiverValue.value as Number).toByte())
                     "toLong" -> LongValue((dispatchReceiverValue.value as Number).toLong())
@@ -284,7 +284,7 @@ internal object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSessio
                 val dispatchReceiver = qualifiedAccessExpression.dispatchReceiver
                 when (symbol.callableId.callableName.asString()) {
                     !in constantIntrinsicCalls -> false
-                    else -> dispatchReceiver.accept(this, data)
+                    else -> dispatchReceiver?.accept(this, data) ?: false
                 }
             }
 
