@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 object FirIncompatibleClassExpressionChecker : FirQualifiedAccessExpressionChecker() {
@@ -51,6 +52,9 @@ object FirIncompatibleClassExpressionChecker : FirQualifiedAccessExpressionCheck
         }
         if (source.isPreReleaseInvisible) {
             reporter.reportOn(element.source, FirErrors.PRE_RELEASE_CLASS, source.presentableString, context)
+        }
+        if (source.abiStability == DeserializedContainerAbiStability.UNSTABLE) {
+            reporter.reportOn(element.source, FirErrors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS, source.presentableString, context)
         }
     }
 }

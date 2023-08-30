@@ -3438,6 +3438,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val presentableString: String
     }
 
+    interface IrWithUnstableAbiCompiledClass : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = IrWithUnstableAbiCompiledClass::class
+        val presentableString: String
+    }
+
     interface OverrideCannotBeStatic : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OverrideCannotBeStatic::class
     }

@@ -343,6 +343,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_A
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_SETTER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IS_ENUM_ENTRY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_MISSING
@@ -2546,7 +2547,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "{0} is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler",
             STRING
         )
+        map.put(
+            IR_WITH_UNSTABLE_ABI_COMPILED_CLASS,
+            "{0} is compiled by an unstable version of the Kotlin compiler and cannot be loaded by this compiler.",
+            STRING
+        )
     }
 }
-
-

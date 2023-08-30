@@ -867,6 +867,7 @@ object FirErrors {
     // Compatibility issues
     val INCOMPATIBLE_CLASS by error2<PsiElement, String, IncompatibleVersionErrorData<*>>()
     val PRE_RELEASE_CLASS by error1<PsiElement, String>()
+    val IR_WITH_UNSTABLE_ABI_COMPILED_CLASS by error1<PsiElement, String>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirErrorsDefaultMessages)

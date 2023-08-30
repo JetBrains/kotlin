@@ -29,7 +29,7 @@ object FirDiagnosticsCompilerResultsReporter {
             AnalyzerWithCompilerReport.reportSpecialErrors(
                 diagnosticsCollector.diagnostics.any { it.factory == FirErrors.INCOMPATIBLE_CLASS },
                 diagnosticsCollector.diagnostics.any { it.factory == FirErrors.PRE_RELEASE_CLASS },
-                hasUnstableClasses = false,     // TODO (KT-61598): report IR_WITH_UNSTABLE_ABI_COMPILED_CLASS
+                diagnosticsCollector.diagnostics.any { it.factory == FirErrors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS },
                 messageCollector,
             )
         }
