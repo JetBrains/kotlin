@@ -567,6 +567,13 @@ class NewConstraintSystemImpl(
             otherVariableWithConstraints.removeConstrains { containsTypeVariable(it.type, freshTypeConstructor) }
         }
 
+//        val substitutorForFixedVariables = typeSubstitutorByTypeConstructor(mapOf(freshTypeConstructor to resultType))
+//
+//        storage.fixedTypeVariables.filter { containsTypeVariable(it.value, freshTypeConstructor) }
+//            .forEach { (otherVariable, otherResultType) ->
+//                storage.fixedTypeVariables[otherVariable] = substitutorForFixedVariables.safeSubstitute(otherResultType)
+//            }
+
         storage.fixedTypeVariables[freshTypeConstructor] = resultType
 
         // Substitute freshly fixed type variable into missed constraints
