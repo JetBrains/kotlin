@@ -258,6 +258,7 @@
 /kotlin-native/common/ Alexander.Shabalin Aleksei.Glushko
 /kotlin-native/runtime/ Alexander.Shabalin Aleksei.Glushko
 /kotlin-native/runtime/src/main/kotlin/ "Kotlin Native" A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
+/kotlin-native/runtime/test "Kotlin Native" A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
 /kotlin-native/runtime/**/*.mm Alexander.Shabalin Aleksei.Glushko Sergey.Bogolepov Svyatoslav.Scherbina
 /kotlin-native/licenses/ "Kotlin Build Infrastructure"
 

@@ -117,9 +117,6 @@ allprojects {
     // backend.native/tests/external
     ext.testOutputExternal = rootProject.file("$testOutputRoot/external")
 
-    // backend.native/tests/stdlib_external
-    ext.testOutputStdlib = rootProject.file("$testOutputRoot/stdlib")
-
     // backend.native/tests/framework
     ext.testOutputFramework = rootProject.file("$testOutputRoot/framework")
 
@@ -129,7 +126,6 @@ allprojects {
     ext.testOutputFileCheck = rootProject.file("$testOutputRoot/filecheck")
 }
 testOutputExternal.mkdirs()
-testOutputStdlib.mkdirs()
 
 konanArtifacts {
     library('testLibrary') {
@@ -2614,21 +2610,6 @@ standaloneTest("unhandled_exception") {
     }
     expectedExitStatusChecker = { it != 0 }
     source = "runtime/exceptions/unhandled_exception.kt"
-}
-
-standaloneTest("runtime_math_exceptions") {
-    source = "stdlib_external/numbers/MathExceptionTest.kt"
-    flags = ['-tr']
-}
-
-standaloneTest("runtime_math") {
-    source = "stdlib_external/numbers/MathTest.kt"
-    flags = ['-tr']
-}
-
-standaloneTest("runtime_math_harmony") {
-    source = "stdlib_external/numbers/HarmonyMathTests.kt"
-    flags = ['-tr']
 }
 
 tasks.register("catch3", KonanLocalTest) {
@@ -5627,26 +5608,6 @@ if (isAppleTarget(project)) {
             opts = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
         }
         swiftSources = ['framework/permanentObjects']
-    }
-}
-
-/**
- * Creates tasks to build and execute Harmony regex tests with GTEST logger.
- */
-KotlinNativeTestKt.createTest(project, 'harmonyRegexTest', KonanGTest) { task ->
-    task.enabled = !isAggressiveGC // TODO: Investigate why too slow
-    task.useFilter = false
-    task.testLogger = KonanTest.Logger.GTEST
-
-    def sources = UtilsKt.getFilesToCompile(project, ["../../../libraries/stdlib/native-wasm/test/harmony_regex"], [])
-
-    konanArtifacts {
-        program('harmonyRegexTest', targets: [target.name]) {
-            srcFiles sources
-            baseDir "$testOutputStdlib/harmonyRegexTest"
-            extraOpts '-tr'
-            extraOpts project.globalTestArgs
-        }
     }
 }
 

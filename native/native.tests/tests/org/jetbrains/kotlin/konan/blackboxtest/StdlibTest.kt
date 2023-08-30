@@ -26,9 +26,8 @@ import org.junit.jupiter.api.TestFactory
         sourceLocations = [
             "libraries/stdlib/test/**.kt",
             "libraries/stdlib/common/test/**.kt",
-            "kotlin-native/backend.native/tests/stdlib_external/text/**.kt",
-            "kotlin-native/backend.native/tests/stdlib_external/utils.kt",
-            "kotlin-native/backend.native/tests/stdlib_external/jsCollectionFactoriesActuals.kt"
+            "libraries/stdlib/native-wasm/test/**.kt",
+            "kotlin-native/runtime/test/**.kt"
         ],
         ignoredTests = [DISABLED_STDLIB_TEST]
     )
@@ -54,9 +53,8 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
         sourceLocations = [
             "libraries/stdlib/test/**.kt",
             "libraries/stdlib/common/test/**.kt",
-            "kotlin-native/backend.native/tests/stdlib_external/text/**.kt",
-            "kotlin-native/backend.native/tests/stdlib_external/utils.kt",
-            "kotlin-native/backend.native/tests/stdlib_external/jsCollectionFactoriesActuals.kt"
+            "libraries/stdlib/native-wasm/test/**.kt",
+            "kotlin-native/runtime/test/**.kt"
         ],
         ignoredTests = [DISABLED_STDLIB_TEST]
     )

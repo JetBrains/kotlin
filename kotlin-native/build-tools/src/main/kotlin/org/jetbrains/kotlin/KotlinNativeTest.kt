@@ -145,64 +145,6 @@ fun <T : KonanTestExecutable> Project.createTest(name: String, type: Class<T>, c
         }
 
 /**
- * Task to run tests compiled with TestRunner.
- * Runs tests with GTEST output and parses it to create statistics info
- */
-open class KonanGTest : KonanTest() {
-    override val outputDirectory = "${project.testOutputStdlib}/$name"
-
-    // Use GTEST logger to parse test results later
-    override var testLogger = Logger.GTEST
-
-    @get:Internal
-    override val executable: String
-        get() = "$outputDirectory/${project.testTarget.name}/$name.${project.testTarget.family.exeSuffix}"
-
-    @Internal
-    var statistics = Statistics()
-
-    @TaskAction
-    override fun run() {
-        doBeforeRun?.execute(this)
-        if (project.compileOnlyTests) {
-            return
-        }
-        runProcess(
-                executor = { project.executor.execute(it) },
-                executable = executable,
-                args = arguments
-        ).run {
-            parse(stdOut)
-            println("""
-                |stdout:
-                |$stdOut
-                |stderr:
-                |$stdErr
-                |exit code: $exitCode
-                """.trimMargin())
-            check(exitCode == 0) { "Test $executable exited with $exitCode" }
-        }
-    }
-
-    private fun parse(output: String) = statistics.apply {
-        Pattern.compile("\\[  PASSED  ] ([0-9]*) tests\\.").matcher(output)
-                .apply { if (find()) pass(group(1).toInt()) }
-
-        Pattern.compile("\\[  FAILED  ] ([0-9]*) tests.*").matcher(output)
-                .apply { if (find()) fail(group(1).toInt()) }
-
-        Pattern.compile("\\[  SKIPPED ] ([0-9]*) test.*").matcher(output)
-                .apply { if (find()) skip(group(1).toInt()) }
-        if (total == 0) {
-            // No test were run. Try to find if we've tried to run something
-            error(Pattern.compile("\\[={10}] Running ([0-9]*) tests from ([0-9]*) test cases\\..*")
-                    .matcher(output)
-                    .run { if (find()) group(1).toInt() else 1 })
-        }
-    }
-}
-
-/**
  * Task to run tests built into a single predefined binary named `localTest`.
  * Note: this task should depend on task that builds a test binary.
  */

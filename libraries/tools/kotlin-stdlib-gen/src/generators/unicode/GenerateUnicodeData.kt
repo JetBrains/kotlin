@@ -147,7 +147,7 @@ fun main(args: Array<String>) {
                 StringLowercaseGenerator(wasmGeneratedDir.resolve("_StringLowercase.kt"), unicodeDataLines, KotlinTarget.WASM)
             )
 
-            val nativeTestDir = baseDir.resolve("kotlin-native/backend.native/tests/stdlib_external/text")
+            val nativeTestDir = baseDir.resolve("kotlin-native/runtime/test/text")
             stringCasingTestGenerator = StringCasingTestGenerator(nativeTestDir)
 
             // For debugging. To see the file content

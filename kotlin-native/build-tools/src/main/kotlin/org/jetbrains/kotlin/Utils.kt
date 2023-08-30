@@ -49,9 +49,6 @@ val Project.testOutputRoot
 val Project.testOutputLocal
     get() = (findProperty("testOutputLocal") as File).toString()
 
-val Project.testOutputStdlib
-    get() = (findProperty("testOutputStdlib") as File).toString()
-
 val Project.testOutputFramework
     get() = (findProperty("testOutputFramework") as File).toString()
 
