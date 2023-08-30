@@ -8,15 +8,16 @@ import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.pages.*
 import org.jsoup.Jsoup
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
-import utils.OnlyDescriptors
-import utils.OnlyDescriptorsMPP
 import utils.TestOutputWriterPlugin
 import utils.assertNotNull
 import java.net.URL
 import java.nio.file.Paths
+import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
+import utils.OnlyDescriptors
+import utils.OnlyDescriptorsMPP
 
 class LinkableContentTest : BaseAbstractTest() {
 
@@ -64,10 +65,10 @@ class LinkableContentTest : BaseAbstractTest() {
 
         testFromData(configuration) {
             documentablesMergingStage = {
-                Assertions.assertEquals(2, it.documentation.size)
-                Assertions.assertEquals(2, it.packages.size)
-                Assertions.assertEquals(1, it.packages.first().documentation.size)
-                Assertions.assertEquals(1, it.packages.last().documentation.size)
+                assertEquals(2, it.documentation.size)
+                assertEquals(2, it.packages.size)
+                assertEquals(1, it.packages.first().documentation.size)
+                assertEquals(1, it.packages.last().documentation.size)
             }
         }
 
@@ -130,14 +131,14 @@ class LinkableContentTest : BaseAbstractTest() {
             renderingStage = { rootPageNode, dokkaContext ->
                 val newRoot = SourceLinksTransformer(dokkaContext).invoke(rootPageNode)
                 val moduleChildren = newRoot.children
-                Assertions.assertEquals(1, moduleChildren.size)
+                assertEquals(1, moduleChildren.size)
                 val packageChildren = moduleChildren.first().children
-                Assertions.assertEquals(2, packageChildren.size)
+                assertEquals(2, packageChildren.size)
                 packageChildren.forEach {
                     val name = it.name.substringBefore("Class")
                     val signature = (it as? ClasslikePageNode)?.content?.dfs { it is ContentGroup && it.dci.kind == ContentKind.Symbol }.assertNotNull("signature")
                     val crl = signature.children.last().children[1] as? ContentResolvedLink
-                    Assertions.assertEquals(
+                    assertEquals(
                         "https://github.com/user/repo/tree/master/src/${name.toLowerCase()}Main/kotlin/${name}Class.kt#L3",
                         crl?.address
                     )
@@ -193,13 +194,13 @@ class LinkableContentTest : BaseAbstractTest() {
 //                val newRoot = DefaultSamplesTransformer(dokkaContext).invoke(rootPageNode)
                 val newRoot = rootPageNode
                 val moduleChildren = newRoot.children
-                Assertions.assertEquals(1, moduleChildren.size)
+                assertEquals(1, moduleChildren.size)
                 val packageChildren = moduleChildren.first().children
-                Assertions.assertEquals(2, packageChildren.size)
+                assertEquals(2, packageChildren.size)
                 packageChildren.forEach { pageNode ->
                     val name = pageNode.name.substringBefore("Class")
                     val classChildren = pageNode.children
-                    Assertions.assertEquals(2, classChildren.size)
+                    assertEquals(2, classChildren.size)
                     val function = classChildren.find { it.name == "printWithExclamation" }
                     val text = (function as MemberPageNode).content.let { it as ContentGroup }.children.last()
                         .let { it as ContentDivergentGroup }.children.single().after
@@ -207,7 +208,7 @@ class LinkableContentTest : BaseAbstractTest() {
                         .let { it as ContentGroup }.children.single()
                         .let { it as ContentCodeBlock }.children.single()
                         .let { it as ContentText }.text
-                    Assertions.assertEquals(
+                    assertEquals(
                         """|import p2.${name}Class
                                 |fun main() { 
                                 |   //sampleStart 
@@ -262,7 +263,7 @@ class LinkableContentTest : BaseAbstractTest() {
                     child?.text == "S"
                 } as? ContentDRILink
 
-                Assertions.assertEquals(
+                assertEquals(
                     (sample.documentables.firstOrNull() as WithGenerics).generics.first().dri,
                     returnTypeNode?.address
                 )
@@ -300,7 +301,7 @@ class LinkableContentTest : BaseAbstractTest() {
 
         testFromData(configuration) {
             documentablesMergingStage = {
-                Assertions.assertNotEquals(null, it.packages.first().documentation.values.single().dfs {
+                assertNotEquals(null, it.packages.first().documentation.values.single().dfs {
                     (it as? Text)?.body?.contains("@SqlTable") ?: false
                 })
             }
@@ -354,20 +355,18 @@ class LinkableContentTest : BaseAbstractTest() {
 
         testFromData(configuration) {
             documentablesMergingStage = { module ->
-                module.documentation.entries.single {
+                val value = module.documentation.entries.single {
                     it.key.displayName == "jvm"
-                }.value.run {
-                    Assertions.assertNotNull(dfs {
-                        (it as? Text)?.body == "This is second JVM documentation for module example"
-                    })
+                }.value
+                assertNotNull(value.dfs {
+                    (it as? Text)?.body == "This is second JVM documentation for module example"
+                })
 
-                    Assertions.assertNotNull(dfs {
-                        (it as? Text)?.body == "This is JVM documentation for module example"
-                    })
-                }
+                assertNotNull(value.dfs {
+                    (it as? Text)?.body == "This is JVM documentation for module example"
+                })
             }
         }
-
     }
 
     @Test

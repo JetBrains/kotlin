@@ -2,8 +2,12 @@ package model
 
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
-import org.junit.jupiter.api.Test
-import utils.*
+import utils.AbstractModelTest
+import utils.assertNotNull
+import utils.comments
+import utils.OnlyDescriptors
+import utils.name
+import kotlin.test.Test
 
 class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "function") {
 

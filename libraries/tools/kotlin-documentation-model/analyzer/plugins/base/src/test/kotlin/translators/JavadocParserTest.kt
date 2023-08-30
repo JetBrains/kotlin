@@ -7,10 +7,10 @@ import org.jetbrains.dokka.model.childrenOfType
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.firstChildOfType
 import org.jetbrains.dokka.model.firstMemberOfType
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
-import utils.JavaCode
 import utils.text
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import utils.JavaCode
 
 @JavaCode
 class JavadocParserTest : BaseAbstractTest() {

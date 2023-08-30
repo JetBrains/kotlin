@@ -6,12 +6,11 @@ import org.jetbrains.dokka.model.Annotations
 import org.jetbrains.dokka.model.InheritedMember
 import org.jetbrains.dokka.model.IsVar
 import org.jetbrains.dokka.model.isJvmField
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Test
-import utils.JavaCode
+import kotlin.test.Test
 import kotlin.test.assertEquals
-
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import utils.JavaCode
 
 @JavaCode
 class PsiSuperFieldsTest : BaseAbstractTest() {

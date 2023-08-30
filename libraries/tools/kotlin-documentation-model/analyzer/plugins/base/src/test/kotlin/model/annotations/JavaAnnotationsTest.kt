@@ -2,13 +2,9 @@ package model.annotations
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.*
-import org.junit.jupiter.api.Test
 import translators.findClasslike
+import kotlin.test.*
 import utils.JavaCode
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 @JavaCode
 class JavaAnnotationsTest : BaseAbstractTest() {

@@ -1,9 +1,9 @@
 package filter
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class EmptyPackagesFilterTest : BaseAbstractTest() {
     @Test
@@ -28,7 +28,7 @@ class EmptyPackagesFilterTest : BaseAbstractTest() {
             configuration
         ) {
             preMergeDocumentablesTransformationStage = {
-                Assertions.assertTrue(
+                assertTrue(
                     it.first().packages.isNotEmpty()
                 )
             }

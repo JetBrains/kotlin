@@ -7,13 +7,9 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.Test
-import utils.OnlyDescriptors
 import utils.text
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
+import utils.OnlyDescriptors
 
 class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
@@ -60,16 +56,17 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
             configuration
         ) {
             documentablesMergingStage = { module ->
-                assert(module.documentationOf("XD", "copy") == "")
-                assert(
+                assertEquals("", module.documentationOf("XD", "copy"))
+                assertEquals(
+                    "Memory is not what the heart desires. That is only a mirror.",
                     module.documentationOf(
                         "XD",
                         "equals"
-                    ) == "Memory is not what the heart desires. That is only a mirror."
+                    )
                 )
-                assert(module.documentationOf("XD", "hashCode") == "")
-                assert(module.documentationOf("XD", "toString") == "")
-                assert(module.documentationOf("XD", "custom") == "But the fat Hobbit, he knows. Eyes always watching.")
+                assertEquals("", module.documentationOf("XD", "hashCode"))
+                assertEquals("", module.documentationOf("XD", "toString"))
+                assertEquals("But the fat Hobbit, he knows. Eyes always watching.", module.documentationOf("XD", "custom"))
             }
         }
     }
@@ -98,12 +95,13 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
             configuration
         ) {
             documentablesMergingStage = { module ->
-                assert(module.documentationOf("XD", "custom") == "But the fat Hobbit, he knows. Eyes always watching.")
-                assert(
+                assertEquals("But the fat Hobbit, he knows. Eyes always watching.", module.documentationOf("XD", "custom"))
+                assertEquals(
+                    "Memory is not what the heart desires. That is only a mirror.",
                     module.documentationOf(
                         "XD",
                         "equals"
-                    ) == "Memory is not what the heart desires. That is only a mirror."
+                    )
                 )
             }
         }
@@ -656,7 +654,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
         }
     }
 
-    @Disabled // The compiler throws away annotations on unresolved types upstream
+    @Ignore // The compiler throws away annotations on unresolved types upstream
     @Test
     fun `Can annotate unresolved type`() {
         testInline(
@@ -813,7 +811,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                 val testFunction = module.packages.find { it.name == "com.example" }
                     ?.functions
                     ?.single { it.name == "foo" }
-                checkNotNull(testFunction)
+                assertNotNull(testFunction)
 
                 val documentationTags = testFunction.documentation.values.single().children
                 assertEquals(7, documentationTags.size)
@@ -873,7 +871,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                 val kotlinEnum = module.packages.find { it.name == "test" }
                     ?.classlikes
                     ?.single { it.name == "KotlinEnum" }
-                checkNotNull(kotlinEnum)
+                assertNotNull(kotlinEnum)
                 val valuesFunction = kotlinEnum.functions.single { it.name == "values" }
 
                 val expectedValuesType = GenericTypeConstructor(
@@ -936,7 +934,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                     ?.classlikes
                     ?.single { it.name == "KotlinEnum" }
 
-                checkNotNull(kotlinEnum)
+                assertNotNull(kotlinEnum)
 
                 val entriesProperty = kotlinEnum.properties.single { it.name == "entries" }
                 val expectedEntriesType = GenericTypeConstructor(
@@ -999,7 +997,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                 val kotlinEnum = module.packages.find { it.name == "test" }
                     ?.classlikes
                     ?.single { it.name == "KotlinEnum" }
-                checkNotNull(kotlinEnum)
+                assertNotNull(kotlinEnum)
 
                 val expectedValueOfType = GenericTypeConstructor(
                     dri = DRI(
@@ -1067,9 +1065,9 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                 val pckg = module.packages.single { it.name == "test" }
 
                 val dataObject = pckg.classlikes.single { it.name == "KotlinDataObject" }
-                assertInstanceOf(DObject::class.java, dataObject)
+                assertTrue(dataObject is DObject)
 
-                val modifiers = (dataObject as DObject).modifiers().values.flatten()
+                val modifiers = dataObject.modifiers().values.flatten()
                 assertEquals(1, modifiers.size)
                 assertEquals(ExtraModifiers.KotlinOnlyModifiers.Data, modifiers[0])
             }

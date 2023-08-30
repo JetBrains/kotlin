@@ -10,12 +10,14 @@ import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
 import signatures.renderedContent
 import utils.TestOutputWriter
 import utils.TestOutputWriterPlugin
 import java.net.URL
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class KotlinEnumsTest : BaseAbstractTest() {
 

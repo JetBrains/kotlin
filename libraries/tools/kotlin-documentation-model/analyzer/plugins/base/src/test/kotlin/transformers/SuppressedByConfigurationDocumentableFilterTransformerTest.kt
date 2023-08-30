@@ -4,9 +4,8 @@ import org.jetbrains.dokka.DokkaDefaults
 import org.jetbrains.dokka.PackageOptionsImpl
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertIterableEquals
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class SuppressedByConfigurationDocumentableFilterTransformerTest : BaseAbstractTest() {
 
@@ -90,7 +89,7 @@ class SuppressedByConfigurationDocumentableFilterTransformerTest : BaseAbstractT
         ) {
             documentablesMergingStage = { module ->
                 assertEquals(2, module.packages.size, "Expected two packages in module")
-                assertIterableEquals(
+                assertEquals(
                     listOf(DRI("parent.some"), DRI("parent.other.default")).sortedBy { it.packageName },
                     module.packages.map { it.dri }.sortedBy { it.packageName },
                     "Expected 'parent.some' and 'parent.other.default' packages to be not suppressed"

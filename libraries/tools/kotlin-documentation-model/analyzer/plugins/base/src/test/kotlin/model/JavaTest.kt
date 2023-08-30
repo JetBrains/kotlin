@@ -7,11 +7,14 @@ import org.jetbrains.dokka.links.*
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.Param
 import org.jetbrains.dokka.model.doc.Text
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
-import utils.*
+import utils.AbstractModelTest
 import utils.assertContains
+import utils.assertNotNull
+import utils.name
+import utils.JavaCode
+import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @JavaCode
 class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
@@ -464,17 +467,17 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
                     when (function.name) {
                         "superBound" -> {
                             assertTrue(variance is Contravariance<*>)
-                            val bound = (variance as Contravariance<*>).inner
+                            val bound = variance.inner
                             assertEquals((bound as GenericTypeConstructor).dri.classNames, "String")
                         }
                         "extendsBound" -> {
                             assertTrue(variance is Covariance<*>)
-                            val bound = (variance as Covariance<*>).inner
+                            val bound = variance.inner
                             assertEquals((bound as GenericTypeConstructor).dri.classNames, "String")
                         }
                         "unbounded" -> {
                             assertTrue(variance is Covariance<*>)
-                            val bound = (variance as Covariance<*>).inner
+                            val bound = variance.inner
                             assertTrue(bound is JavaObject)
                         }
                     }
