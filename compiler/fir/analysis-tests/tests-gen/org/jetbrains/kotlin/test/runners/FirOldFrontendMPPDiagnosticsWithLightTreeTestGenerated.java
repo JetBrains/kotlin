@@ -1083,6 +1083,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
         public void testKt45796() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/kt45796.kt");
         }
+
+        @Test
+        @TestMetadata("sealedHierarchyInBambooMppStructure.kt")
+        public void testSealedHierarchyInBambooMppStructure() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/sealedHierarchyInBambooMppStructure.kt");
+        }
     }
 
     @Nested

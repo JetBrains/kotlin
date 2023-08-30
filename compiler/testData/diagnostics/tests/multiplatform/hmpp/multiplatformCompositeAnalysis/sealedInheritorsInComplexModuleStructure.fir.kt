@@ -12,7 +12,7 @@ expect sealed class SealedWithPlatformActuals : SealedWithSharedActual
 package foo
 
 actual sealed class SealedWithSharedActual
-class SimpleShared : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE, UNRESOLVED_REFERENCE!>SealedWithPlatformActuals<!>()
+class SimpleShared : <!UNRESOLVED_REFERENCE!>SealedWithPlatformActuals<!>()
 
 // MODULE: main()()(intermediate)
 // TARGET_PLATFORM: JVM
