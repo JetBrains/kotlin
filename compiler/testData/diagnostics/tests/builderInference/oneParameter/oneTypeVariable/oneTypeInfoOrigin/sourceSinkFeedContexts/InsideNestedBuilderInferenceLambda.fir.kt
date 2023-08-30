@@ -38,23 +38,23 @@ class Placeholder
 // test 1: PTV is in consuming position (yield-case)
 fun testYield() {
     val arg: UserKlass = UserKlass()
-    val buildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    val buildee = build {
         nestedBuild {
             yield(arg)
             nestedYield(Placeholder())
         }
     }
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>checkExactType<!><<!CANNOT_INFER_PARAMETER_TYPE!>Buildee<UserKlass><!>>(buildee)
+    checkExactType<Buildee<UserKlass>>(buildee)
 }
 
 // test 2: PTV is in producing position (materialize-case)
 fun testMaterialize() {
     fun consume(arg: UserKlass) {}
-    val buildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    val buildee = build {
         nestedBuild {
             consume(materialize())
             nestedYield(Placeholder())
         }
     }
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>checkExactType<!><<!CANNOT_INFER_PARAMETER_TYPE!>Buildee<UserKlass><!>>(buildee)
+    checkExactType<Buildee<UserKlass>>(buildee)
 }

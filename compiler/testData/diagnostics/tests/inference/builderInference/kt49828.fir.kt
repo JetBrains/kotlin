@@ -141,7 +141,7 @@ fun main() {
     }
     val list12 = buildList {
         add("one")
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo00<!>(get(0), 0f)
+        foo00(get(0), 0f)
     }
 
     // Below are multi-arguments resolution ambiguities
@@ -161,14 +161,14 @@ fun main() {
         add("one")
 
         with (get(0)) {
-            foo0003(0f, <!ARGUMENT_TYPE_MISMATCH!>this@l1.get(0)<!>)
+            foo0003(0f, this@l1.get(0))
         }
     }
 
     val list18 = buildList {
         add("one")
 
-        get(0).foo0003(0f, <!ARGUMENT_TYPE_MISMATCH!>get(0)<!>)
+        get(0).foo0003(0f, get(0))
     }
 
     val map1 = buildMap {
@@ -181,13 +181,13 @@ fun main() {
     val list15 = buildList {
         add("one")
 
-        <!NONE_APPLICABLE!>foo0001<!>(get(0), 0f, get(0))
+        foo0001(get(0), 0f, get(0))
     }
 
     val list16 = buildList {
         add("one")
 
-        <!NONE_APPLICABLE!>foo0002<!>(get(0), 0f, get(0))
+        foo0002(get(0), 0f, get(0))
     }
 }
 

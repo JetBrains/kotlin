@@ -15,6 +15,6 @@ fun <K2> myBuilder2(builder: Foo<K2>.() -> Unit): Foo<K2> = Foo<K2>().apply(buil
 val result1 = myBuilder1 {
     add(null)
     myBuilder2 {
-        add(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
+        add("")
     }
 }
