@@ -215,7 +215,8 @@ class DeclarationGenerator(
         val struct = WasmStructDeclaration(
             name = "classITable",
             fields = fields,
-            superType = null
+            superType = null,
+            isFinal = true,
         )
 
         iFacesUnion.forEach {
@@ -227,6 +228,7 @@ class DeclarationGenerator(
         methods: List<VirtualMethodMetadata>,
         name: String,
         superType: WasmSymbolReadOnly<WasmTypeDeclaration>? = null,
+        isFinal: Boolean,
     ): WasmStructDeclaration {
         val tableFields = methods.map {
             WasmStructFieldDeclaration(
@@ -240,6 +242,7 @@ class DeclarationGenerator(
             name = name,
             fields = tableFields,
             superType = superType,
+            isFinal = isFinal
         )
     }
 
@@ -250,7 +253,8 @@ class DeclarationGenerator(
         val vtableStruct = createVirtualTableStruct(
             metadata.virtualMethods,
             vtableName,
-            superType = metadata.superClass?.klass?.symbol?.let(context::referenceVTableGcType)
+            superType = metadata.superClass?.klass?.symbol?.let(context::referenceVTableGcType),
+            isFinal = klass.modality == Modality.FINAL
         )
         context.defineVTableGcType(metadata.klass.symbol, vtableStruct)
 
@@ -357,7 +361,8 @@ class DeclarationGenerator(
             if (symbol in hierarchyDisjointUnions) {
                 val vtableStruct = createVirtualTableStruct(
                     methods = context.getInterfaceMetadata(symbol).methods,
-                    name = "$nameStr.itable"
+                    name = "$nameStr.itable",
+                    isFinal = true,
                 )
                 context.defineVTableGcType(symbol, vtableStruct)
             }
@@ -384,7 +389,8 @@ class DeclarationGenerator(
             val structType = WasmStructDeclaration(
                 name = nameStr,
                 fields = fields,
-                superType = superClass?.let { context.referenceGcType(superClass.klass.symbol) }
+                superType = superClass?.let { context.referenceGcType(superClass.klass.symbol) },
+                isFinal = declaration.modality == Modality.FINAL
             )
             context.defineGcType(symbol, structType)
             context.generateTypeInfo(symbol, binaryDataStruct(metadata))

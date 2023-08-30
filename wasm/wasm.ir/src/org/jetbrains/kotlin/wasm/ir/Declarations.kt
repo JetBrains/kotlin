@@ -155,7 +155,8 @@ data class WasmFunctionType(
 class WasmStructDeclaration(
     name: String,
     val fields: List<WasmStructFieldDeclaration>,
-    val superType: WasmSymbolReadOnly<WasmTypeDeclaration>?
+    val superType: WasmSymbolReadOnly<WasmTypeDeclaration>?,
+    val isFinal: Boolean
 ) : WasmTypeDeclaration(name)
 
 class WasmArrayDeclaration(

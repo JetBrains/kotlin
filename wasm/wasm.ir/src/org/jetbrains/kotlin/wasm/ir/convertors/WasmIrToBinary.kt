@@ -62,8 +62,8 @@ class WasmIrToBinary(
     private var b: ByteWriter = ByteWriter.OutputStream(outputStream)
 
     // "Stack" of offsets waiting initialization. 
-    // Since blocks has as a prefix variable length number encoding its size we can't calculate absolute offsets inside those blocks 
-    // until we generate whole block and generate size. So, we put them into "stack" and initialize as soo as we have all required data.
+    // Since blocks have as a prefix variable length number encoding its size, we can't calculate absolute offsets inside those blocks
+    // until we generate the whole block and generate size. So, we put them into "stack" and initialize as soon as we have all required data.
     private var offsets = persistentListOf<Box>()
 
     fun appendWasmModule() {
@@ -76,7 +76,7 @@ class WasmIrToBinary(
                 val numRecGroups = if (recGroupTypes.isEmpty()) 0 else 1
                 appendVectorSize(functionTypes.size + numRecGroups)
                 functionTypes.forEach { appendFunctionTypeDeclaration(it) }
-                if (!recGroupTypes.isEmpty()) {
+                if (recGroupTypes.isNotEmpty()) {
                     b.writeVarInt7(WasmBinary.REC_GROUP)
                     appendVectorSize(recGroupTypes.size)
                     recGroupTypes.forEach {
@@ -361,14 +361,26 @@ class WasmIrToBinary(
     }
 
     private fun appendStructTypeDeclaration(type: WasmStructDeclaration) {
-        b.writeVarInt7(WasmBinary.SUB_TYPE)
-
         val superType = type.superType
-        if (superType != null) {
-            appendVectorSize(1)
-            appendModuleFieldReference(superType.owner)
+
+        // https://webassembly.github.io/gc/core/binary/types.html#binary-subtype
+        if (superType == null && type.isFinal) {
+            // Short encoding form for final types without subtypes.
         } else {
-            appendVectorSize(0)
+            // General encoding
+            b.writeVarInt7(
+                if (type.isFinal)
+                    WasmBinary.SUB_FINAL_TYPE
+                else
+                    WasmBinary.SUB_TYPE
+            )
+
+            if (superType != null) {
+                appendVectorSize(1)
+                appendModuleFieldReference(superType.owner)
+            } else {
+                appendVectorSize(0)
+            }
         }
 
         b.writeVarInt7(WasmBinary.STRUCT_TYPE)
