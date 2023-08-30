@@ -31,28 +31,12 @@ import org.junit.jupiter.api.TestFactory
             "kotlin-native/backend.native/tests/stdlib_external/jsCollectionFactoriesActuals.kt"
         ],
         ignoredTests = [DISABLED_STDLIB_TEST]
-    ),
-    TC(
-        name = "worker",
-        runnerType = TestRunnerType.WORKER,
-        freeCompilerArgs = [ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL],
-        sourceLocations = [
-            "libraries/stdlib/test/**.kt",
-            "libraries/stdlib/common/test/**.kt",
-            "kotlin-native/backend.native/tests/stdlib_external/text/**.kt",
-            "kotlin-native/backend.native/tests/stdlib_external/utils.kt",
-            "kotlin-native/backend.native/tests/stdlib_external/jsCollectionFactoriesActuals.kt"
-        ],
-        ignoredTests = [DISABLED_STDLIB_TEST]
     )
 )
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class StdlibTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
-
-    @TestFactory
-    fun worker() = dynamicTestCase(TestCaseId.Named("worker"))
 }
 
 @Tag("stdlib")
@@ -78,27 +62,6 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
             DISABLED_K2_ARRAYS,
         ],
         ignoredTests = [DISABLED_STDLIB_TEST]
-    ),
-    TC(
-        name = "worker",
-        runnerType = TestRunnerType.WORKER,
-        freeCompilerArgs = [ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL,
-            "-Xcommon-sources=libraries/stdlib/common/test/jsCollectionFactories.kt",
-            "-Xcommon-sources=libraries/stdlib/common/test/testUtils.kt",
-            "-Xcommon-sources=libraries/stdlib/test/testUtils.kt",
-            "-Xcommon-sources=libraries/stdlib/test/text/StringEncodingTest.kt",
-        ],
-        sourceLocations = [
-            "libraries/stdlib/test/**.kt",
-            "libraries/stdlib/common/test/**.kt",
-            "kotlin-native/backend.native/tests/stdlib_external/text/**.kt",
-            "kotlin-native/backend.native/tests/stdlib_external/utils.kt",
-            "kotlin-native/backend.native/tests/stdlib_external/jsCollectionFactoriesActuals.kt"
-        ],
-        ignoredFiles = [
-            DISABLED_K2_ARRAYS,
-        ],
-        ignoredTests = [DISABLED_STDLIB_TEST]
     )
 )
 @FirPipeline
@@ -106,9 +69,6 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
 class FirStdlibTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
-
-    @TestFactory
-    fun worker() = dynamicTestCase(TestCaseId.Named("worker"))
 }
 
 private const val ENABLE_MPP = "-Xmulti-platform"

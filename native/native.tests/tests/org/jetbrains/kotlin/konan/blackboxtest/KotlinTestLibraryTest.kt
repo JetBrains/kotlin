@@ -21,21 +21,12 @@ import org.junit.jupiter.api.TestFactory
         runnerType = TestRunnerType.DEFAULT,
         freeCompilerArgs = [STDLIB_IS_A_FRIEND],
         sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
-    ),
-    TC(
-        name = "worker",
-        runnerType = TestRunnerType.WORKER,
-        freeCompilerArgs = [STDLIB_IS_A_FRIEND],
-        sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
     )
 )
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
-
-    @TestFactory
-    fun worker() = dynamicTestCase(TestCaseId.Named("worker"))
 }
 
 @Tag("kotlin-test")
@@ -46,12 +37,6 @@ class KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
         runnerType = TestRunnerType.DEFAULT,
         freeCompilerArgs = [STDLIB_IS_A_FRIEND],
         sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
-    ),
-    TC(
-        name = "worker",
-        runnerType = TestRunnerType.WORKER,
-        freeCompilerArgs = [STDLIB_IS_A_FRIEND],
-        sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
     )
 )
 @FirPipeline
@@ -59,7 +44,4 @@ class KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
 class FirKotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
-
-    @TestFactory
-    fun worker() = dynamicTestCase(TestCaseId.Named("worker"))
 }
