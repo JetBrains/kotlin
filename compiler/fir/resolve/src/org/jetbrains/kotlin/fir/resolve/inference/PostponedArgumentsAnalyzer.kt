@@ -244,7 +244,7 @@ fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
     csBuilder: ConstraintSystemBuilder,
     context: ResolutionContext,
     expectedType: ConeKotlinType? = null,
-    returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
+    returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null,
 ): ResolvedLambdaAtom {
     val fixedExpectedType = (csBuilder.buildCurrentSubstitutor() as ConeSubstitutor)
         .substituteOrSelf(expectedType ?: this.expectedType)
