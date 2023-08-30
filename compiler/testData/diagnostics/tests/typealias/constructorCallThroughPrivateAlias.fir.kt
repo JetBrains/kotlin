@@ -26,7 +26,7 @@ import _
 
 fun baz() {
     a.A1("") // resolved to B constructor, OK
-    a.A2("") // resolved to B constructor, INVISIBLE_MEMBER because type alias is private, OK
+    a.<!INVISIBLE_REFERENCE!>A2<!>("") // resolved to B constructor, INVISIBLE_MEMBER because type alias is private, OK
 
     a.A3("") checkType { _<String>() }
 

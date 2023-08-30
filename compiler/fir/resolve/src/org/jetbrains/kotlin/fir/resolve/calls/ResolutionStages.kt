@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.hasBuilderInferenceAnnotation
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -577,6 +578,13 @@ internal object CheckVisibility : CheckerStage() {
                     dispatchReceiver = null
                 )
                 if (!visible) {
+                    sink.yieldDiagnostic(VisibilityError)
+                }
+            }
+
+            val typeAlias = declaration.typeAliasForConstructor
+            if (typeAlias != null) {
+                if (!visibilityChecker.isVisible(typeAlias.fir, candidate)) {
                     sink.yieldDiagnostic(VisibilityError)
                 }
             }
