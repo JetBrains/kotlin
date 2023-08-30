@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -651,9 +651,7 @@ fun KtNamedDeclaration.safeNameForLazyResolve(): Name {
     return nameAsName.safeNameForLazyResolve()
 }
 
-fun Name?.safeNameForLazyResolve(): Name {
-    return SpecialNames.safeIdentifier(this)
-}
+fun Name?.safeNameForLazyResolve(): Name = this?.takeUnless(Name::isSpecial) ?: SpecialNames.NO_NAME_PROVIDED
 
 fun KtNamedDeclaration.safeFqNameForLazyResolve(): FqName? {
     //NOTE: should only create special names for package level declarations, so we can safely rely on real fq name for parent

@@ -15,5 +15,3 @@ package one.two
     /* ClassId: one/two/B.<no name provided> */object
     /* ClassId: one/two/B.<no name provided> */typealias
 }
-
-// IGNORE_CONSISTENCY_CHECK: KTIJ-26848
