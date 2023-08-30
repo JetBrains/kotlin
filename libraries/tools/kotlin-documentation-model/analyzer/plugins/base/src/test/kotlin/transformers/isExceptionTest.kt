@@ -3,8 +3,8 @@ package transformers
 import org.jetbrains.dokka.base.transformers.documentables.isException
 import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.model.DTypeAlias
-import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
+import kotlin.test.Test
 import utils.JavaCode
 import utils.UsingJDK
 
@@ -148,3 +148,4 @@ class IsExceptionJavaTest: AbstractModelTest("/src/main/kotlin/java/Test.java", 
         }
     }
 }
+

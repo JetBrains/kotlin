@@ -3,8 +3,9 @@ package expectActuals
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.withDescendants
 import org.jetbrains.dokka.pages.ClasslikePageNode
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 
 class ExpectActualsTest : BaseAbstractTest() {
@@ -146,25 +147,28 @@ class ExpectActualsTest : BaseAbstractTest() {
                 val commonN1 = allChildren.filter { it.name == "[mingwX64, linuxX64]A" }
                 val commonN2 = allChildren.filter { it.name == "[iosX64, iosArm64]A" }
                 val noClass = allChildren.filter { it.name == "A" }
-                assertTrue(commonJ.size == 1) { "There can be only one [jvm, js]A page" }
+                assertEquals(1, commonJ.size, "There can be only one [jvm, js]A page")
                 assertTrue(
                     commonJ.first().documentables.firstOrNull()?.sourceSets?.map { it.displayName }
-                        ?.containsAll(listOf("commonJ", "js", "jvm")) ?: false
-                ) { "A(jvm, js)should have commonJ, js, jvm sources" }
+                        ?.containsAll(listOf("commonJ", "js", "jvm")) ?: false,
+                    "A(jvm, js)should have commonJ, js, jvm sources"
+                )
 
-                assertTrue(commonN1.size == 1) { "There can be only one [mingwX64, linuxX64]A page" }
+                assertEquals(1, commonN1.size, "There can be only one [mingwX64, linuxX64]A page")
                 assertTrue(
                     commonN1.first().documentables.firstOrNull()?.sourceSets?.map { it.displayName }
-                        ?.containsAll(listOf("commonN1", "linuxX64", "mingwX64")) ?: false
-                ) { "[mingwX64, linuxX64]A should have commonN1, linuxX64, mingwX64 sources" }
+                        ?.containsAll(listOf("commonN1", "linuxX64", "mingwX64")) ?: false,
+                    "[mingwX64, linuxX64]A should have commonN1, linuxX64, mingwX64 sources"
+                )
 
-                assertTrue(commonN2.size == 1) { "There can be only one [iosX64, iosArm64]A page" }
+                assertEquals(1, commonN2.size, "There can be only one [iosX64, iosArm64]A page")
                 assertTrue(
                     commonN2.first().documentables.firstOrNull()?.sourceSets?.map { it.displayName }
-                        ?.containsAll(listOf("commonN2", "iosArm64", "iosX64")) ?: false
-                ) { "[iosX64, iosArm64]A should have commonN2, iosArm64, iosX64 sources" }
+                        ?.containsAll(listOf("commonN2", "iosArm64", "iosX64")) ?: false,
+                    "[iosX64, iosArm64]A should have commonN2, iosArm64, iosX64 sources"
+                )
 
-                assertTrue(noClass.isEmpty()) { "There can't be any A page" }
+                assertTrue(noClass.isEmpty(), "There can't be any A page")
             }
         }
     }

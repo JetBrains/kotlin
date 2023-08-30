@@ -4,10 +4,11 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.doc.P
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.collections.orEmpty
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlin.test.asserter
+import kotlin.test.fail
 
 @DslMarker
 annotation class TestDSL
@@ -25,7 +26,7 @@ abstract class ModelDSL : BaseAbstractTest() {
 interface AssertDSL {
     infix fun Any?.equals(other: Any?) = assertEquals(other, this)
     infix fun Collection<Any>?.allEquals(other: Any?) =
-        this?.onEach { it equals other } ?: run { assert(false) { "Collection is empty" } }
+        this?.onEach { it equals other } ?: run { fail("Collection is empty") }
     infix fun <T> Collection<T>?.exists(e: T) {
         assertTrue(this.orEmpty().isNotEmpty(), "Collection cannot be null or empty")
         assertTrue(this!!.any{it == e}, "Collection doesn't contain $e")
@@ -36,7 +37,7 @@ interface AssertDSL {
     infix fun <T> T?.notNull(name: String): T = this.assertNotNull(name)
 
     fun <T> Collection<T>.assertCount(n: Int, prefix: String = "") =
-        assert(count() == n) { "${prefix}Expected $n, got ${count()}" }
+        assertEquals(n, count(), "${prefix}Expected $n, got ${count()}")
 }
 
 /*

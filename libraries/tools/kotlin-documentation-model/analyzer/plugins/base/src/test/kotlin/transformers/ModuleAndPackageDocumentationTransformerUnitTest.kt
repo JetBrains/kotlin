@@ -2,6 +2,7 @@ package transformers
 
 
 import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.analysis.kotlin.internal.ModuleAndPackageDocumentationReader
 import org.jetbrains.dokka.analysis.markdown.jb.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.transformers.documentables.ModuleAndPackageDocumentationTransformer
 import org.jetbrains.dokka.links.DRI
@@ -12,11 +13,10 @@ import org.jetbrains.dokka.model.doc.CustomDocTag
 import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.model.doc.Text
-import org.jetbrains.dokka.analysis.kotlin.internal.ModuleAndPackageDocumentationReader
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
 import testApi.testRunner.dPackage
 import testApi.testRunner.sourceSet
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 
 class ModuleAndPackageDocumentationTransformerUnitTest {

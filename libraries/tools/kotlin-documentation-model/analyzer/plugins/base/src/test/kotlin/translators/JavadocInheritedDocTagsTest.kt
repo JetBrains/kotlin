@@ -5,11 +5,11 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.*
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
-import utils.JavaCode
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import org.jetbrains.dokka.model.doc.Deprecated as DokkaDeprecatedTag
 import org.jetbrains.dokka.model.doc.Throws as DokkaThrowsTag
+import utils.JavaCode
 
 @JavaCode
 class JavadocInheritedDocTagsTest : BaseAbstractTest() {

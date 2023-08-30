@@ -6,8 +6,8 @@ import org.jetbrains.dokka.testApi.logger.TestLogger
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.dokka.utilities.LoggingLevel
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 class FailOnWarningTest : BaseAbstractTest() {
 
@@ -22,7 +22,7 @@ class FailOnWarningTest : BaseAbstractTest() {
             }
         }
 
-        assertThrows<DokkaException> {
+        assertFailsWith<DokkaException> {
             testInline(
                 """
                 |/src/main/kotlin/Bar.kt
@@ -48,7 +48,7 @@ class FailOnWarningTest : BaseAbstractTest() {
             }
         }
 
-        assertThrows<DokkaException> {
+        assertFailsWith<DokkaException> {
             testInline(
                 """
                 |/src/main/kotlin/Bar.kt

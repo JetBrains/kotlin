@@ -2,7 +2,7 @@ package basic
 
 import org.jetbrains.dokka.DokkaGenerator
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class AbortGracefullyOnMissingDocumentablesTest: BaseAbstractTest() {

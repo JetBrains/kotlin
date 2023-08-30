@@ -1,8 +1,8 @@
 package filter
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class JavaFileFilterTest : BaseAbstractTest() {
     @Test
@@ -27,7 +27,7 @@ class JavaFileFilterTest : BaseAbstractTest() {
             configuration
         ) {
             preMergeDocumentablesTransformationStage = {
-                Assertions.assertTrue(
+                assertTrue(
                     it.first().packages.isNotEmpty()
                 )
             }

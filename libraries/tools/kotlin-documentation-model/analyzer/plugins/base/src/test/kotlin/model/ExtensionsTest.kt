@@ -6,8 +6,8 @@ import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.DInterface
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.properties.WithExtraProperties
-import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
+import kotlin.test.Test
 import utils.UsingJDK
 
 class ExtensionsTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "classes") {
@@ -87,7 +87,7 @@ class ExtensionsTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "cl
             }
         }
     }
-    
+
     @Test
     fun `should be extension for typealias`() {
         inlineModelTest(

@@ -2,10 +2,10 @@ package transformers
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.DEnum
-import org.junit.jupiter.api.Test
-import utils.OnlyDescriptors
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import utils.OnlyDescriptors
 
 class InheritedEntriesDocumentableFilterTransformerTest : BaseAbstractTest() {
     val suppressingInheritedConfiguration = dokkaConfiguration {
@@ -156,3 +156,4 @@ class InheritedEntriesDocumentableFilterTransformerTest : BaseAbstractTest() {
         }
     }
 }
+

@@ -8,12 +8,12 @@ import org.jetbrains.dokka.model.DEnum
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.utilities.firstIsInstanceOrNull
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
-import utils.JavaCode
 import utils.docs
 import utils.text
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import utils.JavaCode
 
 @JavaCode
 class JavadocParserTest : BaseAbstractTest() {

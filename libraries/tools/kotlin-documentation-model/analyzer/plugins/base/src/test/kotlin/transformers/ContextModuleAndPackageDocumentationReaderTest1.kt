@@ -1,6 +1,7 @@
 package transformers
 
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
+import org.jetbrains.dokka.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.plugability.DokkaContext
@@ -9,14 +10,13 @@ import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.dokka.testApi.logger.TestLogger
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.LoggingLevel
-import org.jetbrains.dokka.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import testApi.testRunner.TestDokkaConfigurationBuilder
 import testApi.testRunner.dModule
 import testApi.testRunner.dPackage
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAndPackageDocumentationReaderTest() {
 
@@ -24,7 +24,7 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
     private val includeSourceSetA by lazy { temporaryDirectory.resolve("includeA.md").toFile() }
     private val includeSourceSetB by lazy { temporaryDirectory.resolve("includeB.md").toFile() }
 
-    @BeforeEach
+    @BeforeTest
     fun materializeIncludes() {
         includeSourceSetA.writeText(
             """
@@ -107,14 +107,14 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
     fun `assert moduleA with no source sets`() {
         val documentation = reader.read(dModule("moduleA"))
         assertEquals(
-            emptyMap<DokkaSourceSet, DocumentationNode>(), documentation,
+            emptyMap(), documentation,
             "Expected no documentation received for module not declaring a matching sourceSet"
         )
     }
 
     @Test
     fun `assert moduleA with unknown source set`() {
-        assertThrows<IllegalStateException>(
+        assertFailsWith<IllegalStateException>(
             "Expected no documentation received for module with unknown sourceSet"
         ) {
             reader.read(

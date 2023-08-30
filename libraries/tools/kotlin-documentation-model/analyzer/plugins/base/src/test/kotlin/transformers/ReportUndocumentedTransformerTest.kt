@@ -5,9 +5,9 @@ import org.jetbrains.dokka.DokkaDefaults
 import org.jetbrains.dokka.PackageOptionsImpl
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.Test
+import kotlin.test.Ignore
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 
 class ReportUndocumentedTransformerTest : BaseAbstractTest() {
@@ -181,7 +181,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
         }
     }
 
-    @Disabled
+    @Ignore
     @Test
     fun `undocumented secondary constructor gets reported`() {
         val configuration = dokkaConfiguration {

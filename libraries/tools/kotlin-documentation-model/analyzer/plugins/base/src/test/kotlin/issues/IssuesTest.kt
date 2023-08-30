@@ -2,9 +2,9 @@ package issues
 
 import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.model.DFunction
-import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
 import utils.name
+import kotlin.test.Test
 
 class IssuesTest : AbstractModelTest("/src/main/kotlin/issues/Test.kt", "issues") {
 
