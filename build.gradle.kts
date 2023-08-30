@@ -133,6 +133,7 @@ val commonCompilerModules = arrayOf(
     ":core:compiler.common.jvm",
     ":core:compiler.common.js",
     ":core:compiler.common.native",
+    ":core:compiler.common.wasm",
     ":core:util.runtime",
     ":compiler:frontend.common.jvm",
     ":compiler:frontend.java", // TODO this is fe10 module but some utils used in fir ide now
@@ -243,6 +244,7 @@ extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
     ":core:compiler.common.jvm",
     ":core:compiler.common.js",
     ":core:compiler.common.native",
+    ":core:compiler.common.wasm",
     ":core:descriptors",
     ":core:descriptors.jvm",
     ":compiler:backend.common.jvm",
