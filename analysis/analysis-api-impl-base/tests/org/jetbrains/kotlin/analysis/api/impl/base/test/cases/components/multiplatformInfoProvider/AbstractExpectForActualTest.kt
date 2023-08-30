@@ -24,13 +24,16 @@ abstract class AbstractExpectForActualTest : AbstractAnalysisApiBasedTest() {
 
         val expectedSymbolText: String? = executeOnPooledThreadInReadAction {
             analyseForTest(declaration) {
-                val expectedSymbol = declaration.getSymbol().getExpectForActual() ?: return@analyseForTest null
-                expectedSymbol.psi?.containingFile?.name + " : " + expectedSymbol.render()
+                val expectedSymbols = declaration.getSymbol().getExpectsForActual()
+                expectedSymbols.joinToString(separator = "\n") { expectedSymbol ->
+                    expectedSymbol.psi?.containingFile?.name + " : " + expectedSymbol.render()
+                }
             }
         }
 
         val actual = buildString {
-            appendLine("expected symbol: $expectedSymbolText")
+            appendLine("expected symbols:")
+            appendLine(expectedSymbolText)
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)

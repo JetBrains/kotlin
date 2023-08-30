@@ -51,4 +51,10 @@ public class Fe10IdeNormalAnalysisSourceModuleExpectForActualTestGenerated exten
     public void testAllFilesPresentInExpectForActual() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
+
+    @Test
+    @TestMetadata("multipleExpects.kt")
+    public void testMultipleExpects() throws Exception {
+        runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/multipleExpects.kt");
+    }
 }

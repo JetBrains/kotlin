@@ -9,15 +9,16 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 
 public abstract class KtMultiplatformInfoProvider : KtAnalysisSessionComponent() {
-    public abstract fun getExpectForActual(actual: KtDeclarationSymbol): KtDeclarationSymbol?
+    public abstract fun getExpectForActual(actual: KtDeclarationSymbol): List<KtDeclarationSymbol>
 }
 
 public interface KtMultiplatformInfoProviderMixin : KtAnalysisSessionMixIn {
 
     /**
      * Gives expect symbol for the actual one if it is available.
+     *
+     * @return a single expect declaration corresponds to the [KtDeclarationSymbol] on valid code or multiple expects in a case of erroneous code with multiple expects.
      **/
-    public fun KtDeclarationSymbol.getExpectForActual(): KtDeclarationSymbol? =
+    public fun KtDeclarationSymbol.getExpectsForActual(): List<KtDeclarationSymbol> =
         withValidityAssertion { analysisSession.multiplatformInfoProvider.getExpectForActual(this) }
-
 }

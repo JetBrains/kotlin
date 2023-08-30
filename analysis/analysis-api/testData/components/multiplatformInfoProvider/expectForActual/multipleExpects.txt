@@ -1,0 +1,3 @@
+expected symbols:
+Common1.kt : fun foo()
+Common2.kt : fun foo()

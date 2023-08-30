@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.fir.declarations.expectForActual
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -22,7 +20,7 @@ internal class KtFirMultiplatformInfoProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: KtLifetimeToken,
 ) : KtMultiplatformInfoProvider(), KtFirAnalysisSessionComponent {
-    override fun getExpectForActual(actual: KtDeclarationSymbol): KtDeclarationSymbol? {
+    override fun getExpectForActual(actual: KtDeclarationSymbol): List<KtDeclarationSymbol> {
         require(actual is KtFirSymbol<*>)
         val firSymbol = actual.firSymbol
         val status = when (firSymbol) {
@@ -31,16 +29,9 @@ internal class KtFirMultiplatformInfoProvider(
             is FirTypeAliasSymbol -> firSymbol.rawStatus
             else -> null
         }
-        if (status?.isActual != true) return null
+        if (status?.isActual != true) return emptyList()
 
-        val expectsForActual = firSymbol.expectForActual?.get(ExpectActualCompatibility.Compatible) ?: return null
-        checkWithAttachment(expectsForActual.size <= 1, message = { "expected as maximum one `expect` for the actual" }) {
-            withFirSymbolEntry("actual", firSymbol)
-            withEntry("expectsForActualSize", expectsForActual.size.toString())
-            for ((index, expectForActual) in expectsForActual.withIndex()) {
-                withFirSymbolEntry("expectsForActual$index", expectForActual)
-            }
-        }
-        return expectsForActual.singleOrNull()?.let { analysisSession.firSymbolBuilder.buildSymbol(it) as? KtDeclarationSymbol }
+        val expectsForActual = firSymbol.expectForActual?.get(ExpectActualCompatibility.Compatible) ?: return emptyList()
+        return expectsForActual.map { analysisSession.firSymbolBuilder.buildSymbol(it) as KtDeclarationSymbol }
     }
 }

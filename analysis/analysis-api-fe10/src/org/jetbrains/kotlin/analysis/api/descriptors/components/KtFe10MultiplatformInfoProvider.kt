@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
@@ -20,25 +19,17 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 
 internal class KtFe10MultiplatformInfoProvider(
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisSession: KtFe10AnalysisSession,
 ) : KtMultiplatformInfoProvider(), Fe10KtAnalysisSessionComponent {
-    override fun getExpectForActual(actual: KtDeclarationSymbol): KtDeclarationSymbol? {
-        if (actual.psiSafe<KtDeclaration>()?.hasActualModifier() != true) return null
-        val memberDescriptor = (getSymbolDescriptor(actual) as? MemberDescriptor)?.takeIf { it.isActual } ?: return null
+    override fun getExpectForActual(actual: KtDeclarationSymbol): List<KtDeclarationSymbol> {
+        if (actual.psiSafe<KtDeclaration>()?.hasActualModifier() != true) return emptyList()
+        val memberDescriptor = (getSymbolDescriptor(actual) as? MemberDescriptor)?.takeIf { it.isActual } ?: return emptyList()
 
         val expectedCompatibilityMap =
-            ExpectedActualResolver.findExpectedForActual(memberDescriptor) ?: return null
+            ExpectedActualResolver.findExpectedForActual(memberDescriptor) ?: return emptyList()
 
         val expectsForActual = (expectedCompatibilityMap[ExpectActualCompatibility.Compatible]
             ?: expectedCompatibilityMap.values.flatten())
-        check(expectsForActual.size <= 1) { "expected as maximum one `expect` for the actual" }
-        checkWithAttachment(expectsForActual.size <= 1, message = { "expected as maximum one `expect` for the actual" }) {
-            withEntry("actual", memberDescriptor.toString())
-            withEntry("expectsForActualSize", expectsForActual.size.toString())
-            for ((index, expectForActual) in expectsForActual.withIndex()) {
-                withEntry("expectsForActual$index", expectForActual.toString())
-            }
-        }
-        return expectsForActual.singleOrNull()?.toKtSymbol(analysisContext) as? KtDeclarationSymbol
+        return expectsForActual.map { it.toKtSymbol(analysisContext) as KtDeclarationSymbol }
     }
 }
