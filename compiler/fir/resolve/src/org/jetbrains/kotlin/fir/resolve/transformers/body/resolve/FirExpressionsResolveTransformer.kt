@@ -1054,10 +1054,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val transformedLHS = when (explicitReceiver) {
             is FirPropertyAccessExpression ->
                 transformQualifiedAccessExpression(
-                    explicitReceiver, ResolutionMode.ContextIndependent, isUsedAsReceiver = true
+                    explicitReceiver, ResolutionMode.ReceiverResolution, isUsedAsReceiver = true
                 ) as FirExpression
             else ->
-                explicitReceiver?.transformSingle(this, ResolutionMode.ContextIndependent)
+                explicitReceiver?.transformSingle(this, ResolutionMode.ReceiverResolution)
         }.apply {
             if (this is FirResolvedQualifier && callableReferenceAccess.hasQuestionMarkAtLHS) {
                 replaceIsNullableLHSForCallableReference(true)
