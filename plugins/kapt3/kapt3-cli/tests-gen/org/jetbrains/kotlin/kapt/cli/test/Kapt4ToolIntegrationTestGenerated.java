@@ -67,6 +67,12 @@ public class Kapt4ToolIntegrationTestGenerated extends AbstractKapt4ToolIntegrat
     }
 
     @Test
+    @TestMetadata("multipass")
+    public void testMultipass() throws Exception {
+        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/multipass/");
+    }
+
+    @Test
     @TestMetadata("separateStubAptCompilation")
     public void testSeparateStubAptCompilation() throws Exception {
         runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/separateStubAptCompilation/");

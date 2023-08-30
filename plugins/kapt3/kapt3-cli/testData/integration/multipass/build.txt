@@ -1,0 +1,38 @@
+# mkdir
+output/ap
+output/stubs
+output/classes
+output/javaClasses
+output/sources
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/ap
+ap/processors.kt
+
+# kapt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.AnnotationProcessor3
+-Kapt-processors=apt.AnnotationProcessor2
+-Kapt-processors=apt.AnnotationProcessor1
+-d output/classes
+-cp output/ap:%KOTLIN_STDLIB%
+Test.kt
+
+# javac
+-cp output/ap
+-d output/javaClasses
+-proc:none
+output/sources/generated/Test1.java
+output/sources/generated/Test12.java
+output/sources/generated/Test123.java
+
+# java
+-cp output/classes:output/javaClasses:output/ap:%KOTLIN_STDLIB%
+test.TestKt
+
+# after
+Generated class: generated.Test123
