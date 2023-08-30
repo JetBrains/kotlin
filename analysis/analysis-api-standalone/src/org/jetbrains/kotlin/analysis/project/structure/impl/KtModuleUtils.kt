@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtSta
 import org.jetbrains.kotlin.analysis.project.structure.builder.*
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
@@ -67,7 +66,7 @@ internal fun getSourceFilePaths(
             val path = Paths.get(srcRoot)
             if (Files.isDirectory(path)) {
                 // E.g., project/app/src
-                collectSourceFilePaths(path, this)
+                addAll(collectSourceFilePaths(path))
                 if (includeDirectoryRoot) {
                     add(path)
                 }
@@ -80,19 +79,17 @@ internal fun getSourceFilePaths(
 }
 
 /**
- * Collect source file path from the given [root] store them in [result].
+ * Collect source file path from the given [root]
  *
  * E.g., for `project/app/src` as a [root], this will walk the file tree and
  * collect all `.kt`, `.kts`, and `.java` files under that folder.
  *
  * Note that this util gracefully skips [IOException] during file tree traversal.
  */
-private fun collectSourceFilePaths(
-    root: Path,
-    result: MutableSet<Path>
-) {
+internal fun collectSourceFilePaths(root: Path): List<Path> {
     // NB: [Files#walk] throws an exception if there is an issue during IO.
     // With [Files#walkFileTree] with a custom visitor, we can take control of exception handling.
+    val result = mutableListOf<Path>()
     Files.walkFileTree(
         root,
         object : SimpleFileVisitor<Path>() {
@@ -125,6 +122,7 @@ private fun collectSourceFilePaths(
             }
         }
     )
+    return result
 }
 
 internal inline fun <reified T : PsiFileSystemItem> getPsiFilesFromPaths(
@@ -197,13 +195,7 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
 
         addModuleDependencies(moduleName)
 
-        contentScope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(kotlinCoreProjectEnvironment.project, ordinaryFiles)
-        addSourceRoots(
-            getPsiFilesFromPaths(
-                kotlinCoreProjectEnvironment,
-                getSourceFilePaths(compilerConfig, includeDirectoryRoot = true)
-            )
-        )
+        addSourceRoots(compilerConfig.javaSourceRoots.map { Paths.get(it) })
     }.apply(::addModule)
 
 
