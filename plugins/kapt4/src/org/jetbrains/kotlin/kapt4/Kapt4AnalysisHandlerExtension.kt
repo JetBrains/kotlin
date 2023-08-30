@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
 import org.jetbrains.kotlin.kapt3.base.Kapt
-import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.ProcessorLoader
 import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
@@ -97,7 +96,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                     generateStubs(context!!)
 
                 if (options.mode.runAnnotationProcessing)
-                    runProcessors(options, options.collectJavaSourceFiles(context!!.sourcesToReprocess), logger)
+                    runProcessors(context!!, options, logger)
                 true
             }
         } catch (e: Exception) {
@@ -130,35 +129,20 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
     }
 
     private fun runProcessors(
+        context: Kapt4ContextForStubGeneration,
         options: KaptOptions,
-        sources: List<File>,
         logger: KaptLogger,
     ) {
-        var sourcesToProcess = sources
-        var processedSources = emptySet<File>()
-        val processorLoader = object : ProcessorLoader(options, logger) {
+        val sources = options.collectJavaSourceFiles(context.sourcesToReprocess)
+        if (sources.isEmpty()) return
+        object : ProcessorLoader(options, logger) {
             override fun doLoadProcessors(classpath: LinkedHashSet<File>, classLoader: ClassLoader): List<Processor> =
                 when (classLoader) {
                     is URLClassLoader -> ServiceLoaderLite.loadImplementations(Processor::class.java, classLoader)
                     else -> super.doLoadProcessors(classpath, classLoader)
                 }
-        }
-
-        while (sourcesToProcess.isNotEmpty()) {
-            val processingContext = KaptContext(
-                options,
-                withJdk = false,
-                logger
-            )
-            val processors = processorLoader.loadProcessors()
-            processingContext.doAnnotationProcessing(
-                sourcesToProcess,
-                processors.processors,
-            )
-            processedSources += sourcesToProcess
-            sourcesToProcess = options.sourcesOutputDir.walkTopDown()
-                .filter { it.isFile && it.name.endsWith(".java", true) && it !in processedSources }
-                .toList()
+        }.use { processorLoader ->
+            context.doAnnotationProcessing(sources, processorLoader.loadProcessors().processors)
         }
     }
 
