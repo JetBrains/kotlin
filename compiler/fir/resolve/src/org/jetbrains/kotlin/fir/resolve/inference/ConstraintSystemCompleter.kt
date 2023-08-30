@@ -53,7 +53,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             topLevelAtoms
         )
 
-        if ("".hashCode() == 1 && allTypeVariables.size != notFixedTypeVariables.size) {
+        if (allTypeVariables.size != notFixedTypeVariables.size) {
             withTypeVariablesFromOuter(notFixedTypeVariables.keys - allTypeVariables.toSet()) {
                 runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, collectVariablesFromContext, analyze)
             }
@@ -88,6 +88,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
             if (completionMode == ConstraintSystemCompletionMode.ONLY_LAMBDAS) {
                 if (analyzeNextReadyPostponedArgument(languageVersionSettings, postponedArguments, completionMode, analyze))
+                    continue
+
+                if (tryToCompleteWithBuilderInference(completionMode, postponedArguments, analyze))
                     continue
 
                 break
@@ -224,7 +227,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         postponedArguments: List<PostponedResolvedAtom>,
         analyze: (PostponedResolvedAtom) -> Unit,
     ): Boolean {
-        if (completionMode != ConstraintSystemCompletionMode.FULL && completionMode != ConstraintSystemCompletionMode.PARTIAL_BI) return false
+        if (completionMode != ConstraintSystemCompletionMode.FULL && completionMode != ConstraintSystemCompletionMode.ONLY_LAMBDAS) return false
 
         // If we use the builder inference anyway (if the annotation is presented), then we are already analysed builder inference lambdas
         if (!languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)) return false
@@ -370,6 +373,12 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                         is ResolvedCallableReferenceAtom -> {
                             if (postponedAtom.mightNeedAdditionalResolution) {
                                 postponedAtom.collectNotFixedVariables()
+                            }
+
+                            (postponedAtom.resultingReference as? FirNamedReferenceWithCandidate)?.candidate?.let { referenceCandidate ->
+                                referenceCandidate.freshVariables.mapNotNullTo(result) { typeVariable ->
+                                    typeVariable.toTypeConstructor()
+                                }
                             }
                         }
                         // ResolvedCallAtom?

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.types.model.*
 interface PostponedArgumentsAnalyzerContext : TypeSystemInferenceExtensionContext {
     abstract val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
 
-    fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, StubTypeMarker>): TypeSubstitutorMarker
+    fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker
     fun buildNotFixedVariablesToStubTypesSubstitutor(): TypeSubstitutorMarker
     fun bindingStubsForPostponedVariables(): Map<TypeVariableMarker, StubTypeMarker>
 
