@@ -108,7 +108,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val callSite = SourcePosition(codegen.lastLineNumber, sourceInfo.sourceFileName!!, sourceInfo.pathOrCleanFQN)
         val inliner = MethodInliner(
             node, parameters, info, FieldRemapper(null, null, parameters), sourceCompiler.isCallInsideSameModuleAsCallee,
-            "Method inlining " + sourceCompiler.callElementText,
+            { "Method inlining " + sourceCompiler.callElementText },
             SourceMapCopier(sourceMapper, nodeAndSmap.classSMAP, callSite),
             info.callSiteInfo,
             isInlineOnlyMethod = isInlineOnly,

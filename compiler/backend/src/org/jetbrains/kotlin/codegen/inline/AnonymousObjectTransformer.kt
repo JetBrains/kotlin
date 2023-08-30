@@ -334,7 +334,7 @@ class AnonymousObjectTransformer(
             inliningContext.subInline(transformationInfo.nameGenerator),
             remapper,
             isSameModule,
-            "Transformer for " + transformationInfo.oldClassName,
+            { "Transformer for " + transformationInfo.oldClassName },
             SourceMapCopier(sourceMapper, sourceMap),
             InlineCallSiteInfo(
                 transformationInfo.oldClassName,

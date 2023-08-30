@@ -44,7 +44,7 @@ class MethodInliner(
     private val inliningContext: InliningContext,
     private val nodeRemapper: FieldRemapper,
     private val isSameModule: Boolean,
-    private val errorPrefix: String,
+    private val errorPrefixSupplier: () -> String,
     private val sourceMapper: SourceMapCopier,
     private val inlineCallSiteInfo: InlineCallSiteInfo,
     private val isInlineOnlyMethod: Boolean = false,
@@ -297,7 +297,7 @@ class MethodInliner(
                         info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
                         newCapturedRemapper,
                         if (info is DefaultLambda) isSameModule else true /*cause all nested objects in same module as lambda*/,
-                        "Lambda inlining " + info.lambdaClassType.internalName,
+                        { "Lambda inlining " + info.lambdaClassType.internalName },
                         SourceMapCopier(sourceMapper.parent, info.node.classSMAP, callSite), inlineCallSiteInfo,
                         isInlineOnlyMethod = false
                     )
@@ -1014,9 +1014,9 @@ class MethodInliner(
     @Suppress("SameParameterValue")
     private fun wrapException(originalException: Throwable, node: MethodNode, errorSuffix: String): RuntimeException {
         return if (originalException is InlineException) {
-            InlineException("$errorPrefix: $errorSuffix", originalException)
+            InlineException("${errorPrefixSupplier()}: $errorSuffix", originalException)
         } else {
-            InlineException("$errorPrefix: $errorSuffix\nCause: ${node.nodeText}", originalException)
+            InlineException("${errorPrefixSupplier()}: $errorSuffix\nCause: ${node.nodeText}", originalException)
         }
     }
 
