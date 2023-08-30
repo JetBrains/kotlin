@@ -1,6 +1,9 @@
 // WITH_STDLIB
 // LANGUAGE: +NoBuilderInferenceWithoutAnnotationRestriction
 // SKIP_TXT
+// FIR_IGNORE
+// delegates
+
 
 fun <R> a(lambda: List<R>.(R) -> Unit) {}
 

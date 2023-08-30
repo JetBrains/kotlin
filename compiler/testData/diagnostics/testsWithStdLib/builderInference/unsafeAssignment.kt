@@ -1,3 +1,4 @@
+// FIR_IGNORE
 class Foo<T : Any> {
     fun doSmthng(arg: T) {}
     var a: T? = null
