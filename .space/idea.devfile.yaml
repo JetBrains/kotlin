@@ -7,4 +7,4 @@ attributes:
 components:
   - name: kotlin-build-env
     container:
-      image: registry.jetbrains.team/p/kt/containers/kotlin-build-env:v1
+      image: kotlin.registry.jetbrains.space/p/kotlin/containers/kotlin-build-env:latest
