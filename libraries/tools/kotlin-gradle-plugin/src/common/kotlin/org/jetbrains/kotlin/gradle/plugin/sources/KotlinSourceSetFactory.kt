@@ -17,13 +17,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.getOrCreate
 import org.jetbrains.kotlin.gradle.utils.targets
 import java.io.File
 
 internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal constructor(
-    protected val project: Project
+    protected val project: Project,
 ) : NamedDomainObjectFactory<KotlinSourceSet> {
 
     abstract val itemClass: Class<T>
@@ -73,7 +72,7 @@ internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal con
 
 
 internal class DefaultKotlinSourceSetFactory(
-    project: Project
+    project: Project,
 ) : KotlinSourceSetFactory<DefaultKotlinSourceSet>(project) {
 
     override val itemClass: Class<DefaultKotlinSourceSet>
@@ -105,9 +104,8 @@ internal class DefaultKotlinSourceSetFactory(
                     extendsFrom(project.configurations.maybeCreate(configurationName))
                 }
 
-                if (project.isKotlinGranularMetadataEnabled) {
-                    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-                }
+                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+
 
                 project.afterEvaluate {
                     setJsCompilerIfNecessary(sourceSet, this)

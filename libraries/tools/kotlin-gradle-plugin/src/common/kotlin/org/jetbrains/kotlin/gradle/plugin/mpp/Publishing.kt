@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 
 internal fun configurePublishingWithMavenPublish(project: Project) = project.pluginManager.withPlugin("maven-publish") {
@@ -127,8 +126,7 @@ private fun rewritePom(
  * right dependencies for each source set, we put only the dependencies of the legacy common variant into the POM, i.e. commonMain API.
  */
 private fun dependenciesForPomRewriting(target: InternalKotlinTarget): Provider<Set<ModuleCoordinates>>? =
-    if (target !is KotlinMetadataTarget || !target.project.isKotlinGranularMetadataEnabled)
-        null
+    if (target !is KotlinMetadataTarget) null
     else {
         val commonMain = target.project.kotlinExtension.sourceSets.findByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
         if (commonMain == null)

@@ -25,9 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinal
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.targets.metadata.*
-import org.jetbrains.kotlin.gradle.targets.metadata.COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.setProperty
@@ -62,15 +59,9 @@ abstract class KotlinSoftwareComponent(
     private val _usages: Future<Set<DefaultKotlinUsageContext>> = project.future {
         metadataTarget.awaitMetadataCompilationsCreated()
 
-        if (!project.isKotlinGranularMetadataEnabled) {
-            val metadataCompilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME)
-            return@future metadataTarget.createUsageContexts(metadataCompilation)
-        }
-
         mutableSetOf<DefaultKotlinUsageContext>().apply {
             val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
             val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
-                allMetadataArtifact.classifier = if (project.isCompatibilityMetadataVariantEnabled) "all" else ""
             }
 
             this += DefaultKotlinUsageContext(
@@ -80,18 +71,6 @@ abstract class KotlinSoftwareComponent(
                 overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
             )
 
-            if (project.isCompatibilityMetadataVariantEnabled) {
-                // Ensure that consumers who expect Kotlin 1.2.x metadata package can still get one:
-                // publish the old metadata artifact:
-                this += run {
-                    DefaultKotlinUsageContext(
-                        metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                        KotlinUsageContext.MavenScope.COMPILE,
-                        /** this configuration is created by [KotlinMetadataTargetConfigurator.createCommonMainElementsConfiguration] */
-                        COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
-                    )
-                }
-            }
 
             val sourcesElements = metadataTarget.sourcesElementsConfigurationName
             if (metadataTarget.isSourcesPublishable) {

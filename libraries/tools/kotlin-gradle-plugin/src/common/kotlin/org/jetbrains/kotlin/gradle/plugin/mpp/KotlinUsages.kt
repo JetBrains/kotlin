@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 
 object KotlinUsages {
     const val KOTLIN_API = "kotlin-api"
@@ -50,8 +49,7 @@ object KotlinUsages {
             platformType in jvmPlatformTypes -> JAVA_API
             platformType == common
                     /** The kotlinExtension check below can be removed when legacy [KotlinPlatformCommonPlugin] is also removed. */
-                    && project.kotlinExtension is KotlinMultiplatformExtension
-                    && !project.isCompatibilityMetadataVariantEnabled -> KOTLIN_METADATA
+                    && project.kotlinExtension is KotlinMultiplatformExtension -> KOTLIN_METADATA
             else -> KOTLIN_API
         }
     )
@@ -182,11 +180,11 @@ object KotlinUsages {
         }
     }
 
-    private fun MultipleCandidatesDetails<Usage?>.chooseCandidateByName(name: String?): Unit {
+    private fun MultipleCandidatesDetails<Usage?>.chooseCandidateByName(name: String?) {
         closestMatch(candidateValues.single { it?.name == name }!!)
     }
 
-    internal fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema, isKotlinGranularMetadata: Boolean) {
+    internal fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
         attributesSchema.attribute(USAGE_ATTRIBUTE) { strategy ->
             strategy.compatibilityRules.add(KotlinJavaRuntimeJarsCompatibility::class.java)
             strategy.disambiguationRules.add(KotlinUsagesDisambiguation::class.java)
@@ -194,10 +192,8 @@ object KotlinUsages {
             strategy.compatibilityRules.add(KotlinCinteropCompatibility::class.java)
             strategy.disambiguationRules.add(KotlinCinteropDisambiguation::class.java)
 
-            if (isKotlinGranularMetadata) {
-                strategy.compatibilityRules.add(KotlinMetadataCompatibility::class.java)
-                strategy.disambiguationRules.add(KotlinMetadataDisambiguation::class.java)
-            }
+            strategy.compatibilityRules.add(KotlinMetadataCompatibility::class.java)
+            strategy.disambiguationRules.add(KotlinMetadataDisambiguation::class.java)
         }
     }
 }

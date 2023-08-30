@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.ide.locateOrRegisterIdeResolveDependenciesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.addBuildListenerForXcode
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal.runDeprecationDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -40,7 +39,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         checkGradleCompatibility("the Kotlin Multiplatform plugin")
-        runDeprecationDiagnostics(project)
+        project.rootProject.extraProperties.set("kotlin.mpp.enableGranularSourceSetsMetadata", "true")
 
         project.plugins.apply(JavaBasePlugin::class.java)
 

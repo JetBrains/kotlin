@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import java.io.File
 
@@ -118,7 +117,5 @@ private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
 internal fun Project.isAllowCommonizer(): Boolean {
     assert(state.executed) { "'isAllowCommonizer' can only be called after project evaluation" }
     multiplatformExtensionOrNull ?: return false
-
     return multiplatformExtension.targets.any { it.platformType == KotlinPlatformType.native }
-            && isKotlinGranularMetadataEnabled
 }

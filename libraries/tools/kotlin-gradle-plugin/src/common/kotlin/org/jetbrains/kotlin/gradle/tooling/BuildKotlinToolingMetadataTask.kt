@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.tooling
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.internal.GeneratedSubclass
 import org.gradle.api.tasks.*
@@ -21,8 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -116,10 +113,10 @@ private fun KotlinProjectExtension.getKotlinToolingMetadata(): KotlinToolingMeta
     )
 }
 
-private fun KotlinProjectExtension.buildProjectSettings(): KotlinToolingMetadata.ProjectSettings {
+private fun buildProjectSettings(): KotlinToolingMetadata.ProjectSettings {
     return KotlinToolingMetadata.ProjectSettings(
-        isHmppEnabled = project.isKotlinGranularMetadataEnabled,
-        isCompatibilityMetadataVariantEnabled = project.isCompatibilityMetadataVariantEnabled,
+        isHmppEnabled = true,
+        isCompatibilityMetadataVariantEnabled = false,
         isKPMEnabled = false
     )
 }

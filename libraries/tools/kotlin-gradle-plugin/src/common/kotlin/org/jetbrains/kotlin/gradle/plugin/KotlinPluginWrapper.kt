@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.DefaultUnameExecutorVariantFactory
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.UnameExecutor
 import org.jetbrains.kotlin.gradle.targets.js.npm.addNpmDependencyExtension
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArtifactTypeAttribute
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
@@ -201,10 +200,9 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
     protected fun setupAttributeMatchingStrategy(
         project: Project,
-        isKotlinGranularMetadata: Boolean = project.isKotlinGranularMetadataEnabled,
     ) = with(project.dependencies.attributesSchema) {
         KotlinPlatformType.setupAttributesMatchingStrategy(this)
-        KotlinUsages.setupAttributesMatchingStrategy(this, isKotlinGranularMetadata)
+        KotlinUsages.setupAttributesMatchingStrategy(this)
         KotlinJsCompilerAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
         KotlinWasmTargetAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
         ProjectLocalConfigurations.setupAttributesMatchingStrategy(this)

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.version
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
@@ -207,16 +206,14 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
         apiElements.outgoing.attributes.attribute(artifactTypeAttribute, NativeArtifactFormat.KLIB)
 
-        if (project.isKotlinGranularMetadataEnabled) {
-            project.configurations.create(target.hostSpecificMetadataElementsConfigurationName) { configuration ->
-                configuration.isCanBeConsumed = true
-                configuration.isCanBeResolved = false
+        project.configurations.create(target.hostSpecificMetadataElementsConfigurationName) { configuration ->
+            configuration.isCanBeConsumed = true
+            configuration.isCanBeResolved = false
 
-                configuration.extendsFrom(*apiElements.extendsFrom.toTypedArray())
+            configuration.extendsFrom(*apiElements.extendsFrom.toTypedArray())
 
-                copyAttributes(from = apiElements.attributes, to = configuration.attributes)
-                configuration.attributes.attribute(USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_METADATA))
-            }
+            copyAttributes(from = apiElements.attributes, to = configuration.attributes)
+            configuration.attributes.attribute(USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_METADATA))
         }
     }
 

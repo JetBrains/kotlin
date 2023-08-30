@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import javax.inject.Inject
@@ -28,10 +27,5 @@ open class KotlinCommonCompilation @Inject internal constructor(compilation: Kot
     @Suppress("UNCHECKED_CAST")
     override val compileTaskProvider: TaskProvider<KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>>
         get() = compilation.compileTaskProvider as TaskProvider<KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>>
-
-    internal val isKlibCompilation: Boolean
-        get() = target.project.isKotlinGranularMetadataEnabled && !forceCompilationToKotlinMetadata
-
-    internal var forceCompilationToKotlinMetadata: Boolean = false
 }
 
