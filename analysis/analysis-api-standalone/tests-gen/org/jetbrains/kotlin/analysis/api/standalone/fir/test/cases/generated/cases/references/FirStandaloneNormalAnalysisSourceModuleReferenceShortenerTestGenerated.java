@@ -299,6 +299,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("memberVsCompanionObjectMemberConflict.kt")
+    public void testMemberVsCompanionObjectMemberConflict() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/memberVsCompanionObjectMemberConflict.kt");
+    }
+
+    @Test
     @TestMetadata("multipleImport.kt")
     public void testMultipleImport() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/multipleImport.kt");
@@ -434,6 +440,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     @TestMetadata("shortenAlreadyImportedFunction4.kt")
     public void testShortenAlreadyImportedFunction4() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/shortenAlreadyImportedFunction4.kt");
+    }
+
+    @Test
+    @TestMetadata("staticMethodFromBaseClassConflict.kt")
+    public void testStaticMethodFromBaseClassConflict() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/staticMethodFromBaseClassConflict.kt");
     }
 
     @Test
