@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
  *   to create predicate with meta annotations, and [LookupPredicate] allows to use only annotations with predefined
  *   qualified names
  *
- * Note that predicates can not be used for matching or looking up for local declarations (local functions, local classes, anonymous objects
+ * Note that predicates can not be used for matching or looking up local declarations (local functions, local classes, anonymous objects
  *   and their members). The only exception is matching local classes/anonymous objects with [AbstractPredicate.AnnotatedWith] and
  *   [AbstractPredicate.MetaAnnotatedWith] by [FirPredicateBasedProvider.matches]
  */

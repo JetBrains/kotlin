@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isSingleFieldValueClass
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -453,7 +454,8 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
         reporter: DiagnosticReporter
     ) {
         for (property in properties) {
-            // TODO: reporting diagnostics on properties from superclasses looks a bad idea
+            // Don't report anything on properties from supertypes
+            if (property.propertySymbol.dispatchReceiverClassLookupTagOrNull() != classSymbol.toLookupTag()) continue
             val customSerializerType = property.serializableWith
             val serializerSymbol = customSerializerType?.toRegularClassSymbol(session)
             val propertySymbol = property.propertySymbol
