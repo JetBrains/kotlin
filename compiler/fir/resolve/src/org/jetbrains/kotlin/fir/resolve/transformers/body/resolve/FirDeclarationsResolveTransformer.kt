@@ -272,7 +272,7 @@ open class FirDeclarationsResolveTransformer(
     private fun transformPropertyAccessorsWithDelegate(property: FirProperty, delegate: FirExpression) {
         val isImplicitTypedProperty = property.returnTypeRef is FirImplicitTypeRef
 
-        context.forPropertyDelegateAccessors(property, resolutionContext, callCompleter) {
+        context.forPropertyDelegateAccessors(resolutionContext, callCompleter) {
             dataFlowAnalyzer.enterDelegateExpression()
             // Resolve delegate expression, after that, delegate will contain either expr.provideDelegate or expr
             if (property.isLocal) {

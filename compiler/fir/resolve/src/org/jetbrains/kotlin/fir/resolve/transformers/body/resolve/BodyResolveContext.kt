@@ -835,13 +835,11 @@ class BodyResolveContext(
     }
 
     inline fun <T> forPropertyDelegateAccessors(
-        property: FirProperty,
         resolutionContext: ResolutionContext,
         callCompleter: FirCallCompleter,
         f: FirDelegatedPropertyInferenceSession.() -> T
     ) {
         val inferenceSession = FirDelegatedPropertyInferenceSession(
-            property,
             resolutionContext,
             callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
         )

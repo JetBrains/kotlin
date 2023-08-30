@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
-import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirDelegatedPropertyInferenceSession(
-    val property: FirProperty,
     resolutionContext: ResolutionContext,
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
 ) : FirInferenceSessionForChainedResolve(resolutionContext) {
