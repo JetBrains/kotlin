@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 interface FirResolvedDeclarationStatus : FirDeclarationStatus {
     override val source: KtSourceElement?
     override val visibility: Visibility
-    override val modality: Modality?
     override val isExpect: Boolean
     override val isActual: Boolean
     override val isOverride: Boolean
@@ -40,6 +39,7 @@ interface FirResolvedDeclarationStatus : FirDeclarationStatus {
     override val isFromEnumClass: Boolean
     override val isFun: Boolean
     override val hasStableParameterNames: Boolean
+    override val modality: Modality
     val effectiveVisibility: EffectiveVisibility
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedDeclarationStatus(this, data)

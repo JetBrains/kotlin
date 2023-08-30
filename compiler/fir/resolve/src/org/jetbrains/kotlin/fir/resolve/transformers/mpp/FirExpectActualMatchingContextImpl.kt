@@ -109,12 +109,12 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val ClassLikeSymbolMarker.typeParameters: List<TypeParameterSymbolMarker>
         get() = asSymbol().typeParameterSymbols
 
-    override val ClassLikeSymbolMarker.modality: Modality?
+    override val ClassLikeSymbolMarker.modality: Modality
         get() = asSymbol().resolvedStatus.modality
     override val ClassLikeSymbolMarker.visibility: Visibility
         get() = asSymbol().resolvedStatus.visibility
 
-    override val CallableSymbolMarker.modality: Modality?
+    override val CallableSymbolMarker.modality: Modality
         get() = asSymbol().resolvedStatus.modality
     override val CallableSymbolMarker.visibility: Visibility
         get() = asSymbol().resolvedStatus.visibility

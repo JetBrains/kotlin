@@ -65,7 +65,7 @@ internal class KtFirPropertySetterSymbol(
 
     override val hasBody: Boolean get() = withValidityAssertion { firSymbol.fir.hasBody }
 
-    override val modality: Modality get() = withValidityAssertion { firSymbol.modalityOrFinal }
+    override val modality: Modality get() = withValidityAssertion { firSymbol.modality }
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
     override val annotationsList by cached {

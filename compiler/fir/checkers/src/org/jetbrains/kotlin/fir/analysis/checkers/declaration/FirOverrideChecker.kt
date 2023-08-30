@@ -86,9 +86,7 @@ object FirOverrideChecker : FirClassChecker() {
         overriddenSymbols: List<FirCallableSymbol<*>>,
     ): FirCallableSymbol<*>? {
         for (overridden in overriddenSymbols) {
-            val modality = overridden.modality
-            val isEffectivelyFinal = modality == null || modality == Modality.FINAL
-            if (isEffectivelyFinal) {
+            if (overridden.modality == Modality.FINAL) {
                 return overridden
             }
         }

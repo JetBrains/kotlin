@@ -80,7 +80,9 @@ object FieldSets {
 
     val effectiveVisibility by lazy { field("effectiveVisibility", effectiveVisibilityType) }
 
-    val modality by lazy { field(modalityType, nullable = true) }
+    fun modality(nullable: Boolean): Field {
+        return field(modalityType, nullable = nullable)
+    }
 
     val scopeProvider by lazy { field("scopeProvider", firScopeProviderType) }
 

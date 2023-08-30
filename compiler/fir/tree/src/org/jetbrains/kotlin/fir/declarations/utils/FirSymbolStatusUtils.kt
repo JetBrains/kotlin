@@ -10,16 +10,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 
 // ---------------------- callables with status ----------------------
 
-inline val FirCallableSymbol<*>.modality: Modality? get() = resolvedStatus.modality
-inline val FirCallableSymbol<*>.modalityOrFinal: Modality get() = modality ?: Modality.FINAL
+inline val FirCallableSymbol<*>.modality: Modality get() = resolvedStatus.modality
 inline val FirCallableSymbol<*>.isAbstract: Boolean get() = resolvedStatus.modality == Modality.ABSTRACT
 inline val FirCallableSymbol<*>.isOpen: Boolean get() = resolvedStatus.modality == Modality.OPEN
-inline val FirCallableSymbol<*>.isFinal: Boolean
-    get() {
-        // member with unspecified modality is final
-        val modality = resolvedStatus.modality ?: return true
-        return modality == Modality.FINAL
-    }
+inline val FirCallableSymbol<*>.isFinal: Boolean get() = resolvedStatus.modality == Modality.FINAL
 
 inline val FirCallableSymbol<*>.visibility: Visibility get() = resolvedStatus.visibility
 inline val FirCallableSymbol<*>.effectiveVisibility: EffectiveVisibility get() = resolvedStatus.effectiveVisibility
@@ -43,14 +37,9 @@ inline val FirCallableSymbol<*>.isFun: Boolean get() = rawStatus.isFun
 
 // ---------------------- class like with status ----------------------
 
-inline val FirClassLikeSymbol<*>.modality: Modality? get() = resolvedStatus.modality
+inline val FirClassLikeSymbol<*>.modality: Modality get() = resolvedStatus.modality
 inline val FirClassLikeSymbol<*>.isAbstract: Boolean get() = resolvedStatus.modality == Modality.ABSTRACT
-inline val FirClassLikeSymbol<*>.isFinal: Boolean
-    get() {
-        // member with unspecified modality is final
-        val modality = resolvedStatus.modality ?: return true
-        return modality == Modality.FINAL
-    }
+inline val FirClassLikeSymbol<*>.isFinal: Boolean get() = resolvedStatus.modality == Modality.FINAL
 
 inline val FirClassLikeSymbol<*>.visibility: Visibility get() = resolvedStatus.visibility
 inline val FirClassLikeSymbol<*>.effectiveVisibility: EffectiveVisibility get() = resolvedStatus.effectiveVisibility
