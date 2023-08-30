@@ -676,7 +676,7 @@ class FunctionInlining(
                             startOffset = if (it.isDefaultArg) irExpression.startOffset else UNDEFINED_OFFSET,
                             endOffset = if (it.isDefaultArg) irExpression.startOffset else UNDEFINED_OFFSET,
                             irExpression = irExpression,
-                            irType = if (inlineArgumentsWithTheirOriginalTypeAndOffset) it.parameter.getOriginalType() else irExpression.type,
+                            irType = it.parameter.type,
                             nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers() + "_" + it.parameter.name.asStringStripSpecialMarkers(),
                             isMutable = false
                         )
