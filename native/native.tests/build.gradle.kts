@@ -17,7 +17,7 @@ dependencies {
     testImplementation(project(":compiler:ir.serialization.native"))
     testImplementation(project(":compiler:fir:native"))
     testImplementation(project(":native:kotlin-native-utils"))
-    testImplementation(project(":native:executors"))
+    testImplementation("org.jetbrains.kotlin:executors")
     testImplementation(project(":kotlin-util-klib-abi"))
     testImplementation(projectTests(":kotlin-util-klib-abi"))
     testApi(platform(libs.junit.bom))

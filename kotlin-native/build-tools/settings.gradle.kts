@@ -5,6 +5,7 @@ pluginManagement {
     apply(from = "../../repo/scripts/kotlin-bootstrap.settings.gradle.kts")
 
     includeBuild("../../repo/gradle-settings-conventions")
+    includeBuild("../../repo/gradle-build-conventions")
 
     repositories {
         maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
@@ -45,5 +46,6 @@ buildscript {
 //project(":kotlin-util-klib").projectDir = File("$rootDir/../../compiler/util-klib")
 //project(":kotlin-util-io").projectDir = File("$rootDir/../../compiler/util-io")
 
-include(":kotlin-native-executors")
-project(":kotlin-native-executors").projectDir = File("$rootDir/../../native/executors")
+includeBuild("$rootDir/../../native/executors") {
+    name = "native-executors"
+}

@@ -11,6 +11,7 @@ plugins {
 }
 
 repositories {
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
     mavenCentral()
 }
 
@@ -29,8 +30,8 @@ dependencies {
 
     // KT-61897: Workaround for https://github.com/gradle/gradle/issues/26358
     // (wrong conflict resolution, causing selection of not the latest version of `:kotlin-util-klib` module)
-    if (rootProject.name == "native-build-tools") {
-        implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
+    if (rootProject.name == "native-build-tools" || rootProject.name == "executors") {
+        implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.extra["bootstrapKotlinVersion"]}")
     } else {
         implementation(project(":native:kotlin-native-utils"))
     }
