@@ -162,7 +162,6 @@ class VariableFixationFinder(
 
         val dependencyProvider = TypeVariableDependencyInformationProvider(
             notFixedTypeVariables, postponedArguments, topLevelType.takeIf { completionMode == PARTIAL }, this,
-            typeVariablesFromOuter,
         )
 
         val candidate =
