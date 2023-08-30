@@ -9,7 +9,7 @@ import java.nio.file.Path
 
 @KtModuleBuilderDsl
 public abstract class KtBinaryModuleBuilder : KtModuleBuilder() {
-    protected val binaryRoots: MutableList<Path> = mutableListOf()
+    private val binaryRoots: MutableList<Path> = mutableListOf()
 
     public fun addBinaryRoot(root: Path) {
         binaryRoots.add(root)
@@ -18,4 +18,6 @@ public abstract class KtBinaryModuleBuilder : KtModuleBuilder() {
     public fun addBinaryRoots(roots: Collection<Path>) {
         binaryRoots.addAll(roots)
     }
+
+    protected fun getBinaryRoots(): List<Path> = binaryRoots.distinct()
 }

@@ -27,6 +27,7 @@ public class KtSdkModuleBuilder(
     }
 
     override fun build(): KtSdkModule {
+        val binaryRoots = getBinaryRoots()
         val contentScope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(binaryRoots, kotlinCoreProjectEnvironment)
 
         return KtSdkModuleImpl(

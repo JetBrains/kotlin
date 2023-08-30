@@ -22,6 +22,7 @@ public class KtLibraryModuleBuilder(
     public var librarySources: KtLibrarySourceModule? = null
 
     override fun build(): KtLibraryModule {
+        val binaryRoots = getBinaryRoots()
         val contentScope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(binaryRoots, kotlinCoreProjectEnvironment)
         return KtLibraryModuleImpl(
             directRegularDependencies,
