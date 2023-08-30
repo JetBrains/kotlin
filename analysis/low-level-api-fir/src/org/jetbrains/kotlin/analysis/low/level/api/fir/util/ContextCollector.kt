@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
-import kotlinx.collections.immutable.PersistentMap
-import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
@@ -23,14 +21,20 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
+import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
+import org.jetbrains.kotlin.fir.resolve.dfa.Identifier
+import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
+import org.jetbrains.kotlin.fir.resolve.dfa.smartCastedType
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 internal object ContextCollector {
     enum class ContextKind {
@@ -43,7 +47,7 @@ internal object ContextCollector {
 
     class Context(
         val towerDataContext: FirTowerDataContext,
-        val smartCasts: Map<FirBasedSymbol<*>, Set<ConeKotlinType>>,
+        val smartCasts: Map<Identifier, Set<ConeKotlinType>>,
     )
 
     enum class FilterResponse {
@@ -171,8 +175,6 @@ private class ContextCollectorVisitor(
         dataFlowAnalyzerContext = DataFlowAnalyzerContext(session)
     )
 
-    private var smartCasts: PersistentMap<FirBasedSymbol<*>, Set<ConeKotlinType>> = persistentMapOf()
-
     private val result = HashMap<ContextKey, Context>()
 
     override fun visitElement(element: FirElement) {
@@ -199,12 +201,64 @@ private class ContextCollectorVisitor(
 
         val response = filter(psi)
         if (response != FilterResponse.SKIP) {
-            result[key] = Context(context.towerDataContext, smartCasts)
+            result[key] = computeContext(fir)
         }
 
         if (response == FilterResponse.STOP) {
             isActive = false
         }
+    }
+
+    private fun computeContext(fir: FirElement): Context {
+        val implicitReceiverStack = context.towerDataContext.implicitReceiverStack
+
+        val smartCasts = mutableMapOf<Identifier, Set<ConeKotlinType>>()
+        val oldReceiverTypes = mutableListOf<Pair<Int, ConeKotlinType>>()
+
+        val cfgNode = getControlFlowNode(fir)
+
+        if (cfgNode != null) {
+            val flow = cfgNode.flow
+
+            for (realVariable in flow.knownVariables) {
+                val typeStatement = flow.getTypeStatement(realVariable) ?: continue
+                if (realVariable.stability != PropertyStability.STABLE_VALUE && realVariable.stability != PropertyStability.LOCAL_VAR) {
+                    continue
+                }
+
+                val identifier = typeStatement.variable.identifier
+                smartCasts[identifier] = typeStatement.exactType
+
+                if (realVariable.isThisReference) {
+                    val receiverIndex = implicitReceiverStack.getReceiverIndex(identifier.symbol)
+                    if (receiverIndex != null) {
+                        val originalType = implicitReceiverStack.getOriginalType(receiverIndex)
+                        val smartCastedType = typeStatement.smartCastedType(session.typeContext, originalType)
+                        implicitReceiverStack.replaceReceiverType(receiverIndex, smartCastedType)
+                    }
+                }
+            }
+        }
+
+        val towerDataContextSnapshot = context.towerDataContext.createSnapshot()
+
+        // Receiver types cannot be updated in an immutable snapshot.
+        // So here the types are modified and then restored back.
+        for ((index, oldType) in oldReceiverTypes) {
+            implicitReceiverStack.replaceReceiverType(index, oldType)
+        }
+
+        return Context(towerDataContextSnapshot, smartCasts)
+    }
+
+    private fun getControlFlowNode(fir: FirElement): CFGNode<*>? {
+        val controlFlowGraphReference = context.containers
+            .lastIsInstanceOrNull<FirControlFlowGraphOwner>()
+            ?.controlFlowGraphReference as? FirControlFlowGraphReferenceImpl
+            ?: return null
+
+        val controlFlowGraph = controlFlowGraphReference.controlFlowGraph
+        return controlFlowGraph.nodes.lastOrNull { it.fir == fir }
     }
 
     override fun visitFile(file: FirFile) {
@@ -475,24 +529,6 @@ private class ContextCollectorVisitor(
                 dumpContext(block, ContextKind.BODY)
             }
         }
-    }
-
-    override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression) {
-        if (smartCastExpression.isStable) {
-            val symbol = smartCastExpression.originalExpression.toResolvedCallableSymbol()
-            if (symbol != null) {
-                val previousSmartCasts = smartCasts
-                try {
-                    smartCasts = smartCasts.put(symbol, smartCastExpression.typesFromSmartCast.toSet())
-                    super.visitSmartCastExpression(smartCastExpression)
-                    return
-                } finally {
-                    smartCasts = previousSmartCasts
-                }
-            }
-        }
-
-        super.visitSmartCastExpression(smartCastExpression)
     }
 
     @ContextCollectorDsl

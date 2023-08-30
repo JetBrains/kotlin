@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
+import org.jetbrains.kotlin.fir.resolve.dfa.Identifier
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -180,14 +181,14 @@ internal object ElementContextRenderer {
         }
     }
 
-    private fun StringBuilder.renderSmartCasts(smartCasts: Map<FirBasedSymbol<*>, Set<ConeKotlinType>>) {
+    private fun StringBuilder.renderSmartCasts(smartCasts: Map<Identifier, Set<ConeKotlinType>>) {
         if (smartCasts.isEmpty()) {
             return
         }
 
         appendBlock("Smart Casts:") {
-            for ((symbol, types) in smartCasts) {
-                appendSymbol(symbol).appendLine()
+            for ((identifier, types) in smartCasts) {
+                appendSymbol(identifier.symbol).appendLine()
 
                 appendBlock("Types:") {
                     for (type in types) {
