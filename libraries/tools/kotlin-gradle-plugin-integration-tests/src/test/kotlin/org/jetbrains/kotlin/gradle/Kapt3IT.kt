@@ -464,7 +464,6 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
-    @Disabled
     @DisplayName("Should incrementally rebuild on annotation processor arguments change")
     @GradleTest
     fun testChangeAPArgumentsICRebuild(gradleVersion: GradleVersion) {
