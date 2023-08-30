@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrLocalDelegatedPropertySymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 
@@ -78,8 +75,12 @@ class IrSymbolDeserializer(
     fun deserializeIrSymbol(code: Long): IrSymbol {
         return symbolCache.getOrPut(code) {
             val symbolData = parseSymbolData(code)
-            val signature = deserializeIdSignature(symbolData.signatureId)
-            deserializeIrSymbolData(signature, symbolData.kind)
+            if (symbolData.kind == BinarySymbolData.SymbolKind.RETURNABLE_BLOCK_SYMBOL) {
+                IrReturnableBlockSymbolImpl()
+            } else {
+                val signature = deserializeIdSignature(symbolData.signatureId)
+                deserializeIrSymbolData(signature, symbolData.kind)
+            }
         }
     }
 

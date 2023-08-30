@@ -194,6 +194,12 @@ message IrComposite {
   optional int32 origin_name = 2;
 }
 
+message IrReturnableBlock {
+  required int64 symbol = 1;
+  repeated IrStatement statement = 2;
+  optional int32 origin_name = 3;
+}
+
 message IrClassReference {
   required int64 class_symbol = 1;
   required int32 class_type = 2;
@@ -439,6 +445,7 @@ message IrOperation {
     // Error code
     IrErrorExpression error_expression = 34;
     IrErrorCallExpression error_call_expression = 35;
+    IrReturnableBlock returnable_block = 36;
   }
 }
 

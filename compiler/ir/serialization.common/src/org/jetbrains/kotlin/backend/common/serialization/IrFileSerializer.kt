@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature as 
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak as ProtoBreak
@@ -135,6 +136,8 @@ open class IrFileSerializer(
     // so use this index to store signature only once.
     private val protoIdSignatureMap = mutableMapOf<IdSignature, Int>()
     protected val protoIdSignatureArray = arrayListOf<ProtoIdSignature>()
+
+    private val returnableBlockSymbolMap = mutableMapOf<IrReturnableBlockSymbol, Int>()
 
     protected val protoBodyArray = mutableListOf<XStatementOrExpression>()
 
@@ -342,8 +345,9 @@ open class IrFileSerializer(
     private fun serializeIrSymbol(symbol: IrSymbol): Long {
         val symbolKind = protoSymbolKind(symbol)
 
-        val signatureId = when {
-            symbol is IrFileSymbol -> protoIdSignature(IdSignature.FileSignature(symbol)) // TODO: special signature for files?
+        val signatureId = when (symbol) {
+            is IrReturnableBlockSymbol -> returnableBlockSymbolMap.getOrPut(symbol) { returnableBlockSymbolMap.size }
+            is IrFileSymbol -> protoIdSignature(IdSignature.FileSignature(symbol)) // TODO: special signature for files?
             else -> {
                 val declaration = symbol.owner as? IrDeclaration ?: error("Expected IrDeclaration: ${symbol.owner.render()}")
                 protoIdSignature(declaration)
@@ -513,6 +517,17 @@ open class IrFileSerializer(
 
         block.origin?.let { proto.setOriginName(serializeIrStatementOrigin(it)) }
 
+        block.statements.forEach {
+            proto.addStatement(serializeStatement(it))
+        }
+        return proto.build()
+    }
+
+    private fun serializeReturnableBlock(block: IrReturnableBlock): ProtoReturnableBlock {
+        val proto = ProtoReturnableBlock.newBuilder()
+
+        proto.symbol = serializeIrSymbol(block.symbol)
+        block.origin?.let { proto.setOriginName(serializeIrStatementOrigin(it)) }
         block.statements.forEach {
             proto.addStatement(serializeStatement(it))
         }
@@ -1004,6 +1019,7 @@ open class IrFileSerializer(
 
         // TODO: make me a visitor.
         when (expression) {
+            is IrReturnableBlock -> operationProto.returnableBlock = serializeReturnableBlock(expression)
             is IrBlock -> operationProto.block = serializeBlock(expression)
             is IrBreak -> operationProto.`break` = serializeBreak(expression)
             is IrClassReference -> operationProto.classReference = serializeClassReference(expression)
