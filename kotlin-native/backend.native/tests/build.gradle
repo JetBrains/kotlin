@@ -1008,33 +1008,6 @@ standaloneTest("freeze_disabled") {
     testLogger = KonanTest.Logger.SILENT
 }
 
-tasks.register("atomicSmokeTest", KonanLocalTest) {
-    source = "runtime/atomics/atomic_smoke.kt"
-}
-
-tasks.register("atomicStressTest", KonanLocalTest) {
-    source = "runtime/atomics/atomic_stress.kt"
-}
-
-tasks.register("atomic0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/atomics/atomic0.kt"
-}
-
-standaloneTest("atomic1") {
-    // Note: This test reproduces a race, so it'll start flaking if problem is reintroduced.
-    enabled = false // Needs USE_CYCLIC_GC, which is disabled.
-    source = "runtime/atomics/atomic1.kt"
-}
-
-tasks.register("atomicArraySmokeTest", KonanLocalTest) {
-    source = "runtime/atomics/atomic_array_smoke.kt"
-}
-
-tasks.register("atomicArrayStressTest", KonanLocalTest) {
-    source = "runtime/atomics/atomic_array_stress.kt"
-}
-
 tasks.register("lazy0", KonanLocalTest) {
     useGoldenData = true
     source = "runtime/workers/lazy0.kt"
