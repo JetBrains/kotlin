@@ -27,7 +27,7 @@ Smart Casts:
         Foo
         kotlin/Any
 
-FILE: [ResolvedTo(IMPORTS)] smartCastArgument.kt
+FILE: [ResolvedTo(IMPORTS)] argument.kt
     public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] obj: R|kotlin/Any|): R|kotlin/Unit| {
@@ -38,5 +38,5 @@ FILE: [ResolvedTo(IMPORTS)] smartCastArgument.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any|): R|kotlin/Unit| {
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|Foo|): R|kotlin/Unit| {
     }

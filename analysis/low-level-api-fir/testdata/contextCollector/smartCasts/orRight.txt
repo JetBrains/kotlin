@@ -1,0 +1,41 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 8
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] orRight.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] val isValid: Boolean
+            public? [ResolvedTo(RAW_FIR)] get(): Boolean
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] obj: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/obj| is R|Foo|) || R|/isValid|(R|<local>/obj|) ->  {
+                R|/consume<Inapplicable(INAPPLICABLE): /consume>#|(R|<local>/obj|)
+            }
+        }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun isValid([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any|): R|kotlin/Boolean| {
+        ^isValid Boolean(true)
+    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|Foo|): R|kotlin/Unit| {
+    }

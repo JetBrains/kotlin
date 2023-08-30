@@ -73,6 +73,12 @@ public class ContextCollectorTestGenerated extends AbstractContextCollectorTest 
     }
 
     @Test
+    @TestMetadata("localClass.kt")
+    public void testLocalClass() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/contextCollector/localClass.kt");
+    }
+
+    @Test
     @TestMetadata("nestedClasses.kt")
     public void testNestedClasses() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/contextCollector/nestedClasses.kt");
@@ -90,15 +96,97 @@ public class ContextCollectorTestGenerated extends AbstractContextCollectorTest 
         runTest("analysis/low-level-api-fir/testdata/contextCollector/simple.kt");
     }
 
-    @Test
-    @TestMetadata("smartCastArgument.kt")
-    public void testSmartCastArgument() throws Exception {
-        runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCastArgument.kt");
-    }
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/contextCollector/smartCasts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class SmartCasts {
+        @Test
+        @TestMetadata("afterIf.kt")
+        public void testAfterIf() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/afterIf.kt");
+        }
 
-    @Test
-    @TestMetadata("smartCastReceiverArgument.kt")
-    public void testSmartCastReceiverArgument() throws Exception {
-        runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCastReceiverArgument.kt");
+        @Test
+        @TestMetadata("afterLoop.kt")
+        public void testAfterLoop() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/afterLoop.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInSmartCasts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector/smartCasts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("andRight.kt")
+        public void testAndRight() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/andRight.kt");
+        }
+
+        @Test
+        @TestMetadata("argument.kt")
+        public void testArgument() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/argument.kt");
+        }
+
+        @Test
+        @TestMetadata("argumentAsReceiver.kt")
+        public void testArgumentAsReceiver() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/argumentAsReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("beforeIf.kt")
+        public void testBeforeIf() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/beforeIf.kt");
+        }
+
+        @Test
+        @TestMetadata("beforeLoop.kt")
+        public void testBeforeLoop() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/beforeLoop.kt");
+        }
+
+        @Test
+        @TestMetadata("dispatchReceiver.kt")
+        public void testDispatchReceiver() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/dispatchReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("extensionReceiver.kt")
+        public void testExtensionReceiver() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/extensionReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("insideLoop.kt")
+        public void testInsideLoop() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/insideLoop.kt");
+        }
+
+        @Test
+        @TestMetadata("orRight.kt")
+        public void testOrRight() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/orRight.kt");
+        }
+
+        @Test
+        @TestMetadata("plainCheck.kt")
+        public void testPlainCheck() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/plainCheck.kt");
+        }
+
+        @Test
+        @TestMetadata("require.kt")
+        public void testRequire() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/require.kt");
+        }
+
+        @Test
+        @TestMetadata("when.kt")
+        public void testWhen() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/when.kt");
+        }
     }
 }

@@ -16,37 +16,28 @@ Tower Data Context:
     Element 7
         Scope: FirLocalScope
             Properties:
+                FirValueParameterSymbol another: R|Foo|
                 FirValueParameterSymbol obj: R|kotlin/Any|
     Element 8
         Scope: FirLocalScope
     Element 9
-        Scope: FirLocalScope
-    Element 10
         Scope: FirLocalScope
 Smart Casts:
     FirValueParameterSymbol obj: R|kotlin/Any|
     Types:
         Foo
         kotlin/Any
-        Bar
 
-FILE: [ResolvedTo(IMPORTS)] smartCastReceiverArgument.kt
+FILE: [ResolvedTo(IMPORTS)] plainCheck.kt
     public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
     }
-    public abstract [ResolvedTo(STATUS)] interface Bar : R|kotlin/Any| {
-    }
-    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] obj: R|kotlin/Any|): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] obj: R|kotlin/Any|, [ResolvedTo(BODY_RESOLVE)] another: R|Foo|): R|kotlin/Unit| {
         when () {
             (R|<local>/obj| is R|Foo|) ->  {
-                when () {
-                    (R|<local>/obj| is R|Bar|) ->  {
-                        R|<local>/obj|.R|/consume|(R|<local>/obj|)
-                    }
-                }
-
+                R|/consume|(R|<local>/another|)
             }
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun R|Bar|.consume([ResolvedTo(CONTRACTS)] obj: R|Foo|): R|kotlin/Unit| {
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|Foo|): R|kotlin/Unit| {
     }

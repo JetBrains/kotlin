@@ -98,6 +98,10 @@ class PersistentImplicitReceiverStack private constructor(
         return originalTypes[index]
     }
 
+    fun getType(index: Int): ConeKotlinType {
+        return stack[index].type
+    }
+
     // This method is only used from DFA and it's in some sense breaks persistence contracts of the data structure
     // But it's ok since DFA handles everything properly yet, but still may be it should be rewritten somehow
     @OptIn(ImplicitReceiverValue.ImplicitReceiverInternals::class)

@@ -1,0 +1,36 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 8
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] afterIf.kt
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] obj: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/obj| is R|Foo|) ->  {
+                R|/consume|(R|<local>/obj|)
+            }
+        }
+
+        R|<local>/obj|.R|kotlin/Any.hashCode|()
+    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|Foo|): R|kotlin/Unit| {
+    }

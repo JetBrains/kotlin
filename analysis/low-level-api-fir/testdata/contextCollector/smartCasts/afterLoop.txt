@@ -1,0 +1,48 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node?|
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node?|
+Smart Casts:
+    FirPropertySymbol lvar current: R|Node?|
+    Types:
+        kotlin/Any
+
+FILE: [ResolvedTo(IMPORTS)] afterLoop.kt
+    public abstract [ResolvedTo(STATUS)] interface Node : R|kotlin/Any| {
+        public abstract [ResolvedTo(CONTRACTS)] val shouldProcess: R|kotlin/Boolean|
+            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Boolean|
+
+        public abstract [ResolvedTo(CONTRACTS)] val parent: R|Node?|
+            public [ResolvedTo(CONTRACTS)] get(): R|Node?|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] initial: R|Node?|): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lvar current: R|Node?| = R|<local>/initial|
+        while(R|<local>/current|!!.R|/Node.shouldProcess|) {
+            R|/consume|(R|<local>/current|)
+            R|<local>/current| = R|<local>/current|.R|/Node.parent|
+        }
+
+        R|/consume|(R|<local>/current|)
+    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] node: R|Node|): R|kotlin/Unit| {
+    }

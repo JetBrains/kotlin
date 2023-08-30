@@ -225,7 +225,8 @@ private class LLFirBodyTargetResolver(
                     withPsiEntry("contextPsiElement", contextPsiElement)
                 }
 
-            LLFirCodeFragmentContext(elementContext.towerDataContext.withExtraScopes(), elementContext.smartCasts)
+            val variables = elementContext.smartCasts.mapKeys { it.key.identifier.symbol }
+            LLFirCodeFragmentContext(elementContext.towerDataContext.withExtraScopes(), variables)
         } else {
             val towerDataContext = FirTowerDataContext().withExtraScopes()
             LLFirCodeFragmentContext(towerDataContext, emptyMap())
