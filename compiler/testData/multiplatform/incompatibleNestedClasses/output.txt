@@ -1,6 +1,42 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class O1 {
+^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:2:11: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+    class N1
+          ^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:3:15: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+    interface N2
+              ^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:4:12: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+    object N3
+           ^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:7:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class O2 {
+^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:8:11: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+    class N2
+          ^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:9:17: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+    inner class I2
+                ^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:12:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class O3 {
+^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:13:12: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+    object Companion
+           ^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:14:22: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+    companion object Factory
+                     ^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:17:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class O4 {
+^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:18:15: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+    companion object
+              ^
 
 -- JVM --
 Exit code: COMPILATION_ERROR

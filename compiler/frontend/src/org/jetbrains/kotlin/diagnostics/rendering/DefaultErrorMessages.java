@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.UnboundDiagnostic;
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement;
 import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility;
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible;
 import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -430,6 +429,10 @@ public class DefaultErrorMessages {
                 CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
                 new ListRenderer<>(TO_STRING, (elem) -> "'" + elem + "'"),
                 NAME);
+
+        MAP.put(EXPECT_ACTUAL_CLASSIFIERS_ARE_EXPERIMENTAL_WARNING,
+                "The expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. " +
+                "You can use -Xexpect-actual-classes flag to suppress this warning.");
 
         MAP.put(OPTIONAL_EXPECTATION_NOT_ON_EXPECTED, "'@OptionalExpectation' can only be used on an expected annotation class");
         MAP.put(OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, "Declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry");

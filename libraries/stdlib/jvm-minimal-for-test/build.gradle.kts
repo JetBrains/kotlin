@@ -63,6 +63,7 @@ tasks.compileKotlin {
     kotlinOptions {
         freeCompilerArgs += listOf(
             "-Xallow-kotlin-package",
+            "-Xexpect-actual-classes",
             "-Xmulti-platform",
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=kotlin.contracts.ExperimentalContracts",

@@ -8,4 +8,16 @@ as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
 warning: -Xfragments flag is not supported for language version < 2.0
+compiler/testData/cli/jvm/hmpp/src/a.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class A {
+^
+compiler/testData/cli/jvm/hmpp/src/a.kt:5:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class B {
+^
+compiler/testData/cli/jvm/hmpp/src/b.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual class A {
+^
+compiler/testData/cli/jvm/hmpp/src/c.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual class B {
+^
 OK

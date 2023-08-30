@@ -35,6 +35,11 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirExpectConsistencyChecker,
         )
 
+    override val classLikeCheckers: Set<FirClassLikeChecker>
+        get() = setOf(
+            FirExpectActualClassifiersAreExperimentalChecker,
+        )
+
     override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker>
         get() = setOf(
             FirKClassWithIncorrectTypeArgumentChecker,

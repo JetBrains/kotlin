@@ -1,11 +1,26 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/simple/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class Printer() {
+^
 
 -- JVM --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/simple/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class Printer() {
+^
+compiler/testData/multiplatform/simple/jvm.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual class Printer {
+^
 
 -- JS --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/simple/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class Printer() {
+^
+compiler/testData/multiplatform/simple/js.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual class Printer {
+^

@@ -1,11 +1,19 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/implTypeAlias/generic/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class C1<A> {
+^
 
 -- JVM --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/implTypeAlias/generic/common.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+expect class C1<A> {
+^
+compiler/testData/multiplatform/implTypeAlias/generic/jvm.kt:1:1: warning: the expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. You can use -Xexpect-actual-classes flag to suppress this warning.
+actual typealias C1<A> = C1Impl<A>
+^
 compiler/testData/multiplatform/implTypeAlias/generic/jvm.kt:3:13: warning: parameter 'a' is never used
     fun foo(a: A): List<A>? = null
             ^
-

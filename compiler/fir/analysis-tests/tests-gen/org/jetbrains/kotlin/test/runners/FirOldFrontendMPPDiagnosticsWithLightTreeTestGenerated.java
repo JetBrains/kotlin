@@ -122,6 +122,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("expectActualClassesAreExperimentalWarning.kt")
+    public void testExpectActualClassesAreExperimentalWarning() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualClassesAreExperimentalWarning.kt");
+    }
+
+    @Test
     @TestMetadata("expectDataObject.kt")
     public void testExpectDataObject() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectDataObject.kt");

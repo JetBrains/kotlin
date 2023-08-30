@@ -110,6 +110,7 @@ kotlin {
                         // providing exhaustive list of args here
                         freeCompilerArgs = listOf(
                             "-Xallow-kotlin-package",
+                            "-Xexpect-actual-classes",
                             "-Xmultifile-parts-inherit",
                             "-Xuse-14-inline-classes-mangling-scheme",
                             "-Xbuiltins-from-sources",
@@ -168,6 +169,7 @@ kotlin {
                     kotlinOptions {
                         freeCompilerArgs += listOf(
                             "-Xallow-kotlin-package", // TODO: maybe rename test packages
+                            "-Xexpect-actual-classes",
                         )
                         if (kotlinBuildProperties.useFir) {
                             freeCompilerArgs += "-Xuse-k2"
@@ -256,6 +258,7 @@ kotlin {
             main.apply {
                 kotlinOptions {
                     freeCompilerArgs += "-Xir-module-name=kotlin"
+                    freeCompilerArgs += "-Xexpect-actual-classes"
 
                     if (!kotlinBuildProperties.disableWerror) {
                         allWarningsAsErrors = true
