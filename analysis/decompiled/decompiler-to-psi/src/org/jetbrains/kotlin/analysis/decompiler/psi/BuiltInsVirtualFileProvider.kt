@@ -24,25 +24,25 @@ abstract class BuiltInsVirtualFileProvider {
 }
 
 abstract class BuiltInsVirtualFileProviderBaseImpl : BuiltInsVirtualFileProvider() {
-    private val builtinFiles: Set<VirtualFile> by lazy {
+    private val builtInUrls: Set<URL> by lazy {
         val classLoader = this::class.java.classLoader
         StandardClassIds.builtInsPackages.mapTo(mutableSetOf()) { builtInPackageFqName ->
             val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(builtInPackageFqName)
-            val resourceUrl = classLoader.getResource(resourcePath)
+            classLoader.getResource(resourcePath)
                 ?: errorWithAttachment("Resource for builtin $builtInPackageFqName not found") {
                     withEntry("resourcePath", resourcePath)
-                }
-            findVirtualFile(resourceUrl)
-                ?: errorWithAttachment("Virtual file for builtin $builtInPackageFqName not found") {
-                    withEntry("resourcePath", resourcePath)
-                    withEntry("resourceUrl", resourceUrl) { it.toString() }
                 }
         }
     }
 
     protected abstract fun findVirtualFile(url: URL): VirtualFile?
 
-    override fun getBuiltInVirtualFiles(): Set<VirtualFile> = builtinFiles
+    override fun getBuiltInVirtualFiles(): Set<VirtualFile> = builtInUrls.mapTo(mutableSetOf()) { url ->
+        findVirtualFile(url)
+            ?: errorWithAttachment("Virtual file for builtin is not found") {
+                withEntry("resourceUrl", url) { it.toString() }
+            }
+    }
 }
 
 class BuiltInsVirtualFileProviderCliImpl(
