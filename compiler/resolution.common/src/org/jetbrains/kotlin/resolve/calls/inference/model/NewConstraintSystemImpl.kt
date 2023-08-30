@@ -30,8 +30,7 @@ class NewConstraintSystemImpl(
     ConstraintSystemBuilder,
     ConstraintInjector.Context,
     ResultTypeResolver.Context,
-    PostponedArgumentsAnalyzerContext
-{
+    PostponedArgumentsAnalyzerContext {
     private val utilContext = constraintInjector.constraintIncorporator.utilContext
 
     private val postponedComputationsAfterAllVariablesAreFixed = mutableListOf<() -> Unit>()
@@ -144,7 +143,7 @@ class NewConstraintSystemImpl(
 
     override fun addMissedConstraints(
         position: IncorporationConstraintPosition,
-        constraints: MutableList<Pair<TypeVariableMarker, Constraint>>
+        constraints: MutableList<Pair<TypeVariableMarker, Constraint>>,
     ) {
         storage.missedConstraints.add(position to constraints)
     }
@@ -194,21 +193,22 @@ class NewConstraintSystemImpl(
     override fun putBuiltFunctionalExpectedTypeForPostponedArgument(
         topLevelVariable: TypeConstructorMarker,
         pathToExpectedType: List<Pair<TypeConstructorMarker, Int>>,
-        builtFunctionalType: KotlinTypeMarker
+        builtFunctionalType: KotlinTypeMarker,
     ) {
-        storage.builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables[topLevelVariable to pathToExpectedType] = builtFunctionalType
+        storage.builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables[topLevelVariable to pathToExpectedType] =
+            builtFunctionalType
     }
 
     override fun putBuiltFunctionalExpectedTypeForPostponedArgument(
         expectedTypeVariable: TypeConstructorMarker,
-        builtFunctionalType: KotlinTypeMarker
+        builtFunctionalType: KotlinTypeMarker,
     ) {
         storage.builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables[expectedTypeVariable] = builtFunctionalType
     }
 
     override fun getBuiltFunctionalExpectedTypeForPostponedArgument(
         topLevelVariable: TypeConstructorMarker,
-        pathToExpectedType: List<Pair<TypeConstructorMarker, Int>>
+        pathToExpectedType: List<Pair<TypeConstructorMarker, Int>>,
     ) = storage.builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables[topLevelVariable to pathToExpectedType]
 
     override fun getBuiltFunctionalExpectedTypeForPostponedArgument(expectedTypeVariable: TypeConstructorMarker) =
@@ -510,7 +510,7 @@ class NewConstraintSystemImpl(
      */
     private fun applyConstraintsFromFirstSuccessfulBranchOfTheFork(
         forkPointData: ForkPointData,
-        position: IncorporationConstraintPosition
+        position: IncorporationConstraintPosition,
     ): Boolean {
         return forkPointData.any { constraintSetForForkBranch ->
             runTransaction {
@@ -539,7 +539,7 @@ class NewConstraintSystemImpl(
     override fun fixVariable(
         variable: TypeVariableMarker,
         resultType: KotlinTypeMarker,
-        position: FixVariableConstraintPosition<*>
+        position: FixVariableConstraintPosition<*>,
     ) = with(utilContext) {
         checkState(State.BUILDING, State.COMPLETION)
 
@@ -638,7 +638,7 @@ class NewConstraintSystemImpl(
 
     private fun ConstraintSystemUtilContext.postponeOnlyInputTypesCheck(
         variableWithConstraints: MutableVariableWithConstraints?,
-        resultType: KotlinTypeMarker
+        resultType: KotlinTypeMarker,
     ) {
         if (variableWithConstraints != null && variableWithConstraints.typeVariable.hasOnlyInputTypesAttribute()) {
             postponedComputationsAfterAllVariablesAreFixed.add { checkOnlyInputTypesAnnotation(variableWithConstraints, resultType) }
@@ -654,7 +654,7 @@ class NewConstraintSystemImpl(
     private fun KotlinTypeMarker.substituteAndApproximateIfNecessary(
         substitutor: TypeSubstitutorMarker,
         approximator: AbstractTypeApproximator,
-        constraintKind: ConstraintKind
+        constraintKind: ConstraintKind,
     ): KotlinTypeMarker {
         val doesInputTypeContainsOtherVariables = this.contains { it.typeConstructor() is TypeVariableTypeConstructorMarker }
         val substitutedType = if (doesInputTypeContainsOtherVariables) substitutor.safeSubstitute(this) else this
