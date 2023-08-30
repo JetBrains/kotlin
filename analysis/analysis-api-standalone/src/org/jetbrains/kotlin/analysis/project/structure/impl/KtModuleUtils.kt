@@ -9,8 +9,6 @@ import com.google.common.io.Files.getFileExtension
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
-import com.intellij.util.io.URLUtil
-import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.builder.*
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
@@ -162,14 +160,10 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
             }
         )
         compilerConfig.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
-            val jdkHomePath = jdkHome.toPath()
-            val binaryRoots = LibraryUtils.findClassesFromJdkHome(jdkHomePath).map {
-                Paths.get(URLUtil.extractPath(it))
-            }
             addRegularDependency(
                 buildKtSdkModule {
                     this.platform = platform
-                    addBinaryRoots(binaryRoots)
+                    addBinaryRootsFromJdkHome(jdkHome.toPath(), isJre = false)
                     sdkName = "JDK for $moduleName"
                 }
             )
