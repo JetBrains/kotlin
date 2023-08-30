@@ -977,31 +977,10 @@ private class ElementsToShortenCollector(
         if (candidates.mapNotNull { it.candidate.originScope }
                 .hasScopeCloserThan(scopeForQualifiedAccess, expressionInScope)) return false
         val candidatesWithinSamePriorityScopes = candidates.filter { it.candidate.originScope == scopeForQualifiedAccess }
-        if (candidatesWithinSamePriorityScopes.isEmpty() || candidatesWithinSamePriorityScopes.size == 1) return true
 
-        /**
-         * This is a conservative decision to avoid false positives.
-         *
-         * TODO: Figure out the priorities among `candidatesWithinSamePriorityScopes` and determine if [firQualifiedAccess] matches the
-         * one with the highest priority. At this moment, we have some counter examples that [OverloadCandidate.isInBestCandidates] is true
-         * and its symbol matches [firQualifiedAccess], but we cannot shorten it.
-         *
-         * For example:
-         *   package foo
-         *   class Foo {
-         *       fun test() {
-         *           // It references FIRST. Removing `foo` lets it reference SECOND. However, the one has true for
-         *           // [OverloadCandidate.isInBestCandidates] is FIRST. Therefore, making a decision based on `isInBestCandidates` can
-         *           // cause false positives i.e., shortening changes the referenced symbol.
-         *           <caret>foo.myRun {
-         *               42
-         *           }
-         *       }
-         *   }
-         *   inline fun <R> myRun(block: () -> R): R = block()         // FIRST
-         *   inline fun <T, R> T.myRun(block: T.() -> R): R = block()  // SECOND
-         */
-        return false
+        // TODO isInBestCandidates should probably be used more actively to filter candidates
+        return candidatesWithinSamePriorityScopes.isEmpty() ||
+                candidatesWithinSamePriorityScopes.singleOrNull()?.isInBestCandidates == true
     }
 
     private fun processPropertyAccess(firPropertyAccess: FirPropertyAccessExpression) {
