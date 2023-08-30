@@ -189,7 +189,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
                     .javaExecutable
                     .asFile.get()
                     .absolutePath
-                logger.info("Kapt worker classpath: ${it.classpath}")
+                logger.info("Kapt worker classpath: ${kaptClasspath.toList()}")
             }
             IsolationMode.NONE -> {
                 warnAdditionalJvmArgsAreNotUsed(isolationMode)
