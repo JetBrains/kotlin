@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DIAGNOSTICS_LIST
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JS_DIAGNOSTICS_LIST
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JVM_DIAGNOSTICS_LIST
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.NATIVE_DIAGNOSTICS_LIST
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.WASM_DIAGNOSTICS_LIST
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.ErrorListDiagnosticListRenderer
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.generateDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
@@ -101,6 +102,7 @@ fun main(args: Array<String>) {
     val jvmGenerationPath = File(arguments.getOrElse(1) { "compiler/fir/checkers/checkers.jvm/gen" })
     val jsGenerationPath = File(arguments.getOrElse(2) { "compiler/fir/checkers/checkers.js/gen" })
     val nativeGenerationPath = File(arguments.getOrElse(3) { "compiler/fir/checkers/checkers.native/gen" })
+    val wasmGenerationPath = File(arguments.getOrElse(4) { "compiler/fir/checkers/checkers.wasm/gen" })
     val rawFirGenerationPath = File("compiler/fir/raw-fir/raw-fir.common/gen")
 
     val packageName = "$basePackage.diagnostics"
@@ -109,6 +111,7 @@ fun main(args: Array<String>) {
     generateDiagnostics(jvmGenerationPath, "$packageName.jvm", JVM_DIAGNOSTICS_LIST, starImportsToAdd = setOf(ErrorListDiagnosticListRenderer.BASE_PACKAGE, ErrorListDiagnosticListRenderer.DIAGNOSTICS_PACKAGE))
     generateDiagnostics(jsGenerationPath, "$packageName.js", JS_DIAGNOSTICS_LIST, starImportsToAdd = setOf(ErrorListDiagnosticListRenderer.BASE_PACKAGE, ErrorListDiagnosticListRenderer.DIAGNOSTICS_PACKAGE))
     generateDiagnostics(nativeGenerationPath, "$packageName.native", NATIVE_DIAGNOSTICS_LIST, starImportsToAdd = setOf(ErrorListDiagnosticListRenderer.BASE_PACKAGE, ErrorListDiagnosticListRenderer.DIAGNOSTICS_PACKAGE))
+    generateDiagnostics(wasmGenerationPath, "$packageName.wasm", WASM_DIAGNOSTICS_LIST, starImportsToAdd = setOf(ErrorListDiagnosticListRenderer.BASE_PACKAGE, ErrorListDiagnosticListRenderer.DIAGNOSTICS_PACKAGE))
     generateDiagnostics(rawFirGenerationPath, "org.jetbrains.kotlin.fir.builder", SYNTAX_DIAGNOSTIC_LIST, starImportsToAdd = setOf(ErrorListDiagnosticListRenderer.DIAGNOSTICS_PACKAGE))
 
     generateNonSuppressibleErrorNamesFile(generationPath, packageName)
