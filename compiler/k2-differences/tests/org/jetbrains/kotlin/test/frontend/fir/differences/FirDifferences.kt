@@ -66,6 +66,10 @@ val equivalentDiagnostics = listOf(
         "USAGE_IS_NOT_INLINABLE",
 //    ),
 //    listOf(
+        "TYPEALIAS_EXPANDED_TO_MALFORMED_TYPE",
+        "TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS",
+//    ),
+//    listOf(
         "UNRESOLVED_REFERENCE_WRONG_RECEIVER",
         "UNRESOLVED_REFERENCE",
         "UNRESOLVED_MEMBER",
@@ -98,6 +102,7 @@ val equivalentDiagnostics = listOf(
         "FORBIDDEN_BINARY_MOD_AS_REM",
         "API_NOT_AVAILABLE",
         "NO_CONSTRUCTOR",
+        "SUPERTYPE_INITIALIZED_IN_INTERFACE",
         "ANNOTATION_ARGUMENT_MUST_BE_CONST",
         "OPT_IN_USAGE_ERROR",
         "EXPRESSION_EXPECTED_PACKAGE_FOUND",
@@ -200,6 +205,7 @@ val equivalentDiagnostics = listOf(
     listOf(
         "CANNOT_OVERRIDE_INVISIBLE_MEMBER",
         "NOTHING_TO_OVERRIDE",
+        "RETURN_TYPE_MISMATCH_ON_OVERRIDE",
     ),
     listOf(
         "CYCLIC_INHERITANCE_HIERARCHY",
@@ -246,10 +252,6 @@ val equivalentDiagnostics = listOf(
     listOf(
         "DATA_CLASS_OVERRIDE_DEFAULT_VALUES",
         "DATA_CLASS_OVERRIDE_DEFAULT_VALUES_ERROR"
-    ),
-    listOf(
-        "TYPEALIAS_EXPANDED_TO_MALFORMED_TYPE",
-        "TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS",
     ),
     listOf(
         "ACTUAL_WITHOUT_EXPECT",
@@ -763,9 +765,9 @@ val statsColumns = listOf(
     "Green->Red", // "# of files where it's introduced into",
     "Red->Pure Green", // "# of files it disappeared from that are now pure-green",
     "Pure Green->Red", // "# of pure-green files where it's introduced into",
-    "Dis.", // "Disappearance issue",
-    "Int.", // "Introduction issue",
-    "Mis.", // "Missing issue",
+    "Disappearance issue",
+    "Introduction issue",
+    "Miss issue",
 )
 
 private fun List<*>.toCsvColumns() = joinToString(",") { "\"$it\"" }
@@ -803,9 +805,9 @@ fun printCsvDiagnosticsStatistics(
                 diagnostic, group ?: "--",
                 disappearances.size, introductions.size,
                 pureDisappearances.size, pureIntroductions.size,
-                disappearanceIssue?.ktNumber ?: "--",
-                introductionIssue?.ktNumber ?: "--",
-                missingIssue?.ktNumber ?: "--",
+                disappearanceIssue?.ktLink ?: "--",
+                introductionIssue?.ktLink ?: "--",
+                missingIssue?.ktLink ?: "--",
             ).toCsvLine()
         )
     }
