@@ -29,12 +29,12 @@ fun bar(aInstance: A, bInstance: B) {
         d checkType { _<Short>() }
     }
 
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(bInstance) {
-        <!CANNOT_INFER_PARAMETER_TYPE, COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>(a, b)<!>, (c, d) ->
-        a checkType { _<Int>() }
-        b checkType { _<String>() }
-        c checkType { _<Double>() }
-        d checkType { _<Short>() }
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(bInstance) {
+        <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>(a, b)<!>, (c, d) ->
+        a checkType { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Int<!>>() }
+        b checkType { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>String<!>>() }
+        c checkType <!ARGUMENT_TYPE_MISMATCH!>{ <!INAPPLICABLE_CANDIDATE!>_<!><Double>() }<!>
+        d checkType <!ARGUMENT_TYPE_MISMATCH!>{ <!INAPPLICABLE_CANDIDATE!>_<!><Short>() }<!>
     }
 
     foo<A, B>(bInstance) {
