@@ -151,7 +151,7 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
     compilerConfig: CompilerConfiguration,
     ktFiles: List<KtFile>,
 ): KtStaticProjectStructureProvider = buildProjectStructureProvider(kotlinCoreProjectEnvironment) {
-    val (scriptFiles, ordinaryFiles) = ktFiles.partition { it.isScript() }
+    val (scriptFiles, _) = ktFiles.partition { it.isScript() }
     val platform = JvmPlatforms.defaultJvmPlatform
 
     fun KtModuleBuilder.addModuleDependencies(moduleName: String) {
@@ -159,7 +159,7 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
         addRegularDependency(
             buildKtLibraryModule {
                 this.platform = platform
-                binaryRoots = libraryRoots.map { it.toPath() }
+                addBinaryRoots(libraryRoots.map { it.toPath() })
                 libraryName = "Library for $moduleName"
             }
         )
@@ -171,7 +171,7 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
             addRegularDependency(
                 buildKtSdkModule {
                     this.platform = platform
-                    this.binaryRoots = binaryRoots
+                    addBinaryRoots(binaryRoots)
                     sdkName = "JDK for $moduleName"
                 }
             )
