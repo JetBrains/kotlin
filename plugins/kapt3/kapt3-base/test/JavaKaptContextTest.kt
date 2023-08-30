@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kapt.base.test
 
+import com.sun.tools.javac.processing.AnnotationProcessingError
 import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.base.kapt3.KaptOptions
@@ -135,6 +136,9 @@ class JavaKaptContextTest {
         } catch (e: KaptBaseError) {
             assertEquals(KaptBaseError.Kind.EXCEPTION, e.kind)
             assertEquals("Here we are!", e.cause!!.message)
+            triggered = true
+        } catch (e: Throwable) { // AnnotationProcessorError
+            assertTrue(e.cause!!.message!!.contains("Here we are!"))
             triggered = true
         }
 
