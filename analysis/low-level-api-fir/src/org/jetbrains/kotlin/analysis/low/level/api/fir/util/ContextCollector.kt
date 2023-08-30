@@ -176,23 +176,21 @@ private class ContextCollectorVisitor(
     private val result = HashMap<ContextKey, Context>()
 
     override fun visitElement(element: FirElement) {
-        dumpContext(element.psi, ContextKind.SELF)
+        dumpContext(element, ContextKind.SELF)
 
         onActive {
             element.acceptChildren(this)
         }
     }
 
-    private fun dumpContext(psi: PsiElement?, kind: ContextKind) {
+    private fun dumpContext(fir: FirElement, kind: ContextKind) {
         ProgressManager.checkCanceled()
-
-        if (psi == null) {
-            return
-        }
 
         if (kind == ContextKind.BODY && !shouldCollectBodyContext) {
             return
         }
+
+        val psi = fir.psi ?: return
 
         val key = ContextKey(psi, kind)
         if (key in result) {
@@ -218,11 +216,11 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
-        dumpContext(annotationCall.psi, ContextKind.SELF)
+        dumpContext(annotationCall, ContextKind.SELF)
 
         onActiveBody {
             context.forAnnotation {
-                dumpContext(annotationCall.psi, ContextKind.BODY)
+                dumpContext(annotationCall, ContextKind.BODY)
 
                 // Technically, annotation arguments might contain arbitrary expressions.
                 // However, such cases are very rare, as it's currently forbidden in Kotlin.
@@ -232,7 +230,7 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass) = withProcessor {
-        dumpContext(regularClass.psi, ContextKind.SELF)
+        dumpContext(regularClass, ContextKind.SELF)
 
         processSignatureAnnotations(regularClass)
 
@@ -243,7 +241,7 @@ private class ContextCollectorVisitor(
                 processList(regularClass.typeParameters)
 
                 context.withRegularClass(regularClass, holder) {
-                    dumpContext(regularClass.psi, ContextKind.BODY)
+                    dumpContext(regularClass, ContextKind.BODY)
 
                     onActive {
                         withInterceptor {
@@ -260,7 +258,7 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitConstructor(constructor: FirConstructor) = withProcessor {
-        dumpContext(constructor.psi, ContextKind.SELF)
+        dumpContext(constructor, ContextKind.SELF)
 
         processSignatureAnnotations(constructor)
 
@@ -276,7 +274,7 @@ private class ContextCollectorVisitor(
                 context.forConstructorBody(constructor, session) {
                     processList(constructor.valueParameters)
 
-                    dumpContext(constructor.psi, ContextKind.BODY)
+                    dumpContext(constructor, ContextKind.BODY)
 
                     onActive {
                         process(constructor.body)
@@ -297,13 +295,13 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry) {
-        dumpContext(enumEntry.psi, ContextKind.SELF)
+        dumpContext(enumEntry, ContextKind.SELF)
 
         onActiveBody {
             enumEntry.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
             context.forEnumEntry {
-                dumpContext(enumEntry.psi, ContextKind.BODY)
+                dumpContext(enumEntry, ContextKind.BODY)
 
                 onActive {
                     super.visitEnumEntry(enumEntry)
@@ -313,7 +311,7 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) = withProcessor {
-        dumpContext(simpleFunction.psi, ContextKind.SELF)
+        dumpContext(simpleFunction, ContextKind.SELF)
 
         processSignatureAnnotations(simpleFunction)
 
@@ -324,7 +322,7 @@ private class ContextCollectorVisitor(
                 context.forFunctionBody(simpleFunction, holder) {
                     processList(simpleFunction.valueParameters)
 
-                    dumpContext(simpleFunction.psi, ContextKind.BODY)
+                    dumpContext(simpleFunction, ContextKind.BODY)
 
                     onActive {
                         process(simpleFunction.body)
@@ -339,7 +337,7 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitProperty(property: FirProperty) = withProcessor {
-        dumpContext(property.psi, ContextKind.SELF)
+        dumpContext(property, ContextKind.SELF)
 
         processSignatureAnnotations(property)
 
@@ -347,7 +345,7 @@ private class ContextCollectorVisitor(
             property.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
             context.withProperty(property) {
-                dumpContext(property.psi, ContextKind.BODY)
+                dumpContext(property, ContextKind.BODY)
 
                 onActive {
                     context.forPropertyInitializer {
@@ -375,13 +373,13 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) = withProcessor {
-        dumpContext(propertyAccessor.psi, ContextKind.SELF)
+        dumpContext(propertyAccessor, ContextKind.SELF)
 
         processSignatureAnnotations(propertyAccessor)
 
         onActiveBody {
             context.withPropertyAccessor(propertyAccessor.propertySymbol.fir, propertyAccessor, holder) {
-                dumpContext(propertyAccessor.psi, ContextKind.BODY)
+                dumpContext(propertyAccessor, ContextKind.BODY)
 
                 onActive {
                     processChildren(propertyAccessor)
@@ -391,13 +389,13 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitValueParameter(valueParameter: FirValueParameter) = withProcessor {
-        dumpContext(valueParameter.psi, ContextKind.SELF)
+        dumpContext(valueParameter, ContextKind.SELF)
 
         processSignatureAnnotations(valueParameter)
 
         onActiveBody {
             context.withValueParameter(valueParameter, session) {
-                dumpContext(valueParameter.psi, ContextKind.BODY)
+                dumpContext(valueParameter, ContextKind.BODY)
 
                 onActive {
                     processChildren(valueParameter)
@@ -408,13 +406,13 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) = withProcessor {
-        dumpContext(anonymousInitializer.psi, ContextKind.SELF)
+        dumpContext(anonymousInitializer, ContextKind.SELF)
 
         processSignatureAnnotations(anonymousInitializer)
 
         onActiveBody {
             context.withAnonymousInitializer(anonymousInitializer, session) {
-                dumpContext(anonymousInitializer.psi, ContextKind.BODY)
+                dumpContext(anonymousInitializer, ContextKind.BODY)
 
                 onActive {
                     anonymousInitializer.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -425,7 +423,7 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) = withProcessor {
-        dumpContext(anonymousFunction.psi, ContextKind.SELF)
+        dumpContext(anonymousFunction, ContextKind.SELF)
 
         processSignatureAnnotations(anonymousFunction)
 
@@ -436,7 +434,7 @@ private class ContextCollectorVisitor(
                     context.storeVariable(parameter, holder.session)
                 }
 
-                dumpContext(anonymousFunction.psi, ContextKind.BODY)
+                dumpContext(anonymousFunction, ContextKind.BODY)
 
                 onActive {
                     process(anonymousFunction.body)
@@ -451,13 +449,13 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) = withProcessor {
-        dumpContext(anonymousObject.psi, ContextKind.SELF)
+        dumpContext(anonymousObject, ContextKind.SELF)
 
         processSignatureAnnotations(anonymousObject)
 
         onActiveBody {
             context.withAnonymousObject(anonymousObject, holder) {
-                dumpContext(anonymousObject.psi, ContextKind.BODY)
+                dumpContext(anonymousObject, ContextKind.BODY)
 
                 onActive {
                     processChildren(anonymousObject)
@@ -468,13 +466,13 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitBlock(block: FirBlock) = withProcessor {
-        dumpContext(block.psi, ContextKind.SELF)
+        dumpContext(block, ContextKind.SELF)
 
         onActiveBody {
             context.forBlock(session) {
                 processChildren(block)
 
-                dumpContext(block.psi, ContextKind.BODY)
+                dumpContext(block, ContextKind.BODY)
             }
         }
     }
