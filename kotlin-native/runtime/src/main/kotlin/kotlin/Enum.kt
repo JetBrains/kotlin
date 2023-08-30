@@ -18,10 +18,14 @@ public abstract class Enum<E: Enum<E>>(@kotlin.internal.IntrinsicConstEvaluation
     public companion object {
     }
 
-    public override final fun compareTo(other: E): Int { return ordinal - other.ordinal }
+    public final override fun compareTo(other: E): Int { return ordinal - other.ordinal }
 
-    public override final fun equals(other: Any?): Boolean {
+    public final override fun equals(other: Any?): Boolean {
         return this === other
+    }
+
+    public final override fun hashCode(): Int {
+        return super.hashCode()
     }
 
     public override fun toString(): String {
