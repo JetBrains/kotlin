@@ -38,6 +38,7 @@ val platformGenerationRoots = listOf(
     "checkers.jvm",
     "checkers.js",
     "checkers.native",
+    "checkers.wasm",
 ).map { projectDir.resolve(it).resolve("gen") }
 
 val generateCheckersComponents by tasks.registering(NoDebugJavaExec::class) {
