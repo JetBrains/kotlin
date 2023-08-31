@@ -39,9 +39,11 @@ import org.eclipse.aether.util.repository.AuthenticationBuilder
 import org.eclipse.aether.util.repository.DefaultMirrorSelector
 import org.eclipse.aether.util.repository.DefaultProxySelector
 import java.io.File
+import kotlin.script.experimental.api.IterableResultsCollector
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.asSuccess
+import kotlin.script.experimental.dependencies.impl.makeResolveFailureResult
 
 val mavenCentral: RemoteRepository = RemoteRepository.Builder("maven central", "default", "https://repo.maven.apache.org/maven2/").build()
 
@@ -144,67 +146,63 @@ internal class AetherResolveSession(
     }
 
     fun resolve(
-        root: Artifact,
+        roots: List<Artifact>,
         scope: String,
         kind: ResolutionKind,
         filter: DependencyFilter?,
         classifier: String? = null,
         extension: String? = null,
     ): ResultWithDiagnostics<List<File>> {
-        if (kind == ResolutionKind.NON_TRANSITIVE) return resolveArtifact(root).asSuccess()
+        if (kind == ResolutionKind.NON_TRANSITIVE) return resolveArtifacts(roots).asSuccess()
 
-        val requests = resolveTree(root, scope, filter, classifier, extension)
+        val isOptional = kind == ResolutionKind.TRANSITIVE_PARTIAL
+        val requests = resolveTree(roots, scope, isOptional, filter, classifier, extension)
 
-        @Suppress("KotlinConstantConditions")
-        return when (kind) {
-            ResolutionKind.TRANSITIVE -> resolveDependencies(requests) {
+        val artifactResults = try {
+            synchronized(this) {
                 repositorySystem.resolveArtifacts(
                     repositorySystemSession,
                     requests
-                ).toFiles().asSuccess()
+                )
             }
+        } catch (resolutionException: ArtifactResolutionException) {
+            if (isOptional) {
+                resolutionException.results
+            } else {
+                return makeResolveFailureResult(listOf(resolutionException.message.orEmpty()), null, resolutionException)
+            }
+        }
 
-            ResolutionKind.TRANSITIVE_PARTIAL -> resolveDependencies(requests) {
-                val reports = mutableListOf<ScriptDiagnostic>()
-                val results = mutableListOf<File>()
-                for (req in requests) {
-                    try {
-                        results.add(
-                            repositorySystem.resolveArtifact(
-                                repositorySystemSession,
-                                req
-                            ).artifact.file
-                        )
-                    } catch (e: ArtifactResolutionException) {
-                        reports.add(
+        return IterableResultsCollector<File>().run {
+            for (artifactResult in artifactResults) {
+                if (artifactResult.isResolved) {
+                    addValue(artifactResult.artifact.file)
+                } else {
+                    for (exception in artifactResult.exceptions) {
+                        addDiagnostic(
                             ScriptDiagnostic(
                                 ScriptDiagnostic.unspecifiedError,
-                                e.message.orEmpty(),
-                                ScriptDiagnostic.Severity.WARNING,
-                                exception = e
+                                "Unable to resolve artifact ${artifactResult.request.artifact}",
+                                exception = exception
                             )
                         )
                     }
                 }
-
-                ResultWithDiagnostics.Success(results, reports)
             }
-
-            ResolutionKind.NON_TRANSITIVE -> {
-                error("This statement is not reachable")
-            }
+            getResult()
         }
     }
 
     private fun resolveTree(
-        root: Artifact,
+        roots: List<Artifact>,
         scope: String,
+        isOptional: Boolean,
         filter: DependencyFilter?,
         classifier: String?,
         extension: String?,
     ): Collection<ArtifactRequest> {
         return fetch(
-            request(Dependency(root, scope)),
+            request(roots.map { root -> Dependency(root, scope, isOptional) }),
             { req ->
                 val requestsBuilder = ArtifactRequestBuilder(classifier, extension)
                 val collectionResult = repositorySystem.collectDependencies(repositorySystemSession, req)
@@ -231,39 +229,21 @@ internal class AetherResolveSession(
 
     private fun Collection<ArtifactResult>.toFiles() = map { it.artifact.file }
 
-    private fun resolveDependencies(
-        requests: Collection<ArtifactRequest>,
-        resolveAction: (Collection<ArtifactRequest>) -> ResultWithDiagnostics<List<File>>
-    ): ResultWithDiagnostics<List<File>> {
+    private fun resolveArtifacts(artifacts: List<Artifact>): List<File> {
+        val requests = artifacts.map { artifact ->
+            ArtifactRequest(artifact, remotes, "")
+        }
+
         return fetch(
             requests,
-            resolveAction
-        ) { _, ex ->
-            DependencyCollectionException(
-                null,
-                ex.message,
-                ex
-            )
-        }
+            { reqs -> listOf(repositorySystem.resolveArtifacts(repositorySystemSession, reqs)) },
+            { reqs, ex -> ArtifactResolutionException(reqs.map { req -> ArtifactResult(req) }, ex.message, IllegalArgumentException(ex)) }
+        ).flatMap { it.toFiles() }
     }
 
-    private fun resolveArtifact(artifact: Artifact): List<File> {
-        val request = ArtifactRequest()
-        request.artifact = artifact
-        for (repo in remotes) {
-            request.addRepository(repo)
-        }
-
-        return fetch(
-            request,
-            { req -> listOf(repositorySystem.resolveArtifact(repositorySystemSession, req)) },
-            { req, ex -> ArtifactResolutionException(listOf(ArtifactResult(req)), ex.message, IllegalArgumentException(ex)) }
-        ).toFiles()
-    }
-
-    private fun request(root: Dependency): CollectRequest {
+    private fun request(roots: List<Dependency>): CollectRequest {
         val request = CollectRequest()
-        request.root = root
+        request.dependencies = roots
         for (repo in remotes) {
             request.addRepository(repo)
         }
