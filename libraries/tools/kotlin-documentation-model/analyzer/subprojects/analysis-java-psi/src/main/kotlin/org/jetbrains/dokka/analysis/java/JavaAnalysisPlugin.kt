@@ -26,48 +26,48 @@ import java.io.File
 
 
 @InternalDokkaApi
-interface ProjectProvider {
-    fun getProject(sourceSet: DokkaSourceSet, context: DokkaContext): Project
+public interface ProjectProvider {
+    public fun getProject(sourceSet: DokkaSourceSet, context: DokkaContext): Project
 }
 
 @InternalDokkaApi
-interface SourceRootsExtractor {
-    fun extract(sourceSet: DokkaSourceSet, context: DokkaContext): List<File>
+public interface SourceRootsExtractor {
+    public fun extract(sourceSet: DokkaSourceSet, context: DokkaContext): List<File>
 }
 
 @InternalDokkaApi
-interface BreakingAbstractionKotlinLightMethodChecker {
+public interface BreakingAbstractionKotlinLightMethodChecker {
     // TODO [beresnev] not even sure it's needed, but left for compatibility and to preserve behaviour
-    fun isLightAnnotation(annotation: PsiAnnotation): Boolean
-    fun isLightAnnotationAttribute(attribute: JvmAnnotationAttribute): Boolean
+    public fun isLightAnnotation(annotation: PsiAnnotation): Boolean
+    public fun isLightAnnotationAttribute(attribute: JvmAnnotationAttribute): Boolean
 }
 
 @InternalDokkaApi
-class JavaAnalysisPlugin : DokkaPlugin() {
+public class JavaAnalysisPlugin : DokkaPlugin() {
 
     // single
-    val projectProvider by extensionPoint<ProjectProvider>()
+    public val projectProvider: ExtensionPoint<ProjectProvider> by extensionPoint()
 
     // single
-    val sourceRootsExtractor by extensionPoint<SourceRootsExtractor>()
+    public val sourceRootsExtractor: ExtensionPoint<SourceRootsExtractor> by extensionPoint()
 
     // multiple
-    val docCommentCreators by extensionPoint<DocCommentCreator>()
+    public val docCommentCreators: ExtensionPoint<DocCommentCreator> by extensionPoint()
 
     // multiple
-    val docCommentParsers by extensionPoint<DocCommentParser>()
+    public val docCommentParsers: ExtensionPoint<DocCommentParser> by extensionPoint()
 
     // none or more
-    val inheritDocTagContentProviders by extensionPoint<InheritDocTagContentProvider>()
+    public val inheritDocTagContentProviders: ExtensionPoint<InheritDocTagContentProvider> by extensionPoint()
 
     // TODO [beresnev] figure out a better way depending on what it's used for
-    val kotlinLightMethodChecker by extensionPoint<BreakingAbstractionKotlinLightMethodChecker>()
+    public val kotlinLightMethodChecker: ExtensionPoint<BreakingAbstractionKotlinLightMethodChecker> by extensionPoint()
 
     private val docCommentFactory by lazy {
         DocCommentFactory(query { docCommentCreators }.reversed())
     }
 
-    val docCommentFinder by lazy {
+    public val docCommentFinder: DocCommentFinder by lazy {
         DocCommentFinder(logger, docCommentFactory)
     }
 

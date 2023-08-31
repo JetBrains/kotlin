@@ -13,7 +13,7 @@ import org.jsoup.internal.StringUtil
 import org.jsoup.nodes.Entities
 
 @InternalDokkaApi
-fun String.parseHtmlEncodedWithNormalisedSpaces(
+public fun String.parseHtmlEncodedWithNormalisedSpaces(
     renderWhiteCharactersAsSpaces: Boolean
 ): List<DocTag> {
     val accum = StringBuilder()

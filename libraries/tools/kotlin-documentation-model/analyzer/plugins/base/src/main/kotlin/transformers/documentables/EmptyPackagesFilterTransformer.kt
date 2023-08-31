@@ -9,7 +9,9 @@ import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 import org.jetbrains.dokka.transformers.documentation.sourceSet
 
-class EmptyPackagesFilterTransformer(val context: DokkaContext) : PreMergeDocumentableTransformer {
+public class EmptyPackagesFilterTransformer(
+    public val context: DokkaContext
+) : PreMergeDocumentableTransformer {
     override fun invoke(modules: List<DModule>): List<DModule> {
         return modules.mapNotNull(::filterModule)
     }

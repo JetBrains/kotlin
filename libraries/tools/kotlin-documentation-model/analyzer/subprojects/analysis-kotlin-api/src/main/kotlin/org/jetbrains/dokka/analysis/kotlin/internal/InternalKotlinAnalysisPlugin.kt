@@ -7,6 +7,7 @@ package org.jetbrains.dokka.analysis.kotlin.internal
 import org.jetbrains.dokka.InternalDokkaApi
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.plugability.DokkaPluginApiPreview
+import org.jetbrains.dokka.plugability.ExtensionPoint
 import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
 
 /**
@@ -14,23 +15,23 @@ import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
  * external plugins. If you need any of the given API stabilized, please create an issue describing your use case.
  */
 @InternalDokkaApi
-class InternalKotlinAnalysisPlugin : DokkaPlugin() {
+public class InternalKotlinAnalysisPlugin : DokkaPlugin() {
 
-    val fullClassHierarchyBuilder by extensionPoint<FullClassHierarchyBuilder>()
+    public val fullClassHierarchyBuilder: ExtensionPoint<FullClassHierarchyBuilder> by extensionPoint()
 
-    val syntheticDocumentableDetector by extensionPoint<SyntheticDocumentableDetector>()
+    public val syntheticDocumentableDetector: ExtensionPoint<SyntheticDocumentableDetector> by extensionPoint()
 
-    val moduleAndPackageDocumentationReader by extensionPoint<ModuleAndPackageDocumentationReader>()
+    public val moduleAndPackageDocumentationReader: ExtensionPoint<ModuleAndPackageDocumentationReader> by extensionPoint()
 
-    val kotlinToJavaService by extensionPoint<KotlinToJavaService>()
+    public val kotlinToJavaService: ExtensionPoint<KotlinToJavaService> by extensionPoint()
 
-    val inheritanceBuilder by extensionPoint<InheritanceBuilder>()
+    public val inheritanceBuilder: ExtensionPoint<InheritanceBuilder> by extensionPoint()
 
-    val externalDocumentablesProvider by extensionPoint<ExternalDocumentablesProvider>()
+    public val externalDocumentablesProvider: ExtensionPoint<ExternalDocumentablesProvider> by extensionPoint()
 
-    val documentableSourceLanguageParser by extensionPoint<DocumentableSourceLanguageParser>()
+    public val documentableSourceLanguageParser: ExtensionPoint<DocumentableSourceLanguageParser> by extensionPoint()
 
-    val sampleProviderFactory by extensionPoint<SampleProviderFactory>()
+    public val sampleProviderFactory: ExtensionPoint<SampleProviderFactory> by extensionPoint()
 
     @OptIn(DokkaPluginApiPreview::class)
     override fun pluginApiPreviewAcknowledgement(): PluginApiPreviewAcknowledgement = PluginApiPreviewAcknowledgement

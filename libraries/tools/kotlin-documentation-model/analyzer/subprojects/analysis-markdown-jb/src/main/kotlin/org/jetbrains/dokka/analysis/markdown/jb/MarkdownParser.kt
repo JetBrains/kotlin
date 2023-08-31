@@ -24,7 +24,7 @@ import java.net.URL
 import org.intellij.markdown.parser.MarkdownParser as IntellijMarkdownParser
 
 @InternalDokkaApi
-open class MarkdownParser(
+public open class MarkdownParser(
     private val externalDri: (String) -> DRI?,
     private val kdocLocation: String?,
 ) : Parser() {
@@ -45,7 +45,7 @@ open class MarkdownParser(
         return CustomDocTag(children = parsed, params = emptyMap(), name = "")
     }
 
-    override fun preparse(text: String) = text.replace("\r\n", "\n").replace("\r", "\n")
+    override fun preparse(text: String): String = text.replace("\r\n", "\n").replace("\r", "\n")
 
     override fun parseTagWithBody(tagName: String, content: String): TagWrapper =
         when (tagName) {
@@ -501,8 +501,8 @@ open class MarkdownParser(
         )
 
 
-    companion object {
-        fun DRI.fqDeclarationName(): String? {
+    public companion object {
+        public fun DRI.fqDeclarationName(): String? {
             if (this.target !is PointingToDeclaration) {
                 return null
             }

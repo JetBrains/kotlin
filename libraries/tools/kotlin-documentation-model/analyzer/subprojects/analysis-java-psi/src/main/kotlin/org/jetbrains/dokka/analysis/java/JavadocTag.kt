@@ -8,45 +8,47 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.dokka.InternalDokkaApi
 
 @InternalDokkaApi
-sealed class JavadocTag(val name: String)
+public sealed class JavadocTag(
+    public val name: String
+)
 
-object AuthorJavadocTag : JavadocTag("author")
-object DeprecatedJavadocTag : JavadocTag("deprecated")
-object DescriptionJavadocTag : JavadocTag("description")
-object ReturnJavadocTag : JavadocTag("return")
-object SinceJavadocTag : JavadocTag("since")
+public object AuthorJavadocTag : JavadocTag("author")
+public object DeprecatedJavadocTag : JavadocTag("deprecated")
+public object DescriptionJavadocTag : JavadocTag("description")
+public object ReturnJavadocTag : JavadocTag("return")
+public object SinceJavadocTag : JavadocTag("since")
 
-class ParamJavadocTag(
-    val method: PsiMethod,
-    val paramName: String,
-    val paramIndex: Int
+public class ParamJavadocTag(
+    public val method: PsiMethod,
+    public val paramName: String,
+    public val paramIndex: Int
 ) : JavadocTag(name) {
-    companion object {
-        const val name: String = "param"
+    public companion object {
+        public const val name: String = "param"
     }
 }
 
-class SeeJavadocTag(
-    val qualifiedReference: String
+public class SeeJavadocTag(
+    public val qualifiedReference: String
 ) : JavadocTag(name) {
-    companion object {
-        const val name: String = "see"
+    public companion object {
+        public const val name: String = "see"
     }
 }
 
-sealed class ThrowingExceptionJavadocTag(
+public sealed class ThrowingExceptionJavadocTag(
     name: String,
-    val exceptionQualifiedName: String?
+    public val exceptionQualifiedName: String?
 ) : JavadocTag(name)
 
-class ThrowsJavadocTag(exceptionQualifiedName: String?) : ThrowingExceptionJavadocTag(name, exceptionQualifiedName) {
-    companion object {
-        const val name: String = "throws"
+public class ThrowsJavadocTag(exceptionQualifiedName: String?) : ThrowingExceptionJavadocTag(name, exceptionQualifiedName) {
+    public companion object {
+        public const val name: String = "throws"
     }
 }
 
-class ExceptionJavadocTag(exceptionQualifiedName: String?) : ThrowingExceptionJavadocTag(name, exceptionQualifiedName) {
-    companion object {
-        const val name: String = "exception"
+public class ExceptionJavadocTag(exceptionQualifiedName: String?) : ThrowingExceptionJavadocTag(name, exceptionQualifiedName) {
+    public companion object {
+        public const val name: String = "exception"
     }
 }

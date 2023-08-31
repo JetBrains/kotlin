@@ -4,43 +4,44 @@
 
 package org.jetbrains.dokka.model.properties
 
-data class PropertyContainer<C : Any> internal constructor(
+public data class PropertyContainer<C : Any> internal constructor(
     @PublishedApi internal val map: Map<ExtraProperty.Key<C, *>, ExtraProperty<C>>
 ) {
-    operator fun <D : C> plus(prop: ExtraProperty<D>): PropertyContainer<D> =
+    public operator fun <D : C> plus(prop: ExtraProperty<D>): PropertyContainer<D> =
         PropertyContainer(map + (prop.key to prop))
 
     // TODO: Add logic for caching calculated properties
-    inline operator fun <reified T : Any> get(key: ExtraProperty.Key<C, T>): T? = when (val prop = map[key]) {
+    public inline operator fun <reified T : Any> get(key: ExtraProperty.Key<C, T>): T? = when (val prop = map[key]) {
         is T? -> prop
         else -> throw ClassCastException("Property for $key stored under not matching key type.")
     }
 
-    inline fun <reified T : Any> allOfType(): List<T> = map.values.filterIsInstance<T>()
-    fun <D : C> addAll(extras: Collection<ExtraProperty<D>>): PropertyContainer<D> =
+    public inline fun <reified T : Any> allOfType(): List<T> = map.values.filterIsInstance<T>()
+
+    public fun <D : C> addAll(extras: Collection<ExtraProperty<D>>): PropertyContainer<D> =
         PropertyContainer(map + extras.map { p -> p.key to p })
 
-    operator fun <D : C> minus(prop: ExtraProperty.Key<C, *>): PropertyContainer<D> =
+    public operator fun <D : C> minus(prop: ExtraProperty.Key<C, *>): PropertyContainer<D> =
         PropertyContainer(map.filterNot { it.key == prop })
 
-    companion object {
-        fun <T : Any> empty(): PropertyContainer<T> = PropertyContainer(emptyMap())
-        fun <T : Any> withAll(vararg extras: ExtraProperty<T>?) = empty<T>().addAll(extras.filterNotNull())
-        fun <T : Any> withAll(extras: Collection<ExtraProperty<T>>) = empty<T>().addAll(extras)
+    public companion object {
+        public fun <T : Any> empty(): PropertyContainer<T> = PropertyContainer(emptyMap())
+        public fun <T : Any> withAll(vararg extras: ExtraProperty<T>?): PropertyContainer<T> = empty<T>().addAll(extras.filterNotNull())
+        public fun <T : Any> withAll(extras: Collection<ExtraProperty<T>>): PropertyContainer<T> = empty<T>().addAll(extras)
     }
 }
 
-operator fun <D: Any> PropertyContainer<D>.plus(prop: ExtraProperty<D>?): PropertyContainer<D> =
+public operator fun <D: Any> PropertyContainer<D>.plus(prop: ExtraProperty<D>?): PropertyContainer<D> =
     if (prop == null) this else PropertyContainer(map + (prop.key to prop))
 
 
-interface WithExtraProperties<C : Any> {
-    val extra: PropertyContainer<C>
+public interface WithExtraProperties<C : Any> {
+    public val extra: PropertyContainer<C>
 
-    fun withNewExtras(newExtras: PropertyContainer<C>): C
+    public fun withNewExtras(newExtras: PropertyContainer<C>): C
 }
 
-fun <C> C.mergeExtras(left: C, right: C): C where C : Any, C : WithExtraProperties<C> {
+public fun <C> C.mergeExtras(left: C, right: C): C where C : Any, C : WithExtraProperties<C> {
     val aggregatedExtras: List<List<ExtraProperty<C>>> =
         (left.extra.map.values + right.extra.map.values)
             .groupBy { it.key }

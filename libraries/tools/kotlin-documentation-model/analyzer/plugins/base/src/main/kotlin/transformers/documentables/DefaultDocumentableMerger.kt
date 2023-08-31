@@ -274,8 +274,8 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
     ).mergeExtras(this, other)
 }
 
-data class ClashingDriIdentifier(val value: Set<DokkaConfiguration.DokkaSourceSet>) : ExtraProperty<Documentable> {
-    companion object : ExtraProperty.Key<Documentable, ClashingDriIdentifier> {
+public data class ClashingDriIdentifier(val value: Set<DokkaConfiguration.DokkaSourceSet>) : ExtraProperty<Documentable> {
+    public companion object : ExtraProperty.Key<Documentable, ClashingDriIdentifier> {
         override fun mergeStrategyFor(
             left: ClashingDriIdentifier,
             right: ClashingDriIdentifier

@@ -14,7 +14,7 @@ internal fun interface JavaDocumentationParser {
 }
 
 @InternalDokkaApi
-class JavadocParser(
+public class JavadocParser(
     private val docCommentParsers: List<DocCommentParser>,
     private val docCommentFinder: DocCommentFinder
 ) : JavaDocumentationParser {

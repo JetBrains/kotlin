@@ -8,7 +8,7 @@ import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.plugability.DokkaPluginApiPreview
 import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
 
-class KotlinAnalysisPlugin : DokkaPlugin() {
+public class KotlinAnalysisPlugin : DokkaPlugin() {
 
     /*
      * This is where stable public API will go.
