@@ -40,7 +40,8 @@ class CheckIrElementVisitor(
             return
 
         if (actualType != expectedType) {
-            reportError(this, "unexpected type: expected ${expectedType.render()}, got ${actualType.render()}")
+            error("Expected type: ${expectedType.render()}, actual type: ${actualType.render()}")
+            //reportError(this, "unexpected type: expected ${expectedType.render()}, got ${actualType.render()}")
         }
     }
 
