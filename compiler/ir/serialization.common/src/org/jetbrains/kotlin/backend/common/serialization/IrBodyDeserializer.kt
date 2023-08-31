@@ -35,6 +35,11 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrCatch as ProtoC
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClassReference as ProtoClassReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrComposite as ProtoComposite
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConst as ProtoConst
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstantOperation as ProtoConstantOperation
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstantValue as ProtoConstantValue
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstantPrimitive as ProtoConstantPrimitive
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstantObject as ProtoConstantObject
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstantArray as ProtoConstantArray
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrContinue as ProtoContinue
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDelegatingConstructorCall as ProtoDelegatingConstructorCall
@@ -746,7 +751,7 @@ class IrBodyDeserializer(
         return irContinue
     }
 
-    private fun deserializeConst(proto: ProtoConst, start: Int, end: Int, type: IrType): IrExpression =
+    private fun deserializeConst(proto: ProtoConst, start: Int, end: Int, type: IrType): IrConst<*> =
         when (proto.valueCase!!) {
             NULL
             -> IrConstImpl.constNull(start, end, type)
@@ -772,6 +777,39 @@ class IrBodyDeserializer(
             -> error("Const deserialization error: ${proto.valueCase} ")
         }
 
+    private fun deserializeConstantOperation(proto: ProtoConstantOperation, start: Int, end: Int, type: IrType): IrConstantValue =
+        when (proto.operationCase!!) {
+            ProtoConstantOperation.OperationCase.PRIMITIVE ->
+                IrConstantPrimitiveImpl(start, end, deserializeConst(proto.primitive.value, start, end, type))
+
+            ProtoConstantOperation.OperationCase.OBJECT ->
+                IrConstantObjectImpl(
+                    start, end,
+                    deserializeTypedSymbol(proto.`object`.constructorSymbol, null),
+                    proto.`object`.valueArgumentsList.map { deserializeConstantValue(it) },
+                    proto.`object`.typeArgumentsList.map { declarationDeserializer.deserializeIrType(it) },
+                    type,
+                )
+
+            ProtoConstantOperation.OperationCase.ARRAY ->
+                IrConstantArrayImpl(
+                    start, end,
+                    type,
+                    proto.array.elementsList.map { deserializeConstantValue(it) }
+                )
+
+            ProtoConstantOperation.OperationCase.OPERATION_NOT_SET ->
+                error("Constant operation deserialization error: ${proto.operationCase} ")
+        }
+
+    private fun deserializeConstantValue(proto: ProtoConstantValue): IrConstantValue {
+        val coordinates = BinaryCoordinates.decode(proto.coordinates)
+        val start = coordinates.startOffset
+        val end = coordinates.endOffset
+        val type = declarationDeserializer.deserializeIrType(proto.type)
+        return deserializeConstantOperation(proto.operation, start, end, type)
+    }
+
     private fun deserializeOperation(proto: ProtoOperation, start: Int, end: Int, type: IrType): IrExpression =
         when (proto.operationCase!!) {
             BLOCK -> deserializeBlock(proto.block, start, end, type)
@@ -780,6 +818,7 @@ class IrBodyDeserializer(
             CALL -> deserializeCall(proto.call, start, end, type)
             COMPOSITE -> deserializeComposite(proto.composite, start, end, type)
             CONST -> deserializeConst(proto.const, start, end, type)
+            CONSTANT_OPERATION -> deserializeConstantOperation(proto.constantOperation, start, end, type)
             CONTINUE -> deserializeContinue(proto.`continue`, start, end, type)
             DELEGATING_CONSTRUCTOR_CALL -> deserializeDelegatingConstructorCall(proto.delegatingConstructorCall, start, end)
             DO_WHILE -> deserializeDoWhile(proto.doWhile, start, end, type)

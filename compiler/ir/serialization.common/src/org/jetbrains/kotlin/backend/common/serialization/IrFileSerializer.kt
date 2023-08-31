@@ -48,6 +48,11 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoC
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClassReference as ProtoClassReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrComposite as ProtoComposite
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConst as ProtoConst
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstantValue as ProtoConstantValue
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstantOperation as ProtoConstantOperation
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstantPrimitive as ProtoConstantPrimitive
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstantObject as ProtoConstantObject
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstantArray as ProtoConstantArray
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructor as ProtoConstructor
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrContinue as ProtoContinue
@@ -683,6 +688,39 @@ open class IrFileSerializer(
         return proto.build()
     }
 
+    private fun serializeConstantOperation(value: IrConstantValue) =
+        ProtoConstantOperation.newBuilder().apply {
+            when (value) {
+                is IrConstantPrimitive -> primitive = serializeConstantPrimitive(value)
+                is IrConstantObject -> `object` = serializeConstantObject(value)
+                is IrConstantArray -> array = serializeConstantArray(value)
+            }
+        }.build()
+
+    private fun serializeConstantValue(value: IrConstantValue) =
+        ProtoConstantValue.newBuilder().apply {
+            coordinates = serializeCoordinates(value.startOffset, value.endOffset)
+            type = serializeIrType(value.type)
+            operation = serializeConstantOperation(value)
+        }.build()
+
+    private fun serializeConstantPrimitive(constant: IrConstantPrimitive): ProtoConstantPrimitive =
+        ProtoConstantPrimitive.newBuilder().apply {
+            value = serializeConst(constant.value)
+        }.build()
+
+    private fun serializeConstantObject(constant: IrConstantObject): ProtoConstantObject =
+        ProtoConstantObject.newBuilder().apply {
+            constructorSymbol = serializeIrSymbol(constant.constructor)
+            constant.valueArguments.forEach { addValueArguments(serializeConstantValue(it)) }
+            constant.typeArguments.forEach { addTypeArguments(serializeIrType(it)) }
+        }.build()
+
+    private fun serializeConstantArray(constant: IrConstantArray): ProtoConstantArray =
+        ProtoConstantArray.newBuilder().apply {
+            constant.elements.forEach { addElements(serializeConstantValue(it)) }
+        }.build()
+
     private fun serializeDelegatingConstructorCall(call: IrDelegatingConstructorCall): ProtoDelegatingConstructorCall {
         val proto = ProtoDelegatingConstructorCall.newBuilder()
             .setSymbol(serializeIrSymbol(call.symbol))
@@ -1027,6 +1065,7 @@ open class IrFileSerializer(
             is IrConstructorCall -> operationProto.constructorCall = serializeConstructorCall(expression)
             is IrComposite -> operationProto.composite = serializeComposite(expression)
             is IrConst<*> -> operationProto.const = serializeConst(expression)
+            is IrConstantValue -> operationProto.constantOperation = serializeConstantOperation(expression)
             is IrContinue -> operationProto.`continue` = serializeContinue(expression)
             is IrDelegatingConstructorCall -> operationProto.delegatingConstructorCall = serializeDelegatingConstructorCall(expression)
             is IrDoWhileLoop -> operationProto.doWhile = serializeDoWhile(expression)

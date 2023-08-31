@@ -220,6 +220,34 @@ message IrConst {
   }
 }
 
+message IrConstantOperation {
+  oneof operation {
+    IrConstantPrimitive primitive = 1;
+    IrConstantObject object = 2;
+    IrConstantArray array = 3;
+  }
+}
+
+message IrConstantValue {
+  required int32 type = 1;
+  required int64 coordinates = 2;
+  required IrConstantOperation operation = 3;
+}
+
+message IrConstantPrimitive {
+  required IrConst value = 1;
+}
+
+message IrConstantObject {
+  required int64 constructor_symbol = 1;
+  repeated IrConstantValue value_arguments = 2;
+  repeated int32 type_arguments = 3;
+}
+
+message IrConstantArray {
+  repeated IrConstantValue elements = 1;
+}
+
 message IrContinue {
   required int32 loop_id = 1;
   optional int32 label = 2;
@@ -446,6 +474,7 @@ message IrOperation {
     IrErrorExpression error_expression = 34;
     IrErrorCallExpression error_call_expression = 35;
     IrReturnableBlock returnable_block = 36;
+    IrConstantOperation constant_operation = 37;
   }
 }
 
