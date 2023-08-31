@@ -1083,9 +1083,9 @@ open class PsiRawFirBuilder(
                 isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.Private
                 isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
             }
-            val hasConstructorKeyword = this@toFirConstructor?.getConstructorKeyword() != null
+
             val builder = when {
-                this?.modifierList != null && !hasConstructorKeyword -> createErrorConstructorBuilder(ConeMissingConstructorKeyword)
+                this?.modifierList != null && getConstructorKeyword() == null -> createErrorConstructorBuilder(ConeMissingConstructorKeyword)
                 isErrorConstructor -> createErrorConstructorBuilder(ConeNoConstructorError)
                 else -> FirPrimaryConstructorBuilder()
             }
