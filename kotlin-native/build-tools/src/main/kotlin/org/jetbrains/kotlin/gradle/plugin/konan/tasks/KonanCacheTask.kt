@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.gradle.plugin.konan.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliCompilerRunner
-import org.jetbrains.kotlin.gradle.plugin.konan.konanHome
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -24,9 +24,9 @@ enum class KonanCacheKind(val outputKind: CompilerOutputKind) {
     DYNAMIC(CompilerOutputKind.DYNAMIC_CACHE)
 }
 
-open class KonanCacheTask: DefaultTask() {
+abstract class KonanCacheTask : DefaultTask() {
     @get:InputDirectory
-    var originalKlib: File? = null
+    abstract val originalKlib: DirectoryProperty
 
     @get:Input
     lateinit var klibUniqName: String
@@ -54,11 +54,11 @@ open class KonanCacheTask: DefaultTask() {
     private fun readKlibUniqNameFromManifest(): String {
         val konanHome = compilerDistributionPath.get().absolutePath
         val resolver = defaultResolver(
-                emptyList(),
-                PlatformManager(konanHome).targetByName(target),
-                Distribution(konanHome)
+            emptyList(),
+            PlatformManager(konanHome).targetByName(target),
+            Distribution(konanHome)
         )
-        return resolver.resolve(originalKlib!!.absolutePath).uniqueName
+        return resolver.resolve(originalKlib.asFile.get().absolutePath).uniqueName
     }
 
     @get:Input
@@ -94,12 +94,12 @@ open class KonanCacheTask: DefaultTask() {
         val additionalCacheFlags = PlatformManager(konanHome).let {
             it.targetByName(target).let(it::loader).additionalCacheFlags
         }
-        requireNotNull(originalKlib)
+        require(originalKlib.isPresent)
         val args = mutableListOf(
             "-g",
             "-target", target,
             "-produce", cacheKind.outputKind.name.toLowerCase(),
-            "-Xadd-cache=${originalKlib?.absolutePath}",
+            "-Xadd-cache=${originalKlib.asFile.get().absolutePath}",
             "-Xcache-directory=${cacheDirectory.absolutePath}"
         )
         if (makePerFileCache)

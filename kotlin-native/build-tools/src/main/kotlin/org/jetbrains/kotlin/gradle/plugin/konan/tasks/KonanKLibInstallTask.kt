@@ -3,16 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin
+package org.jetbrains.kotlin.gradle.plugin.konan.tasks
 
-import groovy.lang.Closure
-import org.gradle.api.Task
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanKlibRunner
+import org.jetbrains.kotlin.kotlinNativeDist
 import java.io.File
 
 open class KonanKlibInstallTask : DefaultTask() {
@@ -21,10 +19,6 @@ open class KonanKlibInstallTask : DefaultTask() {
 
     @get:Internal
     var repo: File = project.rootDir
-
-    @get:Input
-    val repoPath
-        get() = repo.absolutePath
 
     val installDir: Provider<File>
         @OutputDirectory

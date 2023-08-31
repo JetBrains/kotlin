@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.kotlin.KonanKlibInstallTask
+import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanKlibInstallTask
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
 import org.jetbrains.kotlin.konan.target.*
@@ -97,7 +97,7 @@ konanTargetList.forEach { target ->
         if (target in cacheableTargets) {
             val cacheTask = tasks.register("${libName}Cache", KonanCacheTask::class.java) {
                 this.target = targetName
-                originalKlib = klibInstallTask.get().installDir.get()
+                originalKlib.fileProvider(klibInstallTask.flatMap { it.installDir })
                 klibUniqName = artifactName
                 cacheRoot = file("$konanHome/klib/cache").absolutePath
 

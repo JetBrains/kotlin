@@ -534,7 +534,7 @@ konanArtifacts {
 }
 
 targetList.forEach { targetName ->
-    tasks.register("${targetName}Stdlib", Copy::class.java) {
+    val stdlibTask = tasks.register("${targetName}Stdlib", Copy::class.java) {
         require(::stdlibBuildTask.isInitialized)
         dependsOn(stdlibBuildTask)
         dependsOn("${targetName}Runtime")
@@ -569,11 +569,10 @@ targetList.forEach { targetName ->
     if (targetName in cacheableTargetNames) {
         tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
             target = targetName
-            originalKlib = project.buildDir.resolve("${targetName}Stdlib")
+            originalKlib.fileProvider(stdlibTask.map { it.destinationDir })
             klibUniqName = "stdlib"
             cacheRoot = project.buildDir.resolve("cache/$targetName").absolutePath
 
-            dependsOn("${targetName}Stdlib")
             dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
         }
     }
