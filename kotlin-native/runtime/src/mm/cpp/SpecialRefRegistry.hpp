@@ -10,6 +10,7 @@
 
 #include "GC.hpp"
 #include "Memory.h"
+#include "ReferenceOps.hpp"
 #include "RawPtr.hpp"
 #include "ReferenceOps.hpp"
 #include "ThreadRegistry.hpp"
@@ -103,7 +104,7 @@ class SpecialRefRegistry : private Pinned {
 
         OBJ_GETTER0(tryRef) noexcept {
             AssertThreadState(ThreadState::kRunnable);
-            RETURN_RESULT_OF(mm::weakRefReadBarrier, obj_);
+            RETURN_RESULT_OF(mm::weakRefReadBarrier, obj_.load(std::memory_order_relaxed));
         }
 
         void retainRef() noexcept {
@@ -124,7 +125,7 @@ class SpecialRefRegistry : private Pinned {
                     return;
                 }
 
-                // TODO: With CMS barrier for marking `obj_` should be here.
+                // TODO: With CMS root-set-write barrier for marking `obj_` should be here.
                 //       Until we have the barrier, the object must already be in the roots.
                 //       If 0->1 happened from `[ObjCClass _tryRetain]`, it would first hold the object
                 //       on the stack via `tryRef`.
@@ -206,7 +207,9 @@ public:
                     // roots. So, it'll either publish the dying thread itself, or
                     // if the dying thread has already deregistered, it means it published
                     // itself. In any case, global root scanning happens afterwards.
-                    // TODO: With CMS barrier for marking `node.obj_` should be here.
+                    // TODO: With CMS root-set-write barrier for marking `node.obj_` should be here.
+                    // TODO: No barrier that uses mm::ThreadData can be placed here.
+
                     owner_.insertIntoRootsHead(node);
                 }
             }

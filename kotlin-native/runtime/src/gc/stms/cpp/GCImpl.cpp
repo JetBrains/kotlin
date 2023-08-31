@@ -20,13 +20,19 @@ gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept : im
 
 gc::GC::ThreadData::~ThreadData() = default;
 
-ALWAYS_INLINE void gc::GC::ThreadData::onAllocation(ObjHeader* object) noexcept {}
-
 void gc::GC::ThreadData::OnSuspendForGC() noexcept { }
 
 void gc::GC::ThreadData::safePoint() noexcept {}
 
 void gc::GC::ThreadData::onThreadRegistration() noexcept {}
+
+ALWAYS_INLINE void gc::GC::ThreadData::onAllocation(ObjHeader* object) noexcept {}
+
+ALWAYS_INLINE void gc::GC::ThreadData::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept {}
+
+ALWAYS_INLINE OBJ_GETTER(gc::GC::ThreadData::weakRefReadBarrier, ObjHeader* weakReferee) noexcept {
+    RETURN_OBJ(weakReferee);
+}
 
 gc::GC::GC(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept :
     impl_(std::make_unique<Impl>(allocator, gcScheduler)) {}
@@ -79,10 +85,6 @@ void gc::GC::WaitFinalizers(int64_t epoch) noexcept {
 
 bool gc::isMarked(ObjHeader* object) noexcept {
     return alloc::objectDataForObject(object).marked();
-}
-
-ALWAYS_INLINE OBJ_GETTER(gc::tryRef, std::atomic<ObjHeader*>& object) noexcept {
-    RETURN_OBJ(object.load(std::memory_order_relaxed));
 }
 
 ALWAYS_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {

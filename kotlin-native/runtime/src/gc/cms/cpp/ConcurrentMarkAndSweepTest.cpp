@@ -46,7 +46,7 @@ TYPED_TEST_P(TracingGCTest, CMSMultipleMutatorsWeak) {
                 auto& object = AllocateObject(threadData);
                 auto& objectWeak = ([&threadData, &object]() -> test_support::RegularWeakReferenceImpl& {
                     ObjHolder holder;
-                    return InstallWeakReference(threadData, object.header(), holder.slot());
+                    return test_support::InstallWeakReference(threadData, object.header(), holder.slot());
                 })();
                 global->field1 = objectWeak.header();
                 weak = &objectWeak;

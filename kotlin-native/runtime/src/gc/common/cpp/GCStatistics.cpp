@@ -43,6 +43,8 @@ namespace {
 constexpr KNativePtr heapPoolKey = const_cast<KNativePtr>(static_cast<const void*>("heap"));
 constexpr KNativePtr extraPoolKey = const_cast<KNativePtr>(static_cast<const void*>("extra"));
 
+constexpr auto kInvalidEpoch = std::numeric_limits<uint64_t>::max();
+
 struct MemoryUsage {
     uint64_t sizeBytes;
 };
@@ -178,7 +180,7 @@ GCHandle GCHandle::create(uint64_t epoch) {
     current.memoryUsageBefore.heap = currentHeapUsage();
     return getByEpoch(epoch);
 }
-GCHandle GCHandle::createFakeForTests() { return getByEpoch(invalid().getEpoch() - 1); }
+GCHandle GCHandle::createFakeForTests() { return getByEpoch(kInvalidEpoch - 1); }
 GCHandle GCHandle::getByEpoch(uint64_t epoch) {
     GCHandle handle{epoch};
     RuntimeAssert(handle.isValid(), "Must be valid");
@@ -195,7 +197,7 @@ std::optional<gc::GCHandle> gc::GCHandle::currentEpoch() noexcept {
 }
 
 GCHandle GCHandle::invalid() {
-    return GCHandle{std::numeric_limits<uint64_t>::max()};
+    return GCHandle{kInvalidEpoch};
 }
 void GCHandle::ClearForTests() {
     std::lock_guard guard(lock);
@@ -203,7 +205,7 @@ void GCHandle::ClearForTests() {
     last = {};
 }
 bool GCHandle::isValid() const {
-    return epoch_ != GCHandle::invalid().epoch_;
+    return epoch_ != kInvalidEpoch;
 }
 void GCHandle::finished() {
     std::lock_guard guard(lock);

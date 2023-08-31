@@ -37,8 +37,9 @@ enum class Tag : int32_t {
     kPause = 5,
     kAlloc = 6,
     kBalancing = 7,
+    kBarriers = 8,
 
-    kEnumSize = 8
+    kEnumSize = 9
 };
 
 namespace internal {
@@ -63,6 +64,7 @@ inline const char* name(Tag tag) {
         case Tag::kPause: return "pause";
         case Tag::kAlloc: return "alloc";
         case Tag::kBalancing: return "balancing";
+        case Tag::kBarriers: return "barriers";
 
         case Tag::kEnumSize: break;
     }

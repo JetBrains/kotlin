@@ -96,9 +96,11 @@ public:
     RefAccessor() = delete;
     RefAccessor& operator=(const RefAccessor&) = delete;
 
-    explicit RefAccessor(ObjHeader*& fieldRef) noexcept : direct_(fieldRef) {}
-    explicit RefAccessor(ObjHeader** fieldPtr) noexcept : RefAccessor(*fieldPtr) {}
-    RefAccessor(const RefAccessor& other) noexcept : direct_(other.direct_) {}
+    explicit RefAccessor(ObjHeader*& fieldRef) noexcept: direct_(fieldRef) {}
+
+    explicit RefAccessor(ObjHeader** fieldPtr) noexcept: RefAccessor(*fieldPtr) {}
+
+    RefAccessor(const RefAccessor& other) noexcept: direct_(other.direct_) {}
 
     DirectRefAccessor direct() const noexcept { return direct_; }
 
@@ -125,7 +127,10 @@ public:
         return result;
     }
 
-    ALWAYS_INLINE ObjHeader* operator=(ObjHeader* desired) noexcept { store(desired); return desired; }
+    ALWAYS_INLINE ObjHeader* operator=(ObjHeader* desired) noexcept {
+        store(desired);
+        return desired;
+    }
 
     ALWAYS_INLINE void store(ObjHeader* desired) noexcept {
         AssertThreadState(ThreadState::kRunnable);
@@ -174,9 +179,11 @@ public:
     auto accessor() noexcept {
         return mm::RefFieldAccessor(value_);
     }
+
     auto direct() noexcept {
         return accessor().direct();
     }
+
     // FIXME probably most of the uses should instead use accessor
     auto ptr() noexcept {
         return direct().location();
@@ -200,6 +207,6 @@ private:
     ObjHeader* value_ = nullptr;
 };
 
-OBJ_GETTER(weakRefReadBarrier, std::atomic<ObjHeader*>& referee) noexcept;
+OBJ_GETTER(weakRefReadBarrier, ObjHeader* weakReferee) noexcept;
 
 }

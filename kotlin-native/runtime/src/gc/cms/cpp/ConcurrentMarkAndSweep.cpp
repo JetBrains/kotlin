@@ -55,8 +55,6 @@ ScopedThread createGCThread(const char* name, Body&& body) {
 } // namespace
 
 void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
-    CallsCheckerIgnoreGuard guard;
-
     gc_.markDispatcher_.runOnMutator(commonThreadData());
 }
 
@@ -152,13 +150,15 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     state_.start(epoch);
 
+    barriers::beginMarkingEpoch(gcHandle);
+
     markDispatcher_.runMainInSTW();
 
     markDispatcher_.endMarkingEpoch();
 
     if (compiler::concurrentWeakSweep()) {
         // Expected to happen inside STW.
-        gc::EnableWeakRefBarriers(epoch);
+        barriers::enableWeakRefBarriers();
         resumeTheWorld(gcHandle);
     }
 
@@ -166,12 +166,16 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     if (compiler::concurrentWeakSweep()) {
         stopTheWorld(gcHandle);
-        gc::DisableWeakRefBarriers();
+        barriers::disableWeakRefBarriers();
     }
 
     // TODO outline as mark_.isolateMarkedHeapAndFinishMark()
+    ////
     // By this point all the alive heap must be marked.
     // All the mutations (incl. allocations) after this method will be subject for the next GC.
+
+    barriers::endMarkingEpoch();
+
     // This should really be done by each individual thread while waiting
     int threadCount = 0;
     for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
@@ -190,6 +194,7 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 #endif
 
     resumeTheWorld(gcHandle);
+    ////
 
 #ifndef CUSTOM_ALLOCATOR
     alloc::SweepExtraObjects<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, *extraObjectFactoryIterable);

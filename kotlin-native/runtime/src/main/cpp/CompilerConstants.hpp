@@ -102,7 +102,6 @@ ALWAYS_INLINE inline bool gcMarkSingleThreaded() noexcept {
     return Kotlin_gcMarkSingleThreaded != 0;
 }
 
-
 WorkerExceptionHandling workerExceptionHandling() noexcept;
 DestroyRuntimeMode destroyRuntimeMode() noexcept;
 bool gcMutatorsCooperate() noexcept;
