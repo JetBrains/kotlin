@@ -84,12 +84,14 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
         error("Accessor of property ${property.render()} not found on parent stack")
     }
 
-    @OptIn(IrSymbolInternals::class)
     @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
     inline fun <reified D : IrDeclaration> findDeclarationInParentsStack(symbol: IrSymbol): @kotlin.internal.NoInfer D {
+        // This is an unsafe fast path for production
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+            @OptIn(IrSymbolInternals::class)
             return symbol.owner as D
         }
+        // With slow assertions the following code guarantees that taking owner from symbol is safe
         for (parent in parentStack.asReversed()) {
             if ((parent as? IrDeclaration)?.symbol == symbol) {
                 return parent as D
@@ -100,6 +102,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
          *   for which we have Fir2IrLazyClass in symbol
          */
         if (configuration.allowNonCachedDeclarations) {
+            @OptIn(IrSymbolInternals::class)
             return symbol.owner as D
         }
         error("Declaration with symbol $symbol is not found in parents stack")

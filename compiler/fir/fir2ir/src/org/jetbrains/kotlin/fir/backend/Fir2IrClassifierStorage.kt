@@ -198,14 +198,13 @@ class Fir2IrClassifierStorage(
         }
     }
 
-    @OptIn(IrSymbolInternals::class)
     fun findIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
         return if (lookupTag.classId.isLocal) {
             getCachedLocalClass(lookupTag)
         } else {
             val firSymbol = lookupTag.toSymbol(session)
             if (firSymbol is FirClassSymbol) {
-                getIrClassSymbol(firSymbol).owner
+                getOrCreateIrClass(firSymbol)
             } else {
                 null
             }
@@ -217,10 +216,14 @@ class Fir2IrClassifierStorage(
     }
 
     fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>): IrClassSymbol {
+        return getOrCreateIrClass(firClassSymbol).symbol
+    }
+
+    private fun getOrCreateIrClass(firClassSymbol: FirClassSymbol<*>): IrClass {
         val firClass = firClassSymbol.fir
-        classifierStorage.getCachedIrClass(firClass)?.let { return it.symbol }
+        classifierStorage.getCachedIrClass(firClass)?.let { return it }
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.Local) {
-            return createAndCacheLocalIrClassOnTheFly(firClass).symbol
+            return createAndCacheLocalIrClassOnTheFly(firClass)
         }
         firClass as FirRegularClass
         val classId = firClassSymbol.classId
@@ -229,14 +232,15 @@ class Fir2IrClassifierStorage(
         val irParent = declarationStorage.findIrParent(classId.packageFqName, parentClass?.toLookupTag(), firClassSymbol, firClass.origin)!!
 
         // firClass may be referenced by some parent's type parameters as a bound. In that case, getIrClassSymbol will be called recursively.
-        classifierStorage.getCachedIrClass(firClass)?.let { return it.symbol }
+        classifierStorage.getCachedIrClass(firClass)?.let { return it }
 
         val irClass = lazyDeclarationsGenerator.createIrLazyClass(firClass, irParent)
         classCache[firClass] = irClass
         // NB: this is needed to prevent recursions in case of self bounds
         (irClass as Fir2IrLazyClass).prepareTypeParameters()
 
-        return irClass.symbol
+        return irClass
+
     }
 
     fun getFieldsWithContextReceiversForClass(irClass: IrClass, klass: FirClass): List<IrField> {

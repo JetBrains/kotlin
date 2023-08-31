@@ -456,8 +456,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         }
     }
 
-    @OptIn(IrSymbolInternals::class)
-    fun createIrClassSymbolForNotFoundClass(classLikeLookupTag: ConeClassLikeLookupTag): IrClassSymbol {
+    fun createIrClassForNotFoundClass(classLikeLookupTag: ConeClassLikeLookupTag): IrClass {
         val classId = classLikeLookupTag.classId
         val signature = IdSignature.CommonSignature(
             packageFqName = classId.packageFqName.asString(),
@@ -468,10 +467,10 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         )
 
         val parentId = classId.outerClassId
-        val parentClass = parentId?.let { createIrClassSymbolForNotFoundClass(it.toLookupTag()) }
-        val irParent = parentClass?.owner ?: declarationStorage.getIrExternalPackageFragment(classId.packageFqName)
+        val parentClass = parentId?.let { createIrClassForNotFoundClass(it.toLookupTag()) }
+        val irParent = parentClass ?: declarationStorage.getIrExternalPackageFragment(classId.packageFqName)
 
-        return symbolTable.referenceClass(signature, { IrClassPublicSymbolImpl(signature) }) {
+        return symbolTable.declareClassIfNotExists(signature, { IrClassPublicSymbolImpl(signature) }) {
             irFactory.createClass(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
