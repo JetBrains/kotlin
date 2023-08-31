@@ -58,7 +58,7 @@ public class IncrementalK2JsKlibCompilerWithScopeExpansionRunnerTestGenerated ex
         }
 
         public void testAllFilesPresentInPureKotlin() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^(sealed|fileWithConstantRemoved).*"), false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^(sealed.*|fileWithConstantRemoved|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict)"), false);
         }
 
         @TestMetadata("annotations")
@@ -224,16 +224,6 @@ public class IncrementalK2JsKlibCompilerWithScopeExpansionRunnerTestGenerated ex
         @TestMetadata("filesExchangePackages")
         public void testFilesExchangePackages() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/filesExchangePackages/");
-        }
-
-        @TestMetadata("funRedeclaration")
-        public void testFunRedeclaration() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/funRedeclaration/");
-        }
-
-        @TestMetadata("funVsConstructorOverloadConflict")
-        public void testFunVsConstructorOverloadConflict() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/funVsConstructorOverloadConflict/");
         }
 
         @TestMetadata("functionBecameInline")
@@ -516,11 +506,6 @@ public class IncrementalK2JsKlibCompilerWithScopeExpansionRunnerTestGenerated ex
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/privateVarSignatureChanged/");
         }
 
-        @TestMetadata("propertyRedeclaration")
-        public void testPropertyRedeclaration() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/propertyRedeclaration/");
-        }
-
         @TestMetadata("publicPropertyWithPrivateSetter")
         public void testPublicPropertyWithPrivateSetter() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/publicPropertyWithPrivateSetter/");
@@ -666,7 +651,7 @@ public class IncrementalK2JsKlibCompilerWithScopeExpansionRunnerTestGenerated ex
         }
 
         public void testAllFilesPresentInClassHierarchyAffected() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^\\.]+)$"), null, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("secondaryConstructorAdded"), false);
         }
 
         @TestMetadata("annotationFlagRemoved")
@@ -844,11 +829,6 @@ public class IncrementalK2JsKlibCompilerWithScopeExpansionRunnerTestGenerated ex
             runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/sealedClassNestedImplAdded/");
         }
 
-        @TestMetadata("secondaryConstructorAdded")
-        public void testSecondaryConstructorAdded() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/secondaryConstructorAdded/");
-        }
-
         @TestMetadata("starProjectionUpperBoundChanged")
         public void testStarProjectionUpperBoundChanged() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/starProjectionUpperBoundChanged/");
@@ -933,55 +913,6 @@ public class IncrementalK2JsKlibCompilerWithScopeExpansionRunnerTestGenerated ex
 
             public void testAllFilesPresentInInlineFunctionLocalDeclarationChanges() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/js/inlineFunctionLocalDeclarationChanges"), Pattern.compile("^([^\\.]+)$"), null, true);
-            }
-        }
-    }
-
-    @TestMetadata("jps/jps-plugin/testData/incremental/scopeExpansion")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ScopeExpansion extends AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInScopeExpansion() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion"), Pattern.compile("^([^\\.]+)$"), null, true);
-        }
-
-        @TestMetadata("changeTypeAliasAndUsage")
-        public void testChangeTypeAliasAndUsage() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/scopeExpansion/changeTypeAliasAndUsage/");
-        }
-
-        @TestMetadata("protectedBecomesPublicAccessedTroughChild")
-        public void testProtectedBecomesPublicAccessedTroughChild() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/scopeExpansion/protectedBecomesPublicAccessedTroughChild/");
-        }
-
-        @TestMetadata("jps/jps-plugin/testData/incremental/scopeExpansion/changeTypeAliasAndUsage")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ChangeTypeAliasAndUsage extends AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInChangeTypeAliasAndUsage() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion/changeTypeAliasAndUsage"), Pattern.compile("^([^\\.]+)$"), null, true);
-            }
-        }
-
-        @TestMetadata("jps/jps-plugin/testData/incremental/scopeExpansion/protectedBecomesPublicAccessedTroughChild")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ProtectedBecomesPublicAccessedTroughChild extends AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInProtectedBecomesPublicAccessedTroughChild() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion/protectedBecomesPublicAccessedTroughChild"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }

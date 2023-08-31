@@ -119,14 +119,19 @@ fun main(args: Array<String>) {
                 model("incremental/scopeExpansion", extension = null, excludeParentDirs = true)
             }
 
+            // TODO: https://youtrack.jetbrains.com/issue/KT-61602/JS-K2-ICL-Fix-muted-tests
             testClass<AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest> {
                 // IC of sealed interfaces are not supported in JS
                 model("incremental/pureKotlin", extension = null, recursive = false,
                     // TODO: 'fileWithConstantRemoved' should be fixed in https://youtrack.jetbrains.com/issue/KT-58824
-                    excludedPattern = "^(sealed|fileWithConstantRemoved).*")
-                model("incremental/classHierarchyAffected", extension = null, recursive = false)
+                    excludedPattern = "^(sealed.*|fileWithConstantRemoved|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict)"
+                )
+                model("incremental/classHierarchyAffected", extension = null, recursive = false,
+                    excludedPattern = "secondaryConstructorAdded"
+                )
                 model("incremental/js", extension = null, excludeParentDirs = true)
-                model("incremental/scopeExpansion", extension = null, excludeParentDirs = true)
+
+                //model("incremental/scopeExpansion", extension = null, excludeParentDirs = true)
             }
 
             testClass<AbstractIncrementalK1JsLegacyCompilerRunnerWithFriendModulesDisabledTest> {

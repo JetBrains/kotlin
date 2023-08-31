@@ -524,6 +524,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             )
         }
 
+        if (analyzedOutput.reportCompilationErrors(moduleStructure, diagnosticsReporter, messageCollector)) {
+            throw CompilationErrorException()
+        }
+
         // FIR2IR
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
 
@@ -537,10 +541,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             if (shouldGoToNextIcRound(moduleStructure, analyzedOutput.output, fir2IrActualizedResult)) {
                 throw IncrementalNextRoundException()
             }
-        }
-
-        if (analyzedOutput.reportCompilationErrors(moduleStructure, diagnosticsReporter, messageCollector)) {
-            throw CompilationErrorException()
         }
 
         // Serialize klib
