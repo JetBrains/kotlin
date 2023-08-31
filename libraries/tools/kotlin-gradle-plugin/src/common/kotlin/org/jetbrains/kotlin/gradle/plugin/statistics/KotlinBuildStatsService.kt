@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAc
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler.Companion.runSafe
+import org.jetbrains.kotlin.gradle.utils.currentBuild
+import org.jetbrains.kotlin.gradle.utils.currentBuildId
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -187,9 +189,12 @@ internal abstract class KotlinBuildStatsService internal constructor() : Statist
 
     override fun close() {
     }
+    /**
+     * Collects metrics at the end of a build
+     */
     open fun recordBuildFinish(action: String?, buildFailed: Boolean, metric: NonSynchronizedMetricsContainer) {}
 
-    open fun recordProjectsEvaluated(gradle: Gradle) {}
+    open fun recordProjectsEvaluated(project: Project) {}
 }
 
 internal class JMXKotlinBuildStatsService(private val mbs: MBeanServer, private val beanName: ObjectName) :
@@ -256,12 +261,13 @@ internal abstract class AbstractKotlinBuildStatsService(
         return (gradle as? DefaultGradle)?.services?.get(BuildRequestMetaData::class.java)?.startTime
     }
 
-    override fun recordProjectsEvaluated(gradle: Gradle) {
+    override fun recordProjectsEvaluated(project: Project) {
         runSafe("${DefaultKotlinBuildStatsService::class.java}.projectEvaluated") {
             if (!sessionLogger.isBuildSessionStarted()) {
                 sessionLogger.startBuildSession(
                     DaemonReuseCounter.incrementAndGetOrdinal(),
-                    gradleBuildStartTime(gradle)
+                    gradleBuildStartTime(project.gradle),
+//                    project.currentBuildId().buildPath
                 )
             }
         }

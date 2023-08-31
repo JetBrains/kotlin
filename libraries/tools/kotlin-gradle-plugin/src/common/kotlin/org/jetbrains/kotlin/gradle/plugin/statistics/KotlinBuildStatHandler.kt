@@ -50,7 +50,6 @@ class KotlinBuildStatHandler {
          */
         internal fun collectGeneralConfigurationTimeMetrics(
             project: Project,
-            isProjectIsolationEnabled: Boolean,
             buildReportOutputs: List<BuildReportType>,
             pluginVersion: String,
         ): MetricContainer {
@@ -71,12 +70,13 @@ class KotlinBuildStatHandler {
                 val gradle = project.gradle
                 configurationTimeMetrics.put(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
                 configurationTimeMetrics.put(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
-                if (!isProjectIsolationEnabled) {
-                    gradle.taskGraph.whenReady { taskExecutionGraph ->
-                        val executedTaskNames = taskExecutionGraph.allTasks.map { it.name }.distinct()
-                        configurationTimeMetrics.put(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
-                    }
+
+                //will be updated with KT-58266
+                gradle.taskGraph.whenReady { taskExecutionGraph ->
+                    val executedTaskNames = taskExecutionGraph.allTasks.map { it.name }.distinct()
+                    configurationTimeMetrics.put(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
                 }
+
             }
             configurationTimeMetrics.put(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
 
@@ -89,13 +89,8 @@ class KotlinBuildStatHandler {
          */
         internal fun collectProjectConfigurationTimeMetrics(
             project: Project,
-            isProjectIsolationEnabled: Boolean,
         ): MetricContainer {
             val configurationTimeMetrics = MetricContainer()
-
-            if (isProjectIsolationEnabled) { //support project isolation - KT-58768
-                return configurationTimeMetrics
-            }
 
             val statisticOverhead = measureTimeMillis {
                 collectAppliedPluginsStatistics(project, configurationTimeMetrics)
