@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -409,6 +410,43 @@ class Fir2IrDeclarationStorage(
 
     // ------------------------------------ properties ------------------------------------
 
+    /**
+     *    There is a difference in how FIR and IR treat synthetic properties (properties built upon java getter + optional java setter)
+     *    For FIR they are really synthetic and exist only during call resolution, so FIR creates a new instance of FirSyntheticProperty
+     *    each time it resolves some call to such property
+     *    In IR synthetic properties are fair properties that are present in IR Java classes
+     *
+     *    This leads to the situation when synthetic property does not have a stable key (because FIR instance is new each time) and the only
+     *    source of truth is a symbol table. To fix it (and avoid using symbol table as a storage), a pair of original getter and setter is
+     *    used as a key for storage IR for synthetic properties. And to avoid introducing special cache of FirSyntheticPropertyKey -> IrProperty
+     *    additional mapping level is introduced
+     *
+     *    - FirSyntheticPropertyKey is mapped to the first FIR synthetic property which was processed by FIR2IR
+     *    - this property is mapped to IrProperty using regular propertyCache
+     *
+     * IMPORTANT: this whole story requires to call [prepareProperty] or [preparePropertySymbol] in the beginning of any public method
+     *   which accepts arbitary FirProperty or FirPropertySymbol
+     */
+    private data class FirSyntheticPropertyKey(
+        val originalForGetter: FirSimpleFunction,
+        val originalForSetter: FirSimpleFunction?,
+    ) {
+        constructor(property: FirSyntheticProperty) : this(property.getter.delegate, property.setter?.delegate)
+    }
+
+    private val originalForSyntheticProperty: ConcurrentHashMap<FirSyntheticPropertyKey, FirSyntheticProperty> = ConcurrentHashMap()
+
+    private fun prepareProperty(property: FirProperty): FirProperty {
+        return when (property) {
+            is FirSyntheticProperty -> originalForSyntheticProperty.getOrPut(FirSyntheticPropertyKey(property)) { property }
+            else -> property
+        }
+    }
+
+    private fun preparePropertySymbol(symbol: FirPropertySymbol): FirPropertySymbol {
+        return prepareProperty(symbol.fir).symbol
+    }
+
     fun getOrCreateIrProperty(
         property: FirProperty,
         irParent: IrDeclarationParent?,
@@ -416,6 +454,8 @@ class Fir2IrDeclarationStorage(
         isLocal: Boolean = false,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
     ): IrProperty {
+        @Suppress("NAME_SHADOWING")
+        val property = prepareProperty(property)
         getCachedIrProperty(property)?.let { return it }
         return createAndCacheIrProperty(property, irParent, predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
     }
@@ -442,6 +482,8 @@ class Fir2IrDeclarationStorage(
         isLocal: Boolean = false,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
     ): IrProperty {
+        @Suppress("NAME_SHADOWING")
+        val property = prepareProperty(property)
         val irProperty = callablesGenerator.createIrProperty(property, irParent, predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
         cacheIrProperty(property, irProperty, fakeOverrideOwnerLookupTag)
         return irProperty
@@ -499,6 +541,8 @@ class Fir2IrDeclarationStorage(
         firPropertySymbol: FirPropertySymbol,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
     ): IrSymbol {
+        @Suppress("NAME_SHADOWING")
+        val firPropertySymbol = preparePropertySymbol(firPropertySymbol)
         val fir = firPropertySymbol.fir
         if (fir.isLocal) {
             return localStorage.getDelegatedProperty(fir)?.symbol ?: getIrVariableSymbol(fir)
@@ -561,6 +605,8 @@ class Fir2IrDeclarationStorage(
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
         signatureCalculator: () -> IdSignature?
     ): IrProperty? {
+        @Suppress("NAME_SHADOWING")
+        val property = prepareProperty(property)
         return getCachedIrCallable(
             property,
             fakeOverrideOwnerLookupTag,
