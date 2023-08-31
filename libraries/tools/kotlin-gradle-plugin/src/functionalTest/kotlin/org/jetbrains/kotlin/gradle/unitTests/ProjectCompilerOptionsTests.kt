@@ -308,6 +308,20 @@ class ProjectCompilerOptionsTests {
         assertEquals("2.0", project.multiplatformExtension.sourceSets.getByName("commonTest").languageSettings.languageVersion)
     }
 
+    @Test
+    fun testJvmModuleNameInMppIsConfigured() {
+        val project = buildProjectWithMPP()
+        project.runLifecycleAwareTest {
+            with(multiplatformExtension) {
+                jvm {
+                    compilerOptions.moduleName.set("my-custom-module-name")
+                }
+            }
+        }
+
+        assertEquals("my-custom-module-name", project.kotlinJvmTask("compileKotlinJvm").compilerOptions.moduleName.orNull)
+    }
+
     private fun Project.kotlinNativeTask(name: String): KotlinCompilationTask<KotlinNativeCompilerOptions> = tasks
         .named<KotlinCompilationTask<KotlinNativeCompilerOptions>>(name)
         .get()
