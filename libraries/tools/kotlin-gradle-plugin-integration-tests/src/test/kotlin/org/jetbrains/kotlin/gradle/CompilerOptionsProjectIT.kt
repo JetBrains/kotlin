@@ -554,4 +554,42 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("KT-61303: Multiplatform/Android module name is changed")
+    @AndroidGradlePluginTests
+    @GradleAndroidTest
+    fun mppAndroidModuleNameCompilerOptionsDsl(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            projectName = "multiplatformAndroidSourceSetLayout2",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG , androidVersion = agpVersion),
+            buildJdk = jdk.location
+        ) {
+            buildGradleKts.appendText(
+                //language=Groovy
+                """
+                |
+                |kotlin {
+                |    androidTarget {
+                |        compilerOptions {
+                |            moduleName.set("my-custom-module")
+                |        }
+                |    }
+                |}
+                |
+                """.trimMargin()
+            )
+
+            build(":compileGermanFreeDebugKotlinAndroid") {
+                assertCompilerArguments(
+                    ":compileGermanFreeDebugKotlinAndroid",
+                    "-module-name my-custom-module_germanFreeDebug"
+                )
+            }
+        }
+    }
 }
