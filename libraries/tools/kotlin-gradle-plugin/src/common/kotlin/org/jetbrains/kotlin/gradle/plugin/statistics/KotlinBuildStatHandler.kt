@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySet
+import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.plugin.statistics.plugins.ObservablePlugins
 import org.jetbrains.kotlin.gradle.report.BuildReportType
@@ -49,10 +51,10 @@ class KotlinBuildStatHandler {
          * Collect general configuration metrics
          */
         internal fun collectGeneralConfigurationTimeMetrics(
-            project: Project,
-            isProjectIsolationEnabled: Boolean,
+            gradle: Gradle,
             buildReportOutputs: List<BuildReportType>,
             pluginVersion: String,
+            isProjectIsolationEnabled: Boolean,
         ): MetricContainer {
             val configurationTimeMetrics = MetricContainer()
 
@@ -68,15 +70,17 @@ class KotlinBuildStatHandler {
                         BuildReportType.TRY_NEXT_CONSOLE -> {}//ignore
                     }
                 }
-                val gradle = project.gradle
                 configurationTimeMetrics.put(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
                 configurationTimeMetrics.put(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
+
+                //will be updated with KT-58266
                 if (!isProjectIsolationEnabled) {
                     gradle.taskGraph.whenReady { taskExecutionGraph ->
                         val executedTaskNames = taskExecutionGraph.allTasks.map { it.name }.distinct()
                         configurationTimeMetrics.put(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
                     }
                 }
+
             }
             configurationTimeMetrics.put(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
 
@@ -89,13 +93,8 @@ class KotlinBuildStatHandler {
          */
         internal fun collectProjectConfigurationTimeMetrics(
             project: Project,
-            isProjectIsolationEnabled: Boolean,
         ): MetricContainer {
             val configurationTimeMetrics = MetricContainer()
-
-            if (isProjectIsolationEnabled) { //support project isolation - KT-58768
-                return configurationTimeMetrics
-            }
 
             val statisticOverhead = measureTimeMillis {
                 collectAppliedPluginsStatistics(project, configurationTimeMetrics)
@@ -202,8 +201,11 @@ class KotlinBuildStatHandler {
             }
         }
 
-        private fun reportLibrariesVersions(configurationTimeMetrics: MetricContainer, dependencies: DependencySet?) {
-            dependencies?.forEach { dependency ->
+        private fun reportLibrariesVersions(
+            configurationTimeMetrics: MetricContainer,
+            dependencies: DependencySet?,
+        ) {
+            dependencies?.filter { it !is ProjectDependency }?.forEach { dependency ->
                 when {
                     dependency.group?.startsWith("org.springframework") ?: false -> configurationTimeMetrics.put(
                         StringMetrics.LIBRARY_SPRING_VERSION,
@@ -272,11 +274,12 @@ class KotlinBuildStatHandler {
         sessionLogger: BuildSessionLogger,
         action: String?,
         buildFailed: Boolean,
-        metrics: NonSynchronizedMetricsContainer,
+        buildId: String,
+        metricsContainer: NonSynchronizedMetricsContainer,
     ) {
         runSafe("${KotlinBuildStatHandler::class.java}.reportBuildFinish") {
-            metrics.sendToConsumer(sessionLogger)
-            sessionLogger.finishBuildSession(action, buildFailed)
+            metricsContainer.sendToConsumer(sessionLogger)
+            sessionLogger.finishBuildSession(action, buildFailed, buildId)
         }
     }
 

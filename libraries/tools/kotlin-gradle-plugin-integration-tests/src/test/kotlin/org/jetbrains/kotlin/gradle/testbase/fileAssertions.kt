@@ -226,15 +226,29 @@ fun assertFileContains(
     file: Path,
     vararg expectedText: String,
 ): String {
-    assertFileExists(file)
-    val text = file.readText()
+    return assertFilesCombinedContains(listOf(file), *expectedText)
+}
+
+/**
+ * Asserts files together contains all the lines from [expectedText]
+ */
+fun assertFilesCombinedContains(
+    files: List<Path>,
+    vararg expectedText: String,
+): String {
+    files.forEach { assertFileExists(it) }
+
+    val text = files.joinToString(separator = "\n") {
+        it.readText()
+    }
+
     val textNotInTheFile = expectedText.filterNot { text.contains(it) }
     assert(textNotInTheFile.isEmpty()) {
         """
-        |$file does not contain:
+        |$files does not contain:
         |${textNotInTheFile.joinToString(separator = "\n")}
         |
-        |actual file content:
+        |actual content:
         |"$text"
         |       
         """.trimMargin()

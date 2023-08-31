@@ -187,9 +187,12 @@ internal abstract class KotlinBuildStatsService internal constructor() : Statist
 
     override fun close() {
     }
-    open fun recordBuildFinish(action: String?, buildFailed: Boolean, metric: NonSynchronizedMetricsContainer) {}
+    /**
+     * Collects metrics at the end of a build
+     */
+    open fun recordBuildFinish(action: String?, buildFailed: Boolean, metricsContainer: NonSynchronizedMetricsContainer, buildId: String) {}
 
-    open fun recordProjectsEvaluated(gradle: Gradle) {}
+    open fun recordProjectsEvaluated(project: Project) {}
 }
 
 internal class JMXKotlinBuildStatsService(private val mbs: MBeanServer, private val beanName: ObjectName) :
@@ -256,12 +259,12 @@ internal abstract class AbstractKotlinBuildStatsService(
         return (gradle as? DefaultGradle)?.services?.get(BuildRequestMetaData::class.java)?.startTime
     }
 
-    override fun recordProjectsEvaluated(gradle: Gradle) {
+    override fun recordProjectsEvaluated(project: Project) {
         runSafe("${DefaultKotlinBuildStatsService::class.java}.projectEvaluated") {
             if (!sessionLogger.isBuildSessionStarted()) {
                 sessionLogger.startBuildSession(
                     DaemonReuseCounter.incrementAndGetOrdinal(),
-                    gradleBuildStartTime(gradle)
+                    gradleBuildStartTime(project.gradle),
                 )
             }
         }
@@ -299,7 +302,7 @@ internal class DefaultKotlinBuildStatsService internal constructor(
         report(StringMetrics.valueOf(name), value, subprojectName, weight)
 
     //only one jmx bean service should report global metrics
-    override fun recordBuildFinish(action: String?, buildFailed: Boolean, metrics: NonSynchronizedMetricsContainer) {
-        KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, metrics)
+    override fun recordBuildFinish(action: String?, buildFailed: Boolean, metricsContainer: NonSynchronizedMetricsContainer, buildId: String) {
+        KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, buildId, metricsContainer)
     }
 }

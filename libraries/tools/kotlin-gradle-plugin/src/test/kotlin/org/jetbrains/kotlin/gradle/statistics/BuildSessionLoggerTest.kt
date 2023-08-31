@@ -13,8 +13,9 @@ import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.junit.After
 import org.junit.Before
 import java.io.File
-import java.lang.IllegalStateException
 import java.nio.file.Files
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.test.*
 
 class BuildSessionLoggerTest {
@@ -44,49 +45,24 @@ class BuildSessionLoggerTest {
         assertEquals(false, logger1.isBuildSessionStarted())
         logger1.startBuildSession(0, 0)
 
-        // created single folder with kotlin statistics
-        assertEquals(1, statFilesCount())
-
         // check that file locks work properly and do not use the same file
         logger2.startBuildSession(0, 0)
-        assertEquals(2, statFilesCount())
 
         assertEquals(true, logger1.isBuildSessionStarted())
 
-        logger1.finishBuildSession("", false)
-        logger2.finishBuildSession("", false)
+        logger1.finishBuildSession("", false, buildId = "1")
+        // created single folder with kotlin statistics
+        assertEquals(1, statFilesCount())
+
+        logger2.finishBuildSession("", false, buildId = "2")
+        assertEquals(2, statFilesCount())
 
         rootFolder.listFiles()?.first()?.listFiles()?.forEach { file ->
             assertTrue(
-                file.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()),
-                "Check that file name ${file.name} matches pattern ${BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN}"
+                file.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN),
+                "Check that file name \'${file.name}\' matches pattern \'${BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN}\'"
             )
         }
-    }
-
-    @Test
-    fun testSizeLimitation() {
-        val maxFileSize = 10_000
-        val logger = BuildSessionLogger(rootFolder, 100, maxFileSize.toLong())
-        logger.startBuildSession(0, null)
-        logger.finishBuildSession("", false)
-
-        assertEquals(1, statFilesCount())
-
-        val file2edit = rootFolder.listFiles()?.first()?.listFiles()?.first() ?: fail("Could not find single stat file")
-
-        logger.startBuildSession(0, 0)
-        logger.finishBuildSession("", false)
-        //new file should not be created
-        assertEquals(1, statFilesCount())
-
-        file2edit.appendBytes(ByteArray(maxFileSize))
-
-        logger.startBuildSession(0, 0)
-        logger.finishBuildSession("", false)
-
-        // a new file should be created as maximal file size
-        assertEquals(2, statFilesCount())
     }
 
     @Test
@@ -94,7 +70,7 @@ class BuildSessionLoggerTest {
         val maxFiles = 100
         val logger = BuildSessionLogger(rootFolder, maxFiles)
         logger.startBuildSession(0, null)
-        logger.finishBuildSession("", false)
+        logger.finishBuildSession("", false, buildId = "1")
         assertEquals(1, statFilesCount())
 
         val statsFolder = rootFolder.listFiles()?.single() ?: fail("${rootFolder.absolutePath} was not created")
@@ -102,12 +78,11 @@ class BuildSessionLoggerTest {
 
         for (i in 1..200) {
             File(statsFolder, "$i").createNewFile()
-            val formattedIndex = "%04d".format(i)
-            File(statsFolder, "$formattedIndex-12-30-12-59-59-123.profile").createNewFile()
+            File(statsFolder, "${UUID.randomUUID()}.profile").createNewFile()
         }
 
         logger.startBuildSession(0, 0)
-        logger.finishBuildSession("", false)
+        logger.finishBuildSession("", false, buildId = "1")
 
         assertTrue(
             statsFolder.listFiles()?.count { it.name == singleStatFile.name } == 1,
@@ -117,48 +92,39 @@ class BuildSessionLoggerTest {
         // files not matching the pattern should not be affected
         assertEquals(
             200,
-            statsFolder.listFiles()?.count { !it.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()) },
+            statsFolder.listFiles()?.count { !it.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN) },
             "Some files which should not be affected, were removed"
         )
 
         assertEquals(
             maxFiles,
-            statsFolder.listFiles()?.count { it.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()) },
+            statsFolder.listFiles()?.count { it.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN) },
             "Some files which should not be affected, were removed"
-        )
-        assertEquals(
-            statsFolder.listFiles()?.filter { it.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()) }?.sorted(),
-            BuildSessionLogger.listProfileFiles(statsFolder)
         )
     }
 
     @Test
     fun testReadWriteMetrics() {
+        val buildId = "test"
         val logger = BuildSessionLogger(rootFolder)
         logger.report(StringMetrics.KOTLIN_COMPILER_VERSION, "1.2.3.4-snapshot")
 
         val startTime = System.currentTimeMillis() - 1001
         logger.startBuildSession(1, startTime)
-        logger.finishBuildSession("Build", false)
+        val reportFile = rootFolder.resolve(BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME)
+            .resolve(buildId + BuildSessionLogger.Companion.PROFILE_FILE_NAME_SUFFIX)
+
+        reportFile.createNewFile()
+        reportFile.appendText("${StringMetrics.USE_FIR.name}=true\n")
+
+        logger.finishBuildSession("Build", false, buildId)
         assertEquals(1, statFilesCount())
 
         val statFile = rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")
-        statFile.appendBytes("break format of the file".toByteArray())
+        statFile.appendBytes("break format of the file".toByteArray()) //this line should be filtered by MetricsContainer.readFromFile
 
         logger.startBuildSession(1, startTime)
-
-        // the file should be locked
-        try {
-            MetricsContainer.readFromFile(statFile) {
-                fail("No metrics should be read due to locked file")
-            }
-            fail("Method should have failed")
-        } catch (e: IllegalStateException) {
-            //all right
-        }
-
-
-        logger.finishBuildSession("", false)
+        logger.finishBuildSession("", false, buildId)
 
         val metrics = ArrayList<MetricsContainer>()
         MetricsContainer.readFromFile(statFile) {
@@ -166,6 +132,11 @@ class BuildSessionLoggerTest {
         }
 
         assertEquals(2, metrics.size, "Invalid number of MerticContainers was read")
+        assertEquals(
+            "true",
+            metrics[0].getMetric(StringMetrics.USE_FIR)?.getValue()
+        )
+
         assertEquals(
             "1.2.3",
             metrics[0].getMetric(StringMetrics.KOTLIN_COMPILER_VERSION)?.getValue()
@@ -194,7 +165,7 @@ class BuildSessionLoggerTest {
         for (metric in NumericalMetrics.values()) {
             logger.report(metric, System.currentTimeMillis())
         }
-        logger.finishBuildSession("Build", false)
+        logger.finishBuildSession("Build", false, buildId = "test")
 
         MetricsContainer.readFromFile(rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")) {
             for (metric in StringMetrics.values()) {
@@ -217,7 +188,7 @@ class BuildSessionLoggerTest {
         logger.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, 10, null, 9)
         logger.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, 100, null, 1)
 
-        logger.finishBuildSession("Build", false)
+        logger.finishBuildSession("Build", false, buildId = "1")
         MetricsContainer.readFromFile(rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")) {
             assertEquals(19L, it.getMetric(NumericalMetrics.ANALYSIS_LINES_PER_SECOND)?.getValue())
         }

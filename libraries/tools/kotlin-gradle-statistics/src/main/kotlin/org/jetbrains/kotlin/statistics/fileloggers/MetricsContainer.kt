@@ -143,8 +143,7 @@ class MetricsContainer(private val forceValuesValidation: Boolean = false) : Sta
         return true
     }
 
-    fun flush(trackingFile: IRecordLogger?) {
-        if (trackingFile == null) return
+    fun flush(writer: BufferedWriter) {
         val allMetrics = TreeMap<MetricDescriptor, IMetricContainer<out Any>>()
         synchronized(metricsLock) {
             allMetrics.putAll(numericalMetrics)
@@ -153,10 +152,10 @@ class MetricsContainer(private val forceValuesValidation: Boolean = false) : Sta
         }
         for (entry in allMetrics.entries) {
             val suffix = if (entry.key.projectHash == null) "" else ".${entry.key.projectHash}"
-            trackingFile.append("${entry.key.name}$suffix=${entry.value.toStringRepresentation()}")
+            writer.appendLine("${entry.key.name}$suffix=${entry.value.toStringRepresentation()}")
         }
 
-        trackingFile.append(BUILD_SESSION_SEPARATOR)
+        writer.appendLine(BUILD_SESSION_SEPARATOR)
 
         synchronized(metricsLock) {
             stringMetrics.clear()

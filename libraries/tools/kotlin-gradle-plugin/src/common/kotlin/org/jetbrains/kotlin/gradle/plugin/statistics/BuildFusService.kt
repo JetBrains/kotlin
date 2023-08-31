@@ -14,30 +14,37 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
+import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
+import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.report.reportingSettings
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.gradle.utils.currentBuildId
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.Serializable
+import java.util.UUID.*
 
 
 internal interface UsesBuildFusService : Task {
     @get:Internal
     val buildFusService: Property<BuildFusService?>
 }
+
 abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoCloseable, OperationCompletionListener {
     private var buildFailed: Boolean = false
     private val log = Logging.getLogger(this.javaClass)
@@ -48,42 +55,30 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
 
     interface Parameters : BuildServiceParameters {
         val configurationMetrics: ListProperty<MetricContainer>
-        val fusStatisticsAvailable: Property<Boolean>
+        val useBuildFinishFlowAction: Property<Boolean>
     }
 
-    internal val fusMetricsConsumer: NonSynchronizedMetricsContainer? by lazy {
-        // parameters should be already injected on this property access
-        if (parameters.fusStatisticsAvailable.get())
-            NonSynchronizedMetricsContainer()
-        else
-            null
-    }
+    private val fusMetricsConsumer = NonSynchronizedMetricsContainer()
+
+    internal fun getFusMetricsConsumer(): StatisticsValuesConsumer = fusMetricsConsumer
 
     internal fun reportFusMetrics(reportAction: (StatisticsValuesConsumer) -> Unit) {
-        fusMetricsConsumer?.let { reportAction(it) }
+        reportAction(fusMetricsConsumer)
     }
+    private val buildId = randomUUID().toString()
 
     companion object {
         private val serviceName = "${BuildFusService::class.simpleName}_${BuildFusService::class.java.classLoader.hashCode()}"
 
-        private fun fusStatisticsAvailable(project: Project): Boolean {
-            return when {
-                //known issue for Gradle with configurationCache: https://github.com/gradle/gradle/issues/20001
-                GradleVersion.current().baseVersion < GradleVersion.version("7.4") -> !project.isConfigurationCacheRequested
-                GradleVersion.current().baseVersion < GradleVersion.version("8.1") -> true
-                //known issue. Cant reuse cache if file is changed in gradle_user_home dir: KT-58768
-                else -> !project.isConfigurationCacheRequested
-            }
-        }
-
-        fun registerIfAbsent(project: Project, pluginVersion: String) = registerIfAbsentImpl(project, pluginVersion).also { serviceProvider ->
-            SingleActionPerProject.run(project, UsesBuildFusService::class.java.name) {
-                project.tasks.withType<UsesBuildFusService>().configureEach { task ->
-                    task.buildFusService.value(serviceProvider).disallowChanges()
-                    task.usesService(serviceProvider)
+        fun registerIfAbsent(project: Project, pluginVersion: String) =
+            registerIfAbsentImpl(project, pluginVersion).also { serviceProvider ->
+                SingleActionPerProject.run(project, UsesBuildFusService::class.java.name) {
+                    project.tasks.withType<UsesBuildFusService>().configureEach { task ->
+                        task.buildFusService.value(serviceProvider).disallowChanges()
+                        task.usesService(serviceProvider)
+                    }
                 }
             }
-        }
 
         private fun registerIfAbsentImpl(
             project: Project,
@@ -96,71 +91,103 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
                 @Suppress("UNCHECKED_CAST")
                 return (it.service as Provider<BuildFusService>).also {
                     it.get().parameters.configurationMetrics.add(project.provider {
-                        KotlinBuildStatHandler.collectProjectConfigurationTimeMetrics(project, isProjectIsolationEnabled)
+                        KotlinBuildStatHandler.collectProjectConfigurationTimeMetrics(project)
                     })
                 }
             }
 
             //init buildStatsService
-            KotlinBuildStatsService.getOrCreateInstance(project)
+            KotlinBuildStatsService.getOrCreateInstance(project)?.also {
+                it.recordProjectsEvaluated(project)
+            }
 
-            val fusStatisticsAvailable = fusStatisticsAvailable(project)
             val buildReportOutputs = reportingSettings(project).buildReportOutputs
+            val gradle = project.gradle
 
             //Workaround for known issues for Gradle 8+: https://github.com/gradle/gradle/issues/24887:
             // when this OperationCompletionListener is called services can be already closed for Gradle 8,
             // so there is a change that no VariantImplementationFactory will be found
-            return project.gradle.sharedServices.registerIfAbsent(serviceName, BuildFusService::class.java) { spec ->
-                if (fusStatisticsAvailable) {
-                    KotlinBuildStatsService.applyIfInitialised {
-                        it.recordProjectsEvaluated(project.gradle)
-                    }
-                }
+            return gradle.sharedServices.registerIfAbsent(serviceName, BuildFusService::class.java) { spec ->
 
                 spec.parameters.configurationMetrics.add(project.provider {
-                    KotlinBuildStatHandler.collectGeneralConfigurationTimeMetrics(project, isProjectIsolationEnabled, buildReportOutputs, pluginVersion)
+                    KotlinBuildStatHandler.collectGeneralConfigurationTimeMetrics(
+                        gradle,
+                        buildReportOutputs,
+                        pluginVersion,
+                        isProjectIsolationEnabled
+                    )
                 })
 
                 spec.parameters.configurationMetrics.add(project.provider {
-                    KotlinBuildStatHandler.collectProjectConfigurationTimeMetrics(project, isProjectIsolationEnabled)
+                    KotlinBuildStatHandler.collectProjectConfigurationTimeMetrics(project)
                 })
-                spec.parameters.fusStatisticsAvailable.set(fusStatisticsAvailable)
+                spec.parameters.useBuildFinishFlowAction.set(GradleVersion.current().baseVersion >= GradleVersion.version("8.1"))
             }.also { buildService ->
-                if (fusStatisticsAvailable) {
-                    when {
-                        GradleVersion.current().baseVersion < GradleVersion.version("8.1") ->
-                            BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildService)
-                        else -> StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResult()
-                    }
+                @Suppress("DEPRECATION")
+                if (GradleVersion.current().baseVersion >= GradleVersion.version("7.4")
+                    || !project.isConfigurationCacheRequested
+                    || project.currentBuildId().name != "buildSrc"
+                ) {
+                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildService)
                 }
+                if (GradleVersion.current().baseVersion >= GradleVersion.version("8.1")) {
+                    StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResult()
+                }
+
             }
         }
     }
 
     override fun onFinish(event: FinishEvent?) {
-        parameters.fusStatisticsAvailable.get() //force to calculate configuration metrics before build finish
-        if ((event is TaskFinishEvent) && (event.result is TaskFailureResult)) {
-            buildFailed = true
+        if (event is TaskFinishEvent) {
+            if (event.result is TaskFailureResult) {
+                buildFailed = true
+            }
+
+            val taskExecutionResult = TaskExecutionResults[event.descriptor.taskPath]
+            taskExecutionResult?.also { reportTaskMetrics(it, event) }
         }
     }
 
     override fun close() {
-        if (parameters.fusStatisticsAvailable.get()) {
+        if (!parameters.useBuildFinishFlowAction.get()) {
             recordBuildFinished(null, buildFailed)
         }
-        KotlinBuildStatsService.closeServices()
         log.kotlinDebug("Close ${this.javaClass.simpleName}")
     }
 
     internal fun recordBuildFinished(action: String?, buildFailed: Boolean) {
-        fusMetricsConsumer?.let { metricsConsumer ->
-            KotlinBuildStatHandler.reportGlobalMetrics(metricsConsumer)
-            parameters.configurationMetrics.orElse(emptyList()).get().forEach { it.addToConsumer(metricsConsumer) }
-            KotlinBuildStatsService.applyIfInitialised {
-                it.recordBuildFinish(action, buildFailed, metricsConsumer)
+        KotlinBuildStatHandler.reportGlobalMetrics(fusMetricsConsumer)
+        parameters.configurationMetrics.orElse(emptyList()).get().forEach { it.addToConsumer(fusMetricsConsumer) }
+        KotlinBuildStatsService.applyIfInitialised {
+            it.recordBuildFinish(action, buildFailed, fusMetricsConsumer, buildId)
+        }
+        KotlinBuildStatsService.closeServices()
+    }
+    private fun reportTaskMetrics(taskExecutionResult: TaskExecutionResult, event: TaskFinishEvent) {
+        val totalTimeMs = event.result.endTime - event.result.startTime
+        val buildMetrics = taskExecutionResult.buildMetrics
+        fusMetricsConsumer.report(NumericalMetrics.COMPILATION_DURATION, totalTimeMs)
+        fusMetricsConsumer.report(BooleanMetrics.KOTLIN_COMPILATION_FAILED, event.result is FailureResult)
+        fusMetricsConsumer.report(NumericalMetrics.COMPILATIONS_COUNT, 1)
+
+        val metricsMap = buildMetrics.buildPerformanceMetrics.asMap()
+
+        val linesOfCode = metricsMap[GradleBuildPerformanceMetric.ANALYZED_LINES_NUMBER]
+        if (linesOfCode != null && linesOfCode > 0 && totalTimeMs > 0) {
+            fusMetricsConsumer.report(NumericalMetrics.COMPILED_LINES_OF_CODE, linesOfCode)
+            fusMetricsConsumer.report(NumericalMetrics.COMPILATION_LINES_PER_SECOND, linesOfCode * 1000 / totalTimeMs, null, linesOfCode)
+            metricsMap[GradleBuildPerformanceMetric.ANALYSIS_LPS]?.also { value ->
+                fusMetricsConsumer.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, value, null, linesOfCode)
+            }
+            metricsMap[GradleBuildPerformanceMetric.CODE_GENERATION_LPS]?.also { value ->
+                fusMetricsConsumer.report(NumericalMetrics.CODE_GENERATION_LINES_PER_SECOND, value, null, linesOfCode)
             }
         }
-
+        fusMetricsConsumer.report(
+            NumericalMetrics.INCREMENTAL_COMPILATIONS_COUNT,
+            if (taskExecutionResult.buildMetrics.buildAttributes.asMap().isEmpty()) 1 else 0
+        )
     }
 }
 
