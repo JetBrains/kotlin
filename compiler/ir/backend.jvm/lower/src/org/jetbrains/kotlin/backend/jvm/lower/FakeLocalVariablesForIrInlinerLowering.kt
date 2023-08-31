@@ -87,7 +87,7 @@ internal class FakeLocalVariablesForIrInlinerLowering(
     private fun handleInlineLambda(expression: IrInlinedFunctionBlock) {
         expression.insertInStackAndProcess()
         // `inlinedElement` here can be either `IrFunctionExpression` or `IrFunctionReference`, so cast must be safe
-        val argument = expression.inlinedElement as IrAttributeContainer
+        val argument = expression.inlinedExpression as IrAttributeContainer
         val callee = inlinedStack.extractDeclarationWhereGivenElementWasInlined(argument) as? IrFunction ?: return
         expression.addFakeLocalVariableForLambda(argument, callee)
     }
@@ -131,7 +131,7 @@ private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesPro
         }
 
         if (expression.isLambdaInlining()) {
-            val argument = expression.inlinedElement as IrAttributeContainer
+            val argument = expression.inlinedExpression as IrAttributeContainer
             val callee = inlinedStack.extractDeclarationWhereGivenElementWasInlined(argument)
             if (callee == null || callee != inlinedStack.lastOrNull()) return
         }

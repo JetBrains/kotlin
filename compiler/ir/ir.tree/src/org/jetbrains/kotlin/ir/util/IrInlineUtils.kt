@@ -11,25 +11,13 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 
 val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
-    get() = when (val element = inlinedElement) {
-        is IrFunction -> element
-        is IrFunctionExpression -> element.function
-        is IrFunctionReference -> element.symbol.owner
-        is IrPropertyReference -> element.symbol.owner
-        else -> throw AssertionError("Not supported ir element for inlining ${element.dump()}")
-    }
+    get() = inlinedFunctionSymbol?.owner ?: (inlinedExpression as? IrPropertyReference)?.symbol?.owner
+    ?: throw AssertionError("Not supported ir element for inlining ${inlinedExpression?.dump()}")
 
 val IrInlinedFunctionBlock.inlineFunction: IrFunction?
-    get() = when (val element = inlinedElement) {
-        is IrFunction -> element
-        is IrFunctionExpression -> element.function
-        is IrFunctionReference -> element.symbol.owner.takeIf { it.isInline }
-        else -> null
-    }
+    get() = inlinedFunctionSymbol?.owner?.takeIf { it.isInline || inlinedExpression !is IrFunctionReference }
 
-fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {
-    return this.inlinedElement is IrFunction
-}
+fun IrInlinedFunctionBlock.isFunctionInlining() = inlinedExpression == null
 
 fun IrInlinedFunctionBlock.isLambdaInlining(): Boolean {
     return !isFunctionInlining()

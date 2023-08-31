@@ -147,7 +147,7 @@ class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
         val iterator = smapStack.iterator()
         while (iterator.hasNext()) {
             if (previousData != null && previousData.inlinedBlock.isLambdaInlining()) {
-                val inlinedAt = getDeclarationWhereGivenElementWasInlined(previousData.inlinedBlock.inlinedElement)
+                val inlinedAt = getDeclarationWhereGivenElementWasInlined(previousData.inlinedBlock.inlinedExpression!!)
                 while (iterator.hasNext() && iterator.next().inlinedBlock.inlineDeclaration != inlinedAt) {
                     // after lambda's smap we should skip "frames" that were inlined inside body of inline function that accept given lambda
                     continue
@@ -175,7 +175,7 @@ class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
             val sourceMapper = if (smapStack.isEmpty()) {
                 smap
             } else {
-                val inlinedAt = getDeclarationWhereGivenElementWasInlined(inlinedBlock.inlinedElement)
+                val inlinedAt = getDeclarationWhereGivenElementWasInlined(inlinedBlock.inlinedExpression!!)
                 val inlineData = smapStack.firstOrNull { it.inlinedBlock.inlineDeclaration == inlinedAt }
                     ?: smapStack.first() // if we are in anonymous inlined class and lambda was declared outside
                 inlineData.smap.parent
@@ -265,7 +265,7 @@ class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
     }
 
     private fun IrInlinedFunctionBlock.getClassThatContainsDeclaration(): IrClass {
-        val firstFunctionInlineBlock = if (this.inlinedElement is IrCallableReference<*>)
+        val firstFunctionInlineBlock = if (this.inlinedExpression is IrCallableReference<*>)
             smapStack.map { it.inlinedBlock }.firstOrNull { it.isFunctionInlining() }
         else
             this

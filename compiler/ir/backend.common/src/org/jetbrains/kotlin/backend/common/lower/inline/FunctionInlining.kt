@@ -177,7 +177,7 @@ class FunctionInlining(
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
 
-        fun inline() = inlineFunction(callSite, callee, inlineFunctionResolver.getFunctionSymbol(callee).owner, true)
+        fun inline(): IrReturnableBlock = inlineFunction(callSite, callee, inlineFunctionResolver.getFunctionSymbol(callee), null, true)
 
         private fun <E : IrElement> E.copy(): E {
             @Suppress("UNCHECKED_CAST")
@@ -187,7 +187,8 @@ class FunctionInlining(
         private fun inlineFunction(
             callSite: IrFunctionAccessExpression,
             callee: IrFunction,
-            originalInlinedElement: IrElement,
+            inlinedFunctionSymbol: IrFunctionSymbol?,
+            originalInlinedExpression: IrExpression?,
             performRecursiveInline: Boolean
         ): IrReturnableBlock {
             val copiedCallee = callee.copy().apply {
@@ -222,7 +223,8 @@ class FunctionInlining(
                 endOffset = callSite.endOffset,
                 type = callSite.type,
                 inlineCall = callSite,
-                inlinedElement = originalInlinedElement,
+                inlinedFunctionSymbol = inlinedFunctionSymbol,
+                inlinedExpression = originalInlinedExpression,
                 origin = null,
                 statements = evaluationStatements + newStatements
             )
@@ -305,7 +307,7 @@ class FunctionInlining(
             fun inlineFunctionExpression(irCall: IrCall, irFunctionExpression: IrFunctionExpression): IrExpression {
                 // Inline the lambda. Lambda parameters will be substituted with lambda arguments.
                 val newExpression = inlineFunction(
-                    irCall, irFunctionExpression.function, irFunctionExpression, false
+                    irCall, irFunctionExpression.function, irFunctionExpression.function.symbol, irFunctionExpression, false
                 )
                 // Substitute lambda arguments with target function arguments.
                 return newExpression.transform(this, null)
@@ -366,7 +368,7 @@ class FunctionInlining(
                     parent = callee.parent
                 }
 
-                return inlineFunction(invokeCall, stubForInline, reference, false)
+                return inlineFunction(invokeCall, stubForInline, reference.symbol as? IrFunctionSymbol, reference, false)
             }
 
             fun inlineAdaptedFunctionReference(irCall: IrCall, irBlock: IrBlock): IrExpression {
@@ -486,7 +488,11 @@ class FunctionInlining(
                 }
 
                 return if (inlinedFunction.needsInlining && inlinedFunction.body != null) {
-                    inlineFunction(immediateCall, inlinedFunction, irFunctionReference, performRecursiveInline = true)
+                    inlineFunction(
+                        immediateCall, inlinedFunction,
+                        irFunctionReference.symbol, irFunctionReference,
+                        performRecursiveInline = true
+                    )
                 } else {
                     val transformedExpression = super.visitExpression(immediateCall).transform(this@FunctionInlining, null)
                     wrapInStubFunction(transformedExpression, irCall, irFunctionReference)

@@ -86,7 +86,8 @@ class IrInlinedFunctionBlockImpl(
     override val endOffset: Int,
     override var type: IrType,
     override var inlineCall: IrFunctionAccessExpression,
-    override var inlinedElement: IrElement,
+    override var inlinedFunctionSymbol: IrFunctionSymbol?,
+    override var inlinedExpression: IrExpression?,
     override var origin: IrStatementOrigin? = null,
 ) : IrInlinedFunctionBlock() {
     constructor(
@@ -94,10 +95,11 @@ class IrInlinedFunctionBlockImpl(
         endOffset: Int,
         type: IrType,
         inlineCall: IrFunctionAccessExpression,
-        inlinedElement: IrElement,
+        inlinedFunctionSymbol: IrFunctionSymbol?,
+        inlinedExpression: IrExpression?,
         origin: IrStatementOrigin?,
         statements: List<IrStatement>,
-    ) : this(startOffset, endOffset, type, inlineCall, inlinedElement, origin) {
+    ) : this(startOffset, endOffset, type, inlineCall, inlinedFunctionSymbol, inlinedExpression, origin) {
         this.statements.addAll(statements)
     }
 }

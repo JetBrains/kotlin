@@ -321,7 +321,8 @@ class DumpIrTreeVisitor(
     override fun visitBlock(expression: IrBlock, data: String) {
         if (expression !is IrInlinedFunctionBlock) return super.visitBlock(expression, data)
         expression.dumpLabeledElementWith(data) {
-            expression.inlinedElement.dumpInternal("inlinedElement")
+            expression.inlinedFunctionSymbol?.dumpInternal("inlinedFunctionSymbol")
+            expression.inlinedExpression?.dumpInternal("inlinedExpression")
             expression.acceptChildren(this, "")
         }
     }

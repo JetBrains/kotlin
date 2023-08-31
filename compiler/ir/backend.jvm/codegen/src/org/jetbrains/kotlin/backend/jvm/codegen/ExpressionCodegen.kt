@@ -496,7 +496,7 @@ class ExpressionCodegen(
                 exp.accept(this, data)
             }
 
-            if (callee != null && (inlinedBlock.inlinedElement !is IrCallableReference<*> || callee.isInline)) {
+            if (callee != null && (inlinedBlock.inlinedExpression !is IrCallableReference<*> || callee.isInline)) {
                 setExtraLineNumberForVoidReturningFunction(callee)
             }
 
@@ -526,7 +526,7 @@ class ExpressionCodegen(
 
     private fun IrInlinedFunctionBlock.buildOrGetClassSMAP(data: BlockInfo): SMAP {
         if (this.isLambdaInlining()) {
-            return context.typeToCachedSMAP[context.getLocalClassType(this.inlinedElement as IrAttributeContainer)]!!
+            return context.typeToCachedSMAP[context.getLocalClassType(this.inlinedExpression as IrAttributeContainer)]!!
         }
 
         val callee = this.inlineDeclaration
