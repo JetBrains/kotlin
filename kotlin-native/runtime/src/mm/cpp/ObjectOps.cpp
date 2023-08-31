@@ -71,14 +71,14 @@ ALWAYS_INLINE OBJ_GETTER(mm::GetAndSetHeapRef, ObjHeader** location, ObjHeader* 
 
 #pragma clang diagnostic pop
 
-OBJ_GETTER(mm::AllocateObject, ThreadData* threadData, const TypeInfo* typeInfo) noexcept {
+ALWAYS_INLINE OBJ_GETTER(mm::AllocateObject, ThreadData* threadData, const TypeInfo* typeInfo) noexcept {
     AssertThreadState(threadData, ThreadState::kRunnable);
     // TODO: Make this work with GCs that can stop thread at any point.
     auto* object = threadData->gc().CreateObject(typeInfo);
     RETURN_OBJ(object);
 }
 
-OBJ_GETTER(mm::AllocateArray, ThreadData* threadData, const TypeInfo* typeInfo, uint32_t elements) noexcept {
+ALWAYS_INLINE OBJ_GETTER(mm::AllocateArray, ThreadData* threadData, const TypeInfo* typeInfo, uint32_t elements) noexcept {
     AssertThreadState(threadData, ThreadState::kRunnable);
     // TODO: Make this work with GCs that can stop thread at any point.
     auto* array = threadData->gc().CreateArray(typeInfo, static_cast<uint32_t>(elements));
