@@ -19,19 +19,16 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
+import org.jetbrains.kotlin.kapt3.EfficientProcessorLoader
 import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
 import org.jetbrains.kotlin.kapt3.base.Kapt
-import org.jetbrains.kotlin.kapt3.base.ProcessorLoader
 import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.util.ServiceLoaderLite
 import java.io.File
-import java.net.URLClassLoader
-import javax.annotation.processing.Processor
 
 private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
     override fun isApplicable(configuration: CompilerConfiguration): Boolean =
@@ -135,14 +132,8 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
     ) {
         val sources = options.collectJavaSourceFiles(context.sourcesToReprocess)
         if (sources.isEmpty()) return
-        object : ProcessorLoader(options, logger) {
-            override fun doLoadProcessors(classpath: LinkedHashSet<File>, classLoader: ClassLoader): List<Processor> =
-                when (classLoader) {
-                    is URLClassLoader -> ServiceLoaderLite.loadImplementations(Processor::class.java, classLoader)
-                    else -> super.doLoadProcessors(classpath, classLoader)
-                }
-        }.use { processorLoader ->
-            context.doAnnotationProcessing(sources, processorLoader.loadProcessors().processors)
+        EfficientProcessorLoader(options, logger).use {
+            context.doAnnotationProcessing(sources, it.loadProcessors().processors)
         }
     }
 
