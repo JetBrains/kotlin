@@ -83,7 +83,7 @@ private fun <Context : PhaseContext, Data> getIrValidator(): Action<Data, Contex
             } catch (t: Throwable) {
                 // TODO: Add reference to source.
                 if (validatorConfig.abortOnError)
-                    throw IllegalStateException("Failed IR validation ${state.beforeOrAfter} ${state.phase}", t)
+                    error("Error on validation:" + t.stackTrace.joinToString("\n"))
                 else context.reportCompilationWarning("[IR VALIDATION] ${state.beforeOrAfter} ${state.phase}: ${t.message}")
             }
         }
