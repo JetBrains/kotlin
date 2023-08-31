@@ -136,7 +136,12 @@ internal class FileStructure private constructor(
             override fun visitDeclaration(dcl: KtDeclaration) {
                 val structureElement = getStructureElementFor(dcl)
                 structureElements += structureElement
-                dcl.acceptChildren(this)
+
+                // Go down only in the case of container declaration
+                val canHaveInnerStructure = dcl is KtClassOrObject || dcl is KtScript
+                if (canHaveInnerStructure) {
+                    dcl.acceptChildren(this)
+                }
             }
 
             override fun visitModifierList(list: KtModifierList) {
