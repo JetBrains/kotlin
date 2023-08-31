@@ -299,6 +299,18 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
             }
 
             @Test
+            @TestMetadata("smartCastExtensionReceiver.kt")
+            public void testSmartCastExtensionReceiver() throws Exception {
+                runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/smartCastExtensionReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("smartCastValueParameter.kt")
+            public void testSmartCastValueParameter() throws Exception {
+                runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/smartCastValueParameter.kt");
+            }
+
+            @Test
             @TestMetadata("valueParameter.kt")
             public void testValueParameter() throws Exception {
                 runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/valueParameter.kt");

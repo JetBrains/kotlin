@@ -144,7 +144,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
                 extensionReceiver = if (extensionReceiver == from) to else extensionReceiver,
             )
         }
-        return _realVariables.getOrPut(newIdentifier) {
+        return getOrPut(newIdentifier) {
             with(variable) {
                 RealVariable(
                     newIdentifier, isThisReference, if (explicitReceiverVariable == from) to else explicitReceiverVariable,
@@ -152,6 +152,10 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
                 )
             }
         }
+    }
+
+    fun getOrPut(identifier: Identifier, factory: () -> RealVariable): RealVariable {
+        return _realVariables.getOrPut(identifier, factory)
     }
 
     private fun FirBasedSymbol<*>.getStability(originalFir: FirElement): PropertyStability? {

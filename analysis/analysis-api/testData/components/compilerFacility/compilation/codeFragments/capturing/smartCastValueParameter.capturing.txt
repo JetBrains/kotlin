@@ -1,0 +1,3 @@
+Local[name: foo; isMutated: false; displayText: foo]
+    foo: R|kotlin/Any?|
+    R|kotlin/Any?|

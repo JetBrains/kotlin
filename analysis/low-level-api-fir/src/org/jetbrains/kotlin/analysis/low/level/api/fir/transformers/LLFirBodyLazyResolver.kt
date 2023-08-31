@@ -39,13 +39,13 @@ import org.jetbrains.kotlin.fir.resolve.FirCodeFragmentContext
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.codeFragmentContext
+import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractsDslNames
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForClass
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForFile
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
@@ -225,8 +225,7 @@ private class LLFirBodyTargetResolver(
                     withPsiEntry("contextPsiElement", contextPsiElement)
                 }
 
-            val variables = elementContext.smartCasts.mapKeys { it.key.identifier.symbol }
-            LLFirCodeFragmentContext(elementContext.towerDataContext.withExtraScopes(), variables)
+            LLFirCodeFragmentContext(elementContext.towerDataContext.withExtraScopes(), elementContext.smartCasts)
         } else {
             val towerDataContext = FirTowerDataContext().withExtraScopes()
             LLFirCodeFragmentContext(towerDataContext, emptyMap())
@@ -513,5 +512,5 @@ private fun requireSameSize(old: List<FirStatement>, new: List<FirStatement>) {
 
 private class LLFirCodeFragmentContext(
     override val towerDataContext: FirTowerDataContext,
-    override val variables: Map<FirBasedSymbol<*>, Set<ConeKotlinType>>
+    override val smartCasts: Map<RealVariable, Set<ConeKotlinType>>
 ) : FirCodeFragmentContext

@@ -255,9 +255,9 @@ abstract class FirDataFlowAnalyzer(
 
     fun enterCodeFragment(codeFragment: FirCodeFragment) {
         graphBuilder.enterCodeFragment(codeFragment).mergeIncomingFlow { _, flow ->
-            val realVariablesFromContext = codeFragment.codeFragmentContext?.variables.orEmpty()
-            for ((symbol, exactTypes) in realVariablesFromContext) {
-                val realVariable = variableStorage.getOrCreateIfReal(flow, symbol.fir) as? RealVariable ?: continue
+            val smartCasts = codeFragment.codeFragmentContext?.smartCasts.orEmpty()
+            for ((originalRealVariable, exactTypes) in smartCasts) {
+                val realVariable = variableStorage.getOrPut(originalRealVariable.identifier) { originalRealVariable }
                 val typeStatement = PersistentTypeStatement(realVariable, exactTypes.toPersistentSet())
                 flow.addTypeStatement(typeStatement)
             }

@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -98,7 +98,7 @@ val FirConstructorSymbol.typeAliasForConstructor: FirTypeAliasSymbol?
 
 interface FirCodeFragmentContext {
     val towerDataContext: FirTowerDataContext
-    val variables: Map<FirBasedSymbol<*>, Set<ConeKotlinType>>
+    val smartCasts: Map<RealVariable, Set<ConeKotlinType>>
 }
 
 private object CodeFragmentContextDataKey : FirDeclarationDataKey()
