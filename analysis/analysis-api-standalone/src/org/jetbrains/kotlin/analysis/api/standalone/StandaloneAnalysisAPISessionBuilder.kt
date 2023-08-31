@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedCla
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.JvmFirDeserializedSymbolProviderFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtModuleProviderImpl
+import org.jetbrains.kotlin.analysis.project.structure.impl.KtSourceModuleImpl
 import org.jetbrains.kotlin.analysis.project.structure.impl.buildKtModuleProviderByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.project.structure.impl.getPsiFilesFromPaths
 import org.jetbrains.kotlin.analysis.project.structure.impl.getSourceFilePaths
@@ -216,10 +218,11 @@ public class StandaloneAnalysisAPISessionBuilder(
             kotlinCoreProjectEnvironment,
             createPackagePartProvider,
         ) {
-            projectStructureProvider.allSourceFiles
-                .asSequence()
-                .filterIsInstance<PsiFile>()
-                .groupBy { projectStructureProvider.getModule(it.originalElement, null) }
+            projectStructureProvider.allKtModules.mapNotNull { ktModule ->
+                if (ktModule !is KtSourceModule) return@mapNotNull null
+                check(ktModule is KtSourceModuleImpl)
+                ktModule to ktModule.sourceRoots.filterIsInstance<PsiFile>()
+            }.toMap()
         }
     }
 }
@@ -231,7 +234,7 @@ public inline fun buildStandaloneAnalysisAPISession(
     unitTestMode: Boolean = false,
     withPsiDeclarationFromBinaryModuleProvider: Boolean = false,
     classLoader: ClassLoader = MockProject::class.java.classLoader,
-    init: StandaloneAnalysisAPISessionBuilder.() -> Unit
+    init: StandaloneAnalysisAPISessionBuilder.() -> Unit,
 ): StandaloneAnalysisAPISession {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
