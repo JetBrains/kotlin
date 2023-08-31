@@ -1,4 +1,4 @@
-fun foo(): Int {/* ReanalyzableFunctionStructureElement */
+fun foo(): Int {/* DeclarationStructureElement */
     println("")
     return 10
 }

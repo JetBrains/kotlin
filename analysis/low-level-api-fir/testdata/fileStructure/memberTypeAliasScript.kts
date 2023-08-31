@@ -1,3 +1,3 @@
-/* RootScriptStructureElement */class A {/* NonReanalyzableClassDeclarationStructureElement */
-    typealias X = Int/* NonReanalyzableNonClassDeclarationStructureElement */
+/* RootScriptStructureElement */class A {/* ClassDeclarationStructureElement */
+    typealias X = Int/* DeclarationStructureElement */
 }

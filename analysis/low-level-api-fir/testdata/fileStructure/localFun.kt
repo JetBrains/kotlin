@@ -1,11 +1,11 @@
-fun x() {/* ReanalyzableFunctionStructureElement */
+fun x() {/* DeclarationStructureElement */
     fun y() {
 
     }
 }
 
-class A {/* NonReanalyzableClassDeclarationStructureElement */
-    fun z() {/* ReanalyzableFunctionStructureElement */
+class A {/* ClassDeclarationStructureElement */
+    fun z() {/* DeclarationStructureElement */
         fun q() {
 
         }

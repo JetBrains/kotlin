@@ -1,3 +1,3 @@
-enum class Enum(val x: Int)/* NonReanalyzableNonClassDeclarationStructureElement */ {/* NonReanalyzableClassDeclarationStructureElement */
-    A(1),/* NonReanalyzableNonClassDeclarationStructureElement */
+enum class Enum(val x: Int)/* DeclarationStructureElement */ {/* ClassDeclarationStructureElement */
+    A(1),/* DeclarationStructureElement */
 }

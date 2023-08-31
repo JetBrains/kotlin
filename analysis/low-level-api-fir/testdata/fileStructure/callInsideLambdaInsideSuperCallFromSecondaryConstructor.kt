@@ -1,17 +1,17 @@
-open class A(x: () -> Unit)/* NonReanalyzableNonClassDeclarationStructureElement *//* NonReanalyzableClassDeclarationStructureElement */
+open class A(x: () -> Unit)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
 
-class B : A {/* NonReanalyzableClassDeclarationStructureElement */
+class B : A {/* ClassDeclarationStructureElement */
     constructor(i: Int) : super(
         {
             foo(i)
         }
-    )/* NonReanalyzableNonClassDeclarationStructureElement */
+    )/* DeclarationStructureElement */
 
     constructor(l: Long) : super(
         {
             foo(l)
         }
-    )/* NonReanalyzableNonClassDeclarationStructureElement */
+    )/* DeclarationStructureElement */
 }
 
-fun foo(any: Any) {/* ReanalyzableFunctionStructureElement */}
+fun foo(any: Any) {/* DeclarationStructureElement */}

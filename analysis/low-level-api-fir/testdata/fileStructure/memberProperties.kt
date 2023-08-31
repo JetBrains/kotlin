@@ -1,7 +1,7 @@
-class A {/* NonReanalyzableClassDeclarationStructureElement */
-    fun foo1() = 10/* NonReanalyzableNonClassDeclarationStructureElement */
+class A {/* ClassDeclarationStructureElement */
+    fun foo1() = 10/* DeclarationStructureElement */
 
-    fun foo2() {/* ReanalyzableFunctionStructureElement */
+    fun foo2() {/* DeclarationStructureElement */
 
     }
 }

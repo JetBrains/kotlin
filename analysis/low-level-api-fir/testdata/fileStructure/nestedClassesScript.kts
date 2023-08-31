@@ -1,16 +1,16 @@
-/* RootScriptStructureElement */class A {/* NonReanalyzableClassDeclarationStructureElement */
-    class B {/* NonReanalyzableClassDeclarationStructureElement */
-        fun x() {/* ReanalyzableFunctionStructureElement */
+/* RootScriptStructureElement */class A {/* ClassDeclarationStructureElement */
+    class B {/* ClassDeclarationStructureElement */
+        fun x() {/* DeclarationStructureElement */
         }
 
-        class C {/* NonReanalyzableClassDeclarationStructureElement */
+        class C {/* ClassDeclarationStructureElement */
 
         }
     }
 
-    class E {/* NonReanalyzableClassDeclarationStructureElement */
+    class E {/* ClassDeclarationStructureElement */
 
     }
 
-    fun y(): Int = 10/* ReanalyzableFunctionStructureElement */
+    fun y(): Int = 10/* DeclarationStructureElement */
 }

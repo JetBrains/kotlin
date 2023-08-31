@@ -18,4 +18,6 @@ internal class FileStructureCache(private val moduleResolveComponents: LLFirModu
     fun getFileStructure(ktFile: KtFile): FileStructure = cache.computeIfAbsent(ktFile) {
         FileStructure.build(ktFile, moduleResolveComponents)
     }
+
+    fun getCachedFileStructure(ktFile: KtFile): FileStructure? = cache[ktFile]
 }

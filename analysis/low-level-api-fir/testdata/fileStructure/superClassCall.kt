@@ -1,16 +1,16 @@
 open class A
-    (init: A.() -> Unit)/* NonReanalyzableNonClassDeclarationStructureElement */
-{/* NonReanalyzableClassDeclarationStructureElement */
-    val prop: String = ""/* NonReanalyzableNonClassDeclarationStructureElement */
+    (init: A.() -> Unit)/* DeclarationStructureElement */
+{/* ClassDeclarationStructureElement */
+    val prop: String = ""/* DeclarationStructureElement */
 }
 
-class B()/* NonReanalyzableNonClassDeclarationStructureElement */ : A()/* NonReanalyzableClassDeclarationStructureElement */
+class B()/* DeclarationStructureElement */ : A()/* ClassDeclarationStructureElement */
 
 object C : A(
     {
         fun foo() = B.prop.toString()
     }
-) {/* NonReanalyzableClassDeclarationStructureElement */
+) {/* ClassDeclarationStructureElement */
 
 }
 
@@ -20,16 +20,16 @@ val f = object : A(
     }
 ) {
 
-}/* NonReanalyzableNonClassDeclarationStructureElement */
+}/* DeclarationStructureElement */
 
 class D : A(
     {
         fun foo() = B.prop.toString()
     }
-) {/* NonReanalyzableClassDeclarationStructureElement */
+) {/* ClassDeclarationStructureElement */
     constructor(): super(
         {
             fun boo() = prop.toString()
         }
-    )/* NonReanalyzableNonClassDeclarationStructureElement */
+    )/* DeclarationStructureElement */
 }

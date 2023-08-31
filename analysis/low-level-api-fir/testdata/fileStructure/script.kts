@@ -1,13 +1,13 @@
-/* RootScriptStructureElement */class Builder {/* NonReanalyzableClassDeclarationStructureElement */
-    var version: String = ""/* NonReanalyzableNonClassDeclarationStructureElement */
+/* RootScriptStructureElement */class Builder {/* ClassDeclarationStructureElement */
+    var version: String = ""/* DeclarationStructureElement */
 
-    fun execute() {/* ReanalyzableFunctionStructureElement */
+    fun execute() {/* DeclarationStructureElement */
         println(version)
     }
 }
 
-fun build(action: Builder.() -> Unit) = Builder().apply(action)/* NonReanalyzableNonClassDeclarationStructureElement */
-fun build2(action: Builder.() -> Unit): Builder = Builder().apply(action)/* ReanalyzableFunctionStructureElement */
+fun build(action: Builder.() -> Unit) = Builder().apply(action)/* DeclarationStructureElement */
+fun build2(action: Builder.() -> Unit): Builder = Builder().apply(action)/* DeclarationStructureElement */
 
 build {
     version = "123"
@@ -22,6 +22,6 @@ build {
 
 val builder = build {
     version = "321"
-}/* NonReanalyzableNonClassDeclarationStructureElement */
+}/* DeclarationStructureElement */
 
 builder.execute()

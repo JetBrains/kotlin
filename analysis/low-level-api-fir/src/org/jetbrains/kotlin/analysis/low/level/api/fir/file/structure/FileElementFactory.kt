@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassWithSpecificMembersResolveTarget
@@ -22,48 +20,16 @@ import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
 internal object FileElementFactory {
     fun createFileStructureElement(
         firDeclaration: FirDeclaration,
-        ktDeclaration: KtDeclaration,
         firFile: FirFile,
         moduleComponents: LLFirModuleResolveComponents,
     ): FileStructureElement = when {
-        ktDeclaration is KtNamedFunction && ktDeclaration.isReanalyzableContainer() -> ReanalyzableFunctionStructureElement(
-            firFile,
-            ktDeclaration,
-            (firDeclaration as FirSimpleFunction).symbol,
-            ktDeclaration.modificationStamp,
-            moduleComponents,
-        )
-
-        ktDeclaration is KtProperty &&
-                (ktDeclaration.isReanalyzableContainer() || ktDeclaration.accessors.any { it.isReanalyzableContainer() })
-        -> ReanalyzablePropertyStructureElement(
-            firFile,
-            ktDeclaration,
-            (firDeclaration as FirProperty).symbol,
-            ktDeclaration.modificationStamp,
-            moduleComponents,
-        )
-
-        ktDeclaration is KtClassOrObject && ktDeclaration !is KtEnumEntry -> {
-            lazyResolveClassWithGeneratedMembers(firDeclaration as FirRegularClass, moduleComponents)
-            NonReanalyzableClassDeclarationStructureElement(
-                firFile,
-                firDeclaration,
-                ktDeclaration,
-                moduleComponents,
-            )
+        firDeclaration is FirRegularClass -> {
+            lazyResolveClassWithGeneratedMembers(firDeclaration, moduleComponents)
+            ClassDeclarationStructureElement(firFile, firDeclaration, moduleComponents)
         }
 
-        ktDeclaration is KtScript -> RootScriptStructureElement(firFile, firDeclaration as FirScript, ktDeclaration, moduleComponents)
-
-        else -> {
-            NonReanalyzableNonClassDeclarationStructureElement(
-                firFile,
-                firDeclaration,
-                ktDeclaration,
-                moduleComponents,
-            )
-        }
+        firDeclaration is FirScript -> RootScriptStructureElement(firFile, firDeclaration, moduleComponents)
+        else -> DeclarationStructureElement(firFile, firDeclaration, moduleComponents)
     }
 
     private fun lazyResolveClassWithGeneratedMembers(firClass: FirRegularClass, moduleComponents: LLFirModuleResolveComponents) {
@@ -147,14 +113,6 @@ private fun isInsideContract(body: KtExpression, child: PsiElement): Boolean {
     val firstStatement = body.firstStatement ?: return false
     if (!firstStatement.isContractDescriptionCallPsiCheck()) return false
     return firstStatement.isAncestor(child)
-}
-
-@TestOnly
-internal fun KtDeclaration.isReanalyzableContainer(): Boolean = when (this) {
-    is KtNamedFunction -> isReanalyzableContainer()
-    is KtPropertyAccessor -> isReanalyzableContainer()
-    is KtProperty -> isReanalyzableContainer()
-    else -> error("Unknown declaration type: ${this::class.simpleName}")
 }
 
 private fun KtNamedFunction.isReanalyzableContainer(): Boolean = hasBlockBody() || typeReference != null

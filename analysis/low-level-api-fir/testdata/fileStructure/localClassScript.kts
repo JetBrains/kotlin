@@ -1,9 +1,9 @@
-/* RootScriptStructureElement */fun a() {/* ReanalyzableFunctionStructureElement */
+/* RootScriptStructureElement */fun a() {/* DeclarationStructureElement */
     class X
 }
 
-class Y {/* NonReanalyzableClassDeclarationStructureElement */
-    fun b() {/* ReanalyzableFunctionStructureElement */
+class Y {/* ClassDeclarationStructureElement */
+    fun b() {/* DeclarationStructureElement */
         class Z
     }
 }

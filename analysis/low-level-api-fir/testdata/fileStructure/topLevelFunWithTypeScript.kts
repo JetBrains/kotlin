@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */fun foo(): Int {/* ReanalyzableFunctionStructureElement */
+/* RootScriptStructureElement */fun foo(): Int {/* DeclarationStructureElement */
     println("")
     return 10
 }

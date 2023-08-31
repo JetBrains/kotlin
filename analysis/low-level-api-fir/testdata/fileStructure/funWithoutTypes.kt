@@ -1,3 +1,3 @@
-fun main() {/* ReanalyzableFunctionStructureElement */
+fun main() {/* DeclarationStructureElement */
 
 }

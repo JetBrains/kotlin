@@ -1,1 +1,1 @@
-fun foo(): Int = 42/* ReanalyzableFunctionStructureElement */
+fun foo(): Int = 42/* DeclarationStructureElement */

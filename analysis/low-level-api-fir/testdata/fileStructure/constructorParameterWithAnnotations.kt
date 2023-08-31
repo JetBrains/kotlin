@@ -5,6 +5,6 @@ class A(
     @field:Ann
     @property:Ann
     var x: Int
-)/* NonReanalyzableNonClassDeclarationStructureElement *//* NonReanalyzableClassDeclarationStructureElement */
+)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
 
-annotation class Ann/* NonReanalyzableClassDeclarationStructureElement */
+annotation class Ann/* ClassDeclarationStructureElement */

@@ -1,8 +1,8 @@
-class B {/* NonReanalyzableClassDeclarationStructureElement */
-    fun q(): C {/* ReanalyzableFunctionStructureElement */}
-    private val y = q()/* NonReanalyzableNonClassDeclarationStructureElement */
+class B {/* ClassDeclarationStructureElement */
+    fun q(): C {/* DeclarationStructureElement */}
+    private val y = q()/* DeclarationStructureElement */
 
     fun foo(a: A) = with(a) {
         bar("a", y)
-    }/* NonReanalyzableNonClassDeclarationStructureElement */
+    }/* DeclarationStructureElement */
 }

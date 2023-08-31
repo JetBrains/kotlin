@@ -1,51 +1,51 @@
-open class A(init: A.() -> Unit)/* NonReanalyzableNonClassDeclarationStructureElement */ {/* NonReanalyzableClassDeclarationStructureElement */
-    val prop: String = ""/* NonReanalyzableNonClassDeclarationStructureElement */
+open class A(init: A.() -> Unit)/* DeclarationStructureElement */ {/* ClassDeclarationStructureElement */
+    val prop: String = ""/* DeclarationStructureElement */
 }
 
-object B : A({})/* NonReanalyzableClassDeclarationStructureElement */
+object B : A({})/* ClassDeclarationStructureElement */
 
 object C : A(
     {
         fun foo() = B.prop.toString()
     }
-)/* NonReanalyzableClassDeclarationStructureElement */
+)/* ClassDeclarationStructureElement */
 
 class D : A(
     {
         fun foo() = B.prop.toString()
     }
-)/* NonReanalyzableClassDeclarationStructureElement */
+)/* ClassDeclarationStructureElement */
 
-class E()/* NonReanalyzableNonClassDeclarationStructureElement */ : A(
+class E()/* DeclarationStructureElement */ : A(
     {
         fun foo() = B.prop.toString()
     }
-)/* NonReanalyzableClassDeclarationStructureElement */
+)/* ClassDeclarationStructureElement */
 
 class F : A(
     {
         fun foo() = B.prop.toString()
     }
-) {/* NonReanalyzableClassDeclarationStructureElement */
-    constructor()/* NonReanalyzableNonClassDeclarationStructureElement */
+) {/* ClassDeclarationStructureElement */
+    constructor()/* DeclarationStructureElement */
 }
 
 class G : A(
     {
         fun foo() = B.prop.toString()
     }
-) {/* NonReanalyzableClassDeclarationStructureElement */
+) {/* ClassDeclarationStructureElement */
     constructor() : super(
         {
             fun foo() = B.prop.toString()
         }
-    )/* NonReanalyzableNonClassDeclarationStructureElement */
+    )/* DeclarationStructureElement */
 }
 
-class H : A {/* NonReanalyzableClassDeclarationStructureElement */
+class H : A {/* ClassDeclarationStructureElement */
     constructor() : super(
         {
             fun foo() = B.prop.toString()
         }
-    )/* NonReanalyzableNonClassDeclarationStructureElement */
+    )/* DeclarationStructureElement */
 }

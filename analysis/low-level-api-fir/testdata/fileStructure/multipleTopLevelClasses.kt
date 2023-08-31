@@ -1,15 +1,15 @@
-class A {/* NonReanalyzableClassDeclarationStructureElement */
+class A {/* ClassDeclarationStructureElement */
 
 }
 
-class B {/* NonReanalyzableClassDeclarationStructureElement */
+class B {/* ClassDeclarationStructureElement */
 
 }
 
-class C {/* NonReanalyzableClassDeclarationStructureElement */
+class C {/* ClassDeclarationStructureElement */
 
 }
 
-class D {/* NonReanalyzableClassDeclarationStructureElement */
+class D {/* ClassDeclarationStructureElement */
 
 }

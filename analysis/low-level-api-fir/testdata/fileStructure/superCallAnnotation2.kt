@@ -1,6 +1,6 @@
 @Target(AnnotationTarget.TYPE)
-annotation class Anno/* NonReanalyzableClassDeclarationStructureElement */
+annotation class Anno/* ClassDeclarationStructureElement */
 
-interface A/* NonReanalyzableClassDeclarationStructureElement */
+interface A/* ClassDeclarationStructureElement */
 
-class B : @Anno A/* NonReanalyzableClassDeclarationStructureElement */
+class B : @Anno A/* ClassDeclarationStructureElement */

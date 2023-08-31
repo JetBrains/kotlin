@@ -1,14 +1,14 @@
-abstract class Foo {/* NonReanalyzableClassDeclarationStructureElement */
-    abstract var id: Int/* ReanalyzablePropertyStructureElement */
+abstract class Foo {/* ClassDeclarationStructureElement */
+    abstract var id: Int/* DeclarationStructureElement */
         protected set
 }
 
-class Bar : Foo() {/* NonReanalyzableClassDeclarationStructureElement */
-    override var id: Int = 1/* ReanalyzablePropertyStructureElement */
+class Bar : Foo() {/* ClassDeclarationStructureElement */
+    override var id: Int = 1/* DeclarationStructureElement */
     public set
 }
 
-fun test() {/* ReanalyzableFunctionStructureElement */
+fun test() {/* DeclarationStructureElement */
     val bar = Bar()
     bar.id = 1
 }

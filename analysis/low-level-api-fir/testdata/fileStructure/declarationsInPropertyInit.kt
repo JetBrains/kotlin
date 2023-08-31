@@ -1,11 +1,11 @@
-class A {/* NonReanalyzableClassDeclarationStructureElement */
+class A {/* ClassDeclarationStructureElement */
     val a = myRun {
         class X()
 
         val y = 10
-    }/* NonReanalyzableNonClassDeclarationStructureElement */
+    }/* DeclarationStructureElement */
 }
 
-inline fun <R> myRun(block: () -> R): R {/* ReanalyzableFunctionStructureElement */
+inline fun <R> myRun(block: () -> R): R {/* DeclarationStructureElement */
     return block()
 }

@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -29,8 +31,7 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
         val fileStructure = ktFile.getFileStructure()
         val allStructureElements = fileStructure.getAllStructureElements(ktFile)
-        val declarationToStructureElement = allStructureElements.associateBy { it.psi }
-
+        val declarationToStructureElement = allStructureElements.associateBy { it.firDeclaration.psi }
         val elementToComment = mutableMapOf<PsiElement, String>()
         ktFile.forEachDescendantOfType<KtDeclaration> { ktDeclaration ->
             val structureElement = declarationToStructureElement[ktDeclaration] ?: return@forEachDescendantOfType
@@ -76,7 +77,7 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
 
         PsiTreeUtil.getChildrenOfTypeAsList(ktFile, KtModifierList::class.java).forEach {
             if (it.nextSibling is PsiErrorElement) {
-                val structureElement = declarationToStructureElement[ktFile] ?: return@forEach
+                val structureElement = declarationToStructureElement[it] ?: return@forEach
                 val comment = structureElement.createComment()
                 elementToComment[it] = comment
             }
@@ -119,6 +120,12 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
         }
     }
 }
+
+internal val FileStructureElement.firDeclaration: FirDeclaration
+    get() = when (this) {
+        is RootStructureElement -> file
+        is DeclarationBaseStructureElement<*> -> declaration
+    }
 
 abstract class AbstractSourceFileStructureTest : AbstractFileStructureTest() {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)

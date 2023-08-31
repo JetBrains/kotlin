@@ -1,1 +1,1 @@
-class A(var x: Int)/* NonReanalyzableNonClassDeclarationStructureElement *//* NonReanalyzableClassDeclarationStructureElement */
+class A(var x: Int)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */

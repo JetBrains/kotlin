@@ -1,14 +1,14 @@
-/* RootScriptStructureElement */fun foo() {/* ReanalyzableFunctionStructureElement */
+/* RootScriptStructureElement */fun foo() {/* DeclarationStructureElement */
     var x: Int
 }
-class A {/* NonReanalyzableClassDeclarationStructureElement */
-    fun q() {/* ReanalyzableFunctionStructureElement */
+class A {/* ClassDeclarationStructureElement */
+    fun q() {/* DeclarationStructureElement */
         val y = 42
     }
 }
-class B {/* NonReanalyzableClassDeclarationStructureElement */
-    class C {/* NonReanalyzableClassDeclarationStructureElement */
-        fun u() {/* ReanalyzableFunctionStructureElement */
+class B {/* ClassDeclarationStructureElement */
+    class C {/* ClassDeclarationStructureElement */
+        fun u() {/* DeclarationStructureElement */
             var z: Int = 15
         }
     }

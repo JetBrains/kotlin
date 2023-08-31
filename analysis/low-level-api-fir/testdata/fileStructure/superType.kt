@@ -1,7 +1,7 @@
-interface A<T>/* NonReanalyzableClassDeclarationStructureElement */
+interface A<T>/* ClassDeclarationStructureElement */
 
-typealias AS = A<String>/* NonReanalyzableNonClassDeclarationStructureElement */
+typealias AS = A<String>/* DeclarationStructureElement */
 
-class C : AS {/* NonReanalyzableClassDeclarationStructureElement */
-    constructor()/* NonReanalyzableNonClassDeclarationStructureElement */
+class C : AS {/* ClassDeclarationStructureElement */
+    constructor()/* DeclarationStructureElement */
 }

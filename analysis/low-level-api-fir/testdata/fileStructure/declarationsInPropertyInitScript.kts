@@ -1,11 +1,11 @@
-/* RootScriptStructureElement */class A {/* NonReanalyzableClassDeclarationStructureElement */
+/* RootScriptStructureElement */class A {/* ClassDeclarationStructureElement */
     val a = run {
         class X()
 
         val y = 10
-    }/* NonReanalyzableNonClassDeclarationStructureElement */
+    }/* DeclarationStructureElement */
 }
 
-inline fun <R> run(block: () -> R): R {/* ReanalyzableFunctionStructureElement */
+inline fun <R> run(block: () -> R): R {/* DeclarationStructureElement */
     return block()
 }

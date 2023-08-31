@@ -1,6 +1,6 @@
-class A {/* NonReanalyzableClassDeclarationStructureElement */
-    fun x() {/* ReanalyzableFunctionStructureElement */
+class A {/* ClassDeclarationStructureElement */
+    fun x() {/* DeclarationStructureElement */
 
     }
-    fun y(): Int = 10/* ReanalyzableFunctionStructureElement */
+    fun y(): Int = 10/* DeclarationStructureElement */
 }

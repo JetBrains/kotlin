@@ -1,27 +1,27 @@
-/* RootScriptStructureElement */fun (a: Int = 1): String = "str"/* ReanalyzableFunctionStructureElement */
+/* RootScriptStructureElement */fun (a: Int = 1): String = "str"/* DeclarationStructureElement */
 
-fun () {/* ReanalyzableFunctionStructureElement */
+fun () {/* DeclarationStructureElement */
 
 }
 
-val : Int = 4/* NonReanalyzableNonClassDeclarationStructureElement */
+val : Int = 4/* DeclarationStructureElement */
 
-var : Int/* ReanalyzablePropertyStructureElement */
+var : Int/* DeclarationStructureElement */
     get() = 4
     set(value) {
 
     }
 
-class A {/* NonReanalyzableClassDeclarationStructureElement */
-    fun (a: Int = 1): String = "str"/* ReanalyzableFunctionStructureElement */
+class A {/* ClassDeclarationStructureElement */
+    fun (a: Int = 1): String = "str"/* DeclarationStructureElement */
 
-    fun () {/* ReanalyzableFunctionStructureElement */
+    fun () {/* DeclarationStructureElement */
 
     }
 
-    val : Int = 4/* NonReanalyzableNonClassDeclarationStructureElement */
+    val : Int = 4/* DeclarationStructureElement */
 
-    var : Boolean/* ReanalyzablePropertyStructureElement */
+    var : Boolean/* DeclarationStructureElement */
         get() = true
         set(value) {
 

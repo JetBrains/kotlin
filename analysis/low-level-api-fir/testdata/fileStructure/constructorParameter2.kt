@@ -1,1 +1,1 @@
-class A(val x: String)/* NonReanalyzableNonClassDeclarationStructureElement *//* NonReanalyzableClassDeclarationStructureElement */
+class A(val x: String)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */

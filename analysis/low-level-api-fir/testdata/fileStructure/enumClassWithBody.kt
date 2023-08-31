@@ -1,13 +1,13 @@
-enum class A {/* NonReanalyzableClassDeclarationStructureElement */
-    X {/* NonReanalyzableNonClassDeclarationStructureElement */
+enum class A {/* ClassDeclarationStructureElement */
+    X {/* DeclarationStructureElement */
         fun localInX() = 1
     },
-    Y {/* NonReanalyzableNonClassDeclarationStructureElement */
+    Y {/* DeclarationStructureElement */
         override fun foo() {}
     },
     Z,
 
-    ;/* NonReanalyzableNonClassDeclarationStructureElement */
+    ;/* DeclarationStructureElement */
 
-    open fun foo() {/* ReanalyzableFunctionStructureElement */}
+    open fun foo() {/* DeclarationStructureElement */}
 }

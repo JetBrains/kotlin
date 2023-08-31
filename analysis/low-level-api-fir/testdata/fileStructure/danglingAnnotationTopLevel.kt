@@ -1,1 +1,1 @@
-@Suppress("") @MustBeDocumented/* DanglingTopLevelModifierListStructureElement */
+@Suppress("") @MustBeDocumented/* DeclarationStructureElement */

@@ -1,5 +1,5 @@
 import java.util.Collections
 
-fun <T> checkSubtype(t: T) = t/* NonReanalyzableNonClassDeclarationStructureElement */
+fun <T> checkSubtype(t: T) = t/* DeclarationStructureElement */
 
-val ab = checkSubtype<List<Int>?>(Collections.emptyList<Int>())/* NonReanalyzableNonClassDeclarationStructureElement */
+val ab = checkSubtype<List<Int>?>(Collections.emptyList<Int>())/* DeclarationStructureElement */

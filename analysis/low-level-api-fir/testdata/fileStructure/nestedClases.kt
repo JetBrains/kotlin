@@ -1,10 +1,10 @@
-class A {/* NonReanalyzableClassDeclarationStructureElement */
-    class B {/* NonReanalyzableClassDeclarationStructureElement */
+class A {/* ClassDeclarationStructureElement */
+    class B {/* ClassDeclarationStructureElement */
 
     }
 
-    object C {/* NonReanalyzableClassDeclarationStructureElement */
-        class D {/* NonReanalyzableClassDeclarationStructureElement */
+    object C {/* ClassDeclarationStructureElement */
+        class D {/* ClassDeclarationStructureElement */
 
         }
     }

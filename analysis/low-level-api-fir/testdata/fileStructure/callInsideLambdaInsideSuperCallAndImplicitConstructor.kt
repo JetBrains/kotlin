@@ -1,7 +1,7 @@
-open class B(x: () -> Unit)/* NonReanalyzableNonClassDeclarationStructureElement *//* NonReanalyzableClassDeclarationStructureElement */
+open class B(x: () -> Unit)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
 
 class A : B(1, {
     foo()
-})/* NonReanalyzableClassDeclarationStructureElement */
+})/* ClassDeclarationStructureElement */
 
-fun foo() {/* ReanalyzableFunctionStructureElement */}
+fun foo() {/* DeclarationStructureElement */}

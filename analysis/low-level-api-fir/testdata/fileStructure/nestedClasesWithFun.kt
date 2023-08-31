@@ -1,7 +1,7 @@
-class A {/* NonReanalyzableClassDeclarationStructureElement */
-    fun y() {/* ReanalyzableFunctionStructureElement */}
+class A {/* ClassDeclarationStructureElement */
+    fun y() {/* DeclarationStructureElement */}
 
-    class B {/* NonReanalyzableClassDeclarationStructureElement */
-        fun x() {/* ReanalyzableFunctionStructureElement */}
+    class B {/* ClassDeclarationStructureElement */
+        fun x() {/* DeclarationStructureElement */}
     }
 }
