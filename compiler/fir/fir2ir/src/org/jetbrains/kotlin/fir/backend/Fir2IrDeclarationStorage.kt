@@ -654,7 +654,7 @@ class Fir2IrDeclarationStorage(
             return fieldStaticOverrideCache[staticFakeOverrideKey]!!.symbol
         }
         // In case of type parameters from the parent as the field's return type, find the parent ahead to cache type parameters.
-        val irParent = findIrParent(fir)
+        val irParent = findIrParent(fir, fakeOverrideOwnerLookupTag)
 
         val unwrapped = fir.unwrapFakeOverrides()
         if (unwrapped !== fir) {
@@ -695,7 +695,7 @@ class Fir2IrDeclarationStorage(
                     return localStorage.getDelegatedProperty(fir)?.delegate?.symbol ?: getIrVariableSymbol(fir)
                 }
                 propertyCache[fir]?.let { return it.backingField!!.symbol }
-                val irParent = findIrParent(fir)
+                val irParent = findIrParent(fir, fakeOverrideOwnerLookupTag = null)
                 val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
                 createAndCacheIrProperty(fir, irParent, predefinedOrigin = parentOrigin).backingField!!.symbol
             }
@@ -906,7 +906,7 @@ class Fir2IrDeclarationStorage(
         return when (val fir = firFunctionSymbol.fir) {
             is FirAnonymousFunction -> {
                 getCachedIrFunction(fir)?.let { return it.symbol }
-                val irParent = findIrParent(fir)
+                val irParent = findIrParent(fir, fakeOverrideOwnerLookupTag)
                 val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
                 val declarationOrigin = computeDeclarationOrigin(firFunctionSymbol, parentOrigin)
                 createAndCacheIrFunction(fir, irParent, predefinedOrigin = declarationOrigin).symbol
@@ -929,7 +929,7 @@ class Fir2IrDeclarationStorage(
                     },
                     createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
                         lazyDeclarationsGenerator.createIrLazyFunction(fir, signature, lazyParent, declarationOrigin).also {
-                            cacheIrFunction(fir, it, fakeOverrideOwnerLookupTag = null)
+                            cacheIrFunction(fir, it, fakeOverrideOwnerLookupTag)
                         }
                     },
                 ) as IrFunctionSymbol
@@ -1019,7 +1019,7 @@ class Fir2IrDeclarationStorage(
         createIrLazyDeclaration: (signature: IdSignature, lazyOwner: IrDeclarationParent, origin: IrDeclarationOrigin) -> I,
     ): IrSymbol {
         val fir = firSymbol.fir as F
-        val irParent by lazy { findIrParent(fir) }
+        val irParent by lazy { findIrParent(fir, fakeOverrideOwnerLookupTag) }
         val signature by lazy {
             signatureComposer.composeSignature(
                 fir,
@@ -1185,11 +1185,24 @@ class Fir2IrDeclarationStorage(
         return parentPackage
     }
 
-    private fun findIrParent(callableDeclaration: FirCallableDeclaration): IrDeclarationParent? {
+    private fun findIrParent(
+        callableDeclaration: FirCallableDeclaration,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
+    ): IrDeclarationParent? {
         val firBasedSymbol = callableDeclaration.symbol
         val callableId = firBasedSymbol.callableId
         val callableOrigin = callableDeclaration.origin
-        return findIrParent(callableId.packageName, callableDeclaration.containingClassLookupTag(), firBasedSymbol, callableOrigin)
+        val parentLookupTag = when {
+            // non-static fields can not be fake overrides
+            firBasedSymbol is FirFieldSymbol && !firBasedSymbol.isStatic -> callableDeclaration.containingClassLookupTag()
+            else -> fakeOverrideOwnerLookupTag ?: callableDeclaration.containingClassLookupTag()
+        }
+        return findIrParent(
+            callableId.packageName,
+            parentLookupTag,
+            firBasedSymbol,
+            callableOrigin
+        )
     }
 
     @OptIn(IrSymbolInternals::class)

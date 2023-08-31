@@ -5,24 +5,18 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.convertWithOffsets
 import org.jetbrains.kotlin.fir.backend.irOrigin
 import org.jetbrains.kotlin.fir.backend.isStubPropertyForPureField
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
-import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
-import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertyPublicSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -38,10 +32,11 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         val symbol = symbolTable.referenceSimpleFunction(signature)
         val irFunction = fir.convertWithOffsets { startOffset, endOffset ->
             symbolTable.declareSimpleFunction(signature, { symbol }) {
-                val isFakeOverride = fir.isSubstitutionOrIntersectionOverride
+                val firContainingClass = (lazyParent as? Fir2IrLazyClass)?.fir
+                val isFakeOverride = fir.isFakeOverride(firContainingClass)
                 Fir2IrLazySimpleFunction(
                     components, startOffset, endOffset, declarationOrigin,
-                    fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol, isFakeOverride
+                    fir, firContainingClass, symbol, isFakeOverride
                 ).apply {
                     this.parent = lazyParent
                 }
@@ -52,7 +47,11 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         return irFunction
     }
 
-    @OptIn(IrSymbolInternals::class)
+    private fun FirCallableDeclaration.isFakeOverride(firContainingClass: FirRegularClass?): Boolean {
+        val declaration = unwrapUseSiteSubstitutionOverrides()
+        return declaration.isSubstitutionOrIntersectionOverride || firContainingClass?.symbol?.toLookupTag() != declaration.containingClassLookupTag()
+    }
+
     internal fun createIrLazyProperty(
         fir: FirProperty,
         signature: IdSignature,
@@ -60,16 +59,12 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         declarationOrigin: IrDeclarationOrigin
     ): IrProperty {
         val symbol = IrPropertyPublicSymbolImpl(signature)
-        val firPropertySymbol = fir.symbol
-
-        fun create(startOffset: Int, endOffset: Int): Fir2IrLazyProperty {
-            val isFakeOverride =
-                fir.isSubstitutionOrIntersectionOverride &&
-                        firPropertySymbol.dispatchReceiverClassLookupTagOrNull() !=
-                        firPropertySymbol.originalForSubstitutionOverride?.dispatchReceiverClassLookupTagOrNull()
+        fun create(startOffset: Int, endOffset: Int, isPropertyForField: Boolean): Fir2IrLazyProperty {
+            val firContainingClass = (lazyParent as? Fir2IrLazyClass)?.fir
+            val isFakeOverride = !isPropertyForField && fir.isFakeOverride(firContainingClass)
             return Fir2IrLazyProperty(
                 components, startOffset, endOffset, declarationOrigin,
-                fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol, isFakeOverride
+                fir, firContainingClass, symbol, isFakeOverride
             ).apply {
                 this.parent = lazyParent
             }
@@ -80,11 +75,10 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
                 // Very special case when two similar properties can exist so conflicts in SymbolTable are possible.
                 // See javaCloseFieldAndKotlinProperty.kt in BB tests
                 symbolTable.declarePropertyWithSignature(signature, symbol)
-                create(startOffset, endOffset)
-                symbol.owner
+                create(startOffset, endOffset, isPropertyForField = true)
             } else {
                 symbolTable.declareProperty(signature, { symbol }) {
-                    create(startOffset, endOffset)
+                    create(startOffset, endOffset, isPropertyForField = false)
                 }
             }
         }
