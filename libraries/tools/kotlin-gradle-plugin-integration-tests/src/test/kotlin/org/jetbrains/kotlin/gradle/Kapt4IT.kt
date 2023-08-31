@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -41,16 +39,13 @@ class Kapt4IT : Kapt3IT() {
     @Disabled("Doesn't make sense in Kapt 4")
     override fun testRepeatableAnnotationsWithOldJvmBackend(gradleVersion: GradleVersion) {}
 
-    @Disabled("Doesn't work in 2.0. Neither with Kapt 3 nor with Kapt 4")
-    override fun testMPPKaptPresence(gradleVersion: GradleVersion) {
-        super.testMPPKaptPresence(gradleVersion)
-    }
+   @Disabled("Doesn't work in 2.0. Neither with Kapt 3 nor with Kapt 4")
+    override fun testMPPKaptPresence(gradleVersion: GradleVersion) {}
 }
 
 @DisplayName("Kapt 4 with classloaders cache")
 class Kapt4ClassLoadersCacheIT : Kapt3ClassLoadersCacheIT() {
-    override val languageVersion: LanguageVersion
-        get() = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.KOTLIN_2_0)
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     override fun TestProject.customizeProject() {
         forceKapt4()

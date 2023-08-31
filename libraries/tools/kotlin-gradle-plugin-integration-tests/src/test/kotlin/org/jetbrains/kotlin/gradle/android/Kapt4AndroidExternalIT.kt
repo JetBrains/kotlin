@@ -12,8 +12,7 @@ import org.junit.jupiter.api.DisplayName
 
 @DisplayName("android with kapt4 external dependencies tests")
 class Kapt4AndroidExternalIT : Kapt3AndroidExternalIT() {
-    override val languageVersion: LanguageVersion
-        get() = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.KOTLIN_2_0)
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     override fun TestProject.customizeProject() {
         forceKapt4()
