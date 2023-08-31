@@ -113,9 +113,16 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
     }
 
     private val _absentArguments = ReflectProperties.lazySoft {
+        val parameters = parameters
         val parameterSize = parameters.size + (if (isSuspend) 1 else 0)
         val flattenedParametersSize =
-            if (parametersNeedMFVCFlattening.value) parameters.sumOf { getParameterTypeSize(it) } else parameters.size
+            if (parametersNeedMFVCFlattening.value) {
+                parameters.sumOf {
+                    if (it.kind == KParameter.Kind.VALUE) getParameterTypeSize(it) else 0
+                }
+            } else {
+                parameters.count { it.kind == KParameter.Kind.VALUE }
+            }
         val maskSize = (flattenedParametersSize + Integer.SIZE - 1) / Integer.SIZE
 
         // Array containing the actual function arguments, masks, and +1 for DefaultConstructorMarker or MethodHandle.
