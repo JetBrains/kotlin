@@ -35541,6 +35541,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/callBy/jvmStaticInObject.kt");
             }
 
+            @TestMetadata("kt61304.kt")
+            public void testKt61304() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/kt61304.kt");
+            }
+
             @TestMetadata("manyArgumentsNoneDefaultConstructor.kt")
             public void testManyArgumentsNoneDefaultConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/manyArgumentsNoneDefaultConstructor.kt");
@@ -35569,6 +35574,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("mfvcFunctionsAndConstructors.kt")
             public void testMfvcFunctionsAndConstructors() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/mfvcFunctionsAndConstructors.kt");
+            }
+
+            @TestMetadata("mfvcKt61304.kt")
+            public void testMfvcKt61304() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/mfvcKt61304.kt");
             }
 
             @TestMetadata("mfvcMembers.kt")

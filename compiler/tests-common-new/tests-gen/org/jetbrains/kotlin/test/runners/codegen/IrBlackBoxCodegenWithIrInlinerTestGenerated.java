@@ -44757,6 +44757,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             }
 
             @Test
+            @TestMetadata("kt61304.kt")
+            public void testKt61304() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/kt61304.kt");
+            }
+
+            @Test
             @TestMetadata("manyArgumentsNoneDefaultConstructor.kt")
             public void testManyArgumentsNoneDefaultConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/manyArgumentsNoneDefaultConstructor.kt");
@@ -44790,6 +44796,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             @TestMetadata("mfvcFunctionsAndConstructors.kt")
             public void testMfvcFunctionsAndConstructors() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/mfvcFunctionsAndConstructors.kt");
+            }
+
+            @Test
+            @TestMetadata("mfvcKt61304.kt")
+            public void testMfvcKt61304() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/mfvcKt61304.kt");
             }
 
             @Test
