@@ -59,11 +59,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
-import org.jetbrains.kotlin.util.ServiceLoaderLite
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
-import java.net.URLClassLoader
-import javax.annotation.processing.Processor
 
 class ClasspathBasedKapt3Extension(
     options: KaptOptions,
@@ -76,16 +73,8 @@ class ClasspathBasedKapt3Extension(
     private var processorLoader: ProcessorLoader? = null
 
     override fun loadProcessors(): LoadedProcessors {
-        val efficientProcessorLoader = object : ProcessorLoader(options, logger) {
-            override fun doLoadProcessors(classpath: LinkedHashSet<File>, classLoader: ClassLoader): List<Processor> =
-                when (classLoader) {
-                    is URLClassLoader -> ServiceLoaderLite.loadImplementations(Processor::class.java, classLoader)
-                    else -> super.doLoadProcessors(classpath, classLoader)
-                }
-        }
-
-        this.processorLoader = efficientProcessorLoader
-        return efficientProcessorLoader.loadProcessors()
+        this.processorLoader = EfficientProcessorLoader(options, logger)
+        return processorLoader!!.loadProcessors()
     }
 
     override fun analysisCompleted(

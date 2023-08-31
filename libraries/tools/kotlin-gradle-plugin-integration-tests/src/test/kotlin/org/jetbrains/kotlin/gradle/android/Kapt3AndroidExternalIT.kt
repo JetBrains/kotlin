@@ -15,7 +15,7 @@ import kotlin.io.path.appendText
 
 @DisplayName("android with kapt3 external dependencies tests")
 @AndroidGradlePluginTests
-class Kapt3AndroidExternalIT : Kapt3BaseIT() {
+open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
 
     // Deprecated and doesn't work with Gradle 8 + AGP 8, so keeping max Gradle version as 7.6
     // For example: https://github.com/JakeWharton/butterknife/issues/1686

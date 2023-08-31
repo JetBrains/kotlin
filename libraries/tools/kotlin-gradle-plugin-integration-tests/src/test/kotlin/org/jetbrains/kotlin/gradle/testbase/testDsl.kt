@@ -80,6 +80,8 @@ fun KGPBaseTest.project(
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
     testProject.addKotlinCompilerArgumentsPlugin()
 
+    testProject.customizeProject()
+
     val result = runCatching {
         testProject.test()
     }
