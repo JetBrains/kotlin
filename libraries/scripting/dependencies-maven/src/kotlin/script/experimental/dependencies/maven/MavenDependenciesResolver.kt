@@ -13,6 +13,7 @@ import org.eclipse.aether.util.artifact.JavaScopes
 import org.eclipse.aether.util.repository.AuthenticationBuilder
 import java.io.File
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.dependencies.ArtifactWithLocation
 import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
 import kotlin.script.experimental.dependencies.RepositoryCoordinates
 import kotlin.script.experimental.dependencies.impl.*
@@ -50,12 +51,13 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
         else null
 
     override suspend fun resolve(
-        artifactCoordinates: String,
-        options: ExternalDependenciesResolver.Options,
-        sourceCodeLocation: SourceCode.LocationWithId?
+        artifactsWithLocations: List<ArtifactWithLocation>,
+        options: ExternalDependenciesResolver.Options
     ): ResultWithDiagnostics<List<File>> {
-
-        val artifactId = artifactCoordinates.toMavenArtifact()!!
+        val firstArtifactWithLocation = artifactsWithLocations.firstOrNull() ?: return ResultWithDiagnostics.Success(emptyList())
+        val artifactIds = artifactsWithLocations.map {
+            it.artifact.toMavenArtifact()!!
+        }
 
         return try {
             val dependencyScopes = options.dependencyScopes ?: listOf(JavaScopes.COMPILE, JavaScopes.RUNTIME)
@@ -71,10 +73,10 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
             AetherResolveSession(
                 null, remoteRepositories()
             ).resolve(
-                artifactId, dependencyScopes.joinToString(","), kind, null, classifier, extension
+                artifactIds, dependencyScopes.joinToString(","), kind, null, classifier, extension
             )
         } catch (e: RepositoryException) {
-            makeResolveFailureResult(e, sourceCodeLocation)
+            makeResolveFailureResult(e, firstArtifactWithLocation.sourceCodeLocation)
         }
     }
 

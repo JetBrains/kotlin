@@ -6,10 +6,7 @@
 package kotlin.script.experimental.dependencies
 
 import java.io.File
-import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.api.ScriptDiagnostic
-import kotlin.script.experimental.api.SourceCode
-import kotlin.script.experimental.api.asSuccess
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.impl.makeResolveFailureResult
 
 class CompoundDependenciesResolver(private val resolvers: List<ExternalDependenciesResolver>) : ExternalDependenciesResolver {
@@ -57,25 +54,57 @@ class CompoundDependenciesResolver(private val resolvers: List<ExternalDependenc
     }
 
     override suspend fun resolve(
-        artifactCoordinates: String,
-        options: ExternalDependenciesResolver.Options,
-        sourceCodeLocation: SourceCode.LocationWithId?
+        artifactsWithLocations: List<ArtifactWithLocation>,
+        options: ExternalDependenciesResolver.Options
     ): ResultWithDiagnostics<List<File>> {
-        val reports = mutableListOf<ScriptDiagnostic>()
+        val resultsCollector = IterableResultsCollector<File>()
 
-        for (resolver in resolvers) {
-            if (resolver.acceptsArtifact(artifactCoordinates)) {
-                when (val resolveResult = resolver.resolve(artifactCoordinates, options, sourceCodeLocation)) {
-                    is ResultWithDiagnostics.Failure -> reports.addAll(resolveResult.reports)
-                    else -> return resolveResult
+        val artifactToResolverIndex = mutableMapOf<ArtifactWithLocation, Int>().apply {
+            for (artifactWithLocation in artifactsWithLocations) {
+                put(artifactWithLocation, -1)
+            }
+        }
+
+        while (artifactToResolverIndex.isNotEmpty()) {
+            val resolverGroups = mutableMapOf<Int, MutableList<ArtifactWithLocation>>()
+
+            for ((artifactWithLocation, resolverIndex) in artifactToResolverIndex) {
+                val (artifact, sourceCodeLocation) = artifactWithLocation
+
+                var currentIndex = resolverIndex + 1
+                while (currentIndex < resolvers.size) {
+                    if (resolvers[currentIndex].acceptsArtifact(artifact)) break
+                    ++currentIndex
+                }
+                if (currentIndex == resolvers.size) {
+                    if (resolverIndex == -1) {
+                        // We add this diagnostic only if there were no resolution attempts made
+                        resultsCollector.addDiagnostic(
+                            "No suitable dependency resolver found for artifact '$artifact'"
+                                .asErrorDiagnostics(locationWithId = sourceCodeLocation)
+                        )
+                    }
+                } else {
+                    resolverGroups
+                        .getOrPut(currentIndex) { mutableListOf() }
+                        .add(artifactWithLocation)
+                }
+            }
+
+            artifactToResolverIndex.clear()
+            for ((resolverIndex, artifacts) in resolverGroups) {
+                val resolver = resolvers[resolverIndex]
+                val resolveResult = resolver.resolve(artifacts, options)
+                resultsCollector.add(resolveResult)
+                if (resolveResult.reports.isNotEmpty()) {
+                    for (artifact in artifacts) {
+                        artifactToResolverIndex[artifact] = resolverIndex
+                    }
                 }
             }
         }
-        return if (reports.count() == 0) {
-            makeResolveFailureResult("No suitable dependency resolver found for artifact '$artifactCoordinates'", sourceCodeLocation)
-        } else {
-            ResultWithDiagnostics.Failure(reports)
-        }
+
+        return resultsCollector.getResult()
     }
 
 }

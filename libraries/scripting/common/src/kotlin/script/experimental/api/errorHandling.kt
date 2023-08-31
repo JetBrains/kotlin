@@ -308,3 +308,37 @@ fun <R> ResultWithDiagnostics<R>.valueOrThrow(): R = valueOr {
     )
 }
 
+class IterableResultsCollector<T> {
+    private val diagnostics = mutableListOf<ScriptDiagnostic>()
+    private val values = mutableListOf<T>()
+
+    fun add(result: ResultWithDiagnostics<Iterable<T>>) {
+        diagnostics.addAll(result.reports)
+        if (result is ResultWithDiagnostics.Success) {
+            values.addAll(result.value)
+        }
+    }
+
+    fun addValue(value: T) {
+        values.add(value)
+    }
+
+    fun addDiagnostic(diagnostic: ScriptDiagnostic) {
+        diagnostics.add(diagnostic)
+    }
+
+    fun getResult(): ResultWithDiagnostics<List<T>> {
+        return if (values.isEmpty()) {
+            ResultWithDiagnostics.Failure(diagnostics)
+        } else {
+            ResultWithDiagnostics.Success(values, diagnostics)
+        }
+    }
+}
+
+fun <T> Iterable<ResultWithDiagnostics<Iterable<T>>>.asSuccessIfAny(): ResultWithDiagnostics<List<T>> {
+    return IterableResultsCollector<T>().run {
+        forEach { add(it) }
+        getResult()
+    }
+}
