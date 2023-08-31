@@ -302,7 +302,8 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 }
                 A(%composer, 0)
                 M3({ %composer: Composer?, %changed: Int ->
-                  sourceInformationMarkerStart(%composer, <>, "C<A()>,<A()>:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<A()>,<A()>:Test.kt")
                   A(%composer, 0)
                   if (condition) {
                     %composer.endToMarker(tmp0_marker)
@@ -315,7 +316,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                     return
                   }
                   A(%composer, 0)
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 A(%composer, 0)
                 if (isTraceInProgress()) {
@@ -374,7 +375,8 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 }
                 A(%composer, 0)
                 M3({ %composer: Composer?, %changed: Int ->
-                  sourceInformationMarkerStart(%composer, <>, "C<A()>,<A()>:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<A()>,<A()>:Test.kt")
                   A(%composer, 0)
                   if (a) {
                     %composer.endToMarker(tmp0_marker)
@@ -387,10 +389,11 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                     return
                   }
                   A(%composer, 0)
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 M3({ %composer: Composer?, %changed: Int ->
-                  sourceInformationMarkerStart(%composer, <>, "C<A()>,<A()>:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<A()>,<A()>:Test.kt")
                   A(%composer, 0)
                   if (b) {
                     %composer.endToMarker(tmp0_marker)
@@ -403,7 +406,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                     return
                   }
                   A(%composer, 0)
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 A(%composer, 0)
                 if (isTraceInProgress()) {
@@ -451,14 +454,15 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 }
                 A(%composer, 0)
                 M3({ %composer: Composer?, %changed: Int ->
-                  sourceInformationMarkerStart(%composer, <>, "C<A()>,<A()>:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<A()>,<A()>:Test.kt")
                   A(%composer, 0)
                   if (condition) {
-                    sourceInformationMarkerEnd(%composer)
+                    %composer.endReplaceableGroup()
                     return@M3
                   }
                   A(%composer, 0)
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 A(%composer, 0)
                 if (isTraceInProgress()) {
@@ -498,7 +502,8 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                       traceEventStart(<>, %changed, -1, <>)
                     }
                     M1({ %composer: Composer?, %changed: Int ->
-                      sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+                      %composer.startReplaceableGroup(<>)
+                      sourceInformation(%composer, "C:Test.kt")
                       if (condition) {
                         %composer.endToMarker(tmp0_marker)
                         if (isTraceInProgress()) {
@@ -506,7 +511,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                         }
                         return@composableLambdaInstance
                       }
-                      sourceInformationMarkerEnd(%composer)
+                      %composer.endReplaceableGroup()
                     }, %composer, 0)
                     if (isTraceInProgress()) {
                       traceEventEnd()
@@ -572,12 +577,13 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                   sourceInformationMarkerStart(%composer, <>, "C<A()>,<M1>,<A()>:Test.kt")
                   A(%composer, 0)
                   M1({ %composer: Composer?, %changed: Int ->
-                    sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+                    %composer.startReplaceableGroup(<>)
+                    sourceInformation(%composer, "C:Test.kt")
                     if (condition) {
-                      sourceInformationMarkerEnd(%composer)
+                      %composer.endReplaceableGroup()
                       return@M1
                     }
-                    sourceInformationMarkerEnd(%composer)
+                    %composer.endReplaceableGroup()
                   }, %composer, 0)
                   A(%composer, 0)
                   sourceInformationMarkerEnd(%composer)
@@ -630,18 +636,20 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 A(%composer, 0)
                 M3({ %composer: Composer?, %changed: Int ->
                   val tmp0_marker = %composer.currentMarker
-                  sourceInformationMarkerStart(%composer, <>, "C<A()>,<M1>,<A()>:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<A()>,<M1>,<A()>:Test.kt")
                   A(%composer, 0)
                   M1({ %composer: Composer?, %changed: Int ->
-                    sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+                    %composer.startReplaceableGroup(<>)
+                    sourceInformation(%composer, "C:Test.kt")
                     if (condition) {
                       %composer.endToMarker(tmp0_marker)
                       return@M3
                     }
-                    sourceInformationMarkerEnd(%composer)
+                    %composer.endReplaceableGroup()
                   }, %composer, 0)
                   A(%composer, 0)
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 A(%composer, 0)
                 if (isTraceInProgress()) {
@@ -694,7 +702,8 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 }
                 A(%composer, 0)
                 M1({ %composer: Composer?, %changed: Int ->
-                  sourceInformationMarkerStart(%composer, <>, "C<A()>,<A()>:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<A()>,<A()>:Test.kt")
                   A(%composer, 0)
                   %composer.startReplaceableGroup(<>)
                   sourceInformation(%composer, "*<A()>,<A()>")
@@ -714,7 +723,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                   }
                   %composer.endReplaceableGroup()
                   A(%composer, 0)
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 A(%composer, 0)
                 if (isTraceInProgress()) {
@@ -769,24 +778,26 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 }
                 A(%composer, 0)
                 M3({ %composer: Composer?, %changed: Int ->
-                  sourceInformationMarkerStart(%composer, <>, "C<A()>,<A()>:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<A()>,<A()>:Test.kt")
                   A(%composer, 0)
                   if (condition) {
-                    sourceInformationMarkerEnd(%composer)
+                    %composer.endReplaceableGroup()
                     return@M3
                   }
                   A(%composer, 0)
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 M3({ %composer: Composer?, %changed: Int ->
-                  sourceInformationMarkerStart(%composer, <>, "C<A()>,<A()>:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<A()>,<A()>:Test.kt")
                   A(%composer, 0)
                   if (condition) {
-                    sourceInformationMarkerEnd(%composer)
+                    %composer.endReplaceableGroup()
                     return@M3
                   }
                   A(%composer, 0)
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 A(%composer, 0)
                 if (isTraceInProgress()) {
@@ -839,14 +850,16 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 }
                 Text("Root - before", %composer, 0b0110)
                 M1({ %composer: Composer?, %changed: Int ->
-                  sourceInformationMarkerStart(%composer, <>, "C<Text("...>,<Text("...>:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<Text("...>,<Text("...>:Test.kt")
                   Text("M1 - begin", %composer, 0b0110)
                   %composer.startReplaceableGroup(<>)
                   sourceInformation(%composer, "<Text("...>,<M1>")
                   if (condition) {
                     Text("if - begin", %composer, 0b0110)
                     M1({ %composer: Composer?, %changed: Int ->
-                      sourceInformationMarkerStart(%composer, <>, "C<Text("...>:Test.kt")
+                      %composer.startReplaceableGroup(<>)
+                      sourceInformation(%composer, "C<Text("...>:Test.kt")
                       Text("In CCM1", %composer, 0b0110)
                       %composer.endToMarker(tmp0_marker)
                       if (isTraceInProgress()) {
@@ -856,12 +869,12 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                         test_CM1_CCM1_RetFun(condition, %composer, updateChangedFlags(%changed or 0b0001))
                       }
                       return
-                      sourceInformationMarkerEnd(%composer)
+                      %composer.endReplaceableGroup()
                     }, %composer, 0)
                   }
                   %composer.endReplaceableGroup()
                   Text("M1 - end", %composer, 0b0110)
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 Text("Root - end", %composer, 0b0110)
                 if (isTraceInProgress()) {
@@ -905,13 +918,14 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 traceEventStart(<>, %changed, -1, <>)
               }
               FakeBox({ %composer: Composer?, %changed: Int ->
-                sourceInformationMarkerStart(%composer, <>, "C<A()>:Test.kt")
+                %composer.startReplaceableGroup(<>)
+                sourceInformation(%composer, "C<A()>:Test.kt")
                 if (condition) {
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                   return@FakeBox
                 }
                 A(%composer, 0)
-                sourceInformationMarkerEnd(%composer)
+                %composer.endReplaceableGroup()
               }, %composer, 0)
               if (isTraceInProgress()) {
                 traceEventEnd()
@@ -1087,13 +1101,14 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                   traceEventStart(<>, %dirty, -1, <>)
                 }
                 IW({ %composer: Composer?, %changed: Int ->
-                  sourceInformationMarkerStart(%composer, <>, "C<A()>:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<A()>:Test.kt")
                   if (condition) {
-                    sourceInformationMarkerEnd(%composer)
+                    %composer.endReplaceableGroup()
                     return@IW
                   }
                   A(%composer, 0)
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 if (isTraceInProgress()) {
                   traceEventEnd()
@@ -1189,7 +1204,8 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 }
                 Text("Some text", %composer, 0b0110)
                 M1({ %composer: Composer?, %changed: Int ->
-                  sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C:Test.kt")
                   Identity {
                     if (condition) {
                       %composer.endToMarker(tmp0_marker)
@@ -1202,7 +1218,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                       return
                     }
                   }
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 Text("Some more text", %composer, 0b0110)
                 if (isTraceInProgress()) {
@@ -1247,14 +1263,15 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 }
                 Text("Some text", %composer, 0b0110)
                 M1({ %composer: Composer?, %changed: Int ->
-                  sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C:Test.kt")
                   Identity {
                     if (condition) {
-                      sourceInformationMarkerEnd(%composer)
+                      %composer.endReplaceableGroup()
                       return@M1
                     }
                   }
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 Text("Some more text", %composer, 0b0110)
                 if (isTraceInProgress()) {
@@ -1266,6 +1283,154 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
               }
+            }
+        """
+    )
+
+    @Test
+    fun verifyEarlyExitFromNestedInlineFunction() = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            @NonRestartableComposable
+            fun Test(condition: Boolean) {
+                Text("Before outer")
+                InlineLinearA {
+                    Text("Before inner")
+                    InlineLinearB inner@{
+                        Text("Before return")
+                        if (condition) return@inner
+                        Text("After return")
+                    }
+                    Text("After inner")
+                }
+                Text("Before outer")
+            }
+        """,
+        expectedTransformed = """
+            @Composable
+            @NonRestartableComposable
+            fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(Test)<Text("...>,<Inline...>,<Text("...>:Test.kt")
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %changed, -1, <>)
+              }
+              Text("Before outer", %composer, 0b0110)
+              InlineLinearA({ %composer: Composer?, %changed: Int ->
+                sourceInformationMarkerStart(%composer, <>, "C<Text("...>,<Inline...>,<Text("...>:Test.kt")
+                Text("Before inner", %composer, 0b0110)
+                InlineLinearB({ %composer: Composer?, %changed: Int ->
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<Text("...>,<Text("...>:Test.kt")
+                  Text("Before return", %composer, 0b0110)
+                  if (condition) {
+                    %composer.endReplaceableGroup()
+                    return@InlineLinearB
+                  }
+                  Text("After return", %composer, 0b0110)
+                  %composer.endReplaceableGroup()
+                }, %composer, 0)
+                Text("After inner", %composer, 0b0110)
+                sourceInformationMarkerEnd(%composer)
+              }, %composer, 0)
+              Text("Before outer", %composer, 0b0110)
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
+              %composer.endReplaceableGroup()
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Text(value: String) { }
+
+            @Composable
+            inline fun InlineLinearA(content: @Composable () -> Unit) {
+                content()
+            }
+
+            @Composable
+            inline fun InlineLinearB(content: @Composable () -> Unit) {
+                content()
+            }
+        """
+    )
+
+    @Test
+    fun verifyEarlyExitFromMultiLevelNestedInlineFunction() = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            @NonRestartableComposable
+            fun Test(condition: Boolean) {
+                Text("Before outer")
+                InlineLinearA outer@{
+                    Text("Before inner")
+                    InlineLinearB {
+                        Text("Before return")
+                        if (condition) return@outer
+                        Text("After return")
+                    }
+                    Text("After inner")
+                }
+                Text("Before outer")
+            }
+        """,
+        expectedTransformed = """
+            @Composable
+            @NonRestartableComposable
+            fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(Test)<Text("...>,<Inline...>,<Text("...>:Test.kt")
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %changed, -1, <>)
+              }
+              Text("Before outer", %composer, 0b0110)
+              InlineLinearA({ %composer: Composer?, %changed: Int ->
+                val tmp0_marker = %composer.currentMarker
+                %composer.startReplaceableGroup(<>)
+                sourceInformation(%composer, "C<Text("...>,<Inline...>,<Text("...>:Test.kt")
+                Text("Before inner", %composer, 0b0110)
+                InlineLinearB({ %composer: Composer?, %changed: Int ->
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<Text("...>,<Text("...>:Test.kt")
+                  Text("Before return", %composer, 0b0110)
+                  if (condition) {
+                    %composer.endToMarker(tmp0_marker)
+                    return@InlineLinearA
+                  }
+                  Text("After return", %composer, 0b0110)
+                  %composer.endReplaceableGroup()
+                }, %composer, 0)
+                Text("After inner", %composer, 0b0110)
+                %composer.endReplaceableGroup()
+              }, %composer, 0)
+              Text("Before outer", %composer, 0b0110)
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
+              %composer.endReplaceableGroup()
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Text(value: String) { }
+
+            @Composable
+            inline fun InlineLinearA(content: @Composable () -> Unit) {
+                content()
+            }
+
+            @Composable
+            inline fun InlineLinearB(content: @Composable () -> Unit) {
+                content()
             }
         """
     )
@@ -1332,7 +1497,8 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 }
                 Text("Root - before", %composer, 0b0110)
                 M1({ %composer: Composer?, %changed: Int ->
-                  sourceInformationMarkerStart(%composer, <>, "C<Text("...>,<Text("...>:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<Text("...>,<Text("...>:Test.kt")
                   Text("M1 - before", %composer, 0b0110)
                   if (condition) {
                     %composer.endToMarker(tmp0_marker)
@@ -1345,7 +1511,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                     return
                   }
                   Text("M1 - after", %composer, 0b0110)
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 Text("Root - after", %composer, 0b0110)
                 if (isTraceInProgress()) {
@@ -6182,16 +6348,18 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 }
                 Inline1({ %composer: Composer?, %changed: Int ->
                   val tmp0_marker = %composer.currentMarker
-                  sourceInformationMarkerStart(%composer, <>, "C<Inline...>:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<Inline...>:Test.kt")
                   Inline2({ %composer: Composer?, %changed: Int ->
-                    sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+                    %composer.startReplaceableGroup(<>)
+                    sourceInformation(%composer, "C:Test.kt")
                     if (true) {
                       %composer.endToMarker(tmp0_marker)
                       return@Inline1
                     }
-                    sourceInformationMarkerEnd(%composer)
+                    %composer.endReplaceableGroup()
                   }, %composer, 0)
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 if (isTraceInProgress()) {
                   traceEventEnd()
