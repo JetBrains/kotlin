@@ -92,7 +92,6 @@ kotlin {
     sourceSets {
         main {
             kotlin.srcDir("src/main/kotlin")
-            kotlin.srcDir("../../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
         }
     }
 }
