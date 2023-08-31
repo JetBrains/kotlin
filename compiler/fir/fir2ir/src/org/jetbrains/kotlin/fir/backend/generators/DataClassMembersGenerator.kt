@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
-import org.jetbrains.kotlin.fir.backend.unsubstitutedScope
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -23,10 +20,7 @@ import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isArrayOrPrimitiveArray
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.declarations.*
@@ -135,7 +129,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 get() {
                     // Pick the (necessarily unique) non-interface upper bound if it exists
                     for (type in bounds) {
-                        val klass = type.toRegularClassSymbol(session)?.fir ?: continue
+                        val klass = type.coneType.nothingToAny().toRegularClassSymbol(session)?.fir ?: continue
                         val kind = klass.classKind
                         if (kind != ClassKind.INTERFACE && kind != ClassKind.ANNOTATION_CLASS) return klass
                     }
@@ -143,7 +137,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     // Otherwise, choose either the first IrClass supertype or recurse.
                     // In the first case, all supertypes are interface types and the choice was arbitrary.
                     // In the second case, there is only a single supertype.
-                    return when (val firstSuper = bounds.first().coneType.fullyExpandedType(session).toSymbol(session)?.fir) {
+                    val firstBoundType = bounds.first().coneType.fullyExpandedType(session).nothingToAny()
+                    return when (val firstSuper = firstBoundType.toSymbol(session)?.fir) {
                         is FirRegularClass -> firstSuper
                         is FirTypeParameter -> firstSuper.erasedUpperBound
                         else -> error("unknown supertype kind $firstSuper")
@@ -163,7 +158,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 val symbol = when {
                     type.isArrayOrPrimitiveArray(checkUnsignedArrays = false) -> context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
                     else -> {
-                        val classForType = when (val classifier = type.toSymbol(session)?.fir) {
+                        val classForType = when (val classifier = type.nothingToAny().toSymbol(session)?.fir) {
                             is FirRegularClass -> classifier
                             is FirTypeParameter -> classifier.erasedUpperBound
                             else -> error("Unknown classifier kind $classifier")
@@ -174,6 +169,16 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     }
                 }
                 return Fir2IrHashCodeFunctionInfo(symbol)
+            }
+        }
+
+        /**
+         * kotlin.Nothing has no members, so any function on property of type Nothing should be actually taken from kotlin.Any
+         */
+        private fun ConeKotlinType.nothingToAny(): ConeKotlinType {
+            return when {
+                this.isNothingOrNullableNothing -> session.builtinTypes.anyType.type
+                else -> this
             }
         }
 
