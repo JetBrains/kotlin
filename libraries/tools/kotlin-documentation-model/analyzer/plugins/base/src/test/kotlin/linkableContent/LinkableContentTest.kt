@@ -1,3 +1,7 @@
+/*
+ * Copyright 2014-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
+ */
+
 package linkableContent
 
 import org.jetbrains.dokka.SourceLinkDefinitionImpl
@@ -139,7 +143,7 @@ class LinkableContentTest : BaseAbstractTest() {
                     val signature = (it as? ClasslikePageNode)?.content?.dfs { it is ContentGroup && it.dci.kind == ContentKind.Symbol }.assertNotNull("signature")
                     val crl = signature.children.last().children[1] as? ContentResolvedLink
                     assertEquals(
-                        "https://github.com/user/repo/tree/master/src/${name.toLowerCase()}Main/kotlin/${name}Class.kt#L3",
+                        "https://github.com/user/repo/tree/master/src/${name.toLowerCase()}Main/kotlin/${name}Class.kt#L7",
                         crl?.address
                     )
                 }

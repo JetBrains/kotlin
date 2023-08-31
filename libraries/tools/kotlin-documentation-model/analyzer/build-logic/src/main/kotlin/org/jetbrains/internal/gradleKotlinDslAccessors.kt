@@ -1,3 +1,7 @@
+/*
+ * Copyright 2014-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
+ */
+
 @file:Suppress("PackageDirectoryMismatch")
 
 package org.gradle.kotlin.dsl // for convenience use a default package for gradle.kts scripts
