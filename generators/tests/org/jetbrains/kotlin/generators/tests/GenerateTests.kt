@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.jvm.abi.AbstractCompareJvmAbiTest
 import org.jetbrains.kotlin.jvm.abi.AbstractCompileAgainstJvmAbiTest
 import org.jetbrains.kotlin.jvm.abi.AbstractJvmAbiContentTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
+import org.jetbrains.kotlin.kapt.cli.test.AbstractKapt4ToolIntegrationTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
 import org.jetbrains.kotlin.kapt3.test.runners.AbstractClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.runners.AbstractIrClassFileToSourceStubConverterTest
@@ -371,9 +372,11 @@ fun main(args: Array<String>) {
             testClass<AbstractArgumentParsingTest> {
                 model("argumentParsing", extension = "txt")
             }
-
             testClass<AbstractKaptToolIntegrationTest> {
                 model("integration", recursive = false, extension = null)
+            }
+            testClass<AbstractKapt4ToolIntegrationTest> {
+                model("integration-kapt4", recursive = false, extension = null)
             }
         }
 

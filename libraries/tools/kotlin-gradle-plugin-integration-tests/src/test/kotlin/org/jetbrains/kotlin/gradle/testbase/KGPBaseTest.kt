@@ -35,4 +35,6 @@ abstract class KGPBaseTest {
 
     @TempDir
     lateinit var workingDir: Path
+
+    internal open fun TestProject.customizeProject() {}
 }

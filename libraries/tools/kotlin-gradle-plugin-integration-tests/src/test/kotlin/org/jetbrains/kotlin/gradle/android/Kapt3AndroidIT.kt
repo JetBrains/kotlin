@@ -15,7 +15,7 @@ import kotlin.io.path.writeText
 
 @DisplayName("android with kapt3 tests")
 @AndroidGradlePluginTests
-class Kapt3AndroidIT : Kapt3BaseIT() {
+open class Kapt3AndroidIT : Kapt3BaseIT() {
     @DisplayName("KT-15001")
     @GradleAndroidTest
     fun testKt15001(

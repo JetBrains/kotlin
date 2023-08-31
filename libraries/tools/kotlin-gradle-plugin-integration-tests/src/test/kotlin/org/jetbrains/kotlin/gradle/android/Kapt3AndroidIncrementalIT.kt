@@ -78,7 +78,7 @@ open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
 
     @DisplayName("incremental compilation works with dagger")
     @GradleAndroidTest
-    fun testAndroidDaggerIC(
+    open fun testAndroidDaggerIC(
         gradleVersion: GradleVersion,
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
@@ -205,6 +205,6 @@ open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
 }
 
 @DisplayName("android with kapt3 incremental build tests with precise compilation outputs backup")
-class Kapt3AndroidIncrementalWithPreciseBackupIT : Kapt3AndroidIncrementalIT() {
+open class Kapt3AndroidIncrementalWithPreciseBackupIT : Kapt3AndroidIncrementalIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
 }

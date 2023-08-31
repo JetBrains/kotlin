@@ -36,7 +36,8 @@ import kotlin.io.path.deleteExisting
 import kotlin.io.path.outputStream
 import kotlin.test.assertEquals
 
-abstract class Kapt3BaseIT(val languageVersion: String = "1.9") : KGPBaseTest() {
+abstract class Kapt3BaseIT : KGPBaseTest() {
+
     companion object {
         private const val KAPT_SUCCESSFUL_MESSAGE = "Annotation processing complete, errors: 0"
     }
@@ -44,8 +45,7 @@ abstract class Kapt3BaseIT(val languageVersion: String = "1.9") : KGPBaseTest() 
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
         .copy(
             kaptOptions = this.kaptOptions(),
-            languageVersion = languageVersion,
-        )
+        ).copyEnsuringK1()
 
     protected open fun kaptOptions(): BuildOptions.KaptOptions = BuildOptions.KaptOptions(
         verbose = true,
@@ -74,8 +74,8 @@ abstract class Kapt3BaseIT(val languageVersion: String = "1.9") : KGPBaseTest() 
  *
  * then override and disable the test here via `@Disabled`.
  */
-@DisplayName("Kapt with classloaders cache")
-class Kapt3ClassLoadersCacheIT : Kapt3IT() {
+@DisplayName("Kapt 3 with classloaders cache")
+open class Kapt3ClassLoadersCacheIT : Kapt3IT() {
     override fun kaptOptions(): BuildOptions.KaptOptions = super.kaptOptions().copy(
         classLoadersCacheSize = 10,
         includeCompileClasspath = false
@@ -138,7 +138,7 @@ class Kapt3ClassLoadersCacheIT : Kapt3IT() {
     }
 }
 
-@DisplayName("Kapt base checks")
+@DisplayName("Kapt 3 base checks")
 @OtherGradlePluginTests
 open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Kapt is skipped when no annotation processors are added")
@@ -486,7 +486,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Should incrementally rebuild on classpath change")
     @GradleTest
-    fun testChangeClasspathICRebuild(gradleVersion: GradleVersion) {
+    open fun testChangeClasspathICRebuild(gradleVersion: GradleVersion) {
         testICRebuild(gradleVersion) { project ->
             project.buildGradle.modify {
                 "$it\ndependencies { implementation 'org.jetbrains.kotlin:kotlin-reflect:' + kotlin_version }"
@@ -944,7 +944,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("kapt works with old MPP")
     @GradleTest
-    fun testMPPKaptPresence(gradleVersion: GradleVersion) {
+    open fun testMPPKaptPresence(gradleVersion: GradleVersion) {
         project("mpp-kapt-presence".withPrefix, gradleVersion) {
 
             build("build") {
@@ -1051,7 +1051,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("KT-46651: kapt is tracking source files properly with configuration cache enabled")
     @GradleTest
-    fun kaptGenerateStubsShouldNotCaptureSourcesStateInConfigurationCache(gradleVersion: GradleVersion) {
+    open fun kaptGenerateStubsShouldNotCaptureSourcesStateInConfigurationCache(gradleVersion: GradleVersion) {
         project(
             "incrementalRebuild".withPrefix,
             gradleVersion,
@@ -1208,7 +1208,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Kapt runs in fallback mode with useK2 = true")
     @GradleTest
-    internal fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {
+    open fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {
         project("simple".withPrefix, gradleVersion) {
             buildGradle.appendText(
                 """
@@ -1237,7 +1237,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Kapt runs in fallback mode with languageVersion = 2.0")
     @GradleTest
-    internal fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {
+    open fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {
         project("simple".withPrefix, gradleVersion) {
             buildGradle.appendText(
                 """
@@ -1344,6 +1344,21 @@ open class Kapt3IT : Kapt3BaseIT() {
         project("kapt-in-test-runtime-classpath".withPrefix, gradleVersion) {
             build("test") {
                 assertFileInProjectExists("build/tmp/kapt3/classes/main/META-INF/services/com.example.SomeInterface")
+            }
+        }
+    }
+
+    @DisplayName("Application of annotation processors is repeated as long as new source files are generated")
+    @GradleTest
+    open fun testMultipleProcessingPasses(gradleVersion: GradleVersion) {
+        project("multipass".withPrefix, gradleVersion) {
+            build("build") {
+                assertKaptSuccessful()
+                assertOutputContains("No elements for AnnotationProcessor3")
+                assertOutputContains("No elements for AnnotationProcessor2")
+                assertFileInProjectExists("example/build/generated/source/kapt/main/generated/TestClass1.java")
+                assertFileInProjectExists("example/build/generated/source/kapt/main/generated/TestClass12.java")
+                assertFileInProjectExists("example/build/generated/source/kapt/main/generated/TestClass123.java")
             }
         }
     }
