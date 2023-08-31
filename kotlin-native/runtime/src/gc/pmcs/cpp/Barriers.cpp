@@ -30,11 +30,10 @@ ObjHeader* weakRefBarrierImpl(ObjHeader* weakReferee) noexcept {
     return weakReferee;
 }
 
-NO_INLINE ObjHeader* weakRefReadSlowPath(std::atomic<ObjHeader*>& weakReferee) noexcept {
+NO_INLINE ObjHeader* weakRefReadSlowPath(ObjHeader* weakReferee) noexcept {
     // reread an action to avoid register pollution outside the function
     auto barrier = weakRefBarrier.load(std::memory_order_seq_cst);
-    auto* weak = weakReferee.load(std::memory_order_relaxed);
-    return barrier ? barrier(weak) : weak;
+    return barrier ? barrier(weakReferee) : weakReferee;
 }
 
 } // namespace
@@ -91,9 +90,9 @@ void gc::DisableWeakRefBarriers() noexcept {
     }
 }
 
-OBJ_GETTER(gc::WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexcept {
+OBJ_GETTER(gc::WeakRefRead, ObjHeader* weakReferee) noexcept {
     if (!compiler::concurrentWeakSweep()) {
-        RETURN_OBJ(weakReferee.load(std::memory_order_relaxed));
+        RETURN_OBJ(weakReferee);
     }
 
     // Copying the scheme from SafePoint.cpp: branch + indirect call.
@@ -102,7 +101,7 @@ OBJ_GETTER(gc::WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexcept {
     if (__builtin_expect(barrier != nullptr, false)) {
         result = weakRefReadSlowPath(weakReferee);
     } else {
-        result = weakReferee.load(std::memory_order_relaxed);
+        result = weakReferee;
     }
     RETURN_OBJ(result);
 }

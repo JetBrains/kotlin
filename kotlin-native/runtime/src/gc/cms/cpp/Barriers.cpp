@@ -5,22 +5,213 @@
 
 #include "Barriers.hpp"
 
-#include <algorithm>
-#include <atomic>
-
 #include "GCImpl.hpp"
 #include "SafePoint.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 
+#if __has_feature(thread_sanitizer)
+#include <sanitizer/tsan_interface.h>
+#endif
+
 using namespace kotlin;
 
 namespace {
 
-std::atomic<ObjHeader* (*)(ObjHeader*)> weakRefBarrier = nullptr;
-std::atomic<int64_t> weakProcessingEpoch = 0;
+gc::barriers::BarriersThreadData::ActualizeAction actualizeThreadDataAction{};
 
-ObjHeader* weakRefBarrierImpl(ObjHeader* weakReferee) noexcept {
+gc::barriers::internal::BarriersControlProto barriersControlProto{};
+
+template<typename ActionOnProto, typename CheckOnThread>
+void ensureEachThread(ActionOnProto&& action, CheckOnThread&& check) {
+    auto threads = mm::ThreadRegistry::Instance().LockForIter();
+    action(barriersControlProto);
+    actualizeThreadDataAction.ensurePerformed(threads);
+    for (auto& t: threads) {
+        RuntimeAssert(check(t.gc().impl().gc().barriers()), "Threads state must be actualized after the action");
+    }
+}
+
+inline constexpr auto kTagBarriers = logging::Tag::kBarriers;
+
+#define BarriersLogDebug(active, format, ...) RuntimeLogDebug({kTagBarriers}, "%s" format, active ? "[active] " : "", ##__VA_ARGS__)
+
+} // namespace
+
+
+ALWAYS_INLINE void gc::barriers::internal::BarriersControl::checkInvariants() noexcept {
+    if (!compiler::runtimeAssertsEnabled()) return;
+    if (markNewObjects_ || concurrentMarkBarriers_ || weakProcessingBarriers_) {
+        RuntimeAssert(gcHandle_.isValid(), "A valid GC handle required");
+    }
+    if (concurrentMarkBarriers_ || weakProcessingBarriers_) {
+        RuntimeAssert(markNewObjects_, "New objects marking must also be enabled");
+    }
+}
+
+gc::barriers::internal::BarriersControl gc::barriers::internal::BarriersControlProto::getValues() const noexcept {
+    std::shared_lock lock(mutex_);
+    return *reinterpret_cast<const BarriersControl*>(this);
+}
+
+void gc::barriers::internal::BarriersControlProto::beginMarkingEpoch(GCHandle gcHandle) noexcept {
+    std::unique_lock lock(mutex_);
+    gcHandle_ = gcHandle;
+    RuntimeLogDebug({kTagBarriers}, "Marking epoch #%" PRIu64 " begun", gcHandle.getEpoch());
+    checkInvariants();
+}
+
+void gc::barriers::internal::BarriersControlProto::endMarkingEpoch() noexcept {
+    std::unique_lock lock(mutex_);
+    markNewObjects_ = false;
+    RuntimeLogDebug({kTagBarriers}, "Marking epoch #%" PRIu64 " ended", gcHandle_.getEpoch());
+    gcHandle_ = GCHandle::invalid();
+    checkInvariants();
+}
+
+void gc::barriers::internal::BarriersControlProto::enableConcurrentMarkBarriers() noexcept {
+    std::unique_lock lock(mutex_);
+    concurrentMarkBarriers_ = true;
+    markNewObjects_ = true;
+    RuntimeLogDebug({kTagBarriers}, "Concurrent mark barriers enabled");
+    checkInvariants();
+}
+
+void gc::barriers::internal::BarriersControlProto::disableConcurrentMarkBarriers() noexcept {
+    std::unique_lock lock(mutex_);
+    concurrentMarkBarriers_ = false;
+    // continue to mark new objects as it may still be required for weak processing etc.
+    RuntimeLogDebug({kTagBarriers}, "Concurrent mark barriers disabled");
+    checkInvariants();
+}
+
+void gc::barriers::internal::BarriersControlProto::enableWeakProcessingBarriers() noexcept {
+    std::unique_lock lock(mutex_);
+    weakProcessingBarriers_ = true;
+    markNewObjects_ = true;
+    RuntimeLogDebug({kTagBarriers}, "Weak processing barriers enabled");
+    checkInvariants();
+}
+
+void gc::barriers::internal::BarriersControlProto::disableWeakProcessingBarriers() noexcept {
+    std::unique_lock lock(mutex_);
+    weakProcessingBarriers_ = false;
+    // continue to mark new objects as it may still be required for concurrent mark etc.
+    RuntimeLogDebug({kTagBarriers}, "Weak processing barriers disabled");
+    checkInvariants();
+}
+
+
+mm::OncePerThreadAction<gc::barriers::BarriersThreadData::ActualizeAction>::ThreadData&
+gc::barriers::BarriersThreadData::ActualizeAction::getUtilityData(mm::ThreadData& threadData) {
+    return threadData.gc().impl().gc().barriers().actualizeActionData_;
+}
+
+void gc::barriers::BarriersThreadData::ActualizeAction::action(mm::ThreadData& threadData) noexcept {
+    threadData.gc().impl().gc().barriers().actualizeFrom(barriersControlProto.getValues());
+}
+
+
+gc::barriers::BarriersThreadData::BarriersThreadData(mm::ThreadData& threadData)
+    : base_(threadData), actualizeActionData_(actualizeThreadDataAction, threadData) {
+    // No point in actualization here. Properly synchronized actualization will happen on thread registration.
+}
+
+void gc::barriers::BarriersThreadData::actualizeFrom(gc::barriers::internal::BarriersControl proto) noexcept {
+    gcHandle_ = proto.gcHandle();
+
+    bool wasMarkingNewObjects = markNewObjects_;
+    bool startsMarkingNewObjects = proto.markNewObjects();
+    if (!wasMarkingNewObjects && startsMarkingNewObjects) {
+        markHandle_ = gcHandle_.mark();
+    } else if (wasMarkingNewObjects && !startsMarkingNewObjects) {
+        markHandle_ = GCHandle::invalid().mark();
+    }
+    markNewObjects_ = startsMarkingNewObjects;
+
+    concurrentMarkBarriers_ = proto.concurrentMarkBarriers();
+    weakProcessingBarriers_ = proto.weakProcessingBarriers();
+
+    RuntimeLogDebug({kTagBarriers}, "Thread #%d data actualized", base_.threadId());
+}
+
+void gc::barriers::BarriersThreadData::onThreadRegistration() noexcept {
+    actualizeFrom(barriersControlProto.getValues());
+}
+
+ALWAYS_INLINE void gc::barriers::BarriersThreadData::onSafePoint() noexcept {
+    actualizeActionData_.onSafePoint();
+}
+
+ALWAYS_INLINE void gc::barriers::BarriersThreadData::onAllocation(ObjHeader* allocated) noexcept {
+    bool shouldMark = markNewObjects();
+    RuntimeAssert(shouldMark == barriersControlProto.markNewObjects(), "Thread barriers data must be synchronized with the proto");
+    BarriersLogDebug(shouldMark, "Allocation %p", allocated);
+    if (shouldMark) {
+        auto& objectData = alloc::objectDataForObject(allocated);
+        objectData.markUncontended();
+        markHandle_.addObject();
+    }
+
+    // TODO Such a barrier may also help to avoid some page-faults in faulty programs with unsafe object publication
+    //      even in absence of concurrent GC.
+    //      Consider moving into the common allocation path.
+#if __has_feature(thread_sanitizer)
+    // The fence bellow orders the object's initialization before it's publication.
+    // Which is important for concurrent mark barriers in order to observe correctly initialized mark-word.
+    // However, TSAN doesn't support atomic_thread_fence, so we have to do some other release here.
+    __tsan_release(allocated);
+#endif
+    std::atomic_thread_fence(std::memory_order_release);
+}
+
+ALWAYS_INLINE void gc::barriers::BarriersThreadData::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept {
+    if (__builtin_expect(concurrentMarkBarriers(), false)) {
+        beforeHeapRefUpdateSlowPath(ref, value);
+    } else {
+        BarriersLogDebug(false, "Write *%p <- %p (%p overwritten)", ref.location(), value, ref.load());
+    }
+}
+
+// TODO decide whether it's beneficial to NO_INLINE the slow path
+void gc::barriers::BarriersThreadData::beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader* value) noexcept {
+    auto prev = ref.loadAtomic(std::memory_order_consume);
+    BarriersLogDebug(true, "Write *%p <- %p (%p overwritten)", ref.location(), value, prev);
+    if (prev != nullptr) {
+#if __has_feature(thread_sanitizer)
+        // Tell TSAN, that we acquire here the object's memory,
+        // released previously on allocation with atomic_thread_fence and __tsan_release workaround.
+        __tsan_acquire(prev);
+#endif
+        // FIXME Redundant if the destination object is black.
+        //       Yet at the moment there is now efficient way to distinguish black and gray objects.
+
+        auto& objectData = alloc::objectDataForObject(prev);
+
+        // TODO This is just a dummy. Replace with enqueueing when thread-local mark queues will be implemented.
+        bool marked = objectData.tryMark();
+
+        if (marked) {
+            // TODO maybe we could go branch-less?
+            markHandle_.addObject();
+        }
+    }
+}
+
+ALWAYS_INLINE OBJ_GETTER(gc::barriers::BarriersThreadData::weakRefReadBarrier, ObjHeader* weakReferee) noexcept {
+    if (compiler::concurrentWeakSweep()) {
+        bool barrierActive = weakProcessingBarriers();
+        BarriersLogDebug(barrierActive, "Weak read: referee = %p", weakReferee);
+        if (__builtin_expect(barrierActive, false)) {
+            RETURN_RESULT_OF(weakRefReadBarrierSlowPath, weakReferee);
+        }
+    }
+
+    RETURN_OBJ(weakReferee);
+}
+
+// TODO decide whether it's beneficial to NO_INLINE the slow path
+OBJ_GETTER(gc::barriers::BarriersThreadData::weakRefReadBarrierSlowPath, ObjHeader* weakReferee) noexcept {
     if (!weakReferee) return nullptr;
     // When weak ref barriers are enabled, marked state cannot change and the
     // object cannot be deleted.
@@ -30,79 +221,52 @@ ObjHeader* weakRefBarrierImpl(ObjHeader* weakReferee) noexcept {
     return weakReferee;
 }
 
-NO_INLINE ObjHeader* weakRefReadSlowPath(std::atomic<ObjHeader*>& weakReferee) noexcept {
-    // reread an action to avoid register pollution outside the function
-    auto barrier = weakRefBarrier.load(std::memory_order_seq_cst);
-    auto* weak = weakReferee.load(std::memory_order_relaxed);
-    return barrier ? barrier(weak) : weak;
+
+void gc::barriers::beginMarkingEpoch(GCHandle gcHandle) noexcept {
+    ensureEachThread(
+            [=](internal::BarriersControlProto& barrierControl) { barrierControl.beginMarkingEpoch(gcHandle); },
+            [=](BarriersThreadData& barriersThreadData) {
+                return barriersThreadData.gcHandle().getEpoch() == gcHandle.getEpoch();
+            }
+    );
 }
 
-} // namespace
-
-void gc::BarriersThreadData::onThreadRegistration() noexcept {
-    if (weakRefBarrier.load(std::memory_order_acquire) != nullptr) {
-        startMarkingNewObjects(GCHandle::getByEpoch(weakProcessingEpoch.load(std::memory_order_relaxed)));
-    }
+void gc::barriers::endMarkingEpoch() noexcept {
+    ensureEachThread(
+            [](internal::BarriersControlProto& barrierControl) { barrierControl.endMarkingEpoch(); },
+            [](BarriersThreadData& barriersThreadData) {
+                return !barriersThreadData.gcHandle().isValid() &&
+                        !barriersThreadData.markNewObjects() &&
+                        !barriersThreadData.concurrentMarkBarriers() &&
+                        !barriersThreadData.weakProcessingBarriers();
+            }
+    );
 }
 
-ALWAYS_INLINE void gc::BarriersThreadData::onSafePoint() noexcept {}
-
-void gc::BarriersThreadData::startMarkingNewObjects(gc::GCHandle gcHandle) noexcept {
-    RuntimeAssert(weakRefBarrier.load(std::memory_order_relaxed) != nullptr, "New allocations marking may only be requested by weak ref barriers");
-    markHandle_ = gcHandle.mark();
+void gc::barriers::enableMarkBarriers() noexcept {
+    ensureEachThread(
+            [](internal::BarriersControlProto& barrierControl) { barrierControl.enableConcurrentMarkBarriers(); },
+            [](BarriersThreadData& barriersThreadData) { return barriersThreadData.concurrentMarkBarriers(); }
+    );
 }
 
-void gc::BarriersThreadData::stopMarkingNewObjects() noexcept {
-    RuntimeAssert(weakRefBarrier.load(std::memory_order_relaxed) == nullptr, "New allocations marking could only been requested by weak ref barriers");
-    markHandle_ = std::nullopt;
+void gc::barriers::disableMarkBarriers() noexcept {
+    ensureEachThread(
+            [](internal::BarriersControlProto& barrierControl) { barrierControl.disableConcurrentMarkBarriers(); },
+            [](BarriersThreadData& barriersThreadData) { return !barriersThreadData.concurrentMarkBarriers(); }
+    );
 }
 
-bool gc::BarriersThreadData::shouldMarkNewObjects() const noexcept {
-    return markHandle_.has_value();
+void gc::barriers::enableWeakRefBarriers() noexcept {
+    ensureEachThread(
+            [](internal::BarriersControlProto& barrierControl) { barrierControl.enableWeakProcessingBarriers(); },
+            [](BarriersThreadData& barriersThreadData) { return barriersThreadData.weakProcessingBarriers(); }
+    );
 }
 
-ALWAYS_INLINE void gc::BarriersThreadData::onAllocation(ObjHeader* allocated) {
-    if (compiler::concurrentWeakSweep()) {
-        bool shouldMark = shouldMarkNewObjects();
-        bool barriersEnabled = weakRefBarrier.load(std::memory_order_relaxed) != nullptr;
-        RuntimeAssert(shouldMark == barriersEnabled, "New allocations marking must happen with and only with weak ref barriers");
-        if (shouldMark) {
-            auto& objectData = alloc::objectDataForObject(allocated);
-            objectData.markUncontended();
-            markHandle_->addObject();
-        }
-    }
-}
-
-void gc::EnableWeakRefBarriers(int64_t epoch) noexcept {
-    auto mutators = mm::ThreadRegistry::Instance().LockForIter();
-    weakProcessingEpoch.store(epoch, std::memory_order_relaxed);
-    weakRefBarrier.store(weakRefBarrierImpl, std::memory_order_seq_cst);
-    for (auto& mutator: mutators) {
-        mutator.gc().impl().gc().barriers().startMarkingNewObjects(GCHandle::getByEpoch(epoch));
-    }
-}
-
-void gc::DisableWeakRefBarriers() noexcept {
-    auto mutators = mm::ThreadRegistry::Instance().LockForIter();
-    weakRefBarrier.store(nullptr, std::memory_order_seq_cst);
-    for (auto& mutator: mutators) {
-        mutator.gc().impl().gc().barriers().stopMarkingNewObjects();
-    }
-}
-
-OBJ_GETTER(gc::WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexcept {
-    if (!compiler::concurrentWeakSweep()) {
-        RETURN_OBJ(weakReferee.load(std::memory_order_relaxed));
-    }
-
-    // Copying the scheme from SafePoint.cpp: branch + indirect call.
-    auto barrier = weakRefBarrier.load(std::memory_order_relaxed);
-    ObjHeader* result;
-    if (__builtin_expect(barrier != nullptr, false)) {
-        result = weakRefReadSlowPath(weakReferee);
-    } else {
-        result = weakReferee.load(std::memory_order_relaxed);
-    }
-    RETURN_OBJ(result);
+void gc::barriers::disableWeakRefBarriers() noexcept {
+    ensureEachThread(
+            [](internal::BarriersControlProto& barrierControl) { barrierControl.disableWeakProcessingBarriers(); },
+            [](BarriersThreadData& barriersThreadData) { return !barriersThreadData.weakProcessingBarriers(); }
+    );
 }

@@ -12,6 +12,7 @@
 #include "Utils.hpp"
 #include "GCStatistics.hpp"
 
+// TODO refactor
 namespace kotlin::gc {
 
 class BarriersThreadData : private Pinned {
@@ -32,6 +33,6 @@ private:
 void EnableWeakRefBarriers(int64_t epoch) noexcept;
 void DisableWeakRefBarriers() noexcept;
 
-OBJ_GETTER(WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexcept;
+OBJ_GETTER(WeakRefRead, ObjHeader* weakReferee) noexcept;
 
 } // namespace kotlin::gc
