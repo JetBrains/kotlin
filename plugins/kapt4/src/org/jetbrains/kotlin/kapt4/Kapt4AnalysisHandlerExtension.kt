@@ -121,7 +121,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
             kaptStub.writeMetadataIfNeeded(forSource = sourceFile)
         }
-        File(File(context.options.stubsOutputDir, "error").apply { mkdirs() }, "NonExistentClass.java")
+        File(context.options.stubsOutputDir, "error").apply { mkdirs() }.resolve("NonExistentClass.java")
             .writeText("package error;\npublic class NonExistentClass {}\n")
     }
 
