@@ -9,53 +9,55 @@ import java.io.File
 import java.io.Serializable
 import java.net.URL
 
-object DokkaDefaults {
-    val moduleName: String = "root"
-    val moduleVersion: String? = null
-    val outputDir = File("./dokka")
-    const val failOnWarning: Boolean = false
-    const val suppressObviousFunctions = true
-    const val suppressInheritedMembers = false
-    const val offlineMode: Boolean = false
+public object DokkaDefaults {
+    public val moduleName: String = "root"
+    public val moduleVersion: String? = null
+    public val outputDir: File = File("./dokka")
+    public const val failOnWarning: Boolean = false
+    public const val suppressObviousFunctions: Boolean = true
+    public const val suppressInheritedMembers: Boolean = false
+    public const val offlineMode: Boolean = false
 
-    const val sourceSetDisplayName = "JVM"
-    const val sourceSetName = "main"
-    val analysisPlatform: Platform = Platform.DEFAULT
+    public const val sourceSetDisplayName: String = "JVM"
+    public const val sourceSetName: String = "main"
+    public val analysisPlatform: Platform = Platform.DEFAULT
 
-    const val suppress: Boolean = false
-    const val suppressGeneratedFiles: Boolean = true
+    public const val suppress: Boolean = false
+    public const val suppressGeneratedFiles: Boolean = true
 
-    const val skipEmptyPackages: Boolean = true
-    const val skipDeprecated: Boolean = false
+    public const val skipEmptyPackages: Boolean = true
+    public const val skipDeprecated: Boolean = false
 
-    const val reportUndocumented: Boolean = false
+    public const val reportUndocumented: Boolean = false
 
-    const val noStdlibLink: Boolean = false
-    const val noAndroidSdkLink: Boolean = false
-    const val noJdkLink: Boolean = false
-    const val jdkVersion: Int = 8
+    public const val noStdlibLink: Boolean = false
+    public const val noAndroidSdkLink: Boolean = false
+    public const val noJdkLink: Boolean = false
+    public const val jdkVersion: Int = 8
 
-    const val includeNonPublic: Boolean = false
-    val documentedVisibilities: Set<DokkaConfiguration.Visibility> = setOf(DokkaConfiguration.Visibility.PUBLIC)
+    public const val includeNonPublic: Boolean = false
+    public val documentedVisibilities: Set<DokkaConfiguration.Visibility> = setOf(DokkaConfiguration.Visibility.PUBLIC)
 
-    val pluginsConfiguration = mutableListOf<PluginConfigurationImpl>()
+    public val pluginsConfiguration: List<PluginConfigurationImpl> = mutableListOf()
 
-    const val delayTemplateSubstitution: Boolean = false
+    public const val delayTemplateSubstitution: Boolean = false
 
-    val cacheRoot: File? = null
+    public val cacheRoot: File? = null
 }
 
-enum class Platform(val key: String) {
+public enum class Platform(
+    public val key: String
+) {
     jvm("jvm"),
     js("js"),
     wasm("wasm"),
     native("native"),
     common("common");
 
-    companion object {
-        val DEFAULT = jvm
+    public companion object {
+        public val DEFAULT: Platform = jvm
 
-        fun fromString(key: String): Platform {
+        public fun fromString(key: String): Platform {
             return when (key.toLowerCase()) {
                 jvm.key -> jvm
                 js.key -> js
@@ -70,14 +72,13 @@ enum class Platform(val key: String) {
     }
 }
 
-fun interface DokkaConfigurationBuilder<T : Any> {
-    fun build(): T
+public fun interface DokkaConfigurationBuilder<T : Any> {
+    public fun build(): T
 }
 
-fun <T : Any> Iterable<DokkaConfigurationBuilder<T>>.build(): List<T> = this.map { it.build() }
+public fun <T : Any> Iterable<DokkaConfigurationBuilder<T>>.build(): List<T> = this.map { it.build() }
 
-
-data class DokkaSourceSetID(
+public data class DokkaSourceSetID(
     /**
      * Unique identifier of the scope that this source set is placed in.
      * Each scope provide only unique source set names.
@@ -102,13 +103,13 @@ data class DokkaSourceSetID(
  *
  * @see [apply] to learn how to apply global configuration
  */
-data class GlobalDokkaConfiguration(
+public data class GlobalDokkaConfiguration(
     val perPackageOptions: List<PackageOptionsImpl>?,
     val externalDocumentationLinks: List<ExternalDocumentationLinkImpl>?,
     val sourceLinks: List<SourceLinkDefinitionImpl>?
 )
 
-fun DokkaConfiguration.apply(globals: GlobalDokkaConfiguration): DokkaConfiguration = this.apply {
+public fun DokkaConfiguration.apply(globals: GlobalDokkaConfiguration): DokkaConfiguration = this.apply {
     sourceSets.forEach {
         it.perPackageOptions.cast<MutableList<DokkaConfiguration.PackageOptions>>()
             .addAll(globals.perPackageOptions ?: emptyList())
@@ -124,21 +125,21 @@ fun DokkaConfiguration.apply(globals: GlobalDokkaConfiguration): DokkaConfigurat
     }
 }
 
-interface DokkaConfiguration : Serializable {
-    val moduleName: String
-    val moduleVersion: String?
-    val outputDir: File
-    val cacheRoot: File?
-    val offlineMode: Boolean
-    val failOnWarning: Boolean
-    val sourceSets: List<DokkaSourceSet>
-    val modules: List<DokkaModuleDescription>
-    val pluginsClasspath: List<File>
-    val pluginsConfiguration: List<PluginConfiguration>
-    val delayTemplateSubstitution: Boolean
-    val suppressObviousFunctions: Boolean
-    val includes: Set<File>
-    val suppressInheritedMembers: Boolean
+public interface DokkaConfiguration : Serializable {
+    public val moduleName: String
+    public val moduleVersion: String?
+    public val outputDir: File
+    public val cacheRoot: File?
+    public val offlineMode: Boolean
+    public val failOnWarning: Boolean
+    public val sourceSets: List<DokkaSourceSet>
+    public val modules: List<DokkaModuleDescription>
+    public val pluginsClasspath: List<File>
+    public val pluginsConfiguration: List<PluginConfiguration>
+    public val delayTemplateSubstitution: Boolean
+    public val suppressObviousFunctions: Boolean
+    public val includes: Set<File>
+    public val suppressInheritedMembers: Boolean
 
     /**
      * Whether coroutines dispatchers should be shutdown after
@@ -157,46 +158,46 @@ interface DokkaConfiguration : Serializable {
      * and closing it down will leave the build in an inoperable state.
      * One such example is unit tests, for which finalization should be disabled.
      */
-    val finalizeCoroutines: Boolean
+    public val finalizeCoroutines: Boolean
 
-    enum class SerializationFormat : Serializable {
+    public enum class SerializationFormat : Serializable {
         JSON, XML
     }
 
-    interface PluginConfiguration : Serializable {
-        val fqPluginName: String
-        val serializationFormat: SerializationFormat
-        val values: String
+    public interface PluginConfiguration : Serializable {
+        public val fqPluginName: String
+        public val serializationFormat: SerializationFormat
+        public val values: String
     }
 
-    interface DokkaSourceSet : Serializable {
-        val sourceSetID: DokkaSourceSetID
-        val displayName: String
-        val classpath: List<File>
-        val sourceRoots: Set<File>
-        val dependentSourceSets: Set<DokkaSourceSetID>
-        val samples: Set<File>
-        val includes: Set<File>
+    public interface DokkaSourceSet : Serializable {
+        public val sourceSetID: DokkaSourceSetID
+        public val displayName: String
+        public val classpath: List<File>
+        public val sourceRoots: Set<File>
+        public val dependentSourceSets: Set<DokkaSourceSetID>
+        public val samples: Set<File>
+        public val includes: Set<File>
 
         @Deprecated(message = "Use [documentedVisibilities] property for a more flexible control over documented visibilities")
-        val includeNonPublic: Boolean
-        val reportUndocumented: Boolean
-        val skipEmptyPackages: Boolean
-        val skipDeprecated: Boolean
-        val jdkVersion: Int
-        val sourceLinks: Set<SourceLinkDefinition>
-        val perPackageOptions: List<PackageOptions>
-        val externalDocumentationLinks: Set<ExternalDocumentationLink>
-        val languageVersion: String?
-        val apiVersion: String?
-        val noStdlibLink: Boolean
-        val noJdkLink: Boolean
-        val suppressedFiles: Set<File>
-        val analysisPlatform: Platform
-        val documentedVisibilities: Set<Visibility>
+        public val includeNonPublic: Boolean
+        public val reportUndocumented: Boolean
+        public val skipEmptyPackages: Boolean
+        public val skipDeprecated: Boolean
+        public val jdkVersion: Int
+        public val sourceLinks: Set<SourceLinkDefinition>
+        public val perPackageOptions: List<PackageOptions>
+        public val externalDocumentationLinks: Set<ExternalDocumentationLink>
+        public val languageVersion: String?
+        public val apiVersion: String?
+        public val noStdlibLink: Boolean
+        public val noJdkLink: Boolean
+        public val suppressedFiles: Set<File>
+        public val analysisPlatform: Platform
+        public val documentedVisibilities: Set<Visibility>
     }
 
-    enum class Visibility {
+    public enum class Visibility {
         /**
          * `public` modifier for Java, default visibility for Kotlin
          */
@@ -222,45 +223,45 @@ interface DokkaConfiguration : Serializable {
          */
         PACKAGE;
 
-        companion object {
-            fun fromString(value: String) = valueOf(value.toUpperCase())
+        public companion object {
+            public fun fromString(value: String): Visibility = valueOf(value.toUpperCase())
         }
     }
 
-    interface SourceLinkDefinition : Serializable {
-        val localDirectory: String
-        val remoteUrl: URL
-        val remoteLineSuffix: String?
+    public interface SourceLinkDefinition : Serializable {
+        public val localDirectory: String
+        public val remoteUrl: URL
+        public val remoteLineSuffix: String?
     }
 
-    interface DokkaModuleDescription : Serializable {
-        val name: String
-        val relativePathToOutputDirectory: File
-        val sourceOutputDirectory: File
-        val includes: Set<File>
+    public interface DokkaModuleDescription : Serializable {
+        public val name: String
+        public val relativePathToOutputDirectory: File
+        public val sourceOutputDirectory: File
+        public val includes: Set<File>
     }
 
-    interface PackageOptions : Serializable {
-        val matchingRegex: String
+    public interface PackageOptions : Serializable {
+        public val matchingRegex: String
 
         @Deprecated("Use [documentedVisibilities] property for a more flexible control over documented visibilities")
-        val includeNonPublic: Boolean
-        val reportUndocumented: Boolean?
-        val skipDeprecated: Boolean
-        val suppress: Boolean
-        val documentedVisibilities: Set<Visibility>
+        public val includeNonPublic: Boolean
+        public val reportUndocumented: Boolean?
+        public val skipDeprecated: Boolean
+        public val suppress: Boolean
+        public val documentedVisibilities: Set<Visibility>
     }
 
-    interface ExternalDocumentationLink : Serializable {
-        val url: URL
-        val packageListUrl: URL
+    public interface ExternalDocumentationLink : Serializable {
+        public val url: URL
+        public val packageListUrl: URL
 
-        companion object
+        public companion object
     }
 }
 
 @Suppress("FunctionName")
-fun ExternalDocumentationLink(
+public fun ExternalDocumentationLink(
     url: URL? = null,
     packageListUrl: URL? = null
 ): ExternalDocumentationLinkImpl {
@@ -273,7 +274,7 @@ fun ExternalDocumentationLink(
 }
 
 @Suppress("FunctionName")
-fun ExternalDocumentationLink(
+public fun ExternalDocumentationLink(
     url: String, packageListUrl: String? = null
 ): ExternalDocumentationLinkImpl =
     ExternalDocumentationLink(url.let(::URL), packageListUrl?.let(::URL))

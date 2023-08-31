@@ -21,52 +21,54 @@ import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.dokka.utilities.LoggingLevel
 
-class BaseDokkaTestGenerator(
+public class BaseDokkaTestGenerator(
     configuration: DokkaConfiguration,
     logger: DokkaLogger,
     testMethods: BaseTestMethods,
     additionalPlugins: List<DokkaPlugin> = emptyList()
 ) : DokkaTestGenerator<BaseTestMethods>(configuration, logger, testMethods, additionalPlugins) {
 
-    override fun generate() = with(testMethods) {
-        val dokkaGenerator = DokkaGenerator(configuration, logger)
+    override fun generate() {
+        with(testMethods) {
+            val dokkaGenerator = DokkaGenerator(configuration, logger)
 
-        val context =
-            dokkaGenerator.initializePlugins(configuration, logger, additionalPlugins)
-        pluginsSetupStage(context)
+            val context =
+                dokkaGenerator.initializePlugins(configuration, logger, additionalPlugins)
+            pluginsSetupStage(context)
 
-        val singleModuleGeneration = context.single(CoreExtensions.generation) as SingleModuleGeneration
+            val singleModuleGeneration = context.single(CoreExtensions.generation) as SingleModuleGeneration
 
-        val modulesFromPlatforms = singleModuleGeneration.createDocumentationModels()
-        documentablesCreationStage(modulesFromPlatforms)
+            val modulesFromPlatforms = singleModuleGeneration.createDocumentationModels()
+            documentablesCreationStage(modulesFromPlatforms)
 
-        verificationStage { singleModuleGeneration.validityCheck(context) }
+            verificationStage { singleModuleGeneration.validityCheck(context) }
 
-        val filteredModules = singleModuleGeneration.transformDocumentationModelBeforeMerge(modulesFromPlatforms)
-        documentablesFirstTransformationStep(filteredModules)
+            val filteredModules = singleModuleGeneration.transformDocumentationModelBeforeMerge(modulesFromPlatforms)
+            documentablesFirstTransformationStep(filteredModules)
 
-        val documentationModel = singleModuleGeneration.mergeDocumentationModels(filteredModules)
-        documentablesMergingStage(documentationModel!!)
+            val documentationModel = singleModuleGeneration.mergeDocumentationModels(filteredModules)
+            documentablesMergingStage(documentationModel!!)
 
-        val transformedDocumentation = singleModuleGeneration.transformDocumentationModelAfterMerge(documentationModel)
-        documentablesTransformationStage(transformedDocumentation)
+            val transformedDocumentation = singleModuleGeneration.transformDocumentationModelAfterMerge(documentationModel)
+            documentablesTransformationStage(transformedDocumentation)
 
-        val pages = singleModuleGeneration.createPages(transformedDocumentation)
-        pagesGenerationStage(pages)
+            val pages = singleModuleGeneration.createPages(transformedDocumentation)
+            pagesGenerationStage(pages)
 
-        val transformedPages = singleModuleGeneration.transformPages(pages)
-        pagesTransformationStage(transformedPages)
+            val transformedPages = singleModuleGeneration.transformPages(pages)
+            pagesTransformationStage(transformedPages)
 
-        singleModuleGeneration.render(transformedPages)
-        renderingStage(transformedPages, context)
+            singleModuleGeneration.render(transformedPages)
+            renderingStage(transformedPages, context)
 
-        singleModuleGeneration.runPostActions()
+            singleModuleGeneration.runPostActions()
 
-        singleModuleGeneration.reportAfterRendering()
+            singleModuleGeneration.reportAfterRendering()
+        }
     }
 }
 
-data class BaseTestMethods(
+public data class BaseTestMethods(
     override val pluginsSetupStage: (DokkaContext) -> Unit,
     override val verificationStage: (() -> Unit) -> Unit,
     override val documentablesCreationStage: (List<DModule>) -> Unit,
@@ -87,31 +89,35 @@ data class BaseTestMethods(
     renderingStage,
 )
 
-class BaseTestBuilder : TestBuilder<BaseTestMethods>() {
-    var pluginsSetupStage: (DokkaContext) -> Unit = {}
-    var verificationStage: (() -> Unit) -> Unit = {}
-    var documentablesCreationStage: (List<DModule>) -> Unit = {}
-    var preMergeDocumentablesTransformationStage: (List<DModule>) -> Unit = {}
-    var documentablesMergingStage: (DModule) -> Unit = {}
-    var documentablesTransformationStage: (DModule) -> Unit = {}
-    var pagesGenerationStage: (RootPageNode) -> Unit = {}
-    var pagesTransformationStage: (RootPageNode) -> Unit = {}
-    var renderingStage: (RootPageNode, DokkaContext) -> Unit = { _, _ -> }
+public class BaseTestBuilder : TestBuilder<BaseTestMethods>() {
+    public var pluginsSetupStage: (DokkaContext) -> Unit = {}
+    public var verificationStage: (() -> Unit) -> Unit = {}
+    public var documentablesCreationStage: (List<DModule>) -> Unit = {}
+    public var preMergeDocumentablesTransformationStage: (List<DModule>) -> Unit = {}
+    public var documentablesMergingStage: (DModule) -> Unit = {}
+    public var documentablesTransformationStage: (DModule) -> Unit = {}
+    public var pagesGenerationStage: (RootPageNode) -> Unit = {}
+    public var pagesTransformationStage: (RootPageNode) -> Unit = {}
+    public var renderingStage: (RootPageNode, DokkaContext) -> Unit = { _, _ -> }
 
-    override fun build() = BaseTestMethods(
-        pluginsSetupStage,
-        verificationStage,
-        documentablesCreationStage,
-        preMergeDocumentablesTransformationStage,
-        documentablesMergingStage,
-        documentablesTransformationStage,
-        pagesGenerationStage,
-        pagesTransformationStage,
-        renderingStage
-    )
+    override fun build(): BaseTestMethods {
+        return BaseTestMethods(
+            pluginsSetupStage,
+            verificationStage,
+            documentablesCreationStage,
+            preMergeDocumentablesTransformationStage,
+            documentablesMergingStage,
+            documentablesTransformationStage,
+            pagesGenerationStage,
+            pagesTransformationStage,
+            renderingStage
+        )
+    }
 }
 
-abstract class BaseAbstractTest(logger: TestLogger = TestLogger(DokkaConsoleLogger(LoggingLevel.DEBUG))) : AbstractTest<BaseTestMethods, BaseTestBuilder, BaseDokkaTestGenerator>(
+public abstract class BaseAbstractTest(
+    logger: TestLogger = TestLogger(DokkaConsoleLogger(LoggingLevel.DEBUG))
+) : AbstractTest<BaseTestMethods, BaseTestBuilder, BaseDokkaTestGenerator>(
     ::BaseTestBuilder,
     ::BaseDokkaTestGenerator,
     logger,

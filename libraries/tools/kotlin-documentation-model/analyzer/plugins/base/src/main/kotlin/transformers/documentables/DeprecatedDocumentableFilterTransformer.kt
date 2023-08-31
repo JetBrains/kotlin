@@ -22,8 +22,9 @@ import org.jetbrains.dokka.transformers.documentation.sourceSet
  * Documentables with [kotlin.Deprecated.level] set to [DeprecationLevel.HIDDEN]
  * are suppressed regardless of global and package options.
  */
-class DeprecatedDocumentableFilterTransformer(context: DokkaContext) :
-    SuppressedByConditionDocumentableFilterTransformer(context) {
+public class DeprecatedDocumentableFilterTransformer(
+    context: DokkaContext
+) : SuppressedByConditionDocumentableFilterTransformer(context) {
 
     override fun shouldBeSuppressed(d: Documentable): Boolean {
         val annotations = (d as? WithExtraProperties<*>)?.annotations() ?: return false

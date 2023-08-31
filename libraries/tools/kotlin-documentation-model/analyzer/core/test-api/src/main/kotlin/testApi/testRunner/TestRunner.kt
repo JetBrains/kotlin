@@ -23,14 +23,15 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 // TODO: take dokka configuration from file
-abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : DokkaTestGenerator<M>>(
+public abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : DokkaTestGenerator<M>>(
     protected val testBuilder: () -> T,
     protected val dokkaTestGenerator: (DokkaConfiguration, DokkaLogger, M, List<DokkaPlugin>) -> D,
     protected val logger: TestLogger,
 ) {
-    protected fun getTestDataDir(name: String) =
-        File("src/test/resources/$name").takeIf { it.exists() }?.toPath()
+    protected fun getTestDataDir(name: String): Path {
+        return File("src/test/resources/$name").takeIf { it.exists() }?.toPath()
             ?: throw InvalidPathException(name, "Cannot be found")
+    }
 
     /**
      * @param cleanupOutput if set to true, any temporary files will be cleaned up after execution. If set to false,
@@ -198,38 +199,38 @@ abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : DokkaTestGe
             ?.replaceAfter(".jar", "")
     }
 
-    protected val stdlibExternalDocumentationLink = ExternalDocumentationLinkImpl(
+    protected val stdlibExternalDocumentationLink: ExternalDocumentationLinkImpl = ExternalDocumentationLinkImpl(
         URL("https://kotlinlang.org/api/latest/jvm/stdlib/"),
         URL("https://kotlinlang.org/api/latest/jvm/stdlib/package-list")
     )
 
-    companion object {
+    public companion object {
         private val filePathRegex = Regex("""[\n^](\/[\w|\-]+)+(\.\w+)?\s*\n""")
     }
 }
 
-interface TestMethods
+public interface TestMethods
 
-open class CoreTestMethods(
-    open val pluginsSetupStage: (DokkaContext) -> Unit,
-    open val verificationStage: (() -> Unit) -> Unit,
-    open val documentablesCreationStage: (List<DModule>) -> Unit,
-    open val documentablesMergingStage: (DModule) -> Unit,
-    open val documentablesTransformationStage: (DModule) -> Unit,
-    open val pagesGenerationStage: (RootPageNode) -> Unit,
-    open val pagesTransformationStage: (RootPageNode) -> Unit,
-    open val renderingStage: (RootPageNode, DokkaContext) -> Unit,
+public open class CoreTestMethods(
+    public open val pluginsSetupStage: (DokkaContext) -> Unit,
+    public open val verificationStage: (() -> Unit) -> Unit,
+    public open val documentablesCreationStage: (List<DModule>) -> Unit,
+    public open val documentablesMergingStage: (DModule) -> Unit,
+    public open val documentablesTransformationStage: (DModule) -> Unit,
+    public open val pagesGenerationStage: (RootPageNode) -> Unit,
+    public open val pagesTransformationStage: (RootPageNode) -> Unit,
+    public open val renderingStage: (RootPageNode, DokkaContext) -> Unit,
 ) : TestMethods
 
-abstract class TestBuilder<M : TestMethods> {
-    abstract fun build(): M
+public abstract class TestBuilder<M : TestMethods> {
+    public abstract fun build(): M
 }
 
-abstract class DokkaTestGenerator<T : TestMethods>(
+public abstract class DokkaTestGenerator<T : TestMethods>(
     protected val configuration: DokkaConfiguration,
     protected val logger: DokkaLogger,
     protected val testMethods: T,
     protected val additionalPlugins: List<DokkaPlugin> = emptyList(),
 ) {
-    abstract fun generate()
+    public abstract fun generate()
 }

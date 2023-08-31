@@ -10,7 +10,7 @@ import org.jetbrains.dokka.model.doc.DocumentationNode
 import java.util.*
 
 @InternalDokkaApi
-class DocTagParserContext {
+public class DocTagParserContext {
     /**
      * exists for resolving `@link element` links, where the referenced
      * PSI element is mapped as DRI
@@ -30,7 +30,7 @@ class DocTagParserContext {
     /**
      * @return key of the stored DRI
      */
-    fun store(dri: DRI): String {
+    public fun store(dri: DRI): String {
         val id = dri.toString()
         driMap[id] = dri
         return id
@@ -39,13 +39,13 @@ class DocTagParserContext {
     /**
      * @return key of the stored documentation node
      */
-    fun store(documentationNode: DocumentationNode): String {
+    public fun store(documentationNode: DocumentationNode): String {
         val id = UUID.randomUUID().toString()
         inheritDocSections[id] = documentationNode
         return id
     }
 
-    fun getDri(id: String): DRI? = driMap[id]
+    public fun getDri(id: String): DRI? = driMap[id]
 
-    fun getDocumentationNode(id: String): DocumentationNode? = inheritDocSections[id]
+    public fun getDocumentationNode(id: String): DocumentationNode? = inheritDocSections[id]
 }

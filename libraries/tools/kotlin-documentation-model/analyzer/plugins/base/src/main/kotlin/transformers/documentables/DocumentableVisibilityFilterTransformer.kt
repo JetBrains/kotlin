@@ -11,12 +11,16 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 
-class DocumentableVisibilityFilterTransformer(val context: DokkaContext) : PreMergeDocumentableTransformer {
+public class DocumentableVisibilityFilterTransformer(
+    public val context: DokkaContext
+) : PreMergeDocumentableTransformer {
 
-    override fun invoke(modules: List<DModule>) = modules.map { original ->
-        val sourceSet = original.sourceSets.single()
-        val packageOptions = sourceSet.perPackageOptions
-        DocumentableVisibilityFilter(packageOptions, sourceSet).processModule(original)
+    override fun invoke(modules: List<DModule>): List<DModule> {
+        return modules.map { original ->
+            val sourceSet = original.sourceSets.single()
+            val packageOptions = sourceSet.perPackageOptions
+            DocumentableVisibilityFilter(packageOptions, sourceSet).processModule(original)
+        }
     }
 
     private class DocumentableVisibilityFilter(

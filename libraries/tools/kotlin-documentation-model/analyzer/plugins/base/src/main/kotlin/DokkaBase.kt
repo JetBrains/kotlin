@@ -30,67 +30,70 @@ import org.jetbrains.dokka.base.transformers.pages.sourcelinks.SourceLinksTransf
 import org.jetbrains.dokka.base.transformers.pages.tags.CustomTagContentProvider
 import org.jetbrains.dokka.base.transformers.pages.tags.SinceKotlinTagContentProvider
 import org.jetbrains.dokka.base.translators.documentables.DefaultDocumentableToPageTranslator
-import org.jetbrains.dokka.plugability.DokkaPlugin
-import org.jetbrains.dokka.plugability.DokkaPluginApiPreview
-import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
+import org.jetbrains.dokka.generation.Generation
+import org.jetbrains.dokka.plugability.*
+import org.jetbrains.dokka.renderers.Renderer
+import org.jetbrains.dokka.transformers.documentation.DocumentableMerger
+import org.jetbrains.dokka.transformers.documentation.DocumentableToPageTranslator
+import org.jetbrains.dokka.transformers.documentation.DocumentableTransformer
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 import org.jetbrains.dokka.transformers.pages.PageTransformer
 
 @Suppress("unused")
-class DokkaBase : DokkaPlugin() {
+public class DokkaBase : DokkaPlugin() {
 
-    val preMergeDocumentableTransformer by extensionPoint<PreMergeDocumentableTransformer>()
-    val pageMergerStrategy by extensionPoint<PageMergerStrategy>()
-    val commentsToContentConverter by extensionPoint<CommentsToContentConverter>()
-    val customTagContentProvider by extensionPoint<CustomTagContentProvider>()
-    val signatureProvider by extensionPoint<SignatureProvider>()
-    val locationProviderFactory by extensionPoint<LocationProviderFactory>()
-    val externalLocationProviderFactory by extensionPoint<ExternalLocationProviderFactory>()
-    val outputWriter by extensionPoint<OutputWriter>()
-    val htmlPreprocessors by extensionPoint<PageTransformer>()
+    public val preMergeDocumentableTransformer: ExtensionPoint<PreMergeDocumentableTransformer> by extensionPoint()
+    public val pageMergerStrategy: ExtensionPoint<PageMergerStrategy> by extensionPoint()
+    public val commentsToContentConverter: ExtensionPoint<CommentsToContentConverter> by extensionPoint()
+    public val customTagContentProvider: ExtensionPoint<CustomTagContentProvider> by extensionPoint()
+    public val signatureProvider: ExtensionPoint<SignatureProvider> by extensionPoint()
+    public val locationProviderFactory: ExtensionPoint<LocationProviderFactory> by extensionPoint()
+    public val externalLocationProviderFactory: ExtensionPoint<ExternalLocationProviderFactory> by extensionPoint()
+    public val outputWriter: ExtensionPoint<OutputWriter> by extensionPoint()
+    public val htmlPreprocessors: ExtensionPoint<PageTransformer> by extensionPoint()
 
     @Deprecated("It is not used anymore")
-    val tabSortingStrategy by extensionPoint<TabSortingStrategy>()
-    val immediateHtmlCommandConsumer by extensionPoint<ImmediateHtmlCommandConsumer>()
+    public val tabSortingStrategy: ExtensionPoint<TabSortingStrategy> by extensionPoint()
+    public val immediateHtmlCommandConsumer: ExtensionPoint<ImmediateHtmlCommandConsumer> by extensionPoint()
 
 
-    val singleGeneration by extending {
+    public val singleGeneration: Extension<Generation, *, *> by extending {
         CoreExtensions.generation providing ::SingleModuleGeneration
     }
 
-    val documentableMerger by extending {
+    public val documentableMerger: Extension<DocumentableMerger, *, *> by extending {
         CoreExtensions.documentableMerger providing ::DefaultDocumentableMerger
     }
 
-    val deprecatedDocumentableFilter by extending {
+    public val deprecatedDocumentableFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::DeprecatedDocumentableFilterTransformer
     }
 
-    val suppressedDocumentableFilter by extending {
+    public val suppressedDocumentableFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::SuppressedByConfigurationDocumentableFilterTransformer
     }
 
-    val suppressedBySuppressTagDocumentableFilter by extending {
+    public val suppressedBySuppressTagDocumentableFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::SuppressTagDocumentableFilter
     }
 
-    val documentableVisibilityFilter by extending {
+    public val documentableVisibilityFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::DocumentableVisibilityFilterTransformer
     }
 
-    val obviousFunctionsVisbilityFilter by extending {
+    public val obviousFunctionsVisbilityFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::ObviousFunctionsDocumentableFilterTransformer
     }
 
-    val inheritedEntriesVisbilityFilter by extending {
+    public val inheritedEntriesVisbilityFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::InheritedEntriesDocumentableFilterTransformer
     }
 
-    val kotlinArrayDocumentableReplacer by extending {
+    public val kotlinArrayDocumentableReplacer: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::KotlinArrayDocumentableReplacerTransformer
     }
 
-    val emptyPackagesFilter by extending {
+    public val emptyPackagesFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::EmptyPackagesFilterTransformer order {
             after(
                 deprecatedDocumentableFilter,
@@ -103,124 +106,127 @@ class DokkaBase : DokkaPlugin() {
         }
     }
 
-    val emptyModulesFilter by extending {
+    public val emptyModulesFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer with EmptyModulesFilterTransformer() order {
             after(emptyPackagesFilter)
         }
     }
 
-    val modulesAndPackagesDocumentation by extending {
+    public val modulesAndPackagesDocumentation: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::ModuleAndPackageDocumentationTransformer
     }
 
-    val actualTypealiasAdder by extending {
+    public val actualTypealiasAdder: Extension<DocumentableTransformer, *, *> by extending {
         CoreExtensions.documentableTransformer with ActualTypealiasAdder()
     }
 
-    val kotlinSignatureProvider by extending {
+    public val kotlinSignatureProvider: Extension<SignatureProvider, *, *> by extending {
         signatureProvider providing ::KotlinSignatureProvider
     }
 
-    val sinceKotlinTransformer by extending {
-        CoreExtensions.documentableTransformer providing ::SinceKotlinTransformer applyIf { SinceKotlinTransformer.shouldDisplaySinceKotlin() } order {
+    public val sinceKotlinTransformer: Extension<DocumentableTransformer, *, *> by extending {
+        CoreExtensions.documentableTransformer providing ::SinceKotlinTransformer applyIf {
+            SinceKotlinTransformer.shouldDisplaySinceKotlin()
+        } order {
             before(extensionsExtractor)
         }
     }
 
-    val inheritorsExtractor by extending {
+    public val inheritorsExtractor: Extension<DocumentableTransformer, *, *> by extending {
         CoreExtensions.documentableTransformer with InheritorsExtractorTransformer()
     }
 
-    val undocumentedCodeReporter by extending {
+    public val undocumentedCodeReporter: Extension<DocumentableTransformer, *, *> by extending {
         CoreExtensions.documentableTransformer with ReportUndocumentedTransformer()
     }
 
-    val extensionsExtractor by extending {
+    public val extensionsExtractor: Extension<DocumentableTransformer, *, *> by extending {
         CoreExtensions.documentableTransformer with ExtensionExtractorTransformer()
     }
 
-    val documentableToPageTranslator by extending {
+    public val documentableToPageTranslator: Extension<DocumentableToPageTranslator, *, *> by extending {
         CoreExtensions.documentableToPageTranslator providing ::DefaultDocumentableToPageTranslator
     }
 
-    val docTagToContentConverter by extending {
+    public val docTagToContentConverter: Extension<CommentsToContentConverter, *, *> by extending {
         commentsToContentConverter with DocTagToContentConverter()
     }
 
-    val sinceKotlinTagContentProvider by extending {
-        customTagContentProvider with SinceKotlinTagContentProvider applyIf { SinceKotlinTransformer.shouldDisplaySinceKotlin() }
-    }
-
-    val pageMerger by extending {
-        CoreExtensions.pageTransformer providing ::PageMerger order {
+    public val sinceKotlinTagContentProvider: Extension<CustomTagContentProvider, *, *> by extending {
+        customTagContentProvider with SinceKotlinTagContentProvider applyIf {
+            SinceKotlinTransformer.shouldDisplaySinceKotlin()
         }
     }
 
-    val sourceSetMerger by extending {
+    public val pageMerger: Extension<PageTransformer, *, *> by extending {
+        CoreExtensions.pageTransformer providing ::PageMerger
+    }
+
+    public val sourceSetMerger: Extension<PageTransformer, *, *> by extending {
         CoreExtensions.pageTransformer providing ::SourceSetMergingPageTransformer
     }
 
-    val fallbackMerger by extending {
+    public val fallbackMerger: Extension<PageMergerStrategy, *, *> by extending {
         pageMergerStrategy providing { ctx -> FallbackPageMergerStrategy(ctx.logger) }
     }
 
-    val sameMethodNameMerger by extending {
+    public val sameMethodNameMerger: Extension<PageMergerStrategy, *, *> by extending {
         pageMergerStrategy providing { ctx -> SameMethodNamePageMergerStrategy(ctx.logger) } order {
             before(fallbackMerger)
         }
     }
 
-    val htmlRenderer by extending {
+    public val htmlRenderer: Extension<Renderer, *, *> by extending {
         CoreExtensions.renderer providing ::HtmlRenderer
     }
 
-    val locationProvider by extending {
+    public val locationProvider: Extension<LocationProviderFactory, *, *> by extending {
         locationProviderFactory providing ::DokkaLocationProviderFactory
     }
 
-    val javadocLocationProvider by extending {
+    public val javadocLocationProvider: Extension<ExternalLocationProviderFactory, *, *> by extending {
         externalLocationProviderFactory providing ::JavadocExternalLocationProviderFactory
     }
 
-    val dokkaLocationProvider by extending {
+    public val dokkaLocationProvider: Extension<ExternalLocationProviderFactory, *, *> by extending {
         externalLocationProviderFactory providing ::DefaultExternalLocationProviderFactory
     }
 
-    val fileWriter by extending {
+    public val fileWriter: Extension<OutputWriter, *, *> by extending {
         outputWriter providing ::FileWriter
     }
 
-    val rootCreator by extending {
+    public val rootCreator: Extension<PageTransformer, *, *> by extending {
         htmlPreprocessors with RootCreator applyIf { !delayTemplateSubstitution }
     }
 
-    val defaultSamplesTransformer by extending {
+    public val defaultSamplesTransformer: Extension<PageTransformer, *, *> by extending {
         CoreExtensions.pageTransformer providing ::DefaultSamplesTransformer order {
             before(pageMerger)
         }
     }
 
-    val sourceLinksTransformer by extending {
+    public val sourceLinksTransformer: Extension<PageTransformer, *, *> by extending {
         htmlPreprocessors providing ::SourceLinksTransformer order { after(rootCreator) }
     }
 
-    val navigationPageInstaller by extending {
+    public val navigationPageInstaller: Extension<PageTransformer, *, *> by extending {
         htmlPreprocessors providing ::NavigationPageInstaller order { after(rootCreator) }
     }
 
-    val scriptsInstaller by extending {
+    public val scriptsInstaller: Extension<PageTransformer, *, *> by extending {
         htmlPreprocessors providing ::ScriptsInstaller order { after(rootCreator) }
     }
 
-    val stylesInstaller by extending {
+    public val stylesInstaller: Extension<PageTransformer, *, *> by extending {
         htmlPreprocessors providing ::StylesInstaller order { after(rootCreator) }
     }
 
-    val assetsInstaller by extending {
+    public val assetsInstaller: Extension<PageTransformer, *, *> by extending {
         htmlPreprocessors with AssetsInstaller order { after(rootCreator) } applyIf { !delayTemplateSubstitution }
     }
 
-    val customResourceInstaller by extending {
+    public val customResourceInstaller: Extension<PageTransformer, *, *> by extending {
         htmlPreprocessors providing { ctx -> CustomResourceInstaller(ctx) } order {
             after(stylesInstaller)
             after(scriptsInstaller)
@@ -228,65 +234,65 @@ class DokkaBase : DokkaPlugin() {
         }
     }
 
-    val packageListCreator by extending {
+    public val packageListCreator: Extension<PageTransformer, *, *> by extending {
         htmlPreprocessors providing {
             PackageListCreator(it, RecognizedLinkFormat.DokkaHtml)
         } order { after(rootCreator) }
     }
 
-    val sourcesetDependencyAppender by extending {
+    public val sourcesetDependencyAppender: Extension<PageTransformer, *, *> by extending {
         htmlPreprocessors providing ::SourcesetDependencyAppender order { after(rootCreator) }
     }
 
-    val resolveLinkConsumer by extending {
+    public val resolveLinkConsumer: Extension<ImmediateHtmlCommandConsumer, *, *> by extending {
         immediateHtmlCommandConsumer with ResolveLinkConsumer
     }
-    val replaceVersionConsumer by extending {
+    public val replaceVersionConsumer: Extension<ImmediateHtmlCommandConsumer, *, *> by extending {
         immediateHtmlCommandConsumer providing ::ReplaceVersionsConsumer
     }
-    val pathToRootConsumer by extending {
+    public val pathToRootConsumer: Extension<ImmediateHtmlCommandConsumer, *, *> by extending {
         immediateHtmlCommandConsumer with PathToRootConsumer
     }
-    val baseSearchbarDataInstaller by extending {
+    public val baseSearchbarDataInstaller: Extension<PageTransformer, *, *> by extending {
         htmlPreprocessors providing ::SearchbarDataInstaller order { after(sourceLinksTransformer) }
     }
 
     //<editor-fold desc="Deprecated API left for compatibility">
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val kotlinAnalysis by extensionPoint<org.jetbrains.dokka.analysis.KotlinAnalysis>()
+    public val kotlinAnalysis: ExtensionPoint<org.jetbrains.dokka.analysis.KotlinAnalysis> by extensionPoint()
 
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val externalDocumentablesProvider by extensionPoint<org.jetbrains.dokka.base.translators.descriptors.ExternalDocumentablesProvider>()
+    public val externalDocumentablesProvider: ExtensionPoint<org.jetbrains.dokka.base.translators.descriptors.ExternalDocumentablesProvider> by extensionPoint()
 
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val externalClasslikesTranslator by extensionPoint<org.jetbrains.dokka.base.translators.descriptors.ExternalClasslikesTranslator>()
+    public val externalClasslikesTranslator: ExtensionPoint<org.jetbrains.dokka.base.translators.descriptors.ExternalClasslikesTranslator> by extensionPoint()
 
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val descriptorToDocumentableTranslator: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator, *, *>
+    public val descriptorToDocumentableTranslator: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator, *, *>
         get() = throw org.jetbrains.dokka.base.deprecated.AnalysisApiDeprecatedError()
 
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val psiToDocumentableTranslator: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator, *, *>
+    public val psiToDocumentableTranslator: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator, *, *>
         get() = throw org.jetbrains.dokka.base.deprecated.AnalysisApiDeprecatedError()
 
     @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
     @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val defaultKotlinAnalysis: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.analysis.KotlinAnalysis, *, *>
+    public val defaultKotlinAnalysis: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.analysis.KotlinAnalysis, *, *>
         get() = throw org.jetbrains.dokka.base.deprecated.AnalysisApiDeprecatedError()
 
     @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
     @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val defaultExternalDocumentablesProvider: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.base.translators.descriptors.ExternalDocumentablesProvider, *, *>
+    public val defaultExternalDocumentablesProvider: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.base.translators.descriptors.ExternalDocumentablesProvider, *, *>
         get() = throw org.jetbrains.dokka.base.deprecated.AnalysisApiDeprecatedError()
 
     @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
     @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val defaultExternalClasslikesTranslator: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.base.translators.descriptors.ExternalClasslikesTranslator, *, *>
+    public val defaultExternalClasslikesTranslator: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.base.translators.descriptors.ExternalClasslikesTranslator, *, *>
         get() = throw org.jetbrains.dokka.base.deprecated.AnalysisApiDeprecatedError()
     //</editor-fold>
 

@@ -6,10 +6,10 @@ package org.jetbrains.dokka
 
 import java.util.function.BiConsumer
 
-interface DokkaBootstrap {
+public interface DokkaBootstrap {
     @Throws(Throwable::class)
-    fun configure(serializedConfigurationJSON: String, logger: BiConsumer<String, String>)
+    public fun configure(serializedConfigurationJSON: String, logger: BiConsumer<String, String>)
 
     @Throws(Throwable::class)
-    fun generate()
+    public fun generate()
 }

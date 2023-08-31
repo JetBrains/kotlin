@@ -10,92 +10,95 @@ import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.model.properties.PropertyContainer
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 
-interface AnnotationTarget
+public interface AnnotationTarget
 
-abstract class Documentable : WithChildren<Documentable>,
+public abstract class Documentable : WithChildren<Documentable>,
     AnnotationTarget {
-    abstract val name: String?
-    abstract val dri: DRI
-    abstract val documentation: SourceSetDependent<DocumentationNode>
-    abstract val sourceSets: Set<DokkaSourceSet>
-    abstract val expectPresentInSet: DokkaSourceSet?
+    public abstract val name: String?
+    public abstract val dri: DRI
+    public abstract val documentation: SourceSetDependent<DocumentationNode>
+    public abstract val sourceSets: Set<DokkaSourceSet>
+    public abstract val expectPresentInSet: DokkaSourceSet?
     abstract override val children: List<Documentable>
 
     override fun toString(): String =
         "${javaClass.simpleName}($dri)"
 
-    override fun equals(other: Any?) =
+    override fun equals(other: Any?): Boolean =
         other is Documentable && this.dri == other.dri // TODO: https://github.com/Kotlin/dokka/pull/667#discussion_r382555806
 
-    override fun hashCode() = dri.hashCode()
+    override fun hashCode(): Int = dri.hashCode()
 }
 
-typealias SourceSetDependent<T> = Map<DokkaSourceSet, T>
+public typealias SourceSetDependent<T> = Map<DokkaSourceSet, T>
 
-interface WithSources {
-    val sources: SourceSetDependent<DocumentableSource>
+public interface WithSources {
+    public val sources: SourceSetDependent<DocumentableSource>
 }
 
-interface WithScope {
-    val functions: List<DFunction>
-    val properties: List<DProperty>
-    val classlikes: List<DClasslike>
+public interface WithScope {
+    public val functions: List<DFunction>
+    public val properties: List<DProperty>
+    public val classlikes: List<DClasslike>
 }
 
-interface WithVisibility {
-    val visibility: SourceSetDependent<Visibility>
+public interface WithVisibility {
+    public val visibility: SourceSetDependent<Visibility>
 }
 
-interface WithType {
-    val type: Bound
+public interface WithType {
+    public val type: Bound
 }
 
-interface WithAbstraction {
-    val modifier: SourceSetDependent<Modifier>
+public interface WithAbstraction {
+    public val modifier: SourceSetDependent<Modifier>
 }
 
-sealed class Modifier(val name: String)
-sealed class KotlinModifier(name: String) : Modifier(name) {
-    object Abstract : KotlinModifier("abstract")
-    object Open : KotlinModifier("open")
-    object Final : KotlinModifier("final")
-    object Sealed : KotlinModifier("sealed")
-    object Empty : KotlinModifier("")
+public sealed class Modifier(
+    public val name: String
+)
+
+public sealed class KotlinModifier(name: String) : Modifier(name) {
+    public object Abstract : KotlinModifier("abstract")
+    public object Open : KotlinModifier("open")
+    public object Final : KotlinModifier("final")
+    public object Sealed : KotlinModifier("sealed")
+    public object Empty : KotlinModifier("")
 }
 
-sealed class JavaModifier(name: String) : Modifier(name) {
-    object Abstract : JavaModifier("abstract")
-    object Final : JavaModifier("final")
-    object Empty : JavaModifier("")
+public sealed class JavaModifier(name: String) : Modifier(name) {
+    public object Abstract : JavaModifier("abstract")
+    public object Final : JavaModifier("final")
+    public object Empty : JavaModifier("")
 }
 
-interface WithCompanion {
-    val companion: DObject?
+public interface WithCompanion {
+    public val companion: DObject?
 }
 
-interface WithConstructors {
-    val constructors: List<DFunction>
+public interface WithConstructors {
+    public val constructors: List<DFunction>
 }
 
-interface WithGenerics {
-    val generics: List<DTypeParameter>
+public interface WithGenerics {
+    public val generics: List<DTypeParameter>
 }
 
-interface WithSupertypes {
-    val supertypes: SourceSetDependent<List<TypeConstructorWithKind>>
+public interface WithSupertypes {
+    public val supertypes: SourceSetDependent<List<TypeConstructorWithKind>>
 }
 
-interface WithIsExpectActual {
-    val isExpectActual: Boolean
+public interface WithIsExpectActual {
+    public val isExpectActual: Boolean
 }
 
-interface Callable : WithVisibility, WithType, WithAbstraction, WithSources, WithIsExpectActual {
-    val receiver: DParameter?
+public interface Callable : WithVisibility, WithType, WithAbstraction, WithSources, WithIsExpectActual {
+    public val receiver: DParameter?
 }
 
-sealed class DClasslike : Documentable(), WithScope, WithVisibility, WithSources, WithIsExpectActual
+public sealed class DClasslike : Documentable(), WithScope, WithVisibility, WithSources, WithIsExpectActual
 
-data class DModule(
+public data class DModule(
     override val name: String,
     val packages: List<DPackage>,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -107,10 +110,10 @@ data class DModule(
     override val children: List<Documentable>
         get() = packages
 
-    override fun withNewExtras(newExtras: PropertyContainer<DModule>) = copy(extra = newExtras)
+    override fun withNewExtras(newExtras: PropertyContainer<DModule>): DModule = copy(extra = newExtras)
 }
 
-data class DPackage(
+public data class DPackage(
     override val dri: DRI,
     override val functions: List<DFunction>,
     override val properties: List<DProperty>,
@@ -134,10 +137,10 @@ data class DPackage(
 
     override val children: List<Documentable> = properties + functions + classlikes + typealiases
 
-    override fun withNewExtras(newExtras: PropertyContainer<DPackage>) = copy(extra = newExtras)
+    override fun withNewExtras(newExtras: PropertyContainer<DPackage>): DPackage = copy(extra = newExtras)
 }
 
-data class DClass(
+public data class DClass(
     override val dri: DRI,
     override val name: String,
     override val constructors: List<DFunction>,
@@ -161,10 +164,10 @@ data class DClass(
     override val children: List<Documentable>
         get() = (functions + properties + classlikes + constructors)
 
-    override fun withNewExtras(newExtras: PropertyContainer<DClass>) = copy(extra = newExtras)
+    override fun withNewExtras(newExtras: PropertyContainer<DClass>): DClass = copy(extra = newExtras)
 }
 
-data class DEnum(
+public data class DEnum(
     override val dri: DRI,
     override val name: String,
     val entries: List<DEnumEntry>,
@@ -185,10 +188,10 @@ data class DEnum(
     override val children: List<Documentable>
         get() = (entries + functions + properties + classlikes + constructors)
 
-    override fun withNewExtras(newExtras: PropertyContainer<DEnum>) = copy(extra = newExtras)
+    override fun withNewExtras(newExtras: PropertyContainer<DEnum>): DEnum = copy(extra = newExtras)
 }
 
-data class DEnumEntry(
+public data class DEnumEntry(
     override val dri: DRI,
     override val name: String,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -202,10 +205,10 @@ data class DEnumEntry(
     override val children: List<Documentable>
         get() = (functions + properties + classlikes)
 
-    override fun withNewExtras(newExtras: PropertyContainer<DEnumEntry>) = copy(extra = newExtras)
+    override fun withNewExtras(newExtras: PropertyContainer<DEnumEntry>): DEnumEntry = copy(extra = newExtras)
 }
 
-data class DFunction(
+public data class DFunction(
     override val dri: DRI,
     override val name: String,
     val isConstructor: Boolean,
@@ -225,10 +228,10 @@ data class DFunction(
     override val children: List<Documentable>
         get() = parameters
 
-    override fun withNewExtras(newExtras: PropertyContainer<DFunction>) = copy(extra = newExtras)
+    override fun withNewExtras(newExtras: PropertyContainer<DFunction>): DFunction = copy(extra = newExtras)
 }
 
-data class DInterface(
+public data class DInterface(
     override val dri: DRI,
     override val name: String,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -248,10 +251,10 @@ data class DInterface(
     override val children: List<Documentable>
         get() = (functions + properties + classlikes)
 
-    override fun withNewExtras(newExtras: PropertyContainer<DInterface>) = copy(extra = newExtras)
+    override fun withNewExtras(newExtras: PropertyContainer<DInterface>): DInterface = copy(extra = newExtras)
 }
 
-data class DObject(
+public data class DObject(
     override val name: String?,
     override val dri: DRI,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -269,10 +272,10 @@ data class DObject(
     override val children: List<Documentable>
         get() = (functions + properties + classlikes)
 
-    override fun withNewExtras(newExtras: PropertyContainer<DObject>) = copy(extra = newExtras)
+    override fun withNewExtras(newExtras: PropertyContainer<DObject>): DObject = copy(extra = newExtras)
 }
 
-data class DAnnotation(
+public data class DAnnotation(
     override val name: String,
     override val dri: DRI,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -292,10 +295,10 @@ data class DAnnotation(
     override val children: List<Documentable>
         get() = (functions + properties + classlikes + constructors)
 
-    override fun withNewExtras(newExtras: PropertyContainer<DAnnotation>) = copy(extra = newExtras)
+    override fun withNewExtras(newExtras: PropertyContainer<DAnnotation>): DAnnotation = copy(extra = newExtras)
 }
 
-data class DProperty(
+public data class DProperty(
     override val dri: DRI,
     override val name: String,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -315,11 +318,11 @@ data class DProperty(
     override val children: List<Nothing>
         get() = emptyList()
 
-    override fun withNewExtras(newExtras: PropertyContainer<DProperty>) = copy(extra = newExtras)
+    override fun withNewExtras(newExtras: PropertyContainer<DProperty>): DProperty = copy(extra = newExtras)
 }
 
 // TODO: treat named Parameters and receivers differently
-data class DParameter(
+public data class DParameter(
     override val dri: DRI,
     override val name: String?,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -331,10 +334,10 @@ data class DParameter(
     override val children: List<Nothing>
         get() = emptyList()
 
-    override fun withNewExtras(newExtras: PropertyContainer<DParameter>) = copy(extra = newExtras)
+    override fun withNewExtras(newExtras: PropertyContainer<DParameter>): DParameter = copy(extra = newExtras)
 }
 
-data class DTypeParameter(
+public data class DTypeParameter(
     val variantTypeParameter: Variance<TypeParameter>,
     override val documentation: SourceSetDependent<DocumentationNode>,
     override val expectPresentInSet: DokkaSourceSet?,
@@ -343,7 +346,7 @@ data class DTypeParameter(
     override val extra: PropertyContainer<DTypeParameter> = PropertyContainer.empty()
 ) : Documentable(), WithExtraProperties<DTypeParameter> {
 
-    constructor(
+    public constructor(
         dri: DRI,
         name: String,
         presentableName: String?,
@@ -367,10 +370,10 @@ data class DTypeParameter(
     override val children: List<Nothing>
         get() = emptyList()
 
-    override fun withNewExtras(newExtras: PropertyContainer<DTypeParameter>) = copy(extra = newExtras)
+    override fun withNewExtras(newExtras: PropertyContainer<DTypeParameter>): DTypeParameter = copy(extra = newExtras)
 }
 
-data class DTypeAlias(
+public data class DTypeAlias(
     override val dri: DRI,
     override val name: String,
     override val type: Bound,
@@ -386,12 +389,12 @@ data class DTypeAlias(
     override val children: List<Nothing>
         get() = emptyList()
 
-    override fun withNewExtras(newExtras: PropertyContainer<DTypeAlias>) = copy(extra = newExtras)
+    override fun withNewExtras(newExtras: PropertyContainer<DTypeAlias>): DTypeAlias = copy(extra = newExtras)
 }
 
-sealed class Projection
-sealed class Bound : Projection()
-data class TypeParameter(
+public sealed class Projection
+public sealed class Bound : Projection()
+public data class TypeParameter(
     val dri: DRI,
     val name: String,
     val presentableName: String? = null,
@@ -401,13 +404,13 @@ data class TypeParameter(
         copy(extra = extra)
 }
 
-sealed class TypeConstructor : Bound(), AnnotationTarget {
-    abstract val dri: DRI
-    abstract val projections: List<Projection>
-    abstract val presentableName: String?
+public sealed class TypeConstructor : Bound(), AnnotationTarget {
+    public abstract val dri: DRI
+    public abstract val projections: List<Projection>
+    public abstract val presentableName: String?
 }
 
-data class GenericTypeConstructor(
+public data class GenericTypeConstructor(
     override val dri: DRI,
     override val projections: List<Projection>,
     override val presentableName: String? = null,
@@ -417,7 +420,7 @@ data class GenericTypeConstructor(
         copy(extra = newExtras)
 }
 
-data class FunctionalTypeConstructor(
+public data class FunctionalTypeConstructor(
     override val dri: DRI,
     override val projections: List<Projection>,
     val isExtensionFunction: Boolean = false,
@@ -430,7 +433,7 @@ data class FunctionalTypeConstructor(
 }
 
 // kotlin.annotation.AnnotationTarget.TYPEALIAS
-data class TypeAliased(
+public data class TypeAliased(
     val typeAlias: Bound,
     val inner: Bound,
     override val extra: PropertyContainer<TypeAliased> = PropertyContainer.empty()
@@ -439,7 +442,7 @@ data class TypeAliased(
         copy(extra = newExtras)
 }
 
-data class PrimitiveJavaType(
+public data class PrimitiveJavaType(
     val name: String,
     override val extra: PropertyContainer<PrimitiveJavaType> = PropertyContainer.empty()
 ) : Bound(), AnnotationTarget, WithExtraProperties<PrimitiveJavaType> {
@@ -447,13 +450,13 @@ data class PrimitiveJavaType(
         copy(extra = newExtras)
 }
 
-data class JavaObject(override val extra: PropertyContainer<JavaObject> = PropertyContainer.empty()) :
+public data class JavaObject(override val extra: PropertyContainer<JavaObject> = PropertyContainer.empty()) :
     Bound(), AnnotationTarget, WithExtraProperties<JavaObject> {
     override fun withNewExtras(newExtras: PropertyContainer<JavaObject>): JavaObject =
         copy(extra = newExtras)
 }
 
-data class UnresolvedBound(
+public data class UnresolvedBound(
     val name: String,
     override val extra: PropertyContainer<UnresolvedBound> = PropertyContainer.empty()
 ) : Bound(), AnnotationTarget, WithExtraProperties<UnresolvedBound> {
@@ -462,66 +465,67 @@ data class UnresolvedBound(
 }
 
 // The following Projections are not AnnotationTargets; they cannot be annotated.
-data class Nullable(val inner: Bound) : Bound()
+public data class Nullable(val inner: Bound) : Bound()
 
 /**
  * It introduces [definitely non-nullable types](https://github.com/Kotlin/KEEP/blob/c72601cf35c1e95a541bb4b230edb474a6d1d1a8/proposals/definitely-non-nullable-types.md)
  */
-data class DefinitelyNonNullable(val inner: Bound) : Bound()
+public data class DefinitelyNonNullable(val inner: Bound) : Bound()
 
-sealed class Variance<out T : Bound> : Projection() {
-    abstract val inner: T
+public sealed class Variance<out T : Bound> : Projection() {
+    public abstract val inner: T
 }
 
-data class Covariance<out T : Bound>(override val inner: T) : Variance<T>() {
-    override fun toString() = "out"
+public data class Covariance<out T : Bound>(override val inner: T) : Variance<T>() {
+    override fun toString(): String = "out"
 }
 
-data class Contravariance<out T : Bound>(override val inner: T) : Variance<T>() {
-    override fun toString() = "in"
+public data class Contravariance<out T : Bound>(override val inner: T) : Variance<T>() {
+    override fun toString(): String = "in"
 }
 
-data class Invariance<out T : Bound>(override val inner: T) : Variance<T>() {
-    override fun toString() = ""
+public data class Invariance<out T : Bound>(override val inner: T) : Variance<T>() {
+    override fun toString(): String = ""
 }
 
-object Star : Projection()
+public object Star : Projection()
 
-object Void : Bound()
-object Dynamic : Bound()
+public object Void : Bound()
+public object Dynamic : Bound()
 
-fun Variance<TypeParameter>.withDri(dri: DRI) = when (this) {
+public fun Variance<TypeParameter>.withDri(dri: DRI): Variance<TypeParameter> = when (this) {
     is Contravariance -> Contravariance(TypeParameter(dri, inner.name, inner.presentableName))
     is Covariance -> Covariance(TypeParameter(dri, inner.name, inner.presentableName))
     is Invariance -> Invariance(TypeParameter(dri, inner.name, inner.presentableName))
 }
 
-fun Documentable.dfs(predicate: (Documentable) -> Boolean): Documentable? =
+public fun Documentable.dfs(predicate: (Documentable) -> Boolean): Documentable? =
     if (predicate(this)) {
         this
     } else {
         this.children.asSequence().mapNotNull { it.dfs(predicate) }.firstOrNull()
     }
 
-sealed class Visibility(val name: String)
-sealed class KotlinVisibility(name: String) : Visibility(name) {
-    object Public : KotlinVisibility("public")
-    object Private : KotlinVisibility("private")
-    object Protected : KotlinVisibility("protected")
-    object Internal : KotlinVisibility("internal")
+public sealed class Visibility(public val name: String)
+
+public sealed class KotlinVisibility(name: String) : Visibility(name) {
+    public object Public : KotlinVisibility("public")
+    public object Private : KotlinVisibility("private")
+    public object Protected : KotlinVisibility("protected")
+    public object Internal : KotlinVisibility("internal")
 }
 
-sealed class JavaVisibility(name: String) : Visibility(name) {
-    object Public : JavaVisibility("public")
-    object Private : JavaVisibility("private")
-    object Protected : JavaVisibility("protected")
-    object Default : JavaVisibility("")
+public sealed class JavaVisibility(name: String) : Visibility(name) {
+    public object Public : JavaVisibility("public")
+    public object Private : JavaVisibility("private")
+    public object Protected : JavaVisibility("protected")
+    public object Default : JavaVisibility("")
 }
 
-fun <T> SourceSetDependent<T>?.orEmpty(): SourceSetDependent<T> = this ?: emptyMap()
+public fun <T> SourceSetDependent<T>?.orEmpty(): SourceSetDependent<T> = this ?: emptyMap()
 
-interface DocumentableSource {
-    val path: String
+public interface DocumentableSource {
+    public val path: String
 
     /**
      * Computes the first line number of the documentable's declaration/signature/identifier.
@@ -530,7 +534,7 @@ interface DocumentableSource {
      *
      * May return null if the sources could not be found - for example, for synthetic/generated declarations.
      */
-    fun computeLineNumber(): Int?
+    public fun computeLineNumber(): Int?
 }
 
-data class TypeConstructorWithKind(val typeConstructor: TypeConstructor, val kind: ClassKind)
+public data class TypeConstructorWithKind(val typeConstructor: TypeConstructor, val kind: ClassKind)

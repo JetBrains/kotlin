@@ -14,36 +14,37 @@ import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.model.properties.PropertyContainer
 import java.io.File
 
-fun dokkaConfiguration(block: TestDokkaConfigurationBuilder.() -> Unit): DokkaConfigurationImpl =
+public fun dokkaConfiguration(block: TestDokkaConfigurationBuilder.() -> Unit): DokkaConfigurationImpl =
     TestDokkaConfigurationBuilder().apply(block).build()
 
 @DslMarker
-annotation class DokkaConfigurationDsl
+public annotation class DokkaConfigurationDsl
 
+// TODO this class heavily relies on `DokkaSourceSetImpl`, should be refactored to `DokkaSourceSet`
 @DokkaConfigurationDsl
-class TestDokkaConfigurationBuilder {
+public class TestDokkaConfigurationBuilder {
 
-    var moduleName: String = "root"
+    public var moduleName: String = "root"
         set(value) {
             check(lazySourceSets.isEmpty()) { "Cannot set moduleName after adding source sets" }
             field = value
         }
-    var moduleVersion: String = "1.0-SNAPSHOT"
-    var outputDir: File = File("out")
-    var format: String = "html"
-    var offlineMode: Boolean = false
-    var cacheRoot: String? = null
-    var pluginsClasspath: List<File> = emptyList()
-    var pluginsConfigurations: MutableList<PluginConfigurationImpl> = mutableListOf()
-    var failOnWarning: Boolean = false
-    var modules: List<DokkaModuleDescriptionImpl> = emptyList()
-    var suppressObviousFunctions: Boolean = DokkaDefaults.suppressObviousFunctions
-    var includes: List<File> = emptyList()
-    var suppressInheritedMembers: Boolean = DokkaDefaults.suppressInheritedMembers
-    var delayTemplateSubstitution: Boolean = DokkaDefaults.delayTemplateSubstitution
+    public var moduleVersion: String = "1.0-SNAPSHOT"
+    public var outputDir: File = File("out")
+    public var format: String = "html"
+    public var offlineMode: Boolean = false
+    public var cacheRoot: String? = null
+    public var pluginsClasspath: List<File> = emptyList()
+    public var pluginsConfigurations: MutableList<PluginConfigurationImpl> = mutableListOf()
+    public var failOnWarning: Boolean = false
+    public var modules: List<DokkaModuleDescriptionImpl> = emptyList()
+    public var suppressObviousFunctions: Boolean = DokkaDefaults.suppressObviousFunctions
+    public var includes: List<File> = emptyList()
+    public var suppressInheritedMembers: Boolean = DokkaDefaults.suppressInheritedMembers
+    public var delayTemplateSubstitution: Boolean = DokkaDefaults.delayTemplateSubstitution
     private val lazySourceSets = mutableListOf<Lazy<DokkaSourceSetImpl>>()
 
-    fun build() = DokkaConfigurationImpl(
+    public fun build(): DokkaConfigurationImpl = DokkaConfigurationImpl(
         moduleName = moduleName,
         moduleVersion = moduleVersion,
         outputDir = outputDir,
@@ -61,82 +62,87 @@ class TestDokkaConfigurationBuilder {
         finalizeCoroutines = false
     )
 
-    fun sourceSets(block: SourceSetsBuilder.() -> Unit) {
+    public fun sourceSets(block: SourceSetsBuilder.() -> Unit) {
         lazySourceSets.addAll(SourceSetsBuilder(moduleName).apply(block))
     }
 
-    fun sourceSet(block: DokkaSourceSetBuilder.() -> Unit): Lazy<DokkaSourceSetImpl> {
+    public fun sourceSet(block: DokkaSourceSetBuilder.() -> Unit): Lazy<DokkaSourceSetImpl> {
         val lazySourceSet = lazy { DokkaSourceSetBuilder(moduleName).apply(block).build() }
         lazySourceSets.add(lazySourceSet)
         return lazySourceSet
     }
 
-    fun unattachedSourceSet(block: DokkaSourceSetBuilder.() -> Unit): DokkaSourceSetImpl {
+    public fun unattachedSourceSet(block: DokkaSourceSetBuilder.() -> Unit): DokkaSourceSetImpl {
         return DokkaSourceSetBuilder(moduleName).apply(block).build()
     }
 }
 
 @DokkaConfigurationDsl
-class SourceSetsBuilder(val moduleName: String) : ArrayList<Lazy<DokkaSourceSetImpl>>() {
-    fun sourceSet(block: DokkaSourceSetBuilder.() -> Unit): Lazy<DokkaConfiguration.DokkaSourceSet> =
-        lazy { DokkaSourceSetBuilder(moduleName).apply(block).build() }.apply(::add)
+public class SourceSetsBuilder(
+    public val moduleName: String
+) : ArrayList<Lazy<DokkaSourceSetImpl>>() {
+    public fun sourceSet(block: DokkaSourceSetBuilder.() -> Unit): Lazy<DokkaConfiguration.DokkaSourceSet> {
+        return lazy { DokkaSourceSetBuilder(moduleName).apply(block).build() }.apply(::add)
+    }
 }
 
 @DokkaConfigurationDsl
-class DokkaSourceSetBuilder(
+public class DokkaSourceSetBuilder(
     private val moduleName: String,
-    var name: String = "main",
-    var displayName: String = "JVM",
-    var classpath: List<String> = emptyList(),
-    var sourceRoots: List<String> = emptyList(),
-    var dependentSourceSets: Set<DokkaSourceSetID> = emptySet(),
-    var samples: List<String> = emptyList(),
-    var includes: List<String> = emptyList(),
+    public var name: String = "main",
+    public var displayName: String = "JVM",
+    public var classpath: List<String> = emptyList(),
+    public var sourceRoots: List<String> = emptyList(),
+    public var dependentSourceSets: Set<DokkaSourceSetID> = emptySet(),
+    public var samples: List<String> = emptyList(),
+    public var includes: List<String> = emptyList(),
     @Deprecated(message = "Use [documentedVisibilities] property for a more flexible control over documented visibilities")
-    var includeNonPublic: Boolean = false,
-    var documentedVisibilities: Set<DokkaConfiguration.Visibility> = DokkaDefaults.documentedVisibilities,
-    var reportUndocumented: Boolean = false,
-    var skipEmptyPackages: Boolean = false,
-    var skipDeprecated: Boolean = false,
-    var jdkVersion: Int = 8,
-    var languageVersion: String? = null,
-    var apiVersion: String? = null,
-    var noStdlibLink: Boolean = false,
-    var noJdkLink: Boolean = false,
-    var suppressedFiles: List<String> = emptyList(),
-    var analysisPlatform: String = "jvm",
-    var perPackageOptions: List<PackageOptionsImpl> = emptyList(),
-    var externalDocumentationLinks: List<ExternalDocumentationLinkImpl> = emptyList(),
-    var sourceLinks: List<SourceLinkDefinitionImpl> = emptyList()
+    public var includeNonPublic: Boolean = false,
+    public var documentedVisibilities: Set<DokkaConfiguration.Visibility> = DokkaDefaults.documentedVisibilities,
+    public var reportUndocumented: Boolean = false,
+    public var skipEmptyPackages: Boolean = false,
+    public var skipDeprecated: Boolean = false,
+    public var jdkVersion: Int = 8,
+    public var languageVersion: String? = null,
+    public var apiVersion: String? = null,
+    public var noStdlibLink: Boolean = false,
+    public var noJdkLink: Boolean = false,
+    public var suppressedFiles: List<String> = emptyList(),
+    public var analysisPlatform: String = "jvm",
+    public var perPackageOptions: List<PackageOptionsImpl> = emptyList(),
+    public var externalDocumentationLinks: List<ExternalDocumentationLinkImpl> = emptyList(),
+    public var sourceLinks: List<SourceLinkDefinitionImpl> = emptyList()
 ) {
     @Suppress("DEPRECATION")
-    fun build() = DokkaSourceSetImpl(
-        displayName = displayName,
-        sourceSetID = DokkaSourceSetID(moduleName, name),
-        classpath = classpath.map(::File),
-        sourceRoots = sourceRoots.map(::File).toSet(),
-        dependentSourceSets = dependentSourceSets,
-        samples = samples.map(::File).toSet(),
-        includes = includes.map(::File).toSet(),
-        includeNonPublic = includeNonPublic,
-        documentedVisibilities = documentedVisibilities,
-        reportUndocumented = reportUndocumented,
-        skipEmptyPackages = skipEmptyPackages,
-        skipDeprecated = skipDeprecated,
-        jdkVersion = jdkVersion,
-        sourceLinks = sourceLinks.toSet(),
-        perPackageOptions = perPackageOptions.toList(),
-        externalDocumentationLinks = externalDocumentationLinks.toSet(),
-        languageVersion = languageVersion,
-        apiVersion = apiVersion,
-        noStdlibLink = noStdlibLink,
-        noJdkLink = noJdkLink,
-        suppressedFiles = suppressedFiles.map(::File).toSet(),
-        analysisPlatform = Platform.fromString(analysisPlatform)
-    )
+    public fun build(): DokkaSourceSetImpl {
+        return DokkaSourceSetImpl(
+            displayName = displayName,
+            sourceSetID = DokkaSourceSetID(moduleName, name),
+            classpath = classpath.map(::File),
+            sourceRoots = sourceRoots.map(::File).toSet(),
+            dependentSourceSets = dependentSourceSets,
+            samples = samples.map(::File).toSet(),
+            includes = includes.map(::File).toSet(),
+            includeNonPublic = includeNonPublic,
+            documentedVisibilities = documentedVisibilities,
+            reportUndocumented = reportUndocumented,
+            skipEmptyPackages = skipEmptyPackages,
+            skipDeprecated = skipDeprecated,
+            jdkVersion = jdkVersion,
+            sourceLinks = sourceLinks.toSet(),
+            perPackageOptions = perPackageOptions.toList(),
+            externalDocumentationLinks = externalDocumentationLinks.toSet(),
+            languageVersion = languageVersion,
+            apiVersion = apiVersion,
+            noStdlibLink = noStdlibLink,
+            noJdkLink = noJdkLink,
+            suppressedFiles = suppressedFiles.map(::File).toSet(),
+            analysisPlatform = Platform.fromString(analysisPlatform)
+        )
+    }
 }
 
-val defaultSourceSet = DokkaSourceSetImpl(
+public val defaultSourceSet: DokkaSourceSetImpl = DokkaSourceSetImpl(
     displayName = "DEFAULT",
     sourceSetID = DokkaSourceSetID("DEFAULT", "DEFAULT"),
     classpath = emptyList(),
@@ -161,14 +167,14 @@ val defaultSourceSet = DokkaSourceSetImpl(
     analysisPlatform = Platform.DEFAULT
 )
 
-fun sourceSet(name: String): DokkaConfiguration.DokkaSourceSet {
+public fun sourceSet(name: String): DokkaConfiguration.DokkaSourceSet {
     return defaultSourceSet.copy(
         displayName = name,
         sourceSetID = defaultSourceSet.sourceSetID.copy(sourceSetName = name)
     )
 }
 
-fun dModule(
+public fun dModule(
     name: String,
     packages: List<DPackage> = emptyList(),
     documentation: SourceSetDependent<DocumentationNode> = emptyMap(),
@@ -184,7 +190,7 @@ fun dModule(
     extra = extra
 )
 
-fun dPackage(
+public fun dPackage(
     dri: DRI,
     functions: List<DFunction> = emptyList(),
     properties: List<DProperty> = emptyList(),
@@ -206,7 +212,7 @@ fun dPackage(
     extra = extra
 )
 
-fun documentationNode(vararg texts: String): DocumentationNode {
+public fun documentationNode(vararg texts: String): DocumentationNode {
     return DocumentationNode(
         texts.toList()
             .map { Description(CustomDocTag(listOf(Text(it)), name = "MARKDOWN_FILE")) })

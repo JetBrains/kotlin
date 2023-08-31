@@ -8,10 +8,10 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.dokka.InternalDokkaApi
 
 @InternalDokkaApi
-class DocCommentFactory(
+public class DocCommentFactory(
     private val docCommentCreators: List<DocCommentCreator>
 ) {
-    fun fromElement(element: PsiNamedElement): DocComment? {
+    public fun fromElement(element: PsiNamedElement): DocComment? {
         docCommentCreators.forEach { creator ->
             val comment = creator.create(element)
             if (comment != null) {
