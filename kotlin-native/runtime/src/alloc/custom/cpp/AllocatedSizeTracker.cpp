@@ -10,7 +10,7 @@
 
 using namespace kotlin;
 
-void alloc::AllocatedSizeTracker::Page::onPageOverflow(std::size_t allocatedBytes) noexcept {
+NO_INLINE void alloc::AllocatedSizeTracker::Page::onPageOverflow(std::size_t allocatedBytes) noexcept {
     RuntimeAssert(allocatedBytes >= allocatedBytesLastRecorded_,
                   "A page can't overflow with less allocated bytes (%zu) than there were after the last sweep (%zu)",
                   allocatedBytes, allocatedBytesLastRecorded_);

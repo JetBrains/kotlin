@@ -33,7 +33,7 @@ FixedBlockPage::FixedBlockPage(uint32_t blockSize) noexcept : blockSize_(blockSi
     end_ = FIXED_BLOCK_PAGE_CELL_COUNT / blockSize * blockSize;
 }
 
-uint8_t* FixedBlockPage::TryAllocate() noexcept {
+ALWAYS_INLINE uint8_t* FixedBlockPage::TryAllocate() noexcept {
     uint32_t next = nextFree_.first;
     if (next < nextFree_.last) {
         nextFree_.first += blockSize_;

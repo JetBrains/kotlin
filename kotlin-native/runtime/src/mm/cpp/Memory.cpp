@@ -133,12 +133,12 @@ extern "C" void ClearMemoryForTests(MemoryState* state) {
     state->GetThreadData()->ClearForTests();
 }
 
-extern "C" RUNTIME_NOTHROW OBJ_GETTER(AllocInstance, const TypeInfo* typeInfo) {
+extern "C" ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(AllocInstance, const TypeInfo* typeInfo) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     RETURN_RESULT_OF(mm::AllocateObject, threadData, typeInfo);
 }
 
-extern "C" OBJ_GETTER(AllocArrayInstance, const TypeInfo* typeInfo, int32_t elements) {
+extern "C" ALWAYS_INLINE OBJ_GETTER(AllocArrayInstance, const TypeInfo* typeInfo, int32_t elements) {
     if (elements < 0) {
         ThrowIllegalArgumentException();
     }

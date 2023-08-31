@@ -45,9 +45,15 @@ public:
 
 private:
     uint8_t* Allocate(uint64_t cellCount) noexcept;
+
     uint8_t* AllocateInSingleObjectPage(uint64_t cellCount) noexcept;
+
     uint8_t* AllocateInNextFitPage(uint32_t cellCount) noexcept;
+    uint8_t* AllocateInNextFitPageSlowPath(uint32_t cellCount) noexcept;
+
     uint8_t* AllocateInFixedBlockPage(uint32_t cellCount) noexcept;
+    uint8_t* AllocateInFixedBlockPageSlowPath(uint32_t cellCount) noexcept;
+
 
     Heap& heap_;
     NextFitPage* nextFitPage_;
