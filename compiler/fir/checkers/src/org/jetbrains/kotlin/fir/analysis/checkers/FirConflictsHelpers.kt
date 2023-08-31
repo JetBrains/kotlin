@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.outerType
@@ -113,21 +114,17 @@ private fun groupTopLevelByName(declarations: List<FirDeclaration>, context: Che
                     group.properties += declaration to representation
                 }
             }
-            is FirRegularClass -> {
-                val group = groups.getOrPut(declaration.name, ::DeclarationBuckets)
-                group.classLikes += declaration to FirRedeclarationPresenter.represent(declaration)
-                if (declaration.classKind != ClassKind.OBJECT) {
-                    declaration.declarations
-                        .filterIsInstance<FirConstructor>()
-                        .mapTo(group.constructors) { it to FirRedeclarationPresenter.represent(it, declaration.symbol) }
-                }
-            }
-            is FirTypeAlias -> {
-                val group = groups.getOrPut(declaration.name, ::DeclarationBuckets)
-                group.classLikes += declaration to FirRedeclarationPresenter.represent(declaration)
+            is FirClassLikeDeclaration -> {
+                val representation = FirRedeclarationPresenter.represent(declaration) ?: continue
+                val group = groups.getOrPut(declaration.nameOrSpecialName, ::DeclarationBuckets)
+                group.classLikes += declaration to representation
 
-                @OptIn(SymbolInternals::class)
-                declaration.expandedClassWithConstructorsScope(context)?.let { (_, scopeWithConstructors) ->
+                declaration.expandedClassWithConstructorsScope(context)?.let { (expandedClass, scopeWithConstructors) ->
+                    if (expandedClass.classKind == ClassKind.OBJECT) {
+                        return@let
+                    }
+
+                    @OptIn(SymbolInternals::class)
                     scopeWithConstructors.processDeclaredConstructors {
                         group.constructors += it.fir to FirRedeclarationPresenter.represent(it.fir, declaration.symbol)
                     }
@@ -183,12 +180,7 @@ fun collectConflictingLocalFunctionsFrom(block: FirBlock, context: CheckerContex
         when (collectable) {
             is FirSimpleFunction ->
                 inspector.collect(collectable, FirRedeclarationPresenter.represent(collectable), functionDeclarations)
-            is FirRegularClass ->
-                // TODO, KT-61243: Use declaredMemberScope
-                collectable.declarations.filterIsInstance<FirConstructor>().forEach {
-                    inspector.collect(it, FirRedeclarationPresenter.represent(it, collectable.symbol), functionDeclarations)
-                }
-            is FirTypeAlias -> {
+            is FirClassLikeDeclaration -> {
                 collectable.expandedClassWithConstructorsScope(context)?.let { (_, scopeWithConstructors) ->
                     scopeWithConstructors.processDeclaredConstructors {
                         @OptIn(SymbolInternals::class)
