@@ -37,7 +37,7 @@ object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessExpressionCh
         if (secondLast is FirQualifiedAccessExpression && secondLast.explicitReceiver == expression) return
 
         val diagnostic = expression.coneTypeOrNull?.coneTypeParameterInQualifiedAccess ?: return
-        val source = expression.source ?: return
+        val source = expression.calleeReference.source ?: return
         reporter.reportOn(source, FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, diagnostic.symbol, context)
     }
 
