@@ -347,4 +347,13 @@ public interface IrOperationOrBuilder extends
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstantOperation constant_operation = 37;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrConstantOperation getConstantOperation();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 38;</code>
+   */
+  boolean hasInlinedFunctionBlock();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 38;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock getInlinedFunctionBlock();
 }

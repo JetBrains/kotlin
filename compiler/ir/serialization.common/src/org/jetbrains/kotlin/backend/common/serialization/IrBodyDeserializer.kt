@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock as ProtoInlinedFunctionBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak as ProtoBreak
@@ -172,6 +173,30 @@ class IrBodyDeserializer(
         }
 
         return IrReturnableBlockImpl(start, end, type, symbol, origin, statements)
+    }
+
+    private fun deserializeInlinedFunctionBlock(
+        proto: ProtoInlinedFunctionBlock, start: Int, end: Int, type: IrType
+    ): IrInlinedFunctionBlock {
+        val statements = mutableListOf<IrStatement>()
+        val statementProtos = proto.statementList
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
+        val inlineCall = deserializeExpression(proto.inlineCall)
+        val inlinedFunctionSymbol = if (proto.hasInlinedFunctionSymbol())
+            deserializeTypedSymbol<IrFunctionSymbol>(proto.inlinedFunctionSymbol, null)
+        else null
+        val inlinedExpression = if (proto.hasInlinedExpression())
+            deserializeExpression(proto.inlinedExpression)
+        else null
+
+        statementProtos.forEach {
+            statements.add(deserializeStatement(it) as IrStatement)
+        }
+
+        return IrInlinedFunctionBlockImpl(
+            start, end, type, inlineCall as IrFunctionAccessExpression,
+            inlinedFunctionSymbol, inlinedExpression, origin, statements
+        )
     }
 
     private fun deserializeMemberAccessCommon(access: IrMemberAccessExpression<*>, proto: ProtoMemberAccessCommon) {
@@ -854,6 +879,7 @@ class IrBodyDeserializer(
             ERROR_EXPRESSION -> deserializeErrorExpression(proto.errorExpression, start, end, type)
             ERROR_CALL_EXPRESSION -> deserializeErrorCallExpression(proto.errorCallExpression, start, end, type)
             RETURNABLE_BLOCK -> deserializeReturnableBlock(proto.returnableBlock, start, end, type)
+            INLINED_FUNCTION_BLOCK -> deserializeInlinedFunctionBlock(proto.inlinedFunctionBlock, start, end, type)
             OPERATION_NOT_SET -> error("Expression deserialization not implemented: ${proto.operationCase}")
         }
 

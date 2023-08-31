@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as Pr
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock as ProtoInlinedFunctionBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak as ProtoBreak
@@ -532,6 +533,19 @@ open class IrFileSerializer(
         val proto = ProtoReturnableBlock.newBuilder()
 
         proto.symbol = serializeIrSymbol(block.symbol)
+        block.origin?.let { proto.setOriginName(serializeIrStatementOrigin(it)) }
+        block.statements.forEach {
+            proto.addStatement(serializeStatement(it))
+        }
+        return proto.build()
+    }
+
+    private fun serializeInlinedFunctionBlock(block: IrInlinedFunctionBlock): ProtoInlinedFunctionBlock {
+        val proto = ProtoInlinedFunctionBlock.newBuilder()
+
+        proto.inlineCall = serializeExpression(block.inlineCall)
+        block.inlinedFunctionSymbol?.let { proto.inlinedFunctionSymbol = serializeIrSymbol(it) }
+        block.inlinedExpression?.let { proto.inlinedExpression = serializeExpression(it) }
         block.origin?.let { proto.setOriginName(serializeIrStatementOrigin(it)) }
         block.statements.forEach {
             proto.addStatement(serializeStatement(it))
@@ -1058,6 +1072,7 @@ open class IrFileSerializer(
         // TODO: make me a visitor.
         when (expression) {
             is IrReturnableBlock -> operationProto.returnableBlock = serializeReturnableBlock(expression)
+            is IrInlinedFunctionBlock -> operationProto.inlinedFunctionBlock = serializeInlinedFunctionBlock(expression)
             is IrBlock -> operationProto.block = serializeBlock(expression)
             is IrBreak -> operationProto.`break` = serializeBreak(expression)
             is IrClassReference -> operationProto.classReference = serializeClassReference(expression)

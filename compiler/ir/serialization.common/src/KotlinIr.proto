@@ -200,6 +200,14 @@ message IrReturnableBlock {
   optional int32 origin_name = 3;
 }
 
+message IrInlinedFunctionBlock {
+  repeated IrStatement statement = 1;
+  optional int32 origin_name = 2;
+  required IrExpression inline_call = 3;
+  optional int64 inlined_function_symbol = 4;
+  optional IrExpression inlined_expression = 5;
+}
+
 message IrClassReference {
   required int64 class_symbol = 1;
   required int32 class_type = 2;
@@ -475,6 +483,7 @@ message IrOperation {
     IrErrorCallExpression error_call_expression = 35;
     IrReturnableBlock returnable_block = 36;
     IrConstantOperation constant_operation = 37;
+    IrInlinedFunctionBlock inlined_function_block = 38;
   }
 }
 
