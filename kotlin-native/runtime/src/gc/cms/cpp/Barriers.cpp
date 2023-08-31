@@ -67,7 +67,7 @@ ALWAYS_INLINE void gc::BarriersThreadData::onAllocation(ObjHeader* allocated) {
         bool barriersEnabled = weakRefBarrier.load(std::memory_order_relaxed) != nullptr;
         RuntimeAssert(shouldMark == barriersEnabled, "New allocations marking must happen with and only with weak ref barriers");
         if (shouldMark) {
-            auto& objectData = objectDataForObject(allocated);
+            auto& objectData = alloc::objectDataForObject(allocated);
             bool wasUnmarked = objectData.tryMark();
             RuntimeAssert(wasUnmarked, "No one else could mark this newly allocated object before");
             markHandle_->addObject();

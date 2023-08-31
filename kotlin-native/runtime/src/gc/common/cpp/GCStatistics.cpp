@@ -9,6 +9,7 @@
 #include <limits>
 #include <optional>
 
+#include "Allocator.hpp"
 #include "Logging.hpp"
 #include "Mutex.hpp"
 #include "Porting.h"
@@ -135,7 +136,7 @@ GCInfo* statByEpoch(uint64_t epoch) {
 
 MemoryUsage currentHeapUsage() noexcept {
     return MemoryUsage{
-            mm::GlobalData::Instance().gc().GetTotalHeapObjectsSizeBytes(),
+            alloc::allocatedBytes(),
     };
 }
 

@@ -181,13 +181,13 @@ test_support::Object<Payload>& AllocateObjectWithFinalizer(mm::ThreadData& threa
 
 std_support::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
 #ifdef CUSTOM_ALLOCATOR
-    return threadData.gc().impl().alloc().heap().GetAllocatedObjects();
+    return threadData.gc().impl().allocator().alloc().heap().GetAllocatedObjects();
 #else
     std_support::vector<ObjHeader*> objects;
-    for (auto node : threadData.gc().impl().objectFactoryThreadQueue()) {
+    for (auto node : threadData.gc().impl().allocator().objectFactoryThreadQueue()) {
         objects.push_back(node.GetObjHeader());
     }
-    for (auto node : mm::GlobalData::Instance().gc().impl().objectFactory().LockForIter()) {
+    for (auto node : mm::GlobalData::Instance().gc().impl().allocator().objectFactory().LockForIter()) {
         objects.push_back(node.GetObjHeader());
     }
     return objects;

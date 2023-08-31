@@ -15,56 +15,27 @@ namespace gc {
 
 class GC::Impl : private Pinned {
 public:
-#ifdef CUSTOM_ALLOCATOR
-    explicit Impl(gcScheduler::GCScheduler& gcScheduler) noexcept : gc_(gcScheduler, compiler::gcMutatorsCooperate(), compiler::auxGCThreads()) {}
-#else
-    explicit Impl(gcScheduler::GCScheduler& gcScheduler) noexcept : gc_(objectFactory_, extraObjectDataFactory_, gcScheduler, compiler::gcMutatorsCooperate(), compiler::auxGCThreads()) {}
-#endif
+    explicit Impl(gcScheduler::GCScheduler& gcScheduler) noexcept :
+        gc_(allocator_, gcScheduler, compiler::gcMutatorsCooperate(), compiler::auxGCThreads()) {}
 
-#ifndef CUSTOM_ALLOCATOR
-    ObjectFactory& objectFactory() noexcept { return objectFactory_; }
-    alloc::ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
-#endif
+    alloc::Allocator::Impl& allocator() noexcept { return allocator_; }
     ConcurrentMarkAndSweep& gc() noexcept { return gc_; }
 
 private:
-#ifndef CUSTOM_ALLOCATOR
-    ObjectFactory objectFactory_;
-    alloc::ExtraObjectDataFactory extraObjectDataFactory_;
-#endif
+    alloc::Allocator::Impl allocator_;
     ConcurrentMarkAndSweep gc_;
 };
 
 class GC::ThreadData::Impl : private Pinned {
 public:
-    Impl(GC& gc, mm::ThreadData& threadData) noexcept :
-        gc_(gc.impl_->gc(), threadData),
-#ifndef CUSTOM_ALLOCATOR
-        objectFactoryThreadQueue_(gc.impl_->objectFactory(), objectFactoryTraits_.CreateAllocator()),
-        extraObjectDataFactoryThreadQueue_(gc.impl_->extraObjectDataFactory()) {
-    }
-#else
-        alloc_(gc.impl_->gc().heap()) {
-    }
-#endif
+    Impl(GC& gc, mm::ThreadData& threadData) noexcept : gc_(gc.impl_->gc(), threadData), allocator_(gc.impl_->allocator()) {}
 
     ConcurrentMarkAndSweep::ThreadData& gc() noexcept { return gc_; }
-#ifdef CUSTOM_ALLOCATOR
-    alloc::CustomAllocator& alloc() noexcept { return alloc_; }
-#else
-    ObjectFactory::ThreadQueue& objectFactoryThreadQueue() noexcept { return objectFactoryThreadQueue_; }
-    alloc::ExtraObjectDataFactory::ThreadQueue& extraObjectDataFactoryThreadQueue() noexcept { return extraObjectDataFactoryThreadQueue_; }
-#endif
+    alloc::Allocator::ThreadData::Impl& allocator() noexcept { return allocator_; }
 
 private:
     ConcurrentMarkAndSweep::ThreadData gc_;
-#ifdef CUSTOM_ALLOCATOR
-    alloc::CustomAllocator alloc_;
-#else
-    [[no_unique_address]] ObjectFactoryTraits objectFactoryTraits_;
-    ObjectFactory::ThreadQueue objectFactoryThreadQueue_;
-    alloc::ExtraObjectDataFactory::ThreadQueue extraObjectDataFactoryThreadQueue_;
-#endif
+    alloc::Allocator::ThreadData::Impl allocator_;
 };
 
 } // namespace gc

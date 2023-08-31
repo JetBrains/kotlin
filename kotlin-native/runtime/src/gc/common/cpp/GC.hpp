@@ -66,10 +66,6 @@ public:
 
     Impl& impl() noexcept { return *impl_; }
 
-    static size_t GetAllocatedHeapSize(ObjHeader* object) noexcept;
-
-    size_t GetTotalHeapObjectsSizeBytes() const noexcept;
-
     void ClearForTests() noexcept;
 
     void StartFinalizerThreadIfNeeded() noexcept;

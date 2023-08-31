@@ -61,17 +61,11 @@ public:
         std::atomic<bool> published_ = false;
     };
 
-#ifdef CUSTOM_ALLOCATOR
-    explicit ConcurrentMarkAndSweep(gcScheduler::GCScheduler& scheduler,
-                                    bool mutatorsCooperate, std::size_t auxGCThreads) noexcept;
-#else
     ConcurrentMarkAndSweep(
-            ObjectFactory& objectFactory,
-            alloc::ExtraObjectDataFactory& extraObjectDataFactory,
+            alloc::Allocator::Impl& allocator,
             gcScheduler::GCScheduler& scheduler,
             bool mutatorsCooperate,
             std::size_t auxGCThreads) noexcept;
-#endif
     ~ConcurrentMarkAndSweep();
 
     void StartFinalizerThreadIfNeeded() noexcept;
@@ -80,10 +74,6 @@ public:
 
     void reconfigure(std::size_t maxParallelism, bool mutatorsCooperate, size_t auxGCThreads) noexcept;
 
-#ifdef CUSTOM_ALLOCATOR
-    alloc::Heap& heap() noexcept { return heap_; }
-#endif
-
     GCStateHolder& state() noexcept { return state_; }
 
 private:
@@ -91,16 +81,11 @@ private:
     void auxiliaryGCThreadBody();
     void PerformFullGC(int64_t epoch) noexcept;
 
-#ifndef CUSTOM_ALLOCATOR
-    ObjectFactory& objectFactory_;
-    alloc::ExtraObjectDataFactory& extraObjectDataFactory_;
-#else
-    alloc::Heap heap_;
-#endif
+    alloc::Allocator::Impl& allocator_;
     gcScheduler::GCScheduler& gcScheduler_;
 
     GCStateHolder state_;
-    FinalizerProcessor<FinalizerQueue, FinalizerQueueTraits> finalizerProcessor_;
+    FinalizerProcessor<alloc::FinalizerQueue, alloc::FinalizerQueueTraits> finalizerProcessor_;
 
     mark::ParallelMark markDispatcher_;
     ScopedThread mainThread_;

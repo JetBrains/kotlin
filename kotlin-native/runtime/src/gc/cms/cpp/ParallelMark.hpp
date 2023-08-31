@@ -85,18 +85,18 @@ public:
         static ALWAYS_INLINE ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
             auto* obj = compiler::gcMarkSingleThreaded() ? queue.tryPopLocal() : queue.tryPop();
             if (obj) {
-                return objectForObjectData(*obj);
+                return alloc::objectForObjectData(*obj);
             }
             return nullptr;
         }
 
         static ALWAYS_INLINE bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
-            auto& objectData = objectDataForObject(object);
+            auto& objectData = alloc::objectDataForObject(object);
             return compiler::gcMarkSingleThreaded() ? queue.tryPushLocal(objectData) : queue.tryPush(objectData);
         }
 
         static ALWAYS_INLINE bool tryMark(ObjHeader* object) noexcept {
-            auto& objectData = objectDataForObject(object);
+            auto& objectData = alloc::objectDataForObject(object);
             return objectData.tryMark();
         }
 

@@ -40,14 +40,7 @@ public:
     private:
     };
 
-#ifdef CUSTOM_ALLOCATOR
-    SameThreadMarkAndSweep(gcScheduler::GCScheduler& gcScheduler) noexcept;
-#else
-    SameThreadMarkAndSweep(
-            ObjectFactory& objectFactory,
-            alloc::ExtraObjectDataFactory& extraObjectDataFactory,
-            gcScheduler::GCScheduler& gcScheduler) noexcept;
-#endif
+    SameThreadMarkAndSweep(alloc::Allocator::Impl& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept;
 
     ~SameThreadMarkAndSweep();
 
@@ -57,24 +50,15 @@ public:
 
     GCStateHolder& state() noexcept { return state_; }
 
-#ifdef CUSTOM_ALLOCATOR
-    alloc::Heap& heap() noexcept { return heap_; }
-#endif
-
 private:
     void PerformFullGC(int64_t epoch) noexcept;
 
-#ifndef CUSTOM_ALLOCATOR
-    ObjectFactory& objectFactory_;
-    alloc::ExtraObjectDataFactory& extraObjectDataFactory_;
-#else
-    alloc::Heap heap_;
-#endif
+    alloc::Allocator::Impl& allocator_;
     gcScheduler::GCScheduler& gcScheduler_;
 
     GCStateHolder state_;
     ScopedThread gcThread_;
-    FinalizerProcessor<FinalizerQueue, FinalizerQueueTraits> finalizerProcessor_;
+    FinalizerProcessor<alloc::FinalizerQueue, alloc::FinalizerQueueTraits> finalizerProcessor_;
 
     MarkQueue markQueue_;
 };
@@ -88,14 +72,16 @@ struct MarkTraits {
 
     static ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
         if (auto* top = queue.try_pop_front()) {
-            return objectForObjectData(*top);
+            return alloc::objectForObjectData(*top);
         }
         return nullptr;
     }
 
-    static bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept { return queue.try_push_front(objectDataForObject(object)); }
+    static bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
+        return queue.try_push_front(alloc::objectDataForObject(object));
+    }
 
-    static bool tryMark(ObjHeader* object) noexcept { return objectDataForObject(object).tryMark(); }
+    static bool tryMark(ObjHeader* object) noexcept { return alloc::objectDataForObject(object).tryMark(); }
 
     static void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
         auto process = object->type_info()->processObjectInMark;

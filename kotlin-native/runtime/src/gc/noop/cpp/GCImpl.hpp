@@ -8,56 +8,30 @@
 #include "GC.hpp"
 
 #include "AllocatorImpl.hpp"
-#include "NoOpGC.hpp"
+#include "Logging.hpp"
+#include "Utils.hpp"
 
 namespace kotlin {
 namespace gc {
 
 class GC::Impl : private Pinned {
 public:
-    Impl() noexcept = default;
+    Impl() noexcept { RuntimeLogInfo({kTagGC}, "No-op GC initialized"); }
 
-#ifndef CUSTOM_ALLOCATOR
-    ObjectFactory& objectFactory() noexcept { return objectFactory_; }
-    alloc::ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
-#endif
-    NoOpGC& gc() noexcept { return gc_; }
+    alloc::Allocator::Impl& allocator() noexcept { return allocator_; }
 
 private:
-#ifndef CUSTOM_ALLOCATOR
-    ObjectFactory objectFactory_;
-    alloc::ExtraObjectDataFactory extraObjectDataFactory_;
-#endif
-    NoOpGC gc_;
+    alloc::Allocator::Impl allocator_;
 };
 
 class GC::ThreadData::Impl : private Pinned {
 public:
-#ifdef CUSTOM_ALLOCATOR
-    Impl(GC& gc, mm::ThreadData& threadData) noexcept : alloc_(gc.impl_->gc().heap()) {}
-#else
-    Impl(GC& gc, mm::ThreadData& threadData) noexcept :
-        objectFactoryThreadQueue_(gc.impl_->objectFactory(), objectFactoryTraits_.CreateAllocator()),
-        extraObjectDataFactoryThreadQueue_(gc.impl_->extraObjectDataFactory()) {}
-#endif
+    Impl(GC& gc, mm::ThreadData& threadData) noexcept : allocator_(gc.impl_->allocator()) {}
 
-    NoOpGC::ThreadData& gc() noexcept { return gc_; }
-#ifdef CUSTOM_ALLOCATOR
-    alloc::CustomAllocator& alloc() noexcept { return alloc_; }
-#else
-    ObjectFactory::ThreadQueue& objectFactoryThreadQueue() noexcept { return objectFactoryThreadQueue_; }
-    alloc::ExtraObjectDataFactory::ThreadQueue& extraObjectDataFactoryThreadQueue() noexcept { return extraObjectDataFactoryThreadQueue_; }
-#endif
+    alloc::Allocator::ThreadData::Impl& allocator() noexcept { return allocator_; }
 
 private:
-    NoOpGC::ThreadData gc_;
-#ifdef CUSTOM_ALLOCATOR
-    alloc::CustomAllocator alloc_;
-#else
-    [[no_unique_address]] ObjectFactoryTraits objectFactoryTraits_;
-    ObjectFactory::ThreadQueue objectFactoryThreadQueue_;
-    alloc::ExtraObjectDataFactory::ThreadQueue extraObjectDataFactoryThreadQueue_;
-#endif
+    alloc::Allocator::ThreadData::Impl allocator_;
 };
 
 } // namespace gc

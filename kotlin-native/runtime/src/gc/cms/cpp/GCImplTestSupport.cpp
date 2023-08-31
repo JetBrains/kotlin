@@ -36,11 +36,11 @@ auto collectPointers(T& iterable) {
 
 void gc::AssertClear(GC& gc) noexcept {
 #ifdef CUSTOM_ALLOCATOR
-    auto objects = gc.impl().gc().heap().GetAllocatedObjects();
+    auto objects = gc.impl().allocator().heap().GetAllocatedObjects();
     EXPECT_THAT(collectCopy(objects), testing::UnorderedElementsAre());
 #else
-    auto objects = gc.impl().objectFactory().LockForIter();
-    auto extraObjects = gc.impl().extraObjectDataFactory().LockForIter();
+    auto objects = gc.impl().allocator().objectFactory().LockForIter();
+    auto extraObjects = gc.impl().allocator().extraObjectDataFactory().LockForIter();
     EXPECT_THAT(collectCopy(objects), testing::UnorderedElementsAre());
     EXPECT_THAT(collectPointers(extraObjects), testing::UnorderedElementsAre());
 #endif

@@ -96,14 +96,6 @@ void Free(void* ptr, size_t size) noexcept;
 
 size_t GetAllocatedBytes() noexcept;
 
-inline gc::GC::ObjectData& objectDataForObject(ObjHeader* object) noexcept {
-    return HeapObjHeader::from(object).objectData();
-}
-
-inline ObjHeader* objectForObjectData(gc::GC::ObjectData& objectData) noexcept {
-    return HeapObjHeader::from(objectData).object();
-}
-
 } // namespace kotlin::alloc
 
 #endif

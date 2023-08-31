@@ -8,18 +8,16 @@
 #include <cstddef>
 #include <type_traits>
 
+#include "Allocator.hpp"
+
 namespace kotlin::alloc {
 
 void initObjectPool() noexcept;
 void* allocateInObjectPool(size_t size) noexcept;
 void freeInObjectPool(void* ptr, size_t size) noexcept;
-// Instruct the allocator to free unused resources.
-void compactObjectPoolInCurrentThread() noexcept;
 // Platform dependent. Schedule `compactObjectPoolInCurrentThread` on the main thread.
 // May do nothing if the main thread is not an event loop.
 void compactObjectPoolInMainThread() noexcept;
-
-size_t allocatedBytes() noexcept;
 
 template <typename T>
 struct ObjectPoolAllocator {
