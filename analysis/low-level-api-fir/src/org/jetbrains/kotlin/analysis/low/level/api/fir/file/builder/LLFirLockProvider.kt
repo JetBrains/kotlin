@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirLazyResolveContractChecker
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -17,9 +15,6 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 import java.util.concurrent.locks.ReentrantLock
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
 /**
  * Keyed locks provider.
@@ -39,19 +34,20 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     }
 
     fun withGlobalPhaseLock(
-        phase: FirResolvePhase,
+        @Suppress("UNUSED_PARAMETER") phase: FirResolvePhase,
         action: () -> Unit,
     ) {
-        val lock = when (phase) {
-            FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> implicitTypesLock
-            else -> null
-        }
-
-        if (lock == null) {
-            action()
-        } else {
-            lock.lockWithPCECheck(DEFAULT_LOCKING_INTERVAL, action)
-        }
+        return action()
+//        val lock = when (phase) {
+//            FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> implicitTypesLock
+//            else -> null
+//        }
+//
+//        if (lock == null) {
+//            action()
+//        } else {
+//            lock.lockWithPCECheck(DEFAULT_LOCKING_INTERVAL, action)
+//        }
     }
 
     /**
