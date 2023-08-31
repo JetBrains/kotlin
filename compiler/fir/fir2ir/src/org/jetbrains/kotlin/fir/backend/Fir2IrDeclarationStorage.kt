@@ -352,6 +352,10 @@ class Fir2IrDeclarationStorage(
         delegatedReverseCache[irFunction] = function
     }
 
+    internal fun cacheGeneratedFunction(firFunction: FirSimpleFunction, irFunction: IrSimpleFunction) {
+        functionCache[firFunction] = irFunction
+    }
+
     // ------------------------------------ constructors ------------------------------------
 
     @OptIn(IrSymbolInternals::class)

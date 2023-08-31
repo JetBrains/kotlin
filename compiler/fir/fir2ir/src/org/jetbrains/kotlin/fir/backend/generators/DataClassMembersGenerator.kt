@@ -198,6 +198,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     components.irBuiltIns.stringType,
                 )
                 irClass.declarations.add(toStringFunction)
+                declarationStorage.cacheGeneratedFunction(toStringContributedFunction, toStringFunction)
             }
 
             val hashcodeNameContributedFunction = contributedSyntheticFunctions[HASHCODE_NAME]
@@ -209,6 +210,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     components.irBuiltIns.intType,
                 )
                 irClass.declarations.add(hashCodeFunction)
+                declarationStorage.cacheGeneratedFunction(hashcodeNameContributedFunction, hashCodeFunction)
             }
 
             val equalsContributedFunction = contributedSyntheticFunctions[EQUALS]
@@ -222,6 +224,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     isOperator = true
                 )
                 irClass.declarations.add(equalsFunction)
+                declarationStorage.cacheGeneratedFunction(equalsContributedFunction, equalsFunction)
             }
 
             return result
@@ -291,7 +294,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             returnType: IrType,
             otherParameterNeeded: Boolean = false,
             isOperator: Boolean = false,
-        ): IrFunction {
+        ): IrSimpleFunction {
             val signature = if (klass.symbol.classId.isLocal) null else components.signatureComposer.composeSignature(syntheticCounterpart)
             return components.callablesGenerator.declareIrSimpleFunction(signature) { symbol ->
                 components.irFactory.createSimpleFunction(
