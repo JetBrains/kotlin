@@ -58,13 +58,13 @@ object FirTopLevelPropertiesChecker : FirFileChecker() {
         }
 
         val propertySymbols = topLevelProperties.mapNotNullTo(mutableSetOf()) { declaration ->
-            (declaration.symbol as? FirPropertySymbol)?.takeIf { it.requiresInitialization(false) }
+            (declaration.symbol as? FirPropertySymbol)?.takeIf { it.requiresInitialization(isForInitialization = true) }
         }
         if (propertySymbols.isEmpty()) return null
 
         // TODO, KT-59803: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
         val data = PropertyInitializationInfoData(propertySymbols, receiver = null, graph)
-        data.checkPropertyAccesses(isForClassInitialization = false, context, reporter)
+        data.checkPropertyAccesses(isForInitialization = true, context, reporter)
         return data.getValue(graph.exitNode)[NormalPath]
     }
 }

@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -51,6 +53,8 @@ import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.getChildren
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 private val INLINE_ONLY_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
 
@@ -828,4 +832,9 @@ fun ConeKotlinType.leastUpperBound(session: FirSession): ConeKotlinType {
 
 fun ConeKotlinType.fullyExpandedClassId(session: FirSession): ClassId? {
     return fullyExpandedType(session).classId
+}
+@OptIn(ExperimentalContracts::class)
+fun ConeKotlinType.hasDiagnosticKind(kind: DiagnosticKind): Boolean {
+    contract { returns(true) implies (this@hasDiagnosticKind is ConeErrorType) }
+    return this is ConeErrorType && (diagnostic as? ConeSimpleDiagnostic)?.kind == kind
 }

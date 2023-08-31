@@ -187,7 +187,11 @@ class ControlFlowGraphBuilder {
         val localFunctionNode = runIf(function is FirSimpleFunction && function.isLocal && bodyBuildingMode) {
             createLocalFunctionDeclarationNode(function).also { addNewSimpleNode(it) }
         }
-        val kind = if (localFunctionNode != null) ControlFlowGraph.Kind.LocalFunction else ControlFlowGraph.Kind.Function
+        val kind = when {
+            localFunctionNode != null -> ControlFlowGraph.Kind.LocalFunction
+            function is FirConstructor -> ControlFlowGraph.Kind.Constructor
+            else -> ControlFlowGraph.Kind.Function
+        }
         val enterNode = enterGraph(function, name, kind) {
             createFunctionEnterNode(it) to createFunctionExitNode(it).also { exit -> exitTargetsForReturn[it.symbol] = exit }
         }
@@ -411,7 +415,8 @@ class ControlFlowGraphBuilder {
 
         var lastNode: CFGNode<*> = enterNode
         for (property in properties) {
-            addEdge(lastNode, property.enterNode, preferredKind = EdgeKind.CfgForward, propagateDeadness = false)
+            // Top-level property CFGs should never be linked with dead edges.
+            CFGNode.addEdge(lastNode, property.enterNode, kind = EdgeKind.CfgForward, propagateDeadness = false)
             lastNode = property.exitNode
         }
 

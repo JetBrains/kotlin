@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.hasDiagnosticKind
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
@@ -33,7 +33,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
 
         if (delegateType is ConeErrorType) {
             // Implicit recursion type is not reported since the type ref does not have a real source.
-            if (source != null && (delegateType.diagnostic as? ConeSimpleDiagnostic)?.kind == DiagnosticKind.RecursionInImplicitTypes) {
+            if (source != null && delegateType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) {
                 // skip reporting other issues in this case
                 reporter.reportOn(source, FirErrors.RECURSION_IN_IMPLICIT_TYPES, context)
             }

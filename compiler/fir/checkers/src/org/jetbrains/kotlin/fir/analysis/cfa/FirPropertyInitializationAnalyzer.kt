@@ -13,12 +13,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.hasDiagnosticKind
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isExternal
-import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
+import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
@@ -27,10 +26,11 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph.Kind
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChecker() {
     override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
-        data.checkPropertyAccesses(isForClassInitialization = false, context, reporter)
+        data.checkPropertyAccesses(isForInitialization = false, context, reporter)
     }
 }
 
@@ -44,40 +44,44 @@ val FirDeclaration.evaluatedInPlace: Boolean
     }
 
 /**
- * [isForClassInitialization] means that caller is interested in member property in the scope
- *   of class initialization section. In this case the fact that property has initializer does
- *   not mean that it's safe to access this property in any place:
+ * [isForInitialization] means that caller is interested in member property in the scope
+ * of file or class initialization section. In this case the fact that property has
+ * initializer does not mean that it's safe to access this property in any place:
  *
+ * ```
  * class A {
  *     val b = a // a is not initialized here
  *     val a = 10
  *     val c = a // but initialized here
  * }
+ * ```
  */
-
 @OptIn(SymbolInternals::class)
-fun FirPropertySymbol.requiresInitialization(isForClassInitialization: Boolean): Boolean {
+fun FirPropertySymbol.requiresInitialization(isForInitialization: Boolean): Boolean {
     val hasImplicitBackingField = !hasExplicitBackingField && hasBackingField
     return when {
         this is FirSyntheticPropertySymbol -> false
-        isForClassInitialization -> hasDelegate || hasImplicitBackingField
+        isForInitialization -> hasDelegate || hasImplicitBackingField
         else -> !hasInitializer && hasImplicitBackingField && fir.isCatchParameter != true
     }
 }
 
 fun PropertyInitializationInfoData.checkPropertyAccesses(
-    isForClassInitialization: Boolean,
+    isForInitialization: Boolean,
     context: CheckerContext,
     reporter: DiagnosticReporter
 ) {
     // If a property has an initializer (or does not need one), then any reads are OK while any writes are OK
     // if it's a `var` and bad if it's a `val`. `FirReassignmentAndInvisibleSetterChecker` does this without a CFG.
-    val filtered = properties.filterTo(mutableSetOf()) { it.requiresInitialization(isForClassInitialization) }
+    val filtered = properties.filterTo(mutableSetOf()) { it.requiresInitialization(isForInitialization) }
     if (filtered.isEmpty()) return
 
     checkPropertyAccesses(
         graph, filtered, context, reporter, scope = null,
-        isForClassInitialization, doNotReportUninitializedVariable = false, mutableMapOf()
+        isForInitialization,
+        doNotReportUninitializedVariable = false,
+        doNotReportConstantUninitialized = true,
+        scopes = mutableMapOf(),
     )
 }
 
@@ -88,9 +92,10 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
     context: CheckerContext,
     reporter: DiagnosticReporter,
     scope: FirDeclaration?,
-    isForClassInitialization: Boolean,
+    isForInitialization: Boolean,
     doNotReportUninitializedVariable: Boolean,
-    scopes: MutableMap<FirPropertySymbol, FirDeclaration?>
+    doNotReportConstantUninitialized: Boolean,
+    scopes: MutableMap<FirPropertySymbol, FirDeclaration?>,
 ) {
     fun FirQualifiedAccessExpression.hasCorrectReceiver() =
         (dispatchReceiver?.unwrapSmartcastExpression() as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver
@@ -126,7 +131,9 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
 
             node is QualifiedAccessNode -> {
                 if (doNotReportUninitializedVariable) continue
+                if (node.fir.resolvedType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) continue
                 val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: continue
+                if (doNotReportConstantUninitialized && symbol.isConst) continue
                 if (!symbol.isLateInit && !symbol.isExternal && node.fir.hasCorrectReceiver() && symbol in properties &&
                     getValue(node).values.any { it[symbol]?.isDefinitelyVisited() != true }
                 ) {
@@ -144,13 +151,20 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
                      *   even if they may be not initialized at this point, because if lambda is not in-place,
                      *   then it most likely will be called after object will be initialized
                      */
-                    val doNotReportForSubGraph = doNotReportUninitializedVariable ||
-                            (isForClassInitialization && subGraph.kind.doNotReportUninitializedVariableForClassInitialization)
+                    val doNotReportForSubGraph = isForInitialization && subGraph.kind.doNotReportUninitializedVariableForInitialization
+
+                    // Must report uninitialized variable if we start initializing a constant property. This
+                    // allows "regular" properties to reference constant properties out-of-order, but all other
+                    // property references must be in-order.
+                    val isSubGraphConstProperty = (subGraph.declaration as? FirProperty)?.isConst == true
 
                     val newScope = subGraph.declaration?.takeIf { !it.evaluatedInPlace } ?: scope
                     checkPropertyAccesses(
                         subGraph, properties, context, reporter, newScope,
-                        isForClassInitialization, doNotReportForSubGraph, scopes
+                        isForInitialization,
+                        doNotReportUninitializedVariable = doNotReportUninitializedVariable || doNotReportForSubGraph,
+                        doNotReportConstantUninitialized = doNotReportConstantUninitialized && !isSubGraphConstProperty,
+                        scopes
                     )
                 }
             }
@@ -158,8 +172,8 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
     }
 }
 
-private val Kind.doNotReportUninitializedVariableForClassInitialization: Boolean
+private val Kind.doNotReportUninitializedVariableForInitialization: Boolean
     get() = when (this) {
-        Kind.AnonymousFunction, Kind.LocalFunction -> true
+        Kind.Function, Kind.AnonymousFunction, Kind.LocalFunction -> true
         else -> false
     }

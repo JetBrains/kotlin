@@ -50,10 +50,11 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
 
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
             val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: return
-            if (symbol.isVar && symbol.source?.kind !is KtFakeSourceElementKind && symbol in data.properties &&
-                (!symbol.requiresInitialization(isForClassInitialization = data.graph.kind == ControlFlowGraph.Kind.Class) || data.getValue(node).values.any { it[symbol]?.canBeRevisited() == true })
-            ) {
-                reassigned.add(symbol)
+            if (symbol.isVar && symbol.source?.kind !is KtFakeSourceElementKind && symbol in data.properties) {
+                val isForInitialization = data.graph.kind == ControlFlowGraph.Kind.Class || data.graph.kind == ControlFlowGraph.Kind.File
+                if (!symbol.requiresInitialization(isForInitialization) || data.getValue(node).values.any { it[symbol]?.canBeRevisited() == true }) {
+                    reassigned.add(symbol)
+                }
             }
         }
 

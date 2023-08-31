@@ -143,11 +143,11 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
         // and `FirTopLevelPropertiesChecker` for top-level properties.
         if (
             (property.isLocal || isInFileGraph(property, context))
-            && property.requiresInitialization(isForClassInitialization = false)
+            && property.requiresInitialization(isForInitialization = false)
         ) return
         if (
             isInOwnersInitializer(expression.dispatchReceiver?.unwrapSmartcastExpression(), context)
-            && property.requiresInitialization(isForClassInitialization = true)
+            && property.requiresInitialization(isForInitialization = true)
         ) return
 
         reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, property, context)

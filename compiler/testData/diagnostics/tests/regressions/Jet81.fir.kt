@@ -3,7 +3,7 @@
 
 class Test {
   private val y = object {
-    val a = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, UNINITIALIZED_VARIABLE!>y<!>;
+    val a = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>y<!>;
   }
 
   val z = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>y.a<!>;
