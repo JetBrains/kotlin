@@ -39,7 +39,7 @@ abstract class ResolversTestBase : TestCase() {
     fun ExternalDependenciesResolver.assertNotResolve(expectedReportsCount: Int, path: String) {
         val result = runBlocking { resolve(path) }
         assertIsFailure(result)
-        assertEquals(expectedReportsCount, result.reports.count())
+        assertEquals("Actual reports:\n${result.reports.joinToString("\n")}", expectedReportsCount, result.reports.count())
     }
 
     fun ExternalDependenciesResolver.assertAcceptsArtifact(path: String) = assertTrue(acceptsArtifact(path))

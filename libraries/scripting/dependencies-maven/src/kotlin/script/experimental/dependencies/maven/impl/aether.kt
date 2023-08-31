@@ -144,16 +144,16 @@ internal class AetherResolveSession(
     }
 
     fun resolve(
-        root: Artifact,
+        roots: List<Artifact>,
         scope: String,
         kind: ResolutionKind,
         filter: DependencyFilter?,
         classifier: String? = null,
         extension: String? = null,
     ): ResultWithDiagnostics<List<File>> {
-        if (kind == ResolutionKind.NON_TRANSITIVE) return resolveArtifact(root).asSuccess()
+        if (kind == ResolutionKind.NON_TRANSITIVE) return resolveArtifacts(roots).asSuccess()
 
-        val requests = resolveTree(root, scope, filter, classifier, extension)
+        val requests = resolveTree(roots, scope, filter, classifier, extension)
 
         @Suppress("KotlinConstantConditions")
         return when (kind) {
@@ -197,14 +197,14 @@ internal class AetherResolveSession(
     }
 
     private fun resolveTree(
-        root: Artifact,
+        roots: List<Artifact>,
         scope: String,
         filter: DependencyFilter?,
         classifier: String?,
         extension: String?,
     ): Collection<ArtifactRequest> {
         return fetch(
-            request(Dependency(root, scope)),
+            request(roots.map { root -> Dependency(root, scope) }),
             { req ->
                 val requestsBuilder = ArtifactRequestBuilder(classifier, extension)
                 val collectionResult = repositorySystem.collectDependencies(repositorySystemSession, req)
@@ -247,23 +247,21 @@ internal class AetherResolveSession(
         }
     }
 
-    private fun resolveArtifact(artifact: Artifact): List<File> {
-        val request = ArtifactRequest()
-        request.artifact = artifact
-        for (repo in remotes) {
-            request.addRepository(repo)
+    private fun resolveArtifacts(artifacts: List<Artifact>): List<File> {
+        val requests = artifacts.map { artifact ->
+            ArtifactRequest(artifact, remotes, "")
         }
 
         return fetch(
-            request,
-            { req -> listOf(repositorySystem.resolveArtifact(repositorySystemSession, req)) },
-            { req, ex -> ArtifactResolutionException(listOf(ArtifactResult(req)), ex.message, IllegalArgumentException(ex)) }
-        ).toFiles()
+            requests,
+            { reqs -> listOf(repositorySystem.resolveArtifacts(repositorySystemSession, reqs)) },
+            { reqs, ex -> ArtifactResolutionException(reqs.map { req -> ArtifactResult(req) }, ex.message, IllegalArgumentException(ex)) }
+        ).flatMap { it.toFiles() }
     }
 
-    private fun request(root: Dependency): CollectRequest {
+    private fun request(roots: List<Dependency>): CollectRequest {
         val request = CollectRequest()
-        request.root = root
+        request.dependencies = roots
         for (repo in remotes) {
             request.addRepository(repo)
         }
