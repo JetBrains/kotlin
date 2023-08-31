@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -16,8 +17,7 @@ import kotlin.io.path.walk
 
 @DisplayName("Kapt 4 base checks")
 class Kapt4IT : Kapt3IT() {
-    override val languageVersion: LanguageVersion
-        get() = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.KOTLIN_2_0)
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     override fun TestProject.customizeProject() {
         forceKapt4()
@@ -40,6 +40,11 @@ class Kapt4IT : Kapt3IT() {
 
     @Disabled("Doesn't make sense in Kapt 4")
     override fun testRepeatableAnnotationsWithOldJvmBackend(gradleVersion: GradleVersion) {}
+
+    @Disabled("Doesn't work in 2.0. Neither with Kapt 3 nor with Kapt 4")
+    override fun testMPPKaptPresence(gradleVersion: GradleVersion) {
+        super.testMPPKaptPresence(gradleVersion)
+    }
 }
 
 @DisplayName("Kapt 4 with classloaders cache")
@@ -66,22 +71,29 @@ class Kapt4ClassLoadersCacheIT : Kapt3ClassLoadersCacheIT() {
 
 fun TestProject.forceKapt4() {
     projectPath.walk().forEach {
-        if (it.fileName.name == "build.gradle") {
-            it.appendText("""
-            
-            try {    
-                Class.forName("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
-                tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-                   compilerOptions {
-                      freeCompilerArgs.addAll([
-                        '-Xuse-kapt4',
-                        '-Xsuppress-version-warnings'
-                      ])
-                   }
+        when (it.fileName.name) {
+            "build.gradle" -> it.appendText(
+                """
+                
+                pluginManager.withPlugin('kotlin') {
+                    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                       compilerOptions.freeCompilerArgs.addAll(['-Xuse-kapt4', '-Xsuppress-version-warnings'])
+                    }
                 }
-            } catch(ClassNotFoundException ignore) {}
-            
-            """.trimIndent())
+                
+                """.trimIndent()
+            )
+            "build.gradle.kts" -> it.appendText(
+                """
+                
+                pluginManager.withPlugin("kotlin") {
+                    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class.java).configureEach {
+                       compilerOptions.freeCompilerArgs.addAll(listOf("-Xuse-kapt4", "-Xsuppress-version-warnings"))
+                    }
+                }
+                
+                """.trimIndent()
+            )
         }
     }
 }

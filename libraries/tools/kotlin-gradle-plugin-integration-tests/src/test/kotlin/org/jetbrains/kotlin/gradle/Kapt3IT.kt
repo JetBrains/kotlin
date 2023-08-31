@@ -29,9 +29,7 @@ import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
-import java.io.File
 import java.nio.file.Files
-import java.nio.file.Path
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.appendText
@@ -69,41 +67,6 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
     }
 
     protected val String.withPrefix get() = "kapt2/$this"
-
-    @OptIn(EnvironmentalVariablesOverride::class)
-    fun project(
-        projectName: String,
-        gradleVersion: GradleVersion,
-        buildOptions: BuildOptions = defaultBuildOptions,
-        forceOutput: Boolean = false,
-        enableBuildScan: Boolean = false,
-        addHeapDumpOptions: Boolean = true,
-        enableGradleDebug: Boolean = false,
-        projectPathAdditionalSuffix: String = "",
-        buildJdk: File? = null,
-        localRepoDir: Path? = null,
-        environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
-        test: TestProject.() -> Unit = {},
-    ) {
-        (this as KGPBaseTest).project(
-            projectName = projectName,
-            gradleVersion = gradleVersion,
-            buildOptions = buildOptions,
-            forceOutput = forceOutput,
-            enableBuildScan = enableBuildScan,
-            addHeapDumpOptions = addHeapDumpOptions,
-            enableGradleDebug = enableGradleDebug,
-            projectPathAdditionalSuffix = projectPathAdditionalSuffix,
-            buildJdk = buildJdk,
-            localRepoDir = localRepoDir,
-            environmentVariables = environmentVariables,
-        ) {
-            customizeProject()
-            test()
-        }
-    }
-
-    protected open fun TestProject.customizeProject() {}
 }
 
 /**
@@ -985,7 +948,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("kapt works with old MPP")
     @GradleTest
-    fun testMPPKaptPresence(gradleVersion: GradleVersion) {
+    open fun testMPPKaptPresence(gradleVersion: GradleVersion) {
         project("mpp-kapt-presence".withPrefix, gradleVersion) {
 
             build("build") {
