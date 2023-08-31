@@ -174,4 +174,77 @@ class ControlFlowTransformTestsNoSource(
             }
         """
     )
+
+    @Test
+    fun verifyEarlyExitFromMultiLevelNestedInlineFunction() = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            @NonRestartableComposable
+            fun Test(condition: Boolean) {
+                Text("Before outer")
+                InlineLinearA outer@{
+                    Text("Before inner")
+                    InlineLinearB {
+                        Text("Before return")
+                        if (condition) return@outer
+                        Text("After return")
+                    }
+                    Text("After inner")
+                }
+                Text("Before outer")
+            }
+        """,
+        expectedTransformed = """
+            @Composable
+            @NonRestartableComposable
+            fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(Test)")
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %changed, -1, <>)
+              }
+              Text("Before outer", %composer, 0b0110)
+              InlineLinearA({ %composer: Composer?, %changed: Int ->
+                val tmp0_marker = %composer.currentMarker
+                %composer.startReplaceableGroup(<>)
+                Text("Before inner", %composer, 0b0110)
+                InlineLinearB({ %composer: Composer?, %changed: Int ->
+                  %composer.startReplaceableGroup(<>)
+                  Text("Before return", %composer, 0b0110)
+                  if (condition) {
+                    %composer.endToMarker(tmp0_marker)
+                    return@InlineLinearA
+                  }
+                  Text("After return", %composer, 0b0110)
+                  %composer.endReplaceableGroup()
+                }, %composer, 0)
+                Text("After inner", %composer, 0b0110)
+                %composer.endReplaceableGroup()
+              }, %composer, 0)
+              Text("Before outer", %composer, 0b0110)
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
+              %composer.endReplaceableGroup()
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Text(value: String) { }
+
+            @Composable
+            inline fun InlineLinearA(content: @Composable () -> Unit) {
+                content()
+            }
+
+            @Composable
+            inline fun InlineLinearB(content: @Composable () -> Unit) {
+                content()
+            }
+        """
+    )
 }

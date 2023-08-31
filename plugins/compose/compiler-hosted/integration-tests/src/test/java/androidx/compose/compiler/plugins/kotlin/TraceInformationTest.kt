@@ -175,7 +175,8 @@ class TraceInformationTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
                 }
                 A(%composer, 0)
                 Wrapper({ %composer: Composer?, %changed: Int ->
-                  sourceInformationMarkerStart(%composer, <>, "C<A()>,<A()>:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<A()>,<A()>:Test.kt")
                   A(%composer, 0)
                   if (!condition) {
                     %composer.endToMarker(tmp0_marker)
@@ -188,7 +189,7 @@ class TraceInformationTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
                     return
                   }
                   A(%composer, 0)
-                  sourceInformationMarkerEnd(%composer)
+                  %composer.endReplaceableGroup()
                 }, %composer, 0)
                 A(%composer, 0)
                 if (isTraceInProgress()) {
