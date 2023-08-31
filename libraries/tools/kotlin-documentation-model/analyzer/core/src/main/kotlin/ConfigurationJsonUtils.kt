@@ -9,15 +9,15 @@ import org.jetbrains.dokka.utilities.parseJson
 import org.jetbrains.dokka.utilities.serializeAsCompactJson
 import org.jetbrains.dokka.utilities.serializeAsPrettyJson
 
-fun DokkaConfigurationImpl(json: String): DokkaConfigurationImpl = parseJson(json)
+public fun DokkaConfigurationImpl(json: String): DokkaConfigurationImpl = parseJson(json)
 
-fun GlobalDokkaConfiguration(json: String): GlobalDokkaConfiguration = parseJson(json)
-
-@Deprecated("Renamed to better distinguish between compact/pretty prints", ReplaceWith("this.toCompactJsonString()"))
-fun DokkaConfiguration.toJsonString(): String = this.toCompactJsonString()
+public fun GlobalDokkaConfiguration(json: String): GlobalDokkaConfiguration = parseJson(json)
 
 @Deprecated("Renamed to better distinguish between compact/pretty prints", ReplaceWith("this.toCompactJsonString()"))
-fun <T : ConfigurableBlock> T.toJsonString(): String = this.toCompactJsonString()
+public fun DokkaConfiguration.toJsonString(): String = this.toCompactJsonString()
+
+@Deprecated("Renamed to better distinguish between compact/pretty prints", ReplaceWith("this.toCompactJsonString()"))
+public fun <T : ConfigurableBlock> T.toJsonString(): String = this.toCompactJsonString()
 
 /**
  * Serializes [DokkaConfiguration] as a machine-readable and compact JSON string.
@@ -25,7 +25,7 @@ fun <T : ConfigurableBlock> T.toJsonString(): String = this.toCompactJsonString(
  * The returned string is not very human friendly as it will be difficult to parse by eyes due to it
  * being compact and in one line. If you want to show the output to a human being, see [toPrettyJsonString].
  */
-fun DokkaConfiguration.toCompactJsonString(): String = serializeAsCompactJson(this)
+public fun DokkaConfiguration.toCompactJsonString(): String = serializeAsCompactJson(this)
 
 /**
  * Serializes [DokkaConfiguration] as a human-readable (pretty printed) JSON string.
@@ -34,7 +34,7 @@ fun DokkaConfiguration.toCompactJsonString(): String = serializeAsCompactJson(th
  * desirable when passing this value between API consumers/producers. If you want
  * a machine-readable and compact json string, see [toCompactJsonString].
  */
-fun DokkaConfiguration.toPrettyJsonString(): String = serializeAsPrettyJson(this)
+public fun DokkaConfiguration.toPrettyJsonString(): String = serializeAsPrettyJson(this)
 
 /**
  * Serializes a [ConfigurableBlock] as a machine-readable and compact JSON string.
@@ -42,7 +42,7 @@ fun DokkaConfiguration.toPrettyJsonString(): String = serializeAsPrettyJson(this
  * The returned string is not very human friendly as it will be difficult to parse by eyes due to it
  * being compact and in one line. If you want to show the output to a human being, see [toPrettyJsonString].
  */
-fun <T : ConfigurableBlock> T.toCompactJsonString(): String = serializeAsCompactJson(this)
+public fun <T : ConfigurableBlock> T.toCompactJsonString(): String = serializeAsCompactJson(this)
 
 /**
  * Serializes a [ConfigurableBlock] as a human-readable (pretty printed) JSON string.
@@ -51,4 +51,4 @@ fun <T : ConfigurableBlock> T.toCompactJsonString(): String = serializeAsCompact
  * desirable when passing this value between API consumers/producers. If you want
  * a machine-readable and compact json string, see [toCompactJsonString].
  */
-fun <T : ConfigurableBlock> T.toPrettyJsonString(): String = serializeAsCompactJson(this)
+public fun <T : ConfigurableBlock> T.toPrettyJsonString(): String = serializeAsCompactJson(this)

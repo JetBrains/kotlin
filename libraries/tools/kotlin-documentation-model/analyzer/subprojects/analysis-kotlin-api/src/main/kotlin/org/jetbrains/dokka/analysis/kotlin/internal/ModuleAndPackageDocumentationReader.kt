@@ -12,8 +12,8 @@ import org.jetbrains.dokka.model.SourceSetDependent
 import org.jetbrains.dokka.model.doc.DocumentationNode
 
 @InternalDokkaApi
-interface ModuleAndPackageDocumentationReader {
-    fun read(module: DModule): SourceSetDependent<DocumentationNode>
-    fun read(pkg: DPackage): SourceSetDependent<DocumentationNode>
-    fun read(module: DokkaConfiguration.DokkaModuleDescription): DocumentationNode?
+public interface ModuleAndPackageDocumentationReader {
+    public fun read(module: DModule): SourceSetDependent<DocumentationNode>
+    public fun read(pkg: DPackage): SourceSetDependent<DocumentationNode>
+    public fun read(module: DokkaConfiguration.DokkaModuleDescription): DocumentationNode?
 }

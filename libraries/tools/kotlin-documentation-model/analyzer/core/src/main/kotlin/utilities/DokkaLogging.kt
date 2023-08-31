@@ -6,17 +6,18 @@ package org.jetbrains.dokka.utilities
 
 import java.util.concurrent.atomic.AtomicInteger
 
-interface DokkaLogger {
-    var warningsCount: Int
-    var errorsCount: Int
-    fun debug(message: String)
-    fun info(message: String)
-    fun progress(message: String)
-    fun warn(message: String)
-    fun error(message: String)
+public interface DokkaLogger {
+    public var warningsCount: Int
+    public var errorsCount: Int
+
+    public fun debug(message: String)
+    public fun info(message: String)
+    public fun progress(message: String)
+    public fun warn(message: String)
+    public fun error(message: String)
 }
 
-fun DokkaLogger.report() {
+public fun DokkaLogger.report() {
     if (warningsCount > 0 || errorsCount > 0) {
         info(
             "Generation completed with $warningsCount warning" +
@@ -29,20 +30,22 @@ fun DokkaLogger.report() {
     }
 }
 
-enum class LoggingLevel(val index: Int) {
+public enum class LoggingLevel(
+    public val index: Int
+) {
     DEBUG(0), PROGRESS(1), INFO(2), WARN(3), ERROR(4);
 }
 
 /**
  * Used to decouple the transport layer from logger and make it convenient for testing
  */
-fun interface MessageEmitter : (String) -> Unit {
-    companion object {
-        val consoleEmitter: MessageEmitter = MessageEmitter { message -> println(message) }
+public fun interface MessageEmitter : (String) -> Unit {
+    public companion object {
+        public val consoleEmitter: MessageEmitter = MessageEmitter { message -> println(message) }
     }
 }
 
-class DokkaConsoleLogger(
+public class DokkaConsoleLogger(
     private val minLevel: LoggingLevel = LoggingLevel.PROGRESS,
     private val emitter: MessageEmitter = MessageEmitter.consoleEmitter
 ) : DokkaLogger {

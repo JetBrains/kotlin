@@ -13,19 +13,19 @@ import java.util.jar.JarFile
 import java.util.zip.ZipEntry
 
 @InternalDokkaApi
-data class ServiceDescriptor(val name: String, val category: String, val description: String?, val className: String)
+public data class ServiceDescriptor(val name: String, val category: String, val description: String?, val className: String)
 
 @InternalDokkaApi
-class ServiceLookupException(message: String) : Exception(message)
+public class ServiceLookupException(message: String) : Exception(message)
 
 @InternalDokkaApi
-object ServiceLocator {
-    fun <T : Any> lookup(clazz: Class<T>, category: String, implementationName: String): T {
+public object ServiceLocator {
+    public fun <T : Any> lookup(clazz: Class<T>, category: String, implementationName: String): T {
         val descriptor = lookupDescriptor(category, implementationName)
         return lookup(clazz, descriptor)
     }
 
-    fun <T : Any> lookup(
+    public fun <T : Any> lookup(
         clazz: Class<T>,
         descriptor: ServiceDescriptor
     ): T {
@@ -56,7 +56,7 @@ object ServiceLocator {
         return ServiceDescriptor(implementationName, category, properties["description"]?.toString(), className)
     }
 
-    fun URL.toFile(): File {
+    public fun URL.toFile(): File {
         assert(protocol == "file")
 
         return try {
@@ -66,7 +66,7 @@ object ServiceLocator {
         }
     }
 
-    fun allServices(category: String): List<ServiceDescriptor> {
+    public fun allServices(category: String): List<ServiceDescriptor> {
         val entries = this.javaClass.classLoader.getResources("dokka/$category")?.toList() ?: emptyList()
 
         return entries.flatMap {

@@ -9,8 +9,9 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.plugability.DokkaContext
 
-class KotlinArrayDocumentableReplacerTransformer(context: DokkaContext):
-    DocumentableReplacerTransformer(context) {
+public class KotlinArrayDocumentableReplacerTransformer(
+    context: DokkaContext
+): DocumentableReplacerTransformer(context) {
 
     private fun Documentable.isJVM() =
         sourceSets.any{ it.analysisPlatform == Platform.jvm }

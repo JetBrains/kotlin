@@ -8,7 +8,7 @@ import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import java.io.File
 import java.net.URL
 
-data class DokkaConfigurationImpl(
+public data class DokkaConfigurationImpl(
     override val moduleName: String = DokkaDefaults.moduleName,
     override val moduleVersion: String? = DokkaDefaults.moduleVersion,
     override val outputDir: File = DokkaDefaults.outputDir,
@@ -26,14 +26,14 @@ data class DokkaConfigurationImpl(
     override val finalizeCoroutines: Boolean = true,
 ) : DokkaConfiguration
 
-data class PluginConfigurationImpl(
+public data class PluginConfigurationImpl(
     override val fqPluginName: String,
     override val serializationFormat: DokkaConfiguration.SerializationFormat,
     override val values: String
 ) : DokkaConfiguration.PluginConfiguration
 
 
-data class DokkaSourceSetImpl(
+public data class DokkaSourceSetImpl(
     override val displayName: String = DokkaDefaults.sourceSetDisplayName,
     override val sourceSetID: DokkaSourceSetID,
     override val classpath: List<File> = emptyList(),
@@ -59,20 +59,21 @@ data class DokkaSourceSetImpl(
     override val documentedVisibilities: Set<DokkaConfiguration.Visibility> = DokkaDefaults.documentedVisibilities,
 ) : DokkaSourceSet
 
-data class DokkaModuleDescriptionImpl(
+public data class DokkaModuleDescriptionImpl(
     override val name: String,
     override val relativePathToOutputDirectory: File,
     override val includes: Set<File>,
     override val sourceOutputDirectory: File
 ) : DokkaConfiguration.DokkaModuleDescription
 
-data class SourceLinkDefinitionImpl(
+public data class SourceLinkDefinitionImpl(
     override val localDirectory: String,
     override val remoteUrl: URL,
     override val remoteLineSuffix: String?,
 ) : DokkaConfiguration.SourceLinkDefinition {
-    companion object {
-        fun parseSourceLinkDefinition(srcLink: String): SourceLinkDefinitionImpl {
+
+    public companion object {
+        public fun parseSourceLinkDefinition(srcLink: String): SourceLinkDefinitionImpl {
             val (path, urlAndLine) = srcLink.split('=')
             return SourceLinkDefinitionImpl(
                 localDirectory = File(path).canonicalPath,
@@ -82,7 +83,7 @@ data class SourceLinkDefinitionImpl(
     }
 }
 
-data class PackageOptionsImpl(
+public data class PackageOptionsImpl(
     override val matchingRegex: String,
     @Deprecated("Use [documentedVisibilities] property for a more flexible control over documented visibilities")
     override val includeNonPublic: Boolean,
@@ -93,7 +94,7 @@ data class PackageOptionsImpl(
 ) : DokkaConfiguration.PackageOptions
 
 
-data class ExternalDocumentationLinkImpl(
+public data class ExternalDocumentationLinkImpl(
     override val url: URL,
     override val packageListUrl: URL,
 ) : DokkaConfiguration.ExternalDocumentationLink

@@ -18,33 +18,35 @@ import org.jetbrains.dokka.utilities.DokkaLogger
  *
  * [generate] method has been split into submethods for test reasons
  */
-class DokkaGenerator(
+public class DokkaGenerator(
     private val configuration: DokkaConfiguration,
     private val logger: DokkaLogger
 ) {
 
-    fun generate() = timed(logger) {
-        report("Initializing plugins")
-        val context = initializePlugins(configuration, logger)
+    public fun generate() {
+        timed(logger) {
+            report("Initializing plugins")
+            val context = initializePlugins(configuration, logger)
 
-        runCatching {
-            context.single(CoreExtensions.generation).run {
-                logger.progress("Dokka is performing: $generationName")
-                generate()
+            runCatching {
+                context.single(CoreExtensions.generation).run {
+                    logger.progress("Dokka is performing: $generationName")
+                    generate()
+                }
+            }.exceptionOrNull()?.let { e ->
+                finalizeCoroutines()
+                throw e
             }
-        }.exceptionOrNull()?.let { e ->
+
             finalizeCoroutines()
-            throw e
-        }
+        }.dump("\n\n === TIME MEASUREMENT ===\n")
+    }
 
-        finalizeCoroutines()
-    }.dump("\n\n === TIME MEASUREMENT ===\n")
-
-    fun initializePlugins(
+    public fun initializePlugins(
         configuration: DokkaConfiguration,
         logger: DokkaLogger,
         additionalPlugins: List<DokkaPlugin> = emptyList()
-    ) = DokkaContext.create(configuration, logger, additionalPlugins)
+    ): DokkaContext = DokkaContext.create(configuration, logger, additionalPlugins)
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun finalizeCoroutines() {
@@ -54,15 +56,15 @@ class DokkaGenerator(
     }
 }
 
-class Timer internal constructor(startTime: Long, private val logger: DokkaLogger?) {
+public class Timer internal constructor(startTime: Long, private val logger: DokkaLogger?) {
     private val steps = mutableListOf("" to startTime)
 
-    fun report(name: String) {
+    public fun report(name: String) {
         logger?.progress(name)
         steps += (name to System.currentTimeMillis())
     }
 
-    fun dump(prefix: String = "") {
+    public fun dump(prefix: String = "") {
         logger?.info(prefix)
         val namePad = steps.map { it.first.length }.maxOrNull() ?: 0
         val timePad = steps.windowed(2).map { (p1, p2) -> p2.second - p1.second }.maxOrNull()?.toString()?.length ?: 0

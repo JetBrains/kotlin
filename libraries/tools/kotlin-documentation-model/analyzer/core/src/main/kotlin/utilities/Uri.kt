@@ -9,7 +9,7 @@ import java.net.URI
 
 @InternalDokkaApi
 @Deprecated("Deprecated for removal") // Unused in Dokka
-fun URI.relativeTo(uri: URI): URI {
+public fun URI.relativeTo(uri: URI): URI {
     // Normalize paths to remove . and .. segments
     val base = uri.normalize()
     val child = this.normalize()

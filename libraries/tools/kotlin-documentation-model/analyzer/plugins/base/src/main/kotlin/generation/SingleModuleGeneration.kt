@@ -22,7 +22,7 @@ import org.jetbrains.dokka.transformers.sources.AsyncSourceToDocumentableTransla
 import org.jetbrains.dokka.utilities.parallelMap
 import org.jetbrains.dokka.utilities.report
 
-class SingleModuleGeneration(private val context: DokkaContext) : Generation {
+public class SingleModuleGeneration(private val context: DokkaContext) : Generation {
 
     override fun Timer.generate() {
         report("Validity check")
@@ -59,38 +59,40 @@ class SingleModuleGeneration(private val context: DokkaContext) : Generation {
         reportAfterRendering()
     }
 
-    override val generationName = "documentation for ${context.configuration.moduleName}"
+    override val generationName: String = "documentation for ${context.configuration.moduleName}"
 
-    fun createDocumentationModels(): List<DModule> = runBlocking(Dispatchers.Default) {
+    public fun createDocumentationModels(): List<DModule> = runBlocking(Dispatchers.Default) {
         context.configuration.sourceSets.parallelMap { sourceSet -> translateSources(sourceSet, context) }.flatten()
             .also { modules -> if (modules.isEmpty()) exitGenerationGracefully("Nothing to document") }
     }
 
-    fun transformDocumentationModelBeforeMerge(modulesFromPlatforms: List<DModule>) =
-        context.plugin<DokkaBase>().query { preMergeDocumentableTransformer }
+    public fun transformDocumentationModelBeforeMerge(modulesFromPlatforms: List<DModule>): List<DModule> {
+        return context.plugin<DokkaBase>()
+            .query { preMergeDocumentableTransformer }
             .fold(modulesFromPlatforms) { acc, t -> t(acc) }
+    }
 
-    fun mergeDocumentationModels(modulesFromPlatforms: List<DModule>) =
+    public fun mergeDocumentationModels(modulesFromPlatforms: List<DModule>): DModule? =
         context.single(CoreExtensions.documentableMerger).invoke(modulesFromPlatforms)
 
-    fun transformDocumentationModelAfterMerge(documentationModel: DModule) =
+    public fun transformDocumentationModelAfterMerge(documentationModel: DModule): DModule =
         context[CoreExtensions.documentableTransformer].fold(documentationModel) { acc, t -> t(acc, context) }
 
-    fun createPages(transformedDocumentation: DModule): RootPageNode =
+    public fun createPages(transformedDocumentation: DModule): RootPageNode =
         context.single(CoreExtensions.documentableToPageTranslator).invoke(transformedDocumentation)
 
-    fun transformPages(pages: RootPageNode): RootPageNode =
+    public fun transformPages(pages: RootPageNode): RootPageNode =
         context[CoreExtensions.pageTransformer].fold(pages) { acc, t -> t(acc) }
 
-    fun render(transformedPages: RootPageNode) {
+    public fun render(transformedPages: RootPageNode) {
         context.single(CoreExtensions.renderer).render(transformedPages)
     }
 
-    fun runPostActions() {
+    public fun runPostActions() {
         context[CoreExtensions.postActions].forEach { it() }
     }
 
-    fun validityCheck(context: DokkaContext) {
+    public fun validityCheck(context: DokkaContext) {
         val (preGenerationCheckResult, checkMessages) = context[CoreExtensions.preGenerationCheck].fold(
             Pair(true, emptyList<String>())
         ) { acc, checker -> checker() + acc }
@@ -99,7 +101,7 @@ class SingleModuleGeneration(private val context: DokkaContext) : Generation {
         )
     }
 
-    fun reportAfterRendering() {
+    public fun reportAfterRendering() {
         context.unusedPoints.takeIf { it.isNotEmpty() }?.also {
             context.logger.info("Unused extension points found: ${it.joinToString(", ")}")
         }

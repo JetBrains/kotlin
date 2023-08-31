@@ -12,20 +12,20 @@ import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
-interface DokkaContext {
-    fun <T : DokkaPlugin> plugin(kclass: KClass<T>): T?
+public interface DokkaContext {
+    public fun <T : DokkaPlugin> plugin(kclass: KClass<T>): T?
 
-    operator fun <T, E> get(point: E): List<T>
+    public operator fun <T, E> get(point: E): List<T>
             where T : Any, E : ExtensionPoint<T>
 
-    fun <T, E> single(point: E): T where T : Any, E : ExtensionPoint<T>
+    public fun <T, E> single(point: E): T where T : Any, E : ExtensionPoint<T>
 
-    val logger: DokkaLogger
-    val configuration: DokkaConfiguration
-    val unusedPoints: Collection<ExtensionPoint<*>>
+    public val logger: DokkaLogger
+    public val configuration: DokkaConfiguration
+    public val unusedPoints: Collection<ExtensionPoint<*>>
 
-    companion object {
-        fun create(
+    public companion object {
+        public fun create(
             configuration: DokkaConfiguration,
             logger: DokkaLogger,
             pluginOverrides: List<DokkaPlugin>
@@ -44,11 +44,11 @@ interface DokkaContext {
     }
 }
 
-inline fun <reified T : DokkaPlugin> DokkaContext.plugin(): T = plugin(T::class)
+public inline fun <reified T : DokkaPlugin> DokkaContext.plugin(): T = plugin(T::class)
     ?: throw java.lang.IllegalStateException("Plugin ${T::class.qualifiedName} is not present in context.")
 
-fun interface DokkaContextConfiguration {
-    fun installExtension(extension: Extension<*, *, *>)
+public fun interface DokkaContextConfiguration {
+    public fun installExtension(extension: Extension<*, *, *>)
 }
 
 private class DokkaContextConfigurationImpl(

@@ -17,7 +17,7 @@ internal val PsiElement.parentsWithSelf: Sequence<PsiElement>
     get() = generateSequence(this) { if (it is PsiFile) null else it.parent }
 
 @InternalDokkaApi
-fun DRI.Companion.from(psi: PsiElement) = psi.parentsWithSelf.run {
+public fun DRI.Companion.from(psi: PsiElement): DRI = psi.parentsWithSelf.run {
     val psiMethod = firstIsInstanceOrNull<PsiMethod>()
     val psiField = firstIsInstanceOrNull<PsiField>()
     val classes = filterIsInstance<PsiClass>().filterNot { it is PsiTypeParameter }
@@ -92,8 +92,10 @@ internal fun PsiElement.getNextSiblingIgnoringWhitespace(withItself: Boolean = f
 }
 
 @InternalDokkaApi
-class PsiDocumentableSource(val psi: PsiNamedElement) : DocumentableSource {
-    override val path = psi.containingFile.virtualFile.path
+public class PsiDocumentableSource(
+    public val psi: PsiNamedElement
+) : DocumentableSource {
+    override val path: String = psi.containingFile.virtualFile.path
 
     override fun computeLineNumber(): Int? {
         val range = psi.getChildOfType<PsiIdentifier>()?.textRange ?: psi.textRange
@@ -103,7 +105,7 @@ class PsiDocumentableSource(val psi: PsiNamedElement) : DocumentableSource {
     }
 }
 
-inline fun <reified T : PsiElement> PsiElement.getChildOfType(): T? {
+public inline fun <reified T : PsiElement> PsiElement.getChildOfType(): T? {
     return PsiTreeUtil.getChildOfType(this, T::class.java)
 }
 

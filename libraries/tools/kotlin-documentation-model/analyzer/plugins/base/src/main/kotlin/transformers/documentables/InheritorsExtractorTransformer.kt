@@ -12,7 +12,7 @@ import org.jetbrains.dokka.model.properties.MergeStrategy
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.DocumentableTransformer
 
-class InheritorsExtractorTransformer : DocumentableTransformer {
+public class InheritorsExtractorTransformer : DocumentableTransformer {
     override fun invoke(original: DModule, context: DokkaContext): DModule =
         original.generateInheritanceMap().let { inheritanceMap -> original.appendInheritors(inheritanceMap) as DModule }
 
@@ -72,8 +72,10 @@ class InheritorsExtractorTransformer : DocumentableTransformer {
 
 }
 
-class InheritorsInfo(val value: SourceSetDependent<List<DRI>>) : ExtraProperty<Documentable> {
-    companion object : ExtraProperty.Key<Documentable, InheritorsInfo> {
+public class InheritorsInfo(
+    public val value: SourceSetDependent<List<DRI>>
+) : ExtraProperty<Documentable> {
+    public companion object : ExtraProperty.Key<Documentable, InheritorsInfo> {
         override fun mergeStrategyFor(left: InheritorsInfo, right: InheritorsInfo): MergeStrategy<Documentable> =
             MergeStrategy.Replace(
                 InheritorsInfo(
