@@ -9,11 +9,11 @@ import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.ExceptionInSupertypes
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 
-val <T : Documentable> WithExtraProperties<T>.isException: Boolean
+public val <T : Documentable> WithExtraProperties<T>.isException: Boolean
     get() = extra[ExceptionInSupertypes] != null
 
 
-val <T : Documentable> WithExtraProperties<T>.deprecatedAnnotation
+public val <T : Documentable> WithExtraProperties<T>.deprecatedAnnotation: Annotations.Annotation?
     get() = extra[Annotations]?.let { annotations ->
         annotations.directAnnotations.values.flatten().firstOrNull {
             it.isDeprecated()
@@ -24,11 +24,12 @@ val <T : Documentable> WithExtraProperties<T>.deprecatedAnnotation
  * @return true if [T] has [kotlin.Deprecated] or [java.lang.Deprecated]
  *         annotation for **any** source set
  */
-fun <T : Documentable> WithExtraProperties<T>.isDeprecated() = deprecatedAnnotation != null
+public fun <T : Documentable> WithExtraProperties<T>.isDeprecated(): Boolean = deprecatedAnnotation != null
 
 /**
  * @return true for [kotlin.Deprecated] and [java.lang.Deprecated]
  */
-fun Annotations.Annotation.isDeprecated() =
-    (this.dri.packageName == "kotlin" && this.dri.classNames == "Deprecated") ||
+public fun Annotations.Annotation.isDeprecated(): Boolean {
+    return (this.dri.packageName == "kotlin" && this.dri.classNames == "Deprecated") ||
             (this.dri.packageName == "java.lang" && this.dri.classNames == "Deprecated")
+}

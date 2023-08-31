@@ -12,7 +12,9 @@ import org.jetbrains.dokka.transformers.documentation.source
 import org.jetbrains.dokka.transformers.documentation.sourceSet
 import java.io.File
 
-class SuppressedByConfigurationDocumentableFilterTransformer(val context: DokkaContext) : PreMergeDocumentableTransformer {
+public class SuppressedByConfigurationDocumentableFilterTransformer(
+    public val context: DokkaContext
+) : PreMergeDocumentableTransformer {
     override fun invoke(modules: List<DModule>): List<DModule> {
         return modules.mapNotNull(::filterModule)
     }

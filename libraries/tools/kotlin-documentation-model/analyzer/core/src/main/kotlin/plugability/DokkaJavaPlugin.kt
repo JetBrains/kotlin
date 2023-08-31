@@ -6,17 +6,19 @@ package org.jetbrains.dokka.plugability
 
 import org.jetbrains.dokka.DokkaConfiguration
 
-class ExtensionBuilderStart internal constructor(){
-    fun <T: Any>  extensionPoint(ext: ExtensionPoint<T>): ProvidedExtension<T> = ProvidedExtension(ext)
+public class ExtensionBuilderStart internal constructor(){
+    public fun <T: Any>  extensionPoint(ext: ExtensionPoint<T>): ProvidedExtension<T> = ProvidedExtension(ext)
 }
 
-class ProvidedExtension<T: Any> internal constructor(val ext: ExtensionPoint<T>){
-    fun fromInstance(inst: T): ExtensionBuilder<T> = createBuilder(
+public class ProvidedExtension<T: Any> internal constructor(
+    public val ext: ExtensionPoint<T>
+) {
+    public fun fromInstance(inst: T): ExtensionBuilder<T> = createBuilder(
         LazyEvaluated.fromInstance(
             inst
         )
     )
-    fun fromRecipe(recipe: (DokkaContext) -> T): ExtensionBuilder<T> = createBuilder(
+    public fun fromRecipe(recipe: (DokkaContext) -> T): ExtensionBuilder<T> = createBuilder(
         LazyEvaluated.fromRecipe(recipe)
     )
 
@@ -28,7 +30,7 @@ class ProvidedExtension<T: Any> internal constructor(val ext: ExtensionPoint<T>)
             OverrideKind.None, emptyList())
 }
 
-data class ExtensionBuilder<T: Any> internal constructor(
+public data class ExtensionBuilder<T: Any> internal constructor(
     private val name: String,
     private val ext: ExtensionPoint<T>,
     private val action: LazyEvaluated<T>,
@@ -37,7 +39,7 @@ data class ExtensionBuilder<T: Any> internal constructor(
     private val override: OverrideKind = OverrideKind.None,
     private val conditions: List<(DokkaConfiguration) -> Boolean>
 ){
-    fun build(): Extension<T, *, *>  = Extension(
+    public fun build(): Extension<T, *, *>  = Extension(
         ext,
         javaClass.name,
         name,
@@ -50,27 +52,27 @@ data class ExtensionBuilder<T: Any> internal constructor(
         conditions
     )
 
-    fun overrideExtension(extension: Extension<T, *, *>) = copy(override = OverrideKind.Present(listOf(extension)))
+    public fun overrideExtension(extension: Extension<T, *, *>): ExtensionBuilder<T> = copy(override = OverrideKind.Present(listOf(extension)))
 
-    fun newOrdering(before: Array<out Extension<*, *, *>>, after: Array<out Extension<*, *, *>>) =
+    public fun newOrdering(before: Array<out Extension<*, *, *>>, after: Array<out Extension<*, *, *>>): ExtensionBuilder<T> =
         copy(before = this.before + before, after = this.after + after)
 
-    fun before(vararg exts: Extension<*, *, *>) = copy(before = this.before + exts)
+    public fun before(vararg exts: Extension<*, *, *>): ExtensionBuilder<T> = copy(before = this.before + exts)
 
-    fun after(vararg exts: Extension<*, *, *>) = copy(after = this.after + exts)
+    public fun after(vararg exts: Extension<*, *, *>): ExtensionBuilder<T> = copy(after = this.after + exts)
 
-    fun addCondition(c: (DokkaConfiguration) -> Boolean) = copy(conditions = conditions + c)
+    public fun addCondition(c: (DokkaConfiguration) -> Boolean): ExtensionBuilder<T> = copy(conditions = conditions + c)
 
-    fun name(name: String) = copy(name = name)
+    public fun name(name: String): ExtensionBuilder<T> = copy(name = name)
 }
 
-abstract class DokkaJavaPlugin: DokkaPlugin() {
+public abstract class DokkaJavaPlugin: DokkaPlugin() {
 
-    fun <T: DokkaPlugin> plugin(clazz: Class<T>): T =
+    public fun <T: DokkaPlugin> plugin(clazz: Class<T>): T =
         context?.plugin(clazz.kotlin) ?: throwIllegalQuery()
 
 
-    fun <T: Any> extend(func: (ExtensionBuilderStart) -> ExtensionBuilder<T>): Lazy<Extension<T, *, *>> =
+    public fun <T: Any> extend(func: (ExtensionBuilderStart) -> ExtensionBuilder<T>): Lazy<Extension<T, *, *>> =
         lazy { func(ExtensionBuilderStart()).build() }.also { unsafeInstall(it) }
 
 }

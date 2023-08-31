@@ -4,40 +4,40 @@
 
 package org.jetbrains.dokka.model
 
-sealed class ExtraModifiers(val name: String) {
+public sealed class ExtraModifiers(public val name: String) {
 
-    sealed class KotlinOnlyModifiers(name: String) : ExtraModifiers(name) {
-        object Inline : KotlinOnlyModifiers("inline")
-        object Value : KotlinOnlyModifiers("value")
-        object Infix : KotlinOnlyModifiers("infix")
-        object External : KotlinOnlyModifiers("external")
-        object Suspend : KotlinOnlyModifiers("suspend")
-        object Reified : KotlinOnlyModifiers("reified")
-        object CrossInline : KotlinOnlyModifiers("crossinline")
-        object NoInline : KotlinOnlyModifiers("noinline")
-        object Override : KotlinOnlyModifiers("override")
-        object Data : KotlinOnlyModifiers("data")
-        object Const : KotlinOnlyModifiers("const")
-        object Inner : KotlinOnlyModifiers("inner")
-        object LateInit : KotlinOnlyModifiers("lateinit")
-        object Operator : KotlinOnlyModifiers("operator")
-        object TailRec : KotlinOnlyModifiers("tailrec")
-        object VarArg : KotlinOnlyModifiers("vararg")
-        object Fun : KotlinOnlyModifiers("fun")
+    public sealed class KotlinOnlyModifiers(name: String) : ExtraModifiers(name) {
+        public object Inline : KotlinOnlyModifiers("inline")
+        public object Value : KotlinOnlyModifiers("value")
+        public object Infix : KotlinOnlyModifiers("infix")
+        public object External : KotlinOnlyModifiers("external")
+        public object Suspend : KotlinOnlyModifiers("suspend")
+        public object Reified : KotlinOnlyModifiers("reified")
+        public object CrossInline : KotlinOnlyModifiers("crossinline")
+        public object NoInline : KotlinOnlyModifiers("noinline")
+        public object Override : KotlinOnlyModifiers("override")
+        public object Data : KotlinOnlyModifiers("data")
+        public object Const : KotlinOnlyModifiers("const")
+        public object Inner : KotlinOnlyModifiers("inner")
+        public object LateInit : KotlinOnlyModifiers("lateinit")
+        public object Operator : KotlinOnlyModifiers("operator")
+        public object TailRec : KotlinOnlyModifiers("tailrec")
+        public object VarArg : KotlinOnlyModifiers("vararg")
+        public object Fun : KotlinOnlyModifiers("fun")
     }
 
-    sealed class JavaOnlyModifiers(name: String) : ExtraModifiers(name) {
-        object Static : JavaOnlyModifiers("static")
-        object Native : JavaOnlyModifiers("native")
-        object Synchronized : JavaOnlyModifiers("synchronized")
-        object StrictFP : JavaOnlyModifiers("strictfp")
-        object Transient : JavaOnlyModifiers("transient")
-        object Volatile : JavaOnlyModifiers("volatile")
-        object Transitive : JavaOnlyModifiers("transitive")
+    public sealed class JavaOnlyModifiers(name: String) : ExtraModifiers(name) {
+        public object Static : JavaOnlyModifiers("static")
+        public object Native : JavaOnlyModifiers("native")
+        public object Synchronized : JavaOnlyModifiers("synchronized")
+        public object StrictFP : JavaOnlyModifiers("strictfp")
+        public object Transient : JavaOnlyModifiers("transient")
+        public object Volatile : JavaOnlyModifiers("volatile")
+        public object Transitive : JavaOnlyModifiers("transitive")
     }
 
-    companion object {
-        fun valueOf(str: String) = when (str) {
+    public companion object {
+        public fun valueOf(str: String): ExtraModifiers = when (str) {
             "inline" -> KotlinOnlyModifiers.Inline
             "value" -> KotlinOnlyModifiers.Value
             "infix" -> KotlinOnlyModifiers.Infix

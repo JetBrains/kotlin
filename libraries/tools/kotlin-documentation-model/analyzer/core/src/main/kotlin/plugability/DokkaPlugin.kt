@@ -22,16 +22,16 @@ import kotlin.reflect.KProperty1
 )
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.BINARY)
-annotation class DokkaPluginApiPreview
+public annotation class DokkaPluginApiPreview
 
 /**
  * Acknowledgement for empty methods that inform users about [DokkaPluginApiPreview]
  * Also, it allows to not propagates the annotation in IDE by default when a user autogenerate methods.
  */
 @DokkaPluginApiPreview
-object PluginApiPreviewAcknowledgement
+public object PluginApiPreviewAcknowledgement
 
-abstract class DokkaPlugin {
+public abstract class DokkaPlugin {
     private val extensionDelegates = mutableListOf<KProperty<*>>()
     private val unsafePlugins = mutableListOf<Lazy<Extension<*, *, *>>>()
 
@@ -47,29 +47,36 @@ abstract class DokkaPlugin {
     protected abstract fun pluginApiPreviewAcknowledgement(): PluginApiPreviewAcknowledgement
     protected inline fun <reified T : DokkaPlugin> plugin(): T = context?.plugin(T::class) ?: throwIllegalQuery()
 
-    protected fun <T : Any> extensionPoint() = ReadOnlyProperty<DokkaPlugin, ExtensionPoint<T>> { thisRef, property ->
-        ExtensionPoint(
-            thisRef::class.qualifiedName ?: throw AssertionError("Plugin must be named class"),
-            property.name
-        )
+    protected fun <T : Any> extensionPoint(): ReadOnlyProperty<DokkaPlugin, ExtensionPoint<T>> {
+        return ReadOnlyProperty { thisRef, property ->
+            ExtensionPoint(
+                thisRef::class.qualifiedName ?: throw AssertionError("Plugin must be named class"),
+                property.name
+            )
+        }
     }
-    protected fun <T : Any> extending(definition: ExtendingDSL.() -> Extension<T, *, *>) = ExtensionProvider(definition)
+    protected fun <T : Any> extending(definition: ExtendingDSL.() -> Extension<T, *, *>): ExtensionProvider<T> {
+        return ExtensionProvider(definition)
+    }
 
     protected class ExtensionProvider<T : Any> internal constructor(
         private val definition: ExtendingDSL.() -> Extension<T, *, *>
     ) {
-        operator fun provideDelegate(thisRef: DokkaPlugin, property: KProperty<*>) = lazy {
-            ExtendingDSL(
-                thisRef::class.qualifiedName ?: throw AssertionError("Plugin must be named class"),
-                property.name
-            ).definition()
-        }.also { thisRef.extensionDelegates += property }
+        public operator fun provideDelegate(thisRef: DokkaPlugin, property: KProperty<*>): Lazy<Extension<T, *, *>> {
+            return lazy {
+                ExtendingDSL(
+                    thisRef::class.qualifiedName ?: throw AssertionError("Plugin must be named class"),
+                    property.name
+                ).definition()
+            }.also { thisRef.extensionDelegates += property }
+        }
     }
 
     internal fun internalInstall(ctx: DokkaContextConfiguration, configuration: DokkaConfiguration) {
         val extensionsToInstall = extensionDelegates.asSequence()
             .filterIsInstance<KProperty1<DokkaPlugin, Extension<*, *, *>>>() // should be always true
             .map { it.get(this) } + unsafePlugins.map { it.value }
+
         extensionsToInstall.forEach { if (configuration.(it.condition)()) ctx.installExtension(it) }
     }
 
@@ -78,22 +85,22 @@ abstract class DokkaPlugin {
     }
 }
 
-interface WithUnsafeExtensionSuppression {
-    val extensionsSuppressed: List<Extension<*, *, *>>
+public interface WithUnsafeExtensionSuppression {
+    public val extensionsSuppressed: List<Extension<*, *, *>>
 }
 
-interface ConfigurableBlock
+public interface ConfigurableBlock
 
-inline fun <reified P : DokkaPlugin, reified E : Any> P.query(extension: P.() -> ExtensionPoint<E>): List<E> =
+public inline fun <reified P : DokkaPlugin, reified E : Any> P.query(extension: P.() -> ExtensionPoint<E>): List<E> =
     context?.let { it[extension()] } ?: throwIllegalQuery()
 
-inline fun <reified P : DokkaPlugin, reified E : Any> P.querySingle(extension: P.() -> ExtensionPoint<E>): E =
+public inline fun <reified P : DokkaPlugin, reified E : Any> P.querySingle(extension: P.() -> ExtensionPoint<E>): E =
     context?.single(extension()) ?: throwIllegalQuery()
 
-fun throwIllegalQuery(): Nothing =
+public fun throwIllegalQuery(): Nothing =
     throw IllegalStateException("Querying about plugins is only possible with dokka context initialised")
 
-inline fun <reified T : DokkaPlugin, reified R : ConfigurableBlock> configuration(context: DokkaContext): R? =
+public inline fun <reified T : DokkaPlugin, reified R : ConfigurableBlock> configuration(context: DokkaContext): R? =
     context.configuration.pluginsConfiguration.firstOrNull { it.fqPluginName == T::class.qualifiedName }
         ?.let { configuration ->
             when (configuration.serializationFormat) {

@@ -9,13 +9,14 @@ import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.plugability.ExtensionPoint
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
+import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.dokka.utilities.LoggingLevel
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.memberProperties
 
 @Suppress("UNCHECKED_CAST") // It is only usable from tests so we do not care about safety
-class MockContext(
+public class MockContext(
     vararg extensions: Pair<ExtensionPoint<*>, (DokkaContext) -> Any>,
     private val testConfiguration: DokkaConfiguration? = null,
     private val unusedExtensionPoints: List<ExtensionPoint<*>>? = null
@@ -36,7 +37,7 @@ class MockContext(
 
     override fun <T : Any, E : ExtensionPoint<T>> single(point: E): T = get(point).single()
 
-    override val logger = DokkaConsoleLogger(LoggingLevel.DEBUG)
+    override val logger: DokkaLogger = DokkaConsoleLogger(LoggingLevel.DEBUG)
 
     override val configuration: DokkaConfiguration
         get() = testConfiguration ?: throw IllegalStateException("This mock context doesn't provide configuration")

@@ -12,7 +12,7 @@ import org.jetbrains.dokka.InternalDokkaApi
  * locally for convenience.
  */
 @InternalDokkaApi
-inline fun <reified T : Any> Iterable<*>.firstIsInstanceOrNull(): T? {
+public inline fun <reified T : Any> Iterable<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
     return null
 }
@@ -23,7 +23,7 @@ inline fun <reified T : Any> Iterable<*>.firstIsInstanceOrNull(): T? {
  * locally for convenience.
  */
 @InternalDokkaApi
-inline fun <reified T : Any> Sequence<*>.firstIsInstanceOrNull(): T? {
+public inline fun <reified T : Any> Sequence<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
     return null
 }

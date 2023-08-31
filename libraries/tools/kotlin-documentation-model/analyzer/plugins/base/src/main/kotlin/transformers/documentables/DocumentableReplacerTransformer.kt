@@ -8,8 +8,9 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 
-abstract class DocumentableReplacerTransformer(val context: DokkaContext) :
-    PreMergeDocumentableTransformer {
+public abstract class DocumentableReplacerTransformer(
+    public val context: DokkaContext
+) : PreMergeDocumentableTransformer {
     override fun invoke(modules: List<DModule>): List<DModule> =
         modules.map { module ->
             val (documentable, wasChanged) = processModule(module)
@@ -170,10 +171,12 @@ abstract class DocumentableReplacerTransformer(val context: DokkaContext) :
         )).let { AnyWithChanges(it, wasChanged) }
     }
 
-    protected open fun processBound(bound: Bound) = when(bound) {
-        is GenericTypeConstructor -> processGenericTypeConstructor(bound)
-        is FunctionalTypeConstructor -> processFunctionalTypeConstructor(bound)
-        else -> AnyWithChanges(bound, false)
+    protected open fun processBound(bound: Bound): AnyWithChanges<Bound> {
+        return when(bound) {
+            is GenericTypeConstructor -> processGenericTypeConstructor(bound)
+            is FunctionalTypeConstructor -> processFunctionalTypeConstructor(bound)
+            else -> AnyWithChanges(bound, false)
+        }
     }
 
     protected open fun processVariance(variance: Variance<*>): AnyWithChanges<Variance<*>> {
@@ -198,7 +201,9 @@ abstract class DocumentableReplacerTransformer(val context: DokkaContext) :
             else -> AnyWithChanges(projection, false)
         }
 
-    protected open fun processGenericTypeConstructor(genericTypeConstructor: GenericTypeConstructor): AnyWithChanges<GenericTypeConstructor> {
+    protected open fun processGenericTypeConstructor(
+        genericTypeConstructor: GenericTypeConstructor
+    ): AnyWithChanges<GenericTypeConstructor> {
         val projections = genericTypeConstructor.projections.map { processProjection(it) }
 
         val wasChanged = projections.any { it.changed }
@@ -207,7 +212,9 @@ abstract class DocumentableReplacerTransformer(val context: DokkaContext) :
         )).let { AnyWithChanges(it, wasChanged) }
     }
 
-    protected open fun processFunctionalTypeConstructor(functionalTypeConstructor: FunctionalTypeConstructor): AnyWithChanges<FunctionalTypeConstructor> {
+    protected open fun processFunctionalTypeConstructor(
+        functionalTypeConstructor: FunctionalTypeConstructor
+    ): AnyWithChanges<FunctionalTypeConstructor> {
         val projections = functionalTypeConstructor.projections.map { processProjection(it) }
 
         val wasChanged = projections.any { it.changed }

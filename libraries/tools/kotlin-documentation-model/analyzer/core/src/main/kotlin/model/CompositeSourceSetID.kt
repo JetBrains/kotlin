@@ -32,15 +32,15 @@ public data class CompositeSourceSetID(
 
     public val all: Set<DokkaSourceSetID> = setOf(merged, *children.toTypedArray())
 
-    operator fun contains(sourceSetId: DokkaSourceSetID): Boolean {
+    public operator fun contains(sourceSetId: DokkaSourceSetID): Boolean {
         return sourceSetId in all
     }
 
-    operator fun contains(sourceSet: DokkaConfiguration.DokkaSourceSet): Boolean {
+    public operator fun contains(sourceSet: DokkaConfiguration.DokkaSourceSet): Boolean {
         return sourceSet.sourceSetID in this
     }
 
-    operator fun plus(other: DokkaSourceSetID): CompositeSourceSetID {
+    public operator fun plus(other: DokkaSourceSetID): CompositeSourceSetID {
         return copy(children = children + other)
     }
 }

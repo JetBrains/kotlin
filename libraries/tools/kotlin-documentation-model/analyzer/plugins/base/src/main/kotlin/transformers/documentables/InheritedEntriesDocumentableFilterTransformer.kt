@@ -9,8 +9,9 @@ import org.jetbrains.dokka.model.InheritedMember
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 import org.jetbrains.dokka.plugability.DokkaContext
 
-class InheritedEntriesDocumentableFilterTransformer(context: DokkaContext) :
-    SuppressedByConditionDocumentableFilterTransformer(context) {
+public class InheritedEntriesDocumentableFilterTransformer(
+    context: DokkaContext
+) : SuppressedByConditionDocumentableFilterTransformer(context) {
 
     override fun shouldBeSuppressed(d: Documentable): Boolean {
         @Suppress("UNCHECKED_CAST")

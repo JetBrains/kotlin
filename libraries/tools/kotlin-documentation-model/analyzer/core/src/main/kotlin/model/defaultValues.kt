@@ -7,12 +7,15 @@ package org.jetbrains.dokka.model
 import org.jetbrains.dokka.model.properties.ExtraProperty
 import org.jetbrains.dokka.model.properties.MergeStrategy
 
-class DefaultValue(val expression: SourceSetDependent<Expression>): ExtraProperty<Documentable> {
+public class DefaultValue(
+    public val expression: SourceSetDependent<Expression>
+): ExtraProperty<Documentable> {
 
     @Deprecated("Use `expression` property that depends on source set", ReplaceWith("this.expression.values.first()"))
-    val value: Expression
+    public val value: Expression
         get() = expression.values.first()
-    companion object : ExtraProperty.Key<Documentable, DefaultValue> {
+
+    public companion object : ExtraProperty.Key<Documentable, DefaultValue> {
         override fun mergeStrategyFor(left: DefaultValue, right: DefaultValue): MergeStrategy<Documentable> =
             MergeStrategy.Replace(DefaultValue(left.expression + right.expression))
 
@@ -22,10 +25,10 @@ class DefaultValue(val expression: SourceSetDependent<Expression>): ExtraPropert
         get() = Companion
 }
 
-interface Expression
-data class ComplexExpression(val value: String) : Expression
-data class IntegerConstant(val value: Long) : Expression
-data class StringConstant(val value: String) : Expression
-data class DoubleConstant(val value: Double) : Expression
-data class FloatConstant(val value: Float) : Expression
-data class BooleanConstant(val value: Boolean) : Expression
+public interface Expression
+public data class ComplexExpression(val value: String) : Expression
+public data class IntegerConstant(val value: Long) : Expression
+public data class StringConstant(val value: String) : Expression
+public data class DoubleConstant(val value: Double) : Expression
+public data class FloatConstant(val value: Float) : Expression
+public data class BooleanConstant(val value: Boolean) : Expression

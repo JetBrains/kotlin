@@ -13,35 +13,39 @@ import org.jetbrains.dokka.model.AnnotationTarget
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 import org.jetbrains.dokka.pages.*
 
-interface JvmSignatureUtils {
+public interface JvmSignatureUtils {
 
-    fun PageContentBuilder.DocumentableContentBuilder.annotationsBlock(d: AnnotationTarget)
+    public fun PageContentBuilder.DocumentableContentBuilder.annotationsBlock(d: AnnotationTarget)
 
-    fun PageContentBuilder.DocumentableContentBuilder.annotationsInline(d: AnnotationTarget)
+    public fun PageContentBuilder.DocumentableContentBuilder.annotationsInline(d: AnnotationTarget)
 
-    fun <T : Documentable> WithExtraProperties<T>.modifiers(): SourceSetDependent<Set<ExtraModifiers>>
+    public fun <T : Documentable> WithExtraProperties<T>.modifiers(): SourceSetDependent<Set<ExtraModifiers>>
 
-    fun Collection<ExtraModifiers>.toSignatureString(): String =
+    public fun Collection<ExtraModifiers>.toSignatureString(): String =
         joinToString("") { it.name.toLowerCase() + " " }
 
     @Suppress("UNCHECKED_CAST")
-    fun Documentable.annotations() = (this as? WithExtraProperties<Documentable>)?.annotations() ?: emptyMap()
+    public fun Documentable.annotations(): Map<DokkaSourceSet, List<Annotations.Annotation>> {
+        return (this as? WithExtraProperties<Documentable>)?.annotations() ?: emptyMap()
+    }
 
-    fun <T : AnnotationTarget> WithExtraProperties<T>.annotations(): SourceSetDependent<List<Annotations.Annotation>> =
+    public fun <T : AnnotationTarget> WithExtraProperties<T>.annotations(): SourceSetDependent<List<Annotations.Annotation>> =
         extra[Annotations]?.directAnnotations ?: emptyMap()
 
     @Suppress("UNCHECKED_CAST")
-    operator fun <T : Iterable<*>> SourceSetDependent<T>.plus(other: SourceSetDependent<T>): SourceSetDependent<T> =
-        LinkedHashMap(this).apply {
+    public operator fun <T : Iterable<*>> SourceSetDependent<T>.plus(other: SourceSetDependent<T>): SourceSetDependent<T> {
+        return LinkedHashMap(this).apply {
             for ((k, v) in other) {
                 put(k, get(k).let { if (it != null) (it + v) as T else v })
             }
         }
+    }
 
-    fun DProperty.annotations(): SourceSetDependent<List<Annotations.Annotation>> =
-        (extra[Annotations]?.directAnnotations ?: emptyMap()) +
-        (getter?.annotations() ?: emptyMap()).mapValues { it.value.map { it.copy( scope = Annotations.AnnotationScope.GETTER) } } +
-        (setter?.annotations() ?: emptyMap()).mapValues { it.value.map { it.copy( scope = Annotations.AnnotationScope.SETTER) } }
+    public fun DProperty.annotations(): SourceSetDependent<List<Annotations.Annotation>> {
+        return (extra[Annotations]?.directAnnotations ?: emptyMap()) +
+                (getter?.annotations() ?: emptyMap()).mapValues { it.value.map { it.copy( scope = Annotations.AnnotationScope.GETTER) } } +
+                (setter?.annotations() ?: emptyMap()).mapValues { it.value.map { it.copy( scope = Annotations.AnnotationScope.SETTER) } }
+    }
 
     private fun PageContentBuilder.DocumentableContentBuilder.annotations(
         d: AnnotationTarget,
@@ -77,7 +81,7 @@ interface JvmSignatureUtils {
         }
     } ?: Unit
 
-    fun PageContentBuilder.DocumentableContentBuilder.toSignatureString(
+    public fun PageContentBuilder.DocumentableContentBuilder.toSignatureString(
         a: Annotations.Annotation,
         renderAtStrategy: AtStrategy,
         listBrackets: Pair<Char, Char>,
@@ -143,7 +147,7 @@ interface JvmSignatureUtils {
         listBrackets?.let{ punctuation(it.second.toString()) }
     }
 
-    fun PageContentBuilder.DocumentableContentBuilder.annotationsBlockWithIgnored(
+    public fun PageContentBuilder.DocumentableContentBuilder.annotationsBlockWithIgnored(
         d: AnnotationTarget,
         ignored: Set<Annotations.Annotation>,
         renderAtStrategy: AtStrategy,
@@ -157,7 +161,7 @@ interface JvmSignatureUtils {
         }
     }
 
-    fun PageContentBuilder.DocumentableContentBuilder.annotationsInlineWithIgnored(
+    public fun PageContentBuilder.DocumentableContentBuilder.annotationsInlineWithIgnored(
         d: AnnotationTarget,
         ignored: Set<Annotations.Annotation>,
         renderAtStrategy: AtStrategy,
@@ -170,7 +174,7 @@ interface JvmSignatureUtils {
         }
     }
 
-    fun <T : Documentable> WithExtraProperties<T>.stylesIfDeprecated(sourceSetData: DokkaSourceSet): Set<TextStyle> {
+    public fun <T : Documentable> WithExtraProperties<T>.stylesIfDeprecated(sourceSetData: DokkaSourceSet): Set<TextStyle> {
         val directAnnotations = extra[Annotations]?.directAnnotations?.get(sourceSetData) ?: emptyList()
         val hasAnyDeprecatedAnnotation =
             directAnnotations.any { it.dri == DRI("kotlin", "Deprecated") || it.dri == DRI("java.lang", "Deprecated") }
@@ -178,7 +182,7 @@ interface JvmSignatureUtils {
         return if (hasAnyDeprecatedAnnotation) setOf(TextStyle.Strikethrough) else emptySet()
     }
 
-    infix fun DFunction.uses(typeParameter: DTypeParameter): Boolean {
+    public infix fun DFunction.uses(typeParameter: DTypeParameter): Boolean {
         val parameterDris = parameters.flatMap { listOf(it.dri) + it.type.drisOfAllNestedBounds }
         val receiverDris =
             listOfNotNull(
@@ -203,8 +207,9 @@ interface JvmSignatureUtils {
      * ```
      * Wrapping and indentation of parameters is applied conditionally, see [shouldWrapParams]
      */
-    fun PageContentBuilder.DocumentableContentBuilder.parametersBlock(
-        function: DFunction, paramBuilder: PageContentBuilder.DocumentableContentBuilder.(DParameter) -> Unit
+    public fun PageContentBuilder.DocumentableContentBuilder.parametersBlock(
+        function: DFunction,
+        paramBuilder: PageContentBuilder.DocumentableContentBuilder.(DParameter) -> Unit
     ) {
         group(kind = SymbolContentKind.Parameters, styles = emptySet()) {
             function.parameters.dropLast(1).forEach {
@@ -220,7 +225,7 @@ interface JvmSignatureUtils {
     }
 }
 
-sealed class AtStrategy
-object All : AtStrategy()
-object OnlyOnce : AtStrategy()
-object Never : AtStrategy()
+public sealed class AtStrategy
+public object All : AtStrategy()
+public object OnlyOnce : AtStrategy()
+public object Never : AtStrategy()

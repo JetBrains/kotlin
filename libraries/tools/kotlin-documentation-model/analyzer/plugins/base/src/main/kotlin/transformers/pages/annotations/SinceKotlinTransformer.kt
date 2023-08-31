@@ -18,7 +18,7 @@ import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.DocumentableTransformer
 import org.jetbrains.dokka.utilities.associateWithNotNull
 
-class SinceKotlinVersion constructor(str: String) : Comparable<SinceKotlinVersion> {
+public class SinceKotlinVersion(str: String) : Comparable<SinceKotlinVersion> {
     private val parts: List<Int> = str.split(".").map { it.toInt() }
 
     /**
@@ -39,7 +39,9 @@ class SinceKotlinVersion constructor(str: String) : Comparable<SinceKotlinVersio
     override fun toString(): String = parts.joinToString(".")
 }
 
-class SinceKotlinTransformer(val context: DokkaContext) : DocumentableTransformer {
+public class SinceKotlinTransformer(
+    public val context: DokkaContext
+) : DocumentableTransformer {
 
     private val minSinceKotlinVersionOfPlatform = mapOf(
         Platform.common to SinceKotlinVersion("1.0"),
@@ -49,7 +51,7 @@ class SinceKotlinTransformer(val context: DokkaContext) : DocumentableTransforme
         Platform.wasm to SinceKotlinVersion("1.8"),
     )
 
-    override fun invoke(original: DModule, context: DokkaContext) = original.transform() as DModule
+    override fun invoke(original: DModule, context: DokkaContext): DModule = original.transform() as DModule
 
     private fun <T : Documentable> T.transform(parent: SourceSetDependent<SinceKotlinVersion>? = null): Documentable {
         val versions = calculateVersions(parent)
