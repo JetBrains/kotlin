@@ -11,8 +11,10 @@
 hs_err_pid*
 
 ### IntelliJ
-
-.idea/
+.idea/*
+!.idea/copyright
+!.idea/codeStyles
+**/.idea
 /out/
 
 ## File-based project format:
