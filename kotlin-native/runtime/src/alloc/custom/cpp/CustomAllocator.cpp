@@ -37,7 +37,7 @@ CustomAllocator::~CustomAllocator() {
     heap_.AddToFinalizerQueue(std::move(finalizerQueue_));
 }
 
-ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
+ALWAYS_INLINE ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
     RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
     auto descriptor = HeapObject::make_descriptor(typeInfo);
     auto& heapObject = *descriptor.construct(Allocate(descriptor.size()));
@@ -53,7 +53,7 @@ ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
     return object;
 }
 
-ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept {
+ALWAYS_INLINE ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept {
     CustomAllocDebug("CustomAllocator@%p::CreateArray(%d)", this ,count);
     RuntimeAssert(typeInfo->IsArray(), "Must be an array");
     auto descriptor = HeapArray::make_descriptor(typeInfo, count);
@@ -64,7 +64,8 @@ ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo, uint32_t cou
     return array;
 }
 
-mm::ExtraObjectData* CustomAllocator::CreateExtraObject() noexcept {
+// FIXME or inline?
+NO_INLINE mm::ExtraObjectData* CustomAllocator::CreateExtraObject() noexcept {
     CustomAllocDebug("CustomAllocator::CreateExtraObject()");
     ExtraObjectPage* page = extraObjectPage_;
     if (page) {
@@ -114,7 +115,7 @@ size_t CustomAllocator::GetAllocatedHeapSize(ObjHeader* object) noexcept {
     }
 }
 
-uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
+ALWAYS_INLINE uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
     RuntimeAssert(size, "CustomAllocator::Allocate cannot allocate 0 bytes");
     CustomAllocDebug("CustomAllocator::Allocate(%" PRIu64 ")", size);
     uint64_t cellCount = (size + sizeof(Cell) - 1) / sizeof(Cell);
@@ -127,19 +128,26 @@ uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
     }
 }
 
-uint8_t* CustomAllocator::AllocateInSingleObjectPage(uint64_t cellCount) noexcept {
+ALWAYS_INLINE uint8_t* CustomAllocator::AllocateInSingleObjectPage(uint64_t cellCount) noexcept {
+    // TODO no slow path here?
     CustomAllocDebug("CustomAllocator::AllocateInSingleObjectPage(%" PRIu64 ")", cellCount);
+    // FIXME WTF is TryAllocate?
     uint8_t* block = heap_.GetSingleObjectPage(cellCount, finalizerQueue_)->TryAllocate();
     return block;
 }
 
-uint8_t* CustomAllocator::AllocateInNextFitPage(uint32_t cellCount) noexcept {
+ALWAYS_INLINE uint8_t* CustomAllocator::AllocateInNextFitPage(uint32_t cellCount) noexcept {
     CustomAllocDebug("CustomAllocator::AllocateInNextFitPage(%u)", cellCount);
     if (nextFitPage_) {
         uint8_t* block = nextFitPage_->TryAllocate(cellCount);
         if (block) return block;
     }
+    return AllocateInNextFitPageSlowPath(cellCount);
+}
+
+NO_INLINE uint8_t* CustomAllocator::AllocateInNextFitPageSlowPath(uint32_t cellCount) noexcept {
     CustomAllocDebug("Failed to allocate in curPage");
+    // FIXME while true?
     while (true) {
         nextFitPage_ = heap_.GetNextFitPage(cellCount, finalizerQueue_);
         uint8_t* block = nextFitPage_->TryAllocate(cellCount);
@@ -147,15 +155,19 @@ uint8_t* CustomAllocator::AllocateInNextFitPage(uint32_t cellCount) noexcept {
     }
 }
 
-uint8_t* CustomAllocator::AllocateInFixedBlockPage(uint32_t cellCount) noexcept {
+ALWAYS_INLINE uint8_t* CustomAllocator::AllocateInFixedBlockPage(uint32_t cellCount) noexcept {
     CustomAllocDebug("CustomAllocator::AllocateInFixedBlockPage(%u)", cellCount);
     FixedBlockPage* page = fixedBlockPages_[cellCount];
     if (page) {
         uint8_t* block = page->TryAllocate();
         if (block) return block;
     }
+    return AllocateInFixedBlockPageSlowPath(cellCount);
+}
+
+NO_INLINE uint8_t* CustomAllocator::AllocateInFixedBlockPageSlowPath(uint32_t cellCount) noexcept {
     CustomAllocDebug("Failed to allocate in current FixedBlockPage");
-    while ((page = heap_.GetFixedBlockPage(cellCount, finalizerQueue_))) {
+    while (auto* page = heap_.GetFixedBlockPage(cellCount, finalizerQueue_)) {
         uint8_t* block = page->TryAllocate();
         if (block) {
             fixedBlockPages_[cellCount] = page;
