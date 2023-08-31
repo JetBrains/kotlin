@@ -191,13 +191,15 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
         // TODO: areEqualByValue and ieee754Equals intrinsics are specially treated by code generator
         // and thus can be declared synthetically in the compiler instead of explicitly in the runtime.
         fun callEquals(lhs: IrExpression, rhs: IrExpression) =
-                if (symbol in ieee754EqualsSymbols)
-                // Find a type-compatible `konan.internal.ieee754Equals` intrinsic:
-                    irCall(selectIntrinsic(symbols.ieee754Equals, lhs.type, rhs.type, true)!!).apply {
+                if (symbol in ieee754EqualsSymbols) {
+                    // Find a type-compatible `konan.internal.ieee754Equals` intrinsic:
+                    val intrinsic = selectIntrinsic(symbols.ieee754Equals, lhs.type, rhs.type, true)
+                            ?: error("Intrinsic not found. Symbol: ${symbol.owner.render()}, types: ${lhs.type.render()}, ${rhs.type.render()}")
+                    irCall(intrinsic).apply {
                         putValueArgument(0, lhs)
                         putValueArgument(1, rhs)
                     }
-                else
+                } else
                     irCall(symbols.equals).apply {
                         dispatchReceiver = lhs
                         putValueArgument(0, rhs)
