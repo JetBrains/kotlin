@@ -78,7 +78,7 @@ open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
 
     @DisplayName("incremental compilation works with dagger")
     @GradleAndroidTest
-    fun testAndroidDaggerIC(
+    open fun testAndroidDaggerIC(
         gradleVersion: GradleVersion,
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
