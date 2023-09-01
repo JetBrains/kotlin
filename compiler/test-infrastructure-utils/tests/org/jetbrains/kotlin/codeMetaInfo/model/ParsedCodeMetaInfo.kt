@@ -12,7 +12,8 @@ open class ParsedCodeMetaInfo(
     override val end: Int,
     override val attributes: MutableList<String>,
     override val tag: String,
-    val description: String?
+    val description: String?,
+    val visualShift: Int = 0,
 ) : CodeMetaInfo {
     override val renderConfiguration = ParsedCodeMetaInfoRenderConfiguration
 
@@ -31,7 +32,7 @@ open class ParsedCodeMetaInfo(
     }
 
     fun copy(): ParsedCodeMetaInfo {
-        return ParsedCodeMetaInfo(start, end, attributes.toMutableList(), tag, description)
+        return ParsedCodeMetaInfo(start, end, attributes.toMutableList(), tag, description, visualShift)
     }
 }
 

@@ -88,7 +88,8 @@ class ConstantValuesHandler(testServices: TestServices) : ClassicFrontendAnalysi
                 end,
                 attributes = mutableListOf(),
                 tag = DEBUG_INFO_CONSTANT,
-                description = actualValue
+                description = actualValue,
+                visualShift = expectedMetaInfo.visualShift,
             )
         }
 

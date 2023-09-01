@@ -445,9 +445,10 @@ class ModifiedParsedCodeMetaInfo(
     attributes: MutableList<String>,
     tag: String,
     description: String?,
+    visualShift: Int,
     val startingLineOffset: Int,
     val endingLineOffset: Int,
-) : ParsedCodeMetaInfo(start, end, attributes, tag, description)
+) : ParsedCodeMetaInfo(start, end, attributes, tag, description, visualShift)
 
 val ParsedCodeMetaInfo.shiftedStart
     get() = when {
@@ -463,13 +464,13 @@ val ParsedCodeMetaInfo.shiftedEnd
 
 fun ParsedCodeMetaInfo.replaceOffsetsWithLineNumbersWithin(lineStartOffsets: IntArray): ParsedCodeMetaInfo {
     val lineIndex = lineStartOffsets.getLineNumberForOffset(start)
-    return ParsedCodeMetaInfo(lineIndex + 1, lineIndex + 1, attributes, tag, description)
+    return ParsedCodeMetaInfo(lineIndex + 1, lineIndex + 1, attributes, tag, description, visualShift)
 }
 
 fun ParsedCodeMetaInfo.shiftOffsetsWithin(lineStartOffsets: IntArray, totalTextLength: Int): ParsedCodeMetaInfo {
     val shiftedStart = lineStartOffsets[lineStartOffsets.getLineNumberForOffset(start) - 1]
     val shiftedEnd = lineStartOffsets.getOrNull(lineStartOffsets.getLineNumberForOffset(end)) ?: totalTextLength
-    return ModifiedParsedCodeMetaInfo(start, end, attributes, tag, description, shiftedStart, shiftedEnd)
+    return ModifiedParsedCodeMetaInfo(start, end, attributes, tag, description, visualShift, shiftedStart, shiftedEnd)
 }
 
 val String.lineStartOffsets: IntArray
@@ -486,37 +487,62 @@ val String.lineStartOffsets: IntArray
         return buffer.toIntArray()
     }
 
-class EquivalenceTestResult(
-    val isK1PureGreen: Boolean,
-    val isK2PureGreen: Boolean,
+open class EquivalenceTestResultRaw(
     val significantK1MetaInfo: MutableList<ParsedCodeMetaInfo> = mutableListOf(),
     val significantK2MetaInfo: MutableList<ParsedCodeMetaInfo> = mutableListOf(),
 )
 
+class EquivalenceTestResult(
+    val isK1PureGreen: Boolean,
+    val isK2PureGreen: Boolean,
+    val visualK1LineStartOffsets: IntArray,
+    val visualK2LineStartOffsets: IntArray,
+    significantK1MetaInfo: MutableList<ParsedCodeMetaInfo> = mutableListOf(),
+    significantK2MetaInfo: MutableList<ParsedCodeMetaInfo> = mutableListOf(),
+) : EquivalenceTestResultRaw(
+    significantK1MetaInfo,
+    significantK2MetaInfo,
+)
+
+private fun ParsedCodeMetaInfo.renderCoordinates(visualLineStartOffsets: IntArray?): String {
+    if (visualLineStartOffsets == null) {
+        return "`(${start}..${end})`"
+    }
+
+    val visualStart = start + visualShift
+    val visualLine = visualLineStartOffsets.getLineNumberForOffset(visualStart)
+    val visualColumn = visualStart - visualLineStartOffsets[visualLine - 1] + 1
+    return "line:column `($visualLine:$visualColumn)`"
+}
+
 fun reportEquivalenceDifference(
     writer: Appendable,
-    result: EquivalenceTestResult,
+    result: EquivalenceTestResultRaw,
     relativeTestPath: String,
+    visualK1LineStartOffsets: IntArray? = null,
+    visualK2LineStartOffsets: IntArray? = null,
 ) {
     writer.append("The `${relativeTestPath}` test:\n\n")
 
     for (it in result.significantK1MetaInfo) {
-        writer.append("- `#potential-feature`: `${it.tag}` was in K1 at `(${it.start}..${it.end})`, but disappeared\n")
+        writer.append("- `#potential-feature`: `${it.tag}` was in K1 at ${it.renderCoordinates(visualK1LineStartOffsets)}, but disappeared\n")
     }
 
     for (it in result.significantK2MetaInfo) {
-        writer.append("- `#potential-breaking-change`: `${it.tag}` was introduced in K2 at `(${it.start}..${it.end})`\n")
+        writer.append("- `#potential-breaking-change`: `${it.tag}` was introduced in K2 at ${it.renderCoordinates(visualK2LineStartOffsets)}\n")
     }
 
     writer.append("\n")
 }
 
-inline fun EquivalenceTestResult.ifTests(
+inline fun EquivalenceTestResultRaw.ifTests(
     testFile: File,
     writer: Writer,
     relativeK1TestPath: String,
     relativeK2TestPath: String,
-    areNonEquivalent: (EquivalenceTestResult) -> Unit,
+    visualK1LineStartOffsets: IntArray? = null,
+    visualK2LineStartOffsets: IntArray? = null,
+    areNonEquivalent: (EquivalenceTestResultRaw) -> Unit,
     collectObsoleteFeatures: () -> List<String>,
     collectBrandNewFeatures: () -> List<String>,
 ) {
@@ -547,7 +573,7 @@ inline fun EquivalenceTestResult.ifTests(
             return
         }
 
-        reportEquivalenceDifference(writer, this, relativeK1TestPath)
+        reportEquivalenceDifference(writer, this, relativeK1TestPath, visualK1LineStartOffsets, visualK2LineStartOffsets)
         areNonEquivalent(this)
     }
 }
@@ -555,7 +581,7 @@ inline fun EquivalenceTestResult.ifTests(
 fun analyseEquivalencesAmong(
     allK1MetaInfos: List<ParsedCodeMetaInfo>,
     allK2MetaInfos: List<ParsedCodeMetaInfo>,
-): EquivalenceTestResult {
+): EquivalenceTestResultRaw {
     val (significantK1MetaInfo, significantK2MetaInfo) = when {
         allK1MetaInfos.size + allK2MetaInfos.size <= MAGIC_DIAGNOSTICS_THRESHOLD -> {
             extractSignificantMetaInfosSlow(allK1MetaInfos, allK2MetaInfos)
@@ -565,13 +591,13 @@ fun analyseEquivalencesAmong(
         }
     }
 
-    return EquivalenceTestResult(allK1MetaInfos.isEmpty(), allK2MetaInfos.isEmpty(), significantK1MetaInfo, significantK2MetaInfo)
+    return EquivalenceTestResultRaw(significantK1MetaInfo, significantK2MetaInfo)
 }
 
 fun analyseEquivalencesAsHierarchyAmong(
     erroneousK1MetaInfos: List<ParsedCodeMetaInfo>,
     erroneousK2MetaInfos: List<ParsedCodeMetaInfo>,
-): EquivalenceTestResult {
+): EquivalenceTestResultRaw {
     val allK1MetaInfos = erroneousK1MetaInfos.toMetaInfosHierarchySet()
     val allK2MetaInfos = erroneousK2MetaInfos.toMetaInfosHierarchySet()
 
@@ -592,7 +618,7 @@ fun analyseEquivalencesAsHierarchyAmong(
         commonK2MetaInfos.overlapsWith(it)
     }
 
-    return EquivalenceTestResult(allK1MetaInfos.isEmpty(), allK2MetaInfos.isEmpty(), significantK1MetaInfo, significantK2MetaInfo)
+    return EquivalenceTestResultRaw(significantK1MetaInfo, significantK2MetaInfo)
 }
 
 fun collectLanguageFeatures(
@@ -697,21 +723,28 @@ fun fixStupidEmptyLines(
 
 typealias DiagnosticsStatistics = MutableMap<String, MutableMap<File, EquivalenceTestResult>>
 
-fun DiagnosticsStatistics.recordDiagnosticsStatistics(test: File, result: EquivalenceTestResult) {
+fun DiagnosticsStatistics.recordDiagnosticsStatistics(
+    test: File,
+    result: EquivalenceTestResultRaw,
+    isK1PureGreen: Boolean,
+    isK2PureGreen: Boolean,
+    visualK1LineStartOffsets: IntArray,
+    visualK2LineStartOffsets: IntArray,
+) {
     for (it in result.significantK1MetaInfo) {
         getOrPut(it.tag) { mutableMapOf() }.getOrPut(test) {
-            EquivalenceTestResult(result.isK1PureGreen, result.isK2PureGreen)
+            EquivalenceTestResult(isK1PureGreen, isK2PureGreen, visualK1LineStartOffsets, visualK2LineStartOffsets)
         }.significantK1MetaInfo.add(it)
     }
 
     for (it in result.significantK2MetaInfo) {
         getOrPut(it.tag) { mutableMapOf() }.getOrPut(test) {
-            EquivalenceTestResult(result.isK1PureGreen, result.isK2PureGreen)
+            EquivalenceTestResult(isK1PureGreen, isK2PureGreen, visualK1LineStartOffsets, visualK2LineStartOffsets)
         }.significantK2MetaInfo.add(it)
     }
 }
 
-fun logPossibleEquivalences(result: EquivalenceTestResult, writer: Writer) {
+fun logPossibleEquivalences(result: EquivalenceTestResultRaw, writer: Writer) {
     val positionToK1Diagnostics = mutableMapOf<Pair<Int, Int>, MutableList<String>>()
 
     for (it in result.significantK1MetaInfo) {
@@ -833,7 +866,7 @@ val KT_ISSUE_PATTERN = """KT-?\d+""".toRegex(RegexOption.IGNORE_CASE)
 
 fun recordCandidateForBoxTestIfNeeded(
     test: File,
-    result: EquivalenceTestResult,
+    result: EquivalenceTestResultRaw,
     shouldCheckManually: Boolean,
     candidatesForAdditionalBoxTests: MutableList<File>,
     candidatesForManualChecking: MutableMap<File, Set<String>>,
@@ -1020,6 +1053,7 @@ fun updateKnownIssuesDescriptions(statistics: DiagnosticsStatistics) {
                 .mapValues {
                     EquivalenceTestResult(
                         it.value.isK1PureGreen, it.value.isK2PureGreen,
+                        it.value.visualK1LineStartOffsets, it.value.visualK2LineStartOffsets,
                         significantK1MetaInfo = it.value.significantK1MetaInfo,
                     )
                 }
@@ -1032,6 +1066,7 @@ fun updateKnownIssuesDescriptions(statistics: DiagnosticsStatistics) {
                 .mapValues {
                     EquivalenceTestResult(
                         it.value.isK1PureGreen, it.value.isK2PureGreen,
+                        it.value.visualK1LineStartOffsets, it.value.visualK2LineStartOffsets,
                         significantK2MetaInfo = it.value.significantK2MetaInfo,
                     )
                 }
@@ -1091,7 +1126,10 @@ fun buildDiagnosticStatisticsIssueDescription(
     append("This diagnostic is backed up by ${filesToEntries.size} tests. See the reports in the parent KT-58630 issue for more details.\n\n")
 
     for ((file, entry) in filesToEntries) {
-        reportEquivalenceDifference(this, entry, file.path.removePrefix(projectDirectory.path))
+        reportEquivalenceDifference(
+            this, entry, file.path.removePrefix(projectDirectory.path),
+            entry.visualK1LineStartOffsets, entry.visualK2LineStartOffsets,
+        )
     }
 }
 
@@ -1220,8 +1258,12 @@ fun main() {
         val allK1MetaInfos = CodeMetaInfoParser.getCodeMetaInfoFromText(k1Text).filter { it.isProbablyK1Error }
         val allK2MetaInfos = CodeMetaInfoParser.getCodeMetaInfoFromText(k2Text).filter { it.isProbablyK2Error }
 
+        val visualK1LineStartOffsets = k1Text.lineStartOffsets
+        val visualK2LineStartOffsets = k2Text.lineStartOffsets
+
         analyseEquivalencesAmong(allK1MetaInfos, allK2MetaInfos).ifTests(
             test, equivalence, relativeK1TestPath, relativeK2TestPath,
+            visualK1LineStartOffsets, visualK2LineStartOffsets,
             areNonEquivalent = { _ ->
                 alongsideNonEquivalentTests.add(test)
             },
@@ -1232,11 +1274,11 @@ fun main() {
         val clearedK1Text = clearTextFromDiagnosticMarkup(k1Text)
         val clearedK2Text = clearTextFromDiagnosticMarkup(k2Text)
 
-        val k1LineStartOffsets = clearedK1Text.lineStartOffsets
-        val k2LineStartOffsets = clearedK2Text.lineStartOffsets
+        val clearedK1LineStartOffsets = clearedK1Text.lineStartOffsets
+        val clearedK2LineStartOffsets = clearedK2Text.lineStartOffsets
 
-        val allK1LineMetaInfos = allK1MetaInfos.map { it.replaceOffsetsWithLineNumbersWithin(k1LineStartOffsets) }
-        val allK2LineMetaInfos = allK2MetaInfos.map { it.replaceOffsetsWithLineNumbersWithin(k2LineStartOffsets) }
+        val allK1LineMetaInfos = allK1MetaInfos.map { it.replaceOffsetsWithLineNumbersWithin(clearedK1LineStartOffsets) }
+        val allK2LineMetaInfos = allK2MetaInfos.map { it.replaceOffsetsWithLineNumbersWithin(clearedK2LineStartOffsets) }
 
         val similarityAnalysisResults = analyseEquivalencesAmong(allK1LineMetaInfos, allK2LineMetaInfos)
 
@@ -1244,20 +1286,29 @@ fun main() {
             test, similarity, relativeK1TestPath, relativeK2TestPath,
             areNonEquivalent = { result ->
                 alongsideNonSimilarTests.add(test)
-                similarityStatistics.recordDiagnosticsStatistics(test, result)
+                similarityStatistics.recordDiagnosticsStatistics(
+                    test, result,
+                    allK1MetaInfos.isEmpty(), allK1MetaInfos.isEmpty(),
+                    visualK1LineStartOffsets, visualK2LineStartOffsets,
+                )
             },
             collectObsoleteFeatures = { obsoleteFeatures },
             collectBrandNewFeatures = { brandNewFeatures },
         )
 
-        val allK1ShiftedMetaInfos = allK1MetaInfos.map { it.shiftOffsetsWithin(k1LineStartOffsets, clearedK1Text.length) }
-        val allK2ShiftedMetaInfos = allK2MetaInfos.map { it.shiftOffsetsWithin(k2LineStartOffsets, clearedK2Text.length) }
+        val allK1ShiftedMetaInfos = allK1MetaInfos.map { it.shiftOffsetsWithin(clearedK1LineStartOffsets, clearedK1Text.length) }
+        val allK2ShiftedMetaInfos = allK2MetaInfos.map { it.shiftOffsetsWithin(clearedK2LineStartOffsets, clearedK2Text.length) }
 
         analyseEquivalencesAsHierarchyAmong(allK1ShiftedMetaInfos, allK2ShiftedMetaInfos).ifTests(
             test, containment, relativeK1TestPath, relativeK2TestPath,
+            visualK1LineStartOffsets, visualK2LineStartOffsets,
             areNonEquivalent = { result ->
                 alongsideNonContainedTests.add(test)
-                containmentStatistics.recordDiagnosticsStatistics(test, result)
+                containmentStatistics.recordDiagnosticsStatistics(
+                    test, result,
+                    allK1MetaInfos.isEmpty(), allK1MetaInfos.isEmpty(),
+                    visualK1LineStartOffsets, visualK2LineStartOffsets,
+                )
                 logPossibleEquivalences(result, containment)
 
                 when {
@@ -1265,7 +1316,7 @@ fun main() {
                     allK1MetaInfos.isEmpty() && allK2MetaInfos.isNotEmpty() -> containmentPureGreenToRed
                     else -> null
                 }?.let {
-                    reportEquivalenceDifference(it, result, relativeK1TestPath)
+                    reportEquivalenceDifference(it, result, relativeK1TestPath, visualK1LineStartOffsets, visualK2LineStartOffsets)
                 }
 
                 recordCandidateForBoxTestIfNeeded(
