@@ -209,7 +209,9 @@ class FirCallCompletionResultsWriterTransformer(
                     (symbol as? FirNamedFunctionSymbol)?.fir?.isInline == true || symbol.isArrayConstructorWithLambda
                 for ((argument, parameter) in newArgumentList.mapping) {
                     val lambda = (argument.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction ?: continue
+                    val parameterIsSomeFunction = parameter.returnTypeRef.coneType.isSomeFunctionType(session)
                     val inlineStatus = when {
+                        !parameterIsSomeFunction -> InlineStatus.NoInline
                         parameter.isCrossinline && functionIsInline -> InlineStatus.CrossInline
                         parameter.isNoinline -> InlineStatus.NoInline
                         functionIsInline -> InlineStatus.Inline

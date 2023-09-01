@@ -121,7 +121,7 @@ digraph plusAssignWithLambdaInRhs_kt {
             46 [label="Postponed exit from lambda"];
             47 [label="Function call: R|/A.A|<R|T|>(...)" style="filled" fillcolor=yellow];
             48 [label="Jump: ^postpone R|/A.A|<R|T|>(<L> = A@fun <anonymous>(resolve: R|(T) -> kotlin/Unit|): R|kotlin/Unit| <inline=NoInline>  {
-    R|<local>/queue|.R|kotlin/collections/plusAssign|<R|() -> kotlin/Unit|>(fun <anonymous>(): R|kotlin/Unit| <inline=Inline>  {
+    R|<local>/queue|.R|kotlin/collections/plusAssign|<R|() -> kotlin/Unit|>(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
         R|<local>/resolve|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/computation|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|())
     }
     )
