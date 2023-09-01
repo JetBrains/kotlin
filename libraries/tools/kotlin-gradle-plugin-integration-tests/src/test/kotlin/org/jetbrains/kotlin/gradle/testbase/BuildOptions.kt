@@ -11,6 +11,7 @@ import org.gradle.internal.logging.LoggingConfigurationBuildOptions.StacktraceOp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM
 import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.report.BuildReportType
@@ -51,6 +52,15 @@ data class BuildOptions(
     val compilerExecutionStrategy: KotlinCompilerExecutionStrategy? = null,
     val runViaBuildToolsApi: Boolean? = null,
 ) {
+    val isK2ByDefault
+        get() = KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0
+
+    fun copyEnsuringK1(): BuildOptions =
+        copy(languageVersion = if (isK2ByDefault) "1.9" else null)
+
+    fun copyEnsuringK2(): BuildOptions =
+        copy(languageVersion = if (isK2ByDefault) null else "2.0")
+
     val safeAndroidVersion: String
         get() = androidVersion ?: error("AGP version is expected to be set")
 
