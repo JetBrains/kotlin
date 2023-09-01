@@ -309,7 +309,7 @@ suspend fun suspendThrowsSpreadLiteralWithUnresolved() {}
 @Throws(*<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>arrayOf(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)<!>)
 suspend fun suspendThrowsSpreadArrayOfUnresolved() {}
 
-<!MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND!>@Throws(UEAlias::class)<!>
+@Throws(UEAlias::class)
 suspend fun suspendThrowsTypealiasToUnresolved() {}
 
 @Throws(Exception1::class, CancellationException::class)

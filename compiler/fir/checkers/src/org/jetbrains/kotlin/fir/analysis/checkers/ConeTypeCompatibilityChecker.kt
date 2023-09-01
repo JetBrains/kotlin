@@ -355,7 +355,7 @@ object ConeTypeCompatibilityChecker {
         }
     }
 
-    private fun FirClassLikeSymbol<*>.getSuperTypes(): List<ConeClassLikeType> {
+    fun FirClassLikeSymbol<*>.getSuperTypes(): List<ConeClassLikeType> {
         return when (this) {
             is FirTypeAliasSymbol -> listOfNotNull(resolvedExpandedTypeRef.coneTypeSafe())
             is FirClassSymbol<*> -> resolvedSuperTypeRefs.mapNotNull { it.coneTypeSafe() }
