@@ -392,28 +392,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             topLevelAtom.collectAllTypeVariables()
         }
 
-        checkNotFixedTypeVariablesCountConsistency(result)
-
         return result.toList()
-    }
-
-    private fun ConstraintSystemCompletionContext.checkNotFixedTypeVariablesCountConsistency(
-        result: LinkedHashSet<TypeConstructorMarker>,
-    ) {
-        val notFixedTypeVariablesToUse =
-            when (outerSystemVariablesPrefixSize) {
-                0 -> notFixedTypeVariables.keys
-                else -> notFixedTypeVariables.keys.toMutableSet().apply {
-                    removeAll(allTypeVariables.keys.take(outerSystemVariablesPrefixSize).toSet())
-                }
-            }
-
-//        require(result.size == notFixedTypeVariablesToUse.size) {
-//            val notFoundTypeVariables = notFixedTypeVariablesToUse.toMutableSet().apply {
-//                removeAll(result)
-//            }
-//            "Not all type variables found: $notFoundTypeVariables"
-//        }
     }
 
     private fun fixVariable(
