@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
 internal class LLFirNotUnderContentRootResolveSession(
     moduleProvider: LLModuleProvider,
-    sessionProvider: LLSessionProvider
+    sessionProvider: LLSessionProvider,
+    diagnosticProvider: LLDiagnosticProvider
 ) : LLFirResolvableResolveSession(
     moduleProvider = moduleProvider,
     moduleKindProvider = LLNotUnderContentRootModuleKindProvider(moduleProvider.useSiteModule),
     sessionProvider = sessionProvider,
-    diagnosticProvider = LLEmptyDiagnosticProvider
+    diagnosticProvider = diagnosticProvider
 )
 
 private class LLNotUnderContentRootModuleKindProvider(private val useSiteModule: KtModule) : LLModuleKindProvider {

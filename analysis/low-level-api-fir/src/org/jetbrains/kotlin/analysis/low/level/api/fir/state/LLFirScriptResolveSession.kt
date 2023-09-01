@@ -10,12 +10,13 @@ import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 
 internal class LLFirScriptResolveSession(
     moduleProvider: LLModuleProvider,
-    sessionProvider: LLSessionProvider
+    sessionProvider: LLSessionProvider,
+    diagnosticProvider: LLDiagnosticProvider
 ) : LLFirResolvableResolveSession(
     moduleProvider = moduleProvider,
     moduleKindProvider = LLScriptModuleKindProvider(moduleProvider.useSiteModule),
     sessionProvider = sessionProvider,
-    diagnosticProvider = LLSourceDiagnosticProvider(moduleProvider, sessionProvider)
+    diagnosticProvider = diagnosticProvider
 )
 
 private class LLScriptModuleKindProvider(private val useSiteModule: KtModule) : LLModuleKindProvider {

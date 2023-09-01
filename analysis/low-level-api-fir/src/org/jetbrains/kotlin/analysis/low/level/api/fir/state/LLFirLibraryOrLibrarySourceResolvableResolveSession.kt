@@ -10,12 +10,13 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
 internal class LLFirLibraryOrLibrarySourceResolvableResolveSession(
     moduleProvider: LLModuleProvider,
-    sessionProvider: LLSessionProvider
+    sessionProvider: LLSessionProvider,
+    diagnosticProvider: LLDiagnosticProvider
 ) : LLFirResolvableResolveSession(
     moduleProvider = moduleProvider,
     moduleKindProvider = LLLibraryModuleKindProvider(moduleProvider.useSiteModule),
     sessionProvider = sessionProvider,
-    diagnosticProvider = LLEmptyDiagnosticProvider
+    diagnosticProvider = diagnosticProvider
 )
 
 private class LLLibraryModuleKindProvider(private val useSiteModule: KtModule) : LLModuleKindProvider {
