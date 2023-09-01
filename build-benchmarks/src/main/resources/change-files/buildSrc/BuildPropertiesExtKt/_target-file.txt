@@ -1,1 +1,1 @@
-buildSrc/src/main/kotlin/BuildPropertiesExt.kt
+repo/gradle-build-conventions/buildsrc-compat/src/main/kotlin/BuildPropertiesExt.kt

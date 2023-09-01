@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -82,6 +83,9 @@ interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingC
      */
     val inlineClassesUtils: InlineClassesUtils
         get() = DefaultInlineClassesUtils
+
+    val partialLinkageSupport: PartialLinkageSupportForLowerings
+        get() = PartialLinkageSupportForLowerings.DISABLED
 }
 
 /**
