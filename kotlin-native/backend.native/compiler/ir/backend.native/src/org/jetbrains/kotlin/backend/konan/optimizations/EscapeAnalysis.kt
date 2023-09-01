@@ -851,8 +851,7 @@ internal object EscapeAnalysis {
 
             fun escapes(node: PointsToGraphNode) = node in reachableFromEscapeOrigins || node in referencingEscapeOrigins
 
-            val ids = (listOf(function.body.rootScope) + function.body.allScopes.flatMap { it.nodes })
-                    .withIndex().associateBy({ it.value }, { it.index })
+            val ids = mutableMapOf<DataFlowIR.Node, Int>()
 
             fun lifetimeOf(node: DataFlowIR.Node) = nodes[node]!!.let { it.forcedLifetime ?: lifetimeOf(it) }
 
@@ -907,6 +906,10 @@ internal object EscapeAnalysis {
             fun DataFlowIR.Edge.toPTGNode() = node.toPTGNode()
 
             fun convertBody(body: DataFlowIR.FunctionBody, returnsNode: PointsToGraphNode) {
+                val startIndex = ids.size
+                (listOf(body.rootScope) + body.allScopes.flatMap { it.nodes })
+                        .forEachIndexed { index, node -> ids[node] = startIndex + index }
+
                 val nothing = moduleDFG.symbolTable.mapClassReferenceType(context.ir.symbols.nothing.owner).resolved()
                 body.forEachNonScopeNode { node ->
                     when (node) {
