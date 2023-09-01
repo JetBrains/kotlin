@@ -407,7 +407,7 @@ class FirCallCompleter(
         // We only run lambda completion from ConstraintSystemCompletionContext.analyzeRemainingNotAnalyzedPostponedArgument when they are
         // left uninferred.
         // Currently, we use stub types for builder inference, so CANNOT_INFER_PARAMETER_TYPE is the only possible result here.
-        if (this is ConeTypeVariableType) {
+        if (this is ConeTypeVariableType && this.lookupTag.originalTypeParameter == null) {
             val diagnostic = valueParameter?.let(::ConeCannotInferValueParameterType) ?: ConeCannotInferReceiverParameterType()
             return ConeErrorType(diagnostic)
         }
