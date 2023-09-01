@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
 internal class LLFirNotUnderContentRootResolveSession(
-    useSiteKtModule: KtModule,
-    useSiteSessionFactory: (KtModule) -> LLFirSession
+    moduleProvider: LLModuleProvider,
+    sessionProvider: LLSessionProvider
 ) : LLFirResolvableResolveSession(
-    useSiteKtModule = useSiteKtModule,
-    moduleKindProvider = LLNotUnderContentRootModuleKindProvider(useSiteKtModule),
-    useSiteSessionFactory = useSiteSessionFactory
+    moduleProvider = moduleProvider,
+    moduleKindProvider = LLNotUnderContentRootModuleKindProvider(moduleProvider.useSiteModule),
+    sessionProvider = sessionProvider
 ) {
     override val diagnosticProvider: LLDiagnosticProvider
         get() = LLEmptyDiagnosticProvider

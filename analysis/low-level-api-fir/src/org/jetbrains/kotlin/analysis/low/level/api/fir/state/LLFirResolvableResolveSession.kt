@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -33,13 +32,13 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal abstract class LLFirResolvableResolveSession(
-    useSiteKtModule: KtModule,
+    moduleProvider: LLModuleProvider,
     moduleKindProvider: LLModuleKindProvider,
-    useSiteSessionFactory: (KtModule) -> LLFirSession,
+    sessionProvider: LLSessionProvider
 ) : LLFirResolveSession(
-    moduleProvider = LLModuleProvider(useSiteKtModule),
+    moduleProvider = moduleProvider,
     moduleKindProvider = moduleKindProvider,
-    sessionProvider = LLSessionProvider(useSiteKtModule, useSiteSessionFactory),
+    sessionProvider = sessionProvider,
     scopeSessionProvider = LLDefaultScopeSessionProvider
 ) {
     override fun getOrBuildFirFor(element: KtElement): FirElement? {

@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirNotUnderConten
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirScriptResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.project.structure.*
 
@@ -35,11 +37,14 @@ class LLFirResolveSessionService(project: Project) {
     }
 
     private fun create(module: KtModule, factory: (KtModule) -> LLFirSession): LLFirResolvableResolveSession {
+        val moduleProvider = LLModuleProvider(module)
+        val sessionProvider = LLSessionProvider(module, factory)
+
         return when (module) {
-            is KtSourceModule -> LLFirSourceResolveSession(module, factory)
-            is KtLibraryModule, is KtLibrarySourceModule -> LLFirLibraryOrLibrarySourceResolvableResolveSession(module, factory)
-            is KtScriptModule -> LLFirScriptResolveSession(module, factory)
-            is KtNotUnderContentRootModule -> LLFirNotUnderContentRootResolveSession(module, factory)
+            is KtSourceModule -> LLFirSourceResolveSession(moduleProvider, sessionProvider)
+            is KtLibraryModule, is KtLibrarySourceModule -> LLFirLibraryOrLibrarySourceResolvableResolveSession(moduleProvider, sessionProvider)
+            is KtScriptModule -> LLFirScriptResolveSession(moduleProvider, sessionProvider)
+            is KtNotUnderContentRootModule -> LLFirNotUnderContentRootResolveSession(moduleProvider, sessionProvider)
             else -> {
                 errorWithFirSpecificEntries("Unexpected ${module::class.java}") {
                     withEntry("module", module) { it.moduleDescription }

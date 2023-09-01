@@ -5,17 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 
 internal class LLFirScriptResolveSession(
-    useSiteKtModule: KtModule,
-    useSiteSessionFactory: (KtModule) -> LLFirSession,
+    moduleProvider: LLModuleProvider,
+    sessionProvider: LLSessionProvider
 ) : LLFirResolvableResolveSession(
-    useSiteKtModule = useSiteKtModule,
-    moduleKindProvider = LLScriptModuleKindProvider(useSiteKtModule),
-    useSiteSessionFactory = useSiteSessionFactory
+    moduleProvider = moduleProvider,
+    moduleKindProvider = LLScriptModuleKindProvider(moduleProvider.useSiteModule),
+    sessionProvider = sessionProvider
 ) {
     override val diagnosticProvider = LLSourceDiagnosticProvider(moduleProvider, sessionProvider)
 }
