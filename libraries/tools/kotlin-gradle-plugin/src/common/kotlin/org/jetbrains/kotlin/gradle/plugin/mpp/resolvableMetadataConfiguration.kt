@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.utils.getOrCreate
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.markResolvable
-import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
 
 /**
  * @see resolvableMetadataConfiguration
@@ -36,9 +35,7 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfigurationName: String
  * These dependencies are set up to resolve Kotlin Metadata (without transformation) and will resolve
  * consistently across the whole project.
  */
-internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configuration by extrasLazyProperty(
-    "resolvableMetadataConfiguration"
-) {
+internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configuration by storedExtrasProperty {
     assert(resolvableMetadataConfigurationName !in project.configurations.names)
     val configuration = project.configurations.maybeCreate(resolvableMetadataConfigurationName)
     configuration.markResolvable()
@@ -79,7 +76,7 @@ Dependencies will be coming from extending the newer 'resolvableMetadataConfigur
 
 the intransitiveMetadataConfigurationName will not extend this mechanism, since it only
 relies on dependencies being added explicitly by the Kotlin Gradle Plugin
-*/
+ */
 private fun InternalKotlinSourceSet.configureMetadataDependenciesConfigurations(resolvableMetadataConfiguration: Configuration) {
     @Suppress("DEPRECATION")
     listOf(
