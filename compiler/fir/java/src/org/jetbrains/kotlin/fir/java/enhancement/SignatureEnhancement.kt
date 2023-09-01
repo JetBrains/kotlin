@@ -747,8 +747,8 @@ private class EnhancementSignatureParts(
         get() = (this as ConeTypeParameterLookupTag).symbol.fir.origin is FirDeclarationOrigin.Java
 }
 
-class FirEnhancedSymbolsStorage(val session: FirSession) : FirSessionComponent {
-    private val cachesFactory = session.firCachesFactory
+class FirEnhancedSymbolsStorage(private val cachesFactory: FirCachesFactory) : FirSessionComponent {
+    constructor(session: FirSession) : this(session.firCachesFactory)
 
     val cacheByOwner: FirCache<FirRegularClassSymbol, EnhancementSymbolsCache, Nothing?> =
         cachesFactory.createCache { _ -> EnhancementSymbolsCache(cachesFactory) }

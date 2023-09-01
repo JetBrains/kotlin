@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.OptInLanguageVersionSettingsCh
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.java.enhancement.FirEnhancedSymbolsStorage
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -72,7 +73,7 @@ fun <F> prepareJvmSessions(
     createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
 ): List<SessionWithSources<F>> {
     val javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources()
-
+    val enhancementSymbolsStorage = FirEnhancedSymbolsStorage(firCachesFactoryForCliMode)
     return prepareSessions(
         files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
         JvmPlatformAnalyzerServices, metadataCompilationMode = false, libraryList, isCommonSource, fileBelongsToModule,
@@ -86,6 +87,7 @@ fun <F> prepareJvmSessions(
                 librariesScope,
                 projectEnvironment.getPackagePartProvider(librariesScope),
                 configuration.languageVersionSettings,
+                predefinedEnhancementStorage = enhancementSymbolsStorage,
                 registerExtraComponents = {},
             )
         }
@@ -101,6 +103,7 @@ fun <F> prepareJvmSessions(
             configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
             configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
             configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
+            predefinedEnhancementStorage = enhancementSymbolsStorage,
             needRegisterJavaElementFinder = true,
             registerExtraComponents = {},
             sessionConfigurator,

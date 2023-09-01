@@ -76,9 +76,9 @@ object FirSessionFactoryHelper {
             lookupTracker,
             enumWhenTracker,
             importTracker,
-            needRegisterJavaElementFinder,
+            needRegisterJavaElementFinder = needRegisterJavaElementFinder,
             registerExtraComponents = {},
-            sessionConfigurator,
+            init = sessionConfigurator,
         )
     }
 

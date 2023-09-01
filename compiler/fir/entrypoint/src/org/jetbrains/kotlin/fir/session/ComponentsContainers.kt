@@ -90,9 +90,12 @@ fun FirSession.registerCommonComponentsAfterExtensionsAreConfigured() {
     register(FirProvidedDeclarationsForMetadataService::class, FirProvidedDeclarationsForMetadataService.create(this))
 }
 
+val firCachesFactoryForCliMode: FirCachesFactory
+    get() = FirThreadUnsafeCachesFactory
+
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerCliCompilerOnlyComponents() {
-    register(FirCachesFactory::class, FirThreadUnsafeCachesFactory)
+    register(FirCachesFactory::class, firCachesFactoryForCliMode)
     register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
     register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
     register(FirExceptionHandler::class, FirCliExceptionHandler)
@@ -102,10 +105,13 @@ fun FirSession.registerCliCompilerOnlyComponents() {
 }
 
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerCommonJavaComponents(javaModuleResolver: JavaModuleResolver) {
+fun FirSession.registerCommonJavaComponents(
+    javaModuleResolver: JavaModuleResolver,
+    predefinedEnhancementStorage: FirEnhancedSymbolsStorage? = null,
+) {
     val jsr305State = languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState)
     register(FirAnnotationTypeQualifierResolver::class, FirAnnotationTypeQualifierResolver(this, jsr305State, javaModuleResolver))
-    register(FirEnhancedSymbolsStorage::class, FirEnhancedSymbolsStorage(this))
+    register(FirEnhancedSymbolsStorage::class, predefinedEnhancementStorage ?: FirEnhancedSymbolsStorage(this))
     register(FirSyntheticPropertiesStorage::class, FirSyntheticPropertiesStorage(this))
     register(
         FirJvmDefaultModeComponent::class,
