@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -133,7 +132,7 @@ internal class JsUsefulDeclarationProcessor(
 
     override fun processSuperTypes(irClass: IrClass) {
         irClass.superTypes.forEach {
-            val shouldClassBeKept = it.classOrNull?.let { context.keeper.shouldKeep(it.owner) } ?: false
+            val shouldClassBeKept = it.classOrNull?.owner?.isKept() ?: false
             if (!it.isInterface() || shouldClassBeKept) {
                 (it.classifierOrNull as? IrClassSymbol)?.owner?.enqueue(irClass, "superTypes")
             }
@@ -143,9 +142,9 @@ internal class JsUsefulDeclarationProcessor(
     override fun processClass(irClass: IrClass) {
         super.processClass(irClass)
 
-        if (context.keeper.shouldKeep(irClass)) {
+        if (irClass.isKept()) {
             irClass.declarations
-                .filter { context.keeper.shouldKeep(it) }
+                .filter { it.isKept() }
                 .forEach { declaration ->
                     declaration.enqueue(irClass, "kept declaration")
                 }
@@ -198,7 +197,7 @@ internal class JsUsefulDeclarationProcessor(
 
         val property = irFunction.correspondingPropertySymbol?.owner ?: return
 
-        if (property.isExported(context) || property.getJsName() != null || property.isOverriddenExternal()) {
+        if (property.getJsName() != null || property.isOverriddenExternal()) {
             context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irFunction, "property for export")
             context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irFunction, "property for export")
         }
@@ -245,7 +244,7 @@ internal class JsUsefulDeclarationProcessor(
         }
     }
 
-    override fun isExported(declaration: IrDeclaration): Boolean = declaration.isExported(context)
+    override fun isExported(declaration: IrDeclaration): Boolean = declaration.hasJsVisibleForInterop()
 
     private fun IrCall.usePrototype(container: IrDeclaration?): Boolean {
         if (superQualifierSymbol == null) return false
@@ -260,7 +259,7 @@ internal class JsUsefulDeclarationProcessor(
 
     private fun IrClass.containsInterfaceDefaultImplementation(): Boolean {
         return superTypes.any { it.classOrNull?.owner?.isExternal == true } ||
-                isExported(context) ||
+                hasJsVisibleForInterop() ||
                 isInterface && declarations.any { it is IrFunction && it.body != null }
     }
 }

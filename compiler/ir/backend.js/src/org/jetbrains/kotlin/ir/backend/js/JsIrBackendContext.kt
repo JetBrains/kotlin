@@ -60,7 +60,7 @@ class JsIrBackendContext(
     override val irBuiltIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     val additionalExportedDeclarationNames: Set<FqName>,
-    keep: Set<String>,
+    val keep: Set<String>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
     override val es6mode: Boolean = false,
     val dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
@@ -81,9 +81,6 @@ class JsIrBackendContext(
 
     val minimizedNameGenerator: MinimizedNameGenerator =
         MinimizedNameGenerator()
-
-    val keeper: Keeper =
-        Keeper(keep)
 
     val fieldDataCache = WeakHashMap<IrClass, Map<IrField, String>>()
 
@@ -106,8 +103,6 @@ class JsIrBackendContext(
     val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
 
     val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
-
-    val additionalExportedDeclarations = hashSetOf<IrDeclaration>()
 
     val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
         DescriptorlessExternalPackageFragmentSymbol(),

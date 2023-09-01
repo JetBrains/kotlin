@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -34,7 +33,7 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
         val irClass = declaration.parentAsClass
         val defaultConstructor = context.findDefaultConstructorFor(irClass)
 
-        if (irClass.isExported(context)) {
+        if (irClass.hasJsVisibleForInterop()) {
             irClass.removeConstructorForExport()
         }
 
@@ -62,7 +61,7 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
             constructor.copyParameterDeclarationsFrom(original)
             constructor.parent = irClass
 
-            if (irClass.isExported(context)) {
+            if (irClass.hasJsVisibleForInterop()) {
                 constructor.annotations = original.annotations.withoutFirst { it.isAnnotation(JsAnnotations.jsExportIgnoreFqn) }
             }
 

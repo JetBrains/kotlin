@@ -44,10 +44,16 @@ internal fun safePropertySet(self: dynamic, setterName: String, propName: String
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 internal annotation class JsFun(val code: String)
 
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
+internal annotation class JsKeep
+
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
+internal annotation class JsVisibleForInterop
+
 /**
  * The annotation is needed for annotating class declarations and type alias which are used inside exported declarations, but
  * doesn't contain @JsExport annotation
  * This information is used for generating special tagged types inside d.ts files, for more strict usage of implicitly exported entities
  */
 @Target(AnnotationTarget.CLASS)
-internal annotation class JsImplicitExport
+internal annotation class JsImplicitlyVisibleForInterop

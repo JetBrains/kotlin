@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.isJsImplicitExport
+import org.jetbrains.kotlin.ir.backend.js.utils.hasJsImplicitlyVisibleForInterop
+import org.jetbrains.kotlin.ir.backend.js.utils.hasJsVisibleForInterop
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -27,7 +27,7 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
     private val strictImplicitExport = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT)
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (!strictImplicitExport || !declaration.isExported(context)) return null
+        if (!strictImplicitExport || !declaration.hasJsVisibleForInterop()) return null
 
         val implicitlyExportedDeclarations = when (declaration) {
             is IrFunction -> declaration.collectImplicitlyExportedDeclarations()
@@ -36,7 +36,7 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
             else -> emptySet()
         }
 
-        implicitlyExportedDeclarations.forEach { it.markWithJsImplicitExport() }
+        implicitlyExportedDeclarations.forEach { it.markWithJsImplicitlyVisibleForInterop() }
 
         return null
     }
@@ -80,19 +80,19 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
             classifier is IrTypeParameterSymbol -> classifier.owner.superTypes.flatMap { it.collectImplicitlyExportedDeclarations() }
                 .toSet()
 
-            classifier is IrClassSymbol -> setOfNotNull(classifier.owner.takeIf { it.shouldBeMarkedWithImplicitExport() })
+            classifier is IrClassSymbol -> setOfNotNull(classifier.owner.takeIf { it.shouldBeMarkedWithImplicitlyVisibleForInterop() })
             else -> emptySet()
         }
     }
 
-    private fun IrDeclaration.shouldBeMarkedWithImplicitExport(): Boolean {
-        return this is IrClass && !isExternal && !isExported(context) && !isJsImplicitExport()
+    private fun IrDeclaration.shouldBeMarkedWithImplicitlyVisibleForInterop(): Boolean {
+        return this is IrClass && !isExternal && !hasJsVisibleForInterop() && !hasJsImplicitlyVisibleForInterop()
     }
 
-    private fun IrDeclaration.markWithJsImplicitExport() {
-        val jsImplicitExportCtor = context.intrinsics.jsImplicitExportAnnotationSymbol.constructors.single()
+    private fun IrDeclaration.markWithJsImplicitlyVisibleForInterop() {
+        val jsImplicitExportCtor = context.intrinsics.jsImplicitlyVisibleForInteropAnnotationSymbol.constructors.single()
         annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsImplicitExportCtor)
 
-        parentClassOrNull?.takeIf { it.shouldBeMarkedWithImplicitExport() }?.markWithJsImplicitExport()
+        parentClassOrNull?.takeIf { it.shouldBeMarkedWithImplicitlyVisibleForInterop() }?.markWithJsImplicitlyVisibleForInterop()
     }
 }

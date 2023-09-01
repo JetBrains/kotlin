@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.hasJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.parentEnumClassOrNull
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -39,14 +39,14 @@ class ExcludeSyntheticDeclarationsFromExportLowering(val context: JsIrBackendCon
         if (this !is IrSimpleFunction) return false
         val original = getOriginalFunction()
         val parent = original.parentClassOrNull ?: return false
-        return parent.isExported(context) &&
+        return parent.hasJsExport() &&
                 original.origin == IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER &&
                 original.name.identifier.startsWith(StandardNames.DATA_CLASS_COMPONENT_PREFIX)
     }
 
     private fun IrDeclaration.isExportedSyntheticEnumEntriesProperty(): Boolean {
         return this is IrSimpleFunction &&
-                parentEnumClassOrNull?.isExported(context) == true &&
+                parentEnumClassOrNull?.hasJsExport() == true &&
                 (body as? IrSyntheticBody)?.kind == IrSyntheticBodyKind.ENUM_ENTRIES
     }
 

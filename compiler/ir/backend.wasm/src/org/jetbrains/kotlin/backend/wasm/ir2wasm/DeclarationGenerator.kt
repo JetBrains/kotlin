@@ -183,7 +183,7 @@ class DeclarationGenerator(
             context.registerInitFunction(function, initPriority)
 
         val nameIfExported = when {
-            declaration.isJsExport() -> declaration.getJsNameOrKotlinName().identifier
+            declaration.hasJsExport() -> declaration.getJsNameOrKotlinName().identifier
             else -> declaration.getWasmExportNameIfWasmExport()
         }
 
@@ -505,7 +505,7 @@ fun IrFunction.getEffectiveValueParameters(): List<IrValueParameter> {
 }
 
 fun IrFunction.isExported(): Boolean =
-    isJsExport() || getWasmExportNameIfWasmExport() != null
+    hasJsExport() || getWasmExportNameIfWasmExport() != null
 
 fun generateConstExpression(
     expression: IrConst<*>,

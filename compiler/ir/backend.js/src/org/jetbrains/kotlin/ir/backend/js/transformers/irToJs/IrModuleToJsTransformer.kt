@@ -158,23 +158,8 @@ class IrModuleToJsTransformer(
         }
     }
 
-    private fun doStaticMembersLowering(modules: Iterable<IrModuleFragment>) {
-        modules.forEach { module ->
-            module.files.forEach {
-                it.accept(backendContext.keeper, Keeper.KeepData(classInKeep = false, classShouldBeKept = false))
-            }
-        }
-
-        modules.forEach { module ->
-            module.files.forEach {
-                StaticMembersLowering(backendContext).lower(it)
-            }
-        }
-    }
-
     fun generateModule(modules: Iterable<IrModuleFragment>, modes: Set<TranslationMode>, relativeRequirePath: Boolean): CompilerResult {
         val exportData = associateIrAndExport(modules)
-        doStaticMembersLowering(modules)
 
         val result = EnumMap<TranslationMode, CompilationOutputs>(TranslationMode::class.java)
 
@@ -195,7 +180,6 @@ class IrModuleToJsTransformer(
 
     fun makeJsCodeGenerator(modules: Iterable<IrModuleFragment>, mode: TranslationMode): JsCodeGenerator {
         val exportData = associateIrAndExport(modules)
-        doStaticMembersLowering(modules)
 
         if (mode.production) {
             optimizeProgramByIr(modules, backendContext, removeUnusedAssociatedObjects)
@@ -204,16 +188,11 @@ class IrModuleToJsTransformer(
         return makeJsCodeGeneratorFromIr(exportData, mode)
     }
 
-    fun makeIrFragmentsGenerators(
-        dirtyFiles: Collection<IrFile>,
-        allModules: Collection<IrModuleFragment>
-    ): List<() -> List<JsIrProgramFragment>> {
+    fun makeIrFragmentsGenerators(dirtyFiles: Collection<IrFile>): List<() -> List<JsIrProgramFragment>> {
         val files = dirtyFiles + backendContext.mapping.chunkToOriginalFile.keys
         val exportModelGenerator = ExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
         val exportData = exportModelGenerator.generateExportWithExternals(files)
         val mode = TranslationMode.fromFlags(production = false, backendContext.granularity, minimizedMemberNames = false)
-
-        doStaticMembersLowering(allModules)
 
         return exportData
             .groupBy { it.generatedFrom ?: it.file }

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
-import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
+import org.jetbrains.kotlin.ir.backend.js.utils.hasJsExport
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -54,7 +54,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
         if (declaration.isFakeOverride) return null
         if (declaration !is IrSimpleFunction) return null
-        val isExported = declaration.isJsExport()
+        val isExported = declaration.hasJsExport()
         val isExternal = declaration.isExternal || declaration.getJsFunAnnotation() != null
         if (declaration.isPropertyAccessor) return null
         if (declaration.parent !is IrPackageFragment) return null

@@ -164,26 +164,25 @@ fun translateCall(
 
     // Transform external and interface's property accessor call
     // @JsName-annotated external and interface's property accessors are translated as function calls
-    if (function.getJsName() == null) {
+    if (function.getJsNameForOverriddenDeclaration() == null) {
         val property = function.correspondingPropertySymbol?.owner
+        val propertyStableName = property?.getJsNameForOverriddenDeclaration()
         if (
             property != null &&
-            (property.isEffectivelyExternal() || property.isExportedMember(context.staticContext.backendContext))
+            (property.isEffectivelyExternal() || propertyStableName != null)
         ) {
-            if (function.overriddenSymbols.isEmpty() || function.overriddenStableProperty(context.staticContext.backendContext)) {
-                val propertyName = context.getNameForProperty(property)
-                val nameRef = when (jsDispatchReceiver) {
-                    null -> JsNameRef(propertyName)
-                    else -> jsElementAccess(propertyName.ident, jsDispatchReceiver)
-                }
-                return when (function) {
-                    property.getter -> nameRef
-                    property.setter -> jsAssignment(nameRef, arguments.single())
-                    else -> compilationException(
-                        "Function must be an accessor of corresponding property",
-                        function
-                    )
-                }
+            val propertyName = context.getNameForProperty(property)
+            val nameRef = when (jsDispatchReceiver) {
+                null -> JsNameRef(propertyName)
+                else -> jsElementAccess(propertyName.ident, jsDispatchReceiver)
+            }
+            return when (function) {
+                property.getter -> nameRef
+                property.setter -> jsAssignment(nameRef, arguments.single())
+                else -> compilationException(
+                    "Function must be an accessor of corresponding property",
+                    function
+                )
             }
         }
     }

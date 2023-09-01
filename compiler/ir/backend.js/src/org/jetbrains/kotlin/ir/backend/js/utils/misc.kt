@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -27,7 +25,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun TODO(element: IrElement): Nothing = TODO(element::class.java.simpleName + " is not supported yet here")
 
-fun IrFunction.hasStableJsName(context: JsIrBackendContext): Boolean {
+fun IrFunction.hasStableJsName(): Boolean {
     if (
         origin == JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME ||
         (this as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
@@ -49,13 +47,13 @@ fun IrFunction.hasStableJsName(context: JsIrBackendContext): Boolean {
             if (owner == null) {
                 true
             } else {
-                owner.getter?.getJsName() != null
+                owner.getter?.getJsNameForOverriddenDeclaration() != null
             }
         }
         else -> true
     }
 
-    return (isEffectivelyExternal() || getJsName() != null || isExported(context)) && namedOrMissingGetter
+    return (isEffectivelyExternal() || getJsNameForOverriddenDeclaration() != null) && namedOrMissingGetter
 }
 
 fun IrFunction.isEqualsInheritedFromAny(): Boolean =

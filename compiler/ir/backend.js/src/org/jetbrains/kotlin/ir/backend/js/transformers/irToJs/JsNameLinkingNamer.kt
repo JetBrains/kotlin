@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.dce.isKept
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -56,10 +56,11 @@ class JsNameLinkingNamer(
     override fun getNameForMemberFunction(function: IrSimpleFunction): JsName {
         require(function.dispatchReceiverParameter != null)
         val signature = jsFunctionSignature(function, context)
-        if (context.keeper.shouldKeep(function)) {
+        // TODO: think more about this line
+        if (function.isKept() && function.getJsNameForOverriddenDeclaration() == null) {
             context.minimizedNameGenerator.keepName(signature)
         }
-        val result = if (minimizedMemberNames && !function.hasStableJsName(context)) {
+        val result = if (minimizedMemberNames && !function.hasStableJsName()) {
             function.parentAsClass.fieldData()
             context.minimizedNameGenerator.nameBySignature(signature)
         } else {
@@ -161,18 +162,20 @@ class JsNameLinkingNamer(
                         when {
                             declaration is IrFunction && declaration.dispatchReceiverParameter != null -> {
                                 val property = (declaration as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
-                                if (property?.isExported(context) == true || property?.isEffectivelyExternal() == true) {
-                                    context.minimizedNameGenerator.reserveName(property.getJsNameOrKotlinName().identifier)
+                                val declaredJsName = property?.getJsNameForOverriddenDeclaration()
+                                if (declaredJsName != null || property?.isEffectivelyExternal() == true) {
+                                    context.minimizedNameGenerator.reserveName(declaredJsName ?: property.name.identifier)
                                 }
-                                if (declaration.hasStableJsName(context)) {
+                                if (declaration.hasStableJsName()) {
                                     val signature = jsFunctionSignature(declaration, context)
                                     context.minimizedNameGenerator.reserveName(signature)
                                 }
                             }
 
                             declaration is IrProperty -> {
-                                if (declaration.isExported(context)) {
-                                    context.minimizedNameGenerator.reserveName(declaration.getJsNameOrKotlinName().identifier)
+                                val declaredJsName = declaration.getJsNameForOverriddenDeclaration()
+                                if (declaredJsName != null) {
+                                    context.minimizedNameGenerator.reserveName(declaredJsName)
                                 }
                             }
                         }
@@ -185,13 +188,14 @@ class JsNameLinkingNamer(
                     when {
                         it is IrField -> {
                             val correspondingProperty = it.correspondingPropertySymbol?.owner
+                            val declaredJsName = correspondingProperty?.getJsNameForOverriddenDeclaration()
                             val hasStableName = correspondingProperty != null &&
                                     correspondingProperty.visibility.isPublicAPI &&
-                                    (correspondingProperty.isExported(context) || correspondingProperty.getJsName() != null) &&
+                                    declaredJsName != null &&
                                     correspondingProperty.isSimpleProperty
                             val safeName = when {
                                hasStableName -> (correspondingProperty ?: it).getJsNameOrKotlinName().identifier
-                               minimizedMemberNames && !context.keeper.shouldKeep(it) -> context.minimizedNameGenerator.generateNextName()
+                               minimizedMemberNames && !it.isKept() -> context.minimizedNameGenerator.generateNextName()
                                else -> it.safeName()
                             }
                             val resultName = if (!hasStableName) {

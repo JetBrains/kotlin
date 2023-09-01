@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
@@ -111,21 +110,15 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
                     }
                     it.defaultValue = null
                 }
-
-                if (originalFun.isExported(context)) {
-                    context.additionalExportedDeclarations.add(defaultFunStub)
-
-                    if (!originalFun.hasAnnotation(JsAnnotations.jsNameFqn)) {
-                        annotations = annotations memoryOptimizedPlus originalFun.generateJsNameAnnotationCall()
-                    }
-                }
             }
         }
 
         val (exportAnnotations, irrelevantAnnotations) = originalFun.annotations
             .map { it.deepCopyWithSymbols(originalFun as? IrDeclarationParent) }
             .partition {
-                it.isAnnotation(JsAnnotations.jsExportFqn) || (it.isAnnotation(JsAnnotations.jsNameFqn))
+                it.isAnnotation(JsAnnotations.jsVisibleForInterop) ||
+                        (it.isAnnotation(JsAnnotations.jsNameFqn)) ||
+                        (it.isAnnotation(JsAnnotations.jsKeepFqn))
             }
 
         originalFun.annotations = irrelevantAnnotations
@@ -172,7 +165,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
 
             var superContextValueParam: IrValueParameter? = null
 
-            val superFunCall = runIf(wrappedFunctionCall.dispatchReceiver != null && !originalDeclaration.isExported(ctx)) {
+            val superFunCall = runIf(wrappedFunctionCall.dispatchReceiver != null) {
                 val superContext = valueParameters.last().also {
                     superContextValueParam = it
                 }

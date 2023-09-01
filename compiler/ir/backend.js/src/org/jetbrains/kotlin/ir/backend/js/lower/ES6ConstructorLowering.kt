@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -22,12 +21,10 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
-import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
-import org.jetbrains.kotlin.utils.memoryOptimizedMap
-import org.jetbrains.kotlin.utils.memoryOptimizedPlus
-import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 object ES6_INIT_CALL : IrStatementOriginImpl("ES6_INIT_CALL")
 object ES6_CONSTRUCTOR_REPLACEMENT : IrDeclarationOriginImpl("ES6_CONSTRUCTOR_REPLACEMENT")
@@ -73,7 +70,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
     }
 
     private fun IrConstructor.generateExportedConstructorIfNeed(factoryFunction: IrSimpleFunction): IrConstructor? {
-        return runIf(isExported(context) && isPrimary) {
+        return runIf(hasJsVisibleForInterop() && isPrimary) {
             apply {
                 valueParameters = valueParameters.memoryOptimizedFilterNot { it.isBoxParameter }
                 body = (body as? IrBlockBody)?.let {
@@ -137,11 +134,9 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
             factory.parent = irClass
             factory.copyTypeParametersFrom(irClass)
             factory.copyValueParametersFrom(constructor)
-            factory.annotations = annotations
             factory.dispatchReceiverParameter = irClass.thisReceiver?.copyTo(factory)
-
-            if (irClass.isExported(context) && constructor.isPrimary) {
-                factory.excludeFromExport()
+            factory.annotations = annotations.butIf(isPrimary) { list ->
+                list.memoryOptimizedFilter { !it.isAnnotation(JsAnnotations.jsVisibleForInterop) }
             }
 
             factory.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
@@ -274,11 +269,5 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
 
     private fun getCurrentConstructorReference(currentFactoryFunction: IrSimpleFunction): IrExpression {
         return JsIrBuilder.buildGetValue(currentFactoryFunction.dispatchReceiverParameter!!.symbol)
-    }
-
-    private fun IrDeclaration.excludeFromExport() {
-        val jsExportIgnoreClass = context.intrinsics.jsExportIgnoreAnnotationSymbol.owner
-        val jsExportIgnoreCtor = jsExportIgnoreClass.primaryConstructor ?: return
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsExportIgnoreCtor.symbol)
     }
 }

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -48,6 +47,9 @@ fun eliminateDeadDeclarations(
 private fun IrField.isConstant(): Boolean =
     correspondingPropertySymbol?.owner?.isConst ?: false
 
+fun IrDeclaration.isKept(): Boolean =
+    hasJsKeep() || (this is IrOverridableDeclaration<*> && overriddenSymbols.any { (it.owner as IrDeclaration).isKept() })
+
 private fun IrDeclaration.addRootsTo(
     nestedVisitor: IrElementVisitorVoid,
     context: JsIrBackendContext
@@ -71,20 +73,20 @@ private fun IrDeclaration.addRootsTo(
             }
         }
 
-        isExported(context) -> {
+        isKept() -> {
             acceptVoid(nestedVisitor)
         }
 
         this is IrField -> {
             // TODO: simplify
-            if ((initializer != null && !isKotlinPackage() || correspondingPropertySymbol?.owner?.isExported(context) == true) && !isConstant()) {
+            if ((initializer != null && !isKotlinPackage() || correspondingPropertySymbol?.owner?.isKept() == true) && !isConstant()) {
                 acceptVoid(nestedVisitor)
             }
         }
 
         this is IrSimpleFunction -> {
             val correspondingProperty = correspondingPropertySymbol?.owner ?: return
-            if (correspondingProperty.isExported(context)) {
+            if (correspondingProperty.isKept()) {
                 acceptVoid(nestedVisitor)
             }
         }
@@ -124,7 +126,6 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
 
     addIfNotNull(context.intrinsics.void.owner.backingField)
     addAll(context.testFunsPerFile.values)
-    addAll(context.additionalExportedDeclarations)
 }
 
 internal fun RuntimeDiagnostic.unreachableDeclarationMethod(context: JsIrBackendContext) =

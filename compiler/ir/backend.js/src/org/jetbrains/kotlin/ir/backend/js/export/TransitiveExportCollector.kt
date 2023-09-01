@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.backend.js.utils.isJsImplicitExport
+import org.jetbrains.kotlin.ir.backend.js.utils.hasJsImplicitlyVisibleForInterop
+import org.jetbrains.kotlin.ir.backend.js.utils.hasJsVisibleForInterop
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.superTypes
 
@@ -39,7 +40,7 @@ class TransitiveExportCollector(val context: JsIrBackendContext) {
 
     private fun IrSimpleType.findNearestExportedClass(typeSubstitutionMap: SubstitutionMap): IrSimpleType? {
         val classifier = classifier as? IrClassSymbol ?: return null
-        if (classifier.owner.isExported(context)) return substitute(typeSubstitutionMap) as IrSimpleType
+        if (classifier.owner.hasJsVisibleForInterop()) return substitute(typeSubstitutionMap) as IrSimpleType
 
         return classifier.superTypes()
             .firstNotNullOfOrNull { (it as? IrSimpleType)?.findNearestExportedClass(typeSubstitutionMap) }
@@ -51,8 +52,8 @@ class TransitiveExportCollector(val context: JsIrBackendContext) {
 
         return when {
             isBuiltInClass(owner) || isStdLibClass(owner) -> emptySet()
-            owner.isExported(context) -> setOf(substitute(substitutionMap))
-            owner.isJsImplicitExport() -> setOfNotNull(
+            owner.hasJsVisibleForInterop() -> setOf(substitute(substitutionMap))
+            owner.hasJsImplicitlyVisibleForInterop() -> setOfNotNull(
                 substitute(typeSubstitutionMap),
                 takeIf { !owner.isInterface }?.findNearestExportedClass(substitutionMap)
             )

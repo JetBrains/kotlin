@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLow
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
@@ -137,16 +138,37 @@ private val validateIrAfterLowering = makeCustomJsModulePhase(
     description = "Validate IR after lowering"
 ).toModuleLowering()
 
-private val collectClassDefaultConstructorsPhase = makeDeclarationTransformerPhase(
-    ::CollectClassDefaultConstructorsLowering,
-    name = "CollectClassDefaultConstructorsLowering",
-    description = "Collect classes default constructors to add it to metadata on code generating phase"
-)
-
 private val preventExportOfSyntheticDeclarationsLowering = makeDeclarationTransformerPhase(
     ::ExcludeSyntheticDeclarationsFromExportLowering,
     name = "ExcludeSyntheticDeclarationsFromExportLowering",
     description = "Exclude synthetic declarations which we don't want to export such as `Enum.entries` or `DataClass::componentN`",
+)
+
+private val collectKeptAndVisibleForInteropDeclarationsLowering = makeDeclarationTransformerPhase(
+    ::AnnotateKeptAndVisibleForInteropDeclarationsLowering,
+    name = "SplitJsExportAnnotationLowering",
+    description = "Split @JsExport annotation on 3 annotations: @JsKeep, @JsName and @JsVisibleForInterop",
+    prerequisite = setOf(preventExportOfSyntheticDeclarationsLowering)
+)
+
+private val removeJsExportAnnotationUsageLowering = makeDeclarationTransformerPhase(
+    { RemoveJsExportAnnotationUsageLowering() },
+    name = "RemoveJsExportAnnotationUsageLowering",
+    description = "Remove usage of @JsExport and @JsExport.Ignore annotations",
+    prerequisite = setOf(collectKeptAndVisibleForInteropDeclarationsLowering)
+)
+
+private val staticMembersLoweringPhase = makeDeclarationTransformerPhase(
+    ::StaticMembersLowering,
+    name = "StaticMembersLowering",
+    description = "Move static member declarations to top-level",
+    prerequisite = setOf(collectKeptAndVisibleForInteropDeclarationsLowering, removeJsExportAnnotationUsageLowering)
+)
+
+private val collectClassDefaultConstructorsPhase = makeDeclarationTransformerPhase(
+    ::CollectClassDefaultConstructorsLowering,
+    name = "CollectClassDefaultConstructorsLowering",
+    description = "Collect classes default constructors to add it to metadata on code generating phase"
 )
 
 val scriptRemoveReceiverLowering = makeJsModulePhase(
@@ -774,12 +796,6 @@ private val callsLoweringPhase = makeBodyLoweringPhase(
     description = "Handle intrinsics"
 )
 
-private val staticMembersLoweringPhase = makeDeclarationTransformerPhase(
-    ::StaticMembersLowering,
-    name = "StaticMembersLowering",
-    description = "Move static member declarations to top-level"
-)
-
 private val objectDeclarationLoweringPhase = makeDeclarationTransformerPhase(
     ::ObjectDeclarationLowering,
     name = "ObjectDeclarationLowering",
@@ -865,6 +881,8 @@ val loweringList = listOf<Lowering>(
     scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
     preventExportOfSyntheticDeclarationsLowering,
+    collectKeptAndVisibleForInteropDeclarationsLowering,
+    removeJsExportAnnotationUsageLowering,
     inventNamesForLocalClassesPhase,
     collectClassIdentifiersLowering,
     annotationInstantiationLowering,
@@ -966,6 +984,7 @@ val loweringList = listOf<Lowering>(
     callsLoweringPhase,
     escapedIdentifiersLowering,
     implicitlyExportedDeclarationsMarkingLowering,
+    staticMembersLoweringPhase,
     cleanupLoweringPhase,
     // Currently broken due to static members lowering making single-open-class
     // files non-recognizable as single-class files

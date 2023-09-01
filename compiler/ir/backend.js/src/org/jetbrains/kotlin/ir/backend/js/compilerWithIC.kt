@@ -67,7 +67,7 @@ class JsIrCompilerWithIC(
         lowerPreservingTags(allModules, context, phaseConfig, context.irFactory.stageController as WholeWorldStageController)
 
         val transformer = IrModuleToJsTransformer(context, mainArguments)
-        return transformer.makeIrFragmentsGenerators(dirtyFiles, allModules)
+        return transformer.makeIrFragmentsGenerators(dirtyFiles)
     }
 }
 

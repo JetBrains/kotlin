@@ -41,7 +41,7 @@ class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<J
 
     override fun getBridgeOrigin(bridge: IrSimpleFunction): IrDeclarationOrigin =
         when {
-            bridge.hasStableJsName(context) -> JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME
+            bridge.hasStableJsName() -> JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME
             bridge.correspondingPropertySymbol != null -> JsLoweredDeclarationOrigin.BRIDGE_PROPERTY_ACCESSOR
             else -> JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME
         }

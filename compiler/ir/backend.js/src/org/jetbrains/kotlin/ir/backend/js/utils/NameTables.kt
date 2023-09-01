@@ -183,7 +183,7 @@ fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): S
     require(!declaration.isStaticMethodOfClass)
     require(declaration.dispatchReceiverParameter != null)
 
-    if (declaration.hasStableJsName(context)) {
+    if (declaration.hasStableJsName()) {
         val declarationName = declaration.getJsNameOrKotlinName().asString()
         // TODO: Handle reserved suffix in FE
         require(!declarationName.endsWith(RESERVED_MEMBER_NAME_SUFFIX)) {

@@ -70,7 +70,7 @@ class UselessDeclarationsRemover(
 
     private fun IrClassSymbol.collectUsedSuperTypes(): Set<IrClassSymbol> {
         return savedTypesCache.getOrPut(this) {
-            if (owner in usefulDeclarations || context.keeper.shouldKeep(owner)) {
+            if (owner in usefulDeclarations || owner.isKept()) {
                 setOf(this)
             } else {
                 owner.superTypes

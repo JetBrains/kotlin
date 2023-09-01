@@ -19,10 +19,12 @@ object JsAnnotations {
     val jsModuleFqn = FqName("kotlin.js.JsModule")
     val jsNonModuleFqn = FqName("kotlin.js.JsNonModule")
     val jsNameFqn = FqName("kotlin.js.JsName")
+    val jsKeepFqn = FqName("kotlin.js.JsKeep")
+    val jsVisibleForInterop = FqName("kotlin.js.JsVisibleForInterop")
+    val jsImplicitlyVisibleForInterop = FqName("kotlin.js.JsImplicitlyVisibleForInterop")
     val jsFileNameFqn = FqName("kotlin.js.JsFileName")
     val jsQualifierFqn = FqName("kotlin.js.JsQualifier")
     val jsExportFqn = FqName("kotlin.js.JsExport")
-    val jsImplicitExportFqn = FqName("kotlin.js.JsImplicitExport")
     val jsExportIgnoreFqn = FqName("kotlin.js.JsExport.Ignore")
     val jsNativeGetter = FqName("kotlin.js.nativeGetter")
     val jsNativeSetter = FqName("kotlin.js.nativeSetter")
@@ -56,13 +58,22 @@ fun IrAnnotationContainer.getDeprecated(): String? =
 fun IrAnnotationContainer.hasJsPolyfill(): Boolean =
     hasAnnotation(JsAnnotations.JsPolyfillFqn)
 
-fun IrAnnotationContainer.isJsExport(): Boolean =
+fun IrAnnotationContainer.hasJsExport(): Boolean =
     hasAnnotation(JsAnnotations.jsExportFqn)
 
-fun IrAnnotationContainer.isJsImplicitExport(): Boolean =
-    hasAnnotation(JsAnnotations.jsImplicitExportFqn)
+fun IrAnnotationContainer.hasJsName(): Boolean =
+    hasAnnotation(JsAnnotations.jsKeepFqn)
 
-fun IrAnnotationContainer.isJsExportIgnore(): Boolean =
+fun IrAnnotationContainer.hasJsKeep(): Boolean =
+    hasAnnotation(JsAnnotations.jsKeepFqn)
+
+fun IrAnnotationContainer.hasJsVisibleForInterop(): Boolean =
+    hasAnnotation(JsAnnotations.jsVisibleForInterop)
+
+fun IrAnnotationContainer.hasJsImplicitlyVisibleForInterop(): Boolean =
+    hasAnnotation(JsAnnotations.jsImplicitlyVisibleForInterop)
+
+fun IrAnnotationContainer.hasJsExportIgnore(): Boolean =
     hasAnnotation(JsAnnotations.jsExportIgnoreFqn)
 
 fun IrAnnotationContainer.isJsNativeGetter(): Boolean = hasAnnotation(JsAnnotations.jsNativeGetter)

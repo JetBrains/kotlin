@@ -8,11 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.export.isAllowedFakeOverriddenDeclaration
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
-import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -151,13 +146,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 if (property.getter?.extensionReceiverParameter != null || property.setter?.extensionReceiverParameter != null)
                     continue
 
-                if (!property.visibility.isPublicAPI || property.isSimpleProperty || property.isJsExportIgnore())
+                if (!property.visibility.isPublicAPI || property.isSimpleProperty || property.hasJsExportIgnore())
                     continue
 
-                if (
-                    property.isFakeOverride &&
-                    !property.isAllowedFakeOverriddenDeclaration(backendContext)
-                )
+                if (property.isFakeOverride && !property.hasJsVisibleForInterop())
                     continue
 
                 fun IrSimpleFunction.propertyAccessorForwarder(
@@ -173,33 +165,9 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                         )
                     }
 
-                val overriddenSymbols = property.getter?.overriddenSymbols.orEmpty()
-
-                // Don't generate `defineProperty` if the property overrides a property from an exported class,
-                // because we've already generated `defineProperty` for the base class property.
-                // In other words, we only want to generate `defineProperty` once for each property.
-                // The exception is case when we override val with var,
-                // so we need regenerate `defineProperty` with setter.
-                // P.S. If the overridden property is owned by an interface - we should generate defineProperty
-                // for overridden property in the first class which override those properties
-                val hasOverriddenExportedInterfaceProperties = overriddenSymbols.any { it.owner.isDefinedInsideExportedInterface() }
-                        && !overriddenSymbols.any { it.owner.parentClassOrNull.isExportedClass(backendContext) }
-
                 val getterOverridesExternal = property.getter?.overridesExternal() == true
-                val overriddenExportedGetter = !property.getter?.overriddenSymbols.isNullOrEmpty() &&
-                        property.getter?.isOverriddenExported(backendContext) == true
 
-                val noOverriddenExportedSetter = property.setter?.isOverriddenExported(backendContext) == false
-
-                val needsOverride = (overriddenExportedGetter && noOverriddenExportedSetter) ||
-                        property.isAllowedFakeOverriddenDeclaration(backendContext)
-
-                if (irClass.isExported(backendContext) &&
-                    (overriddenSymbols.isEmpty() || needsOverride) ||
-                    hasOverriddenExportedInterfaceProperties ||
-                    getterOverridesExternal ||
-                    property.getJsName() != null
-                ) {
+                if (getterOverridesExternal || property.getJsNameForOverriddenDeclaration() != null) {
                     val propertyName = context.getNameForProperty(property)
 
                     // Use "direct dispatch" for final properties, i. e. instead of this:
@@ -216,7 +184,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     //     });
 
                     val getterForwarder = property.getter
-                        .takeIf { it.shouldExportAccessor(backendContext) }
+                        .takeIf { it.shouldExportAccessor() }
                         .getOrGenerateIfFinalOrEs6Mode {
                             propertyAccessorForwarder("getter forwarder") {
                                 JsReturn(JsInvocation(it))
@@ -224,7 +192,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                         }
 
                     val setterForwarder = property.setter
-                        .takeIf { it.shouldExportAccessor(backendContext) }
+                        .takeIf { it.shouldExportAccessor() }
                         .getOrGenerateIfFinalOrEs6Mode {
                             val setterArgName = JsName("value", false)
                             propertyAccessorForwarder("setter forwarder") {
@@ -267,12 +235,6 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         return if (!es6mode && modality == Modality.FINAL) accessorRef() else generateFunc()
     }
 
-    private fun IrSimpleFunction.isDefinedInsideExportedInterface(): Boolean {
-        if (isJsExportIgnore() || correspondingPropertySymbol?.owner?.isJsExportIgnore() == true) return false
-        return (!isFakeOverride && parentClassOrNull.isExportedInterface(backendContext)) ||
-                overriddenSymbols.any { it.owner.isDefinedInsideExportedInterface() }
-    }
-
     private fun IrSimpleFunction.accessorRef(): JsNameRef? =
         when (visibility) {
             DescriptorVisibilities.PRIVATE -> null
@@ -284,7 +246,6 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun IrSimpleFunction.generateAssignmentIfMangled(memberName: JsName) {
         if (
-            irClass.isExported(backendContext) &&
             visibility.isPublicAPI && hasMangledName() &&
             correspondingPropertySymbol == null
         ) {
@@ -293,11 +254,11 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun IrSimpleFunction.hasMangledName(): Boolean {
-        return getJsName() == null && !name.asString().isValidES5Identifier()
+        return getJsNameForOverriddenDeclaration() == null && !name.asString().isValidES5Identifier()
     }
 
     private fun IrSimpleFunction.prototypeAccessRef(): JsExpression {
-        return jsElementAccess(name.asString(), classPrototypeRef)
+        return jsElementAccess(getJsNameForOverriddenDeclaration() ?: name.asString(), classPrototypeRef)
     }
 
     private fun IrClass.shouldCopyFrom(): Boolean {
@@ -508,26 +469,17 @@ fun JsStatement.isSimpleSuperCall(container: JsFunction): Boolean {
     return true
 }
 
-fun IrSimpleFunction?.shouldExportAccessor(context: JsIrBackendContext): Boolean {
-    if (this == null) return false
-
-    if (parentAsClass.isExported(context)) return true
-
-    return isAccessorOfOverriddenStableProperty(context)
+fun IrSimpleFunction?.shouldExportAccessor(): Boolean {
+    return this != null && isAccessorOfOverriddenStableProperty()
 }
 
-fun IrSimpleFunction.overriddenStableProperty(context: JsIrBackendContext): Boolean {
+fun IrSimpleFunction.overriddenStableProperty(): Boolean {
     val property = correspondingPropertySymbol!!.owner
-
-    if (property.isOverriddenExported(context)) {
-        return isOverriddenExported(context)
-    }
-
-    return overridesExternal() || property.getJsName() != null
+    return overridesExternal() || property.getJsNameForOverriddenDeclaration() != null
 }
 
-fun IrSimpleFunction.isAccessorOfOverriddenStableProperty(context: JsIrBackendContext): Boolean {
-    return overriddenStableProperty(context) || correspondingPropertySymbol!!.owner.overridesExternal()
+fun IrSimpleFunction.isAccessorOfOverriddenStableProperty(): Boolean {
+    return overriddenStableProperty() || correspondingPropertySymbol!!.owner.overridesExternal()
 }
 
 private fun IrOverridableDeclaration<*>.overridesExternal(): Boolean {

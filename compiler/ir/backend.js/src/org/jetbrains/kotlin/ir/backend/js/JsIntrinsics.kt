@@ -325,10 +325,12 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("DoNotIntrinsify"))
     val jsFunAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsFun"))
     val jsNameAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsName"))
+    val jsKeepAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsKeep"))
+    val jsVisibleForInteropAnnotationSymbol =
+        context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsVisibleForInterop"))
 
-    val jsExportAnnotationSymbol by lazy(LazyThreadSafetyMode.NONE) {
+    val jsExportAnnotationSymbol =
         context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsExport"))
-    }
 
     val jsExportIgnoreAnnotationSymbol by lazy(LazyThreadSafetyMode.NONE) {
         jsExportAnnotationSymbol.owner
@@ -336,8 +338,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
             ?.symbol ?: error("can't find kotlin.js.JsExport.Ignore annotation")
     }
 
-    val jsImplicitExportAnnotationSymbol =
-        context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsImplicitExport"))
+    val jsImplicitlyVisibleForInteropAnnotationSymbol =
+        context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsImplicitlyVisibleForInterop"))
 
     // TODO move CharSequence-related stiff to IntrinsifyCallsLowering
     val charSequenceClassSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getClass(FqName("kotlin.CharSequence")))
