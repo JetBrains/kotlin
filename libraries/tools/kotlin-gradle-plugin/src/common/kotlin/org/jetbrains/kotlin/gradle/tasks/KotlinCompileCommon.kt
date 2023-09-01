@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
@@ -135,7 +136,7 @@ abstract class KotlinCompileCommon @Inject constructor(
         taskOutputsBackup: TaskOutputsBackup?
     ) {
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
-        val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector)
+        val gradleMessageCollector = GradleErrorMessageCollector(logger, gradlePrintingMessageCollector)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
         val environment = GradleCompilerEnvironment(

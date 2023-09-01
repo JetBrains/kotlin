@@ -310,7 +310,7 @@ abstract class KotlinCompile @Inject constructor(
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val gradleMessageCollector =
             GradleErrorMessageCollector(
-                gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger)
+                logger, gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger)
             )
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()

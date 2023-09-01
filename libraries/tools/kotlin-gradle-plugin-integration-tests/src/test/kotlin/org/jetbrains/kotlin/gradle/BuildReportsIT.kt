@@ -283,21 +283,21 @@ class BuildReportsIT : KGPBaseTest() {
                     }
                 """.trimIndent()
             )
-            build("compileKotlin") {
+            build("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertTrue { projectPath.resolve(kotlinErrorPath).listDirectoryEntries().isEmpty() }
+                assertOutputDoesNotContain("errors were stored into file")
             }
             val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
             kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
-            buildAndFail("compileKotlin") {
-                val buildErrorDir = projectPath.resolve(kotlinErrorPath).toFile()
-                val files = buildErrorDir.listFiles()
-                assertTrue { files?.first()?.exists() ?: false }
-                files?.first()?.bufferedReader().use { reader ->
-                    val kotlinVersion = reader?.readLine()
+            buildAndFail("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                assertOutputContains("errors were stored into file")
+                val file = projectPath.getSingleFileInDir(kotlinErrorPath)
+                file.bufferedReader().use { reader ->
+                    val kotlinVersion = reader.readLine()
                     assertTrue("kotlin version should be in the error file") {
                         kotlinVersion != null && kotlinVersion.trim().equals("kotlin version: ${buildOptions.kotlinVersion}")
                     }
-                    val errorMessage = reader?.readLine()
+                    val errorMessage = reader.readLine()
                     assertTrue("Error message should start with 'error message: ' to parse it on IDEA side") {
                         errorMessage != null && errorMessage.trim().startsWith("error message:")
                     }
@@ -314,13 +314,15 @@ class BuildReportsIT : KGPBaseTest() {
     @GradleTest
     fun testErrorsFileWithCompilationError(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
-            build("compileKotlin") {
+            build("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertTrue { projectPath.resolve(kotlinErrorPath).listDirectoryEntries().isEmpty() }
+                assertOutputDoesNotContain("errors were stored into file")
             }
             val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
             kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
-            buildAndFail("compileKotlin") {
+            buildAndFail("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertTrue { projectPath.resolve(kotlinErrorPath).listDirectoryEntries().isEmpty() }
+                assertOutputDoesNotContain("errors were stored into file")
             }
         }
     }

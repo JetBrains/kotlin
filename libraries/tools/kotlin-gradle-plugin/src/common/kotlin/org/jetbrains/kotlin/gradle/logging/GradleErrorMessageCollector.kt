@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.logging
 
+import org.gradle.api.logging.Logger
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -12,10 +14,18 @@ import java.io.File
 import java.io.FileWriter
 
 class GradleErrorMessageCollector(
+    private val logger: KotlinLogger,
     private val delegate: MessageCollector? = null,
     private val acceptableMessageSeverity: List<CompilerMessageSeverity> = listOf(CompilerMessageSeverity.EXCEPTION),
     private val kotlinPluginVersion: String? = null
 ) : MessageCollector {
+
+    constructor(
+        logger: Logger,
+        delegate: MessageCollector? = null,
+        acceptableMessageSeverity: List<CompilerMessageSeverity> = listOf(CompilerMessageSeverity.EXCEPTION),
+        kotlinPluginVersion: String? = null,
+    ) : this(GradleKotlinLogger(logger), delegate, acceptableMessageSeverity, kotlinPluginVersion)
 
     private val errors = ArrayList<String>()
 
@@ -47,7 +57,6 @@ class GradleErrorMessageCollector(
             return
         }
         file.createNewFile()
-        println("Errors were stored into ${file.absolutePath}")
         FileWriter(file).use {
             kotlinPluginVersion?.also { version -> it.append("kotlin version: $version\n") }
             for (error in errors) {
@@ -55,6 +64,7 @@ class GradleErrorMessageCollector(
             }
             it.flush()
         }
+        logger.debug("${errors.count()} errors were stored into file ${file.absolutePath}")
         clear()
     }
 }

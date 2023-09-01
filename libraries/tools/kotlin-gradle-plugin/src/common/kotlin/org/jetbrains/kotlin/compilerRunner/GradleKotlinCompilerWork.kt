@@ -130,7 +130,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         metrics.startMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
         try {
             val gradlePrintingMessageCollector = GradlePrintingMessageCollector(log, allWarningsAsErrors)
-            val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector, kotlinPluginVersion = kotlinPluginVersion)
+            val gradleMessageCollector = GradleErrorMessageCollector(log, gradlePrintingMessageCollector, kotlinPluginVersion = kotlinPluginVersion)
             val (exitCode, executionStrategy) = compileWithDaemonOrFallbackImpl(gradleMessageCollector)
             if (incrementalCompilationEnvironment?.disableMultiModuleIC == true) {
                 incrementalCompilationEnvironment.multiModuleICSettings.buildHistoryFile.delete()

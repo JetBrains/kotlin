@@ -120,7 +120,7 @@ internal fun runToolInSeparateProcess(
         compilerClassName,
         "@${compilerOptions.absolutePath}"
     )
-    val messageCollector = GradleErrorMessageCollector(createLoggingMessageCollector(logger))
+    val messageCollector = GradleErrorMessageCollector(logger, createLoggingMessageCollector(logger))
     val process = launchProcessWithFallback(builder, DaemonReportingTargets(messageCollector = messageCollector))
 
     // important to read inputStream, otherwise the process may hang on some systems
