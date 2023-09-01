@@ -56,6 +56,7 @@ class FirDelegatedPropertyInferenceSession(
         val candidate = call.candidate
 
         // Ignore unsuccessful `provideDelegate` candidates
+        // This behavior is aligned with a relevant part at FirDeclarationsResolveTransformer.transformWrappedDelegateExpression
         if (call.isProvideDelegate() && !candidate.isSuccessful) return
 
         val candidateSystem = candidate.system
@@ -80,7 +81,7 @@ class FirDelegatedPropertyInferenceSession(
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
 
     fun completeCandidates(): List<FirResolvable> {
-        val commonSystem = currentConstraintSystem
+        val commonSystem = currentConstraintSystem.apply { prepareForGlobalCompletion() }
 
         val notCompletedCalls = partiallyResolvedCalls.mapNotNull { partiallyResolvedCall ->
             partiallyResolvedCall.first.takeIf { resolvable ->

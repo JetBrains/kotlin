@@ -369,21 +369,19 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             topLevelAtom.collectAllTypeVariables()
         }
 
-        checkNotFixedTypeVariablesCountConsistency(topLevelAtoms, result)
+        checkNotFixedTypeVariablesCountConsistency(result)
 
         return result.toList()
     }
 
     private fun ConstraintSystemCompletionContext.checkNotFixedTypeVariablesCountConsistency(
-        topLevelAtoms: List<FirStatement>,
         result: LinkedHashSet<TypeConstructorMarker>,
     ) {
-        val outerSystemVariablesPrefixSizeToUse = if (topLevelAtoms.size > 1) 0 else outerSystemVariablesPrefixSize
         val notFixedTypeVariablesToUse =
-            when (outerSystemVariablesPrefixSizeToUse) {
+            when (outerSystemVariablesPrefixSize) {
                 0 -> notFixedTypeVariables.keys
                 else -> notFixedTypeVariables.keys.toMutableSet().apply {
-                    removeAll(allTypeVariables.keys.take(outerSystemVariablesPrefixSizeToUse).toSet())
+                    removeAll(allTypeVariables.keys.take(outerSystemVariablesPrefixSize).toSet())
                 }
             }
 

@@ -53,6 +53,7 @@ class NewConstraintSystemImpl(
      * @see [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
      */
     fun withTypeVariablesThatAreNotCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> Unit) {
+        checkState(State.BUILDING)
         // Cleaning cache is necessary because temporarily we change the meaning of what does "proper type" mean
         properTypesCache.clear()
         notProperTypesCache.clear()
@@ -308,6 +309,11 @@ class NewConstraintSystemImpl(
     fun setBaseSystem(outerSystem: ConstraintStorage) {
         addOtherSystem(outerSystem)
         storage.outerSystemVariablesPrefixSize = outerSystem.outerSystemVariablesPrefixSize
+    }
+
+    fun prepareForGlobalCompletion() {
+        // There's no more separation of outer/inner variables once global completion starts
+        storage.outerSystemVariablesPrefixSize = 0
     }
 
     override fun addOtherSystem(otherSystem: ConstraintStorage) {

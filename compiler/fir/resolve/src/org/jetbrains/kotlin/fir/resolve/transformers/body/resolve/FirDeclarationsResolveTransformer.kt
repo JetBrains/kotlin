@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
@@ -47,7 +46,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
@@ -324,21 +322,12 @@ open class FirDeclarationsResolveTransformer(
     private fun FirProperty.applyFinalSubstitutor(
         finalSubstitutor: ConeSubstitutor,
     ) {
-        val substitutorTypeRefTransformer = ApplyingSubstitutorTypeRefTransformer(finalSubstitutor)
-
-        transformReturnTypeRef(substitutorTypeRefTransformer, null)
+        finalSubstitutor.substituteOrNull(returnTypeRef.coneType)?.let { substitutedType ->
+            replaceReturnTypeRef(returnTypeRef.withReplacedConeType(substitutedType))
+        }
 
         getter?.transformTypeWithPropertyType(returnTypeRef, forceUpdateForNonImplicitTypes = true)
         setter?.transformTypeWithPropertyType(returnTypeRef, forceUpdateForNonImplicitTypes = true)
-    }
-
-    private class ApplyingSubstitutorTypeRefTransformer(private val substitutor: ConeSubstitutor) : FirDefaultTransformer<Nothing?>() {
-        override fun <E : FirElement> transformElement(element: E, data: Nothing?): E = element
-
-        override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?): FirTypeRef =
-            substitutor.substituteOrNull(resolvedTypeRef.type)?.let {
-                resolvedTypeRef.withReplacedConeType(it)
-            } ?: resolvedTypeRef
     }
 
     override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: ResolutionMode): FirStatement {
@@ -352,20 +341,9 @@ open class FirDeclarationsResolveTransformer(
         data: ResolutionMode,
     ): FirStatement {
         // First, resolve delegate expression in dependent context, and add potentially partially resolved call to inference session
-        // (that is why we use ContextDependent.Delegate instead of plain ContextDependent)
+        // (that is why we use ContextDependent.ContextDependent.Delegate instead of plain ContextDependent)
         val delegateExpression = wrappedDelegateExpression.expression.transformSingle(transformer, ResolutionMode.ContextDependent.Delegate)
             .transformSingle(components.integerLiteralAndOperatorApproximationTransformer, null)
-
-        // Second, replace result type of delegate expression with stub type if delegate not yet resolved
-        if (delegateExpression is FirResolvable) {
-            val calleeReference = delegateExpression.calleeReference
-            if (calleeReference is FirNamedReferenceWithCandidate) {
-                val delegateExpressionType = delegateExpression.resolvedType
-                val returnTypeSubstitutedWithTypeVariables =
-                    calleeReference.candidate.substitutor.substituteOrNull(delegateExpressionType)
-                delegateExpression.replaceConeTypeOrNull(returnTypeSubstitutedWithTypeVariables)
-            }
-        }
 
         val provideDelegateCall = wrappedDelegateExpression.delegateProvider as FirFunctionCall
         provideDelegateCall.replaceExplicitReceiver(delegateExpression)
@@ -437,7 +415,7 @@ open class FirDeclarationsResolveTransformer(
             components.typeFromCallee(provideDelegate).type
                 // Substitut type parameter to type variable
                 .let(candidate.substitutor::substituteOrSelf)
-                .lowerBoundIfFlexible() as? ConeTypeVariableType ?: return null
+                .unwrapTopLevelVariableType() ?: return null
         val typeVariable = returnTypeBasedOnVariable.lookupTag
 
         val candidateSystem = candidate.system
@@ -525,6 +503,13 @@ open class FirDeclarationsResolveTransformer(
         if (setterResolutionMode != SetterResolutionMode.SKIP) {
             resolveSetter(mayResolveSetterBody = setterResolutionMode == SetterResolutionMode.FULLY_RESOLVE)
         }
+    }
+
+    private fun ConeKotlinType.unwrapTopLevelVariableType(): ConeTypeVariableType? = when {
+        this is ConeTypeVariableType -> this
+        this is ConeFlexibleType -> lowerBound.unwrapTopLevelVariableType()
+        this is ConeDefinitelyNotNullType -> original.unwrapTopLevelVariableType()
+        else -> null
     }
 
     private fun FirProperty.resolveSetter(
