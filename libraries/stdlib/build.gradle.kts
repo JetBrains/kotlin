@@ -245,6 +245,28 @@ kotlin {
         commonWasmTargetConfiguration()
     }
 
+    if (kotlinBuildProperties.isInIdeaSync) {
+        val hostOs = System.getProperty("os.name")
+        val isMingwX64 = hostOs.startsWith("Windows")
+        val nativeTarget = when {
+            hostOs == "Mac OS X" -> macosX64("native")
+            hostOs == "Linux" -> linuxX64("native")
+            isMingwX64 -> mingwX64("native")
+            else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
+        }
+        nativeTarget.apply {
+            compilations.all {
+                kotlinOptions {
+                    freeCompilerArgs += listOf(
+                        "-Xallow-kotlin-package",
+                        "-Xexpect-actual-classes",
+                        "-nostdlib",
+                    )
+                }
+            }
+        }
+    }
+
     sourceSets {
         all {
             kotlin.setSrcDirs(emptyList<File>())
@@ -488,6 +510,33 @@ kotlin {
             }
         }
 
+        if (kotlinBuildProperties.isInIdeaSync) {
+            val nativeMain by getting {
+                dependsOn(nativeWasmMain)
+                kotlin {
+                    srcDir("$rootDir/kotlin-native/runtime/src/main/kotlin")
+                    srcDir("$rootDir/kotlin-native/Interop/Runtime/src/main/kotlin")
+                    srcDir("$rootDir/kotlin-native/Interop/Runtime/src/native/kotlin")
+                }
+                languageSettings {
+                    optIn("kotlin.native.internal.InternalForKotlinNative")
+                }
+            }
+            val nativeTest by getting {
+                dependsOn(nativeWasmTest)
+                kotlin {
+                    srcDir("$rootDir/kotlin-native/runtime/test")
+                }
+                languageSettings {
+                    optIn("kotlin.experimental.ExperimentalNativeApi")
+                    optIn("kotlin.native.ObsoleteNativeApi")
+                    optIn("kotlin.native.runtime.NativeRuntimeApi")
+                    optIn("kotlin.native.internal.InternalForKotlinNative")
+                    optIn("kotlinx.cinterop.ExperimentalForeignApi")
+                }
+            }
+        }
+
         all sourceSet@ {
             languageSettings {
                 // TODO: progressiveMode = use build property 'test.progressive.mode'
@@ -507,7 +556,7 @@ dependencies {
     val jvmMainApi by configurations.getting
     val commonMainMetadataElementsWithClassifier by configurations.creating
     val metadataApiElements by configurations.getting
-    val nativeApiElements by configurations.creating
+    val nativeApiElements = configurations.maybeCreate("nativeApiElements")
     constraints {
         // there is no dependency anymore from kotlin-stdlib to kotlin-stdlib-common,
         // but use this constraint to align it if another library brings it transitively
