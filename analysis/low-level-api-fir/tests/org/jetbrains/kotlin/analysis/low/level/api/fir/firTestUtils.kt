@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirNotUnderContentRootResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirScriptResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
+import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.fir.FirElement
@@ -54,11 +53,9 @@ internal inline fun <R> resolveWithCaches(context: KtElement, action: (LLFirReso
 }
 
 internal val LLFirResolveSession.isSourceSession: Boolean
-    get() {
-        return when (this) {
-            is LLFirSourceResolveSession, is LLFirNotUnderContentRootResolveSession, is LLFirScriptResolveSession -> true
-            else -> false
-        }
+    get() = when (useSiteKtModule) {
+        is KtLibraryModule, is KtLibrarySourceModule -> false
+        else -> true
     }
 
 internal fun TestConfigurationBuilder.useFirSessionConfigurator(configurator: (TestServices) -> LLFirSessionConfigurator) {
