@@ -6,6 +6,7 @@
 @file:Suppress("PackageDirectoryMismatch", "UNCHECKED_CAST") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.Action
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
@@ -27,6 +28,14 @@ open class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions, CO
     @Suppress("UNCHECKED_CAST")
     override val compilerOptions: HasCompilerOptions<CO> =
         compilation.compilerOptions as HasCompilerOptions<CO>
+
+    fun compilerOptions(configure: CO.() -> Unit) {
+        compilerOptions.configure(configure)
+    }
+
+    fun compilerOptions(configure: Action<CO>) {
+        configure.execute(compilerOptions.options)
+    }
 
     val compileJavaTaskProvider: TaskProvider<out JavaCompile>
         get() = target.project.tasks.withType(JavaCompile::class.java).named(javaSourceSet.compileJavaTaskName)
