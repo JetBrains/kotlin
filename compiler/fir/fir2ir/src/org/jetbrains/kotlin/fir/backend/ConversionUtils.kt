@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.isJava
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
@@ -162,7 +160,7 @@ fun FirClassifierSymbol<*>.toSymbol(
 }
 
 context(Fir2IrComponents)
-private fun FirBasedSymbol<*>.toSymbolForCall(
+fun FirBasedSymbol<*>.toSymbolForCall(
     dispatchReceiver: FirExpression?,
     preferGetter: Boolean,
     explicitReceiver: FirExpression? = null,
@@ -181,6 +179,19 @@ private fun FirBasedSymbol<*>.toSymbolForCall(
     else -> error("Unknown symbol: $this")
 }
 
+fun FirReference.extractSymbolForCall(): FirBasedSymbol<*>? {
+    if (this !is FirResolvedNamedReference) {
+        return null
+    }
+    var symbol = resolvedSymbol
+
+    if (symbol is FirCallableSymbol<*> && symbol.origin == FirDeclarationOrigin.SubstitutionOverride.CallSite) {
+        symbol = symbol.fir.unwrapUseSiteSubstitutionOverrides<FirCallableDeclaration>().symbol
+    }
+
+    return symbol
+}
+
 context(Fir2IrComponents)
 @OptIn(ExperimentalContracts::class)
 fun FirReference.toSymbolForCall(
@@ -193,16 +204,8 @@ fun FirReference.toSymbolForCall(
     contract {
         returnsNotNull() implies (this@toSymbolForCall is FirResolvedNamedReference)
     }
-    if (this !is FirResolvedNamedReference) {
-        return null
-    }
-    var symbol = resolvedSymbol
 
-    if (symbol is FirCallableSymbol<*> && symbol.origin == FirDeclarationOrigin.SubstitutionOverride.CallSite) {
-        symbol = symbol.fir.unwrapUseSiteSubstitutionOverrides<FirCallableDeclaration>().symbol
-    }
-
-    return symbol.toSymbolForCall(
+    return extractSymbolForCall()?.toSymbolForCall(
         dispatchReceiver,
         preferGetter,
         explicitReceiver,
@@ -219,9 +222,9 @@ private fun FirResolvedQualifier.toLookupTag(session: FirSession): ConeClassLike
     }
 
 context(Fir2IrComponents)
-private fun FirCallableSymbol<*>.toSymbolForCall(
+fun FirCallableSymbol<*>.toSymbolForCall(
     dispatchReceiver: FirExpression?,
-    preferGetter: Boolean,
+    preferGetter: Boolean = true,
     // Note: in fact LHS for callable references and explicit receiver for normal qualified accesses
     explicitReceiver: FirExpression? = null,
     isDelegate: Boolean = false,

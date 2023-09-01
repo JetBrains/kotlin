@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -71,24 +72,18 @@ class CallAndReferenceGenerator(
     ): IrExpression {
         val type = approximateFunctionReferenceType(callableReferenceAccess.resolvedType).toIrType()
 
-        val callableSymbol = callableReferenceAccess.calleeReference.toResolvedCallableSymbol()
-        if (callableSymbol?.origin == FirDeclarationOrigin.SamConstructor) {
+        val firSymbol = callableReferenceAccess.calleeReference.extractSymbolForCall()
+        if (firSymbol?.origin == FirDeclarationOrigin.SamConstructor) {
             assert(explicitReceiverExpression == null) {
                 "Fun interface constructor reference should be unbound: ${explicitReceiverExpression?.dump()}"
             }
             return adapterGenerator.generateFunInterfaceConstructorReference(
                 callableReferenceAccess,
-                callableSymbol as FirSyntheticFunctionSymbol,
+                firSymbol as FirSyntheticFunctionSymbol,
                 type
             )
         }
 
-        val symbol = callableReferenceAccess.calleeReference.toSymbolForCall(
-            callableReferenceAccess.dispatchReceiver,
-            explicitReceiver = callableReferenceAccess.explicitReceiver,
-            isDelegate = isDelegate,
-            isReference = true
-        )
         // val x by y ->
         //   val `x$delegate` = y
         //   val x get() = `x$delegate`.getValue(this, ::x)
@@ -96,90 +91,135 @@ class CallAndReferenceGenerator(
         val isForDelegate = callableReferenceAccess.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
         val origin = if (isForDelegate) IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE else null
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
-            when (symbol) {
-                is IrPropertySymbol -> {
-                    val referencedPropertyGetterSymbol = declarationStorage.findGetterOfProperty(symbol)
-                    val referencedPropertySetterSymbol = runIf(callableReferenceAccess.resolvedType.isKMutableProperty(session)) {
-                        declarationStorage.findSetterOfProperty(symbol)
-                    }
-                    val backingFieldSymbol = when {
-                        referencedPropertyGetterSymbol != null -> null
-                        else -> declarationStorage.findBackingFieldOfProperty(symbol)
-                    }
-                    IrPropertyReferenceImpl(
-                        startOffset, endOffset, type, symbol,
-                        typeArgumentsCount = callableReferenceAccess.toResolvedCallableSymbol()?.fir?.typeParameters?.size ?: 0,
-                        field = backingFieldSymbol,
-                        getter = referencedPropertyGetterSymbol,
-                        setter = referencedPropertySetterSymbol,
-                        origin = origin
-                    ).applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
-                }
 
-                is IrLocalDelegatedPropertySymbol -> {
-                    IrLocalDelegatedPropertyReferenceImpl(
-                        startOffset, endOffset, type, symbol,
-                        delegate = declarationStorage.findDelegateVariableOfProperty(symbol),
-                        getter = declarationStorage.findGetterOfProperty(symbol),
-                        setter = declarationStorage.findSetterOfProperty(symbol),
-                        origin = origin
-                    )
-                }
+            fun FirCallableSymbol<*>.toSymbolForCall(): IrSymbol? {
+                return toSymbolForCall(
+                    callableReferenceAccess.dispatchReceiver,
+                    explicitReceiver = callableReferenceAccess.explicitReceiver,
+                    isDelegate = isDelegate,
+                    isReference = true
+                )
+            }
 
-                is IrFieldSymbol -> {
-                    val field = (callableSymbol as FirFieldSymbol).fir
-                    val propertySymbol = declarationStorage.findPropertyForBackingField(symbol)
-                        ?: run {
-                            // In case of [IrField] without the corresponding property, we've created it directly from [FirField].
-                            // Since it's used as a field reference, we need a bogus property as a placeholder.
-                            val firSymbol =
-                                (callableReferenceAccess.calleeReference as FirResolvedNamedReference).resolvedSymbol as FirFieldSymbol
-                            @OptIn(IrSymbolInternals::class)
-                            declarationStorage.getOrCreateIrPropertyByPureField(firSymbol.fir, symbol.owner.parent).symbol
-                        }
-                    IrPropertyReferenceImpl(
-                        startOffset, endOffset, type,
-                        propertySymbol,
-                        typeArgumentsCount = 0,
-                        field = symbol,
-                        getter = runIf(!field.isStatic) { declarationStorage.findGetterOfProperty(propertySymbol) },
-                        setter = runIf(!field.isStatic) { declarationStorage.findSetterOfProperty(propertySymbol) },
-                        origin
-                    ).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
+            fun convertReferenceToRegularProperty(propertySymbol: FirPropertySymbol): IrExpression? {
+                val irPropertySymbol = propertySymbol.toSymbolForCall() as? IrPropertySymbol ?: return null
+                val referencedPropertyGetterSymbol = declarationStorage.findGetterOfProperty(irPropertySymbol)
+                val referencedPropertySetterSymbol = runIf(callableReferenceAccess.resolvedType.isKMutableProperty(session)) {
+                    declarationStorage.findSetterOfProperty(irPropertySymbol)
                 }
+                val backingFieldSymbol = when {
+                    referencedPropertyGetterSymbol != null -> null
+                    else -> declarationStorage.findBackingFieldOfProperty(irPropertySymbol)
+                }
+                return IrPropertyReferenceImpl(
+                    startOffset, endOffset, type, irPropertySymbol,
+                    typeArgumentsCount = callableReferenceAccess.toResolvedCallableSymbol()?.fir?.typeParameters?.size ?: 0,
+                    field = backingFieldSymbol,
+                    getter = referencedPropertyGetterSymbol,
+                    setter = referencedPropertySetterSymbol,
+                    origin = origin
+                ).applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
+            }
 
-                is IrFunctionSymbol -> {
-                    require(type is IrSimpleType)
-                    var function = callableReferenceAccess.calleeReference.toResolvedFunctionSymbol()!!.fir
-                    if (function is FirConstructor) {
-                        // The number of type parameters of typealias constructor may mismatch with that number in the original constructor.
-                        // And for IR, we need to use the original constructor as a source of truth
-                        function = function.originalConstructorIfTypeAlias ?: function
-                    }
-                    if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
-                        // Receivers are being applied inside
-                        with(adapterGenerator) {
-                            // TODO: Figure out why `adaptedType` is different from the `type`?
-                            val adaptedType = callableReferenceAccess.resolvedType.toIrType() as IrSimpleType
-                            generateAdaptedCallableReference(callableReferenceAccess, explicitReceiverExpression, symbol, adaptedType)
-                        }
-                    } else {
-                        IrFunctionReferenceImpl(
-                            startOffset, endOffset, type, symbol,
-                            typeArgumentsCount = function.typeParameters.size,
-                            valueArgumentsCount = function.valueParameters.size + function.contextReceivers.size,
-                            reflectionTarget = symbol
-                        ).applyTypeArguments(callableReferenceAccess)
-                            .applyReceivers(callableReferenceAccess, explicitReceiverExpression)
+            fun convertReferenceToSyntheticProperty(propertySymbol: FirSimpleSyntheticPropertySymbol): IrExpression? {
+                val irPropertySymbol = callablesGenerator.generateIrPropertyForSyntheticPropertyReference(
+                    propertySymbol,
+                    conversionScope.parentFromStack()
+                ).symbol
+                val property = propertySymbol.syntheticProperty
+                val referencedPropertyGetterSymbol = declarationStorage.getIrFunctionSymbol(property.getter.delegate.unwrapUseSiteSubstitutionOverrides().symbol) as? IrSimpleFunctionSymbol ?: return null
+                val referencedPropertySetterSymbol = runIf(callableReferenceAccess.resolvedType.isKMutableProperty(session)) {
+                    property.setter?.delegate?.unwrapUseSiteSubstitutionOverrides()?.symbol?.let {
+                        declarationStorage.getIrFunctionSymbol(it) as? IrSimpleFunctionSymbol? ?: return null
                     }
                 }
+                return IrPropertyReferenceImpl(
+                    startOffset, endOffset, type, irPropertySymbol,
+                    typeArgumentsCount = callableReferenceAccess.toResolvedCallableSymbol()?.fir?.typeParameters?.size ?: 0,
+                    field = null,
+                    getter = referencedPropertyGetterSymbol,
+                    setter = referencedPropertySetterSymbol,
+                    origin = origin
+                ).applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
+            }
 
-                else -> {
-                    IrErrorCallExpressionImpl(
-                        startOffset, endOffset, type, "Unsupported callable reference: ${callableReferenceAccess.render()}"
-                    )
+            fun convertReferenceToLocalDelegatedProperty(propertySymbol: FirPropertySymbol): IrExpression? {
+                val irPropertySymbol = propertySymbol.toSymbolForCall() as? IrLocalDelegatedPropertySymbol ?: return null
+
+                return IrLocalDelegatedPropertyReferenceImpl(
+                    startOffset, endOffset, type, irPropertySymbol,
+                    delegate = declarationStorage.findDelegateVariableOfProperty(irPropertySymbol),
+                    getter = declarationStorage.findGetterOfProperty(irPropertySymbol),
+                    setter = declarationStorage.findSetterOfProperty(irPropertySymbol),
+                    origin = origin
+                )
+            }
+
+            fun convertReferenceToField(fieldSymbol: FirFieldSymbol): IrExpression? {
+                val irFieldSymbol = fieldSymbol.toSymbolForCall() as? IrFieldSymbol ?: return null
+
+                val field = fieldSymbol.fir
+                val propertySymbol = declarationStorage.findPropertyForBackingField(irFieldSymbol)
+                    ?: run {
+                        // In case of [IrField] without the corresponding property, we've created it directly from [FirField].
+                        // Since it's used as a field reference, we need a bogus property as a placeholder.
+                        @OptIn(IrSymbolInternals::class)
+                        declarationStorage.getOrCreateIrPropertyByPureField(fieldSymbol.fir, irFieldSymbol.owner.parent).symbol
+                    }
+                return IrPropertyReferenceImpl(
+                    startOffset, endOffset, type,
+                    propertySymbol,
+                    typeArgumentsCount = 0,
+                    field = irFieldSymbol,
+                    getter = runIf(!field.isStatic) { declarationStorage.findGetterOfProperty(propertySymbol) },
+                    setter = runIf(!field.isStatic) { declarationStorage.findSetterOfProperty(propertySymbol) },
+                    origin
+                ).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
+            }
+
+            fun convertReferenceToFunction(functionSymbol: FirFunctionSymbol<*>): IrExpression? {
+                val irFunctionSymbol = functionSymbol.toSymbolForCall() as? IrFunctionSymbol ?: return null
+
+                require(type is IrSimpleType)
+                var function = callableReferenceAccess.calleeReference.toResolvedFunctionSymbol()!!.fir
+                if (function is FirConstructor) {
+                    // The number of type parameters of typealias constructor may mismatch with that number in the original constructor.
+                    // And for IR, we need to use the original constructor as a source of truth
+                    function = function.originalConstructorIfTypeAlias ?: function
+                }
+                return if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
+                    // Receivers are being applied inside
+                    with(adapterGenerator) {
+                        // TODO: Figure out why `adaptedType` is different from the `type`?
+                        val adaptedType = callableReferenceAccess.resolvedType.toIrType() as IrSimpleType
+                        generateAdaptedCallableReference(callableReferenceAccess, explicitReceiverExpression, irFunctionSymbol, adaptedType)
+                    }
+                } else {
+                    IrFunctionReferenceImpl(
+                        startOffset, endOffset, type, irFunctionSymbol,
+                        typeArgumentsCount = function.typeParameters.size,
+                        valueArgumentsCount = function.valueParameters.size + function.contextReceivers.size,
+                        reflectionTarget = irFunctionSymbol
+                    ).applyTypeArguments(callableReferenceAccess)
+                        .applyReceivers(callableReferenceAccess, explicitReceiverExpression)
                 }
             }
+
+            when (firSymbol) {
+                is FirSimpleSyntheticPropertySymbol -> convertReferenceToSyntheticProperty(firSymbol)
+                is FirPropertySymbol -> when {
+                    firSymbol.isLocal -> when {
+                        firSymbol.hasDelegate -> convertReferenceToLocalDelegatedProperty(firSymbol)
+                        else -> null
+                    }
+                    else -> convertReferenceToRegularProperty(firSymbol)
+                }
+                is FirFunctionSymbol<*> -> convertReferenceToFunction(firSymbol)
+                is FirFieldSymbol -> convertReferenceToField(firSymbol)
+                else -> null
+            } ?: IrErrorCallExpressionImpl(
+                startOffset, endOffset, type, "Unsupported callable reference: ${callableReferenceAccess.render()}"
+            )
         }
     }
 

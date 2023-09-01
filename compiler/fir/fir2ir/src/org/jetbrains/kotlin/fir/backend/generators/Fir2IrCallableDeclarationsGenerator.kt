@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
+import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -384,6 +385,30 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         }
 
         return initializer
+    }
+
+    fun generateIrPropertyForSyntheticPropertyReference(
+        propertySymbol: FirSimpleSyntheticPropertySymbol,
+        parent: IrDeclarationParent,
+    ): IrProperty {
+        val property = propertySymbol.fir
+        return irFactory.createProperty(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE,
+            name = property.name,
+            visibility = visibilityConverter.convertToDescriptorVisibility(property.visibility),
+            modality = property.modality ?: Modality.FINAL,
+            symbol = IrPropertySymbolImpl(),
+            isVar = property.isVar,
+            isConst = false,
+            isLateinit = property.isLateInit,
+            isDelegated = property.delegate != null,
+            isExternal = property.isExternal,
+            isExpect = property.isExpect
+        ).also {
+            it.parent = parent
+        }
     }
 
     // ------------------------------------ property accessors ------------------------------------
