@@ -21,17 +21,6 @@ import kotlin.script.experimental.dependencies.maven.impl.AetherResolveSession
 import kotlin.script.experimental.dependencies.maven.impl.ResolutionKind
 import kotlin.script.experimental.dependencies.maven.impl.mavenCentral
 
-@Deprecated(
-    "This class is not functional and left only for compatibility reasons. Use kotlin.script.experimental.dependencies.ExternalDependenciesResolver.Options for passing authorization options",
-    replaceWith = ReplaceWith("RepositoryCoordinates(url)", "kotlin.script.experimental.dependencies.RepositoryCoordinates")
-)
-class MavenRepositoryCoordinates(
-    url: String,
-    val username: String?,
-    val password: String?,
-    val privateKeyFile: String?,
-    val passPhrase: String?
-) : RepositoryCoordinates(url)
 
 class MavenDependenciesResolver(
     cacheResolveSession: Boolean = false
@@ -116,10 +105,8 @@ class MavenDependenciesResolver(
             ?: return false.asSuccess()
         val repoId = repositoryCoordinates.string.replace(FORBIDDEN_CHARS, "_")
 
-        @Suppress("DEPRECATION")
-        val mavenRepo = repositoryCoordinates as? MavenRepositoryCoordinates
-        val usernameRaw = options.username ?: mavenRepo?.username
-        val passwordRaw = options.password ?: mavenRepo?.password
+        val usernameRaw = options.username
+        val passwordRaw = options.password
 
         val reports = mutableListOf<ScriptDiagnostic>()
         fun getFinalValue(optionName: String, rawValue: String?): String? {
