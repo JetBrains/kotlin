@@ -246,7 +246,7 @@ class FirCallCompletionResultsWriterTransformer(
 
     private fun FirBasedSymbol<*>.updateSubstitutedMemberIfReceiverContainsTypeVariable(): FirBasedSymbol<*>? {
         // TODO: Add assertion that this function returns not-null only for BI and delegation inference
-        if (mode != Mode.DelegatedPropertyCompletion) return null
+        // if (mode != Mode.DelegatedPropertyCompletion) return null
 
         val fir = fir
         if (fir !is FirCallableDeclaration) return null
