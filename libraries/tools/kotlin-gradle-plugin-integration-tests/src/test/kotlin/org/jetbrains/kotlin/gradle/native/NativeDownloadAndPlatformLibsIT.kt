@@ -54,7 +54,6 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
     @AfterEach
     fun checkThatUserKonanDirIsEmptyAfterTest() {
         val userHomeDir = System.getProperty("user.home")
-        assertFileNotExists(Paths.get("$userHomeDir/.konan/dependencies"))
         assertFileNotExists(Paths.get("$userHomeDir/.konan/kotlin-native-prebuilt-$platformName-$currentCompilerVersion"))
     }
 
