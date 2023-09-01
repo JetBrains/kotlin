@@ -14,11 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCach
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.KtModuleKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLDiagnosticProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLEmptyDiagnosticProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirLibraryOrLibrarySourceResolvableResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirNotUnderContentRootResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirScriptResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleKindProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSessionProvider
@@ -46,13 +42,18 @@ class LLFirResolveSessionService(project: Project) {
     private fun create(module: KtModule, factory: (KtModule) -> LLFirSession): LLFirResolvableResolveSession {
         val moduleProvider = LLModuleProvider(module)
         val sessionProvider = LLSessionProvider(module, factory)
+        val moduleKindProvider = createModuleKindProvider(module)
         val diagnosticProvider = createDiagnosticProvider(moduleProvider, sessionProvider)
 
+        return LLFirResolvableResolveSession(moduleProvider, moduleKindProvider, sessionProvider, diagnosticProvider)
+    }
+
+    private fun createModuleKindProvider(module: KtModule): LLModuleKindProvider {
         return when (module) {
-            is KtSourceModule -> LLFirSourceResolveSession(moduleProvider, LLSourceModuleKindProvider, sessionProvider, diagnosticProvider)
-            is KtLibraryModule, is KtLibrarySourceModule -> LLFirLibraryOrLibrarySourceResolvableResolveSession(moduleProvider, LLLibraryModuleKindProvider(module), sessionProvider, diagnosticProvider)
-            is KtScriptModule -> LLFirScriptResolveSession(moduleProvider, LLScriptModuleKindProvider(module), sessionProvider, diagnosticProvider)
-            is KtNotUnderContentRootModule -> LLFirNotUnderContentRootResolveSession(moduleProvider, LLNotUnderContentRootModuleKindProvider(module), sessionProvider, diagnosticProvider)
+            is KtSourceModule -> LLSourceModuleKindProvider
+            is KtLibraryModule, is KtLibrarySourceModule -> LLLibraryModuleKindProvider(module)
+            is KtScriptModule -> LLScriptModuleKindProvider(module)
+            is KtNotUnderContentRootModule -> LLNotUnderContentRootModuleKindProvider(module)
             else -> {
                 errorWithFirSpecificEntries("Unexpected ${module::class.java}") {
                     withEntry("module", module) { it.moduleDescription }

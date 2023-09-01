@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-internal abstract class LLFirResolvableResolveSession(
+internal class LLFirResolvableResolveSession(
     moduleProvider: LLModuleProvider,
     moduleKindProvider: LLModuleKindProvider,
     sessionProvider: LLSessionProvider,
@@ -53,7 +53,7 @@ internal abstract class LLFirResolvableResolveSession(
         return moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
     }
 
-    protected fun getModuleComponentsForElement(element: KtElement): LLFirModuleResolveComponents {
+    private fun getModuleComponentsForElement(element: KtElement): LLFirModuleResolveComponents {
         val module = getModule(element)
         return sessionProvider.getResolvableSession(module).moduleComponents
     }
@@ -107,7 +107,7 @@ internal abstract class LLFirResolvableResolveSession(
         return findDeclarationInSourceViaResolve(ktDeclaration)
     }
 
-    protected fun getModuleKind(module: KtModule): KtModuleKind {
+    private fun getModuleKind(module: KtModule): KtModuleKind {
         return moduleKindProvider.getKind(module)
     }
 
