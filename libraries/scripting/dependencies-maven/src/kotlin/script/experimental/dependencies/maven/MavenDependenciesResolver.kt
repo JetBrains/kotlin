@@ -33,7 +33,9 @@ class MavenRepositoryCoordinates(
     val passPhrase: String?
 ) : RepositoryCoordinates(url)
 
-class MavenDependenciesResolver : ExternalDependenciesResolver {
+class MavenDependenciesResolver(
+    cacheResolveSession: Boolean = false
+) : ExternalDependenciesResolver {
 
     override fun acceptsArtifact(artifactCoordinates: String): Boolean =
         artifactCoordinates.toMavenArtifact() != null
@@ -42,9 +44,15 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
         return repositoryCoordinates.toRepositoryUrlOrNull() != null
     }
 
-    val repos: ArrayList<RemoteRepository> = arrayListOf()
+    private val repos: ArrayList<RemoteRepository> = arrayListOf()
 
     private fun remoteRepositories() = if (repos.isEmpty()) arrayListOf(mavenCentral) else repos.toList() // copy to avoid sharing problems
+
+    private val getResolveSession = { repositories: List<RemoteRepository> ->
+        AetherResolveSession(null, repositories)
+    }.let { sessionFactory ->
+        if (cacheResolveSession) LRU1Cache(sessionFactory) else sessionFactory
+    }
 
     private fun String.toMavenArtifact(): DefaultArtifact? =
         if (this.isNotBlank() && this.count { it == ':' } >= 2) DefaultArtifact(this)
@@ -63,16 +71,14 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
             val dependencyScopes = options.dependencyScopes ?: listOf(JavaScopes.COMPILE, JavaScopes.RUNTIME)
             val kind = when (options.partialResolution) {
                 true -> ResolutionKind.TRANSITIVE_PARTIAL
-                false, null -> when(options.transitive) {
+                false, null -> when (options.transitive) {
                     true, null -> ResolutionKind.TRANSITIVE
                     false -> ResolutionKind.NON_TRANSITIVE
                 }
             }
             val classifier = options.classifier
             val extension = options.extension
-            AetherResolveSession(
-                null, remoteRepositories()
-            ).resolve(
+            getResolveSession(remoteRepositories()).resolve(
                 artifactIds, dependencyScopes.joinToString(","), kind, null, classifier, extension
             )
         } catch (e: RepositoryException) {
@@ -181,6 +187,23 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
             }
 
             return makeResolveFailureResult(listOf(message), location, exception)
+        }
+
+        private class LRU1Cache<T : Any, R>(private val calculate: (T) -> R) : (T) -> R {
+            private var lastArgument: T? = null
+            private var lastValue: R? = null
+
+            @Synchronized
+            override operator fun invoke(arg: T): R {
+                return if (arg == lastArgument) {
+                    lastValue!!
+                } else {
+                    val newValue = calculate(arg)
+                    lastArgument = arg
+                    lastValue = newValue
+                    newValue
+                }
+            }
         }
     }
 }
