@@ -35,3 +35,12 @@ enum class KtModuleKind {
      */
     BINARY_MODULE
 }
+
+internal class LLSimpleResolvableModuleKindProvider(private val useSiteModule: KtModule) : LLModuleKindProvider {
+    override fun getKind(module: KtModule): KtModuleKind {
+        return when (module) {
+            useSiteModule -> KtModuleKind.RESOLVABLE_MODULE
+            else -> KtModuleKind.BINARY_MODULE
+        }
+    }
+}
