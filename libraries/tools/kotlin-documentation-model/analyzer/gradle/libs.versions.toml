@@ -3,7 +3,7 @@
 gradlePlugin-kotlin = "1.9.0"
 # See: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
 gradlePlugin-android = "4.2.2"
-gradlePlugin-dokka = "1.8.20"
+gradlePlugin-dokka = "1.9.0"
 
 kotlinx-coroutines = "1.6.3"
 kotlinx-collections-immutable = "0.3.4"
