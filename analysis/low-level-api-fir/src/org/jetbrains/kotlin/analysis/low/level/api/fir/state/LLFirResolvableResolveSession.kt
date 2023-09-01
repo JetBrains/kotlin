@@ -34,12 +34,14 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 internal abstract class LLFirResolvableResolveSession(
     moduleProvider: LLModuleProvider,
     moduleKindProvider: LLModuleKindProvider,
-    sessionProvider: LLSessionProvider
+    sessionProvider: LLSessionProvider,
+    diagnosticProvider: LLDiagnosticProvider
 ) : LLFirResolveSession(
     moduleProvider = moduleProvider,
     moduleKindProvider = moduleKindProvider,
     sessionProvider = sessionProvider,
-    scopeSessionProvider = LLDefaultScopeSessionProvider
+    scopeSessionProvider = LLDefaultScopeSessionProvider,
+    diagnosticProvider = diagnosticProvider
 ) {
     override fun getOrBuildFirFor(element: KtElement): FirElement? {
         val moduleComponents = getModuleComponentsForElement(element)

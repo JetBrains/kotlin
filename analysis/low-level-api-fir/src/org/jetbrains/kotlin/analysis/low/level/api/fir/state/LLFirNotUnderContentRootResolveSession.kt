@@ -13,11 +13,9 @@ internal class LLFirNotUnderContentRootResolveSession(
 ) : LLFirResolvableResolveSession(
     moduleProvider = moduleProvider,
     moduleKindProvider = LLNotUnderContentRootModuleKindProvider(moduleProvider.useSiteModule),
-    sessionProvider = sessionProvider
-) {
-    override val diagnosticProvider: LLDiagnosticProvider
-        get() = LLEmptyDiagnosticProvider
-}
+    sessionProvider = sessionProvider,
+    diagnosticProvider = LLEmptyDiagnosticProvider
+)
 
 private class LLNotUnderContentRootModuleKindProvider(private val useSiteModule: KtModule) : LLModuleKindProvider {
     override fun getKind(module: KtModule): KtModuleKind {

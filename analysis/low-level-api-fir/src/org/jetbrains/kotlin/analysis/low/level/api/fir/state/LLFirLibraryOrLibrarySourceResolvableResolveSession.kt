@@ -14,11 +14,9 @@ internal class LLFirLibraryOrLibrarySourceResolvableResolveSession(
 ) : LLFirResolvableResolveSession(
     moduleProvider = moduleProvider,
     moduleKindProvider = LLLibraryModuleKindProvider(moduleProvider.useSiteModule),
-    sessionProvider = sessionProvider
-) {
-    override val diagnosticProvider: LLDiagnosticProvider
-        get() = LLEmptyDiagnosticProvider
-}
+    sessionProvider = sessionProvider,
+    diagnosticProvider = LLEmptyDiagnosticProvider
+)
 
 private class LLLibraryModuleKindProvider(private val useSiteModule: KtModule) : LLModuleKindProvider {
     override fun getKind(module: KtModule): KtModuleKind {

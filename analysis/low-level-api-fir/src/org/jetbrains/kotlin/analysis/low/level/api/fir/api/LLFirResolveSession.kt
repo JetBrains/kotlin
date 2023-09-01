@@ -36,10 +36,9 @@ abstract class LLFirResolveSession(
     val moduleProvider: LLModuleProvider,
     val moduleKindProvider: LLModuleKindProvider,
     val sessionProvider: LLSessionProvider,
-    val scopeSessionProvider: LLScopeSessionProvider
+    val scopeSessionProvider: LLScopeSessionProvider,
+    val diagnosticProvider: LLDiagnosticProvider
 ) {
-    abstract val diagnosticProvider: LLDiagnosticProvider
-
     val useSiteKtModule: KtModule
         get() = moduleProvider.useSiteModule
 

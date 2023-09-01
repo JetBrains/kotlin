@@ -49,11 +49,9 @@ internal class LLFirResolveSessionDepended(
     originalFirResolveSession.moduleProvider,
     originalFirResolveSession.moduleKindProvider,
     originalFirResolveSession.sessionProvider,
-    LLDependedScopeSessionProvider(originalFirResolveSession.project)
+    LLDependedScopeSessionProvider(originalFirResolveSession.project),
+    LLDependedDiagnosticProvider
 ) {
-    override val diagnosticProvider: LLDiagnosticProvider
-        get() = LLDependedDiagnosticProvider
-
     override fun getOrBuildFirFor(element: KtElement): FirElement? {
         val psi = FirElementBuilder.getPsiAsFirElementSource(element) ?: return null
         ktToFirMapping?.getFir(psi)?.let { return it }
