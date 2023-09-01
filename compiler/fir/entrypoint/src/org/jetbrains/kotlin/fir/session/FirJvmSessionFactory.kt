@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
-import org.jetbrains.kotlin.fir.java.enhancement.FirEnhancedSymbolsStorage
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
@@ -42,7 +41,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         scope: AbstractProjectFileSearchScope,
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings,
-        predefinedEnhancementStorage: FirEnhancedSymbolsStorage? = null,
+        predefinedJavaComponents: FirSharableJavaComponents? = null,
         registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession {
         return createLibrarySession(
@@ -52,7 +51,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             languageVersionSettings,
             extensionRegistrars,
             registerExtraComponents = {
-                it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver(), predefinedEnhancementStorage)
+                it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver(), predefinedJavaComponents)
                 registerExtraComponents(it)
             },
             createKotlinScopeProvider = { FirKotlinScopeProvider(::wrapScopeWithJvmMapped) },
@@ -92,7 +91,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         lookupTracker: LookupTracker? = null,
         enumWhenTracker: EnumWhenTracker? = null,
         importTracker: ImportTracker? = null,
-        predefinedEnhancementStorage: FirEnhancedSymbolsStorage? = null,
+        predefinedJavaComponents: FirSharableJavaComponents? = null,
         needRegisterJavaElementFinder: Boolean,
         registerExtraComponents: ((FirSession) -> Unit) = {},
         init: FirSessionConfigurator.() -> Unit = {}
@@ -107,7 +106,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             importTracker,
             init,
             registerExtraComponents = {
-                it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver(), predefinedEnhancementStorage)
+                it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver(), predefinedJavaComponents)
                 it.registerJavaSpecificResolveComponents()
                 registerExtraComponents(it)
             },

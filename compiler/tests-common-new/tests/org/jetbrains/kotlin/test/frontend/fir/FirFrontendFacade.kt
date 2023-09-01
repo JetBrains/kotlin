@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.java.enhancement.FirEnhancedSymbolsStorage
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -97,7 +96,9 @@ open class FirFrontendFacade(
         val project = testServices.compilerConfigurationProvider.getProject(module)
         val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
         val targetPlatform = module.targetPlatform
-        val enhancedSymbolsStorage = runIf(targetPlatform.isJvm()) { FirEnhancedSymbolsStorage(firCachesFactoryForCliMode) }
+        val predefinedJavaComponents = runIf(targetPlatform.isJvm()) {
+            FirSharableJavaComponents(firCachesFactoryForCliMode)
+        }
         val projectEnvironment = createLibrarySession(
             module,
             project,
@@ -106,11 +107,11 @@ open class FirFrontendFacade(
             moduleDataProvider,
             testServices.compilerConfigurationProvider.getCompilerConfiguration(module),
             extensionRegistrars,
-            enhancedSymbolsStorage
+            predefinedJavaComponents
         )
 
         val firOutputPartForDependsOnModules = sortedModules.map {
-            analyze(it, moduleDataMap[it]!!, targetPlatform, projectEnvironment, extensionRegistrars, enhancedSymbolsStorage)
+            analyze(it, moduleDataMap[it]!!, targetPlatform, projectEnvironment, extensionRegistrars, predefinedJavaComponents)
         }
 
         return FirOutputArtifactImpl(firOutputPartForDependsOnModules)
@@ -172,7 +173,7 @@ open class FirFrontendFacade(
         moduleDataProvider: ModuleDataProvider,
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        enhancedSymbolsStorage: FirEnhancedSymbolsStorage?
+        predefinedJavaComponents: FirSharableJavaComponents?
     ): AbstractProjectEnvironment? {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val projectEnvironment: AbstractProjectEnvironment?
@@ -210,7 +211,7 @@ open class FirFrontendFacade(
                         projectFileSearchScope,
                         packagePartProvider,
                         languageVersionSettings,
-                        predefinedEnhancementStorage = enhancedSymbolsStorage,
+                        predefinedJavaComponents = predefinedJavaComponents,
                         registerExtraComponents = ::registerExtraComponents,
                     )
                 }
@@ -267,7 +268,7 @@ open class FirFrontendFacade(
         targetPlatform: TargetPlatform,
         projectEnvironment: AbstractProjectEnvironment?,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        enhancedSymbolsStorage: FirEnhancedSymbolsStorage?,
+        predefinedJavaComponents: FirSharableJavaComponents?,
     ): FirOutputPartForDependsOnModule {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val moduleInfoProvider = testServices.firModuleInfoProvider
@@ -301,7 +302,7 @@ open class FirFrontendFacade(
             projectEnvironment,
             extensionRegistrars,
             sessionConfigurator,
-            enhancedSymbolsStorage,
+            predefinedJavaComponents,
             project,
             ktFiles
         )
@@ -330,7 +331,7 @@ open class FirFrontendFacade(
         projectEnvironment: AbstractProjectEnvironment?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
-        enhancedSymbolsStorage: FirEnhancedSymbolsStorage?,
+        predefinedJavaComponents: FirSharableJavaComponents?,
         project: Project,
         ktFiles: Collection<KtFile>,
     ): FirSession {
@@ -357,7 +358,7 @@ open class FirFrontendFacade(
                     incrementalCompilationContext = null,
                     extensionRegistrars,
                     languageVersionSettings,
-                    predefinedEnhancementStorage = enhancedSymbolsStorage,
+                    predefinedJavaComponents = predefinedJavaComponents,
                     needRegisterJavaElementFinder = true,
                     registerExtraComponents = ::registerExtraComponents,
                     init = sessionConfigurator,

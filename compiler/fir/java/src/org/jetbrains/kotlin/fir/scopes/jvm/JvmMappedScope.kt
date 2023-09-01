@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
-import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -51,9 +49,7 @@ class JvmMappedScope(
     private val declaredMemberScope: FirContainingNamesAwareScope,
     private val javaMappedClassUseSiteScope: FirTypeScope,
 ) : FirTypeScope() {
-    private val functionsCache = mutableMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
-
-    private val constructorsCache = mutableMapOf<FirConstructorSymbol, FirConstructorSymbol>()
+    private val mappedSymbolCache = session.mappedSymbolStorage.cacheByOwner.getValue(firKotlinClass.symbol)
 
     private val overrideChecker = FirStandardOverrideChecker(session)
 
@@ -137,7 +133,7 @@ class JvmMappedScope(
             // hidden methods in final class can't be overridden or called with 'super'
             if (jdkMemberStatus == JDKMemberStatus.HIDDEN && firKotlinClass.isFinal) return@processor
 
-            val newSymbol = getOrCreateSubstitutedCopy(symbol, jdkMemberStatus)
+            val newSymbol = mappedSymbolCache.mappedFunctions.getValue(symbol, this to jdkMemberStatus)
             processor(newSymbol)
         }
     }
@@ -206,7 +202,7 @@ class JvmMappedScope(
         return JDKMemberStatus.HIDDEN
     }
 
-    private enum class JDKMemberStatus {
+    internal enum class JDKMemberStatus {
         HIDDEN, VISIBLE, DROP
     }
 
@@ -214,26 +210,24 @@ class JvmMappedScope(
         declaredMemberScope.processPropertiesByName(name, processor)
     }
 
-    private fun getOrCreateSubstitutedCopy(symbol: FirNamedFunctionSymbol, jdkMemberStatus: JDKMemberStatus): FirNamedFunctionSymbol {
-        return functionsCache.getOrPut(symbol) {
-            val oldFunction = symbol.fir
-            val newSymbol = FirNamedFunctionSymbol(CallableId(firKotlinClass.classId, symbol.callableId.callableName))
-            FirFakeOverrideGenerator.createCopyForFirFunction(
-                newSymbol,
-                baseFunction = symbol.fir,
-                derivedClassLookupTag = firKotlinClass.symbol.toLookupTag(),
-                session,
-                symbol.fir.origin,
-                newDispatchReceiverType = kotlinDispatchReceiverType,
-                newParameterTypes = oldFunction.valueParameters.map { substitutor.substituteOrSelf(it.returnTypeRef.coneType) },
-                newReturnType = substitutor.substituteOrSelf(oldFunction.returnTypeRef.coneType),
-            ).apply {
-                if (jdkMemberStatus == JDKMemberStatus.HIDDEN) {
-                    isHiddenEverywhereBesideSuperCalls = true
-                }
+    private fun createMappedFunction(symbol: FirNamedFunctionSymbol, jdkMemberStatus: JDKMemberStatus): FirNamedFunctionSymbol {
+        val oldFunction = symbol.fir
+        val newSymbol = FirNamedFunctionSymbol(CallableId(firKotlinClass.classId, symbol.callableId.callableName))
+        FirFakeOverrideGenerator.createCopyForFirFunction(
+            newSymbol,
+            baseFunction = symbol.fir,
+            derivedClassLookupTag = firKotlinClass.symbol.toLookupTag(),
+            session,
+            symbol.fir.origin,
+            newDispatchReceiverType = kotlinDispatchReceiverType,
+            newParameterTypes = oldFunction.valueParameters.map { substitutor.substituteOrSelf(it.returnTypeRef.coneType) },
+            newReturnType = substitutor.substituteOrSelf(oldFunction.returnTypeRef.coneType),
+        ).apply {
+            if (jdkMemberStatus == JDKMemberStatus.HIDDEN) {
+                isHiddenEverywhereBesideSuperCalls = true
             }
-            newSymbol
         }
+        return newSymbol
     }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(
@@ -275,7 +269,7 @@ class JvmMappedScope(
             if (javaCtor.isTrivialCopyConstructor()) return@processor
             if (firKotlinClassConstructors.any { javaCtor.isShadowedBy(it) }) return@processor
 
-            val newSymbol = getOrCreateCopy(javaCtorSymbol)
+            val newSymbol = mappedSymbolCache.mappedConstructors.getValue(javaCtorSymbol, this)
             processor(newSymbol)
         }
 
@@ -284,27 +278,25 @@ class JvmMappedScope(
 
     private fun FirDeclaration.isDeprecated(): Boolean = symbol.getDeprecation(session, callSite = null) != null
 
-    private fun getOrCreateCopy(symbol: FirConstructorSymbol): FirConstructorSymbol {
-        return constructorsCache.getOrPut(symbol) {
-            val oldConstructor = symbol.fir
-            val classId = firKotlinClass.classId
-            val newSymbol = FirConstructorSymbol(CallableId(classId, classId.shortClassName))
-            FirFakeOverrideGenerator.createCopyForFirConstructor(
-                newSymbol,
-                session,
-                oldConstructor,
-                derivedClassLookupTag = firKotlinClass.symbol.toLookupTag(),
-                symbol.fir.origin,
-                newDispatchReceiverType = null,
-                newReturnType = substitutor.substituteOrSelf(oldConstructor.returnTypeRef.coneType),
-                newParameterTypes = oldConstructor.valueParameters.map { substitutor.substituteOrSelf(it.returnTypeRef.coneType) },
-                newTypeParameters = null,
-                newContextReceiverTypes = emptyList(),
-                isExpect = false,
-                fakeOverrideSubstitution = null
-            )
-            newSymbol
-        }
+    private fun createMappedConstructor(symbol: FirConstructorSymbol): FirConstructorSymbol {
+        val oldConstructor = symbol.fir
+        val classId = firKotlinClass.classId
+        val newSymbol = FirConstructorSymbol(CallableId(classId, classId.shortClassName))
+        FirFakeOverrideGenerator.createCopyForFirConstructor(
+            newSymbol,
+            session,
+            oldConstructor,
+            derivedClassLookupTag = firKotlinClass.symbol.toLookupTag(),
+            symbol.fir.origin,
+            newDispatchReceiverType = null,
+            newReturnType = substitutor.substituteOrSelf(oldConstructor.returnTypeRef.coneType),
+            newParameterTypes = oldConstructor.valueParameters.map { substitutor.substituteOrSelf(it.returnTypeRef.coneType) },
+            newTypeParameters = null,
+            newContextReceiverTypes = emptyList(),
+            isExpect = false,
+            fakeOverrideSubstitution = null
+        )
+        return newSymbol
     }
 
     override fun processDirectOverriddenPropertiesWithBaseScope(
@@ -320,6 +312,26 @@ class JvmMappedScope(
 
     override fun getClassifierNames(): Set<Name> {
         return declaredMemberScope.getClassifierNames()
+    }
+
+    class FirMappedSymbolStorage(private val cachesFactory: FirCachesFactory) : FirSessionComponent {
+        constructor(session: FirSession) : this(session.firCachesFactory)
+
+        // Key is the kotlin class
+        internal val cacheByOwner: FirCache<FirRegularClassSymbol, MappedSymbolsCache, Nothing?> =
+            cachesFactory.createCache { _ -> MappedSymbolsCache(cachesFactory) }
+
+        internal class MappedSymbolsCache(cachesFactory: FirCachesFactory) {
+            val mappedFunctions: FirCache<FirNamedFunctionSymbol, FirNamedFunctionSymbol, Pair<JvmMappedScope, JDKMemberStatus>> =
+                cachesFactory.createCache { symbol, (scope, jdkMemberStatus) ->
+                    scope.createMappedFunction(symbol, jdkMemberStatus)
+                }
+
+            val mappedConstructors: FirCache<FirConstructorSymbol, FirConstructorSymbol, JvmMappedScope> =
+                cachesFactory.createCache { symbol, scope ->
+                    scope.createMappedConstructor(symbol)
+                }
+        }
     }
 
     companion object {
@@ -343,3 +355,5 @@ class JvmMappedScope(
         return "JVM mapped scope for ${firKotlinClass.classId}"
     }
 }
+
+private val FirSession.mappedSymbolStorage: JvmMappedScope.FirMappedSymbolStorage by FirSession.sessionComponentAccessor()

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.OptInLanguageVersionSettingsCh
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.java.enhancement.FirEnhancedSymbolsStorage
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -73,7 +71,7 @@ fun <F> prepareJvmSessions(
     createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
 ): List<SessionWithSources<F>> {
     val javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources()
-    val enhancementSymbolsStorage = FirEnhancedSymbolsStorage(firCachesFactoryForCliMode)
+    val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
     return prepareSessions(
         files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
         JvmPlatformAnalyzerServices, metadataCompilationMode = false, libraryList, isCommonSource, fileBelongsToModule,
@@ -87,7 +85,7 @@ fun <F> prepareJvmSessions(
                 librariesScope,
                 projectEnvironment.getPackagePartProvider(librariesScope),
                 configuration.languageVersionSettings,
-                predefinedEnhancementStorage = enhancementSymbolsStorage,
+                predefinedJavaComponents = predefinedJavaComponents,
                 registerExtraComponents = {},
             )
         }
@@ -103,7 +101,7 @@ fun <F> prepareJvmSessions(
             configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
             configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
             configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
-            predefinedEnhancementStorage = enhancementSymbolsStorage,
+            predefinedJavaComponents = predefinedJavaComponents,
             needRegisterJavaElementFinder = true,
             registerExtraComponents = {},
             sessionConfigurator,
