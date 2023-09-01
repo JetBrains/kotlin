@@ -138,8 +138,8 @@ konanArtifacts {
     }
     UtilsKt.dependsOnDist(UtilsKt.findKonanBuildTask(project, "testLibrary", HostManager.@Companion.getHost()))
 }
-configure(project.tasks.findByName("compileKonanBaseTestClass${UtilsKt.getTestTargetSuffix(project)}")) {
-  UtilsKt.dependsOnDist(it)
+tasks.named("compileKonanBaseTestClass${UtilsKt.getTestTargetSuffix(project)}").configure {
+    UtilsKt.dependsOnDist(it)
 }
 
 def installTestLib = tasks.register("installTestLibrary", KonanKlibInstallTask) {
