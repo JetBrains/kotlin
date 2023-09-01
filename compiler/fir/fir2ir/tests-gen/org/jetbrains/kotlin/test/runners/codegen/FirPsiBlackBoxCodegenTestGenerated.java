@@ -15519,6 +15519,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             runTest("compiler/testData/codegen/box/delegatedProperty/varInInnerClass.kt");
         }
 
+        @Test
+        @TestMetadata("withInvoke.kt")
+        public void testWithInvoke() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/withInvoke.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToAnother")
         @TestDataPath("$PROJECT_ROOT")

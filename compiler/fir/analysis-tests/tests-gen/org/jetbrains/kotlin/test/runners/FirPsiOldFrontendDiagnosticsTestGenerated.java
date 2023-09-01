@@ -9539,6 +9539,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("withInvokes.kt")
+            public void testWithInvokes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/withInvokes.kt");
+            }
+
+            @Test
             @TestMetadata("wrongCountOfParametersInGet.kt")
             public void testWrongCountOfParametersInGet() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegatedProperty/wrongCountOfParametersInGet.kt");
