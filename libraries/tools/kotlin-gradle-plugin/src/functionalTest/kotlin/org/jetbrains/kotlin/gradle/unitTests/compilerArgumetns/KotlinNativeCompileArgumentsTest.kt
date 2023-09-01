@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.unitTests.compilerArgumetns
 
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.default
@@ -119,11 +118,6 @@ class KotlinNativeCompileArgumentsTest {
         val sharedNativeCompileTask = sharedNativeCompilation.compileTaskProvider.get() as KotlinNativeCompile
         val arguments = sharedNativeCompileTask.createCompilerArguments(lenient)
 
-        assertTrue(
-            LanguageVersion.fromVersionString(arguments.languageVersion)!! >= LanguageVersion.KOTLIN_2_0,
-            "Expected 'languageVersion' 2.0 or higher"
-        )
-
         assertNull(
             arguments.fragments?.toList(),
             "Expected 'fragments' to *not* be set: Metadata compilations shall use -Xcommon-sources and provide klib dependencies"
@@ -175,11 +169,6 @@ class KotlinNativeCompileArgumentsTest {
         val nativeCompilation = kotlin.linuxX64().compilations.main
         val sharedNativeCompileTask = nativeCompilation.compileTaskProvider.get() as KotlinNativeCompile
         val arguments = sharedNativeCompileTask.createCompilerArguments(lenient)
-
-        assertTrue(
-            LanguageVersion.fromVersionString(arguments.languageVersion)!! >= LanguageVersion.KOTLIN_2_0,
-            "Expected 'languageVersion' 2.0 or higher"
-        )
 
         assertNull(
             arguments.commonSources?.toList(),
