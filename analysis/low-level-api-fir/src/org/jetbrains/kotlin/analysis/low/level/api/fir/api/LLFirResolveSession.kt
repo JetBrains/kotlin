@@ -9,8 +9,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLDiagnosticProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleKindProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLScopeSessionProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -26,16 +32,31 @@ import org.jetbrains.kotlin.psi.KtFile
 /**
  * An entry point for a FIR Low Level API resolution. Represents a project view from a use-site [KtModule].
  */
-abstract class LLFirResolveSession {
-    abstract val project: Project
+abstract class LLFirResolveSession(
+    val moduleProvider: LLModuleProvider,
+    val moduleKindProvider: LLModuleKindProvider,
+    val sessionProvider: LLSessionProvider,
+    val scopeSessionProvider: LLScopeSessionProvider
+) {
+    abstract val diagnosticProvider: LLDiagnosticProvider
 
-    abstract val useSiteFirSession: LLFirSession
+    val useSiteKtModule: KtModule
+        get() = moduleProvider.useSiteModule
 
-    abstract val useSiteKtModule: KtModule
+    val project: Project
+        get() = useSiteKtModule.project
 
-    abstract fun getSessionFor(module: KtModule): LLFirSession
+    val useSiteFirSession: LLFirSession
+        get() = sessionProvider.useSiteSession
 
-    abstract fun getScopeSessionFor(firSession: FirSession): ScopeSession
+    fun getSessionFor(module: KtModule): LLFirSession {
+        return sessionProvider.getSession(module)
+    }
+
+    fun getScopeSessionFor(firSession: FirSession): ScopeSession {
+        requireIsInstance<LLFirSession>(firSession)
+        return scopeSessionProvider.getScopeSession(firSession)
+    }
 
     /**
      * Build fully resolved FIR node for a requested element.
@@ -51,9 +72,13 @@ abstract class LLFirResolveSession {
      */
     internal abstract fun getOrBuildFirFile(ktFile: KtFile): FirFile
 
-    internal abstract fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic>
+    internal fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
+        return diagnosticProvider.getDiagnostics(element, filter)
+    }
 
-    internal abstract fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic>
+    internal fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> {
+        return diagnosticProvider.collectDiagnostics(ktFile, filter)
+    }
 
     abstract fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*>
 
