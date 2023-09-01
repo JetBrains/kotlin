@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
@@ -150,7 +150,7 @@ open class FirBuiltinSymbolProvider(
             ).memberDeserializer
         }
 
-        private val lookup = moduleData.session.firCachesFactory.createCacheWithPostCompute(
+        private val classCache = moduleData.session.firCachesFactory.createCacheWithPostCompute(
             { classId: ClassId, context: FirDeserializationContext? -> FirRegularClassSymbol(classId) to context }
         ) { classId, symbol, parentContext ->
             val classData = classDataFinder.findClassData(classId)!!
@@ -165,6 +165,17 @@ open class FirBuiltinSymbolProvider(
             )
         }
 
+        private val functionCache: FirCache<Name, List<FirNamedFunctionSymbol>, Nothing?> =
+            moduleData.session.firCachesFactory.createCache { name ->
+                packageProto.`package`.functionList.filter { nameResolver.getName(it.name) == name }.map {
+                    memberDeserializer.loadFunction(it).symbol
+                }
+            }
+
+        private val functionsNameCache: FirLazyValue<List<Name>> = moduleData.session.firCachesFactory.createLazyValue {
+            packageProto.`package`.functionList.map { nameResolver.getName(it.name) }
+        }
+
         fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
             findAndDeserializeClass(classId)
 
@@ -174,20 +185,19 @@ open class FirBuiltinSymbolProvider(
         ): FirRegularClassSymbol? {
             val classIdExists = classId in classDataFinder.allClassIds
             if (!classIdExists) return null
-            return lookup.getValue(classId, parentContext)
+            return classCache.getValue(classId, parentContext)
         }
 
         fun getTopLevelCallableSymbols(name: Name): List<FirCallableSymbol<*>> {
             return getTopLevelFunctionSymbols(name)
         }
 
-        fun getTopLevelCallableNames(): Collection<Name> =
-            packageProto.`package`.functionList.map { nameResolver.getName(it.name) }
+        fun getTopLevelCallableNames(): Collection<Name> {
+            return functionsNameCache.getValue()
+        }
 
         fun getTopLevelFunctionSymbols(name: Name): List<FirNamedFunctionSymbol> {
-            return packageProto.`package`.functionList.filter { nameResolver.getName(it.name) == name }.map {
-                memberDeserializer.loadFunction(it).symbol
-            }
+            return functionCache.getValue(name)
         }
     }
 }
