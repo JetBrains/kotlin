@@ -45,4 +45,20 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Check wasi and js target")
+    @GradleTest
+    fun wasiAndJsTarget(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-wasi-js-test", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build("assemble") {
+                assertTasksExecuted(":app:compileKotlinWasmWasi")
+                assertTasksExecuted(":app:compileKotlinWasmJs")
+
+                assertTasksExecuted(":lib:compileKotlinWasmWasi")
+                assertTasksExecuted(":lib:compileKotlinWasmJs")
+            }
+        }
+    }
 }
