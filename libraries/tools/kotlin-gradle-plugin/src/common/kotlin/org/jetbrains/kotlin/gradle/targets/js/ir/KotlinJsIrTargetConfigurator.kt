@@ -85,21 +85,6 @@ open class KotlinJsIrTargetConfigurator :
         }
     }
 
-    override fun configureCompilations(target: KotlinJsIrTarget) {
-        super.configureCompilations(target)
-
-
-        target.compilations.all { compilation ->
-            compilation.binaries
-                .withType(JsIrBinary::class.java)
-                .all { binary ->
-                    binary.linkTask.configure { linkTask ->
-                        linkTask.compilerOptions.configureJsDefaultOptions()
-                    }
-                }
-        }
-    }
-
     override fun defineConfigurationsForTarget(target: KotlinJsIrTarget) {
         super.defineConfigurationsForTarget(target)
 
@@ -118,10 +103,16 @@ open class KotlinJsIrTargetConfigurator :
     }
 
     internal companion object {
-        internal fun KotlinJsCompilerOptions.configureJsDefaultOptions() {
+        internal fun KotlinJsCompilerOptions.configureJsDefaultOptions(
+            platformType: KotlinPlatformType
+        ) {
             moduleKind.set(JsModuleKind.MODULE_UMD)
             sourceMap.set(true)
             sourceMapEmbedSources.set(JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_NEVER)
+
+            if (platformType == KotlinPlatformType.wasm) {
+                freeCompilerArgs.add(WASM_BACKEND)
+            }
         }
     }
 }
