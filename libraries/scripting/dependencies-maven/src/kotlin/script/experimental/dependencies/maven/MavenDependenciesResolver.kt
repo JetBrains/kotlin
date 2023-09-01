@@ -46,6 +46,10 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
 
     private fun remoteRepositories() = if (repos.isEmpty()) arrayListOf(mavenCentral) else repos.toList() // copy to avoid sharing problems
 
+    private val getResolveSession = LRU1Cache { repositories: List<RemoteRepository> ->
+        AetherResolveSession(null, repositories)
+    }
+
     private fun String.toMavenArtifact(): DefaultArtifact? =
         if (this.isNotBlank() && this.count { it == ':' } >= 2) DefaultArtifact(this)
         else null
@@ -63,16 +67,14 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
             val dependencyScopes = options.dependencyScopes ?: listOf(JavaScopes.COMPILE, JavaScopes.RUNTIME)
             val kind = when (options.partialResolution) {
                 true -> ResolutionKind.TRANSITIVE_PARTIAL
-                false, null -> when(options.transitive) {
+                false, null -> when (options.transitive) {
                     true, null -> ResolutionKind.TRANSITIVE
                     false -> ResolutionKind.NON_TRANSITIVE
                 }
             }
             val classifier = options.classifier
             val extension = options.extension
-            AetherResolveSession(
-                null, remoteRepositories()
-            ).resolve(
+            getResolveSession(remoteRepositories()).resolve(
                 artifactIds, dependencyScopes.joinToString(","), kind, null, classifier, extension
             )
         } catch (e: RepositoryException) {
@@ -181,6 +183,23 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
             }
 
             return makeResolveFailureResult(listOf(message), location, exception)
+        }
+
+        private class LRU1Cache<T : Any, R>(private val calculate: (T) -> R) {
+            private var lastArgument: T? = null
+            private var lastValue: R? = null
+
+            @Synchronized
+            operator fun invoke(arg: T): R {
+                return if (arg == lastArgument) {
+                    lastValue!!
+                } else {
+                    val newValue = calculate(arg)
+                    lastArgument = arg
+                    lastValue = newValue
+                    newValue
+                }
+            }
         }
     }
 }
