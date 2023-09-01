@@ -117,6 +117,10 @@ open class Kapt3ClassLoadersCacheIT : Kapt3IT() {
     override fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {
     }
 
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun testMultipleProcessingPasses(gradleVersion: GradleVersion) {
+    }
+
     override fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
         project("annotationProcessorAsFqName".withPrefix, gradleVersion) {
             //classloaders caching is not compatible with includeCompileClasspath
