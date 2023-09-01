@@ -5,28 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
 
 internal class LLFirNotUnderContentRootResolveSession(
     useSiteKtModule: KtModule,
     useSiteSessionFactory: (KtModule) -> LLFirSession
-) : LLFirResolvableResolveSession(useSiteKtModule, useSiteSessionFactory) {
-    override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> =
-        emptyList()
+) : LLFirResolvableResolveSession(
+    useSiteKtModule = useSiteKtModule,
+    moduleKindProvider = LLNotUnderContentRootModuleKindProvider(useSiteKtModule),
+    useSiteSessionFactory = useSiteSessionFactory
+) {
+    override val diagnosticProvider: LLDiagnosticProvider
+        get() = LLEmptyDiagnosticProvider
+}
 
-    override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> =
-        emptyList()
-
-    override fun getModuleKind(module: KtModule): ModuleKind {
+private class LLNotUnderContentRootModuleKindProvider(private val useSiteModule: KtModule) : LLModuleKindProvider {
+    override fun getKind(module: KtModule): KtModuleKind {
         return when (module) {
-            useSiteKtModule -> ModuleKind.RESOLVABLE_MODULE
-            else -> ModuleKind.BINARY_MODULE
+            useSiteModule -> KtModuleKind.RESOLVABLE_MODULE
+            else -> KtModuleKind.BINARY_MODULE
         }
     }
 }
-
