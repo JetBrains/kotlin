@@ -6,6 +6,7 @@ package
 @kotlin.Throws(exceptionClasses = {Exception1::class, kotlin.coroutines.cancellation.CancellationException::class}) public suspend fun suspendThrowsCancellationException1(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {kotlin.coroutines.cancellation.CancellationException::class, Exception1::class}) public suspend fun suspendThrowsCancellationException2(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {kotlin.coroutines.cancellation.CancellationException::class}) public suspend fun suspendThrowsCancellationExceptionTypealias(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {Orphan::class}) public suspend fun suspendThrowsClassWithUnresolvedParent(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {kotlin.Exception::class}) public suspend fun suspendThrowsException1(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {Exception1::class, kotlin.Exception::class}) public suspend fun suspendThrowsException2(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {kotlin.Exception::class}) public suspend fun suspendThrowsExceptionTypealias(): kotlin.Unit
@@ -31,6 +32,7 @@ package
 @kotlin.Throws(exceptionClasses = {kotlin.Throwable::class}) public suspend fun suspendThrowsThrowableTypealias(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsTypealiasToUnresolved(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsUnresolved(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {Orphan::class}) public fun throwsClassWithUnresolvedParent(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {}) public fun throwsEmptyParens(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {}) public fun throwsNamedArrayOfUnresolved(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {}) public fun throwsNamedEmptyArrayOf(): kotlin.Unit
@@ -243,6 +245,13 @@ public final class InheritsThrowsAndNoThrows : Base0, Base1 {
     public open override /*2*/ fun foo(): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Orphan {
+    public constructor Orphan()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final class OverrideDifferentThrows4 : OverridesDifferentThrows3 {
