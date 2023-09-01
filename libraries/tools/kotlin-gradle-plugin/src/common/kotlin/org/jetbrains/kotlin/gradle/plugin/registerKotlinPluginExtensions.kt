@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.gradle.dsl.PlatformSourceSetConventionsChecker
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.GeneralKotlinExtensionParameterSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.MultiplatformSetupAdditionalCompilerArgumentsAction
 
 internal fun Project.registerKotlinPluginExtensions() {
     KotlinProjectAction.extensionPoint.apply {
+        register(project, GeneralKotlinExtensionParameterSetupAction)
+
         if (multiplatformExtensionOrNull != null) {
             register(project, MultiplatformSetupAdditionalCompilerArgumentsAction)
         }
