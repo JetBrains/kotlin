@@ -3,8 +3,5 @@ Exit code: OK
 Output:
 
 -- JVM --
-Exit code: COMPILATION_ERROR
+Exit code: OK
 Output:
-compiler/testData/multiplatform/simpleNoImplKeywordOnTopLevelFunction/jvm.kt:3:5: error: declaration must be marked with 'actual'
-fun foo(s: String): Array<CharSequence?> = arrayOf(s)
-    ^
