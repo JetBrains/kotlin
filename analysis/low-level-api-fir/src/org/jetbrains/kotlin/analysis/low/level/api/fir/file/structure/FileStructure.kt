@@ -113,7 +113,7 @@ internal class FileStructure private constructor(
         return false
     }
 
-    fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> {
+    fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
         // TODO, KT-60799: Add a new FileStructure for file diagnostics
         firFile.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         val structureElements = getAllStructureElements()
