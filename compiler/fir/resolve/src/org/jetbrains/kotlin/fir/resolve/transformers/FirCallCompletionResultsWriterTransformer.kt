@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReferenc
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionResultOverridesOtherToPreserveCompatibility
 import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionResultOverridesOtherToPreserveCompatibility
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
@@ -179,6 +179,8 @@ class FirCallCompletionResultsWriterTransformer(
      * That all looks a bit ugly, but there are not many options.
      * In an ideal world, we wouldn't have substitution overrides in FIR, but instead used a pair original symbol and substitution
      * everywhere, but we're not there yet.
+     *
+     * TODO: In future, it would be nice to get rid of it and there's actually a way to do it – not using substitution overrides (see KT-61618)
      */
     private fun Candidate.updateSubstitutedMemberIfReceiverContainsTypeVariable() {
         val updatedSymbol = symbol.updateSubstitutedMemberIfReceiverContainsTypeVariable() ?: return
