@@ -5,26 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
-import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
-
 internal class LLFirScriptResolveSession(
     moduleProvider: LLModuleProvider,
+    moduleKindProvider: LLModuleKindProvider,
     sessionProvider: LLSessionProvider,
     diagnosticProvider: LLDiagnosticProvider
 ) : LLFirResolvableResolveSession(
     moduleProvider = moduleProvider,
-    moduleKindProvider = LLScriptModuleKindProvider(moduleProvider.useSiteModule),
+    moduleKindProvider = moduleKindProvider,
     sessionProvider = sessionProvider,
     diagnosticProvider = diagnosticProvider
 )
-
-private class LLScriptModuleKindProvider(private val useSiteModule: KtModule) : LLModuleKindProvider {
-    override fun getKind(module: KtModule): KtModuleKind {
-        return when (module) {
-            useSiteModule, is KtSourceModule -> KtModuleKind.RESOLVABLE_MODULE
-            is KtBuiltinsModule, is KtLibraryModule -> KtModuleKind.BINARY_MODULE
-            else -> unexpectedElementError("module", module)
-        }
-    }
-}

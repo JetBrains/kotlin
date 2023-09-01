@@ -5,23 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-
 internal class LLFirLibraryOrLibrarySourceResolvableResolveSession(
     moduleProvider: LLModuleProvider,
+    moduleKindProvider: LLModuleKindProvider,
     sessionProvider: LLSessionProvider,
     diagnosticProvider: LLDiagnosticProvider
 ) : LLFirResolvableResolveSession(
     moduleProvider = moduleProvider,
-    moduleKindProvider = LLLibraryModuleKindProvider(moduleProvider.useSiteModule),
+    moduleKindProvider = moduleKindProvider,
     sessionProvider = sessionProvider,
     diagnosticProvider = diagnosticProvider
 )
-
-private class LLLibraryModuleKindProvider(private val useSiteModule: KtModule) : LLModuleKindProvider {
-    override fun getKind(module: KtModule): KtModuleKind {
-        LLFirLibraryOrLibrarySourceResolvableModuleSession.checkIsValidKtModule(module)
-        return if (module == useSiteModule) KtModuleKind.RESOLVABLE_MODULE else KtModuleKind.BINARY_MODULE
-    }
-}
