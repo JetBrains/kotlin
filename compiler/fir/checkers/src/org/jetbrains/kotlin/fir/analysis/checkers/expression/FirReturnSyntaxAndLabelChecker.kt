@@ -62,6 +62,9 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker() {
     }
 
     private fun isReturnAllowed(targetSymbol: FirFunctionSymbol<*>, context: CheckerContext): Boolean {
+        if (context.containingDeclarations.lastOrNull() is FirValueParameter) {
+            return false
+        }
         for (containingDeclaration in context.containingDeclarations.asReversed()) {
             when (containingDeclaration) {
                 // return from member of local class or anonymous object

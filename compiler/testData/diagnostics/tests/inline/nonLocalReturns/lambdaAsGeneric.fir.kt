@@ -1,7 +1,7 @@
 
 fun box() : String {
     test {
-        return@box "123"
+        <!RETURN_NOT_ALLOWED!>return@box<!> "123"
     }
 
     return "OK"
