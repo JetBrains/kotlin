@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.configuration.Kotlin2JsCompileConfig
@@ -50,6 +53,17 @@ internal class KotlinJsIrSourceSetProcessor(
                     it.libraries.from(project.filesProvider { compilation.runtimeDependencyFiles })
                 }
                 configAction.configureTask { task ->
+                    val targetCompilerOptions = (compilation.target as KotlinJsIrTarget).compilerOptions
+                    KotlinJsCompilerOptionsHelper.syncOptionsAsConvention(
+                        targetCompilerOptions,
+                        task.compilerOptions
+                    )
+
+                    // Restoring already configured module name
+                    task.compilerOptions.moduleName.convention(
+                        project.provider { compilation.npmProject.name }
+                    )
+
                     task.modeProperty.set(binary.mode)
                     task.dependsOn(kotlinTask)
                 }

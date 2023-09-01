@@ -9,6 +9,10 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoBuildService
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.tcs
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
@@ -37,7 +41,16 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
 
             configureAdditionalFreeCompilerArguments(task, compilation)
 
-            task.moduleName.set(task.compilerOptions.moduleName)
+            val compilationTarget = compilation.tcs.compilation.target
+            if (compilationTarget is KotlinJsTarget ||
+                (compilationTarget is KotlinWithJavaTarget<*, *> && compilationTarget.platformType == KotlinPlatformType.js)
+            ) {
+                // JS v1 which does not configure module name via target compiler options
+                task.compilerOptions.moduleName.convention(compilation.moduleName)
+                task.moduleName.set(providers.provider { compilation.moduleName })
+            } else {
+                task.moduleName.set(task.compilerOptions.moduleName)
+            }
 
             @Suppress("DEPRECATION")
             task.outputFileProperty.value(

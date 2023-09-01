@@ -399,11 +399,7 @@ constructor(
     override val compilerOptions: KotlinJsCompilerOptions = project.objects
         .newInstance<KotlinJsCompilerOptionsDefault>()
         .apply {
-            configureJsDefaultOptions()
-
-            if (platformType == KotlinPlatformType.wasm) {
-                freeCompilerArgs.add(WASM_BACKEND)
-            }
+            configureJsDefaultOptions(platformType)
 
             freeCompilerArgs.add(DISABLE_PRE_IR)
         }
