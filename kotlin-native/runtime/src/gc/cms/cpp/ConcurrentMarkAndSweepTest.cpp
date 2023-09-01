@@ -13,6 +13,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "AllocatorTestSupport.hpp"
 #include "ExtraObjectData.hpp"
 #include "FinalizerHooksTestSupport.hpp"
 #include "GCImpl.hpp"
@@ -179,19 +180,8 @@ test_support::Object<Payload>& AllocateObjectWithFinalizer(mm::ThreadData& threa
     return test_support::Object<Payload>::FromObjHeader(holder.obj());
 }
 
-std_support::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
-#ifdef CUSTOM_ALLOCATOR
-    return threadData.gc().impl().allocator().alloc().heap().GetAllocatedObjects();
-#else
-    std_support::vector<ObjHeader*> objects;
-    for (auto node : threadData.gc().impl().allocator().objectFactoryThreadQueue()) {
-        objects.push_back(node.GetObjHeader());
-    }
-    for (auto node : mm::GlobalData::Instance().gc().impl().allocator().objectFactory().LockForIter()) {
-        objects.push_back(node.GetObjHeader());
-    }
-    return objects;
-#endif
+std::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
+    return alloc::test_support::allocatedObjects(threadData);
 }
 
 test_support::RegularWeakReferenceImpl& InstallWeakReference(mm::ThreadData& threadData, ObjHeader* objHeader, ObjHeader** location) {
@@ -232,6 +222,7 @@ public:
         mm::GlobalsRegistry::Instance().ClearForTests();
         mm::SpecialRefRegistry::instance().clearForTests();
         mm::GlobalData::Instance().gc().ClearForTests();
+        mm::GlobalData::Instance().allocator().clearForTests();
     }
 
     testing::MockFunction<void(ObjHeader*)>& finalizerHook() { return finalizerHooks_.finalizerHook(); }
@@ -705,7 +696,7 @@ public:
         return holderRef;
     }
 
-    std_support::vector<ObjHeader*> Alive() { return ::Alive(*executor_.context().memory_->memoryState()->GetThreadData()); }
+    std::vector<ObjHeader*> Alive() { return ::Alive(*executor_.context().memory_->memoryState()->GetThreadData()); }
 
 private:
     struct Context {
@@ -1065,7 +1056,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsWeakNewObj) {
             auto& extraObj = *mm::ExtraObjectData::Get(object.header());
             extraObj.ClearRegularWeakReferenceImpl();
             extraObj.Uninstall();
-            mm::GlobalData::Instance().gc().DestroyExtraObjectData(extraObj);
+            alloc::destroyExtraObjectData(extraObj);
 
             while (!gcDone.load(std::memory_order_relaxed)) {
                 mm::safePoint(threadData);
@@ -1162,23 +1153,20 @@ TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
         expectedAlive.push_back(unreachables[kDefaultThreadCount + i]);
     }
 
-#ifndef CUSTOM_ALLOCATOR
     // Force mutators to publish their internal heaps
+    // Really only needed for legacy allocators.
     std_support::vector<std::future<void>> publishFutures;
     for (auto& mutator: mutators) {
-        publishFutures.emplace_back(mutator.Execute([](mm::ThreadData& threadData, Mutator& mutator) {
-            threadData.gc().PublishObjectFactory();
-        }));
+        publishFutures.emplace_back(
+                mutator.Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.allocator().prepareForGC(); }));
     }
     for (auto& mutator: newMutators) {
-        publishFutures.emplace_back(mutator.Execute([](mm::ThreadData& threadData, Mutator& mutator) {
-            threadData.gc().PublishObjectFactory();
-        }));
+        publishFutures.emplace_back(
+                mutator.Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.allocator().prepareForGC(); }));
     }
     for (auto& future : publishFutures) {
         future.wait();
     }
-#endif
 
     // All threads see the same alive objects, enough to check a single mutator.
     EXPECT_THAT(mutators[0].Alive(), testing::UnorderedElementsAreArray(expectedAlive));

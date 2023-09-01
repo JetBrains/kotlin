@@ -6,6 +6,7 @@
 #ifndef RUNTIME_MM_GLOBAL_DATA_H
 #define RUNTIME_MM_GLOBAL_DATA_H
 
+#include "Allocator.hpp"
 #include "GlobalsRegistry.hpp"
 #include "GC.hpp"
 #include "GCScheduler.hpp"
@@ -26,6 +27,7 @@ public:
     GlobalsRegistry& globalsRegistry() noexcept { return globalsRegistry_; }
     SpecialRefRegistry& specialRefRegistry() noexcept { return specialRefRegistry_; }
     gcScheduler::GCScheduler& gcScheduler() noexcept { return gcScheduler_; }
+    alloc::Allocator& allocator() noexcept { return allocator_; }
     gc::GC& gc() noexcept { return gc_; }
     AppStateTracking& appStateTracking() noexcept { return appStateTracking_; }
 
@@ -41,7 +43,8 @@ private:
     GlobalsRegistry globalsRegistry_;
     SpecialRefRegistry specialRefRegistry_;
     gcScheduler::GCScheduler gcScheduler_;
-    gc::GC gc_{gcScheduler_};
+    alloc::Allocator allocator_;
+    gc::GC gc_{allocator_, gcScheduler_};
 };
 
 } // namespace mm

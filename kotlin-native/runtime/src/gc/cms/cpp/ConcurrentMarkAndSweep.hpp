@@ -62,10 +62,7 @@ public:
     };
 
     ConcurrentMarkAndSweep(
-            alloc::Allocator::Impl& allocator,
-            gcScheduler::GCScheduler& scheduler,
-            bool mutatorsCooperate,
-            std::size_t auxGCThreads) noexcept;
+            alloc::Allocator& allocator, gcScheduler::GCScheduler& scheduler, bool mutatorsCooperate, std::size_t auxGCThreads) noexcept;
     ~ConcurrentMarkAndSweep();
 
     void StartFinalizerThreadIfNeeded() noexcept;
@@ -81,7 +78,7 @@ private:
     void auxiliaryGCThreadBody();
     void PerformFullGC(int64_t epoch) noexcept;
 
-    alloc::Allocator::Impl& allocator_;
+    alloc::Allocator& allocator_;
     gcScheduler::GCScheduler& gcScheduler_;
 
     GCStateHolder state_;

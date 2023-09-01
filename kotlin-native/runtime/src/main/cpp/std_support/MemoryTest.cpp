@@ -8,7 +8,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "AllocatorTestSupport.hpp"
+#include "StdAllocatorTestSupport.hpp"
 #include "KAssert.h"
 #include "Utils.hpp"
 

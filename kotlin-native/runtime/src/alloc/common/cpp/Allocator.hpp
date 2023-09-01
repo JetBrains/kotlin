@@ -5,6 +5,9 @@
 
 #pragma once
 
+#include <cstdint>
+#include <memory>
+
 #include "GC.hpp"
 #include "Utils.hpp"
 
@@ -19,10 +22,37 @@ public:
     public:
         class Impl;
 
+        explicit ThreadData(Allocator& allocator) noexcept;
+        ~ThreadData();
+
+        Impl& impl() noexcept { return *impl_; }
+
+        ObjHeader* allocateObject(const TypeInfo* typeInfo) noexcept;
+        ArrayHeader* allocateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept;
+        mm::ExtraObjectData& allocateExtraObjectData(ObjHeader* object, const TypeInfo* typeInfo) noexcept;
+        void destroyUnattachedExtraObjectData(mm::ExtraObjectData& extraObject) noexcept;
+
+        void prepareForGC() noexcept;
+
+        // TODO: Move into AllocatorTestSupport.hpp
+        void clearForTests() noexcept;
+
     private:
+        std::unique_ptr<Impl> impl_;
     };
 
+    Allocator() noexcept;
+    ~Allocator();
+
+    Impl& impl() noexcept { return *impl_; }
+
+    void prepareForGC() noexcept;
+
+    // TODO: Move into AllocatorTestSupport.hpp
+    void clearForTests() noexcept;
+
 private:
+    std::unique_ptr<Impl> impl_;
 };
 
 void initObjectPool() noexcept;
@@ -36,4 +66,6 @@ ObjHeader* objectForObjectData(gc::GC::ObjectData& objectData) noexcept;
 size_t allocatedHeapSize(ObjHeader* object) noexcept;
 
 size_t allocatedBytes() noexcept;
+
+void destroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept;
 }

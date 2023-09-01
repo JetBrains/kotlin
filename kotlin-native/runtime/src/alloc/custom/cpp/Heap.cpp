@@ -88,8 +88,8 @@ FinalizerQueue Heap::ExtractFinalizerQueue() noexcept {
     return std::move(pendingFinalizerQueue_);
 }
 
-std_support::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
-    std_support::vector<ObjHeader*> allocated;
+std::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
+    std::vector<ObjHeader*> allocated;
     for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
         for (auto* page : fixedBlockPages_[blockSize].GetPages()) {
             for (auto* block : page->GetAllocatedBlocks()) {
@@ -107,7 +107,7 @@ std_support::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
             allocated.push_back(reinterpret_cast<HeapObjHeader*>(block)->object());
         }
     }
-    std_support::vector<ObjHeader*> unfinalized;
+    std::vector<ObjHeader*> unfinalized;
     for (auto* block: allocated) {
         if (!block->has_meta_object() || !mm::ExtraObjectData::Get(block)->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
             unfinalized.push_back(block);

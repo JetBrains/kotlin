@@ -149,7 +149,10 @@ public:
         return handle.getMarked();
     }
 
-    ~MarkAndSweepUtilsMarkTest() { mm::GlobalData::Instance().gc().ClearForTests(); }
+    ~MarkAndSweepUtilsMarkTest() {
+        mm::GlobalData::Instance().gc().ClearForTests();
+        mm::GlobalData::Instance().allocator().clearForTests();
+    }
 
 private:
     uint64_t epoch_ = 0;

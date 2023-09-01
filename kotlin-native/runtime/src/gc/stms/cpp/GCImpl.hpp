@@ -7,7 +7,6 @@
 
 #include "GC.hpp"
 
-#include "AllocatorImpl.hpp"
 #include "SameThreadMarkAndSweep.hpp"
 
 namespace kotlin {
@@ -15,26 +14,22 @@ namespace gc {
 
 class GC::Impl : private Pinned {
 public:
-    explicit Impl(gcScheduler::GCScheduler& gcScheduler) noexcept : gc_(allocator_, gcScheduler) {}
+    explicit Impl(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept : gc_(allocator, gcScheduler) {}
 
-    alloc::Allocator::Impl& allocator() noexcept { return allocator_; }
     SameThreadMarkAndSweep& gc() noexcept { return gc_; }
 
 private:
-    alloc::Allocator::Impl allocator_;
     SameThreadMarkAndSweep gc_;
 };
 
 class GC::ThreadData::Impl : private Pinned {
 public:
-    Impl(GC& gc, mm::ThreadData& threadData) noexcept : gc_(gc.impl_->gc(), threadData), allocator_(gc.impl_->allocator()) {}
+    Impl(GC& gc, mm::ThreadData& threadData) noexcept : gc_(gc.impl_->gc(), threadData) {}
 
     SameThreadMarkAndSweep::ThreadData& gc() noexcept { return gc_; }
-    alloc::Allocator::ThreadData::Impl& allocator() noexcept { return allocator_; }
 
 private:
     SameThreadMarkAndSweep::ThreadData gc_;
-    alloc::Allocator::ThreadData::Impl allocator_;
 };
 
 } // namespace gc

@@ -10,7 +10,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "AllocatorTestSupport.hpp"
+#include "StdAllocatorTestSupport.hpp"
 #include "ScopedThread.hpp"
 #include "TestSupport.hpp"
 #include "std_support/Vector.hpp"

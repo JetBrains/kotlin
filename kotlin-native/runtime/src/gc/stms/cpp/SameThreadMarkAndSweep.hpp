@@ -40,7 +40,7 @@ public:
     private:
     };
 
-    SameThreadMarkAndSweep(alloc::Allocator::Impl& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept;
+    SameThreadMarkAndSweep(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept;
 
     ~SameThreadMarkAndSweep();
 
@@ -53,7 +53,7 @@ public:
 private:
     void PerformFullGC(int64_t epoch) noexcept;
 
-    alloc::Allocator::Impl& allocator_;
+    alloc::Allocator& allocator_;
     gcScheduler::GCScheduler& gcScheduler_;
 
     GCStateHolder state_;

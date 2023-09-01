@@ -41,7 +41,7 @@ public:
     FinalizerQueue ExtractFinalizerQueue() noexcept;
 
     // Test method
-    std_support::vector<ObjHeader*> GetAllocatedObjects() noexcept;
+    std::vector<ObjHeader*> GetAllocatedObjects() noexcept;
     void ClearForTests() noexcept;
 
 private:

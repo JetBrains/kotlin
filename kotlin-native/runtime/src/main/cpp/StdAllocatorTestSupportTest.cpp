@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-#include "AllocatorTestSupport.hpp"
+#include "StdAllocatorTestSupport.hpp"
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -21,7 +21,7 @@ static_assert(sizeof(Class) > sizeof(EmptyClass));
 
 } // namespace
 
-TEST(AllocatorTestSupportTest, MockAllocate) {
+TEST(StdAllocatorTestSupportTest, MockAllocate) {
     testing::StrictMock<test_support::MockAllocatorCore> allocatorCore;
     auto allocator = test_support::MakeAllocator<Class>(allocatorCore);
 
@@ -31,7 +31,7 @@ TEST(AllocatorTestSupportTest, MockAllocate) {
     EXPECT_THAT(ptr, expectedPtr);
 }
 
-TEST(AllocatorTestSupportTest, MockDeallocate) {
+TEST(StdAllocatorTestSupportTest, MockDeallocate) {
     testing::StrictMock<test_support::MockAllocatorCore> allocatorCore;
     auto allocator = test_support::MakeAllocator<Class>(allocatorCore);
 
@@ -40,7 +40,7 @@ TEST(AllocatorTestSupportTest, MockDeallocate) {
     std::allocator_traits<decltype(allocator)>::deallocate(allocator, ptr, 2);
 }
 
-TEST(AllocatorTestSupportTest, MockAdjustType) {
+TEST(StdAllocatorTestSupportTest, MockAdjustType) {
     testing::StrictMock<test_support::MockAllocatorCore> allocatorCore;
     auto initial = test_support::MakeAllocator<EmptyClass>(allocatorCore);
 
@@ -58,7 +58,7 @@ TEST(AllocatorTestSupportTest, MockAdjustType) {
     Traits::deallocate(allocator, ptr, 2);
 }
 
-TEST(AllocatorTestSupportTest, Spy) {
+TEST(StdAllocatorTestSupportTest, Spy) {
     test_support::SpyAllocatorCore allocatorCore;
     auto allocator = test_support::MakeAllocator<Class>(allocatorCore);
 

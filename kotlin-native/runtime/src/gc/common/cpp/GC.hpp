@@ -16,6 +16,10 @@
 
 namespace kotlin {
 
+namespace alloc {
+class Allocator;
+}
+
 namespace mm {
 class ThreadData;
 }
@@ -35,19 +39,13 @@ public:
 
         Impl& impl() noexcept { return *impl_; }
 
-        void PublishObjectFactory() noexcept;
-        void ClearForTests() noexcept;
-
-        ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept;
-        ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept;
-        mm::ExtraObjectData& CreateExtraObjectDataForObject(ObjHeader* object, const TypeInfo* typeInfo) noexcept;
-        void DestroyUnattachedExtraObjectData(mm::ExtraObjectData& extraObject) noexcept;
-
         void OnSuspendForGC() noexcept;
 
         void safePoint() noexcept;
 
         void onThreadRegistration() noexcept;
+
+        void onAllocation(ObjHeader* object) noexcept;
 
     private:
         std_support::unique_ptr<Impl> impl_;
@@ -61,7 +59,7 @@ public:
     //       the destructor is a trivial one.
     class ObjectData;
 
-    explicit GC(gcScheduler::GCScheduler& gcScheduler) noexcept;
+    GC(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept;
     ~GC();
 
     Impl& impl() noexcept { return *impl_; }
@@ -80,8 +78,6 @@ public:
     int64_t Schedule() noexcept;
     void WaitFinished(int64_t epoch) noexcept;
     void WaitFinalizers(int64_t epoch) noexcept;
-
-    static void DestroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept;
 
 private:
     std_support::unique_ptr<Impl> impl_;

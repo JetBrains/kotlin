@@ -7,7 +7,7 @@
 
 #include <type_traits>
 
-#include "AllocatorImpl.hpp"
+#include "Allocator.hpp"
 #include "GC.hpp"
 #include "IntrusiveList.hpp"
 #include "KAssert.h"

@@ -30,6 +30,7 @@ public:
     ~ExtraObjectDataTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
         mm::GlobalData::Instance().gc().ClearForTests();
+        mm::GlobalData::Instance().allocator().clearForTests();
     }
 };
 
@@ -78,7 +79,8 @@ TEST_F(ExtraObjectDataTest, ConcurrentInstall) {
             }
             auto& extraData = mm::ExtraObjectData::Install(object.header());
             actual[i] = &extraData;
-            mm::GlobalData::Instance().threadRegistry().CurrentThreadData()->gc().PublishObjectFactory();
+            // Really only needed for legacy allocators.
+            mm::GlobalData::Instance().threadRegistry().CurrentThreadData()->allocator().prepareForGC();
         });
     }
 

@@ -7,32 +7,9 @@
 
 #include "GC.hpp"
 
-#include "AllocatorImpl.hpp"
-#include "Logging.hpp"
-#include "Utils.hpp"
+namespace kotlin::gc {
 
-namespace kotlin {
-namespace gc {
+class GC::Impl {};
+class GC::ThreadData::Impl {};
 
-class GC::Impl : private Pinned {
-public:
-    Impl() noexcept { RuntimeLogInfo({kTagGC}, "No-op GC initialized"); }
-
-    alloc::Allocator::Impl& allocator() noexcept { return allocator_; }
-
-private:
-    alloc::Allocator::Impl allocator_;
-};
-
-class GC::ThreadData::Impl : private Pinned {
-public:
-    Impl(GC& gc, mm::ThreadData& threadData) noexcept : allocator_(gc.impl_->allocator()) {}
-
-    alloc::Allocator::ThreadData::Impl& allocator() noexcept { return allocator_; }
-
-private:
-    alloc::Allocator::ThreadData::Impl allocator_;
-};
-
-} // namespace gc
-} // namespace kotlin
+} // namespace kotlin::gc

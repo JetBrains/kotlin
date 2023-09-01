@@ -28,11 +28,11 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
 
     RuntimeCheck(!hasPointerBits(typeInfo, OBJECT_TAG_MASK), "Object must not be tagged");
 
-    auto& gc = mm::ThreadRegistry::Instance().CurrentThreadData()->gc();
-    auto& data = gc.CreateExtraObjectDataForObject(object, typeInfo);
+    auto& allocator = mm::ThreadRegistry::Instance().CurrentThreadData()->allocator();
+    auto& data = allocator.allocateExtraObjectData(object, typeInfo);
     if (!compareExchange(object->typeInfoOrMeta_, typeInfo, reinterpret_cast<TypeInfo*>(&data))) {
         // Somebody else created `mm::ExtraObjectData` for this object.
-        gc.DestroyUnattachedExtraObjectData(data);
+        allocator.destroyUnattachedExtraObjectData(data);
         return *reinterpret_cast<mm::ExtraObjectData*>(typeInfo);
     }
 

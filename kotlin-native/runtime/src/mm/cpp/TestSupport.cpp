@@ -6,8 +6,8 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
+#include "AllocatorTestSupport.hpp"
 #include "GC.hpp"
-#include "GCTestSupport.hpp"
 #include "GlobalData.hpp"
 #include "GlobalsRegistry.hpp"
 #include "TestSupport.hpp"
@@ -51,7 +51,7 @@ extern "C" void Kotlin_TestSupport_AssertClearGlobalState() {
     EXPECT_THAT(collectCopy(globals), testing::UnorderedElementsAre());
     EXPECT_THAT(collectPointers(specialRefs), testing::UnorderedElementsAre());
     EXPECT_THAT(collectPointers(threads), testing::UnorderedElementsAre());
-    gc::AssertClear(mm::GlobalData::Instance().gc());
+    alloc::test_support::assertClear(mm::GlobalData::Instance().allocator());
 }
 
 void kotlin::DeinitMemoryForTests(MemoryState* memoryState) {

@@ -80,7 +80,7 @@ MetaObjHeader* ObjHeader::createMetaObject(ObjHeader* object) {
 void ObjHeader::destroyMetaObject(ObjHeader* object) {
     RuntimeAssert(object->has_meta_object(), "Object must have a meta object set");
     auto &extraObject = *mm::ExtraObjectData::Get(object);
-    gc::GC::DestroyExtraObjectData(extraObject);
+    alloc::destroyExtraObjectData(extraObject);
 }
 
 ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj) {
