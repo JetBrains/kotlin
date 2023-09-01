@@ -1,31 +1,31 @@
 /function_call.kt:(4,5): info: Generated Viper text for f:
-method global$pkg_$f(local$x: Int) returns (ret$: Int)
+method pkg_$global$f(local$x: Int) returns (ret: Int)
 {
-  ret$ := local$x
+  ret := local$x
 }
 
 /function_call.kt:(27,40): info: Generated Viper text for function_call:
-method global$pkg_$f(local$x: Int) returns (ret$: Int)
+method pkg_$global$f(local$x: Int) returns (ret: Int)
 
 
-method global$pkg_$function_call() returns (ret$: dom$Unit)
+method pkg_$global$function_call() returns (ret: dom$Unit)
 {
   var anonymous$1: Int
   var anonymous$2: Int
-  anonymous$1 := global$pkg_$f(0)
-  anonymous$2 := global$pkg_$f(0)
+  anonymous$1 := pkg_$global$f(0)
+  anonymous$2 := pkg_$global$f(0)
 }
 
 /function_call.kt:(69,89): info: Generated Viper text for function_call_nested:
-method global$pkg_$f(local$x: Int) returns (ret$: Int)
+method pkg_$global$f(local$x: Int) returns (ret: Int)
 
 
-method global$pkg_$function_call_nested() returns (ret$: dom$Unit)
+method pkg_$global$function_call_nested() returns (ret: dom$Unit)
 {
   var anonymous$1: Int
   var anonymous$2: Int
   var anonymous$3: Int
-  anonymous$3 := global$pkg_$f(0)
-  anonymous$2 := global$pkg_$f(anonymous$3)
-  anonymous$1 := global$pkg_$f(anonymous$2)
+  anonymous$3 := pkg_$global$f(0)
+  anonymous$2 := pkg_$global$f(anonymous$3)
+  anonymous$1 := pkg_$global$f(anonymous$2)
 }

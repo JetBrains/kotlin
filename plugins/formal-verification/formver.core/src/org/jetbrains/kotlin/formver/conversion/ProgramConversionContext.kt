@@ -18,11 +18,8 @@ import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 interface ProgramConversionContext {
     val config: PluginConfiguration
 
-    fun add(symbol: FirFunctionSymbol<*>): MethodSignatureEmbedding
-
-    fun add(symbol: FirRegularClassSymbol): ClassEmbedding
-
+    fun embedFunction(symbol: FirFunctionSymbol<*>): MethodSignatureEmbedding
+    fun embedClass(symbol: FirRegularClassSymbol): ClassEmbedding
     fun embedType(type: ConeKotlinType): TypeEmbedding
-
     fun embedType(exp: FirExpression): TypeEmbedding = embedType(exp.resolvedType)
 }

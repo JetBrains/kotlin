@@ -11,13 +11,10 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -27,7 +24,6 @@ import org.jetbrains.kotlin.formver.viper.ast.AccessPredicate
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
-import org.jetbrains.kotlin.formver.viper.domains.NullableDomain
 import org.jetbrains.kotlin.formver.viper.domains.UnitDomain
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -67,7 +63,7 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         when (constExpression.kind) {
             ConstantValueKind.Int -> Exp.IntLit((constExpression.value as Long).toInt())
             ConstantValueKind.Boolean -> Exp.BoolLit(constExpression.value as Boolean)
-            ConstantValueKind.Null -> NullableDomain.nullVal((data.embedType(constExpression) as NullableTypeEmbedding).elementType.type)
+            ConstantValueKind.Null -> (data.embedType(constExpression) as NullableTypeEmbedding).nullVal
             else -> handleUnimplementedElement("Constant Expression of type ${constExpression.kind} is not yet implemented.", data)
         }
 
@@ -109,9 +105,8 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         propertyAccessExpression: FirPropertyAccessExpression,
         data: StmtConversionContext,
     ): Exp {
-        val symbol = propertyAccessExpression.calleeReference.toResolvedBaseSymbol()!!
         val type = data.embedType(propertyAccessExpression)
-        return when (symbol) {
+        return when (val symbol = propertyAccessExpression.calleeSymbol) {
             is FirValueParameterSymbol -> VariableEmbedding(symbol.callableId.embedName(), type).toLocalVar()
             is FirPropertySymbol -> {
                 val varEmbedding = VariableEmbedding(symbol.callableId.embedName(), type)
@@ -153,18 +148,18 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
     private fun convertEqCmp(left: Exp, leftType: TypeEmbedding, right: Exp, rightType: TypeEmbedding): Exp =
         if (leftType is NullableTypeEmbedding && rightType !is NullableTypeEmbedding) {
             Exp.And(
-                Exp.NeCmp(left, NullableDomain.nullVal(leftType.elementType.type)),
+                Exp.NeCmp(left, leftType.nullVal),
                 // TODO: Replace the Eq comparison with a member call function to `left.equals`
-                Exp.EqCmp(left.withType(leftType.elementType.type), right.withType(leftType.elementType.type))
+                Exp.EqCmp(left.withType(leftType.elementType), right.withType(leftType.elementType))
             )
         } else if (leftType is NullableTypeEmbedding && rightType is NullableTypeEmbedding) {
             Exp.Or(
                 Exp.And(
-                    Exp.EqCmp(left, NullableDomain.nullVal(leftType.elementType.type)),
-                    Exp.EqCmp(right, NullableDomain.nullVal(rightType.elementType.type)),
+                    Exp.EqCmp(left, leftType.nullVal),
+                    Exp.EqCmp(right, rightType.nullVal),
                 ),
                 // TODO: Replace the Eq comparison with a member call function to `left.equals`
-                Exp.EqCmp(left.withType(leftType.elementType.type), right.withType(leftType.elementType.type))
+                Exp.EqCmp(left.withType(leftType.elementType), right.withType(leftType.elementType))
             )
         } else {
             // TODO: Replace the Eq comparison with a member call function to `left.equals`
@@ -172,7 +167,8 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext): Exp {
-        val id = functionCall.calleeReference.toResolvedCallableSymbol()!!.callableId
+        val symbol = functionCall.calleeCallableSymbol
+        val id = symbol.callableId
         val specialFunc = SpecialFunctions.byCallableId[id]
         val getArgs = { getFunctionCallArguments(functionCall).map(data::convert) }
         if (specialFunc != null) {
@@ -180,26 +176,25 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
             return specialFunc.convertCall(getArgs(), data)
         }
 
-        val symbol = functionCall.calleeReference.resolved!!.resolvedSymbol
         val calleeSig = when (symbol) {
-            is FirNamedFunctionSymbol -> data.add(symbol)
-            is FirConstructorSymbol -> data.add(symbol)
-            else -> TODO("Are there any other possible cases?")
+            is FirNamedFunctionSymbol -> data.embedFunction(symbol)
+            is FirConstructorSymbol -> data.embedFunction(symbol)
+            else -> TODO("Identify and handle other cases")
         }
 
         return data.withResult(calleeSig.returnType) {
             val args = getArgs().zip(calleeSig.formalArgs).map { (arg, formalArg) -> arg.withType(formalArg.viperType) }
-            data.addStatement(Stmt.MethodCall(calleeSig.name.mangled, args, listOf(this.resultVar.toLocalVar())))
+            data.addStatement(calleeSig.toMethodCall(args, this.resultVar))
         }
     }
 
     override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: StmtConversionContext): Exp {
         val args = getFunctionCallArguments(implicitInvokeCall).map(data::convert)
-        val retType = implicitInvokeCall.calleeReference.toResolvedCallableSymbol()!!.resolvedReturnType
+        val retType = implicitInvokeCall.calleeCallableSymbol.resolvedReturnType
         return data.withResult(data.embedType(retType)) {
             // NOTE: Since it is only relevant to update the number of times that a function object is called,
             // the function call invocation is intentionally not assigned to the return variable
-            data.addStatement(Stmt.MethodCall(InvokeFunctionObjectName.mangled, args.take(1), listOf()))
+            data.addStatement(InvokeFunctionObjectMethod.toMethodCall(args.take(1), listOf()))
         }
     }
 
@@ -216,13 +211,14 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         val symbol = property.symbol
         val type = property.returnTypeRef.coneTypeOrNull!!
         if (!symbol.isLocal) {
-            handleUnimplementedElement("Non-local property ${property.source} is not yet implemented.", data)
+            throw Exception("StmtConversionVisitor should not encounter non-local properties.")
         }
         val cvar = VariableEmbedding(symbol.callableId.embedName(), data.embedType(type))
-        val propInitializer = property.initializer
-        val initializer = propInitializer?.let { data.convert(it) }
         data.addDeclaration(cvar.toLocalVarDecl())
-        initializer?.let { data.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), it.withType(cvar.viperType))) }
+        property.initializer?.let {
+            val initializerExp = data.convert(it)
+            data.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), initializerExp.withType(cvar.type)))
+        }
         return UnitDomain.element
     }
 
@@ -251,7 +247,7 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: StmtConversionContext): Exp {
         val exp = data.convert(smartCastExpression.originalExpression)
         val newType = smartCastExpression.smartcastType.coneType
-        return exp.withType(data.embedType(newType).type)
+        return exp.withType(data.embedType(newType))
     }
 
     override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: StmtConversionContext): Exp {
@@ -278,12 +274,16 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         data.signature.receiver?.toLocalVar()
             ?: throw IllegalArgumentException("Can't resolve the 'this' receiver since the function does not have one.")
 
+    private val FirResolvable.calleeSymbol: FirBasedSymbol<*>
+        get() = calleeReference.toResolvedBaseSymbol()!!
+    private val FirResolvable.calleeCallableSymbol: FirCallableSymbol<*>
+        get() = calleeReference.toResolvedCallableSymbol()!!
+
     private fun handleUnimplementedElement(msg: String, data: StmtConversionContext): Exp =
         when (data.config.behaviour) {
             UnsupportedFeatureBehaviour.THROW_EXCEPTION ->
                 TODO(msg)
             UnsupportedFeatureBehaviour.ASSUME_UNREACHABLE -> {
-                // TODO: This is not perfect, sa the resulting Viper may not typecheck.
                 System.err.println(msg) // hack for while we're actively developing this to see what we're missing
                 data.addStatement(Stmt.Assume(Exp.BoolLit(false)))
                 UnitDomain.element

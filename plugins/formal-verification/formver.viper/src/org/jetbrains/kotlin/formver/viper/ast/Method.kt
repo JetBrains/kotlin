@@ -10,18 +10,19 @@ import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.toScalaOption
 import org.jetbrains.kotlin.formver.viper.toScalaSeq
 
-open class Method(
+abstract class Method(
     val name: MangledName,
-    val formalArgs: List<Declaration.LocalVarDecl>,
-    val formalReturns: List<Declaration.LocalVarDecl>,
-    val pres: List<Exp>,
-    val posts: List<Exp>,
-    val body: Stmt.Seqn?,
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
 ) : IntoViper<viper.silver.ast.Method> {
     open val includeInShortDump: Boolean = true
+    abstract val formalArgs: List<Declaration.LocalVarDecl>
+    abstract val formalReturns: List<Declaration.LocalVarDecl>
+    open val pres: List<Exp> = listOf()
+    open val posts: List<Exp> = listOf()
+    open val body: Stmt.Seqn? = null
+
     override fun toViper(): viper.silver.ast.Method =
         viper.silver.ast.Method(
             name.mangled,
@@ -35,18 +36,34 @@ open class Method(
             trafos.toViper()
         )
 
+    fun toMethodCall(
+        args: List<Exp>,
+        targets: List<Exp.LocalVar>,
+        pos: Position = Position.NoPosition,
+        info: Info = Info.NoInfo,
+        trafos: Trafos = Trafos.NoTrafos,
+    ) = Stmt.MethodCall(name, args, targets, pos, info, trafos)
 }
 
-class BuiltInMethod(
+class UserMethod(
     name: MangledName,
-    formalArgs: List<Declaration.LocalVarDecl>,
-    formalReturns: List<Declaration.LocalVarDecl>,
-    pres: List<Exp>,
-    posts: List<Exp>,
-    body: Stmt.Seqn?,
+    override val formalArgs: List<Declaration.LocalVarDecl>,
+    returnVar: Declaration.LocalVarDecl,
+    override val pres: List<Exp>,
+    override val posts: List<Exp>,
+    override val body: Stmt.Seqn?,
     pos: Position = Position.NoPosition,
     info: Info = Info.NoInfo,
     trafos: Trafos = Trafos.NoTrafos,
-) : Method(name, formalArgs, formalReturns, pres, posts, body, pos, info, trafos) {
+) : Method(name, pos, info, trafos) {
+    override val formalReturns: List<Declaration.LocalVarDecl> = listOf(returnVar)
+}
+
+abstract class BuiltInMethod(
+    name: MangledName,
+    pos: Position = Position.NoPosition,
+    info: Info = Info.NoInfo,
+    trafos: Trafos = Trafos.NoTrafos,
+) : Method(name, pos, info, trafos) {
     override val includeInShortDump: Boolean = false
 }

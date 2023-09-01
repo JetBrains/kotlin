@@ -11,7 +11,5 @@ class ClassEmbedding(
     val name: ClassName,
     val fields: List<VariableEmbedding>,
 ) : TypeEmbedding {
-
-    override val type: Type
-        get() = Type.Ref
+    override val type = Type.Ref
 }

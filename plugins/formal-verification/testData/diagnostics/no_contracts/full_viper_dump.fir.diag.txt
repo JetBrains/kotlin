@@ -48,6 +48,6 @@ method special$invoke_function_object(anonymous$0: Ref)
     anonymous$0.special$function_object_call_counter
 
 
-method global$pkg_$f() returns (ret$: dom$Unit)
+method pkg_$global$f() returns (ret: dom$Unit)
 {
 }

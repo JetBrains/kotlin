@@ -29,7 +29,7 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
     FirSimpleFunctionChecker() {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         val programConversionContext = ProgramConverter(session, config)
-        programConversionContext.addWithBody(declaration)
+        programConversionContext.registerForVerification(declaration)
         val program = programConversionContext.program
 
         getProgramForLogging(program)?.let {

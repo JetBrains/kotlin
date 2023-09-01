@@ -1,70 +1,70 @@
 /returns_booleans.kt:(121,133): info: Generated Viper text for returns_true:
-method global$pkg_$returns_true() returns (ret$: Bool)
+method pkg_$global$returns_true() returns (ret: Bool)
   ensures true
-  ensures ret$ == true
+  ensures ret == true
 {
-  ret$ := true
+  ret := true
 }
 
 /returns_booleans.kt:(268,281): info: Generated Viper text for returns_false:
-method global$pkg_$returns_false() returns (ret$: Bool)
+method pkg_$global$returns_false() returns (ret: Bool)
   ensures true
-  ensures ret$ == false
+  ensures ret == false
 {
-  ret$ := false
+  ret := false
 }
 
 /returns_booleans.kt:(418,443): info: Generated Viper text for incorrectly_returns_false:
-method global$pkg_$incorrectly_returns_false() returns (ret$: Bool)
-  ensures ret$ == true
+method pkg_$global$incorrectly_returns_false() returns (ret: Bool)
+  ensures ret == true
 {
-  ret$ := false
+  ret := false
 }
 
-/returns_booleans.kt:(418,443): warning: Viper verification error: Postcondition of global$pkg_$incorrectly_returns_false might not hold. Assertion ret$ == true might not hold. (<no position>)
+/returns_booleans.kt:(418,443): warning: Viper verification error: Postcondition of pkg_$global$incorrectly_returns_false might not hold. Assertion ret == true might not hold. (<no position>)
 
 
 /returns_booleans.kt:(418,443): warning: Function incorrectly_returns_false may not satisfy its contract.
 
 /returns_booleans.kt:(561,578): info: Generated Viper text for conditional_basic:
-method global$pkg_$conditional_basic(local$b: Bool) returns (ret$: Bool)
-  ensures ret$ == true ==> true
-  ensures ret$ == false ==> local$b
+method pkg_$global$conditional_basic(local$b: Bool) returns (ret: Bool)
+  ensures ret == true ==> true
+  ensures ret == false ==> local$b
 {
-  ret$ := true
+  ret := true
 }
 
 /returns_booleans.kt:(755,779): info: Generated Viper text for binary_logic_expressions:
-method global$pkg_$binary_logic_expressions(local$a: Bool, local$b: Bool)
-  returns (ret$: Bool)
-  ensures ret$ == false ==> local$b && false
-  ensures ret$ == true ==> (true || local$a) && (local$b || true)
+method pkg_$global$binary_logic_expressions(local$a: Bool, local$b: Bool)
+  returns (ret: Bool)
+  ensures ret == false ==> local$b && false
+  ensures ret == true ==> (true || local$a) && (local$b || true)
 {
-  ret$ := true
+  ret := true
 }
 
 /returns_booleans.kt:(998,1009): info: Generated Viper text for logical_not:
-method global$pkg_$logical_not(local$b: Bool) returns (ret$: Bool)
-  ensures ret$ == true ==> !local$b && local$b
-  ensures ret$ == false ==> local$b || !local$b
+method pkg_$global$logical_not(local$b: Bool) returns (ret: Bool)
+  ensures ret == true ==> !local$b && local$b
+  ensures ret == false ==> local$b || !local$b
 {
-  ret$ := false
+  ret := false
 }
 
 /returns_booleans.kt:(1195,1218): info: Generated Viper text for call_fun_with_contracts:
-method global$pkg_$binary_logic_expressions(local$a: Bool, local$b: Bool)
-  returns (ret$: Bool)
-  ensures ret$ == false ==> local$b && false
-  ensures ret$ == true ==> (true || local$a) && (local$b || true)
+method pkg_$global$binary_logic_expressions(local$a: Bool, local$b: Bool)
+  returns (ret: Bool)
+  ensures ret == false ==> local$b && false
+  ensures ret == true ==> (true || local$a) && (local$b || true)
 
 
-method global$pkg_$call_fun_with_contracts(local$b: Bool)
-  returns (ret$: Bool)
-  ensures ret$ == true
+method pkg_$global$call_fun_with_contracts(local$b: Bool)
+  returns (ret: Bool)
+  ensures ret == true
 {
-  var anonymous$1: Bool
   var local$a: Bool
-  anonymous$1 := global$pkg_$binary_logic_expressions(local$b, local$b)
+  var anonymous$1: Bool
+  anonymous$1 := pkg_$global$binary_logic_expressions(local$b, local$b)
   local$a := anonymous$1
-  ret$ := local$a
+  ret := local$a
 }

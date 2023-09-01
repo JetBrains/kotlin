@@ -1,51 +1,51 @@
 /nullable.kt:(4,22): info: Generated Viper text for use_nullable_twice:
-method global$pkg_$use_nullable_twice(local$x: dom$Nullable[Int])
-  returns (ret$: dom$Nullable[Int])
+method pkg_$global$use_nullable_twice(local$x: dom$Nullable[Int])
+  returns (ret: dom$Nullable[Int])
 {
   var local$a: dom$Nullable[Int]
   var local$b: dom$Nullable[Int]
   local$a := local$x
   local$b := local$x
-  ret$ := local$a
+  ret := local$a
 }
 
 /nullable.kt:(88,111): info: Generated Viper text for pass_nullable_parameter:
-method global$pkg_$use_nullable_twice(local$x: dom$Nullable[Int])
-  returns (ret$: dom$Nullable[Int])
+method pkg_$global$use_nullable_twice(local$x: dom$Nullable[Int])
+  returns (ret: dom$Nullable[Int])
 
 
-method global$pkg_$pass_nullable_parameter(local$x: dom$Nullable[Int])
-  returns (ret$: dom$Nullable[Int])
+method pkg_$global$pass_nullable_parameter(local$x: dom$Nullable[Int])
+  returns (ret: dom$Nullable[Int])
 {
   var anonymous$1: dom$Nullable[Int]
-  anonymous$1 := global$pkg_$use_nullable_twice(local$x)
-  ret$ := local$x
+  anonymous$1 := pkg_$global$use_nullable_twice(local$x)
+  ret := local$x
 }
 
 /nullable.kt:(175,203): info: Generated Viper text for nullable_nullable_comparison:
-method global$pkg_$nullable_nullable_comparison(local$x: dom$Nullable[Int],
+method pkg_$global$nullable_nullable_comparison(local$x: dom$Nullable[Int],
   local$y: dom$Nullable[Int])
-  returns (ret$: Bool)
+  returns (ret: Bool)
 {
-  ret$ := local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
+  ret := local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
     local$y == (dom$Nullable$null(): dom$Nullable[Int]) ||
     (dom$Casting$cast(local$x): Int) == (dom$Casting$cast(local$y): Int)
 }
 
 /nullable.kt:(258,290): info: Generated Viper text for nullable_non_nullable_comparison:
-method global$pkg_$nullable_non_nullable_comparison(local$x: dom$Nullable[Int],
+method pkg_$global$nullable_non_nullable_comparison(local$x: dom$Nullable[Int],
   local$y: dom$Nullable[Int])
-  returns (ret$: Bool)
+  returns (ret: Bool)
 {
-  ret$ := !(local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
+  ret := !(local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
     (dom$Casting$cast(local$x): Int) == 3)
 }
 
 /nullable.kt:(345,360): info: Generated Viper text for null_comparison:
-method global$pkg_$null_comparison(local$x: dom$Nullable[Int])
-  returns (ret$: Bool)
+method pkg_$global$null_comparison(local$x: dom$Nullable[Int])
+  returns (ret: Bool)
 {
-  ret$ := local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
+  ret := local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
     (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
     (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||
     (dom$Casting$cast(local$x): Int) ==

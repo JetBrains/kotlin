@@ -18,12 +18,11 @@ class MethodSignatureEmbedding(
     val name: MangledName,
     val receiver: VariableEmbedding?,
     val params: List<VariableEmbedding>,
-    val returnType: TypeEmbedding
+    val returnType: TypeEmbedding,
 ) {
-    val returnVar: VariableEmbedding
-        get() = VariableEmbedding(ReturnVariableName, returnType)
+    val returnVar = VariableEmbedding(ReturnVariableName, returnType)
 
-    val formalArgs: List<VariableEmbedding> = (receiver?.let { listOf(it) } ?: emptyList()) + params
+    val formalArgs: List<VariableEmbedding> = listOfNotNull(receiver) + params
 
     fun toMethod(
         pres: List<Exp>, posts: List<Exp>,
@@ -31,17 +30,22 @@ class MethodSignatureEmbedding(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): Method {
-        val returns = listOf(returnVar)
-        return Method(
-            name,
-            formalArgs.map { it.toLocalVarDecl() },
-            returns.map { it.toLocalVarDecl() },
-            formalArgs.flatMap { it.invariants() } + pres,
-            formalArgs.flatMap { it.invariants() } +
-                    formalArgs.flatMap { it.dynamicInvariants() } +
-                    returns.flatMap { it.invariants() } + posts,
-            body, pos, info, trafos,
-        )
-    }
+    ) = UserMethod(
+        name,
+        formalArgs.map { it.toLocalVarDecl() },
+        returnVar.toLocalVarDecl(),
+        formalArgs.flatMap { it.invariants() } + pres,
+        formalArgs.flatMap { it.invariants() } +
+                formalArgs.flatMap { it.dynamicInvariants() } +
+                returnVar.invariants() + posts,
+        body, pos, info, trafos,
+    )
+
+    fun toMethodCall(
+        parameters: List<Exp>,
+        targetVar: VariableEmbedding,
+        pos: Position = Position.NoPosition,
+        info: Info = Info.NoInfo,
+        trafos: Trafos = Trafos.NoTrafos,
+    ) = Stmt.MethodCall(name, parameters, listOf(targetVar.toLocalVar()), pos, info, trafos)
 }

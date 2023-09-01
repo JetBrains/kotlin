@@ -49,6 +49,8 @@ class TypeVarEmbedding(val name: String) : TypeEmbedding {
 
 class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding {
     override val type: Type = NullableDomain.nullableType(elementType.type)
+
+    val nullVal: Exp = NullableDomain.nullVal(elementType.type)
 }
 
 object FunctionTypeEmbedding : TypeEmbedding {
@@ -66,3 +68,4 @@ object FunctionTypeEmbedding : TypeEmbedding {
         )
 }
 
+fun Exp.withType(type: TypeEmbedding): Exp = withType(type.type)

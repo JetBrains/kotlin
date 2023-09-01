@@ -11,9 +11,10 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-/**
- * This file contains classes to mangle Kotlin names, such as variables,
- * classes and so on.
+/** This file contains classes to mangle names present in the Kotlin source.
+ *
+ * Name components should be separated by dollar signs.
+ * If there is a risk of collision, add a prefix.
  */
 
 /**
@@ -25,45 +26,33 @@ data class LocalName(val name: Name) : MangledName {
 }
 
 data class ClassName(val packageName: FqName, val className: Name) : MangledName {
-    /**
-     * Example of mangled class' name:
-     * ```kotlin
-     * val cn = ClassName("test", "Foo")
-     * assert(cf.mangled == "\$pkg_test\$class\$Foo"
-     * ```
-     */
     override val mangled: String
-        get() = "\$pkg_${packageName.asString()}\$class\$${className.asString()}"
+        get() = "pkg_${packageName.asString()}\$class_${className.asString()}"
 }
 
 data class ClassMemberName(val className: ClassName, val name: Name) : MangledName {
-
-    /**
-     * Example of mangled class' member name:
-     * ```kotlin
-     * val cfn = ClassMemberName(ClassName("Foo"), "bar")
-     * assert(cfn.mangled == "class\$Foo\$member\$bar")
-     * ```
-     */
     override val mangled: String
-        get() = "${className.mangled}\$member\$${name.asString()}"
+        get() = "${className.mangled}\$member_${name.asString()}"
 }
 
-/**
- * This is a barebones representation of global names.  We'll need to
- * expand it to include classes, but let's keep things simple for now.
+/** Global name not associated with a class.
  */
 data class GlobalName(val packageName: FqName, val name: Name) : MangledName {
     override val mangled: String
-        get() = "global\$pkg_${packageName.asString()}\$${name.asStringStripSpecialMarkers()}"
+        get() = "pkg_${packageName.asString()}\$global\$${name.asStringStripSpecialMarkers()}"
 }
 
 fun FirValueParameterSymbol.embedName(): LocalName = LocalName(name)
-fun CallableId.embedName(): MangledName = if (isLocal) {
-    LocalName(callableName)
-} else if (!isLocal && className != null) {
-    val name = ClassName(packageName, className!!.shortName())
-    ClassMemberName(name, callableName)
-} else {
-    GlobalName(packageName, callableName)
+fun CallableId.embedName(): MangledName = when {
+    isLocal -> {
+        LocalName(callableName)
+    }
+    className != null -> {
+        // The !! is necessary since className is a property from a different package.
+        val name = ClassName(packageName, className!!.shortName())
+        ClassMemberName(name, callableName)
+    }
+    else -> {
+        GlobalName(packageName, callableName)
+    }
 }

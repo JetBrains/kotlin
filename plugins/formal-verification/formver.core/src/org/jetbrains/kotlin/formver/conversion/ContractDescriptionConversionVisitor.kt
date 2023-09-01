@@ -16,34 +16,29 @@ import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Exp.*
 import org.jetbrains.kotlin.formver.viper.ast.Type
 
-class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, MethodConversionContext, ConeKotlinType, ConeDiagnostic>() {
-    private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.embeddedVar(data: MethodConversionContext): VariableEmbedding {
-        val name = data.signature.params[parameterIndex].name
-        val type = data.signature.params[parameterIndex].type
-        return VariableEmbedding(name, type)
-    }
+object ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, MethodConversionContext, ConeKotlinType, ConeDiagnostic>() {
+    private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.embeddedVar(data: MethodConversionContext): VariableEmbedding =
+        data.signature.params[parameterIndex]
 
-    private fun VariableEmbedding.nullCmp(isNegated: Boolean): Exp {
-        return if (type is NullableTypeEmbedding) {
+
+    private fun VariableEmbedding.nullCmp(isNegated: Boolean): Exp =
+        if (type is NullableTypeEmbedding) {
             if (isNegated) {
-                NeCmp(toLocalVar(), NullableDomain.nullVal(type.elementType.type))
+                NeCmp(toLocalVar(), type.nullVal)
             } else {
-                EqCmp(toLocalVar(), NullableDomain.nullVal(type.elementType.type))
+                EqCmp(toLocalVar(), type.nullVal)
             }
         } else {
             BoolLit(isNegated)
         }
-    }
 
     override fun visitBooleanConstantDescriptor(
         booleanConstantDescriptor: KtBooleanConstantReference<ConeKotlinType, ConeDiagnostic>,
         data: MethodConversionContext,
-    ): Exp {
-        return when (booleanConstantDescriptor) {
-            ConeContractConstantValues.TRUE -> BoolLit(true)
-            ConeContractConstantValues.FALSE -> BoolLit(false)
-            else -> throw Exception("Unexpected boolean constant: $booleanConstantDescriptor")
-        }
+    ): Exp = when (booleanConstantDescriptor) {
+        ConeContractConstantValues.TRUE -> BoolLit(true)
+        ConeContractConstantValues.FALSE -> BoolLit(false)
+        else -> throw Exception("Unexpected boolean constant: $booleanConstantDescriptor")
     }
 
     override fun visitReturnsEffectDeclaration(
@@ -79,8 +74,8 @@ class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, M
          * So it is necessary to take care of these cases in order to avoid comparison between non-nullable
          * values and null. Let x be a non-nullable variable, then x == null is mapped to false and x != null is mapped to true
          */
-        val arg = data.signature.params[isNullPredicate.arg.parameterIndex]
-        return arg.nullCmp(isNullPredicate.isNegated)
+        val param = isNullPredicate.arg.embeddedVar(data)
+        return param.nullCmp(isNullPredicate.isNegated)
     }
 
     override fun visitLogicalBinaryOperationContractExpression(
@@ -111,7 +106,7 @@ class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, M
 
     override fun visitCallsEffectDeclaration(
         callsEffect: KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
-        data: MethodConversionContext
+        data: MethodConversionContext,
     ): Exp {
         val param = callsEffect.valueParameterReference.accept(this, data)
         val callsFieldAccess = FieldAccess(param, SpecialFields.FunctionObjectCallCounterField)

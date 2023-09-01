@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.formver.viper.ast
 
 import org.jetbrains.kotlin.formver.viper.IntoViper
+import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.toScalaSeq
 import org.jetbrains.kotlin.formver.viper.toViper
 
@@ -50,7 +51,7 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
     }
 
     data class MethodCall(
-        val methodName: String,
+        val methodName: MangledName,
         val args: List<Exp>,
         val targets: List<Exp.LocalVar>,
         val position: Position = Position.NoPosition,
@@ -58,7 +59,7 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
         val trafos: Trafos = Trafos.NoTrafos,
     ) : Stmt() {
         override fun toViper(): viper.silver.ast.MethodCall = viper.silver.ast.MethodCall(
-            methodName,
+            methodName.mangled,
             args.map { it.toViper() }.toScalaSeq(),
             targets.map { it.toViper() }.toScalaSeq(),
             position.toViper(),

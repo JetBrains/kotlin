@@ -1,48 +1,48 @@
 /boolean_logic.kt:(4,12): info: Generated Viper text for negation:
-method global$pkg_$negation(local$x: Bool) returns (ret$: Bool)
+method pkg_$global$negation(local$x: Bool) returns (ret: Bool)
 {
-  ret$ := !local$x
+  ret := !local$x
 }
 
 /boolean_logic.kt:(56,67): info: Generated Viper text for conjunction:
-method global$pkg_$conjunction(local$x: Bool, local$y: Bool)
-  returns (ret$: Bool)
+method pkg_$global$conjunction(local$x: Bool, local$y: Bool)
+  returns (ret: Bool)
 {
   var anonymous$1: Bool
   if (local$x) {
     anonymous$1 := local$y
   } else {
     anonymous$1 := false}
-  ret$ := anonymous$1
+  ret := anonymous$1
 }
 
 /boolean_logic.kt:(127,151): info: Generated Viper text for conjunction_side_effects:
-method global$pkg_$negation(local$x: Bool) returns (ret$: Bool)
+method pkg_$global$negation(local$x: Bool) returns (ret: Bool)
 
 
-method global$pkg_$conjunction_side_effects(local$x: Bool, local$y: Bool)
-  returns (ret$: Bool)
+method pkg_$global$conjunction_side_effects(local$x: Bool, local$y: Bool)
+  returns (ret: Bool)
 {
   var anonymous$1: Bool
   var anonymous$2: Bool
-  anonymous$1 := global$pkg_$negation(local$x)
+  anonymous$1 := pkg_$global$negation(local$x)
   if (anonymous$1) {
     var anonymous$3: Bool
-    anonymous$3 := global$pkg_$negation(local$y)
+    anonymous$3 := pkg_$global$negation(local$y)
     anonymous$2 := anonymous$3
   } else {
     anonymous$2 := false}
-  ret$ := anonymous$2
+  ret := anonymous$2
 }
 
 /boolean_logic.kt:(324,335): info: Generated Viper text for disjunction:
-method global$pkg_$disjunction(local$x: Bool, local$y: Bool)
-  returns (ret$: Bool)
+method pkg_$global$disjunction(local$x: Bool, local$y: Bool)
+  returns (ret: Bool)
 {
   var anonymous$1: Bool
   if (local$x) {
     anonymous$1 := true
   } else {
     anonymous$1 := local$y}
-  ret$ := anonymous$1
+  ret := anonymous$1
 }

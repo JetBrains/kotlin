@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -37,20 +36,20 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
     val program: Program
         get() = Program(
-            domains = listOf(UnitDomain, NullableDomain, CastingDomain), /* Domains */
-            fields = SpecialFields.all + classes.values.flatMap { it.fields }.map { it.toField() }, /* Fields */
-            methods = SpecialMethods.all + methods.values.toList(), /* Methods */
+            domains = listOf(UnitDomain, NullableDomain, CastingDomain),
+            fields = SpecialFields.all + classes.values.flatMap { it.fields }.map { it.toField() },
+            methods = SpecialMethods.all + methods.values.toList(),
         )
 
-    fun addWithBody(declaration: FirSimpleFunction) {
+    fun registerForVerification(declaration: FirSimpleFunction) {
         processFunction(declaration.symbol, declaration.body)
     }
 
-    override fun add(symbol: FirFunctionSymbol<*>): MethodSignatureEmbedding {
+    override fun embedFunction(symbol: FirFunctionSymbol<*>): MethodSignatureEmbedding {
         return processFunction(symbol, null)
     }
 
-    override fun add(symbol: FirRegularClassSymbol): ClassEmbedding {
+    override fun embedClass(symbol: FirRegularClassSymbol): ClassEmbedding {
 
         val className = ClassName(symbol.classId.packageFqName, symbol.classId.shortClassName)
         // If the class name is not contained in the classes hashmap, then add a new embedding.
@@ -72,25 +71,15 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         type.isNothing -> NothingTypeEmbedding
         type.isSomeFunctionType(session) -> FunctionTypeEmbedding
         type.isNullable -> NullableTypeEmbedding(embedType(type.withNullability(ConeNullability.NOT_NULL, session.typeContext)))
-        else -> {
-            // For the moment, to create classes' embeddings, we fall
-            // back on the else branch. Notice that is not permanent,
-            // and it will be modified in the future to handle more cases (e.g., type variables)
-            val classId = type.classId!!
-            val classLikeSymbol = session.symbolProvider.getClassLikeSymbolByClassId(classId)
+        type is ConeClassLikeType -> {
+            val classLikeSymbol = type.toClassSymbol(session)
             if (classLikeSymbol is FirRegularClassSymbol) {
-                add(classLikeSymbol)
+                embedClass(classLikeSymbol)
             } else {
-                when (config.behaviour) {
-                    UnsupportedFeatureBehaviour.THROW_EXCEPTION ->
-                        throw NotImplementedError("The embedding for type $type is not yet implemented.")
-                    UnsupportedFeatureBehaviour.ASSUME_UNREACHABLE -> {
-                        System.err.println("Requested type $type, for which we do not yet have an embedding.")
-                        UnitTypeEmbedding
-                    }
-                }
+                unimplementedTypeEmbedding(type)
             }
         }
+        else -> unimplementedTypeEmbedding(type)
     }
 
     private fun <D : FirFunction> embedSignature(symbol: FirFunctionSymbol<D>): MethodSignatureEmbedding {
@@ -128,11 +117,21 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             }
 
             val postconditions = symbol.resolvedContractDescription?.effects?.map {
-                it.effect.accept(ContractDescriptionConversionVisitor(), methodCtx)
+                it.effect.accept(ContractDescriptionConversionVisitor, methodCtx)
             } ?: emptyList()
 
             signature.toMethod(listOf(), postconditions, seqn)
         }
         return signature
     }
+
+    private fun unimplementedTypeEmbedding(type: ConeKotlinType): TypeEmbedding =
+        when (config.behaviour) {
+            UnsupportedFeatureBehaviour.THROW_EXCEPTION ->
+                throw NotImplementedError("The embedding for type $type is not yet implemented.")
+            UnsupportedFeatureBehaviour.ASSUME_UNREACHABLE -> {
+                System.err.println("Requested type $type, for which we do not yet have an embedding.")
+                UnitTypeEmbedding
+            }
+        }
 }

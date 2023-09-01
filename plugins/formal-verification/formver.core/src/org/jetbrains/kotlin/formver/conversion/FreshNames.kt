@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.formver.viper.MangledName
 
 /**
- * This file contains classes/objects representing new names
- * for Viper's specific declarations.
+ * This file contains mangled names for constructs introduced during the conversion to Viper.
+ *
+ * See the NameEmbeddings file for guidelines on good name choices.
  */
 
 /**
@@ -23,20 +24,15 @@ data class AnonymousName(val n: Int) : MangledName {
 
 data object ReturnVariableName : MangledName {
     override val mangled: String
-        get() = "ret\$"
+        get() = "ret"
 }
 
 data object ThisReceiverName : MangledName {
     override val mangled: String
-        get() = "this\$"
+        get() = "this"
 }
 
 data class SpecialFieldName(val name: String) : MangledName {
     override val mangled: String
         get() = "special\$$name"
-}
-
-data object InvokeFunctionObjectName : MangledName {
-    override val mangled: String
-        get() = "special\$invoke_function_object"
 }

@@ -5,29 +5,24 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.formver.embeddings.FunctionTypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.viper.ast.*
 import org.jetbrains.kotlin.formver.viper.ast.Exp.*
 
-private fun invokeFunctionObject(): BuiltInMethod {
-    val thisArg = LocalVar(AnonymousName(0), Type.Ref)
-    val acc = AccessPredicate.FieldAccessPredicate(
-        thisArg.fieldAccess(SpecialFields.FunctionObjectCallCounterField),
-        PermExp.FullPerm()
+object InvokeFunctionObjectMethod : BuiltInMethod(SpecialFieldName("invoke_function_object")) {
+    private val thisArg = VariableEmbedding(AnonymousName(0), FunctionTypeEmbedding)
+    private val calls = EqCmp(
+        Add(Old(thisArg.toFieldAccess(SpecialFields.FunctionObjectCallCounterField)), IntLit(1)),
+        thisArg.toFieldAccess(SpecialFields.FunctionObjectCallCounterField)
     )
-    val calls = EqCmp(
-        Add(Old(thisArg.fieldAccess(SpecialFields.FunctionObjectCallCounterField)), IntLit(1)),
-        thisArg.fieldAccess(SpecialFields.FunctionObjectCallCounterField)
-    )
-    return BuiltInMethod(
-        InvokeFunctionObjectName,
-        listOf(Declaration.LocalVarDecl(AnonymousName(0), Type.Ref)),
-        listOf(),
-        listOf(acc),
-        listOf(acc, calls),
-        null
-    )
+
+    override val formalArgs: List<Declaration.LocalVarDecl> = listOf(thisArg.toLocalVarDecl())
+    override val formalReturns: List<Declaration.LocalVarDecl> = listOf()
+    override val pres: List<Exp> = thisArg.invariants()
+    override val posts: List<Exp> = thisArg.invariants() + listOf(calls)
 }
 
 object SpecialMethods {
-    val all = listOf(invokeFunctionObject())
+    val all = listOf(InvokeFunctionObjectMethod)
 }

@@ -1,10 +1,10 @@
 /simple.kt:(84,100): info: Generated Viper text for without_contract:
-method global$pkg_$without_contract() returns (ret$: dom$Unit)
+method pkg_$global$without_contract() returns (ret: dom$Unit)
 {
 }
 
 /simple.kt:(148,161): info: Generated Viper text for with_contract:
-method global$pkg_$with_contract() returns (ret$: dom$Unit)
+method pkg_$global$with_contract() returns (ret: dom$Unit)
   ensures true
 {
 }
