@@ -63,16 +63,19 @@ testsJar()
 projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
+    val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)
     doFirst {
-        systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+        systemProperty("kotlin.test.script.classpath", scriptClasspath)
     }
 }
 
 projectTest(taskName = "testWithK1", parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
+    val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)
+
     doFirst {
-        systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+        systemProperty("kotlin.test.script.classpath", scriptClasspath)
         systemProperty("kotlin.script.test.base.compiler.arguments", "-language-version 1.9")
         systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
     }
