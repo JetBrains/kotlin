@@ -31,7 +31,7 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
         return repositoryCoordinates.toRepositoryUrlOrNull() != null
     }
 
-    val repos: ArrayList<RemoteRepository> = arrayListOf()
+    private val repos: ArrayList<RemoteRepository> = arrayListOf()
 
     private fun remoteRepositories() = if (repos.isEmpty()) arrayListOf(mavenCentral) else repos.toList() // copy to avoid sharing problems
 
