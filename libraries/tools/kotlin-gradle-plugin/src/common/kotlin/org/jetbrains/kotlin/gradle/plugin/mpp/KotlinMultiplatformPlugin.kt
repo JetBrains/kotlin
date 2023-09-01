@@ -63,7 +63,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         kotlinMultiplatformExtension.targets.withType(InternalKotlinTarget::class.java).all { applyUserDefinedAttributes(it) }
 
         // propagate compiler plugin options to the source set language settings
-        setupAdditionalCompilerArguments(project)
         project.setupGeneralKotlinExtensionParameters()
 
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
@@ -86,43 +85,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         }
     }
 
-    private fun setupAdditionalCompilerArguments(project: Project) {
-        // common source sets use the compiler options from the metadata compilation:
-        val metadataCompilation =
-            project.multiplatformExtension.metadata().compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
-        val primaryCompilationsBySourceSet by lazy { // don't evaluate eagerly: Android targets are not created at this point
-            val allCompilationsForSourceSets = project.multiplatformExtension.sourceSets.associateWith { sourceSet ->
-                sourceSet.internal.compilations.filter { compilation -> compilation.target.platformType != KotlinPlatformType.common }
-            }
-
-            allCompilationsForSourceSets.mapValues { (_, compilations) -> // choose one primary compilation
-                when (compilations.size) {
-                    0 -> metadataCompilation
-                    1 -> compilations.single()
-                    else -> {
-                        val sourceSetTargets = compilations.map { it.target }.distinct()
-                        when (sourceSetTargets.size) {
-                            1 -> sourceSetTargets.single().compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-                                ?: // use any of the compilations for now, looks OK for Android TODO maybe reconsider
-                                compilations.first()
-
-                            else -> metadataCompilation
-                        }
-                    }
-                }
-            }
-        }
-
-        project.kotlinExtension.sourceSets.all { sourceSet ->
-            (sourceSet.languageSettings as? DefaultLanguageSettingsBuilder)?.run {
-                compilerPluginOptionsTask = lazy {
-                    val associatedCompilation = primaryCompilationsBySourceSet[sourceSet] ?: metadataCompilation
-                    project.tasks.getByName(associatedCompilation.compileKotlinTaskName) as AbstractKotlinCompileTool<*>
-                }
-            }
-        }
-    }
 
     fun setupDefaultPresets(project: Project) {
         @Suppress("DEPRECATION")

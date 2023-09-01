@@ -9,10 +9,18 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.AndroidMainSourceSetConventionsChecker
 import org.jetbrains.kotlin.gradle.dsl.IosSourceSetConventionChecker
 import org.jetbrains.kotlin.gradle.dsl.PlatformSourceSetConventionsChecker
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.MultiplatformSetupAdditionalCompilerArgumentsAction
 
 internal fun Project.registerKotlinPluginExtensions() {
+    KotlinProjectAction.extensionPoint.apply {
+        if (multiplatformExtensionOrNull != null) {
+            register(project, MultiplatformSetupAdditionalCompilerArgumentsAction)
+        }
+    }
+
     KotlinGradleProjectChecker.extensionPoint.apply {
         register(project, CommonMainOrTestWithDependsOnChecker)
         register(project, DeprecatedKotlinNativeTargetsChecker)
