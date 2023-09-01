@@ -254,9 +254,12 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
 
         project.extensions.add(KotlinTestsRegistry.PROJECT_EXTENSION_NAME, createTestRegistry(project))
 
+
         val plugin = getPlugin(project)
 
         setupAttributeMatchingStrategy(project)
+
+        project.registerKotlinPluginExtensions()
 
         project.startKotlinPluginLifecycle()
 
