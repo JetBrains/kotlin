@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.GeneralKotlinExtensionParameterSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.MultiplatformSetupAdditionalCompilerArgumentsAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.MultiplatformSourceSetsSetupAction
 
 internal fun Project.registerKotlinPluginExtensions() {
     KotlinProjectAction.extensionPoint.apply {
         register(project, GeneralKotlinExtensionParameterSetupAction)
 
         if (multiplatformExtensionOrNull != null) {
+            register(project, MultiplatformSourceSetsSetupAction)
             register(project, MultiplatformSetupAdditionalCompilerArgumentsAction)
         }
     }

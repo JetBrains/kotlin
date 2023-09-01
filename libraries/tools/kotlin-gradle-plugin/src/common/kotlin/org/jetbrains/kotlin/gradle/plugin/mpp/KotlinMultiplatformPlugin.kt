@@ -48,7 +48,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         setupDefaultPresets(project)
         customizeKotlinDependencies(project)
-        configureSourceSets(project)
         setupTargetsBuildStatsReport(project)
 
         // set up metadata publishing
@@ -125,15 +124,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     }
 
 
-    private fun configureSourceSets(project: Project) = with(project.multiplatformExtension) {
-        /* Create 'commonMain' and 'commonTest' SourceSets */
-        sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
-        sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
 
-        project.launch {
-            project.setupDefaultKotlinHierarchy()
-        }
-    }
 
     private fun setupTargetsBuildStatsReport(project: Project) {
         project.multiplatformExtension.targets.all { target ->
