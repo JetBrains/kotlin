@@ -290,14 +290,33 @@ class JavaClassUseSiteMemberScope(
      * Examples:
      * - boolean containsKey(Object key) -> true
      * - boolean containsKey(K key) -> false // Wrong JDK method override, while it's a valid Kotlin built-in override
+     *
+     * There is a case when we shouldn't hide a function even if it overrides builtin member with value parameter erasure:
+     *   if substituted kotlin overridden has the same parameters as current java override. Such situation may happen only in
+     *   case when `Any`/`Object` is used as parameterization of supertype:
+     *
+     * // java
+     * class MySuperMap extends java.util.Map<Object, Object> {
+     *     @Override
+     *     public boolean containsKey(Object key) {...}
+     *
+     *     @Override
+     *     public boolean containsValue(Object key) {...}
+     * }
+     *
+     * In this case, the signature of override, made based on the correct kotlin signature, will be the same (because of { K -> Any, V -> Any }
+     *   substitution for both functions).
+     * And since the list of all such functions is well-known, the only case when this may happen is when value parameter types of kotlin
+     *   overridden are `Any`
      */
     private fun FirNamedFunctionSymbol.shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters(): Boolean {
         if (!name.sameAsBuiltinMethodWithErasedValueParameters) return false
-        val candidatesToOverride = supertypeScopeContext.collectMembersGroupedByScope(name, FirScope::processFunctionsByName)
-            .flatMap { (scope, symbols) ->
-                symbols.mapNotNull {
-                    BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(it, scope)
-                }
+        val candidatesToOverride = supertypeScopeContext.collectIntersectionResultsForCallables(name, FirScope::processFunctionsByName)
+            .flatMap { it.overriddenMembers }
+            .filterNot { (member, _) ->
+                member.valueParameterSymbols.all { it.resolvedReturnType.lowerBoundIfFlexible().isAny }
+            }.mapNotNull { (member, scope) ->
+                BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(member, scope)
             }
 
         val jvmDescriptor = fir.computeJvmDescriptor()
@@ -439,12 +458,20 @@ class JavaClassUseSiteMemberScope(
             it.hasSameJvmDescriptor(functionFromSupertypeWithErasedParameterType) && it.hasErasedParameters() &&
                     javaOverrideChecker.doesReturnTypesHaveSameKind(functionFromSupertypeWithErasedParameterType.fir, it.fir)
         } ?: return false
+        /*
+         * See the comment to shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters function
+         * It explains why we should check value parameters for `Any` type
+         */
+        var allParametersAreAny = true
         val renamedDeclaredFunction = buildJavaMethodCopy(originalDeclaredFunction.fir as FirJavaMethod) {
             name = naturalName
             symbol = FirNamedFunctionSymbol(originalDeclaredFunction.callableId)
             this.valueParameters.clear()
             originalDeclaredFunction.fir.valueParameters.zip(overriddenMemberWithErasedValueParameters.fir.valueParameters)
                 .mapTo(this.valueParameters) { (overrideParameter, parameterFromSupertype) ->
+                    if (!parameterFromSupertype.returnTypeRef.coneType.lowerBoundIfFlexible().isAny) {
+                        allParametersAreAny = false
+                    }
                     buildJavaValueParameterCopy(overrideParameter) {
                         this@buildJavaValueParameterCopy.returnTypeRef = parameterFromSupertype.returnTypeRef
                     }
@@ -452,6 +479,10 @@ class JavaClassUseSiteMemberScope(
         }.apply {
             initialSignatureAttr = originalDeclaredFunction.fir
         }.symbol
+
+        if (allParametersAreAny) {
+            return false
+        }
 
         val hasAccidentalOverrideWithDeclaredFunction = explicitlyDeclaredFunctionsWithNaturalName.any {
             overrideChecker.isOverriddenFunction(
