@@ -986,14 +986,51 @@ class Fir2IrDeclarationStorage(
             cache[declaration]?.let { return it }
         }
 
-        return signatureCalculator()?.let { signature ->
-            referenceIfAny(signature)?.let { irDeclaration ->
-                if (!isFakeOverride) {
-                    cache[declaration] = irDeclaration
-                }
-                irDeclaration
+        /*
+         * There are cases when two different f/o identifiers may represent the same IR f/o
+         *
+         * // MODULE: common
+         * expect open class Base<T>() {
+         *     fun foo(param: T) // (1)
+         * }
+         *
+         * class Derived : Base<String>() {
+         *     // substitution override fun foo(param: String)
+         * }
+         *
+         * // MODULE: platform()()(common)
+         * actual open class Base<T> {
+         *     actual fun foo(param: T) {} // (2)
+         * }
+         *
+         * fun test(d: Derived) {
+         *     d.foo()
+         * }
+         *
+         * In this case we have two different FIR functions for substitution override Derived.foo, because substitution and two different
+         *   original functions for them depending on the module we are watching
+         * - during conversion of the common module we will create and save IR f/o for derived with identifier (function (1), Derived)
+         * - during conversion of the platform module for each call of `Derived.foo` we will use identifier (function (2), Derived).
+         * But we actually must use the f/o which was created in common module. So here we should reuse the symbol from symbol table if we
+         *   find one.
+         *
+         * TODO: Most likely check for `isFakeOverride` may be removed after fix of KT-61774
+         */
+        signatureCalculator()?.let { signature ->
+            val cachedInSymbolTable = referenceIfAny(signature) ?: return@let
+            if (isFakeOverride) {
+                val key = FakeOverrideIdentifier(
+                    declaration.symbol.unwrapFakeOverrides(),
+                    fakeOverrideOwnerLookupTag ?: declaration.containingClassLookupTag()!!
+                )
+                irFakeOverridesForFirFakeOverrideMap[key] = cachedInSymbolTable
+                return cachedInSymbolTable
+            } else {
+                error("IR declaration with signature $signature found in SymbolTable and not found in declaration storage")
             }
         }
+
+        return null
     }
 
     @OptIn(IrSymbolInternals::class)
