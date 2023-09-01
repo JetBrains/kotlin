@@ -144,13 +144,20 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
             classFileFactory.getClassFiles().forEach { writeClass(it.relativePath, it.asByteArray()) }
             javaClassesOutputDirectory?.listFiles()?.forEach { writeClass(it.name, it.readBytes()) }
 
+            val robolectricProperties = System.getProperties().propertyNames().asSequence()
+                .map { it.toString() }.filter { it.startsWith("robolectric") }
+                .map { "-D$it=${System.getProperty(it)}" }
+                .toList()
+                .toTypedArray()
+
             val process = ProcessBuilder(
                 javaExe.absolutePath,
                 "-ea",
                 "-classpath",
                 (libraryClasspath + dirForTestClasses).joinToString(File.pathSeparator),
+                *robolectricProperties,
                 JUnitCore::class.java.name,
-                JUNIT_GENERATED_TEST_CLASS_FQNAME
+                JUNIT_GENERATED_TEST_CLASS_FQNAME,
             ).start()
 
             val out = process.inputStream.bufferedReader().lineSequence().joinToString("\n")

@@ -6,6 +6,8 @@ plugins {
 }
 
 val robolectricClasspath by configurations.creating
+val robolectricDependency by configurations.creating
+
 val parcelizeRuntimeForTests by configurations.creating
 val layoutLib by configurations.creating
 val layoutLibApi by configurations.creating
@@ -53,8 +55,9 @@ dependencies {
 
     testApi(commonDependency("junit:junit"))
 
+    robolectricDependency("org.robolectric:android-all:5.0.2_r3-robolectric-r0")
+
     robolectricClasspath(commonDependency("org.robolectric", "robolectric"))
-    robolectricClasspath("org.robolectric:android-all:4.4_r1-robolectric-r2")
     robolectricClasspath(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }
     robolectricClasspath(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
 
@@ -81,10 +84,19 @@ sourcesJar()
 javadocJar()
 testsJar()
 
+val robolectricDependencyDir = "$buildDir/robolectricDependencies"
+val prepareRobolectricDependencies by tasks.registering(Copy::class) {
+    from(robolectricDependency)
+    into(robolectricDependencyDir)
+}
+
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
     dependsOn(parcelizeRuntimeForTests)
     dependsOn(robolectricClasspath)
+    dependsOn(robolectricDependency)
+
+    dependsOn(prepareRobolectricDependencies)
     dependsOn(":dist")
     workingDir = rootDir
     useAndroidJar()
@@ -96,6 +108,10 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     doFirst {
         systemProperty("parcelizeRuntime.classpath", parcelizeRuntimeForTestsConf.asPath)
         systemProperty("robolectric.classpath", robolectricClasspathConf.asPath)
+
+        systemProperty("robolectric.offline", "true")
+        systemProperty("robolectric.dependency.dir", robolectricDependencyDir)
+
         systemProperty("layoutLib.path", layoutLibConf.singleFile.canonicalPath)
         systemProperty("layoutLibApi.path", layoutLibApiConf.singleFile.canonicalPath)
     }
