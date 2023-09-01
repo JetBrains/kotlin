@@ -12,19 +12,18 @@ import org.jdom.input.SAXBuilder
 import org.jdom.output.Format
 import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
-import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.*
-import kotlin.streams.asSequence
-import kotlin.streams.toList
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.name
+import kotlin.io.path.readText
 import kotlin.test.assertEquals
 
-fun GradleProject.assertTestResults(expectedTestReport: Path, vararg testReportNames: String) {
+fun GradleProject.assertTestResults(expectedTestReport: Path, vararg testReportNames: String, cleanupStdOut: (String) -> String = { it }) {
     val testReportDirs = testReportNames.map { projectPath.resolve("build/test-results/$it") }
 
     assertDirectoriesExist(*testReportDirs.toTypedArray())
 
-    val actualTestResults = readAndCleanupTestResults(testReportDirs, projectPath)
+    val actualTestResults = readAndCleanupTestResults(testReportDirs, projectPath, cleanupStdOut)
     val expectedTestResults = prettyPrintXml(expectedTestReport.readText())
 
     assertEquals(expectedTestResults, actualTestResults)

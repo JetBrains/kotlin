@@ -7,17 +7,12 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
-import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCommandLineArguments
-import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
-import org.jetbrains.kotlin.gradle.native.configureJvmMemory
-import org.jetbrains.kotlin.gradle.native.transformNativeTestProject
-import org.jetbrains.kotlin.gradle.native.transformNativeTestProjectWithPluginDsl
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.testbase.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
@@ -1790,5 +1785,12 @@ open class NewMultiplatformIT : BaseGradleIT() {
         HostManager.hostIsMingw -> "mingwX64"
         HostManager.hostIsMac -> "macosX64"
         else -> throw AssertionError("Host ${HostManager.host} is not supported for this test")
+    }
+
+    companion object {
+        fun List<String>.containsSequentially(vararg elements: String): Boolean {
+            check(elements.isNotEmpty())
+            return Collections.indexOfSubList(this, elements.toList()) != -1
+        }
     }
 }

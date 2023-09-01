@@ -558,7 +558,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName).orNull
         if (deprecatedProperty != null) {
-            project.reportDiagnosticOncePerBuild(KotlinToolingDiagnostics.DeprecatedPropertyWithReplacement(deprecatedProperty, propName))
+            project.reportDiagnosticOncePerBuild(KotlinToolingDiagnostics.DeprecatedPropertyWithReplacement(deprecatedPropName, propName))
         }
         return property(propName).orNull ?: deprecatedProperty
     }

@@ -705,24 +705,10 @@ class CocoaPodsIT : KGPBaseTest() {
 
                 assertTasksExecuted(":cinteropSDWebImageIOS")
 
-                // TODO(Dmitrii Krasnov): rewrite it, when GeneralNativeIT will be migrated to new test dsl
-                assertOutputContains(
-                    """
-                    |	-linker-option
-                    |	-framework
-                    |	-linker-option
-                    |	AFNetworking
-                    """.trimMargin()
-                )
-
-                assertOutputContains(
-                    """
-                    |	-linker-option
-                    |	-framework
-                    |	-linker-option
-                    |	SSZipArchive
-                    """.trimMargin()
-                )
+                extractNativeTasksCommandLineArgumentsFromOutput(":linkPodDebugFrameworkIOS") {
+                    assertCommandLineArgumentsContainSequentially("-linker-option", "-framework", "-linker-option", "AFNetworking")
+                    assertCommandLineArgumentsContainSequentially("-linker-option", "-framework", "-linker-option", "SSZipArchive")
+                }
             }
         }
     }

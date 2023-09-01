@@ -304,12 +304,14 @@ open class GradleProject(
 
     fun classesDir(
         sourceSet: String = "main",
-        language: String = "kotlin",
-    ): Path = projectPath.resolve("build/classes/$language/$sourceSet/")
+        targetName: String? = null,
+        language: String = "kotlin"
+    ): Path = projectPath.resolve("build/classes/$language/${targetName.orEmpty()}/$sourceSet/")
 
     fun kotlinClassesDir(
         sourceSet: String = "main",
-    ): Path = classesDir(sourceSet, language = "kotlin")
+        targetName: String? = null
+    ): Path = classesDir(sourceSet, targetName, language = "kotlin")
 
     fun javaClassesDir(
         sourceSet: String = "main",
@@ -328,6 +330,9 @@ open class GradleProject(
     ): List<Path> = files.map { projectPath.relativize(it) }
 }
 
+/**
+ * You need at least [TestVersions.Gradle.G_7_0] for supporting environment variables with gradle runner
+ */
 @JvmInline
 value class EnvironmentalVariables @EnvironmentalVariablesOverride constructor(val environmentalVariables: Map<String, String> = emptyMap()) {
     @EnvironmentalVariablesOverride constructor(vararg environmentVariables: Pair<String, String>) : this(mapOf(*environmentVariables))
@@ -578,7 +583,6 @@ internal fun Path.enableAndroidSdk() {
     acceptAndroidSdkLicenses(androidSdk)
     applyAndroidTestFixes()
 }
-
 
 internal fun Path.enableCacheRedirector() {
     // Path relative to the current gradle module project dir

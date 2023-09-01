@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
 
@@ -149,21 +148,6 @@ fun BuildResult.assertTasksPackedToCache(vararg tasks: String) {
         assertOutputContains("Stored cache entry for task '$it' with cache key ")
     }
 }
-
-/**
- * Asserts classpath of the given K/N compiler tool for given tasks' paths.
- *
- * Note: Log level of output must be set to [LogLevel.DEBUG].
- *
- * @param tasksPaths tasks' paths, for which classpath should be checked with give assertions
- * @param toolName name of build tool
- * @param assertions assertions, with will be applied to each classpath of each given task
- */
-fun BuildResult.assertNativeTasksClasspath(
-    vararg tasksPaths: String,
-    toolName: NativeToolKind = NativeToolKind.KONANC,
-    assertions: (List<String>) -> Unit,
-) = tasksPaths.forEach { taskPath -> assertions(extractNativeCompilerClasspath(getOutputForTask(taskPath), toolName)) }
 
 /**
  * Builds test project with 'tasks --all' arguments and then

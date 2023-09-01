@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.api.JavaVersion
-import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -460,32 +459,23 @@ class AppleFrameworkIT : KGPBaseTest() {
                 ":iosApp:dependencyInsight", "--configuration", configuration, "--dependency", "iosLib"
             )
 
-            fun variant(variantName: String) =
-                if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_7_5)) {
-                    "Variant $variantName"
-                } else {
-                    "variant \"$variantName\""
-                }
-
-            fun BuildResult.assertContainsVariant(variantName: String) = assertOutputContains(variant(variantName))
-
             subProject("iosApp").buildGradleKts.replaceText("<applePluginTestVersion>", "\"${TestVersions.AppleGradlePlugin.V222_0_21}\"")
 
             build(*dependencyInsight("iosAppIosX64DebugImplementation")) {
-                assertContainsVariant("mainDynamicDebugFrameworkIos")
+                assertOutputContainsNativeFrameworkVariant("mainDynamicDebugFrameworkIos", gradleVersion)
             }
 
             build(*dependencyInsight("iosAppIosX64ReleaseImplementation")) {
-                assertContainsVariant("mainDynamicReleaseFrameworkIos")
+                assertOutputContainsNativeFrameworkVariant("mainDynamicReleaseFrameworkIos", gradleVersion)
             }
 
             // NB: '0' is required at the end since dependency is added with custom attribute, and it creates new configuration
             build(*dependencyInsight("iosAppIosX64DebugImplementation0"), "-PmultipleFrameworks") {
-                assertContainsVariant("mainStaticDebugFrameworkIos")
+                assertOutputContainsNativeFrameworkVariant("mainStaticDebugFrameworkIos", gradleVersion)
             }
 
             build(*dependencyInsight("iosAppIosX64ReleaseImplementation0"), "-PmultipleFrameworks") {
-                assertOutputDoesNotContain(variant("mainStaticReleaseFrameworkIos"))
+                assertOutputContainsNativeFrameworkVariant("mainStaticReleaseFrameworkIos", gradleVersion)
             }
         }
     }

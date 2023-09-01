@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
-import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import java.io.File
 import java.nio.file.Path

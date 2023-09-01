@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.capitalize
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests

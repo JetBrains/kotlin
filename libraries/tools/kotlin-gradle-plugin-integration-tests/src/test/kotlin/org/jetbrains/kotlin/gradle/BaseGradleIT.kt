@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.RunnerWithMuteInDatabase
 import org.junit.After
 import org.junit.AfterClass
@@ -273,7 +274,7 @@ abstract class BaseGradleIT {
         val useParsableDiagnosticsFormatting: Boolean = true,
         val showDiagnosticsStacktrace: Boolean? = false, // false by default to not clutter the testdata + stacktraces change often
         val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
-        val konanDataDir: Path = Paths.get("build/.konan"),
+        val konanDataDir: Path = konanDir,
     ) {
         val safeAndroidGradlePluginVersion: AGPVersion
             get() = androidGradlePluginVersion ?: error("AGP version is expected to be set")
@@ -847,6 +848,68 @@ abstract class BaseGradleIT {
         assertEquals(expectedTestResults, actualTestResults)
     }
 
+    /**
+     * Filter output for specific task with given [taskPath]
+     *
+     * Requires using [LogLevel.DEBUG].
+     */
+    fun CompiledProject.getOutputForTask(taskPath: String): String = getOutputForTask(taskPath, output)
+
+    fun CompiledProject.withNativeCommandLineArguments(
+        vararg taskPaths: String,
+        toolName: NativeToolKind = NativeToolKind.KONANC,
+        check: (List<String>) -> Unit,
+    ) = taskPaths.forEach { taskPath -> check(extractNativeCompilerCommandLineArguments(getOutputForTask(taskPath), toolName)) }
+
+    internal fun transformNativeTestProject(
+        projectName: String,
+        wrapperVersion: GradleVersionRequired = defaultGradleVersion,
+        directoryPrefix: String? = null,
+    ): BaseGradleIT.Project {
+        val project = Project(projectName, wrapperVersion, directoryPrefix = directoryPrefix)
+        project.setupWorkingDir()
+        project.configureSingleNativeTarget()
+        project.gradleProperties().apply {
+            configureJvmMemory()
+            disableKotlinNativeCaches()
+        }
+        return project
+    }
+
+    internal fun transformNativeTestProjectWithPluginDsl(
+        projectName: String,
+        wrapperVersion: GradleVersionRequired = defaultGradleVersion,
+        directoryPrefix: String? = null,
+    ): BaseGradleIT.Project {
+        val project = transformProjectWithPluginsDsl(projectName, wrapperVersion, directoryPrefix = directoryPrefix)
+        project.configureSingleNativeTarget()
+        project.gradleProperties().apply {
+            configureJvmMemory()
+            disableKotlinNativeCaches()
+        }
+        return project
+    }
+
+    internal fun File.configureJvmMemory() {
+        appendText("\norg.gradle.jvmargs=-Xmx1g\n")
+    }
+
+    internal fun File.disableKotlinNativeCaches() {
+        appendText("\nkotlin.native.cacheKind=none\n")
+    }
+
+    private val SINGLE_NATIVE_TARGET_PLACEHOLDER = "<SingleNativeTarget>"
+
+    private fun Project.configureSingleNativeTarget(preset: String = HostManager.host.presetName) {
+        projectDir.walk()
+            .filter { it.isFile && (it.name == "build.gradle.kts" || it.name == "build.gradle") }
+            .forEach { file ->
+                file.modify {
+                    it.replace(SINGLE_NATIVE_TARGET_PLACEHOLDER, preset)
+                }
+            }
+    }
+
     private fun Project.createGradleTailParameters(options: BuildOptions, params: Array<out String> = arrayOf()): List<String> =
         params.toMutableList().apply {
             when (minLogLevel) {
@@ -939,7 +1002,7 @@ abstract class BaseGradleIT {
                 add("-Pkotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError")
             }
 
-            add("-Pkonan.data.dir=${options.konanDataDir.absolutePathString()}")
+            add("-Pkonan.data.dir=${options.konanDataDir.absolutePathString().normalize()}")
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
             add("--console=plain")

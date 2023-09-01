@@ -28,7 +28,6 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
                 // https://docs.gradle.org/8.0/release-notes.html#kotlin-dsl-updated-to-kotlin-api-level-1.8 ,
                 // and it registers old service, so we don't need check with re-registering old version service.
                 if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
-                    // TODO(Dmitrii Krasnov): you can remove this check, when min gradle version becomes 8 or greater
                     //kotlin 1.4 in kotlinDsl does not create jmx service yet
                     assertOutputContains("Register JMX service for backward compatibility")
                 }

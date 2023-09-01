@@ -546,7 +546,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
             }
 
             build(":compileKotlinLinuxX64") {
-                extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlinLinuxX64") {
+                extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlinLinuxX64", logLevel = LogLevel.DEBUG) {
                     assertCommandLineArgumentsContain("-language-version", "1.7")
                     assertCommandLineArgumentsContain("-api-version", "1.7")
                     assertCommandLineArgumentsContain("-progressive")

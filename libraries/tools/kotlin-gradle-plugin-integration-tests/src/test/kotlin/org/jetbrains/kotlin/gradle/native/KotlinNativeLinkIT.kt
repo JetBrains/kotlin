@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.native
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -30,8 +29,7 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
     fun shouldUseCompilationFreeCompilerArgs(gradleVersion: GradleVersion) {
         nativeProject(
             "native-link-simple",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+            gradleVersion
         ) {
             buildGradle.appendText(
                 """
@@ -70,7 +68,6 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
             "kt-60839-native-link-cache-builder",
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                logLevel = LogLevel.DEBUG,
                 // KT-60839 only reproduces when the build cache is enabled,
                 // but we must ignore it when running this test in order to
                 // ensure we actually try to pass -Xpartial-linkage to konanc.

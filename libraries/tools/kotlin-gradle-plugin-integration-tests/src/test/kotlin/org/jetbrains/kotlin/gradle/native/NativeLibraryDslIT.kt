@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.native
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
@@ -57,7 +56,7 @@ class NativeLibraryDslIT : KGPBaseTest() {
     @GradleTest
     fun shouldLinkSharedLibrariesFromSingleModule(gradleVersion: GradleVersion) {
         nativeProject("new-kn-library-dsl", gradleVersion) {
-            build(":shared:assembleMylibDebugSharedLibraryLinuxX64", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build(":shared:assembleMylibDebugSharedLibraryLinuxX64") {
                 assertTasksExecuted(
                     ":shared:compileKotlinLinuxX64",
                     ":shared:assembleMylibDebugSharedLibraryLinuxX64"
@@ -80,7 +79,7 @@ class NativeLibraryDslIT : KGPBaseTest() {
     fun shouldLinkSharedLibrariesFromSingleModuleWithAdditionalLinkArgs(gradleVersion: GradleVersion) {
         nativeProject("new-kn-library-dsl", gradleVersion) {
             gradleProperties.appendText("\nkotlin.native.linkArgs=-Xfoo=bar -Xbaz=qux")
-            build(":shared:assembleMylibDebugSharedLibraryLinuxX64", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build(":shared:assembleMylibDebugSharedLibraryLinuxX64") {
                 assertTasksExecuted(
                     ":shared:compileKotlinLinuxX64",
                     ":shared:assembleMylibDebugSharedLibraryLinuxX64"

@@ -99,7 +99,7 @@ class ResourcesIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build("jar", forceOutput = true) {
+            build("jar") {
                 assertFileInProjectExists("build/libs/simpleProject.jar")
                 projectPath.resolve("build/libs/simpleProject.jar").assertZipArchiveContainsFilesOnce(
                     listOf(mainResFile.name, additionalResFile.name)

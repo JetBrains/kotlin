@@ -223,9 +223,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
-            // We need to get specific task output as commonizer may run first producing
-            // arguments as well in output
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             buildGradle.appendText(
                 //language=Groovy
@@ -256,7 +253,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
 
             build("compileNativeMainKotlinMetadata") {
                 assertTasksExecuted(":compileNativeMainKotlinMetadata")
-                val taskOutput = getOutputForTask(":compileNativeMainKotlinMetadata")
+                val taskOutput = getOutputForTask(":compileNativeMainKotlinMetadata", logLevel = LogLevel.INFO)
                 val arguments = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, taskOutput)
                 assertEquals(
                     setOf("another.custom.UnderOptIn", "my.custom.OptInAnnotation"), arguments.optIn?.toSet(),
@@ -266,7 +263,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
 
             build("compileKotlinLinux64") {
                 assertTasksExecuted(":compileKotlinLinux64")
-                val taskOutput = getOutputForTask(":compileKotlinLinux64")
+                val taskOutput = getOutputForTask(":compileKotlinLinux64", logLevel = LogLevel.INFO)
                 val arguments = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, taskOutput)
                 assertEquals(
                     setOf("another.custom.UnderOptIn", "my.custom.OptInAnnotation"), arguments.optIn?.toSet(),
@@ -293,7 +290,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build("compileKotlinHost", forceOutput = true) {
+            build("compileKotlinHost") {
                 val expectedOptIn = listOf("kotlin.RequiresOptIn", "my.CustomOptIn")
                 val arguments = parseCompilerArguments<K2NativeCompilerArguments>()
                 if (arguments.optIn?.toList() != listOf("kotlin.RequiresOptIn", "my.CustomOptIn")) {
@@ -446,9 +443,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
-            // We need to get specific task output as commonizer may run first producing
-            // arguments as well in output
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             buildGradle.appendText(
                 //language=Groovy
@@ -492,9 +486,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
-            // We need to get specific task output as commonizer may run first producing
-            // arguments as well in output
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             buildGradle.modify {
                 val buildScript = """

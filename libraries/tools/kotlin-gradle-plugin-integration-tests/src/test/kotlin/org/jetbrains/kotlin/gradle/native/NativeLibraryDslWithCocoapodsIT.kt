@@ -185,7 +185,7 @@ class NativeLibraryDslWithCocoapodsIT : KGPBaseTest() {
 
     private fun buildNewKnLibraryDslCocoapodsProjectWithTasks(
         gradleVersion: GradleVersion,
-        buildBlock: TestProject.() -> Unit
+        buildBlock: TestProject.() -> Unit,
     ) {
         nativeProject("new-kn-library-dsl-cocoapods", gradleVersion, test = buildBlock)
     }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
-import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.*

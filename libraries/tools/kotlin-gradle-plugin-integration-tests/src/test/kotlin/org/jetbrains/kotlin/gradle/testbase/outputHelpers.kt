@@ -10,7 +10,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.intellij.lang.annotations.Language
 
 @Language("RegExp")
-private fun taskOutputRegex(
+private fun taskOutputRegexForDebugLog(
     taskName: String,
 ) = """
     \[org\.gradle\.internal\.operations\.DefaultBuildOperationRunner] Build operation 'Task $taskName' started
@@ -20,22 +20,58 @@ private fun taskOutputRegex(
     .replace("\n", "")
     .toRegex()
 
-/**
- * Filter [BuildResult.getOutput] for specific task with given [taskPath]
- *
- * Requires using [LogLevel.DEBUG].
- */
-fun BuildResult.getOutputForTask(taskPath: String): String = getOutputForTask(taskPath, output)
+@Language("RegExp")
+private fun taskOutputRegexForInfoLog(
+    taskName: String,
+) = """
+    ^\s*$
+    ^> Task $taskName$
+    ([\s\S]+?)
+    ^\s*$
+    """.trimIndent()
+    .toRegex(RegexOption.MULTILINE)
 
 /**
- * Filter give output for specific task with given [taskPath]
+ * Gets the output produced by a specific task during a Gradle build.
  *
- * Requires using [LogLevel.DEBUG].
+ * @param taskPath The path of the task whose output should be retrieved.
+ * @param logLevel The given output contains no more than the [logLevel] logs.
+ *
+ * @return The output produced by the specified task during the build.
+ *
+ * @throws IllegalStateException if the specified task path does not match any tasks in the build.
  */
-fun getOutputForTask(taskPath: String, output: String): String = taskOutputRegex(taskPath)
+fun BuildResult.getOutputForTask(taskPath: String, logLevel: LogLevel = LogLevel.DEBUG): String =
+    getOutputForTask(taskPath, output, logLevel)
+
+/**
+ * Gets the output produced by a specific task during a Gradle build.
+ *
+ * @param taskPath The path of the task whose output should be retrieved.
+ * @param output The output from which we should extract task's output
+ * @param logLevel The given output contains no more than the [logLevel] logs.
+ *
+ * @return The output produced by the specified task during the build.
+ *
+ * @throws IllegalStateException if the specified task path does not match any tasks in the build.
+ */
+fun getOutputForTask(taskPath: String, output: String, logLevel: LogLevel = LogLevel.DEBUG): String = (
+        when (logLevel) {
+            LogLevel.INFO -> taskOutputRegexForInfoLog(taskPath)
+            LogLevel.DEBUG -> taskOutputRegexForDebugLog(taskPath)
+            else -> throw throw IllegalStateException("Unsupported log lever for task output was given: $logLevel")
+        })
     .find(output)
     ?.let { it.groupValues[1] }
-    ?: error("Could not find output for task $taskPath")
+    ?: error(
+        """
+        Could not find output for task $taskPath.
+        =================
+        Build output is:
+        $output 
+        =================     
+        """.trimIndent()
+    )
 
 class CommandLineArguments(
     val args: List<String>,
@@ -49,15 +85,18 @@ class CommandLineArguments(
  *
  * @param tasksPaths The paths of the tasks for which the command line arguments should be checked against the provided assertions.
  * @param toolName The name of the build tool used.
+ * @param logLevel The given output contains no more than the [logLevel] logs.
  * @param assertions The assertions to be applied to each command line argument of each given task.
+ *                   These assertions validate the expected properties of the command line arguments.
  *                   These assertions validate the expected properties of the command line arguments.
  */
 fun BuildResult.extractNativeTasksCommandLineArgumentsFromOutput(
     vararg tasksPaths: String,
     toolName: NativeToolKind = NativeToolKind.KONANC,
+    logLevel: LogLevel = LogLevel.INFO,
     assertions: CommandLineArguments.() -> Unit,
 ) = tasksPaths.forEach { taskPath ->
-    val taskOutput = getOutputForTask(taskPath)
+    val taskOutput = getOutputForTask(taskPath, logLevel)
     val commandLineArguments = extractNativeCompilerCommandLineArguments(taskOutput, toolName)
     assertions(
         CommandLineArguments(commandLineArguments, this)

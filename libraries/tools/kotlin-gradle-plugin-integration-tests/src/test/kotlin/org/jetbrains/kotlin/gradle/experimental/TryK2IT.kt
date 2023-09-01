@@ -144,7 +144,7 @@ class TryK2IT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            buildAndFail("build", forceOutput = true) {
+            buildAndFail("build") {
                 assertOutputContains(
                     """
                     |##### 'kotlin.experimental.tryK2' results #####

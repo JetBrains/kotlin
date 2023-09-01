@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import java.util.*
 
@@ -35,7 +36,6 @@ fun extractNativeCompilerCommandLineArguments(taskOutput: String, toolName: Nati
 
 enum class NativeToolKind(val title: String) {
     KONANC("konanc"),
-    GENERATE_PLATFORM_LIBRARIES("generatePlatformLibraries"),
     C_INTEROP("cinterop")
 }
 
@@ -69,4 +69,23 @@ fun extractNativeToolSettings(
         emptySequence() // No parameters.
     else
         settings.drop(1).map { it.trim() }.takeWhile { it != "]" }
+}
+
+internal object MPPNativeTargets {
+    val current = when (HostManager.host) {
+        KonanTarget.LINUX_X64 -> "linux64"
+        KonanTarget.MACOS_X64 -> "macos64"
+        KonanTarget.MACOS_ARM64 -> "macosArm64"
+        KonanTarget.MINGW_X64 -> "mingw64"
+        else -> error("Unsupported host")
+    }
+
+    val unsupported = when {
+        HostManager.hostIsMingw -> setOf("macos64")
+        HostManager.hostIsLinux -> setOf("macos64")
+        HostManager.hostIsMac -> emptySet()
+        else -> error("Unknown host")
+    }
+
+    val supported = listOf("linux64", "macos64", "mingw64").filter { !unsupported.contains(it) }
 }

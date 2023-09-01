@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.native
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -14,8 +13,6 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Tests for K/N builds with embeddable compiler jar")
 @NativeGradlePluginTests
 internal class NativeEmbeddableCompilerJarIT : KGPBaseTest() {
-
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
 
     private fun String.isRegularJar() = this.endsWith("/kotlin-native.jar")
     private fun String.isEmbeddableJar() = this.endsWith("/kotlin-native-compiler-embeddable.jar")
