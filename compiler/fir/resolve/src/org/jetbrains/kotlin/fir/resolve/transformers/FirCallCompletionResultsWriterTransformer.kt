@@ -180,8 +180,7 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         for (postponedAccess in subCandidate.postponedAccesses) {
-            postponedAccess.resultType =
-                postponedAccess.resultType.withReplacedConeType(finallySubstituteOrNull(postponedAccess.typeRef.coneType))
+            postponedAccess.replaceConeTypeOrNull(finallySubstituteOrSelf(postponedAccess.resolvedType))
 
             if (postponedAccess is FirSmartCastExpression) {
                 postponedAccess.replaceSmartcastType(

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -40,7 +39,7 @@ class FirBuilderInferenceSession2(
         call.candidate()?.usedOuterCs != true
 
     override fun handleQualifiedAccess(qualifiedAccessExpression: FirExpression, data: ResolutionMode) {
-        if (qualifiedAccessExpression.resultType.containsNotFixedTypeVariables() && (qualifiedAccessExpression as? FirResolvable)?.candidate() == null) {
+        if (qualifiedAccessExpression.resolvedType.containsNotFixedTypeVariables() && (qualifiedAccessExpression as? FirResolvable)?.candidate() == null) {
             qualifiedAccessesToProcess.add(qualifiedAccessExpression)
             outerCandidate.postponedAccesses += qualifiedAccessExpression
 
@@ -75,13 +74,13 @@ class FirBuilderInferenceSession2(
     ) {
         val additionalBindings = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
         if (resolutionMode == ResolutionMode.ReceiverResolution) {
-            fixVariablesForMemberScope(resultType.coneType, outerCandidate)?.let { additionalBindings += it }
+            fixVariablesForMemberScope(resolvedType, outerCandidate)?.let { additionalBindings += it }
         }
 
         val updatedType =
-            (outerSystem.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor).substituteOrNull(typeRef.coneType)
+            (outerSystem.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor).substituteOrNull(resolvedType)
         if (updatedType != null) {
-            resultType = resultType.withReplacedConeType(updatedType)
+            replaceConeTypeOrNull(updatedType)
         }
     }
 
@@ -139,17 +138,17 @@ class FirBuilderInferenceSession2(
     }
 
     private fun Candidate.needsToBePostponed(): Boolean {
-        if (dispatchReceiver?.typeRef?.containsNotFixedTypeVariables() == true) return true
-        if (givenExtensionReceiverOptions.any { it.typeRef.containsNotFixedTypeVariables() }) return true
+        if (dispatchReceiver?.resolvedType?.containsNotFixedTypeVariables() == true) return true
+        if (givenExtensionReceiverOptions.any { it.resolvedType.containsNotFixedTypeVariables() }) return true
         if (callInfo.arguments.any { it in qualifiedAccessesToProcess }) return true
 
         return false
     }
 
-    private fun FirTypeRef.containsNotFixedTypeVariables(): Boolean =
-        coneTypeOrNull?.contains {
+    private fun ConeKotlinType.containsNotFixedTypeVariables(): Boolean =
+        contains {
             it is ConeTypeVariableType && it.lookupTag in outerSystem.allTypeVariables
-        } == true
+        }
 
     // TODO: Get rid of them
 
