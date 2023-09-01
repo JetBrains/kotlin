@@ -1027,7 +1027,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         val result = variableAssignment.transformRValue(
             transformer,
-            if (variableAssignment.lValue.typeRef.coneTypeOrNull?.contains { it is ConeTypeVariableType } == true)
+            if (variableAssignment.lValue.resolvedType.contains { it is ConeTypeVariableType })
                 ResolutionMode.ContextIndependent
             else
                 withExpectedType(

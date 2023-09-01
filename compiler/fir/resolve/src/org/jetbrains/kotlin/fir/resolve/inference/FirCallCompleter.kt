@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferReceiverParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -407,10 +406,10 @@ class FirCallCompleter(
         // We only run lambda completion from ConstraintSystemCompletionContext.analyzeRemainingNotAnalyzedPostponedArgument when they are
         // left uninferred.
         // Currently, we use stub types for builder inference, so CANNOT_INFER_PARAMETER_TYPE is the only possible result here.
-        if (this is ConeTypeVariableType) {
-            val diagnostic = valueParameter?.let(::ConeCannotInferValueParameterType) ?: ConeCannotInferReceiverParameterType()
-            return ConeErrorType(diagnostic)
-        }
+//        if (this is ConeTypeVariableType) {
+//            val diagnostic = valueParameter?.let(::ConeCannotInferValueParameterType) ?: ConeCannotInferReceiverParameterType()
+//            return ConeErrorType(diagnostic)
+//        }
 
         return session.typeApproximator.approximateToSuperType(
             this, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
