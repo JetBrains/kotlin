@@ -23,34 +23,34 @@ object KotlinContractFunction : SpecialFunction {
 }
 
 interface SpecialFunctionImplementation : SpecialFunction {
-    fun convertCall(args: List<Exp>, ctx: StmtConversionContext): Exp
+    fun convertCall(args: List<Exp>, ctx: StmtConversionContext<ResultTrackingContext>): Exp
 }
 
 object KotlinIntPlusFunctionImplementation : SpecialFunctionImplementation {
     override val callableId = CallableId(FqName("kotlin"), FqName("Int"), Name.identifier("plus"))
 
-    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext): Exp =
+    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext<ResultTrackingContext>): Exp =
         Add(args[0], args[1])
 }
 
 object KotlinIntMinusFunctionImplementation : SpecialFunctionImplementation {
     override val callableId = CallableId(FqName("kotlin"), FqName("Int"), Name.identifier("minus"))
 
-    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext): Exp =
+    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext<ResultTrackingContext>): Exp =
         Sub(args[0], args[1])
 }
 
 object KotlinIntTimesFunctionImplementation : SpecialFunctionImplementation {
     override val callableId = CallableId(FqName("kotlin"), FqName("Int"), Name.identifier("times"))
 
-    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext): Exp =
+    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext<ResultTrackingContext>): Exp =
         Mul(args[0], args[1])
 }
 
 object KotlinIntDivFunctionImplementation : SpecialFunctionImplementation {
     override val callableId = CallableId(FqName("kotlin"), FqName("Int"), Name.identifier("div"))
 
-    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext): Exp {
+    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext<ResultTrackingContext>): Exp {
         ctx.addStatement(Stmt.Inhale(NeCmp(args[1], IntLit(0))))
         return Div(args[0], args[1])
     }
@@ -59,7 +59,7 @@ object KotlinIntDivFunctionImplementation : SpecialFunctionImplementation {
 object KotlinBooleanNotFunctionImplementation : SpecialFunctionImplementation {
     override val callableId = CallableId(FqName("kotlin"), FqName("Boolean"), Name.identifier("not"))
 
-    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext): Exp =
+    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext<ResultTrackingContext>): Exp =
         Not(args[0])
 }
 

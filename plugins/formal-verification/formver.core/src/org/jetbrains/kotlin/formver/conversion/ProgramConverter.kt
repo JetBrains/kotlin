@@ -110,7 +110,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             }
 
             val bodySeqn = body?.let {
-                val ctx = StmtConverter(methodCtx, SeqnBuilder())
+                val ctx = StmtConverter(methodCtx, SeqnBuilder(), NoopResultTrackerFactory)
                 ctx.convert(body)
                 ctx.block
             }

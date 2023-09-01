@@ -8,38 +8,24 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 
-interface StmtConversionContext : MethodConversionContext, SeqnBuildContext {
-    val resultExpr: Exp
+interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConversionContext, SeqnBuildContext, ResultTrackingContext {
+    val resultCtx: RTC
+
     fun convert(stmt: FirStatement): Exp
 
     fun convertAndCapture(exp: FirExpression) {
-        convert(exp)
+        resultCtx.capture(convert(exp), embedType(exp))
     }
 
-    fun newBlock(): StmtConversionContext
-    fun newBlockShareResult(): StmtConversionContext = newBlock()
-    fun withResult(type: TypeEmbedding): StmtWithResultConversionContext
+    fun newBlock(): StmtConversionContext<RTC>
+    fun withoutResult(): StmtConversionContext<NoopResultTracker>
+    fun withResult(type: TypeEmbedding): StmtConversionContext<VarResultTrackingContext>
 
-    fun withResult(type: TypeEmbedding, action: StmtWithResultConversionContext.() -> Unit): Exp {
+    fun withResult(type: TypeEmbedding, action: StmtConversionContext<VarResultTrackingContext>.() -> Unit): Exp {
         val ctx = withResult(type)
         ctx.action()
-        return ctx.resultVar.toLocalVar()
+        return ctx.resultExp
     }
-}
-
-interface StmtWithResultConversionContext : StmtConversionContext {
-    val resultVar: VariableEmbedding
-    override val resultExpr: Exp
-        get() = resultVar.toLocalVar()
-
-    fun captureResult(exp: Exp, expType: TypeEmbedding)
-
-    override fun convertAndCapture(exp: FirExpression) {
-        captureResult(convert(exp), embedType(exp))
-    }
-
-    override fun newBlockShareResult(): StmtWithResultConversionContext
 }
