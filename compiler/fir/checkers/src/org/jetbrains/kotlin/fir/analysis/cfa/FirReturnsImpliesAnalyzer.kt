@@ -54,11 +54,25 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         if (function !is FirContractDescriptionOwner || function.contractDescription.source == null) return
         val effects = function.contractDescription.effects ?: return
         val dataFlowInfo = function.controlFlowGraphReference?.dataFlowInfo ?: return
+
+        val argumentIdentifiers = Array(function.valueParameters.size + 1) { i ->
+            val parameterSymbol = if (i > 0) {
+                function.valueParameters[i - 1].symbol
+            } else {
+                if (function.symbol is FirPropertyAccessorSymbol) {
+                    context.containingProperty?.symbol
+                } else {
+                    null
+                } ?: function.symbol
+            }
+            Identifier(parameterSymbol, null, null)
+        }
+
         for (firEffect in effects) {
             val coneEffect = firEffect.effect as? ConeConditionalEffectDeclaration ?: continue
             val returnValue = coneEffect.effect as? ConeReturnsEffectDeclaration ?: continue
             val wrongCondition = graph.exitNode.previousCfgNodes.any {
-                isWrongConditionOnNode(it, coneEffect, returnValue, function, logicSystem, dataFlowInfo, context)
+                isWrongConditionOnNode(it, coneEffect, returnValue, function, logicSystem, dataFlowInfo, argumentIdentifiers, context)
             }
             if (wrongCondition) {
                 // TODO, KT-59813: reportOn(firEffect.source, ...)
@@ -74,6 +88,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         function: FirFunction,
         logicSystem: LogicSystem,
         dataFlowInfo: DataFlowInfo,
+        argumentIdentifiers: Array<Identifier>,
         context: CheckerContext
     ): Boolean {
         val builtinTypes = context.session.builtinTypes
@@ -87,7 +102,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
         if (isReturn && resultExpression is FirWhenExpression) {
             return node.collectBranchExits().any {
-                isWrongConditionOnNode(it, effectDeclaration, effect, function, logicSystem, dataFlowInfo, context)
+                isWrongConditionOnNode(it, effectDeclaration, effect, function, logicSystem, dataFlowInfo, argumentIdentifiers, context)
             }
         }
 
@@ -113,18 +128,8 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         // TODO, KT-59814: if this is not a top-level function, `FirDataFlowAnalyzer` has erased its value parameters
         //  from `dataFlowInfo.variableStorage` for some reason, so its `getLocalVariable` doesn't work.
         val knownVariables = flow.knownVariables.associateBy { it.identifier }
-        // TODO, KT-59815: these should be the same on all return paths, so maybe don't recompute them every time?
-        val argumentVariables = Array(function.valueParameters.size + 1) { i ->
-            val parameterSymbol = if (i > 0) {
-                function.valueParameters[i - 1].symbol
-            } else {
-                if (function.symbol is FirPropertyAccessorSymbol) {
-                    context.containingProperty?.symbol
-                } else {
-                    null
-                } ?: function.symbol
-            }
-            val identifier = Identifier(parameterSymbol, null, null)
+        val argumentVariables = Array(argumentIdentifiers.size) { i ->
+            val identifier = argumentIdentifiers[i]
             // Might be unknown if there are no statements made about that parameter, but it's still possible that trivial
             // contracts are valid. E.g. `returns() implies (x is String)` when `x`'s *original type* is already `String`.
             knownVariables[identifier] ?: RealVariable(identifier, i == 0, null, i, PropertyStability.STABLE_VALUE)
