@@ -411,6 +411,8 @@ class StringTest {
         assertEquals("3+", s.substringAfterLast(","))
         assertEquals("-1", s.substringBefore(","))
         assertEquals("-1,22", s.substringBeforeLast(","))
+        assertEquals("-1,22,3+", s.substringBeforeLast(""))
+        assertEquals("", s.substringAfterLast(""))
 
         // non-existing delimiter
         assertEquals("", s.substringAfter("+"))
@@ -435,6 +437,8 @@ class StringTest {
         assertEquals("/user/folder/another.doc", s.replaceAfterLast("/", "another.doc"))
         assertEquals("new name.extension", s.replaceBefore(".", "new name"))
         assertEquals("/new/path/file.extension", s.replaceBeforeLast("/", "/new/path"))
+        assertEquals("new", s.replaceBeforeLast("", "new"))
+        assertEquals("/user/folder/file.extension.append", s.replaceAfterLast("", ".append"))
 
         // non-existing delimiter
         assertEquals("/user/folder/file.extension", s.replaceAfter("=", "doc"))
@@ -734,6 +738,7 @@ class StringTest {
         assertEquals(-1, string.lastIndexOfAny(substrings, 1))
 
         assertEquals(0, string.indexOfAny(listOf("dab", "")), "empty strings are not ignored")
+        assertEquals(11, string.lastIndexOfAny(listOf("dab", "")), "empty strings are not ignored")
         assertEquals(-1, string.indexOfAny(listOf()))
     }
 
@@ -762,6 +767,7 @@ class StringTest {
         assertEquals(null, string.findLastAnyOf(substrings, 1))
 
         assertEquals(0 to "", string.findAnyOf(listOf("dab", "")), "empty strings are not ignored")
+        assertEquals(11 to "", string.findLastAnyOf(listOf("dab", "")), "empty strings are not ignored")
         assertEquals(null, string.findAnyOf(listOf()))
     }
 
@@ -819,6 +825,10 @@ class StringTest {
         assertEquals(1, string.indexOf("ced"))
         assertEquals(4, string.indexOf("ed", 3))
         assertEquals(-1, string.indexOf("abcdefgh"))
+
+        assertEquals(4, string.lastIndexOf("ed"))
+        assertEquals(2, string.lastIndexOf("ed", 3))
+        assertEquals(6, string.lastIndexOf(""))
     }
 
     @Test fun indexOfStringIgnoreCase() = withOneCharSequenceArg("bceded") { string ->

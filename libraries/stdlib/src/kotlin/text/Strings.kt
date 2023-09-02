@@ -952,7 +952,7 @@ public fun CharSequence.indexOfAny(chars: CharArray, startIndex: Int = 0, ignore
  * @return An index of the last occurrence of matched character from [chars] or -1 if none of [chars] are found.
  *
  */
-public fun CharSequence.lastIndexOfAny(chars: CharArray, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
+public fun CharSequence.lastIndexOfAny(chars: CharArray, startIndex: Int = length, ignoreCase: Boolean = false): Int {
     if (!ignoreCase && chars.size == 1 && this is String) {
         val char = chars.single()
         return nativeLastIndexOf(char, startIndex)
@@ -973,7 +973,7 @@ private fun CharSequence.indexOf(other: CharSequence, startIndex: Int, endIndex:
     val indices = if (!last)
         startIndex.coerceAtLeast(0)..endIndex.coerceAtMost(length)
     else
-        startIndex.coerceAtMost(lastIndex) downTo endIndex.coerceAtLeast(0)
+        startIndex.coerceAtMost(length) downTo endIndex.coerceAtLeast(0)
 
     if (this is String && other is String) { // smart cast
         for (index in indices) {
@@ -996,7 +996,7 @@ private fun CharSequence.findAnyOf(strings: Collection<String>, startIndex: Int,
         return if (index < 0) null else index to string
     }
 
-    val indices = if (!last) startIndex.coerceAtLeast(0)..length else startIndex.coerceAtMost(lastIndex) downTo 0
+    val indices = if (!last) startIndex.coerceAtLeast(0)..length else startIndex.coerceAtMost(length) downTo 0
 
     if (this is String) {
         for (index in indices) {
@@ -1042,7 +1042,7 @@ public fun CharSequence.findAnyOf(strings: Collection<String>, startIndex: Int =
  * the end toward the beginning of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
  */
-public fun CharSequence.findLastAnyOf(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Pair<Int, String>? =
+public fun CharSequence.findLastAnyOf(strings: Collection<String>, startIndex: Int = length, ignoreCase: Boolean = false): Pair<Int, String>? =
     findAnyOf(strings, startIndex, ignoreCase, last = true)
 
 /**
@@ -1071,7 +1071,7 @@ public fun CharSequence.indexOfAny(strings: Collection<String>, startIndex: Int 
  * the end toward the beginning of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
  */
-public fun CharSequence.lastIndexOfAny(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int =
+public fun CharSequence.lastIndexOfAny(strings: Collection<String>, startIndex: Int = length, ignoreCase: Boolean = false): Int =
     findAnyOf(strings, startIndex, ignoreCase, last = true)?.first ?: -1
 
 
@@ -1128,7 +1128,7 @@ public fun CharSequence.lastIndexOf(char: Char, startIndex: Int = lastIndex, ign
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
  * @return An index of the last occurrence of [string] or -1 if none is found.
  */
-public fun CharSequence.lastIndexOf(string: String, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
+public fun CharSequence.lastIndexOf(string: String, startIndex: Int = length, ignoreCase: Boolean = false): Int {
     return if (ignoreCase || this !is String)
         indexOf(string, startIndex, 0, ignoreCase, last = true)
     else
