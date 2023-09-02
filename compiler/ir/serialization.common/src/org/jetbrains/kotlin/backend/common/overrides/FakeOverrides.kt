@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupport
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureFactory
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
@@ -48,10 +48,10 @@ class FakeOverrideGlobalDeclarationTable(
 open class FakeOverrideDeclarationTable(
     mangler: KotlinMangler.IrMangler,
     globalTable: FakeOverrideGlobalDeclarationTable = FakeOverrideGlobalDeclarationTable(mangler),
-    signatureSerializerFactory: (PublicIdSignatureComputer, DeclarationTable) -> IdSignatureSerializer
+    signatureSerializerFactory: (PublicIdSignatureComputer, DeclarationTable) -> IdSignatureFactory
 ) : DeclarationTable(globalTable) {
     override val globalDeclarationTable: FakeOverrideGlobalDeclarationTable = globalTable
-    override val signaturer: IdSignatureSerializer = signatureSerializerFactory(globalTable.publicIdSignatureComputer, this)
+    override val signaturer: IdSignatureFactory = signatureSerializerFactory(globalTable.publicIdSignatureComputer, this)
 
     fun clear() {
         this.table.clear()
@@ -81,7 +81,7 @@ class FakeOverrideBuilder(
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: DeclarationTable = FakeOverrideDeclarationTable(mangler) { builder, table ->
-        IdSignatureSerializer(builder, table)
+        IdSignatureFactory(builder, table)
     },
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList(),
 ) : FakeOverrideBuilderStrategy(

@@ -188,7 +188,22 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
     }
 }
 
-class IdSignatureSerializer(
+/**
+ * `IdSignatureSerializer` has been renamed to [IdSignatureFactory]. The [IdSignatureSerializer] type alias is added here
+ * in place of the original `IdSignatureSerializer` class to keep source compatibility with the Compose compiler plugin
+ * (this is only needed for a short duration of time).
+ *
+ * The [Deprecated] annotation was commented out because it leads to compilation errors in Compose plugin due to the use of `-Werror`.
+ */
+//@Deprecated(
+//    message = "IdSignatureSerializer has been renamed to IdSignatureFactory." +
+//            " Need to maintain this type alias for a while to keep source compatibility with the Compose plugin.",
+//    replaceWith = ReplaceWith("IdSignatureFactory")
+//)
+@Suppress("unused")
+typealias IdSignatureSerializer = IdSignatureFactory
+
+class IdSignatureFactory(
     private val publicSignatureBuilder: PublicIdSignatureComputer,
     private val table: DeclarationTable,
     startIndex: Int

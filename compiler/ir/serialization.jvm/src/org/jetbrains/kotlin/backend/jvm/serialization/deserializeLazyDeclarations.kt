@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideDeclarationTabl
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureFactory
 import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -193,7 +193,7 @@ private fun buildFakeOverridesForLocalClasses(
 
 class PrePopulatedDeclarationTable(
     sig2symbol: Map<IdSignature, IrSymbol>
-) : FakeOverrideDeclarationTable(JvmIrMangler, signatureSerializerFactory = ::IdSignatureSerializer) {
+) : FakeOverrideDeclarationTable(JvmIrMangler, signatureSerializerFactory = ::IdSignatureFactory) {
     private val symbol2Sig = sig2symbol.entries.associate { (x, y) -> y to x }
 
     override fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? {

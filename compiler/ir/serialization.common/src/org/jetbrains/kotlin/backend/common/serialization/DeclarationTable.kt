@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureFactory
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -56,7 +56,7 @@ open class DeclarationTable(globalTable: GlobalDeclarationTable) {
     protected val table = hashMapOf<IrDeclaration, IdSignature>()
     protected open val globalDeclarationTable: GlobalDeclarationTable = globalTable
     // TODO: we need to disentangle signature construction with declaration tables.
-    open val signaturer: IdSignatureSerializer = IdSignatureSerializer(globalTable.publicIdSignatureComputer, this)
+    open val signaturer: IdSignatureFactory = IdSignatureFactory(globalTable.publicIdSignatureComputer, this)
 
     fun inFile(file: IrFile?, block: () -> Unit) {
         signaturer.inFile(file?.symbol, block)
