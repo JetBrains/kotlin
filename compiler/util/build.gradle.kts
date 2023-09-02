@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -32,4 +34,8 @@ testsJar()
 
 projectTest(parallel = true) {
     workingDir = rootDir
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-Xallow-kotlin-package"
 }
