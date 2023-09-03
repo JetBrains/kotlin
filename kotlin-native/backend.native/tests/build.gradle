@@ -6285,25 +6285,6 @@ dependencies {
     api RepoDependencies.commonDependency(project, "junit")
 }
 
-// Configure build for iOS device targets.
-if (UtilsKt.supportsRunningTestsOnDevice(target) && !UtilsKt.getCompileOnlyTests(project)) {
-    project.tasks
-            .withType(KonanTestExecutable.class)
-            .configureEach {
-                ExecutorServiceKt.configureXcodeBuild((KonanTestExecutable) it)
-            }
-    // Exclude tasks that cannot be run on device
-    project.tasks
-            .withType(KonanTest.class)
-            .matching { (it instanceof KonanLocalTest && ((KonanLocalTest) it).useTestData) ||
-                    // Filter out tests that depend on libs. TODO: copy them too
-                    it instanceof KonanInteropTest ||
-                    it instanceof KonanDynamicTest ||
-                    it instanceof KonanLinkTest
-            }
-            .configureEach { it.enabled = false }
-}
-
 project.afterEvaluate {
     // Don't treat any task as up-to-date, no matter what.
     // Note: this project should contain only test tasks, including ones that build binaries,

@@ -157,12 +157,6 @@ fun isSimulatorTarget(project: Project, target: KonanTarget): Boolean =
     project.platformManager.platform(target).targetTriple.isSimulator
 
 /**
- * Check that [target] is an Apple device.
- */
-fun supportsRunningTestsOnDevice(target: KonanTarget): Boolean =
-    target == KonanTarget.IOS_ARM32 || target == KonanTarget.IOS_ARM64
-
-/**
  * Creates a list of file paths to be compiled from the given [compile] list with regard to [exclude] list.
  */
 fun Project.getFilesToCompile(compile: List<String>, exclude: List<String>): List<String> {
