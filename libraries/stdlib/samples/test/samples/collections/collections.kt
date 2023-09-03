@@ -1033,4 +1033,69 @@ class Collections {
         }
 
     }
+
+    class BinaryOperations {
+
+        @Sample
+        fun unionOfGeneric() {
+            val unionOfArrayAndIterable = arrayOf("Apple", "Banana", "Orange", "Apple").union(
+                listOf("Orange", "Lime")
+            )
+            assertPrints(unionOfArrayAndIterable, "[Apple, Banana, Orange, Lime]")
+            val unionOfTwoIterables = listOf("Apple", "Banana", "Orange", "Apple").union(
+                listOf("Orange", "Lime")
+            )
+            assertPrints(unionOfTwoIterables, "[Apple, Banana, Orange, Lime]")
+        }
+
+        @Sample
+        fun unionOfByte() {
+            val union = byteArrayOf(1.toByte(), 2.toByte(), 3.toByte(), 1.toByte())
+                .union(listOf(2, 4))
+            assertPrints(union, "[1, 2, 3, 4]")
+        }
+
+        @Sample
+        fun unionOfShort() {
+            val union = shortArrayOf(1.toShort(), 2.toShort(), 3.toShort(), 1.toShort())
+                .union(listOf(2, 4))
+            assertPrints(union, "[1, 2, 3, 4]")
+        }
+
+        @Sample
+        fun unionOfInt() {
+            val union = intArrayOf(1, 2, 3, 1).union(listOf(2, 4))
+            assertPrints(union, "[1, 2, 3, 4]")
+        }
+
+        @Sample
+        fun unionOfLong() {
+            val union = arrayOf(1L, 2L, 3L, 1L).union(listOf(2L, 4L))
+            assertPrints(union, "[1, 2, 3, 4]")
+        }
+
+        @Sample
+        fun unionOfFloat() {
+            val union = arrayOf(1F, 2F, 3F, 1F).union(listOf(2F, 4F))
+            assertPrints(union, "[1.0, 2.0, 3.0, 4.0]")
+        }
+
+        @Sample
+        fun unionOfDouble() {
+            val union = arrayOf(1.0, 2.0, 3.0, 1.0).union(listOf(2.0, 4.0))
+            assertPrints(union, "[1.0, 2.0, 3.0, 4.0]")
+        }
+
+        @Sample
+        fun unionOfBoolean() {
+            val union = booleanArrayOf(false, false).union(listOf(true, false))
+            assertPrints(union, "[false, true]")
+        }
+
+        @Test
+        fun unionOfChar() {
+            val union = charArrayOf('a', 'b', 'c').union(listOf('b', 'd'))
+            assertPrints(union, "[a, b, c, d]")
+        }
+    }
 }
