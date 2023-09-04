@@ -104,3 +104,37 @@ FILE: calls_in_place.kt
 
         ^incorrect_at_least_once R|/unknown|(R|<local>/f|)
     }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun loopWhile(lambda: R|() -> kotlin/Boolean|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(lambda, AT_LEAST_ONCE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Boolean|>(R|<local>/lambda|, R|kotlin/contracts/InvocationKind.AT_LEAST_ONCE|)
+            }
+            )
+        }
+
+        while(R|<local>/lambda|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Boolean|>|()) {
+        }
+
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun loopUntil(lambda: R|() -> kotlin/Boolean|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(lambda, AT_LEAST_ONCE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Boolean|>(R|<local>/lambda|, R|kotlin/contracts/InvocationKind.AT_LEAST_ONCE|)
+            }
+            )
+        }
+
+        while(R|<local>/lambda|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Boolean|>|().R|kotlin/Boolean.not|()) {
+        }
+
+    }

@@ -145,3 +145,55 @@ method pkg_$global$incorrect_at_least_once(local$f: Ref) returns (ret: Int)
 /calls_in_place.kt:(1144,1167): warning: Function incorrect_at_least_once may not satisfy its contract.
 
 /calls_in_place.kt:(1197,1252): warning: Wrong invocation kind 'AT_LEAST_ONCE' for 'f: (Int) -> Int' specified, the actual invocation kind is 'UNKNOWN'.
+
+/calls_in_place.kt:(1326,1335): info: Generated Viper text for loopWhile:
+method pkg_$global$loopWhile(local$lambda: Ref) returns (ret: dom$Unit)
+  requires acc(local$lambda.special$function_object_call_counter, write)
+  ensures acc(local$lambda.special$function_object_call_counter, write)
+  ensures old(local$lambda.special$function_object_call_counter) <=
+    local$lambda.special$function_object_call_counter
+  ensures local$lambda.special$function_object_call_counter >
+    old(local$lambda.special$function_object_call_counter)
+{
+  var anonymous$1: Bool
+  var anonymous$2: Bool
+  special$invoke_function_object(local$lambda)
+  anonymous$1 := anonymous$2
+  while (anonymous$1)
+    invariant acc(local$lambda.special$function_object_call_counter, write)
+    invariant old(local$lambda.special$function_object_call_counter) <=
+      local$lambda.special$function_object_call_counter
+    invariant local$lambda.special$function_object_call_counter >
+      old(local$lambda.special$function_object_call_counter)
+  {
+    var anonymous$3: Bool
+    special$invoke_function_object(local$lambda)
+    anonymous$1 := anonymous$3
+  }
+}
+
+/calls_in_place.kt:(1516,1525): info: Generated Viper text for loopUntil:
+method pkg_$global$loopUntil(local$lambda: Ref) returns (ret: dom$Unit)
+  requires acc(local$lambda.special$function_object_call_counter, write)
+  ensures acc(local$lambda.special$function_object_call_counter, write)
+  ensures old(local$lambda.special$function_object_call_counter) <=
+    local$lambda.special$function_object_call_counter
+  ensures local$lambda.special$function_object_call_counter >
+    old(local$lambda.special$function_object_call_counter)
+{
+  var anonymous$1: Bool
+  var anonymous$2: Bool
+  special$invoke_function_object(local$lambda)
+  anonymous$1 := !anonymous$2
+  while (anonymous$1)
+    invariant acc(local$lambda.special$function_object_call_counter, write)
+    invariant old(local$lambda.special$function_object_call_counter) <=
+      local$lambda.special$function_object_call_counter
+    invariant local$lambda.special$function_object_call_counter >
+      old(local$lambda.special$function_object_call_counter)
+  {
+    var anonymous$3: Bool
+    special$invoke_function_object(local$lambda)
+    anonymous$1 := !anonymous$3
+  }
+}

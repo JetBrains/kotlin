@@ -87,7 +87,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         }
         val receiver = symbol.dispatchReceiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it)) }
         return MethodSignatureEmbedding(
-            symbol.callableId.embedName(),
+            symbol,
             receiver,
             params,
             embedType(retType)
@@ -108,17 +108,13 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                     VariableEmbedding(AnonymousName(++nextAnonVarNumber), type)
             }
 
-            val seqn = body?.let {
+            val bodySeqn = body?.let {
                 val ctx = StmtConverter(methodCtx, SeqnBuilder())
                 ctx.convert(body)
                 ctx.block
             }
 
-            val postconditions = symbol.resolvedContractDescription?.effects?.map {
-                it.effect.accept(ContractDescriptionConversionVisitor, methodCtx)
-            } ?: emptyList()
-
-            signature.toMethod(listOf(), postconditions, seqn)
+            signature.toMethod(bodySeqn)
         }
         return signature
     }

@@ -1,0 +1,106 @@
+/loop_invariants.kt:(4,19): info: Generated Viper text for returns_boolean:
+method pkg_$global$returns_boolean() returns (ret: Bool)
+{
+  ret := false
+}
+
+/loop_invariants.kt:(57,81): info: Generated Viper text for dynamic_lambda_invariant:
+method pkg_$global$returns_boolean() returns (ret: Bool)
+
+
+method pkg_$global$dynamic_lambda_invariant(local$f: Ref)
+  returns (ret: dom$Unit)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+{
+  var anonymous$1: Bool
+  var anonymous$2: Bool
+  anonymous$2 := pkg_$global$returns_boolean()
+  anonymous$1 := anonymous$2
+  while (anonymous$1)
+    invariant acc(local$f.special$function_object_call_counter, write)
+    invariant old(local$f.special$function_object_call_counter) <=
+      local$f.special$function_object_call_counter
+  {
+    var anonymous$3: Int
+    var anonymous$4: Bool
+    special$invoke_function_object(local$f)
+    anonymous$4 := pkg_$global$returns_boolean()
+    anonymous$1 := anonymous$4
+  }
+}
+
+/loop_invariants.kt:(155,174): info: Generated Viper text for function_assignment:
+method pkg_$global$returns_boolean() returns (ret: Bool)
+
+
+method pkg_$global$function_assignment(local$f: Ref)
+  returns (ret: dom$Unit)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+{
+  var local$g: Ref
+  var anonymous$1: Bool
+  var anonymous$2: Bool
+  local$g := local$f
+  anonymous$2 := pkg_$global$returns_boolean()
+  anonymous$1 := anonymous$2
+  while (anonymous$1)
+    invariant acc(local$f.special$function_object_call_counter, write)
+    invariant old(local$f.special$function_object_call_counter) <=
+      local$f.special$function_object_call_counter
+  {
+    var anonymous$3: Int
+    var anonymous$4: Bool
+    special$invoke_function_object(local$g)
+    anonymous$4 := pkg_$global$returns_boolean()
+    anonymous$1 := anonymous$4
+  }
+}
+
+/loop_invariants.kt:(262,293): info: Generated Viper text for conditional_function_assignment:
+method pkg_$global$returns_boolean() returns (ret: Bool)
+
+
+method pkg_$global$conditional_function_assignment(local$b: Bool, local$f: Ref,
+  local$h: Ref)
+  returns (ret: dom$Unit)
+  requires acc(local$f.special$function_object_call_counter, write)
+  requires acc(local$h.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$h.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures old(local$h.special$function_object_call_counter) <=
+    local$h.special$function_object_call_counter
+{
+  var local$g: Ref
+  var anonymous$1: Ref
+  var anonymous$2: Bool
+  var anonymous$3: Bool
+  if (local$b) {
+    anonymous$1 := local$f
+  } else {
+    anonymous$1 := local$h}
+  local$g := anonymous$1
+  anonymous$3 := pkg_$global$returns_boolean()
+  anonymous$2 := anonymous$3
+  while (anonymous$2)
+    invariant acc(local$f.special$function_object_call_counter, write)
+    invariant acc(local$h.special$function_object_call_counter, write)
+    invariant old(local$f.special$function_object_call_counter) <=
+      local$f.special$function_object_call_counter
+    invariant old(local$h.special$function_object_call_counter) <=
+      local$h.special$function_object_call_counter
+  {
+    var anonymous$4: Int
+    var anonymous$5: Bool
+    special$invoke_function_object(local$g)
+    anonymous$5 := pkg_$global$returns_boolean()
+    anonymous$2 := anonymous$5
+  }
+}

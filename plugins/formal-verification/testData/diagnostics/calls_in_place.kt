@@ -57,3 +57,21 @@ fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT, VIPER_VERIFICATION_ERROR!>i
     }<!>
     return unknown(f)
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun <!VIPER_TEXT!>loopWhile<!>(lambda: () -> Boolean)
+{
+    contract {
+        callsInPlace(lambda, AT_LEAST_ONCE)
+    }
+    while (lambda()) { /* no body */ }
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun <!VIPER_TEXT!>loopUntil<!>(lambda: () -> Boolean)
+{
+    contract {
+        callsInPlace(lambda, AT_LEAST_ONCE)
+    }
+    while (!lambda()) { /* no body */ }
+}
