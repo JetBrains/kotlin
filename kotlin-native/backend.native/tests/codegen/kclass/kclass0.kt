@@ -211,6 +211,14 @@ private fun checkLocalClasses(args: Array<String>) {
     ::suspendFunWithLocalClass.runCoroutine()
 }
 
+interface HasFoo {
+    fun foo(): String
+}
+
+private inline fun getHasFoo(s: String) = object : HasFoo {
+    override fun foo(): String = s
+}
+
 private fun checkAnonymousObjects(args: Array<String>) {
     // Anonymous object.
     with(object : Any() {
@@ -370,6 +378,16 @@ private fun checkAnonymousObjects(args: Array<String>) {
         }
     }
     ::suspendFunWithAnonymousObject.runCoroutine()
+
+    val hasFoo = getHasFoo("zzz")
+    checkClass(
+            hasFoo::class,
+            expectedQualifiedName = null,
+            expectedSimpleName = null,
+            expectedToStringName = "class codegen.kclass.kclass0.Kclass0Kt$1",
+            expectedInstance = hasFoo,
+            expectedNotInstance = Any()
+    )
 }
 
 private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
