@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.codeFragmentScopeProvider
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.FirCodeFragmentContext
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.codeFragmentContext
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
@@ -219,9 +221,11 @@ private class LLFirBodyTargetResolver(
         val contextKtFile = contextPsiElement?.containingFile as? KtFile
 
         firCodeFragment.codeFragmentContext = if (contextKtFile != null) {
+            val contextModule = resolveSession.getModule(contextKtFile)
+            val contextSession = resolveSession.sessionProvider.getResolvableSession(contextModule)
             val contextFirFile = resolveSession.getOrBuildFirFile(contextKtFile)
-            val sessionHolder = transformer.components
 
+            val sessionHolder = SessionHolderImpl(contextSession, contextSession.getScopeSession())
             val elementContext = ContextCollector.process(contextFirFile, sessionHolder, contextPsiElement)
                 ?: errorWithAttachment("Cannot find enclosing context for ${contextPsiElement::class}") {
                     withPsiEntry("contextPsiElement", contextPsiElement)

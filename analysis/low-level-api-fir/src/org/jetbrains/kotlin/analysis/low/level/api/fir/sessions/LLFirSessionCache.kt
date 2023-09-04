@@ -146,6 +146,12 @@ class LLFirSessionCache(private val project: Project) {
             is KtLibraryModule, is KtLibrarySourceModule -> sessionFactory.createLibrarySession(module)
             is KtSdkModule -> sessionFactory.createBinaryLibrarySession(module)
             is KtScriptModule -> sessionFactory.createScriptSession(module)
+            is KtCodeFragmentModule -> {
+                // 'KtCodeFragment' context must have an analyzable session, so we can properly compile code against it.
+                // 'KtCodeFragmentModule' is always a leaf module, there might not be a circular reference.
+                val contextSession = getSession(module.contextModule, preferBinary = false)
+                sessionFactory.createCodeFragmentSession(module, contextSession)
+            }
             is KtNotUnderContentRootModule -> sessionFactory.createNotUnderContentRootResolvableSession(module)
             else -> error("Unexpected module kind: ${module::class.simpleName}")
         }

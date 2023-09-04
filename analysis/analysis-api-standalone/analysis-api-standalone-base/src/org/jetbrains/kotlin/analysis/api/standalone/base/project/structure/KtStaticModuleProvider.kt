@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.analysis.project.structure.impl.KtCodeFragmentModuleImpl
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
@@ -22,6 +24,15 @@ class KtStaticModuleProvider(
     override fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule {
         // Unwrap context-dependent file copies coming from dependent sessions
         val containingPsiFile = element.containingFile.originalFile
+
+        if (containingPsiFile is KtCodeFragment) {
+            val contextElement = containingPsiFile.context
+                ?: throw KotlinExceptionWithAttachments("Context not found for a code fragment")
+                    .withAttachment("codeFragment.kt", containingPsiFile.text)
+
+            val contextModule = getModule(contextElement, contextualModule)
+            return KtCodeFragmentModuleImpl(containingPsiFile, contextModule)
+        }
 
         val containingVirtualFile = containingPsiFile.virtualFile
         if (containingVirtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
