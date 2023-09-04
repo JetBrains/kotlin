@@ -42,17 +42,27 @@ class LLFirResolveSessionService(project: Project) {
     private fun create(module: KtModule, factory: (KtModule) -> LLFirSession): LLFirResolvableResolveSession {
         val moduleProvider = LLModuleProvider(module)
         val sessionProvider = LLSessionProvider(module, factory)
-        val moduleKindProvider = createModuleKindProvider(module)
+        val moduleKindProvider = createModuleKindProvider(module, moduleProvider)
         val diagnosticProvider = createDiagnosticProvider(moduleProvider, sessionProvider)
 
         return LLFirResolvableResolveSession(moduleProvider, moduleKindProvider, sessionProvider, diagnosticProvider)
     }
 
-    private fun createModuleKindProvider(module: KtModule): LLModuleKindProvider {
+    private fun createModuleKindProvider(module: KtModule, moduleProvider: LLModuleProvider): LLModuleKindProvider {
         return when (module) {
             is KtSourceModule -> LLSourceModuleKindProvider
             is KtLibraryModule, is KtLibrarySourceModule -> LLLibraryModuleKindProvider(module)
             is KtScriptModule -> LLScriptModuleKindProvider(module)
+            is KtCodeFragmentModule -> {
+                val contextElement = module.file.context
+                if (contextElement != null) {
+                    val contextModule = moduleProvider.getModule(contextElement)
+                    val contextModuleKindProvider = createModuleKindProvider(contextModule, moduleProvider)
+                    LLCodeFragmentKindProvider(contextModuleKindProvider)
+                } else {
+                    LLNotUnderContentRootModuleKindProvider(module)
+                }
+            }
             is KtNotUnderContentRootModule -> LLNotUnderContentRootModuleKindProvider(module)
             else -> {
                 errorWithFirSpecificEntries("Unexpected ${module::class.java}") {
@@ -64,7 +74,9 @@ class LLFirResolveSessionService(project: Project) {
 
     private fun createDiagnosticProvider(moduleProvider: LLModuleProvider, sessionProvider: LLSessionProvider): LLDiagnosticProvider {
         return when (moduleProvider.useSiteModule) {
-            is KtSourceModule, is KtScriptModule -> LLSourceDiagnosticProvider(moduleProvider, sessionProvider)
+            is KtSourceModule,
+            is KtScriptModule,
+            is KtCodeFragmentModule -> LLSourceDiagnosticProvider(moduleProvider, sessionProvider)
             else -> LLEmptyDiagnosticProvider
         }
     }
@@ -98,6 +110,15 @@ private class LLScriptModuleKindProvider(private val useSiteModule: KtModule) : 
             useSiteModule, is KtSourceModule -> KtModuleKind.RESOLVABLE_MODULE
             is KtBuiltinsModule, is KtLibraryModule -> KtModuleKind.BINARY_MODULE
             else -> unexpectedElementError("module", module)
+        }
+    }
+}
+
+private class LLCodeFragmentKindProvider(private val delegate: LLModuleKindProvider) : LLModuleKindProvider {
+    override fun getKind(module: KtModule): KtModuleKind {
+        return when (module) {
+            is KtCodeFragmentModule -> KtModuleKind.RESOLVABLE_MODULE
+            else -> delegate.getKind(module)
         }
     }
 }

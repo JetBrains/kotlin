@@ -9,4 +9,4 @@ MODULE_FRAGMENT
         EXPRESSION_BODY
           BLOCK type=kotlin.Unit origin=null
             CALL 'public final fun call (): kotlin.Unit declared in <root>.Foo' type=kotlin.Unit origin=null
-              $this: GET_OBJECT 'CLASS OBJECT name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Foo
+              $this: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Foo
