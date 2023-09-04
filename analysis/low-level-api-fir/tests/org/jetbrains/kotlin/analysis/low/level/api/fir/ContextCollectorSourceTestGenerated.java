@@ -18,10 +18,10 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/low-level-api-fir/testdata/contextCollector")
 @TestDataPath("$PROJECT_ROOT")
-public class ContextCollectorTestGenerated extends AbstractContextCollectorTest {
+public class ContextCollectorSourceTestGenerated extends AbstractContextCollectorSourceTest {
     @Test
     public void testAllFilesPresentInContextCollector() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
