@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithScript
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Context
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 internal object ContextCollector {
     enum class ContextKind {
@@ -106,7 +108,13 @@ internal object ContextCollector {
         if (contextKtDeclaration != null) {
             val designationPath = FirElementFinder.collectDesignationPath(file, contextKtDeclaration)
             if (designationPath != null) {
-                return FirDesignation(designationPath.path, designationPath.target)
+                val script = file.declarations.singleOrNull() as? FirScript
+
+                return if (script == null || script === designationPath.target) {
+                    FirDesignation(designationPath.path, designationPath.target)
+                } else {
+                    FirDesignationWithScript(designationPath.path, designationPath.target, script)
+                }
             }
         }
 
@@ -138,6 +146,7 @@ internal object ContextCollector {
 
     private class DesignationInterceptor(private val designation: FirDesignation) : () -> FirElement? {
         private val targetIterator = iterator {
+            yieldIfNotNull((designation as? FirDesignationWithScript)?.firScript)
             yieldAll(designation.path)
             yield(designation.target)
         }
@@ -276,6 +285,14 @@ private class ContextCollectorVisitor(
 
     private fun isAcceptedControlFlowNode(node: CFGNode<*>): Boolean {
         return node !is ClassExitNode
+    }
+
+    override fun visitScript(script: FirScript) {
+        context.withScopesForScript(script, holder) {
+            withInterceptor {
+                super.visitScript(script)
+            }
+        }
     }
 
     override fun visitFile(file: FirFile) {

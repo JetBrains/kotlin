@@ -97,6 +97,16 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/contextCollector/scripts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Scripts {
+        @Test
+        public void testAllFilesPresentInScripts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector/scripts"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/low-level-api-fir/testdata/contextCollector/smartCasts")
     @TestDataPath("$PROJECT_ROOT")
     public class SmartCasts {
@@ -114,7 +124,7 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
 
         @Test
         public void testAllFilesPresentInSmartCasts() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector/smartCasts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector/smartCasts"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test

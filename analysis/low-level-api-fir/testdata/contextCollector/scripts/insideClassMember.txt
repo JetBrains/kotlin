@@ -1,0 +1,105 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public? final? class After_OtherClass : R|kotlin/Any|
+                FirRegularClassSymbol public? final? class Before_OtherClass : R|kotlin/Any|
+                FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public? final? fun after_Fun(): R|kotlin/Unit|
+                FirNamedFunctionSymbol public? final? fun before_Fun(): R|kotlin/Unit|
+            Properties:
+                FirPropertySymbol public? final? val after_Val: <implicit>
+                    public? get(): <implicit>
+                FirPropertySymbol public? final? val before_Val: <implicit>
+                    public? get(): <implicit>
+    Element 8
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol lval args: R|kotlin/Array<kotlin/String>|
+    Element 9
+        Context receivers:
+            FirScriptSymbol context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+            SCRIPT:
+                lval args: R|kotlin/Array<kotlin/String>|
+
+                public? final? fun before_Fun(): R|kotlin/Unit|
+                public? final? val before_Val: <implicit>
+                    public? get(): <implicit>
+
+                public? final? class Before_OtherClass : R|kotlin/Any|
+                public final class MyClass : R|kotlin/Any|
+                public? final? fun after_Fun(): R|kotlin/Unit|
+                public? final? val after_Val: <implicit>
+                    public? get(): <implicit>
+
+                public? final? class After_OtherClass : R|kotlin/Any|
+                Type: kotlin/script/templates/standard/ScriptTemplateWithArgs
+                Label: <script>
+    Element 10
+        Implicit receiver:
+            FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
+                Type: MyClass
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] insideClassMember.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun before_Fun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val before_Val: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] class Before_OtherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|Before_OtherClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] constructor(): R|MyClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: R|kotlin/Int| = Int(10)
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+                this@R|/MyClass|.R|/MyClass.foo|
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun after_Fun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val after_Val: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] class After_OtherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|After_OtherClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }

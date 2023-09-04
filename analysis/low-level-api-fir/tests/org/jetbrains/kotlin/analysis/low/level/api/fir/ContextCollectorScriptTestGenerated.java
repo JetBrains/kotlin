@@ -23,4 +23,42 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
     public void testAllFilesPresentInContextCollector() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/contextCollector/scripts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Scripts {
+        @Test
+        public void testAllFilesPresentInScripts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector/scripts"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("insideClassMember.kts")
+        public void testInsideClassMember() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/scripts/insideClassMember.kts");
+        }
+
+        @Test
+        @TestMetadata("insideTopLevelFunction.kts")
+        public void testInsideTopLevelFunction() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/scripts/insideTopLevelFunction.kts");
+        }
+
+        @Test
+        @TestMetadata("topLevel.kts")
+        public void testTopLevel() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/scripts/topLevel.kts");
+        }
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/contextCollector/smartCasts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class SmartCasts {
+        @Test
+        public void testAllFilesPresentInSmartCasts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector/smartCasts"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        }
+    }
 }

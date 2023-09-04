@@ -45,6 +45,12 @@ class FirDesignationWithFile(
     }
 }
 
+class FirDesignationWithScript(
+    path: List<FirRegularClass>,
+    target: FirElementWithResolveState,
+    val firScript: FirScript,
+): FirDesignation(path, target)
+
 open class FirDesignation(
     val path: List<FirRegularClass>,
     val target: FirElementWithResolveState,
