@@ -5,9 +5,12 @@ interface I {
 }
 
 // FILE: JavaClass.java
+import kotlin.coroutines.Continuation;
+import org.jetbrains.annotations.NotNull;
+
 public class JavaClass implements I {
     @Override
-    public String foo(int x, kotlin.coroutines.Continuation<String> continuation) {
+    public Object foo(int x, @NotNull Continuation<? super String> continuation) {
         return null;
     }
 }
@@ -22,7 +25,7 @@ class K2 : JavaClass() {
 }
 
 class K3 : JavaClass() {
-    override fun foo(x: Int, y: Continuation<String>): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Any?<!> = null
+    override fun foo(x: Int, y: Continuation<String>): Any? = null
 }
 
 fun builder(block: suspend () -> Unit) {}

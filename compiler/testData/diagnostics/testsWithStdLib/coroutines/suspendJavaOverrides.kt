@@ -5,9 +5,12 @@ interface I {
 }
 
 // FILE: JavaClass.java
+import kotlin.coroutines.Continuation;
+import org.jetbrains.annotations.NotNull;
+
 public class JavaClass implements I {
     @Override
-    public Object foo(int x, kotlin.coroutines.Continuation<String> continuation) {
+    public Object foo(int x, @NotNull Continuation<? super String> continuation) {
         return null;
     }
 }
