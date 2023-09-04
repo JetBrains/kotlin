@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
@@ -38,7 +37,7 @@ private class LLLibraryScopeAwareConeCallConflictResolver(
 ) : ConeCallConflictResolver() {
     override fun chooseMaximallySpecificCandidates(candidates: Set<Candidate>, discriminateAbstracts: Boolean): Set<Candidate> {
         val filteredCandidates = when {
-            candidates.size > 1 && bodyResolveComponents.file.psi is KtCodeFragment -> filterCodeFragmentCandidates(candidates)
+            candidates.size > 1 -> filterCodeFragmentCandidates(candidates)
             else -> candidates
         }
 

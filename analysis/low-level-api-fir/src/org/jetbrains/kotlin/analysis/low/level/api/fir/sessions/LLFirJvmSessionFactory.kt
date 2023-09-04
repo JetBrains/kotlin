@@ -9,18 +9,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.LLLibraryScopeAwareCallConflictResolverFactory
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
 import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.calls.callConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -73,7 +69,6 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
             )
             register(JavaSymbolProvider::class, javaSymbolProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
-            registerLibraryScopeAwareCallConflictResolverFactory()
         }
     }
 
@@ -81,12 +76,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
         return doCreateBinaryLibrarySession(module) {
             registerJavaComponents(JavaModuleResolver.getInstance(project))
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
-            registerLibraryScopeAwareCallConflictResolverFactory()
         }
-    }
-
-    private fun FirSession.registerLibraryScopeAwareCallConflictResolverFactory() {
-        register(ConeCallConflictResolverFactory::class, LLLibraryScopeAwareCallConflictResolverFactory(callConflictResolverFactory))
     }
 
     override fun createProjectLibraryProvidersForScope(
