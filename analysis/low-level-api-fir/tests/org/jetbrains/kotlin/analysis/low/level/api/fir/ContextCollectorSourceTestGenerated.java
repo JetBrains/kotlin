@@ -91,6 +91,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("propertyDelegateInitializer.kt")
+    public void testPropertyDelegateInitializer() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/contextCollector/propertyDelegateInitializer.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/contextCollector/simple.kt");

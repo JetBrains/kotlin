@@ -460,6 +460,35 @@ private class ContextCollectorVisitor(
         }
     }
 
+    /**
+     * We visit fields to properly handle supertypes delegation:
+     *
+     * ```kt
+     * class Foo : Bar by baz
+     * ```
+     *
+     * In the code above, `baz` expression is saved into a separate synthetic field.
+     * It's not accessible from the delegated constructor, it's just added to the
+     * `Foo` class body.
+     */
+    override fun visitField(field: FirField) = withProcessor {
+        dumpContext(field, ContextKind.SELF)
+
+        processSignatureAnnotations(field)
+
+        onActiveBody {
+            field.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+
+            context.withField(field) {
+                dumpContext(field, ContextKind.BODY)
+
+                onActive {
+                    process(field.initializer)
+                }
+            }
+        }
+    }
+
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) = withProcessor {
         dumpContext(propertyAccessor, ContextKind.SELF)
 
