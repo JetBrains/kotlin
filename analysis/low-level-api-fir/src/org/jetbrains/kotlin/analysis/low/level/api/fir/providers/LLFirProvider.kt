@@ -135,7 +135,7 @@ internal class LLFirProvider(
             callableId: CallableId,
             callables: Collection<KtCallableDeclaration>
         ) {
-            destination += providerHelper.getTopLevelCallableSymbols(callableId, callables.map { it.containingKtFile })
+            destination += providerHelper.getTopLevelCallableSymbols(callableId, callables.mapTo(mutableSetOf()) { it.containingKtFile })
         }
 
         override fun getTopLevelFunctionSymbols(packageFqName: FqName, name: Name): List<FirNamedFunctionSymbol> {
@@ -155,7 +155,7 @@ internal class LLFirProvider(
             callableId: CallableId,
             functions: Collection<KtNamedFunction>
         ) {
-            destination += providerHelper.getTopLevelFunctionSymbols(callableId, functions.map { it.containingKtFile })
+            destination += providerHelper.getTopLevelFunctionSymbols(callableId, functions.mapTo(mutableSetOf()) { it.containingKtFile })
         }
 
         override fun getTopLevelPropertySymbols(packageFqName: FqName, name: Name): List<FirPropertySymbol> {
