@@ -5,3 +5,5 @@ modules = AppKit
 
 compilerOpts = -framework AppKit
 linkerOpts = -framework AppKit
+
+strictEnums = NSBezierPathElement
