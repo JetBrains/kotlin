@@ -956,6 +956,19 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NameContainsIllegalChars::class
     }
 
+    interface JsNameClash : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsNameClash::class
+        val name: String
+        val existing: List<KtSymbol>
+    }
+
+    interface JsFakeNameClash : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsFakeNameClash::class
+        val name: String
+        val override: KtSymbol
+        val existing: List<KtSymbol>
+    }
+
     interface OptInUsage : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OptInUsage::class
         val optInMarkerFqName: FqName

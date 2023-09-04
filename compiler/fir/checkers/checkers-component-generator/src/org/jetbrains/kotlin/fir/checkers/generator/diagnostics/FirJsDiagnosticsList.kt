@@ -58,6 +58,15 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
             parameter<String>("name")
         }
         val NAME_CONTAINS_ILLEGAL_CHARS by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_NAME_CLASH by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("name")
+            parameter<Collection<FirBasedSymbol<*>>>("existing")
+        }
+        val JS_FAKE_NAME_CLASH by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("name")
+            parameter<FirBasedSymbol<*>>("override")
+            parameter<Collection<FirBasedSymbol<*>>>("existing")
+        }
     }
 
     val SUPERTYPES by object : DiagnosticGroup("Supertypes") {

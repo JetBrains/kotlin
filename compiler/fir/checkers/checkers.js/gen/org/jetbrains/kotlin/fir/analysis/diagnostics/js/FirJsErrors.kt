@@ -52,6 +52,8 @@ object FirJsErrors {
     val JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY by error0<KtElement>()
     val JS_BUILTIN_NAME_CLASH by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val NAME_CONTAINS_ILLEGAL_CHARS by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val JS_NAME_CLASH by error2<KtElement, String, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val JS_FAKE_NAME_CLASH by error3<KtElement, String, FirBasedSymbol<*>, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
     // Supertypes
     val WRONG_MULTIPLE_INHERITANCE by error1<KtElement, FirCallableSymbol<*>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)

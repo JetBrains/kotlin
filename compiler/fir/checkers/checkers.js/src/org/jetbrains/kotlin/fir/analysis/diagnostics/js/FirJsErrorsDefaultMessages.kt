@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_EXTERNAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_JS_MODULE_PROHIBITED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_FAKE_NAME_CLASH
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_CLASH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_IS_NOT_ON_ALL_ACCESSORS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_ON_ACCESSOR_AND_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED
@@ -201,6 +203,19 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             CommonRenderers.STRING
         )
         map.put(NAME_CONTAINS_ILLEGAL_CHARS, "Name contains illegal chars that cannot appear in JavaScript identifier.")
+        map.put(
+            JS_NAME_CLASH,
+            "JavaScript name ({0}) generated for this declaration clashes with another declarations: {1}",
+            CommonRenderers.STRING,
+            FirDiagnosticRenderers.SYMBOLS
+        )
+        map.put(
+            JS_FAKE_NAME_CLASH,
+            "JavaScript name {0} is generated for different inherited members: {1} and {2}",
+            CommonRenderers.STRING,
+            FirDiagnosticRenderers.SYMBOL,
+            FirDiagnosticRenderers.SYMBOLS
+        )
 
         map.put(JS_NAME_IS_NOT_ON_ALL_ACCESSORS, "'@JsName' should be on all the property accessors.")
         map.put(JS_NAME_PROHIBITED_FOR_NAMED_NATIVE, "'@JsName' is prohibited for external declaration with explicit name.")

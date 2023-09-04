@@ -1148,6 +1148,21 @@ internal class NameContainsIllegalCharsImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NameContainsIllegalChars
 
+internal class JsNameClashImpl(
+    override val name: String,
+    override val existing: List<KtSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.JsNameClash
+
+internal class JsFakeNameClashImpl(
+    override val name: String,
+    override val override: KtSymbol,
+    override val existing: List<KtSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.JsFakeNameClash
+
 internal class OptInUsageImpl(
     override val optInMarkerFqName: FqName,
     override val message: String,
