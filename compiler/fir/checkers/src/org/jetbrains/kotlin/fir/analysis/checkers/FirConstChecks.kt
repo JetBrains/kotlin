@@ -194,7 +194,10 @@ private fun FirExpression.isForbiddenComplexConstant(session: FirSession): Boole
     val forbidComplexBooleanExpressions = session.languageVersionSettings.supportsFeature(
         LanguageFeature.ProhibitSimplificationOfNonTrivialConstBooleanExpressions
     )
-    return isComplexBooleanConstant && forbidComplexBooleanExpressions
+    val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(
+        LanguageFeature.IntrinsicConstEvaluation
+    )
+    return !intrinsicConstEvaluation && forbidComplexBooleanExpressions && isComplexBooleanConstant
 }
 
 private val FirExpression.isComplexBooleanConstant

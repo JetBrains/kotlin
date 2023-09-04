@@ -24614,6 +24614,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/enumName.kt");
             }
 
+            @TestMetadata("ifConstVal.kt")
+            public void ignoreIfConstVal() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/ifConstVal.kt");
+            }
+
             @TestMetadata("kCallableName.kt")
             public void ignoreKCallableName() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kCallableName.kt");
