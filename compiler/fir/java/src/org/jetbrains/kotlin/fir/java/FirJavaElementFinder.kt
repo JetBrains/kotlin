@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.*
 import com.intellij.psi.impl.cache.ModifierFlags
+import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsClassImpl
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.impl.file.PsiPackageImpl
@@ -24,12 +25,14 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -48,11 +51,14 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 val FirSession.javaElementFinder: FirJavaElementFinder? by FirSession.nullableSessionComponentAccessor<FirJavaElementFinder>()
 
+private typealias PropertyEvaluator = (FirProperty) -> String?
+
 class FirJavaElementFinder(
     private val session: FirSession,
     project: Project
 ) : PsiElementFinder(), KotlinFinderMarker, FirSessionComponent {
     private val psiManager = PsiManager.getInstance(project)
+    var propertyEvaluator: PropertyEvaluator? = null
 
     private val firProviders: List<FirProvider> = buildList {
         add(session.firProvider)
@@ -110,6 +116,18 @@ class FirJavaElementFinder(
                 false, false, false
             )
         )
+
+        val classProperties = firClass.declarations.filterIsInstance<FirProperty>()
+        // Note: we must store companion properties in outer clas because java resolver will not find it other way.
+        val companionProperties = firClass.companionObjectSymbol?.declarationSymbols?.map { it.fir }?.filterIsInstance<FirProperty>() ?: emptyList()
+        (classProperties + companionProperties).forEach {
+            // TODO correct type info
+            val psiField = PsiFieldStubImpl(
+                stub, it.name.identifier, TypeInfo.fromString("int"), propertyEvaluator?.invoke(it),
+                PsiFieldStubImpl.packFlags(false, false, false, false)
+            )
+            PsiModifierListStubImpl(psiField, ModifierFlags.PUBLIC_MASK + ModifierFlags.FINAL_MASK + ModifierFlags.STATIC_MASK)
+        }
 
         PsiModifierListStubImpl(stub, firClass.packFlags())
 
