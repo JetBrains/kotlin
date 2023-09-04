@@ -5285,6 +5285,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
         }
 
         @Test
+        @TestMetadata("inheritExtensionsWithSameNames.kt")
+        public void testInheritExtensionsWithSameNames() throws Exception {
+            runTest("js/js.translator/testData/box/inheritance/inheritExtensionsWithSameNames.kt");
+        }
+
+        @Test
         @TestMetadata("inheritFromCharIterator.kt")
         public void testInheritFromCharIterator() throws Exception {
             runTest("js/js.translator/testData/box/inheritance/inheritFromCharIterator.kt");
