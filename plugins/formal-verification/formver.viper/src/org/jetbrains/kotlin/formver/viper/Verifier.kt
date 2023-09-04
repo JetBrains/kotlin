@@ -45,7 +45,7 @@ class Verifier {
 
     /** Verify the program.  Returns true on successful verification.
      */
-    fun verify(program: Program, onFailure: (VerifierError) -> Unit): Boolean {
+    fun verify(program: Program, actuallyVerify: Boolean, onFailure: (VerifierError) -> Unit): Boolean {
         val viperProgram = program.toViper()
         val consistencyResults = viperProgram.checkTransitively()
         var success = true
@@ -55,6 +55,7 @@ class Verifier {
         }
 
         if (!success) return false
+        if (!actuallyVerify) return true
 
         val results = verifier.verify(viperProgram, emptySeq<SilverCfg>(), Option.None<String>().toScala())
 

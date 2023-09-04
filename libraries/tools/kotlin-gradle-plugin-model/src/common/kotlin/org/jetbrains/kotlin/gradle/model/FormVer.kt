@@ -34,4 +34,18 @@ interface FormVer {
      * @return the behaviour for unsupported features
      */
     val unsupportedFeatureBehaviour: String?
+
+    /**
+     * Returns the choice of targets to convert to Viper.
+     *
+     * @return the choice of targets
+     */
+    val conversionTargetsSelection: String?
+
+    /**
+     * Returns the choice of targets to verify.
+     *
+     * @return the choice of targets
+     */
+    val verificationTargetsSelection: String?
 }

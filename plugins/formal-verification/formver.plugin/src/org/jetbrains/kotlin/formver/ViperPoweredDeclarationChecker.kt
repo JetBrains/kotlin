@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
+import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.formver.conversion.ProgramConverter
 import org.jetbrains.kotlin.formver.viper.ConsistencyError
@@ -25,9 +27,22 @@ private val VerifierError.error: KtDiagnosticFactory1<String>
         is VerificationError -> PluginErrors.VIPER_VERIFICATION_ERROR
     }
 
+private val FirContractDescriptionOwner.hasContract: Boolean
+    get() = when (val description = contractDescription) {
+        is FirResolvedContractDescription -> description.effects.isNotEmpty()
+        else -> false
+    }
+
+private fun TargetsSelection.applicable(declaration: FirSimpleFunction): Boolean = when (this) {
+    TargetsSelection.ALL_TARGETS -> true
+    TargetsSelection.TARGETS_WITH_CONTRACT -> declaration.hasContract
+    TargetsSelection.NO_TARGETS -> false
+}
+
 class ViperPoweredDeclarationChecker(private val session: FirSession, private val config: PluginConfiguration) :
     FirSimpleFunctionChecker() {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (!config.conversionSelection.applicable(declaration)) return
         val programConversionContext = ProgramConverter(session, config)
         programConversionContext.registerForVerification(declaration)
         val program = programConversionContext.program
@@ -38,8 +53,9 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
 
         try {
             val verifier = Verifier()
+            val actuallyVerify = config.verificationSelection.applicable(declaration)
 
-            val success = verifier.verify(program) {
+            val success = verifier.verify(program, actuallyVerify) {
                 reporter.reportOn(declaration.source, it.error, it.msg, context)
             }
 

@@ -11,15 +11,24 @@ import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.formver.FormalVerificationConfigurationKeys.CONVERSION_TARGETS_SELECTION
 import org.jetbrains.kotlin.formver.FormalVerificationConfigurationKeys.LOG_LEVEL
 import org.jetbrains.kotlin.formver.FormalVerificationConfigurationKeys.UNSUPPORTED_FEATURE_BEHAVIOUR
+import org.jetbrains.kotlin.formver.FormalVerificationConfigurationKeys.VERIFICATION_TARGETS_SELECTION
+import org.jetbrains.kotlin.formver.FormalVerificationPluginNames.CONVERSION_TARGETS_SELECTION_OPTION_NAME
 import org.jetbrains.kotlin.formver.FormalVerificationPluginNames.LOG_LEVEL_OPTION_NAME
 import org.jetbrains.kotlin.formver.FormalVerificationPluginNames.UNSUPPORTED_FEATURE_BEHAVIOUR_OPTION_NAME
+import org.jetbrains.kotlin.formver.FormalVerificationPluginNames.VERIFICATION_TARGETS_SELECTION_OPTION_NAME
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 
 object FormalVerificationConfigurationKeys {
     val LOG_LEVEL: CompilerConfigurationKey<LogLevel> = CompilerConfigurationKey.create("viper log level")
     val UNSUPPORTED_FEATURE_BEHAVIOUR: CompilerConfigurationKey<UnsupportedFeatureBehaviour> =
         CompilerConfigurationKey.create("unsupported feature behaviour")
+    val CONVERSION_TARGETS_SELECTION: CompilerConfigurationKey<TargetsSelection> =
+        CompilerConfigurationKey.create("conversion targets selection")
+    val VERIFICATION_TARGETS_SELECTION: CompilerConfigurationKey<TargetsSelection> =
+        CompilerConfigurationKey.create("verification targets selection")
 }
 
 class FormalVerificationCommandLineProcessor : CommandLineProcessor {
@@ -35,24 +44,43 @@ class FormalVerificationCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = false
         )
+        val CONVERSION_TARGETS_SELECTION_OPTION = CliOption(
+            CONVERSION_TARGETS_SELECTION_OPTION_NAME,
+            "<conversion_targets_selection>",
+            "Choice of targets to convert to Viper",
+            required = false,
+            allowMultipleOccurrences = false
+        )
+        val VERIFICATION_TARGETS_SELECTION_OPTION = CliOption(
+            VERIFICATION_TARGETS_SELECTION_OPTION_NAME,
+            "<verification_targets_selection>",
+            "Choice of targets to verify",
+            required = false,
+            allowMultipleOccurrences = false
+        )
     }
 
     override val pluginId: String = FormalVerificationPluginNames.PLUGIN_ID
-    override val pluginOptions: Collection<AbstractCliOption> = listOf(LOG_LEVEL_OPTION, UNSUPPORTED_FEATURE_BEHAVIOUR_OPTION)
+    override val pluginOptions: Collection<AbstractCliOption> = listOf(
+        LOG_LEVEL_OPTION,
+        UNSUPPORTED_FEATURE_BEHAVIOUR_OPTION,
+        CONVERSION_TARGETS_SELECTION_OPTION,
+        VERIFICATION_TARGETS_SELECTION_OPTION
+    )
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) =
-        when (option) {
-            LOG_LEVEL_OPTION -> when (value) {
-                "only_warnings" -> configuration.put(LOG_LEVEL, LogLevel.ONLY_WARNINGS)
-                "short_viper_dump" -> configuration.put(LOG_LEVEL, LogLevel.SHORT_VIPER_DUMP)
-                "full_viper_dump" -> configuration.put(LOG_LEVEL, LogLevel.FULL_VIPER_DUMP)
-                else -> throw CliOptionProcessingException("Invalid setting $value for ${option.optionName}")
+        try {
+            when (option) {
+                LOG_LEVEL_OPTION -> configuration.put(LOG_LEVEL, LogLevel.valueOf(value.toUpperCaseAsciiOnly()))
+                UNSUPPORTED_FEATURE_BEHAVIOUR_OPTION ->
+                    configuration.put(UNSUPPORTED_FEATURE_BEHAVIOUR, UnsupportedFeatureBehaviour.valueOf(value.toUpperCaseAsciiOnly()))
+                CONVERSION_TARGETS_SELECTION_OPTION ->
+                    configuration.put(CONVERSION_TARGETS_SELECTION, TargetsSelection.valueOf(value.toUpperCaseAsciiOnly()))
+                VERIFICATION_TARGETS_SELECTION_OPTION ->
+                    configuration.put(VERIFICATION_TARGETS_SELECTION, TargetsSelection.valueOf(value.toUpperCaseAsciiOnly()))
+                else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
             }
-            UNSUPPORTED_FEATURE_BEHAVIOUR_OPTION -> when (value) {
-                "throw_exception" -> configuration.put(UNSUPPORTED_FEATURE_BEHAVIOUR, UnsupportedFeatureBehaviour.THROW_EXCEPTION)
-                "assume_unreachable" -> configuration.put(UNSUPPORTED_FEATURE_BEHAVIOUR, UnsupportedFeatureBehaviour.ASSUME_UNREACHABLE)
-                else -> throw CliOptionProcessingException("Invalid setting $value for ${option.optionName}")
-            }
-            else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
+        } catch (e: IllegalArgumentException) {
+            throw CliOptionProcessingException("Value $value is not a valid argument for option ${option.optionName}.")
         }
 }

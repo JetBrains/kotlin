@@ -5,4 +5,15 @@
 
 package org.jetbrains.kotlin.formver
 
-class PluginConfiguration(val logLevel: LogLevel, val behaviour: UnsupportedFeatureBehaviour)
+class PluginConfiguration(
+    val logLevel: LogLevel,
+    val behaviour: UnsupportedFeatureBehaviour,
+    val conversionSelection: TargetsSelection,
+    val verificationSelection: TargetsSelection,
+) {
+    init {
+        if (conversionSelection < verificationSelection) {
+            throw IllegalArgumentException("Conversion options may not be stricter than verification options; converting $conversionSelection but verifying $verificationSelection.")
+        }
+    }
+}
