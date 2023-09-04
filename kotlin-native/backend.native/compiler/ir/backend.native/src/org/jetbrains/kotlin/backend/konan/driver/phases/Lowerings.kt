@@ -76,7 +76,7 @@ private val annotationImplementationPhase = createFileLoweringPhase(
 )
 
 private val lowerBeforeInlinePhase = createFileLoweringPhase(
-        ::PreInlineLowering,
+        ::TypeOfLowering,
         name = "LowerBeforeInline",
         description = "Special operations processing before inlining"
 )

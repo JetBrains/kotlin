@@ -21,12 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
-/**
- * This pass runs before inlining and performs the following additional transformations over some operations:
- *     - Assertion call removal.
- *     - First phase of typeOf intrinsic lowering.
- */
-internal class PreInlineLowering(val context: Context) : BodyLoweringPass {
+internal class TypeOfLowering(val context: Context) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) = lower(irBody, container, container.file)
 
     fun lower(irBody: IrBody, container: IrDeclaration, irFile: IrFile) {

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.deepCopyWithVariables
@@ -73,7 +72,7 @@ internal class NativeInlineFunctionResolver(override val context: Context, val g
     private fun lower(function: IrFunction, irFile: IrFile, functionIsCached: Boolean) {
         val body = function.body ?: return
 
-        PreInlineLowering(context).lower(body, function, irFile)
+        TypeOfLowering(context).lower(body, function, irFile)
 
         ArrayConstructorLowering(context).lower(body, function)
 
