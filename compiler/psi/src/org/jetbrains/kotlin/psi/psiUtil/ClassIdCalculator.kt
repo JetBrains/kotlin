@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,11 +36,14 @@ internal object ClassIdCalculator {
                 }
             }
         }
+
         if (ktFile == null) return null
-        val relativeClassName = FqName.fromSegments(containingClasses.reversed().map { containingClass ->
-            containingClass.name ?: SpecialNames.NO_NAME_PROVIDED.asString()
-        }
+        val relativeClassName = FqName.fromSegments(
+            containingClasses.asReversed().map { containingClass ->
+                containingClass.name ?: SpecialNames.NO_NAME_PROVIDED.asString()
+            }
         )
+
         return ClassId(ktFile.packageFqName, relativeClassName, /*local=*/false)
     }
 }
