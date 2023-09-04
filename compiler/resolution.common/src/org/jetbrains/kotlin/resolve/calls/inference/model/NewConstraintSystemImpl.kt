@@ -324,15 +324,23 @@ class NewConstraintSystemImpl(
             )
         }
 
-    fun addOuterSystem(outerSystem: ConstraintStorage, usesOuterCs: Boolean = false) {
-        addOtherSystem(outerSystem)
+    fun addOuterSystem(outerSystem: ConstraintStorage) {
+        require(!storage.usesOuterCs)
+
+        storage.usesOuterCs = true
         storage.outerSystemVariablesPrefixSize = outerSystem.allTypeVariables.size
-        storage.usesOuterCs = storage.usesOuterCs || usesOuterCs
+        storage.outerCS = outerSystem
+
+        addOtherSystem(outerSystem, isAddingOuter = true)
     }
 
-    fun setBaseSystem(outerSystem: ConstraintStorage) {
-        addOtherSystem(outerSystem)
-        storage.outerSystemVariablesPrefixSize = outerSystem.outerSystemVariablesPrefixSize
+    fun setBaseSystem(baseSystem: ConstraintStorage) {
+        require(storage.allTypeVariables.isEmpty())
+        storage.usesOuterCs = baseSystem.usesOuterCs
+        storage.outerSystemVariablesPrefixSize = baseSystem.outerSystemVariablesPrefixSize
+        storage.outerCS = (baseSystem as? MutableConstraintStorage)?.outerCS
+
+        addOtherSystem(baseSystem)
     }
 
     fun prepareForGlobalCompletion() {
@@ -341,6 +349,10 @@ class NewConstraintSystemImpl(
     }
 
     override fun addOtherSystem(otherSystem: ConstraintStorage) {
+        addOtherSystem(otherSystem, isAddingOuter = false)
+    }
+
+    fun addOtherSystem(otherSystem: ConstraintStorage, isAddingOuter: Boolean) {
         if (otherSystem.allTypeVariables.isNotEmpty()) {
             otherSystem.allTypeVariables.forEach {
                 transactionRegisterVariable(it.value)
@@ -364,7 +376,18 @@ class NewConstraintSystemImpl(
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
         storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
-        storage.usesOuterCs = storage.usesOuterCs || otherSystem.usesOuterCs
+
+        if (otherSystem.usesOuterCs && (otherSystem as? MutableConstraintStorage)?.outerCS !== storage) {
+            require(storage.usesOuterCs) {
+                "123"
+            }
+
+            if (!isAddingOuter) {
+                require(storage.outerSystemVariablesPrefixSize == otherSystem.outerSystemVariablesPrefixSize) {
+                    "Expected to be ${otherSystem.outerSystemVariablesPrefixSize}, but ${storage.outerSystemVariablesPrefixSize} found"
+                }
+            }
+        }
     }
 
     // ResultTypeResolver.Context, ConstraintSystemBuilder

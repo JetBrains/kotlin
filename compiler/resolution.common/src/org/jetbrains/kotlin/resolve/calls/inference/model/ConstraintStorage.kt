@@ -49,6 +49,8 @@ interface ConstraintStorage {
     val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>>
 
     /**
+     *  Outer system for a call means some set of variables defined beside it/its arguments
+     *
      *  In case some candidate's CS is built in the context of some outer CS, first [outerSystemVariablesPrefixSize] in the list
      *  of [allTypeVariables] belong to the outer CS.
      *

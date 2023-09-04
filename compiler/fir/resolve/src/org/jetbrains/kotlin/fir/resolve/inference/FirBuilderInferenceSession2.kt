@@ -62,7 +62,7 @@ class FirBuilderInferenceSession2(
         outerCandidate.postponedCalls += call
 
         (resolutionMode as? ResolutionMode.ContextIndependent.ForDeclaration)?.declaration?.let(outerCandidate.updateDeclarations::add)
-        outerSystem.addOtherSystem(candidate.system.currentStorage())
+        outerSystem.addOtherSystem(candidate.system.currentStorage(), isAddingOuter = false)
 
         if (call is FirExpression) {
             call.updateReturnTypeWithCurrentSubstitutor(resolutionMode)

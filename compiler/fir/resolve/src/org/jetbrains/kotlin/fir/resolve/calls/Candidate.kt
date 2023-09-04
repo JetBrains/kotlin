@@ -74,10 +74,8 @@ class Candidate(
         val system = constraintSystemFactory.createConstraintSystem()
 
         val outerCs = inferenceSession.outerCSForCandidate(this)
-        if (outerCs != null) {
-            system.addOuterSystem(outerCs, usesOuterCs = true)
-
-            require(baseSystem.outerSystemVariablesPrefixSize == 0)
+        if (outerCs != null && !baseSystem.usesOuterCs) {
+            system.addOuterSystem(outerCs)
             system.addOtherSystem(baseSystem)
         } else {
             system.setBaseSystem(baseSystem)

@@ -69,6 +69,9 @@ class FirDelegatedPropertyInferenceSession(
         return name == OperatorNameConventions.PROVIDE_DELEGATE || name == OperatorNameConventions.GET_VALUE || name == OperatorNameConventions.SET_VALUE
     }
 
+    override fun outerCSForCandidate(candidate: Candidate): ConstraintStorage? =
+        resolutionContext.bodyResolveContext.outerConstraintStorage.takeIf { it !== ConstraintStorage.Empty }
+
     fun completeCandidates(): List<FirResolvable> {
         val commonSystem = currentConstraintSystem.apply { prepareForGlobalCompletion() }
 
