@@ -1,6 +1,6 @@
 [versions]
 
-gradlePlugin-kotlin = "1.9.0"
+gradlePlugin-kotlin = "1.9.10"
 # See: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
 gradlePlugin-android = "4.2.2"
 gradlePlugin-dokka = "1.9.0"
@@ -10,7 +10,7 @@ kotlinx-collections-immutable = "0.3.4"
 kotlinx-bcv = "0.12.1"
 
 ## Analysis
-kotlin-compiler = "1.9.0"
+kotlin-compiler = "1.9.10"
 kotlin-compiler-k2 = "1.9.0-release-358"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
