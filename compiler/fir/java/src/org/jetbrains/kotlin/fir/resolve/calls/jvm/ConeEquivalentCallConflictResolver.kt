@@ -44,7 +44,7 @@ class ConeEquivalentCallConflictResolver(
         // Since we can consider a declaration from source and one from binary equivalent, we need to make sure we favor the one from
         // source, otherwise we might get a behavior change to K1.
         // See org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver.filterOutEquivalentCalls.
-        val fromSourceFirst = candidates.sortedBy { it.symbol.fir.source == null }
+        val fromSourceFirst = candidates.sortedBy { it.symbol.fir.moduleData.session.kind != FirSession.Kind.Source }
 
         val result = mutableSetOf<Candidate>()
         outerLoop@ for (myCandidate in fromSourceFirst) {
