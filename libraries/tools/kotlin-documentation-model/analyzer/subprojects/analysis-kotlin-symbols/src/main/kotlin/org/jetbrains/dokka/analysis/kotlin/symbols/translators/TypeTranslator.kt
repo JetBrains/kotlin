@@ -52,7 +52,7 @@ internal class TypeTranslator(
             throw IllegalStateException("Expected type alias symbol in type")
     }
 
-    private fun KtAnalysisSession.toTypeConstructorFrom(classType: KtUsualClassType) =
+    private fun KtAnalysisSession.toTypeConstructorFrom(classType: KtNonErrorClassType) =
         GenericTypeConstructor(
             dri = getDRIFromNonErrorClassType(classType),
             projections = classType.ownTypeArguments.map { toProjection(it) },
@@ -91,7 +91,18 @@ internal class TypeTranslator(
             )
 
             is KtClassErrorType -> UnresolvedBound(type.toString())
-            is KtFunctionalType -> toFunctionalTypeConstructorFrom(type)
+            is KtFunctionalType -> {
+                /**
+                 * For example
+                 * `typealias CompletionHandler = (cause: Throwable?) -> Unit`
+                 * has functional type with no type arguments in K2
+                 * In K1 we have a usual generic type
+                 */
+                if (type.ownTypeArguments.isEmpty())
+                    toTypeConstructorFrom(type)
+                else
+                    toFunctionalTypeConstructorFrom(type)
+            }
             is KtDynamicType -> Dynamic
             is KtDefinitelyNotNullType -> DefinitelyNonNullable(
                 toBoundFrom(type.original)
