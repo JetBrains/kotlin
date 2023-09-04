@@ -5,7 +5,8 @@
 package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.moduledocs
 
 import org.jetbrains.dokka.DokkaConfiguration
-import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.logIfNotResolved
+import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.ifUnresolved
+import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.logUnresolvedLink
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.KotlinAnalysis
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.moduledocs.ModuleAndPackageDocumentation.Classifier.Module
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.moduledocs.ModuleAndPackageDocumentation.Classifier.Package
@@ -32,20 +33,31 @@ internal fun ModuleAndPackageDocumentationParsingContext(
     sourceSet: DokkaConfiguration.DokkaSourceSet? = null
 ) = ModuleAndPackageDocumentationParsingContext { fragment, sourceLocation ->
 
-    if(kotlinAnalysis == null || sourceSet == null) {
+    if (kotlinAnalysis == null || sourceSet == null) {
         MarkdownParser(externalDri = { null }, sourceLocation)
     } else {
         val analysisContext = kotlinAnalysis[sourceSet]
-        analyze(analysisContext.mainModule) {
+        val contextPsi = analyze(analysisContext.mainModule) {
             val contextSymbol = when (fragment.classifier) {
                 Module -> ROOT_PACKAGE_SYMBOL
                 Package -> getPackageSymbolIfPackageExists(FqName(fragment.name))
             }
-
-            MarkdownParser(
-                externalDri = { resolveKDocTextLink(it, contextSymbol?.psi).logIfNotResolved(it, logger) },
-                sourceLocation
-            )
+            contextSymbol?.psi
         }
+        MarkdownParser(
+            externalDri = { link ->
+                analyze(analysisContext.mainModule) {
+                    resolveKDocTextLink(
+                        link,
+                        contextPsi
+                    ).ifUnresolved {
+                        logger.logUnresolvedLink(link, fragment.name.ifBlank { "module documentation" })
+                    }
+
+                }
+            },
+            sourceLocation
+        )
+
     }
 }
