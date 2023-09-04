@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.context
 
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.Importable
 
 abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val builder: T) {
@@ -67,11 +68,11 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
         }
 
         fun shouldBeAnInterface() {
-            element.kind = Implementation.Kind.Interface
+            element.kind = ImplementationKind.Interface
         }
 
         fun shouldBeAbstractClass() {
-            element.kind = Implementation.Kind.AbstractClass
+            element.kind = ImplementationKind.AbstractClass
         }
     }
 

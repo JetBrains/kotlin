@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeImplementationConfigurator
-import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind.Object
-import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind.OpenClass
+import org.jetbrains.kotlin.generators.tree.ImplementationKind.Object
+import org.jetbrains.kotlin.generators.tree.ImplementationKind.OpenClass
 
 object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() {
     fun configureImplementations() {

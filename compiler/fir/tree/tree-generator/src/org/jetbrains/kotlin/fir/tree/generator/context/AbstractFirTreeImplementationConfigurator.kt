@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.tree.generator.constructClassLikeTypeImport
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.printer.call
 import org.jetbrains.kotlin.fir.tree.generator.standardClassIdsType
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.Importable
 
 abstract class AbstractFirTreeImplementationConfigurator {
@@ -180,7 +181,7 @@ abstract class AbstractFirTreeImplementationConfigurator {
             }
         }
 
-        var kind: Implementation.Kind?
+        var kind: ImplementationKind?
             get() = implementation.kind
             set(value) {
                 implementation.kind = value

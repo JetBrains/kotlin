@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.fir.tree.generator.util
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
-import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import java.io.File
 
 // It's used to generate a graph in dot format (it's useful for debugging)
 @Suppress("unused")
 fun printHierarchyGraph(builder: AbstractFirTreeBuilder) {
-    fun Implementation.Kind.toColor(): String = when (this) {
-        Implementation.Kind.Interface -> "green"
+    fun ImplementationKind.toColor(): String = when (this) {
+        ImplementationKind.Interface -> "green"
         else -> "red"
     }
 
@@ -25,7 +25,7 @@ fun printHierarchyGraph(builder: AbstractFirTreeBuilder) {
         }
     }
 
-    val (interfaces, classes) = elements.partition { it.kind == Implementation.Kind.Interface }
+    val (interfaces, classes) = elements.partition { it.kind == ImplementationKind.Interface }
     println("Interfaces: ${interfaces.size}")
     println("Classes: ${classes.size}")
 

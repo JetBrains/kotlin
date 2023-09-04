@@ -9,14 +9,11 @@ import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
 import org.jetbrains.kotlin.fir.tree.generator.util.set
 import org.jetbrains.kotlin.generators.tree.FieldContainer
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.Importable
+import org.jetbrains.kotlin.generators.tree.ImplementationKindOwner
 
-interface KindOwner : Importable {
-    var kind: Implementation.Kind?
-    val allParents: List<KindOwner>
-}
-
-interface AbstractElement : FieldContainer, KindOwner {
+interface AbstractElement : FieldContainer, ImplementationKindOwner {
     val name: String
     val fields: Set<Field>
     val parents: List<AbstractElement>
@@ -36,16 +33,16 @@ interface AbstractElement : FieldContainer, KindOwner {
     val isSealed: Boolean
         get() = false
 
-    override val allParents: List<KindOwner> get() = parents
+    override val allParents: List<ImplementationKindOwner> get() = parents
 }
 
 class Element(override val name: String, kind: Kind) : AbstractElement {
     companion object {
         private val allowedKinds = setOf(
-            Implementation.Kind.Interface,
-            Implementation.Kind.SealedInterface,
-            Implementation.Kind.AbstractClass,
-            Implementation.Kind.SealedClass
+            ImplementationKind.Interface,
+            ImplementationKind.SealedInterface,
+            ImplementationKind.AbstractClass,
+            ImplementationKind.SealedClass
         )
     }
 
@@ -58,7 +55,7 @@ class Element(override val name: String, kind: Kind) : AbstractElement {
     override val customImplementations = mutableListOf<Implementation>()
     override val typeArguments = mutableListOf<TypeArgument>()
     override val parentsArguments = mutableMapOf<AbstractElement, MutableMap<Importable, Importable>>()
-    override var kind: Implementation.Kind? = null
+    override var kind: ImplementationKind? = null
         set(value) {
             if (value !in allowedKinds) {
                 throw IllegalArgumentException(value.toString())

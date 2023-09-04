@@ -5,31 +5,29 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
-import org.jetbrains.kotlin.generators.tree.ArbitraryImportable
-import org.jetbrains.kotlin.generators.tree.FieldContainer
-import org.jetbrains.kotlin.generators.tree.Importable
+import org.jetbrains.kotlin.generators.tree.*
 
 class ImplementationWithArg(
     val implementation: Implementation,
     val argument: Importable?
-) : FieldContainer by implementation, KindOwner by implementation {
+) : FieldContainer by implementation, ImplementationKindOwner by implementation {
     val element: Element get() = implementation.element
 }
 
-class Implementation(val element: Element, val name: String?) : FieldContainer, KindOwner {
+class Implementation(val element: Element, val name: String?) : FieldContainer, ImplementationKindOwner {
     private val _parents = mutableListOf<ImplementationWithArg>()
     val parents: List<ImplementationWithArg> get() = _parents
 
-    override val allParents: List<KindOwner> get() = listOf(element) + parents
+    override val allParents: List<ImplementationKindOwner> get() = listOf(element) + parents
     val isDefault = name == null
     override val type = name ?: element.type + "Impl"
     override val allFields = element.allFields.toMutableList().mapTo(mutableListOf()) {
         FieldWithDefault(it)
     }
-    override var kind: Kind? = null
+    override var kind: ImplementationKind? = null
         set(value) {
             field = value
-            if (kind != Kind.FinalClass) {
+            if (kind != ImplementationKind.FinalClass) {
                 isPublic = true
             }
             if (value?.hasLeafBuilder == true) {
@@ -78,13 +76,7 @@ class Implementation(val element: Element, val name: String?) : FieldContainer, 
     val fieldsWithoutDefault by lazy { allFields.filter { it.defaultValueInImplementation == null } }
     val fieldsWithDefault by lazy { allFields.filter { it.defaultValueInImplementation != null } }
 
-    enum class Kind(val title: String, val hasLeafBuilder: Boolean, val isInterface: Boolean) {
-        Interface("interface", hasLeafBuilder = false, isInterface = true),
-        FinalClass("class", hasLeafBuilder = true, isInterface = false),
-        OpenClass("open class", hasLeafBuilder = true, isInterface = false),
-        AbstractClass("abstract class", hasLeafBuilder = false, isInterface = false),
-        SealedClass("sealed class", hasLeafBuilder = false, isInterface = false),
-        SealedInterface("sealed interface", hasLeafBuilder = false, isInterface = true),
-        Object("object", hasLeafBuilder = false, isInterface = false),
-    }
 }
+
+val ImplementationKind.hasLeafBuilder: Boolean
+    get() = this == ImplementationKind.FinalClass || this == ImplementationKind.OpenClass

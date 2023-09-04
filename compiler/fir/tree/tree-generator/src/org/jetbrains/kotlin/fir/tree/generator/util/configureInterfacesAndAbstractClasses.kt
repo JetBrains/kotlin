@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.fir.tree.generator.util
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
-import org.jetbrains.kotlin.fir.tree.generator.model.Element
-import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
-import org.jetbrains.kotlin.fir.tree.generator.model.ImplementationWithArg
-import org.jetbrains.kotlin.fir.tree.generator.model.KindOwner
+import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.generators.tree.ImplementationKindOwner
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.util.Node
 import org.jetbrains.kotlin.generators.util.solveGraphForClassVsInterface
 
-private class NodeImpl(val element: KindOwner) : Node {
+private class NodeImpl(val element: ImplementationKindOwner) : Node {
     override val parents: List<Node>
         get() = element.allParents.map(::NodeImpl)
 
@@ -51,23 +50,23 @@ private fun updateKinds(nodes: List<NodeImpl>, solution: List<Boolean>) {
         val element = node.element
         val existingKind = element.kind
         if (isClass) {
-            if (existingKind == Implementation.Kind.Interface)
+            if (existingKind == ImplementationKind.Interface)
                 throw IllegalStateException(element.toString())
 
             if (existingKind == null) {
                 element.kind = when (element) {
                     is Implementation -> {
                         if (node in allParents)
-                            Implementation.Kind.AbstractClass
+                            ImplementationKind.AbstractClass
                         else
-                            Implementation.Kind.FinalClass
+                            ImplementationKind.FinalClass
                     }
-                    is Element -> Implementation.Kind.AbstractClass
+                    is Element -> ImplementationKind.AbstractClass
                     else -> throw IllegalStateException()
                 }
             }
         } else {
-            element.kind = Implementation.Kind.Interface
+            element.kind = ImplementationKind.Interface
         }
     }
 }
@@ -78,8 +77,8 @@ private fun updateSealedKinds(nodes: Collection<NodeImpl>) {
         if (element is Element) {
             if (element.isSealed) {
                 element.kind = when (element.kind) {
-                    Implementation.Kind.AbstractClass -> Implementation.Kind.SealedClass
-                    Implementation.Kind.Interface -> Implementation.Kind.SealedInterface
+                    ImplementationKind.AbstractClass -> ImplementationKind.SealedClass
+                    ImplementationKind.Interface -> ImplementationKind.SealedInterface
                     else -> error("element $element with kind ${element.kind} can not be sealed")
                 }
             }
@@ -87,4 +86,4 @@ private fun updateSealedKinds(nodes: Collection<NodeImpl>) {
     }
 }
 
-private val KindOwner.origin: KindOwner get() = if (this is ImplementationWithArg) implementation else this
+private val ImplementationKindOwner.origin: ImplementationKindOwner get() = if (this is ImplementationWithArg) implementation else this

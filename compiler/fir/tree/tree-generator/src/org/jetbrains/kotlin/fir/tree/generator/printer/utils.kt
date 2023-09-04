@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.firImplementationDetailType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
-import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.generators.tree.Importable
+import org.jetbrains.kotlin.generators.tree.ImplementationKindOwner
 import java.io.File
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -113,8 +114,8 @@ private fun List<String>.filterRedundantImports(
 }
 
 
-val KindOwner.needPureAbstractElement: Boolean
-    get() = (kind != Kind.Interface && kind != Kind.SealedInterface) && !allParents.any { it.kind == Kind.AbstractClass || it.kind == Kind.SealedClass }
+val ImplementationKindOwner.needPureAbstractElement: Boolean
+    get() = (kind != ImplementationKind.Interface && kind != ImplementationKind.SealedInterface) && !allParents.any { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }
 
 
 val Field.isVal: Boolean
@@ -159,9 +160,9 @@ fun Element.multipleUpperBoundsList(): String {
     } ?: " "
 }
 
-fun Kind?.braces(): String = when (this) {
-    Kind.Interface, Kind.SealedInterface -> ""
-    Kind.OpenClass, Kind.AbstractClass, Kind.SealedClass -> "()"
+fun ImplementationKind?.braces(): String = when (this) {
+    ImplementationKind.Interface, ImplementationKind.SealedInterface -> ""
+    ImplementationKind.OpenClass, ImplementationKind.AbstractClass, ImplementationKind.SealedClass -> "()"
     else -> throw IllegalStateException(this.toString())
 }
 

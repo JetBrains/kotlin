@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
-import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.Importable
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.util.get
@@ -37,7 +37,7 @@ fun Element.generateCode(generationPath: File): GeneratedFile {
 
 fun SmartPrinter.printElement(element: Element) {
     with(element) {
-        val isInterface = kind == Kind.Interface || kind == Kind.SealedInterface
+        val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
         fun abstract() {
             if (!isInterface) {
                 print("abstract ")
@@ -54,7 +54,7 @@ fun SmartPrinter.printElement(element: Element) {
         if (typeArguments.isNotEmpty()) {
             print(typeArguments.joinToString(", ", "<", ">") { it.toString() })
         }
-        val needPureAbstractElement = !isInterface && !allParents.any { it.kind == Kind.AbstractClass || it.kind == Kind.SealedClass }
+        val needPureAbstractElement = !isInterface && !allParents.any { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }
 
         if (parents.isNotEmpty() || needPureAbstractElement) {
             print(" : ")
