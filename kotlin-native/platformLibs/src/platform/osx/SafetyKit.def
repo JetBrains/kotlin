@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.SafetyKit
+
+modules = SafetyKit
+compilerOpts = -framework SafetyKit
+linkerOpts = -framework SafetyKit

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.Cinematic
+
+modules.tvos_arm64 = Cinematic
+compilerOpts.tvos_arm64 = -framework Cinematic
+linkerOpts.tvos_arm64 = -framework Cinematic
+#Disabled: Check that framework is not available for simulators

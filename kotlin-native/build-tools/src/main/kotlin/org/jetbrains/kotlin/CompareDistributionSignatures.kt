@@ -9,6 +9,8 @@ import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
  * Compares SignatureIds of the current distribution and the given older one.
@@ -91,14 +93,16 @@ open class CompareDistributionSignatures : DefaultTask() {
     private fun cumulativeSignaturesComparison(klibDiff: KlibDiff): Boolean {
         report("signatures diff")
         // Boolean value signifies if value is present in new platform libraries.
-        val signaturesMap = mutableMapOf<String, Mark>()
+        val signaturesMap = ConcurrentHashMap<String, Mark>()
+        val duplicates = ConcurrentLinkedQueue<String>()
+
         val oldLibs = klibDiff.missingLibs + klibDiff.remainingLibs.map { it.old }
-        oldLibs.flatMap { getKlibSignatures(it) }.forEach { sig ->
+        val newLibs = klibDiff.newLibs + klibDiff.remainingLibs.map { it.new }
+
+        fun markOldSymbol(sig: String) {
             signaturesMap.getOrPut(sig, ::Mark).presentInOld = true
         }
-        val duplicates = mutableListOf<String>()
-        val newLibs = klibDiff.newLibs + klibDiff.remainingLibs.map { it.new }
-        newLibs.flatMap { getKlibSignatures(it) }.forEach { sig ->
+        fun markNewSymbol(sig: String) {
             val mark = signaturesMap.getOrPut(sig, ::Mark)
             if (mark.presentInNew) {
                 duplicates += sig
@@ -106,7 +110,20 @@ open class CompareDistributionSignatures : DefaultTask() {
                 mark.presentInNew = true
             }
         }
-        duplicates.forEach { report("dup: $it") }
+
+        data class LibraryToProcess(val file: File, val mark: (String) -> Unit)
+
+        listOf(
+            *oldLibs.map { LibraryToProcess(it, ::markOldSymbol) }.toTypedArray(),
+            *newLibs.map { LibraryToProcess(it, ::markNewSymbol) }.toTypedArray()
+        ).parallelStream()
+            .forEach {
+                getKlibSignatures(it.file).forEach { sig ->
+                    it.mark(sig)
+                }
+            }
+
+        duplicates.sorted().forEach { report("dup: $it") }
         val oldSigs = signaturesMap.filterValues { it.oldOnly }.keys
                 .sorted()
                 .onEach { report("-: $it") }

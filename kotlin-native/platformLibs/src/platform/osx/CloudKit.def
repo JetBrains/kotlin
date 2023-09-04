@@ -5,3 +5,5 @@ modules = CloudKit
 
 compilerOpts = -framework CloudKit
 linkerOpts = -framework CloudKit
+
+objcClassesIncludingCategories = CKNotification

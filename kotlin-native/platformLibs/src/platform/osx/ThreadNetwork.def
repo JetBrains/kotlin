@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.ThreadNetwork
+
+modules = ThreadNetwork
+compilerOpts = -framework ThreadNetwork
+linkerOpts = -framework ThreadNetwork
