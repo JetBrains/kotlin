@@ -8,10 +8,11 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.analysis.java.doccomment.DocComment
 import org.jetbrains.dokka.analysis.java.parsers.DocCommentParser
-import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.logIfNotResolved
-import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
+import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.*
+import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.logUnresolvedLink
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.parseFromKDocTag
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.resolveKDocLink
+import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.plugin
@@ -37,10 +38,11 @@ internal class KotlinDocCommentParser(
                 ?: sourceSets.first { it.analysisPlatform == Platform.jvm }
         }
         val kotlinAnalysis = context.plugin<SymbolsAnalysisPlugin>().querySingle { kotlinAnalysis }
+        val elementName = element.resolveDocContext.ktElement.name
         return analyze(kotlinAnalysis[sourceSet].mainModule) {
             parseFromKDocTag(
                 kDocTag = element.comment,
-                externalDri = { link -> resolveKDocLink(link).logIfNotResolved(link.getLinkText(), context.logger) },
+                externalDri = { link -> resolveKDocLink(link).ifUnresolved { context.logger.logUnresolvedLink(link.getLinkText(), elementName) } },
                 kdocLocation = null,
                 parseWithChildren = parseWithChildren
             )
