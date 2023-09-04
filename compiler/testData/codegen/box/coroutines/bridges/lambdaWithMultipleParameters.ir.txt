@@ -13,9 +13,9 @@ final class LambdaWithMultipleParametersKt$box$1$1 {
     inner (anonymous) class LambdaWithMultipleParametersKt$box$1
     inner (anonymous) class LambdaWithMultipleParametersKt$box$1$1
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: long, p2: long, p3: long, p4: long, p5: long, @org.jetbrains.annotations.Nullable p6: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: java.lang.String, p1: long, p2: long, p3: long, p4: long, p5: long, p6: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -29,10 +29,10 @@ final class LambdaWithMultipleParametersKt$box$1 {
     inner (anonymous) class LambdaWithMultipleParametersKt$box$1
     inner (anonymous) class LambdaWithMultipleParametersKt$box$1$1
     method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
     public final inner class kotlin/jvm/internal/Ref$ObjectRef
 }
 

@@ -9,10 +9,10 @@ final class Foo$bar$1 {
     synthetic final field this$0: Foo
     inner (anonymous) class Foo$bar$1
     method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: Foo, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
     public final inner class kotlin/jvm/internal/Ref$ObjectRef
 }
 

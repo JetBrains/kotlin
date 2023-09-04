@@ -5,7 +5,6 @@ final class foo/Kotlin$foo5$lambda$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/fu
     void <init>(foo.Kotlin $receiver)
 
     public final java.lang.String invoke()
-      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
@@ -19,7 +18,6 @@ final class foo/Kotlin$foo6$indyLambda$1 : kotlin/jvm/internal/Lambda, kotlin/jv
     void <init>(foo.Kotlin $receiver)
 
     public final java.lang.String invoke()
-      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 

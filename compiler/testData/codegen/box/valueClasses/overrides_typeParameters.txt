@@ -197,7 +197,7 @@ final class Overrides_typeParametersKt$box$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -208,7 +208,7 @@ final class Overrides_typeParametersKt$box$10 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$10
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -220,7 +220,7 @@ final class Overrides_typeParametersKt$box$100 {
     synthetic final field $xPointWithInterface-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$100
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -232,7 +232,7 @@ final class Overrides_typeParametersKt$box$101 {
     synthetic final field $xPointWithInterface-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$101
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -244,7 +244,7 @@ final class Overrides_typeParametersKt$box$102 {
     synthetic final field $xPointWithInterface-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$102
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -256,7 +256,7 @@ final class Overrides_typeParametersKt$box$103 {
     synthetic final field $xPointWithInterface-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$103
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
+    public final method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -268,7 +268,7 @@ final class Overrides_typeParametersKt$box$104 {
     synthetic final field $xPointWithInterface-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$104
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -346,7 +346,7 @@ final class Overrides_typeParametersKt$box$11 {
     inner (anonymous) class Overrides_typeParametersKt$box$11
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -412,7 +412,7 @@ final class Overrides_typeParametersKt$box$114 {
     synthetic final field $xSegment-p1-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$114
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -424,7 +424,7 @@ final class Overrides_typeParametersKt$box$115 {
     synthetic final field $xSegment-p2-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$115
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -436,7 +436,7 @@ final class Overrides_typeParametersKt$box$116 {
     inner (anonymous) class Overrides_typeParametersKt$box$116
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -447,7 +447,7 @@ final class Overrides_typeParametersKt$box$117 {
     synthetic final field $xPoint-x: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$117
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -459,7 +459,7 @@ final class Overrides_typeParametersKt$box$118 {
     inner (anonymous) class Overrides_typeParametersKt$box$118
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -470,7 +470,7 @@ final class Overrides_typeParametersKt$box$119 {
     synthetic final field $xSegment-p1-x: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$119
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -482,7 +482,7 @@ final class Overrides_typeParametersKt$box$12 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$12
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -494,7 +494,7 @@ final class Overrides_typeParametersKt$box$120 {
     inner (anonymous) class Overrides_typeParametersKt$box$120
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -505,7 +505,7 @@ final class Overrides_typeParametersKt$box$121 {
     synthetic final field $otherXPoint-x: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$121
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -517,7 +517,7 @@ final class Overrides_typeParametersKt$box$122 {
     inner (anonymous) class Overrides_typeParametersKt$box$122
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -528,7 +528,7 @@ final class Overrides_typeParametersKt$box$123 {
     synthetic final field $xSegment-p2-x: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$123
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -540,7 +540,7 @@ final class Overrides_typeParametersKt$box$124 {
     inner (anonymous) class Overrides_typeParametersKt$box$124
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -551,7 +551,7 @@ final class Overrides_typeParametersKt$box$125 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$125
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -563,7 +563,7 @@ final class Overrides_typeParametersKt$box$126 {
     inner (anonymous) class Overrides_typeParametersKt$box$126
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -574,7 +574,7 @@ final class Overrides_typeParametersKt$box$127 {
     synthetic final field $xSegment-p1-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$127
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -586,7 +586,7 @@ final class Overrides_typeParametersKt$box$128 {
     inner (anonymous) class Overrides_typeParametersKt$box$128
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -597,7 +597,7 @@ final class Overrides_typeParametersKt$box$129 {
     synthetic final field $otherXPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$129
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -609,7 +609,7 @@ final class Overrides_typeParametersKt$box$13 {
     inner (anonymous) class Overrides_typeParametersKt$box$13
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -621,7 +621,7 @@ final class Overrides_typeParametersKt$box$130 {
     inner (anonymous) class Overrides_typeParametersKt$box$130
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -632,7 +632,7 @@ final class Overrides_typeParametersKt$box$131 {
     synthetic final field $xSegment-p2-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$131
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -646,7 +646,7 @@ final class Overrides_typeParametersKt$box$132 {
     synthetic final field $xSegment-p2-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$132
     method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -660,7 +660,7 @@ final class Overrides_typeParametersKt$box$133 {
     synthetic final field $xSegment-p2-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$133
     method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -672,7 +672,7 @@ final class Overrides_typeParametersKt$box$134 {
     inner (anonymous) class Overrides_typeParametersKt$box$134
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -686,7 +686,7 @@ final class Overrides_typeParametersKt$box$135 {
     synthetic final field $xSegment-p2-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$135
     method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -698,7 +698,7 @@ final class Overrides_typeParametersKt$box$136 {
     inner (anonymous) class Overrides_typeParametersKt$box$136
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -712,7 +712,7 @@ final class Overrides_typeParametersKt$box$137 {
     synthetic final field $xSegment-p2-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$137
     method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -724,7 +724,7 @@ final class Overrides_typeParametersKt$box$138 {
     inner (anonymous) class Overrides_typeParametersKt$box$138
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -738,7 +738,7 @@ final class Overrides_typeParametersKt$box$139 {
     synthetic final field $xSegment-p2-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$139
     method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -752,7 +752,7 @@ final class Overrides_typeParametersKt$box$14 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$14
     method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -764,7 +764,7 @@ final class Overrides_typeParametersKt$box$140 {
     inner (anonymous) class Overrides_typeParametersKt$box$140
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -778,7 +778,7 @@ final class Overrides_typeParametersKt$box$141 {
     synthetic final field $xSegment-p2-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$141
     method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -790,7 +790,7 @@ final class Overrides_typeParametersKt$box$15 {
     inner (anonymous) class Overrides_typeParametersKt$box$15
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -804,7 +804,7 @@ final class Overrides_typeParametersKt$box$16 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$16
     method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -816,7 +816,7 @@ final class Overrides_typeParametersKt$box$17 {
     inner (anonymous) class Overrides_typeParametersKt$box$17
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -830,7 +830,7 @@ final class Overrides_typeParametersKt$box$18 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$18
     method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -842,7 +842,7 @@ final class Overrides_typeParametersKt$box$19 {
     inner (anonymous) class Overrides_typeParametersKt$box$19
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -855,7 +855,7 @@ final class Overrides_typeParametersKt$box$2 {
     inner (anonymous) class Overrides_typeParametersKt$box$2
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -868,7 +868,7 @@ final class Overrides_typeParametersKt$box$20 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$20
     method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -880,7 +880,7 @@ final class Overrides_typeParametersKt$box$21 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$21
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
+    public final method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -892,7 +892,7 @@ final class Overrides_typeParametersKt$box$22 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$22
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
+    public final method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -904,7 +904,7 @@ final class Overrides_typeParametersKt$box$23 {
     inner (anonymous) class Overrides_typeParametersKt$box$23
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -915,7 +915,7 @@ final class Overrides_typeParametersKt$box$24 {
     synthetic final field $xPoint-x: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$24
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -927,7 +927,7 @@ final class Overrides_typeParametersKt$box$25 {
     inner (anonymous) class Overrides_typeParametersKt$box$25
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -939,7 +939,7 @@ final class Overrides_typeParametersKt$box$26 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$26
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -951,7 +951,7 @@ final class Overrides_typeParametersKt$box$27 {
     inner (anonymous) class Overrides_typeParametersKt$box$27
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -962,7 +962,7 @@ final class Overrides_typeParametersKt$box$28 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$28
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -974,7 +974,7 @@ final class Overrides_typeParametersKt$box$29 {
     inner (anonymous) class Overrides_typeParametersKt$box$29
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -987,7 +987,7 @@ final class Overrides_typeParametersKt$box$3 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -998,7 +998,7 @@ final class Overrides_typeParametersKt$box$30 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$30
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
+    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1009,7 +1009,7 @@ final class Overrides_typeParametersKt$box$31 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_typeParametersKt$box$31
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1020,7 +1020,7 @@ final class Overrides_typeParametersKt$box$32 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_typeParametersKt$box$32
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1031,7 +1031,7 @@ final class Overrides_typeParametersKt$box$33 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_typeParametersKt$box$33
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1042,7 +1042,7 @@ final class Overrides_typeParametersKt$box$34 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_typeParametersKt$box$34
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1053,7 +1053,7 @@ final class Overrides_typeParametersKt$box$35 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_typeParametersKt$box$35
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1064,7 +1064,7 @@ final class Overrides_typeParametersKt$box$36 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_typeParametersKt$box$36
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1075,7 +1075,7 @@ final class Overrides_typeParametersKt$box$37 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_typeParametersKt$box$37
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1086,7 +1086,7 @@ final class Overrides_typeParametersKt$box$38 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_typeParametersKt$box$38
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1097,7 +1097,7 @@ final class Overrides_typeParametersKt$box$39 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_typeParametersKt$box$39
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1110,7 +1110,7 @@ final class Overrides_typeParametersKt$box$4 {
     inner (anonymous) class Overrides_typeParametersKt$box$4
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -1224,7 +1224,7 @@ final class Overrides_typeParametersKt$box$48 {
     synthetic final field $genericFakeOverride: GenericFakeOverride
     inner (anonymous) class Overrides_typeParametersKt$box$48
     method <init>(p0: GenericFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1235,7 +1235,7 @@ final class Overrides_typeParametersKt$box$49 {
     synthetic final field $genericFakeOverride: GenericFakeOverride
     inner (anonymous) class Overrides_typeParametersKt$box$49
     method <init>(p0: GenericFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1247,7 +1247,7 @@ final class Overrides_typeParametersKt$box$5 {
     inner (anonymous) class Overrides_typeParametersKt$box$5
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1258,7 +1258,7 @@ final class Overrides_typeParametersKt$box$50 {
     synthetic final field $genericFakeOverride: GenericFakeOverride
     inner (anonymous) class Overrides_typeParametersKt$box$50
     method <init>(p0: GenericFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1269,7 +1269,7 @@ final class Overrides_typeParametersKt$box$51 {
     synthetic final field $genericFakeOverride: GenericFakeOverride
     inner (anonymous) class Overrides_typeParametersKt$box$51
     method <init>(p0: GenericFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1280,7 +1280,7 @@ final class Overrides_typeParametersKt$box$52 {
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
     inner (anonymous) class Overrides_typeParametersKt$box$52
     method <init>(p0: ReifiedFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1291,7 +1291,7 @@ final class Overrides_typeParametersKt$box$53 {
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
     inner (anonymous) class Overrides_typeParametersKt$box$53
     method <init>(p0: ReifiedFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1302,7 +1302,7 @@ final class Overrides_typeParametersKt$box$54 {
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
     inner (anonymous) class Overrides_typeParametersKt$box$54
     method <init>(p0: ReifiedFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1313,7 +1313,7 @@ final class Overrides_typeParametersKt$box$55 {
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
     inner (anonymous) class Overrides_typeParametersKt$box$55
     method <init>(p0: ReifiedFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1324,7 +1324,7 @@ final class Overrides_typeParametersKt$box$56 {
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
     inner (anonymous) class Overrides_typeParametersKt$box$56
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1335,7 +1335,7 @@ final class Overrides_typeParametersKt$box$57 {
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
     inner (anonymous) class Overrides_typeParametersKt$box$57
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1346,7 +1346,7 @@ final class Overrides_typeParametersKt$box$58 {
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
     inner (anonymous) class Overrides_typeParametersKt$box$58
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1357,7 +1357,7 @@ final class Overrides_typeParametersKt$box$59 {
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
     inner (anonymous) class Overrides_typeParametersKt$box$59
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1369,7 +1369,7 @@ final class Overrides_typeParametersKt$box$6 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$6
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1511,7 +1511,7 @@ final class Overrides_typeParametersKt$box$7 {
     inner (anonymous) class Overrides_typeParametersKt$box$7
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1549,7 +1549,7 @@ final class Overrides_typeParametersKt$box$72 {
     synthetic final field $genericFakeOverrideMFVC-field2: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$72
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1561,7 +1561,7 @@ final class Overrides_typeParametersKt$box$73 {
     synthetic final field $genericFakeOverrideMFVC-field2: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$73
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1573,7 +1573,7 @@ final class Overrides_typeParametersKt$box$74 {
     synthetic final field $genericFakeOverrideMFVC-field2: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$74
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1585,7 +1585,7 @@ final class Overrides_typeParametersKt$box$75 {
     synthetic final field $genericFakeOverrideMFVC-field2: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$75
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1597,7 +1597,7 @@ final class Overrides_typeParametersKt$box$76 {
     synthetic final field $reifiedFakeOverrideMFVC-field2: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$76
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1609,7 +1609,7 @@ final class Overrides_typeParametersKt$box$77 {
     synthetic final field $reifiedFakeOverrideMFVC-field2: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$77
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1621,7 +1621,7 @@ final class Overrides_typeParametersKt$box$78 {
     synthetic final field $reifiedFakeOverrideMFVC-field2: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$78
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1633,7 +1633,7 @@ final class Overrides_typeParametersKt$box$79 {
     synthetic final field $reifiedFakeOverrideMFVC-field2: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$79
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1645,7 +1645,7 @@ final class Overrides_typeParametersKt$box$8 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$8
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1657,7 +1657,7 @@ final class Overrides_typeParametersKt$box$80 {
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$80
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1669,7 +1669,7 @@ final class Overrides_typeParametersKt$box$81 {
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$81
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1681,7 +1681,7 @@ final class Overrides_typeParametersKt$box$82 {
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$82
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1693,7 +1693,7 @@ final class Overrides_typeParametersKt$box$83 {
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$83
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1789,7 +1789,7 @@ final class Overrides_typeParametersKt$box$9 {
     inner (anonymous) class Overrides_typeParametersKt$box$9
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1885,7 +1885,7 @@ final class Overrides_typeParametersKt$box$96 {
     synthetic final field $xPointWithInterface-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$96
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1897,7 +1897,7 @@ final class Overrides_typeParametersKt$box$97 {
     synthetic final field $xPointWithInterface-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$97
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1909,7 +1909,7 @@ final class Overrides_typeParametersKt$box$98 {
     synthetic final field $xPointWithInterface-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$98
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
+    public final method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1921,7 +1921,7 @@ final class Overrides_typeParametersKt$box$99 {
     synthetic final field $xPointWithInterface-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$99
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
+    public final method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1946,7 +1946,7 @@ final class Overrides_typeParametersKt$box$lam1$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -1970,7 +1970,7 @@ final class Overrides_typeParametersKt$box$lam11$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -1994,7 +1994,7 @@ final class Overrides_typeParametersKt$box$lam13$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2018,7 +2018,7 @@ final class Overrides_typeParametersKt$box$lam15$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2042,7 +2042,7 @@ final class Overrides_typeParametersKt$box$lam17$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2066,7 +2066,7 @@ final class Overrides_typeParametersKt$box$lam19$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2102,7 +2102,7 @@ final class Overrides_typeParametersKt$box$lam3$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2126,7 +2126,7 @@ final class Overrides_typeParametersKt$box$lam5$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2150,7 +2150,7 @@ final class Overrides_typeParametersKt$box$lam7$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2174,7 +2174,7 @@ final class Overrides_typeParametersKt$box$lam9$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2185,7 +2185,7 @@ final class Overrides_typeParametersKt$box$otherXPointLam$1 {
     synthetic final field $otherXPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$otherXPointLam$1
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -2197,7 +2197,7 @@ final class Overrides_typeParametersKt$box$xPointLam$1 {
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$xPointLam$1
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): XPoint
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 

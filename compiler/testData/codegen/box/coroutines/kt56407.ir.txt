@@ -15,10 +15,10 @@ final class DefaultAuthorizableClient$connectToServer$2 {
     inner (anonymous) class DefaultAuthorizableClient$connectToServer$2
     inner (local) class DefaultAuthorizableClient$connectToServer$NextObjectQuery NextObjectQuery
     method <init>(p0: DefaultAuthorizableClient, p1: DefaultAuthorizableClient$connectToServer$NextObjectQuery, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.Nullable p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: java.lang.String, p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -57,10 +57,10 @@ final class Kt56407Kt$box$1 {
     inner (anonymous) class Kt56407Kt$box$1
     inner (anonymous) class Kt56407Kt$box$1$1
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.Nullable p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: java.lang.String, p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -70,8 +70,8 @@ public final class Kt56407Kt$builder$$inlined$Continuation$1 {
     synthetic final field $context: kotlin.coroutines.CoroutineContext
     inner (anonymous) class Kt56407Kt$builder$$inlined$Continuation$1
     public method <init>(p0: kotlin.coroutines.CoroutineContext): void
-    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
-    public method resumeWith(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public method getContext(): kotlin.coroutines.CoroutineContext
+    public method resumeWith(p0: java.lang.Object): void
 }
 
 @kotlin.Metadata

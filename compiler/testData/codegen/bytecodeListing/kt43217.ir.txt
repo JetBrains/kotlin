@@ -4,7 +4,7 @@ public final class A$b$1 {
     enclosing method A.<init>()V
     inner (anonymous) class A$b$1
     method <init>(): void
-    public @org.jetbrains.annotations.NotNull method get(): java.lang.Double
+    public method get(): java.lang.Double
     public synthetic bridge method get(): java.lang.Object
 }
 

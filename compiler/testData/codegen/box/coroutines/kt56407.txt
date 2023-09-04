@@ -67,8 +67,8 @@ public final class Kt56407Kt$builder$$inlined$Continuation$1 {
     synthetic final field $context: kotlin.coroutines.CoroutineContext
     inner (anonymous) class Kt56407Kt$builder$$inlined$Continuation$1
     public method <init>(p0: kotlin.coroutines.CoroutineContext): void
-    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
-    public method resumeWith(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public method getContext(): kotlin.coroutines.CoroutineContext
+    public method resumeWith(p0: java.lang.Object): void
 }
 
 @kotlin.Metadata

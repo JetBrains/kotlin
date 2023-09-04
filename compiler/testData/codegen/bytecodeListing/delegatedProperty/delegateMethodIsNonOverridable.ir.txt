@@ -6,7 +6,7 @@ synthetic final class C$x$2$1 {
     inner (anonymous) class C$x$2$1
     static method <clinit>(): void
     method <init>(): void
-    public @org.jetbrains.annotations.Nullable method get(): java.lang.Object
+    public method get(): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -28,7 +28,7 @@ synthetic final class D$x$2$1 {
     inner (anonymous) class D$x$2$1
     static method <clinit>(): void
     method <init>(): void
-    public @org.jetbrains.annotations.Nullable method get(): java.lang.Object
+    public method get(): java.lang.Object
 }
 
 @kotlin.Metadata

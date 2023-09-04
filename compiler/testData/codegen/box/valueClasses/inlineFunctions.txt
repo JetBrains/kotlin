@@ -5,8 +5,8 @@ public final class CallerKt$runSuspend$$inlined$Continuation$1 {
     synthetic final field $context: kotlin.coroutines.CoroutineContext
     inner (anonymous) class CallerKt$runSuspend$$inlined$Continuation$1
     public method <init>(p0: kotlin.coroutines.CoroutineContext): void
-    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
-    public method resumeWith(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public method getContext(): kotlin.coroutines.CoroutineContext
+    public method resumeWith(p0: java.lang.Object): void
 }
 
 @kotlin.Metadata
@@ -107,10 +107,10 @@ final class TestKt$box$13 {
     field label: int
     inner (anonymous) class TestKt$box$13
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata

@@ -21,7 +21,7 @@ final class SimpleLockTest$withLock$result$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata

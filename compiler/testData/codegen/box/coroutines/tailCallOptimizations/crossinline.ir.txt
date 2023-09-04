@@ -20,8 +20,8 @@ public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2 {
     synthetic final field $this_source$inlined: Sink
     inner (anonymous) class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2
     public method <init>(p0: Sink): void
-    public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
-    public @org.jetbrains.annotations.Nullable method send(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public method close(p0: java.lang.Throwable): void
+    public method send(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -32,7 +32,7 @@ public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1 {
     inner (anonymous) class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1
     inner (anonymous) class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$1
     public method <init>(p0: SourceCrossinline): void
-    public @org.jetbrains.annotations.Nullable method consume(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public method consume(p0: Sink, p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -42,8 +42,8 @@ public final class CrossinlineKt$box$1$invokeSuspend$$inlined$fold$1 {
     synthetic final field $acc$inlined: kotlin.jvm.internal.Ref$ObjectRef
     inner (anonymous) class CrossinlineKt$box$1$invokeSuspend$$inlined$fold$1
     public method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef): void
-    public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
-    public @org.jetbrains.annotations.Nullable method send(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public method close(p0: java.lang.Throwable): void
+    public method send(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -57,10 +57,10 @@ final class CrossinlineKt$box$1 {
     field label: int
     inner (anonymous) class CrossinlineKt$box$1
     method <init>(p0: kotlin.jvm.internal.Ref$IntRef, p1: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
     public final inner class SourceCrossinline$Factory
     public final inner class kotlin/jvm/internal/Ref$IntRef
 }
@@ -86,9 +86,9 @@ public final class CrossinlineKt$consumeEach$2 {
     inner (anonymous) class CrossinlineKt$consumeEach$2
     inner (anonymous) class CrossinlineKt$consumeEach$2$send$1
     public method <init>(p0: kotlin.jvm.functions.Function2): void
-    public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
-    public @org.jetbrains.annotations.Nullable method send$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
-    public @org.jetbrains.annotations.Nullable method send(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public method close(p0: java.lang.Throwable): void
+    public method send$$forInline(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
+    public method send(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -115,8 +115,8 @@ public final class CrossinlineKt$filter$$inlined$source$1 {
     inner (anonymous) class CrossinlineKt$filter$$inlined$source$1
     inner (anonymous) class CrossinlineKt$filter$$inlined$source$1$1
     public method <init>(p0: SourceCrossinline, p1: kotlin.jvm.functions.Function1): void
-    public @org.jetbrains.annotations.Nullable method consume$$forInline(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
-    public @org.jetbrains.annotations.Nullable method consume(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public method consume$$forInline(p0: Sink, p1: kotlin.coroutines.Continuation): java.lang.Object
+    public method consume(p0: Sink, p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -141,9 +141,9 @@ public final class CrossinlineKt$filter$lambda$3$$inlined$consumeEach$1 {
     inner (anonymous) class CrossinlineKt$filter$lambda$3$$inlined$consumeEach$1
     inner (anonymous) class CrossinlineKt$filter$lambda$3$$inlined$consumeEach$1$1
     public method <init>(p0: kotlin.jvm.functions.Function1, p1: Sink): void
-    public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
-    public @org.jetbrains.annotations.Nullable method send$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
-    public @org.jetbrains.annotations.Nullable method send(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public method close(p0: java.lang.Throwable): void
+    public method send$$forInline(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
+    public method send(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -170,9 +170,9 @@ public final class CrossinlineKt$fold$$inlined$consumeEach$1 {
     inner (anonymous) class CrossinlineKt$fold$$inlined$consumeEach$1
     inner (anonymous) class CrossinlineKt$fold$$inlined$consumeEach$1$1
     public method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.jvm.functions.Function3): void
-    public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
-    public @org.jetbrains.annotations.Nullable method send$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
-    public @org.jetbrains.annotations.Nullable method send(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public method close(p0: java.lang.Throwable): void
+    public method send$$forInline(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
+    public method send(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -215,7 +215,7 @@ public final class CrossinlineKt$range$$inlined$source$1 {
     inner (anonymous) class CrossinlineKt$range$$inlined$source$1
     inner (anonymous) class CrossinlineKt$range$$inlined$source$1$1
     public method <init>(p0: int, p1: int): void
-    public @org.jetbrains.annotations.Nullable method consume(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public method consume(p0: Sink, p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -241,8 +241,8 @@ public final class CrossinlineKt$source$1 {
     inner (anonymous) class CrossinlineKt$source$1
     inner (anonymous) class CrossinlineKt$source$1$consume$1
     public method <init>(p0: kotlin.jvm.functions.Function2): void
-    public @org.jetbrains.annotations.Nullable method consume$$forInline(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
-    public @org.jetbrains.annotations.Nullable method consume(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public method consume$$forInline(p0: Sink, p1: kotlin.coroutines.Continuation): java.lang.Object
+    public method consume(p0: Sink, p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata

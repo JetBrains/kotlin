@@ -4,11 +4,11 @@ public final class _2Kt$box$$inlined$test$1 {
     enclosing method _2Kt.box()V
     synthetic final field $captured$inlined: java.lang.String
     synthetic final field $z$inlined: kotlin.jvm.internal.Ref$ObjectRef
-    private final @org.jetbrains.annotations.NotNull field p: java.lang.String
+    private final field p: java.lang.String
     inner (anonymous) class _2Kt$box$$inlined$test$1
     public method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: java.lang.String): void
-    public @org.jetbrains.annotations.NotNull method a(): java.lang.String
-    public final @org.jetbrains.annotations.NotNull method getP(): java.lang.String
+    public method a(): java.lang.String
+    public final method getP(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -19,7 +19,7 @@ final class _2Kt$box$res$1$1 {
     inner (anonymous) class _2Kt$box$res$1$1
     method <init>(p0: java.lang.String): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -41,11 +41,11 @@ public final class test/_1Kt$test$1 {
     // source: '1.kt'
     enclosing method test/_1Kt.test(Lkotlin/jvm/functions/Function0;)Ltest/Z;
     synthetic final field $z: kotlin.jvm.functions.Function0
-    private final @org.jetbrains.annotations.NotNull field p: java.lang.String
+    private final field p: java.lang.String
     inner (anonymous) class test/_1Kt$test$1
     public method <init>(p0: kotlin.jvm.functions.Function0): void
-    public @org.jetbrains.annotations.NotNull method a(): java.lang.String
-    public final @org.jetbrains.annotations.NotNull method getP(): java.lang.String
+    public method a(): java.lang.String
+    public final method getP(): java.lang.String
 }
 
 @kotlin.Metadata

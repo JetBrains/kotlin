@@ -7,11 +7,11 @@ public interface<<T:Ljava/lang/Object;>Ljava/lang/Object;>  Sam {
 @kotlin.Metadata
 synthetic final class<null>  TKt$genericSam$1 {
     // source: 't.kt'
-    public final @org.jetbrains.annotations.NotNull <()Lkotlin/Function<*>;> method getFunctionDelegate(): kotlin.Function
+    public final <()Lkotlin/Function<*>;> method getFunctionDelegate(): kotlin.Function
     public final <()TT;> method get(): java.lang.Object
     static <null> method <clinit>(): void
     <null> method <init>(): void
-    public final <null> method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final <null> method equals(p0: java.lang.Object): boolean
     public final <null> method hashCode(): int
     enclosing method TKt.genericSam()Ljava/lang/Object;
     public final static field <null> INSTANCE: TKt$genericSam$1

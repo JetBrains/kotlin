@@ -1,0 +1,40 @@
+@kotlin.Metadata
+final class SamAdapterForJavaInterfaceWithNullabilityKt$testNoAnnotation$1 {
+    // source: 'samAdapterForJavaInterfaceWithNullability.kt'
+    enclosing method SamAdapterForJavaInterfaceWithNullabilityKt.testNoAnnotation(Ljava/lang/String;)LJNoAnnotation;
+    synthetic final field $s: java.lang.String
+    inner (anonymous) class SamAdapterForJavaInterfaceWithNullabilityKt$testNoAnnotation$1
+    method <init>(p0: java.lang.String): void
+    public final method getString(): java.lang.String
+}
+
+@kotlin.Metadata
+final class SamAdapterForJavaInterfaceWithNullabilityKt$testNotNull$1 {
+    // source: 'samAdapterForJavaInterfaceWithNullability.kt'
+    enclosing method SamAdapterForJavaInterfaceWithNullabilityKt.testNotNull(Ljava/lang/String;)LJNotNull;
+    synthetic final field $s: java.lang.String
+    inner (anonymous) class SamAdapterForJavaInterfaceWithNullabilityKt$testNotNull$1
+    method <init>(p0: java.lang.String): void
+    public final method getNullableString(): java.lang.String
+}
+
+@kotlin.Metadata
+final class SamAdapterForJavaInterfaceWithNullabilityKt$testNullable$1 {
+    // source: 'samAdapterForJavaInterfaceWithNullability.kt'
+    enclosing method SamAdapterForJavaInterfaceWithNullabilityKt.testNullable(Ljava/lang/String;)LJNullable;
+    synthetic final field $s: java.lang.String
+    inner (anonymous) class SamAdapterForJavaInterfaceWithNullabilityKt$testNullable$1
+    method <init>(p0: java.lang.String): void
+    public final method getNullableString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class SamAdapterForJavaInterfaceWithNullabilityKt {
+    // source: 'samAdapterForJavaInterfaceWithNullability.kt'
+    inner (anonymous) class SamAdapterForJavaInterfaceWithNullabilityKt$testNoAnnotation$1
+    inner (anonymous) class SamAdapterForJavaInterfaceWithNullabilityKt$testNotNull$1
+    inner (anonymous) class SamAdapterForJavaInterfaceWithNullabilityKt$testNullable$1
+    public final static @org.jetbrains.annotations.NotNull method testNoAnnotation(@org.jetbrains.annotations.NotNull p0: java.lang.String): JNoAnnotation
+    public final static @org.jetbrains.annotations.NotNull method testNotNull(@org.jetbrains.annotations.NotNull p0: java.lang.String): JNotNull
+    public final static @org.jetbrains.annotations.NotNull method testNullable(@org.jetbrains.annotations.NotNull p0: java.lang.String): JNullable
+}

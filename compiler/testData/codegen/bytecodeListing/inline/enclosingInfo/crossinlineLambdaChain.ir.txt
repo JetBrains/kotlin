@@ -23,7 +23,7 @@ public final class _2Kt$box$lambda$1$$inlined$test$1 {
     inner (anonymous) class _2Kt$box$lambda$1$$inlined$test$1
     public method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -42,7 +42,7 @@ public final class _2Kt$box$lambda$4$lambda$3$$inlined$test$1 {
     inner (anonymous) class _2Kt$box$lambda$4$lambda$3$$inlined$test$1
     public method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -69,7 +69,7 @@ public final class test/_1Kt$test$1 {
     inner (anonymous) class test/_1Kt$test$1
     public method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata

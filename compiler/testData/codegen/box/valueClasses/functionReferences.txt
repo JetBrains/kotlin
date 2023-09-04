@@ -19,7 +19,7 @@ synthetic final class AnotherKt$any1$1 {
     inner (anonymous) class AnotherKt$any1$1
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(p0: double, p1: double): DPoint
+    public final method invoke(p0: double, p1: double): DPoint
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
 }
 
@@ -29,7 +29,7 @@ synthetic final class AnotherKt$any2$1 {
     enclosing method AnotherKt.any2-nuuzChU(DD)Ljava/lang/Object;
     inner (anonymous) class AnotherKt$any2$1
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
+    public final method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
 
@@ -42,7 +42,7 @@ synthetic final class AnotherKt$any2$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
 }
 
 @kotlin.Metadata
@@ -51,8 +51,8 @@ synthetic final class AnotherKt$any3$1 {
     enclosing method AnotherKt.any3-nuuzChU(DD)Ljava/lang/Object;
     inner (anonymous) class AnotherKt$any3$1
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -64,7 +64,7 @@ synthetic final class AnotherKt$any3$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -73,8 +73,8 @@ synthetic final class AnotherKt$any4$1 {
     enclosing method AnotherKt.any4-nuuzChU(DD)Ljava/lang/Object;
     inner (anonymous) class AnotherKt$any4$1
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -86,7 +86,7 @@ synthetic final class AnotherKt$any4$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -117,7 +117,7 @@ synthetic final class AnotherKt$any6$1 {
     enclosing method AnotherKt.any6-nuuzChU(DD)Ljava/lang/Object;
     inner (anonymous) class AnotherKt$any6$1
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
+    public final method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
 
@@ -130,7 +130,7 @@ synthetic final class AnotherKt$any6$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
 }
 
 @kotlin.Metadata
@@ -140,7 +140,7 @@ synthetic final class AnotherKt$any7$1 {
     inner (anonymous) class AnotherKt$any7$1
     method <init>(p0: java.lang.Object): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-qDyJxbU(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-qDyJxbU(p0: double, p1: double, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -152,7 +152,7 @@ synthetic final class AnotherKt$any7$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, p4: kotlin.jvm.functions.Function2, p5: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -162,7 +162,7 @@ synthetic final class AnotherKt$any8$1 {
     inner (anonymous) class AnotherKt$any8$1
     method <init>(p0: java.lang.Object): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-qDyJxbU(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-qDyJxbU(p0: double, p1: double, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -174,7 +174,7 @@ synthetic final class AnotherKt$any8$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, p4: kotlin.jvm.functions.Function2, p5: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -220,8 +220,8 @@ public final class CallerKt$runSuspend$$inlined$Continuation$1 {
     synthetic final field $context: kotlin.coroutines.CoroutineContext
     inner (anonymous) class CallerKt$runSuspend$$inlined$Continuation$1
     public method <init>(p0: kotlin.coroutines.CoroutineContext): void
-    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
-    public method resumeWith(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public method getContext(): kotlin.coroutines.CoroutineContext
+    public method resumeWith(p0: java.lang.Object): void
 }
 
 @kotlin.Metadata
@@ -307,10 +307,10 @@ final class TestKt$box$10 {
     field label: int
     inner (anonymous) class TestKt$box$10
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -322,7 +322,7 @@ synthetic final class TestKt$box$100 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
 }
 
 @kotlin.Metadata
@@ -334,7 +334,7 @@ synthetic final class TestKt$box$101 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
 }
 
 @kotlin.Metadata
@@ -344,7 +344,7 @@ synthetic final class TestKt$box$102 {
     inner (anonymous) class TestKt$box$102
     method <init>(p0: java.lang.Object): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
 }
 
 @kotlin.Metadata
@@ -354,7 +354,7 @@ synthetic final class TestKt$box$103 {
     inner (anonymous) class TestKt$box$103
     method <init>(p0: java.lang.Object): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
 }
 
 @kotlin.Metadata
@@ -366,7 +366,7 @@ synthetic final class TestKt$box$104 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-Vn1JeKA(@org.jetbrains.annotations.NotNull p0: A, p1: double, p2: double, p3: double): java.lang.Double
+    public final method invoke-Vn1JeKA(p0: A, p1: double, p2: double, p3: double): java.lang.Double
 }
 
 @kotlin.Metadata
@@ -378,7 +378,7 @@ synthetic final class TestKt$box$105 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-Vn1JeKA(@org.jetbrains.annotations.NotNull p0: A, p1: double, p2: double, p3: double): java.lang.Double
+    public final method invoke-Vn1JeKA(p0: A, p1: double, p2: double, p3: double): java.lang.Double
 }
 
 @kotlin.Metadata
@@ -390,7 +390,7 @@ synthetic final class TestKt$box$106 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-p4hbfwc(p0: double, p1: double, p2: double, p3: double): DPoint
+    public final method invoke-p4hbfwc(p0: double, p1: double, p2: double, p3: double): DPoint
 }
 
 @kotlin.Metadata
@@ -402,7 +402,7 @@ synthetic final class TestKt$box$107 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-p4hbfwc(p0: double, p1: double, p2: double, p3: double): DPoint
+    public final method invoke-p4hbfwc(p0: double, p1: double, p2: double, p3: double): DPoint
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -415,10 +415,10 @@ final class TestKt$box$11 {
     field label: int
     inner (anonymous) class TestKt$box$11
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -430,7 +430,7 @@ final class TestKt$box$110$1 {
     inner (anonymous) class TestKt$box$110$1
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.Nullable method run-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method run-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -444,10 +444,10 @@ final class TestKt$box$110 {
     inner (anonymous) class TestKt$box$110
     inner (anonymous) class TestKt$box$110$1
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -459,7 +459,7 @@ final class TestKt$box$111$1 {
     inner (anonymous) class TestKt$box$111$1
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.Nullable method run-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method run-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -473,10 +473,10 @@ final class TestKt$box$111 {
     inner (anonymous) class TestKt$box$111
     inner (anonymous) class TestKt$box$111$1
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -489,7 +489,7 @@ synthetic final class TestKt$box$12$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -503,10 +503,10 @@ final class TestKt$box$12 {
     inner (anonymous) class TestKt$box$12
     inner (anonymous) class TestKt$box$12$1
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -519,7 +519,7 @@ synthetic final class TestKt$box$13$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -533,10 +533,10 @@ final class TestKt$box$13 {
     inner (anonymous) class TestKt$box$13
     inner (anonymous) class TestKt$box$13$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -549,7 +549,7 @@ synthetic final class TestKt$box$14$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -563,10 +563,10 @@ final class TestKt$box$14 {
     inner (anonymous) class TestKt$box$14
     inner (anonymous) class TestKt$box$14$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -579,7 +579,7 @@ synthetic final class TestKt$box$15$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -593,10 +593,10 @@ final class TestKt$box$15 {
     inner (anonymous) class TestKt$box$15
     inner (anonymous) class TestKt$box$15$1
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -609,7 +609,7 @@ synthetic final class TestKt$box$16$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -623,10 +623,10 @@ final class TestKt$box$16 {
     inner (anonymous) class TestKt$box$16
     inner (anonymous) class TestKt$box$16$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -639,7 +639,7 @@ synthetic final class TestKt$box$17$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -653,10 +653,10 @@ final class TestKt$box$17 {
     inner (anonymous) class TestKt$box$17
     inner (anonymous) class TestKt$box$17$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -669,10 +669,10 @@ final class TestKt$box$18$1 {
     inner (anonymous) class TestKt$box$18
     inner (anonymous) class TestKt$box$18$1
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -686,10 +686,10 @@ final class TestKt$box$18 {
     inner (anonymous) class TestKt$box$18
     inner (anonymous) class TestKt$box$18$1
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -702,10 +702,10 @@ final class TestKt$box$19$2 {
     inner (anonymous) class TestKt$box$19
     inner (anonymous) class TestKt$box$19$2
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -719,10 +719,10 @@ final class TestKt$box$19 {
     inner (anonymous) class TestKt$box$19
     inner (anonymous) class TestKt$box$19$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -735,10 +735,10 @@ final class TestKt$box$20$2 {
     inner (anonymous) class TestKt$box$20
     inner (anonymous) class TestKt$box$20$2
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -752,10 +752,10 @@ final class TestKt$box$20 {
     inner (anonymous) class TestKt$box$20
     inner (anonymous) class TestKt$box$20$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -768,10 +768,10 @@ final class TestKt$box$21$1 {
     inner (anonymous) class TestKt$box$21
     inner (anonymous) class TestKt$box$21$1
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -785,10 +785,10 @@ final class TestKt$box$21 {
     inner (anonymous) class TestKt$box$21
     inner (anonymous) class TestKt$box$21$1
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -801,10 +801,10 @@ final class TestKt$box$22$2 {
     inner (anonymous) class TestKt$box$22
     inner (anonymous) class TestKt$box$22$2
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -818,10 +818,10 @@ final class TestKt$box$22 {
     inner (anonymous) class TestKt$box$22
     inner (anonymous) class TestKt$box$22$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -834,10 +834,10 @@ final class TestKt$box$23$2 {
     inner (anonymous) class TestKt$box$23
     inner (anonymous) class TestKt$box$23$2
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -851,10 +851,10 @@ final class TestKt$box$23 {
     inner (anonymous) class TestKt$box$23
     inner (anonymous) class TestKt$box$23$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -867,7 +867,7 @@ synthetic final class TestKt$box$24$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -881,10 +881,10 @@ final class TestKt$box$24 {
     inner (anonymous) class TestKt$box$24
     inner (anonymous) class TestKt$box$24$1
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -897,7 +897,7 @@ synthetic final class TestKt$box$25$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -911,10 +911,10 @@ final class TestKt$box$25 {
     inner (anonymous) class TestKt$box$25
     inner (anonymous) class TestKt$box$25$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -927,7 +927,7 @@ synthetic final class TestKt$box$26$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -941,10 +941,10 @@ final class TestKt$box$26 {
     inner (anonymous) class TestKt$box$26
     inner (anonymous) class TestKt$box$26$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -957,7 +957,7 @@ synthetic final class TestKt$box$27$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -971,10 +971,10 @@ final class TestKt$box$27 {
     inner (anonymous) class TestKt$box$27
     inner (anonymous) class TestKt$box$27$1
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -987,7 +987,7 @@ synthetic final class TestKt$box$28$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1001,10 +1001,10 @@ final class TestKt$box$28 {
     inner (anonymous) class TestKt$box$28
     inner (anonymous) class TestKt$box$28$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1017,7 +1017,7 @@ synthetic final class TestKt$box$29$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1031,10 +1031,10 @@ final class TestKt$box$29 {
     inner (anonymous) class TestKt$box$29
     inner (anonymous) class TestKt$box$29$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1047,10 +1047,10 @@ final class TestKt$box$30$1 {
     inner (anonymous) class TestKt$box$30
     inner (anonymous) class TestKt$box$30$1
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1064,10 +1064,10 @@ final class TestKt$box$30 {
     inner (anonymous) class TestKt$box$30
     inner (anonymous) class TestKt$box$30$1
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1080,10 +1080,10 @@ final class TestKt$box$31$2 {
     inner (anonymous) class TestKt$box$31
     inner (anonymous) class TestKt$box$31$2
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1097,10 +1097,10 @@ final class TestKt$box$31 {
     inner (anonymous) class TestKt$box$31
     inner (anonymous) class TestKt$box$31$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1113,10 +1113,10 @@ final class TestKt$box$32$2 {
     inner (anonymous) class TestKt$box$32
     inner (anonymous) class TestKt$box$32$2
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1130,10 +1130,10 @@ final class TestKt$box$32 {
     inner (anonymous) class TestKt$box$32
     inner (anonymous) class TestKt$box$32$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1146,10 +1146,10 @@ final class TestKt$box$33$1 {
     inner (anonymous) class TestKt$box$33
     inner (anonymous) class TestKt$box$33$1
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1163,10 +1163,10 @@ final class TestKt$box$33 {
     inner (anonymous) class TestKt$box$33
     inner (anonymous) class TestKt$box$33$1
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1179,10 +1179,10 @@ final class TestKt$box$34$2 {
     inner (anonymous) class TestKt$box$34
     inner (anonymous) class TestKt$box$34$2
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1196,10 +1196,10 @@ final class TestKt$box$34 {
     inner (anonymous) class TestKt$box$34
     inner (anonymous) class TestKt$box$34$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1212,10 +1212,10 @@ final class TestKt$box$35$2 {
     inner (anonymous) class TestKt$box$35
     inner (anonymous) class TestKt$box$35$2
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.Nullable p2: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1229,10 +1229,10 @@ final class TestKt$box$35 {
     inner (anonymous) class TestKt$box$35
     inner (anonymous) class TestKt$box$35$2
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1244,7 +1244,7 @@ synthetic final class TestKt$box$47 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-p4hbfwc(p0: double, p1: double, p2: double, p3: double): DPoint
+    public final method invoke-p4hbfwc(p0: double, p1: double, p2: double, p3: double): DPoint
 }
 
 @kotlin.Metadata
@@ -1256,7 +1256,7 @@ final class TestKt$box$48 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-p4hbfwc(p0: double, p1: double, p2: double, p3: double): DPoint
+    public final method invoke-p4hbfwc(p0: double, p1: double, p2: double, p3: double): DPoint
 }
 
 @kotlin.Metadata
@@ -1268,7 +1268,7 @@ final class TestKt$box$51 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-p4hbfwc(p0: double, p1: double, p2: double, p3: double): DPoint
+    public final method invoke-p4hbfwc(p0: double, p1: double, p2: double, p3: double): DPoint
 }
 
 @kotlin.Metadata
@@ -1279,7 +1279,7 @@ synthetic final class TestKt$box$53 {
     inner (anonymous) class TestKt$box$53
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(p0: double, p1: double): DPoint
+    public final method invoke(p0: double, p1: double): DPoint
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
 }
 
@@ -1291,7 +1291,7 @@ synthetic final class TestKt$box$55 {
     inner (anonymous) class TestKt$box$55
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(p0: double, p1: double): DPoint
+    public final method invoke(p0: double, p1: double): DPoint
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
 }
 
@@ -1303,7 +1303,7 @@ synthetic final class TestKt$box$56 {
     inner (anonymous) class TestKt$box$56
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(p0: double, p1: double): DPoint
+    public final method invoke(p0: double, p1: double): DPoint
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
 }
 
@@ -1315,7 +1315,7 @@ synthetic final class TestKt$box$57 {
     inner (anonymous) class TestKt$box$57
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(p0: double, p1: double): DPoint
+    public final method invoke(p0: double, p1: double): DPoint
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
 }
 
@@ -1325,7 +1325,7 @@ synthetic final class TestKt$box$58 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$58
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
+    public final method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
 
@@ -1335,7 +1335,7 @@ synthetic final class TestKt$box$59 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$59
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
+    public final method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
 
@@ -1349,10 +1349,10 @@ final class TestKt$box$6 {
     field label: int
     inner (anonymous) class TestKt$box$6
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1364,7 +1364,7 @@ synthetic final class TestKt$box$60 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
 }
 
 @kotlin.Metadata
@@ -1376,7 +1376,7 @@ synthetic final class TestKt$box$61 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
 }
 
 @kotlin.Metadata
@@ -1385,7 +1385,7 @@ synthetic final class TestKt$box$62 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$62
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
+    public final method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
 
@@ -1398,7 +1398,7 @@ synthetic final class TestKt$box$63 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
 }
 
 @kotlin.Metadata
@@ -1407,8 +1407,8 @@ synthetic final class TestKt$box$64 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$64
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1417,8 +1417,8 @@ synthetic final class TestKt$box$65 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$65
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1430,7 +1430,7 @@ synthetic final class TestKt$box$66 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1442,7 +1442,7 @@ synthetic final class TestKt$box$67 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1451,8 +1451,8 @@ synthetic final class TestKt$box$68 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$68
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1464,7 +1464,7 @@ synthetic final class TestKt$box$69 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1477,10 +1477,10 @@ final class TestKt$box$7 {
     field label: int
     inner (anonymous) class TestKt$box$7
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1489,8 +1489,8 @@ synthetic final class TestKt$box$70 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$70
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1499,8 +1499,8 @@ synthetic final class TestKt$box$71 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$71
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1512,7 +1512,7 @@ synthetic final class TestKt$box$72 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1524,7 +1524,7 @@ synthetic final class TestKt$box$73 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1533,8 +1533,8 @@ synthetic final class TestKt$box$74 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$74
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1546,7 +1546,7 @@ synthetic final class TestKt$box$75 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-jsnAEDk(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1603,10 +1603,10 @@ final class TestKt$box$8 {
     field label: int
     inner (anonymous) class TestKt$box$8
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1637,7 +1637,7 @@ synthetic final class TestKt$box$82 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$82
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
+    public final method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
 
@@ -1647,7 +1647,7 @@ synthetic final class TestKt$box$83 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$83
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
+    public final method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
 
@@ -1660,7 +1660,7 @@ synthetic final class TestKt$box$84 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
 }
 
 @kotlin.Metadata
@@ -1672,7 +1672,7 @@ synthetic final class TestKt$box$85 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
 }
 
 @kotlin.Metadata
@@ -1681,7 +1681,7 @@ synthetic final class TestKt$box$86 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$86
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
+    public final method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
 
@@ -1694,7 +1694,7 @@ synthetic final class TestKt$box$87 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
+    public final method invoke-jsnAEDk(p0: double, p1: double, p2: double): java.lang.Double
 }
 
 @kotlin.Metadata
@@ -1704,7 +1704,7 @@ synthetic final class TestKt$box$88 {
     inner (anonymous) class TestKt$box$88
     method <init>(p0: java.lang.Object): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-qDyJxbU(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-qDyJxbU(p0: double, p1: double, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1714,7 +1714,7 @@ synthetic final class TestKt$box$89 {
     inner (anonymous) class TestKt$box$89
     method <init>(p0: java.lang.Object): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-qDyJxbU(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-qDyJxbU(p0: double, p1: double, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -1727,10 +1727,10 @@ final class TestKt$box$9 {
     field label: int
     inner (anonymous) class TestKt$box$9
     method <init>(p0: double, p1: double, p2: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1742,7 +1742,7 @@ synthetic final class TestKt$box$90 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, p4: kotlin.jvm.functions.Function2, p5: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1754,7 +1754,7 @@ synthetic final class TestKt$box$91 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, p4: kotlin.jvm.functions.Function2, p5: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1764,7 +1764,7 @@ synthetic final class TestKt$box$92 {
     inner (anonymous) class TestKt$box$92
     method <init>(p0: java.lang.Object): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-qDyJxbU(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-qDyJxbU(p0: double, p1: double, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1776,7 +1776,7 @@ synthetic final class TestKt$box$93 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, p4: kotlin.jvm.functions.Function2, p5: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1786,7 +1786,7 @@ synthetic final class TestKt$box$94 {
     inner (anonymous) class TestKt$box$94
     method <init>(p0: java.lang.Object): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-qDyJxbU(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-qDyJxbU(p0: double, p1: double, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1796,7 +1796,7 @@ synthetic final class TestKt$box$95 {
     inner (anonymous) class TestKt$box$95
     method <init>(p0: java.lang.Object): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-qDyJxbU(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-qDyJxbU(p0: double, p1: double, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1808,7 +1808,7 @@ synthetic final class TestKt$box$96 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, p4: kotlin.jvm.functions.Function2, p5: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1820,7 +1820,7 @@ synthetic final class TestKt$box$97 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, p4: kotlin.jvm.functions.Function2, p5: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1830,7 +1830,7 @@ synthetic final class TestKt$box$98 {
     inner (anonymous) class TestKt$box$98
     method <init>(p0: java.lang.Object): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-qDyJxbU(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-qDyJxbU(p0: double, p1: double, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1842,7 +1842,7 @@ synthetic final class TestKt$box$99 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invoke-lQKCjj0(p0: double, p1: double, p2: double, p3: double, p4: kotlin.jvm.functions.Function2, p5: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata

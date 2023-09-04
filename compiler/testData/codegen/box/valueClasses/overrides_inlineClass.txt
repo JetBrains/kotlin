@@ -306,7 +306,7 @@ final class Overrides_inlineClassKt$box$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -317,7 +317,7 @@ final class Overrides_inlineClassKt$box$10 {
     synthetic final field $dPoint-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$10
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -329,7 +329,7 @@ final class Overrides_inlineClassKt$box$100 {
     synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$100
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -341,7 +341,7 @@ final class Overrides_inlineClassKt$box$101 {
     synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$101
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -353,7 +353,7 @@ final class Overrides_inlineClassKt$box$102 {
     synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$102
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -365,7 +365,7 @@ final class Overrides_inlineClassKt$box$103 {
     synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$103
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
+    public final method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -377,7 +377,7 @@ final class Overrides_inlineClassKt$box$104 {
     synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$104
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -455,7 +455,7 @@ final class Overrides_inlineClassKt$box$11 {
     inner (anonymous) class Overrides_inlineClassKt$box$11
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -521,7 +521,7 @@ final class Overrides_inlineClassKt$box$114 {
     synthetic final field $dSegment-p1-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$114
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -533,7 +533,7 @@ final class Overrides_inlineClassKt$box$115 {
     synthetic final field $dSegment-p2-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$115
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -591,7 +591,7 @@ final class Overrides_inlineClassKt$box$12 {
     synthetic final field $dPoint-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$12
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -718,7 +718,7 @@ final class Overrides_inlineClassKt$box$13 {
     inner (anonymous) class Overrides_inlineClassKt$box$13
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -755,7 +755,7 @@ final class Overrides_inlineClassKt$box$132 {
     synthetic final field $dSegment-p2-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$132
     method <init>(p0: double, p1: double, p2: double, p3: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -769,7 +769,7 @@ final class Overrides_inlineClassKt$box$133 {
     synthetic final field $dSegment-p2-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$133
     method <init>(p0: double, p1: double, p2: double, p3: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -861,7 +861,7 @@ final class Overrides_inlineClassKt$box$14 {
     synthetic final field $otherDPoint-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$14
     method <init>(p0: double, p1: double, p2: double, p3: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -899,7 +899,7 @@ final class Overrides_inlineClassKt$box$15 {
     inner (anonymous) class Overrides_inlineClassKt$box$15
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -913,7 +913,7 @@ final class Overrides_inlineClassKt$box$16 {
     synthetic final field $otherDPoint-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$16
     method <init>(p0: double, p1: double, p2: double, p3: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -925,7 +925,7 @@ final class Overrides_inlineClassKt$box$17 {
     inner (anonymous) class Overrides_inlineClassKt$box$17
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -939,7 +939,7 @@ final class Overrides_inlineClassKt$box$18 {
     synthetic final field $otherDPoint-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$18
     method <init>(p0: double, p1: double, p2: double, p3: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -951,7 +951,7 @@ final class Overrides_inlineClassKt$box$19 {
     inner (anonymous) class Overrides_inlineClassKt$box$19
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -964,7 +964,7 @@ final class Overrides_inlineClassKt$box$2 {
     inner (anonymous) class Overrides_inlineClassKt$box$2
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -977,7 +977,7 @@ final class Overrides_inlineClassKt$box$20 {
     synthetic final field $otherDPoint-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$20
     method <init>(p0: double, p1: double, p2: double, p3: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -989,7 +989,7 @@ final class Overrides_inlineClassKt$box$21 {
     synthetic final field $dPoint-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$21
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
+    public final method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1001,7 +1001,7 @@ final class Overrides_inlineClassKt$box$22 {
     synthetic final field $dPoint-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$22
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
+    public final method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1036,7 +1036,7 @@ final class Overrides_inlineClassKt$box$25 {
     inner (anonymous) class Overrides_inlineClassKt$box$25
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Object
+    public final method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1047,7 +1047,7 @@ final class Overrides_inlineClassKt$box$26 {
     synthetic final field $dPoint-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$26
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Object
+    public final method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1081,7 +1081,7 @@ final class Overrides_inlineClassKt$box$29 {
     inner (anonymous) class Overrides_inlineClassKt$box$29
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Object
+    public final method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1093,7 +1093,7 @@ final class Overrides_inlineClassKt$box$3 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -1104,7 +1104,7 @@ final class Overrides_inlineClassKt$box$30 {
     synthetic final field $dPoint-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$30
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Object
+    public final method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -1114,7 +1114,7 @@ final class Overrides_inlineClassKt$box$31 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_inlineClassKt$box$31
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1125,7 +1125,7 @@ final class Overrides_inlineClassKt$box$32 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_inlineClassKt$box$32
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1136,7 +1136,7 @@ final class Overrides_inlineClassKt$box$33 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_inlineClassKt$box$33
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1147,7 +1147,7 @@ final class Overrides_inlineClassKt$box$34 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_inlineClassKt$box$34
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1158,7 +1158,7 @@ final class Overrides_inlineClassKt$box$35 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_inlineClassKt$box$35
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1169,7 +1169,7 @@ final class Overrides_inlineClassKt$box$36 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_inlineClassKt$box$36
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1180,7 +1180,7 @@ final class Overrides_inlineClassKt$box$37 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_inlineClassKt$box$37
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1191,7 +1191,7 @@ final class Overrides_inlineClassKt$box$38 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_inlineClassKt$box$38
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1202,7 +1202,7 @@ final class Overrides_inlineClassKt$box$39 {
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class Overrides_inlineClassKt$box$39
     method <init>(p0: RealOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1215,7 +1215,7 @@ final class Overrides_inlineClassKt$box$4 {
     inner (anonymous) class Overrides_inlineClassKt$box$4
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -1329,7 +1329,7 @@ final class Overrides_inlineClassKt$box$48 {
     synthetic final field $genericFakeOverride: GenericFakeOverride
     inner (anonymous) class Overrides_inlineClassKt$box$48
     method <init>(p0: GenericFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1340,7 +1340,7 @@ final class Overrides_inlineClassKt$box$49 {
     synthetic final field $genericFakeOverride: GenericFakeOverride
     inner (anonymous) class Overrides_inlineClassKt$box$49
     method <init>(p0: GenericFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1352,7 +1352,7 @@ final class Overrides_inlineClassKt$box$5 {
     inner (anonymous) class Overrides_inlineClassKt$box$5
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1363,7 +1363,7 @@ final class Overrides_inlineClassKt$box$50 {
     synthetic final field $genericFakeOverride: GenericFakeOverride
     inner (anonymous) class Overrides_inlineClassKt$box$50
     method <init>(p0: GenericFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1374,7 +1374,7 @@ final class Overrides_inlineClassKt$box$51 {
     synthetic final field $genericFakeOverride: GenericFakeOverride
     inner (anonymous) class Overrides_inlineClassKt$box$51
     method <init>(p0: GenericFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1385,7 +1385,7 @@ final class Overrides_inlineClassKt$box$52 {
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
     inner (anonymous) class Overrides_inlineClassKt$box$52
     method <init>(p0: ReifiedFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1396,7 +1396,7 @@ final class Overrides_inlineClassKt$box$53 {
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
     inner (anonymous) class Overrides_inlineClassKt$box$53
     method <init>(p0: ReifiedFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1407,7 +1407,7 @@ final class Overrides_inlineClassKt$box$54 {
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
     inner (anonymous) class Overrides_inlineClassKt$box$54
     method <init>(p0: ReifiedFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1418,7 +1418,7 @@ final class Overrides_inlineClassKt$box$55 {
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
     inner (anonymous) class Overrides_inlineClassKt$box$55
     method <init>(p0: ReifiedFakeOverride): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1429,7 +1429,7 @@ final class Overrides_inlineClassKt$box$56 {
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
     inner (anonymous) class Overrides_inlineClassKt$box$56
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1440,7 +1440,7 @@ final class Overrides_inlineClassKt$box$57 {
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
     inner (anonymous) class Overrides_inlineClassKt$box$57
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1451,7 +1451,7 @@ final class Overrides_inlineClassKt$box$58 {
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
     inner (anonymous) class Overrides_inlineClassKt$box$58
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1462,7 +1462,7 @@ final class Overrides_inlineClassKt$box$59 {
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
     inner (anonymous) class Overrides_inlineClassKt$box$59
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1474,7 +1474,7 @@ final class Overrides_inlineClassKt$box$6 {
     synthetic final field $dPoint-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$6
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1616,7 +1616,7 @@ final class Overrides_inlineClassKt$box$7 {
     inner (anonymous) class Overrides_inlineClassKt$box$7
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1654,7 +1654,7 @@ final class Overrides_inlineClassKt$box$72 {
     synthetic final field $genericFakeOverrideMFVC-field2: double
     inner (anonymous) class Overrides_inlineClassKt$box$72
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1666,7 +1666,7 @@ final class Overrides_inlineClassKt$box$73 {
     synthetic final field $genericFakeOverrideMFVC-field2: double
     inner (anonymous) class Overrides_inlineClassKt$box$73
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1678,7 +1678,7 @@ final class Overrides_inlineClassKt$box$74 {
     synthetic final field $genericFakeOverrideMFVC-field2: double
     inner (anonymous) class Overrides_inlineClassKt$box$74
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1690,7 +1690,7 @@ final class Overrides_inlineClassKt$box$75 {
     synthetic final field $genericFakeOverrideMFVC-field2: double
     inner (anonymous) class Overrides_inlineClassKt$box$75
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1702,7 +1702,7 @@ final class Overrides_inlineClassKt$box$76 {
     synthetic final field $reifiedFakeOverrideMFVC-field2: double
     inner (anonymous) class Overrides_inlineClassKt$box$76
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1714,7 +1714,7 @@ final class Overrides_inlineClassKt$box$77 {
     synthetic final field $reifiedFakeOverrideMFVC-field2: double
     inner (anonymous) class Overrides_inlineClassKt$box$77
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1726,7 +1726,7 @@ final class Overrides_inlineClassKt$box$78 {
     synthetic final field $reifiedFakeOverrideMFVC-field2: double
     inner (anonymous) class Overrides_inlineClassKt$box$78
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1738,7 +1738,7 @@ final class Overrides_inlineClassKt$box$79 {
     synthetic final field $reifiedFakeOverrideMFVC-field2: double
     inner (anonymous) class Overrides_inlineClassKt$box$79
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1750,7 +1750,7 @@ final class Overrides_inlineClassKt$box$8 {
     synthetic final field $dPoint-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$8
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1762,7 +1762,7 @@ final class Overrides_inlineClassKt$box$80 {
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
     inner (anonymous) class Overrides_inlineClassKt$box$80
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1774,7 +1774,7 @@ final class Overrides_inlineClassKt$box$81 {
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
     inner (anonymous) class Overrides_inlineClassKt$box$81
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1786,7 +1786,7 @@ final class Overrides_inlineClassKt$box$82 {
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
     inner (anonymous) class Overrides_inlineClassKt$box$82
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1798,7 +1798,7 @@ final class Overrides_inlineClassKt$box$83 {
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
     inner (anonymous) class Overrides_inlineClassKt$box$83
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1894,7 +1894,7 @@ final class Overrides_inlineClassKt$box$9 {
     inner (anonymous) class Overrides_inlineClassKt$box$9
     static method <clinit>(): void
     method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
+    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1990,7 +1990,7 @@ final class Overrides_inlineClassKt$box$96 {
     synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$96
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -2002,7 +2002,7 @@ final class Overrides_inlineClassKt$box$97 {
     synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$97
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -2014,7 +2014,7 @@ final class Overrides_inlineClassKt$box$98 {
     synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$98
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
+    public final method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -2026,7 +2026,7 @@ final class Overrides_inlineClassKt$box$99 {
     synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$99
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
+    public final method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -2038,7 +2038,7 @@ final class Overrides_inlineClassKt$box$dPointLam$1 {
     synthetic final field $dPoint-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$dPointLam$1
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -2063,7 +2063,7 @@ final class Overrides_inlineClassKt$box$lam1$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2087,7 +2087,7 @@ final class Overrides_inlineClassKt$box$lam11$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2111,7 +2111,7 @@ final class Overrides_inlineClassKt$box$lam13$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2135,7 +2135,7 @@ final class Overrides_inlineClassKt$box$lam15$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2159,7 +2159,7 @@ final class Overrides_inlineClassKt$box$lam17$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2183,7 +2183,7 @@ final class Overrides_inlineClassKt$box$lam19$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2219,7 +2219,7 @@ final class Overrides_inlineClassKt$box$lam3$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2243,7 +2243,7 @@ final class Overrides_inlineClassKt$box$lam5$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2267,7 +2267,7 @@ final class Overrides_inlineClassKt$box$lam7$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2291,7 +2291,7 @@ final class Overrides_inlineClassKt$box$lam9$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Void
+    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2302,7 +2302,7 @@ final class Overrides_inlineClassKt$box$otherDPointLam$1 {
     synthetic final field $otherDPoint-y: double
     inner (anonymous) class Overrides_inlineClassKt$box$otherDPointLam$1
     method <init>(p0: double, p1: double): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 

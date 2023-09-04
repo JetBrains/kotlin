@@ -5,7 +5,7 @@ public final class B$test$1 {
     synthetic final field this$0: B
     inner (anonymous) class B$test$1
     method <init>(p0: B): void
-    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public method toString(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -25,7 +25,7 @@ final class a/A$fk$1 {
     inner (anonymous) class a/A$fk$1
     method <init>(p0: a.A): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata

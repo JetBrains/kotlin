@@ -15,7 +15,7 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$A_bar$1 {
     inner (anonymous) class NoReceiverInCallableReferenceClassesKt$A_bar$1
     static method <clinit>(): void
     method <init>(): void
-    public @org.jetbrains.annotations.Nullable method get(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Object
+    public method get(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -26,7 +26,7 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$A_foo$1 {
     inner (anonymous) class NoReceiverInCallableReferenceClassesKt$A_foo$1
     static method <clinit>(): void
     method <init>(): void
-    public final method invoke(@org.jetbrains.annotations.NotNull p0: A): void
+    public final method invoke(p0: A): void
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
 
@@ -36,7 +36,7 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$aBar$1 {
     enclosing class NoReceiverInCallableReferenceClassesKt
     inner (anonymous) class NoReceiverInCallableReferenceClassesKt$aBar$1
     method <init>(p0: java.lang.Object): void
-    public @org.jetbrains.annotations.Nullable method get(): java.lang.Object
+    public method get(): java.lang.Object
 }
 
 @kotlin.Metadata

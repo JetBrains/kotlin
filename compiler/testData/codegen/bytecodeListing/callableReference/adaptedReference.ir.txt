@@ -5,7 +5,7 @@ synthetic final class A$testDefaultArguments$1 {
     inner (anonymous) class A$testDefaultArguments$1
     method <init>(p0: java.lang.Object): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -14,8 +14,8 @@ synthetic final class A$testDefaultArguments$2 {
     enclosing method A.testDefaultArguments()V
     inner (anonymous) class A$testDefaultArguments$2
     method <init>(p0: java.lang.Object): void
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata

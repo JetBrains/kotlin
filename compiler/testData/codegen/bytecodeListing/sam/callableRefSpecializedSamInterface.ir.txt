@@ -4,7 +4,7 @@ synthetic final class<null>  TKt$specializedSam$1 {
     static <null> method <clinit>(): void
     <null> method <init>(): void
     public synthetic bridge <null> method get(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull <null> method get(): java.lang.String
+    public final <null> method get(): java.lang.String
     enclosing method TKt.specializedSam()Ljava/lang/String;
     public final static field <null> INSTANCE: TKt$specializedSam$1
     inner (anonymous) class TKt$specializedSam$1
