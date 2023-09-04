@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.formver.conversion.SpecialFields
+import org.jetbrains.kotlin.formver.domains.AnyDomain
 import org.jetbrains.kotlin.formver.domains.NullableDomain
 import org.jetbrains.kotlin.formver.domains.TypeDomain
 import org.jetbrains.kotlin.formver.domains.UnitDomain
@@ -41,6 +42,11 @@ object NothingTypeEmbedding : TypeEmbedding {
     override val viperType: Type = UnitDomain.toType()
 
     override fun invariants(v: Exp): List<Exp> = listOf(Exp.BoolLit(false))
+}
+
+object AnyTypeEmbedding : TypeEmbedding {
+    override val kotlinType = TypeDomain.anyType()
+    override val viperType = AnyDomain.toType()
 }
 
 object IntTypeEmbedding : TypeEmbedding {

@@ -1,0 +1,7 @@
+FILE: any.kt
+    public final fun any_argument_return(x: R|kotlin/Any|): R|kotlin/Any| {
+        ^any_argument_return R|<local>/x|
+    }
+    public final fun any_cast(x: R|kotlin/Int|): R|kotlin/Any| {
+        ^any_cast R|<local>/x|
+    }

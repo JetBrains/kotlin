@@ -1,0 +1,12 @@
+/any.kt:(4,23): info: Generated Viper text for any_argument_return:
+method pkg_$global$any_argument_return(local$x: dom$Any)
+  returns (ret: dom$Any)
+{
+  ret := local$x
+}
+
+/any.kt:(59,67): info: Generated Viper text for any_cast:
+method pkg_$global$any_cast(local$x: Int) returns (ret: dom$Any)
+{
+  ret := (dom$Casting$cast(local$x, dom$Type$Any()): dom$Any)
+}

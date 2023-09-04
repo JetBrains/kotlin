@@ -34,7 +34,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
     val program: Program
         get() = Program(
-            domains = listOf(UnitDomain, NullableDomain, CastingDomain, TypeOfDomain, TypeDomain(classes.values.toList())),
+            domains = listOf(UnitDomain, NullableDomain, CastingDomain, TypeOfDomain, TypeDomain(classes.values.toList()), AnyDomain),
             fields = SpecialFields.all + classes.values.flatMap { it.fields }.map { it.toField() },
             methods = SpecialMethods.all + methods.values.toList(),
         )
@@ -69,6 +69,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         type.isNothing -> NothingTypeEmbedding
         type.isSomeFunctionType(session) -> FunctionTypeEmbedding
         type.isNullable -> NullableTypeEmbedding(embedType(type.withNullability(ConeNullability.NOT_NULL, session.typeContext)))
+        type.isAny -> AnyTypeEmbedding
         type is ConeClassLikeType -> {
             val classLikeSymbol = type.toClassSymbol(session)
             if (classLikeSymbol is FirRegularClassSymbol) {

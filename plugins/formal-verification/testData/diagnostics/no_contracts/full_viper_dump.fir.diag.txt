@@ -210,6 +210,11 @@ domain dom$Type  {
   }
 }
 
+domain dom$Any  {
+
+
+}
+
 field special$function_object_call_counter: Int
 
 method special$invoke_function_object(anonymous$0: Ref)
