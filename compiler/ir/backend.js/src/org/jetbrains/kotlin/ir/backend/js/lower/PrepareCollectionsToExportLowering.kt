@@ -53,24 +53,24 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
     )
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (
-            declaration is IrDeclarationWithName &&
-            declaration.parentClassOrNull?.symbol in exportableSymbols &&
-            !declaration.isFakeOverride &&
-            declaration.name.asString() !in exportedMethodNames
-        ) {
-            declaration.excludeFromJsExport()
-        }
-
         if (declaration is IrClass && declaration.symbol in exportableSymbols) {
             declaration.addJsName()
             declaration.markWithJsImplicitExport()
+
+            declaration.declarations.forEach {
+                if (it !is IrDeclarationWithName || it.name.toString() !in exportedMethodNames) {
+                    it.excludeFromJsExport()
+                }
+            }
         }
 
         return null
     }
 
     private fun IrDeclaration.excludeFromJsExport() {
+        if (this is IrSimpleFunction) {
+            correspondingPropertySymbol?.owner?.excludeFromJsExport()
+        }
         annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsExportIgnoreCtor)
     }
 
