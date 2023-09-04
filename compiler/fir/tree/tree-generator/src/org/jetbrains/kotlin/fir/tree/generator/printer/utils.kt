@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.tree.generator.firImplementationDetailType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
+import org.jetbrains.kotlin.generators.tree.Importable
 import java.io.File
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 

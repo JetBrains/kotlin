@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
 import org.jetbrains.kotlin.fir.tree.generator.util.set
+import org.jetbrains.kotlin.generators.tree.Importable
 
 interface KindOwner : Importable {
     var kind: Implementation.Kind?

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
+import org.jetbrains.kotlin.generators.tree.Importable
 
 sealed class Field : Importable {
     abstract val name: String

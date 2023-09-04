@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.tree.generator.constructClassLikeTypeImport
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.printer.call
 import org.jetbrains.kotlin.fir.tree.generator.standardClassIdsType
+import org.jetbrains.kotlin.generators.tree.Importable
 
 abstract class AbstractFirTreeImplementationConfigurator {
     private val elementsWithImpl = mutableSetOf<Element>()

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.context
 
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.utils.DummyDelegate
+import org.jetbrains.kotlin.generators.tree.Importable
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 

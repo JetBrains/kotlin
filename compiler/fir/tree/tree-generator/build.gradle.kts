@@ -10,6 +10,7 @@ runtimeOnly.extendsFrom(compileOnly)
 
 dependencies {
     implementation(project(":generators"))
+    implementation(project(":generators:tree-generator-common"))
     implementation(project(":core:compiler.common"))
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:cones"))

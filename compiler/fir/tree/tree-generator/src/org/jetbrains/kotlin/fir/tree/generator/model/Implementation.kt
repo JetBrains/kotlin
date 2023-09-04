@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
+import org.jetbrains.kotlin.generators.tree.Importable
+
 class ImplementationWithArg(
     val implementation: Implementation,
     val argument: Importable?
