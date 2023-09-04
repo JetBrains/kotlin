@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.impl
 
-import com.google.common.io.Files.getFileExtension
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.wasm.resolve.WasmJsPlatformAnalyzerServices
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
+import kotlin.io.path.extension
 
 internal fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServices {
     return when {
@@ -101,11 +101,7 @@ internal fun collectSourceFilePaths(root: Path): List<Path> {
             override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
                 if (!Files.isRegularFile(file) || !Files.isReadable(file))
                     return FileVisitResult.CONTINUE
-                val ext = getFileExtension(file.fileName.toString())
-                if (ext == KotlinFileType.EXTENSION ||
-                    ext == KotlinParserDefinition.STD_SCRIPT_SUFFIX ||
-                    ext == JavaFileType.DEFAULT_EXTENSION
-                ) {
+                if (file.hasSuitableExtensionToAnalyse()) {
                     result.add(file)
                 }
                 return FileVisitResult.CONTINUE
@@ -121,6 +117,14 @@ internal fun collectSourceFilePaths(root: Path): List<Path> {
         }
     )
     return result
+}
+
+internal fun Path.hasSuitableExtensionToAnalyse(): Boolean {
+    val extension = extension
+
+    return extension == KotlinFileType.EXTENSION ||
+            extension == KotlinParserDefinition.STD_SCRIPT_SUFFIX ||
+            extension == JavaFileType.DEFAULT_EXTENSION
 }
 
 internal inline fun <reified T : PsiFileSystemItem> getPsiFilesFromPaths(

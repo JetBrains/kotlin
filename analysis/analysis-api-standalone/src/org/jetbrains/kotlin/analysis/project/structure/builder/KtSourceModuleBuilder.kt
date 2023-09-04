@@ -11,6 +11,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtSourceModuleImpl
 import org.jetbrains.kotlin.analysis.project.structure.impl.collectSourceFilePaths
+import org.jetbrains.kotlin.analysis.project.structure.impl.hasSuitableExtensionToAnalyse
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -62,10 +63,10 @@ public class KtSourceModuleBuilder(
         val localFileSystem = kotlinCoreProjectEnvironment.environment.localFileSystem
         return buildList {
             for (root in sourceRoots) {
-                val files = if (root.isDirectory()) {
-                    collectSourceFilePaths(root)
-                } else {
-                    listOf(root)
+                val files = when {
+                    root.isDirectory() -> collectSourceFilePaths(root)
+                    root.hasSuitableExtensionToAnalyse() -> listOf(root)
+                    else -> emptyList()
                 }
                 for (file in files) {
                     val virtualFile = localFileSystem.findFileByIoFile(file.toFile()) ?: continue
