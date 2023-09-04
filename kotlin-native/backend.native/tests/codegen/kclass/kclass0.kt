@@ -589,20 +589,20 @@ private fun checkClass(
         expectedQualifiedName: String?, expectedSimpleName: String?, expectedToStringName: String,
         expectedInstance: Any, expectedNotInstance: Any?
 ) {
-    assertEquals(clazz.qualifiedName, expectedQualifiedName)
-    assertEquals(clazz.simpleName, expectedSimpleName)
-    assertEquals(clazz.toString(), expectedToStringName)
+    assertEquals(expectedQualifiedName, clazz.qualifiedName)
+    assertEquals(expectedSimpleName, clazz.simpleName)
+    assertEquals(expectedToStringName, clazz.toString())
 
     assertTrue(clazz.isInstance(expectedInstance))
     if (expectedNotInstance != null) assertTrue(!clazz.isInstance(expectedNotInstance))
 }
 
 private fun checkInstanceClass(instance: Any, clazz: KClass<*>) {
-    assertEquals(instance::class, clazz)
+    assertEquals(clazz, instance::class)
 }
 
 private inline fun <reified T> checkReifiedClass(expectedClass: KClass<*>) {
-    assertEquals(T::class, expectedClass)
+    assertEquals(expectedClass, T::class)
 }
 
 private inline fun <reified T> checkReifiedClass2(expectedClass: KClass<*>) {
