@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
+import org.jetbrains.kotlin.formver.domains.TypeDomain
 import org.jetbrains.kotlin.formver.viper.ast.Type
 
-class ClassEmbedding(
+data class ClassEmbedding(
     val name: ClassName,
     val fields: List<VariableEmbedding>,
 ) : TypeEmbedding {
-    override val type = Type.Ref
+
+    override val kotlinType = TypeDomain.classType(this)
+
+    override val viperType = Type.Ref
 }

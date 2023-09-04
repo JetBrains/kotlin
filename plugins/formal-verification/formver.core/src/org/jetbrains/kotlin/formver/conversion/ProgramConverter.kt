@@ -16,13 +16,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.formver.PluginConfiguration
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
+import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Method
 import org.jetbrains.kotlin.formver.viper.ast.Program
-import org.jetbrains.kotlin.formver.viper.domains.CastingDomain
-import org.jetbrains.kotlin.formver.viper.domains.NullableDomain
-import org.jetbrains.kotlin.formver.viper.domains.UnitDomain
 
 /**
  * Tracks the top-level information about the program.
@@ -36,7 +34,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
     val program: Program
         get() = Program(
-            domains = listOf(UnitDomain, NullableDomain, CastingDomain),
+            domains = listOf(UnitDomain, NullableDomain, CastingDomain, TypeOfDomain, TypeDomain(classes.values.toList())),
             fields = SpecialFields.all + classes.values.flatMap { it.fields }.map { it.toField() },
             methods = SpecialMethods.all + methods.values.toList(),
         )

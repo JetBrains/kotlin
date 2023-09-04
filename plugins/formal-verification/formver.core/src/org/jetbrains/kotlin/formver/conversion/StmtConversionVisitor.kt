@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.formver.viper.ast.AccessPredicate
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
-import org.jetbrains.kotlin.formver.viper.domains.UnitDomain
+import org.jetbrains.kotlin.formver.domains.UnitDomain
+import org.jetbrains.kotlin.formver.domains.convertType
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -49,9 +50,10 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
 
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: StmtConversionContext): Exp {
         val expr = data.convert(returnExpression.result)
+        val exprType = data.embedType(returnExpression.result)
         // TODO: respect return-based control flow
         val returnVar = data.signature.returnVar
-        data.addStatement(Stmt.LocalVarAssign(returnVar.toLocalVar(), expr.withType(returnVar.viperType)))
+        data.addStatement(Stmt.LocalVarAssign(returnVar.toLocalVar(), expr.convertType(exprType, returnVar.type)))
         return UnitDomain.element
     }
 
@@ -150,7 +152,7 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
             Exp.And(
                 Exp.NeCmp(left, leftType.nullVal),
                 // TODO: Replace the Eq comparison with a member call function to `left.equals`
-                Exp.EqCmp(left.withType(leftType.elementType), right.withType(leftType.elementType))
+                Exp.EqCmp(left.convertType(leftType, leftType.elementType), right.convertType(rightType, leftType.elementType))
             )
         } else if (leftType is NullableTypeEmbedding && rightType is NullableTypeEmbedding) {
             Exp.Or(
@@ -159,21 +161,27 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
                     Exp.EqCmp(right, rightType.nullVal),
                 ),
                 // TODO: Replace the Eq comparison with a member call function to `left.equals`
-                Exp.EqCmp(left.withType(leftType.elementType), right.withType(leftType.elementType))
+                Exp.And(
+                    Exp.And(
+                        Exp.NeCmp(left, leftType.nullVal),
+                        Exp.NeCmp(right, rightType.nullVal),
+                    ),
+                    Exp.EqCmp(left.convertType(leftType, leftType.elementType), right.convertType(rightType, leftType.elementType))
+                )
             )
         } else {
             // TODO: Replace the Eq comparison with a member call function to `left.equals`
-            Exp.EqCmp(left, right.withType(left.type))
+            Exp.EqCmp(left, right.convertType(rightType, leftType))
         }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext): Exp {
         val symbol = functionCall.calleeCallableSymbol
         val id = symbol.callableId
         val specialFunc = SpecialFunctions.byCallableId[id]
-        val getArgs = { getFunctionCallArguments(functionCall).map(data::convert) }
+        val argsFir = getFunctionCallArguments(functionCall)
         if (specialFunc != null) {
             if (specialFunc !is SpecialFunctionImplementation) return UnitDomain.element
-            return specialFunc.convertCall(getArgs(), data)
+            return specialFunc.convertCall(argsFir.map(data::convert), data)
         }
 
         val calleeSig = when (symbol) {
@@ -183,7 +191,10 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         }
 
         return data.withResult(calleeSig.returnType) {
-            val args = getArgs().zip(calleeSig.formalArgs).map { (arg, formalArg) -> arg.withType(formalArg.viperType) }
+            val args = argsFir
+                .zip(calleeSig.formalArgs)
+                .map { (arg, formalArg) -> data.convert(arg).convertType(data.embedType(arg), formalArg.type) }
+
             data.addStatement(calleeSig.toMethodCall(args, this.resultVar))
         }
     }
@@ -217,7 +228,8 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         data.addDeclaration(cvar.toLocalVarDecl())
         property.initializer?.let {
             val initializerExp = data.convert(it)
-            data.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), initializerExp.withType(cvar.type)))
+            val initializerType = data.embedType(it)
+            data.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), initializerExp.convertType(initializerType, cvar.type)))
         }
         return UnitDomain.element
     }
@@ -239,15 +251,18 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         // lvalues and rvalues, but let's try to at first, and we'll fix it later if it turns out
         // not to work.
         val convertedLValue = data.convert(variableAssignment.lValue)
+        val lValueType = data.embedType(variableAssignment.lValue)
         val convertedRValue = data.convert(variableAssignment.rValue)
-        data.addStatement(Stmt.assign(convertedLValue, convertedRValue.withType(convertedLValue.type)))
+        val rValueType = data.embedType(variableAssignment.rValue)
+        data.addStatement(Stmt.assign(convertedLValue, convertedRValue.convertType(rValueType, lValueType)))
         return UnitDomain.element
     }
 
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: StmtConversionContext): Exp {
         val exp = data.convert(smartCastExpression.originalExpression)
-        val newType = smartCastExpression.smartcastType.coneType
-        return exp.withType(data.embedType(newType))
+        val expType = data.embedType(smartCastExpression.originalExpression)
+        val newType = data.embedType(smartCastExpression.smartcastType.coneType)
+        return exp.convertType(expType, newType)
     }
 
     override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: StmtConversionContext): Exp {
@@ -258,12 +273,12 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
             when (binaryLogicExpression.kind) {
                 LogicOperationKind.AND -> {
                     val constCtx = newBlockShareResult()
-                    constCtx.captureResult(Exp.BoolLit(false))
+                    constCtx.captureResult(Exp.BoolLit(false), BooleanTypeEmbedding)
                     data.addStatement(Stmt.If(left, rightCtx.block, constCtx.block))
                 }
                 LogicOperationKind.OR -> {
                     val constCtx = newBlockShareResult()
-                    constCtx.captureResult(Exp.BoolLit(true))
+                    constCtx.captureResult(Exp.BoolLit(true), BooleanTypeEmbedding)
                     data.addStatement(Stmt.If(left, constCtx.block, rightCtx.block))
                 }
             }

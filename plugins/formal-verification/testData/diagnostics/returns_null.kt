@@ -5,7 +5,15 @@ import kotlin.contracts.ExperimentalContracts
 fun <!VIPER_TEXT!>simple_returns_null<!>(x: Int?): Int? {
     contract {
         returns(null)
-        returnsNotNull() implies true
+        returnsNotNull() implies false
+    }
+    return null
+}
+
+@OptIn(ExperimentalContracts::class)
+fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT, VIPER_VERIFICATION_ERROR!>returns_null_unverifiable<!>(x: Int?): Int? {
+    contract {
+        returns() implies false
     }
     return null
 }

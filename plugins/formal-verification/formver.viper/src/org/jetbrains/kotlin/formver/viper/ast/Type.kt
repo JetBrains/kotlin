@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.formver.viper.ast
 
 import org.jetbrains.kotlin.formver.viper.IntoViper
-import org.jetbrains.kotlin.formver.viper.domains.NullableDomain
-import org.jetbrains.kotlin.formver.viper.domains.UnitDomain
 import org.jetbrains.kotlin.formver.viper.toScalaMap
 import org.jetbrains.kotlin.formver.viper.toScalaSeq
 import viper.silver.ast.*

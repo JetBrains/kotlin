@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.formver.viper.domains
+package org.jetbrains.kotlin.formver.domains
 
 import org.jetbrains.kotlin.formver.viper.ast.*
 
@@ -13,6 +13,13 @@ import org.jetbrains.kotlin.formver.viper.ast.*
  * least easy) to ensure this in Viper: even an axiom of the form `x: Unit, y: Unit :: x == y` doesn't
  * seem to suffice (hence why it is not present here).  It isn't quite clear why this is the case, but
  * since we don't generally need to talk about equality of units this should be fine.
+ *
+ * Viper Code:
+ * ```
+ * domain Unit  {
+ *   function element(): Unit
+ * }
+ * ```
  */
 object UnitDomain : BuiltinDomain("Unit") {
     override val typeVars: List<Type.TypeVar> = emptyList()

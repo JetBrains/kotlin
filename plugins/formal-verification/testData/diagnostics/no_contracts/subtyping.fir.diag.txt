@@ -5,25 +5,28 @@ method pkg_$global$smart_cast(local$x: dom$Nullable[Int])
   if (local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
   (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
   (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||
-  (dom$Casting$cast(local$x): Int) ==
-  (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit])): Int)) {
+  local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) !=
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) &&
+  (dom$Casting$cast(local$x, dom$Type$Int()): Int) ==
+  (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$Int()): Int)) {
     ret := 0
   } else {
-    ret := (dom$Casting$cast(local$x): Int)}
+    ret := (dom$Casting$cast(local$x, dom$Type$Int()): Int)}
 }
 
 /subtyping.kt:(112,128): info: Generated Viper text for return_subtyping:
 method pkg_$global$return_subtyping() returns (ret: dom$Nullable[Int])
 {
-  ret := (dom$Casting$cast(0): dom$Nullable[Int])
+  ret := (dom$Casting$cast(0, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
 }
 
 /subtyping.kt:(159,179): info: Generated Viper text for assignment_subtyping:
 method pkg_$global$assignment_subtyping() returns (ret: dom$Unit)
 {
   var local$x: dom$Nullable[Bool]
-  local$x := (dom$Casting$cast(false): dom$Nullable[Bool])
-  local$x := (dom$Casting$cast(true): dom$Nullable[Bool])
+  local$x := (dom$Casting$cast(false, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
+  local$x := (dom$Casting$cast(true, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
 }
 
 /subtyping.kt:(232,250): info: Generated Viper text for nullable_parameter:
@@ -40,5 +43,5 @@ method pkg_$global$nullable_parameter(local$b: dom$Nullable[Bool])
 method pkg_$global$function_parameter_subtyping() returns (ret: dom$Unit)
 {
   var anonymous$1: dom$Unit
-  anonymous$1 := pkg_$global$nullable_parameter((dom$Casting$cast(false): dom$Nullable[Bool]))
+  anonymous$1 := pkg_$global$nullable_parameter((dom$Casting$cast(false, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool]))
 }

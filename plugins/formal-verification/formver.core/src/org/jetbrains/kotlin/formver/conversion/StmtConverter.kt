@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.formver.domains.UnitDomain
+import org.jetbrains.kotlin.formver.domains.convertType
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
-import org.jetbrains.kotlin.formver.viper.domains.UnitDomain
 
 abstract class BaseStmtConverter(
     private val methodCtx: MethodConversionContext,
@@ -44,8 +45,8 @@ class StmtWithAnonResultConverter(
     seqnCtx: SeqnBuildContext,
     override val resultVar: VariableEmbedding,
 ) : BaseStmtConverter(methodCtx, seqnCtx), StmtWithResultConversionContext {
-    override fun captureResult(exp: Exp) {
-        addStatement(Stmt.assign(resultVar.toLocalVar(), exp.withType(resultVar.viperType)))
+    override fun captureResult(exp: Exp, expType: TypeEmbedding) {
+        addStatement(Stmt.assign(resultVar.toLocalVar(), exp.convertType(expType, resultVar.type)))
     }
 
     override fun newBlockShareResult(): StmtWithResultConversionContext = StmtWithAnonResultConverter(this, SeqnBuilder(), resultVar)

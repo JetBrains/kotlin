@@ -9,33 +9,204 @@ domain dom$Nullable[T]  {
   function dom$Nullable$null(): dom$Nullable[T]
 
   axiom dom$Nullable$some_not_null {
-    (forall x: T ::
-      { (dom$Casting$cast(x): dom$Nullable[T]) }
-      (dom$Casting$cast(x): dom$Nullable[T]) !=
+    (forall x: T, newType: dom$Type ::
+      { (dom$Casting$cast(x, dom$Type$special$Nullable(newType)): dom$Nullable[T]) }
+      !dom$Type$is_nullable_type(newType) ==>
+      (dom$Casting$cast(x, dom$Type$special$Nullable(newType)): dom$Nullable[T]) !=
       (dom$Nullable$null(): dom$Nullable[T]))
   }
 
   axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T ::
-      { (dom$Casting$cast((dom$Casting$cast(x): dom$Nullable[T])): T) }
-      (dom$Casting$cast((dom$Casting$cast(x): dom$Nullable[T])): T) == x)
+    (forall x: T, newType: dom$Type ::
+      { (dom$Casting$cast((dom$Casting$cast(x, dom$Type$special$Nullable(newType)): dom$Nullable[T]),
+      (dom$TypeOf$typeOf(x): dom$Type)): T) }
+      (dom$Casting$cast((dom$Casting$cast(x, dom$Type$special$Nullable(newType)): dom$Nullable[T]),
+      (dom$TypeOf$typeOf(x): dom$Type)): T) ==
+      x)
   }
 
   axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall nx: dom$Nullable[T] ::
-      { (dom$Casting$cast((dom$Casting$cast(nx): T)): dom$Nullable[T]) }
+    (forall nx: dom$Nullable[T], newType: dom$Type ::
+      { (dom$Casting$cast((dom$Casting$cast(nx, newType): T), (dom$TypeOf$typeOf(nx): dom$Type)): dom$Nullable[T]) }
       nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Casting$cast((dom$Casting$cast(nx): T)): dom$Nullable[T]) == nx)
+      (dom$Casting$cast((dom$Casting$cast(nx, newType): T), (dom$TypeOf$typeOf(nx): dom$Type)): dom$Nullable[T]) ==
+      nx)
   }
 }
 
 domain dom$Casting[A, B]  {
 
-  function dom$Casting$cast(a: A): B
+  function dom$Casting$cast(a: A, newType: dom$Type): B
 
   axiom dom$Casting$null_cast {
-    (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[A])): dom$Nullable[B]) ==
-    (dom$Nullable$null(): dom$Nullable[B])
+    (forall newType: dom$Type ::
+      { (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[A]), dom$Type$special$Nullable(newType)): dom$Nullable[B]) }
+      (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[A]), dom$Type$special$Nullable(newType)): dom$Nullable[B]) ==
+      (dom$Nullable$null(): dom$Nullable[B]))
+  }
+
+  axiom dom$Casting$type_of_cast {
+    (forall a: A, newType: dom$Type ::
+      { (dom$TypeOf$typeOf((dom$Casting$cast(a, newType): B)): dom$Type) }
+      dom$Type$isSubtype((dom$TypeOf$typeOf((dom$Casting$cast(a, newType): B)): dom$Type),
+      newType))
+  }
+}
+
+domain dom$TypeOf[T]  {
+
+  function dom$TypeOf$typeOf(x: T): dom$Type
+}
+
+domain dom$Type  {
+
+  unique function dom$Type$Int(): dom$Type
+
+  unique function dom$Type$Boolean(): dom$Type
+
+  unique function dom$Type$Unit(): dom$Type
+
+  unique function dom$Type$Nothing(): dom$Type
+
+  unique function dom$Type$Any(): dom$Type
+
+  unique function dom$Type$Function(): dom$Type
+
+  function dom$Type$special$Nullable(t: dom$Type): dom$Type
+
+  function dom$Type$isSubtype(a: dom$Type, b: dom$Type): Bool
+
+  function dom$Type$is_nullable_type(t: dom$Type): Bool
+
+  axiom {
+    (forall t: dom$Type ::
+      { dom$Type$special$Nullable(t) }
+      dom$Type$special$Nullable(t) != dom$Type$Int())
+  }
+
+  axiom {
+    (forall t: dom$Type ::
+      { dom$Type$special$Nullable(t) }
+      dom$Type$special$Nullable(t) != dom$Type$Boolean())
+  }
+
+  axiom {
+    (forall t: dom$Type ::
+      { dom$Type$special$Nullable(t) }
+      dom$Type$special$Nullable(t) != dom$Type$Unit())
+  }
+
+  axiom {
+    (forall t: dom$Type ::
+      { dom$Type$special$Nullable(t) }
+      dom$Type$special$Nullable(t) != dom$Type$Nothing())
+  }
+
+  axiom {
+    (forall t: dom$Type ::
+      { dom$Type$special$Nullable(t) }
+      dom$Type$special$Nullable(t) != dom$Type$Any())
+  }
+
+  axiom {
+    (forall t: dom$Type ::
+      { dom$Type$special$Nullable(t) }
+      dom$Type$special$Nullable(t) != dom$Type$Function())
+  }
+
+  axiom {
+    !dom$Type$is_nullable_type(dom$Type$Int())
+  }
+
+  axiom {
+    !dom$Type$is_nullable_type(dom$Type$Boolean())
+  }
+
+  axiom {
+    !dom$Type$is_nullable_type(dom$Type$Unit())
+  }
+
+  axiom {
+    !dom$Type$is_nullable_type(dom$Type$Nothing())
+  }
+
+  axiom {
+    !dom$Type$is_nullable_type(dom$Type$Any())
+  }
+
+  axiom {
+    !dom$Type$is_nullable_type(dom$Type$Function())
+  }
+
+  axiom {
+    (forall t: dom$Type ::
+      { dom$Type$special$Nullable(t) }
+      dom$Type$is_nullable_type(dom$Type$special$Nullable(t)))
+  }
+
+  axiom {
+    dom$Type$isSubtype(dom$Type$Int(), dom$Type$Any())
+  }
+
+  axiom {
+    dom$Type$isSubtype(dom$Type$Boolean(), dom$Type$Any())
+  }
+
+  axiom {
+    dom$Type$isSubtype(dom$Type$Unit(), dom$Type$Any())
+  }
+
+  axiom {
+    dom$Type$isSubtype(dom$Type$Nothing(), dom$Type$Any())
+  }
+
+  axiom {
+    dom$Type$isSubtype(dom$Type$Any(), dom$Type$Any())
+  }
+
+  axiom {
+    dom$Type$isSubtype(dom$Type$Function(), dom$Type$Any())
+  }
+
+  axiom {
+    (forall t: dom$Type, t2: dom$Type ::t != t2 ==>
+      dom$Type$special$Nullable(t) != dom$Type$special$Nullable(t2))
+  }
+
+  axiom {
+    (forall t: dom$Type ::dom$Type$isSubtype(t, t))
+  }
+
+  axiom {
+    (forall t: dom$Type, t2: dom$Type, t3: dom$Type ::
+      { dom$Type$isSubtype(t, t2), dom$Type$isSubtype(t2, t3) }
+      dom$Type$isSubtype(t, t2) && dom$Type$isSubtype(t2, t3) ==>
+      dom$Type$isSubtype(t, t3))
+  }
+
+  axiom {
+    (forall t: dom$Type, t2: dom$Type ::
+      { dom$Type$isSubtype(t, t2), dom$Type$isSubtype(t2, t) }
+      dom$Type$isSubtype(t, t2) && dom$Type$isSubtype(t2, t) ==> t == t2)
+  }
+
+  axiom {
+    (forall t: dom$Type ::
+      { dom$Type$special$Nullable(t) }
+      dom$Type$isSubtype(t, dom$Type$special$Nullable(t)))
+  }
+
+  axiom {
+    (forall t: dom$Type, t2: dom$Type ::
+      { dom$Type$isSubtype(dom$Type$special$Nullable(t), dom$Type$special$Nullable(t2)) }
+      dom$Type$isSubtype(t, t2) ==>
+      dom$Type$isSubtype(dom$Type$special$Nullable(t), dom$Type$special$Nullable(t2)))
+  }
+
+  axiom {
+    (forall t: dom$Type ::
+      { dom$Type$isSubtype(dom$Type$Nothing(), t) }
+      dom$Type$isSubtype(dom$Type$Nothing(), t))
   }
 }
 

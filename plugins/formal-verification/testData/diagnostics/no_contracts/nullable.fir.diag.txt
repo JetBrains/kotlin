@@ -29,7 +29,10 @@ method pkg_$global$nullable_nullable_comparison(local$x: dom$Nullable[Int],
 {
   ret := local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
     local$y == (dom$Nullable$null(): dom$Nullable[Int]) ||
-    (dom$Casting$cast(local$x): Int) == (dom$Casting$cast(local$y): Int)
+    local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
+    local$y != (dom$Nullable$null(): dom$Nullable[Int]) &&
+    (dom$Casting$cast(local$x, dom$Type$Int()): Int) ==
+    (dom$Casting$cast(local$y, dom$Type$Int()): Int)
 }
 
 /nullable.kt:(258,290): info: Generated Viper text for nullable_non_nullable_comparison:
@@ -38,7 +41,7 @@ method pkg_$global$nullable_non_nullable_comparison(local$x: dom$Nullable[Int],
   returns (ret: Bool)
 {
   ret := !(local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
-    (dom$Casting$cast(local$x): Int) == 3)
+    (dom$Casting$cast(local$x, dom$Type$Int()): Int) == 3)
 }
 
 /nullable.kt:(345,360): info: Generated Viper text for null_comparison:
@@ -48,6 +51,9 @@ method pkg_$global$null_comparison(local$x: dom$Nullable[Int])
   ret := local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
     (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
     (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||
-    (dom$Casting$cast(local$x): Int) ==
-    (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit])): Int)
+    local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
+    (dom$Nullable$null(): dom$Nullable[dom$Unit]) !=
+    (dom$Nullable$null(): dom$Nullable[dom$Unit]) &&
+    (dom$Casting$cast(local$x, dom$Type$Int()): Int) ==
+    (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$Int()): Int)
 }

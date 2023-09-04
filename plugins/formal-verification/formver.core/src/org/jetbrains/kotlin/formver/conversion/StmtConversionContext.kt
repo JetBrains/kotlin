@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
@@ -14,8 +15,8 @@ interface StmtConversionContext : MethodConversionContext, SeqnBuildContext {
     val resultExpr: Exp
     fun convert(stmt: FirStatement): Exp
 
-    fun convertAndCapture(stmt: FirStatement) {
-        convert(stmt)
+    fun convertAndCapture(exp: FirExpression) {
+        convert(exp)
     }
 
     fun newBlock(): StmtConversionContext
@@ -34,10 +35,10 @@ interface StmtWithResultConversionContext : StmtConversionContext {
     override val resultExpr: Exp
         get() = resultVar.toLocalVar()
 
-    fun captureResult(exp: Exp)
+    fun captureResult(exp: Exp, expType: TypeEmbedding)
 
-    override fun convertAndCapture(stmt: FirStatement) {
-        captureResult(convert(stmt))
+    override fun convertAndCapture(exp: FirExpression) {
+        captureResult(convert(exp), embedType(exp))
     }
 
     override fun newBlockShareResult(): StmtWithResultConversionContext

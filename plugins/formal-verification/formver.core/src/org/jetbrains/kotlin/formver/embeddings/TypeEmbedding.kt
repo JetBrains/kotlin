@@ -6,14 +6,20 @@
 package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.formver.conversion.SpecialFields
-import org.jetbrains.kotlin.formver.viper.domains.NullableDomain
-import org.jetbrains.kotlin.formver.viper.domains.UnitDomain
+import org.jetbrains.kotlin.formver.domains.NullableDomain
+import org.jetbrains.kotlin.formver.domains.TypeDomain
+import org.jetbrains.kotlin.formver.domains.UnitDomain
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
 import org.jetbrains.kotlin.formver.viper.ast.Type
 
 interface TypeEmbedding {
-    val type: Type
+    // type represents a Viper expression specifying the type. They are defined in TypingDomain and are used for casting, subtyping and the is operator.
+    val kotlinType: Exp
+
+    // This represents the Viper type that an expression of this type has (e.g. an object is embedded as a Viper Ref type)
+    val viperType: Type
+
     fun invariants(v: Exp): List<Exp> = emptyList()
 
     /**
@@ -26,35 +32,37 @@ interface TypeEmbedding {
 }
 
 object UnitTypeEmbedding : TypeEmbedding {
-    override val type: Type = UnitDomain.toType()
+    override val kotlinType = TypeDomain.unitType()
+    override val viperType: Type = UnitDomain.toType()
 }
 
 object NothingTypeEmbedding : TypeEmbedding {
-    override val type: Type = UnitDomain.toType()
+    override val kotlinType = TypeDomain.nothingType()
+    override val viperType: Type = UnitDomain.toType()
 
     override fun invariants(v: Exp): List<Exp> = listOf(Exp.BoolLit(false))
 }
 
 object IntTypeEmbedding : TypeEmbedding {
-    override val type: Type = Type.Int
+    override val kotlinType = TypeDomain.intType()
+    override val viperType: Type = Type.Int
 }
 
 object BooleanTypeEmbedding : TypeEmbedding {
-    override val type: Type = Type.Bool
+    override val kotlinType = TypeDomain.booleanType()
+    override val viperType: Type = Type.Bool
 }
 
-class TypeVarEmbedding(val name: String) : TypeEmbedding {
-    override val type: Type = Type.TypeVar(name)
-}
+data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding {
+    override val kotlinType = TypeDomain.nullableType(elementType.kotlinType)
+    override val viperType: Type = NullableDomain.nullableType(elementType.viperType)
 
-class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding {
-    override val type: Type = NullableDomain.nullableType(elementType.type)
-
-    val nullVal: Exp = NullableDomain.nullVal(elementType.type)
+    val nullVal: Exp = NullableDomain.nullVal(elementType.viperType)
 }
 
 object FunctionTypeEmbedding : TypeEmbedding {
-    override val type: Type = Type.Ref
+    override val kotlinType = TypeDomain.functionType()
+    override val viperType: Type = Type.Ref
 
     override fun invariants(v: Exp): List<Exp> =
         listOf(v.fieldAccessPredicate(SpecialFields.FunctionObjectCallCounterField, PermExp.FullPerm()))
@@ -67,5 +75,3 @@ object FunctionTypeEmbedding : TypeEmbedding {
             )
         )
 }
-
-fun Exp.withType(type: TypeEmbedding): Exp = withType(type.type)

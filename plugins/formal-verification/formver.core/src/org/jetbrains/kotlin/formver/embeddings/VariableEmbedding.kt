@@ -9,25 +9,24 @@ import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.*
 
 class VariableEmbedding(val name: MangledName, val type: TypeEmbedding) {
-    val viperType = type.type
 
     fun toLocalVarDecl(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): Declaration.LocalVarDecl = Declaration.LocalVarDecl(name, type.type, pos, info, trafos)
+    ): Declaration.LocalVarDecl = Declaration.LocalVarDecl(name, type.viperType, pos, info, trafos)
 
     fun toLocalVar(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): Exp.LocalVar = Exp.LocalVar(name, type.type, pos, info, trafos)
+    ): Exp.LocalVar = Exp.LocalVar(name, type.viperType, pos, info, trafos)
 
     fun toField(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): Field = Field(name, type.type, pos, info, trafos)
+    ): Field = Field(name, type.viperType, pos, info, trafos)
 
     fun toFieldAccess(
         field: Field,
