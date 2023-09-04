@@ -8,32 +8,20 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
 import org.jetbrains.kotlin.generators.tree.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.Importable
+import org.jetbrains.kotlin.generators.tree.AbstractField
 
-sealed class Field : Importable {
-    abstract val name: String
-    open val arguments = mutableListOf<Importable>()
-    abstract val nullable: Boolean
-    abstract var isVolatile: Boolean
-    abstract var isFinal: Boolean
-    abstract var isLateinit: Boolean
-    abstract var isParameter: Boolean
+sealed class Field : AbstractField() {
     open var withReplace: Boolean = false
     abstract val isFirType: Boolean
 
-    var fromParent: Boolean = false
     open var needsSeparateTransform: Boolean = false
     var parentHasSeparateTransform: Boolean = true
     open var needTransformInOtherChildren: Boolean = false
     open var customInitializationCall: String? = null
-    open val arbitraryImportables: MutableList<Importable> = mutableListOf()
-    open var optInAnnotation: ArbitraryImportable? = null
 
     open val defaultValueInImplementation: String? get() = null
-    abstract var isMutable: Boolean
     abstract var isMutableOrEmpty: Boolean
     open var isMutableInInterface: Boolean = false
-    open val withGetter: Boolean get() = false
-    open val customSetter: String? get() = null
     open val fromDelegate: Boolean get() = false
 
     open val overridenTypes: MutableSet<Importable> = mutableSetOf()
@@ -65,21 +53,6 @@ sealed class Field : Importable {
 
     protected abstract fun internalCopy(): Field
 
-    override fun toString(): String {
-        return name
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null) return false
-        if (javaClass != other.javaClass) return false
-        other as Field
-        return name == other.name
-    }
-
-    override fun hashCode(): Int {
-        return name.hashCode()
-    }
 }
 
 // ----------- Field with default -----------

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
+import org.jetbrains.kotlin.generators.tree.FieldContainer
 import org.jetbrains.kotlin.generators.tree.Importable
 
 private const val DEFAULT_BUILDER_PACKAGE = "org.jetbrains.kotlin.fir.tree.builder"

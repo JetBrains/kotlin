@@ -8,16 +8,12 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
 import org.jetbrains.kotlin.fir.tree.generator.util.set
+import org.jetbrains.kotlin.generators.tree.FieldContainer
 import org.jetbrains.kotlin.generators.tree.Importable
 
 interface KindOwner : Importable {
     var kind: Implementation.Kind?
     val allParents: List<KindOwner>
-}
-
-interface FieldContainer {
-    val allFields: List<Field>
-    operator fun get(fieldName: String): Field?
 }
 
 interface AbstractElement : FieldContainer, KindOwner {
