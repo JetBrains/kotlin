@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import kotlin.collections.set
 
@@ -67,6 +69,15 @@ abstract class InventNamesForLocalClasses(
         }
 
         override fun visitClass(declaration: IrClass, data: Data) {
+            val parent = declaration.parent
+            val isLocal = parent is IrFile && declaration.isAnonymousObject
+            if (!isLocal) return processClass(declaration, data)
+
+            val enclosingName = (parent as IrFile).name.removeSuffix(".kt").plus("Kt").capitalizeAsciiOnly()
+            processClass(declaration, data.copy(enclosingName = enclosingName, isLocal = true))
+        }
+
+        private fun processClass(declaration: IrClass, data: Data) {
             if (!data.isLocal) {
                 // This is not a local class, so we need not invent a name for it, the type mapper will correctly compute it
                 // by navigating through its containers.
