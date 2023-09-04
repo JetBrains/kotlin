@@ -156,7 +156,7 @@ private class ContextCollectorVisitor(
     private val holder: SessionHolder,
     private val shouldCollectBodyContext: Boolean,
     private val filter: (PsiElement) -> FilterResponse,
-    private val interceptor: () -> FirElement?
+    private val designationPathInterceptor: () -> FirElement?
 ) : FirDefaultVisitorVoid() {
     private data class ContextKey(val element: PsiElement, val kind: ContextKind)
 
@@ -595,8 +595,13 @@ private class ContextCollectorVisitor(
         }
     }
 
-    private inline fun withInterceptor(block: () -> Unit) {
-        val target = interceptor()
+    /**
+     * Ensures that the visitor is going through the path specified by the initial [FirDesignation].
+     *
+     * If the designation is over, then allows the [block] code to take control.
+     */
+    private fun withInterceptor(block: () -> Unit) {
+        val target = designationPathInterceptor()
         if (target != null) {
             target.accept(this)
         } else {
