@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/low-level-api-fir/testdata/classId")
 @TestDataPath("$PROJECT_ROOT")
-public class ScriptClassIdTestGenerated extends AbstractScriptClassIdTest {
+public class ScriptClassIdConsistencyTestGenerated extends AbstractScriptClassIdConsistencyTest {
     @Test
     public void testAllFilesPresentInClassId() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/classId"), Pattern.compile("^(.+)\\.(kts)$"), null, true);

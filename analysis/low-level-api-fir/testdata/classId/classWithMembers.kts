@@ -24,3 +24,5 @@
 foo {
     /* ClassId: null */class E
 }
+
+// IGNORE_CONSISTENCY_CHECK: KTIJ-26902

@@ -1,3 +1,4 @@
+// IGNORE_CONSISTENCY_CHECK: KTIJ-26902
 package one.two
 
 /* ClassId: one/two/TopLevelObject */object TopLevelObject

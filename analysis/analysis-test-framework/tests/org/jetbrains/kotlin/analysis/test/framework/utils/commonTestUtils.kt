@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.offsetToLineAndColumn
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.test.directives.model.Directive
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 
 inline fun <T> runReadAction(crossinline runnable: () -> T): T {
     return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
@@ -52,4 +54,25 @@ fun PsiReference.unwrapMultiReferences(): List<PsiReference> = when (this) {
     is KtReference -> listOf(this)
     is PsiMultiReference -> references.flatMap { it.unwrapMultiReferences() }
     else -> error("Unexpected reference $this")
+}
+
+/**
+ * [AfterAnalysisChecker][org.jetbrains.kotlin.test.model.AfterAnalysisChecker] should be the preferred option
+ */
+fun RegisteredDirectives.ignoreExceptionIfIgnoreDirectivePresent(ignoreDirective: Directive, action: () -> Unit) {
+    var exception: Throwable? = null
+    try {
+        action()
+    } catch (e: Throwable) {
+        exception = e
+    }
+
+    if (ignoreDirective in this) {
+        if (exception != null) return
+        error("$ignoreDirective is redundant")
+    }
+
+    if (exception != null) {
+        throw exception
+    }
 }

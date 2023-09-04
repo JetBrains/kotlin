@@ -175,6 +175,14 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("classId", pattern = TestGeneratorUtil.KTS)
         }
 
+        testClass<AbstractSourceClassIdConsistencyTest> {
+            model("classId", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractScriptClassIdConsistencyTest> {
+            model("classId", pattern = TestGeneratorUtil.KTS)
+        }
+
         testClass<AbstractCompilationPeerAnalysisTest> {
             model("compilationPeers")
         }
