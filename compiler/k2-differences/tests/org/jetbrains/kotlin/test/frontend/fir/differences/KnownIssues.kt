@@ -465,6 +465,7 @@ private val mutableKnownDisappearedDiagnostics = mutableMapOf(
     "SUPERTYPE_INITIALIZED_IN_INTERFACE" to IssueInfo("25-4702766", 60684),
     "DEPRECATION" to IssueInfo("25-4702763", 60682),
     "MISSING_DEPENDENCY_CLASS" to IssueInfo("25-4767673", 61536),
+    "MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED" to IssueInfo("25-4777559", 61662),
     //<::>knownDisappearedDiagnostics
 )
 
@@ -580,6 +581,9 @@ private val mutableKnownIntroducedDiagnostics = mutableMapOf(
     "MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_DEPRECATION_ERROR" to IssueInfo("25-4767674", 61537),
     "WRONG_NUMBER_OF_TYPE_ARGUMENTS" to IssueInfo("25-4767675", 61538),
     "INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION_ERROR" to IssueInfo("25-4767676", 61539),
+    "ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED" to IssueInfo("25-4777560", 61663),
+    "CAPTURED_VAL_INITIALIZATION" to IssueInfo("25-4777561", 61664),
+    "EXPRESSION_EXPECTED" to IssueInfo("25-4777562", 61665),
     //<::>knownIntroducedDiagnostics
 )
 
