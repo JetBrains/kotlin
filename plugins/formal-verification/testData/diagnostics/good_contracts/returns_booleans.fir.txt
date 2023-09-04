@@ -33,21 +33,6 @@ FILE: returns_booleans.kt
 
         ^returns_false Boolean(false)
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun incorrectly_returns_false(): R|kotlin/Boolean|
-        [R|Contract description]
-         <
-            Returns(TRUE)
-        >
-     {
-         {
-            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
-                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true))
-            }
-            )
-        }
-
-        ^incorrectly_returns_false Boolean(false)
-    }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun conditional_basic(b: R|kotlin/Boolean|): R|kotlin/Boolean|
         [R|Contract description]
          <

@@ -24,40 +24,84 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
-    @TestMetadata("calls_in_place.kt")
-    public void testCalls_in_place() throws Exception {
-        runTest("plugins/formal-verification/testData/diagnostics/calls_in_place.kt");
+    @Nested
+    @TestMetadata("plugins/formal-verification/testData/diagnostics/bad_contracts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Bad_contracts {
+        @Test
+        public void testAllFilesPresentInBad_contracts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics/bad_contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("calls_in_place.kt")
+        public void testCalls_in_place() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/calls_in_place.kt");
+        }
+
+        @Test
+        @TestMetadata("is_type_contract.kt")
+        public void testIs_type_contract() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/is_type_contract.kt");
+        }
+
+        @Test
+        @TestMetadata("returns_booleans.kt")
+        public void testReturns_booleans() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/returns_booleans.kt");
+        }
+
+        @Test
+        @TestMetadata("returns_null.kt")
+        public void testReturns_null() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/returns_null.kt");
+        }
     }
 
-    @Test
-    @TestMetadata("inlining.kt")
-    public void testInlining() throws Exception {
-        runTest("plugins/formal-verification/testData/diagnostics/inlining.kt");
-    }
+    @Nested
+    @TestMetadata("plugins/formal-verification/testData/diagnostics/good_contracts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Good_contracts {
+        @Test
+        public void testAllFilesPresentInGood_contracts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics/good_contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
 
-    @Test
-    @TestMetadata("is_type_contract.kt")
-    public void testIs_type_contract() throws Exception {
-        runTest("plugins/formal-verification/testData/diagnostics/is_type_contract.kt");
-    }
+        @Test
+        @TestMetadata("calls_in_place.kt")
+        public void testCalls_in_place() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/good_contracts/calls_in_place.kt");
+        }
 
-    @Test
-    @TestMetadata("returns_booleans.kt")
-    public void testReturns_booleans() throws Exception {
-        runTest("plugins/formal-verification/testData/diagnostics/returns_booleans.kt");
-    }
+        @Test
+        @TestMetadata("inlining.kt")
+        public void testInlining() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/good_contracts/inlining.kt");
+        }
 
-    @Test
-    @TestMetadata("returns_null.kt")
-    public void testReturns_null() throws Exception {
-        runTest("plugins/formal-verification/testData/diagnostics/returns_null.kt");
-    }
+        @Test
+        @TestMetadata("is_type_contract.kt")
+        public void testIs_type_contract() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/good_contracts/is_type_contract.kt");
+        }
 
-    @Test
-    @TestMetadata("simple.kt")
-    public void testSimple() throws Exception {
-        runTest("plugins/formal-verification/testData/diagnostics/simple.kt");
+        @Test
+        @TestMetadata("returns_booleans.kt")
+        public void testReturns_booleans() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/good_contracts/returns_booleans.kt");
+        }
+
+        @Test
+        @TestMetadata("returns_null.kt")
+        public void testReturns_null() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/good_contracts/returns_null.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/good_contracts/simple.kt");
+        }
     }
 
     @Nested

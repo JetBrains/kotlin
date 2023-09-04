@@ -9,22 +9,7 @@ method pkg_$global$simple_returns_null(local$x: dom$Nullable[Int])
   ret := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
 }
 
-/returns_null.kt:(300,325): info: Generated Viper text for returns_null_unverifiable:
-method pkg_$global$returns_null_unverifiable(local$x: dom$Nullable[Int])
-  returns (ret: dom$Nullable[Int])
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
-  ensures true ==> false
-{
-  ret := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
-}
-
-/returns_null.kt:(300,325): warning: Viper verification error: Postcondition of pkg_$global$returns_null_unverifiable might not hold. Assertion true ==> false might not hold. (<no position>)
-
-
-/returns_null.kt:(300,325): warning: Function returns_null_unverifiable may not satisfy its contract.
-
-/returns_null.kt:(456,476): info: Generated Viper text for returns_null_implies:
+/returns_null.kt:(300,320): info: Generated Viper text for returns_null_implies:
 method pkg_$global$returns_null_implies(local$x: dom$Nullable[Bool])
   returns (ret: dom$Nullable[Bool])
   requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Boolean()))
@@ -37,7 +22,7 @@ method pkg_$global$returns_null_implies(local$x: dom$Nullable[Bool])
   ret := local$x
 }
 
-/returns_null.kt:(667,687): info: Generated Viper text for returns_null_with_if:
+/returns_null.kt:(511,531): info: Generated Viper text for returns_null_with_if:
 method pkg_$global$returns_null_with_if(local$x: dom$Nullable[Int], local$y: dom$Nullable[Int],
   local$z: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
@@ -66,7 +51,7 @@ method pkg_$global$returns_null_with_if(local$x: dom$Nullable[Int], local$y: dom
     ret := local$z}
 }
 
-/returns_null.kt:(989,1018): info: Generated Viper text for non_nullable_returns_not_null:
+/returns_null.kt:(833,862): info: Generated Viper text for non_nullable_returns_not_null:
 method pkg_$global$non_nullable_returns_not_null(local$x: Int)
   returns (ret: Int)
   ensures true
@@ -74,20 +59,7 @@ method pkg_$global$non_nullable_returns_not_null(local$x: Int)
   ret := local$x
 }
 
-/returns_null.kt:(1137,1162): info: Generated Viper text for non_nullable_returns_null:
-method pkg_$global$non_nullable_returns_null(local$x: Int)
-  returns (ret: Int)
-  ensures false
-{
-  ret := local$x
-}
-
-/returns_null.kt:(1137,1162): warning: Viper verification error: Postcondition of pkg_$global$non_nullable_returns_null might not hold. Assertion false might not hold. (<no position>)
-
-
-/returns_null.kt:(1137,1162): warning: Function non_nullable_returns_null may not satisfy its contract.
-
-/returns_null.kt:(1278,1307): info: Generated Viper text for non_nullable_compared_to_null:
+/returns_null.kt:(981,1010): info: Generated Viper text for non_nullable_compared_to_null:
 method pkg_$global$non_nullable_compared_to_null(local$x: Int, local$y: Int)
   returns (ret: Int)
   ensures true ==> false || true
@@ -95,6 +67,6 @@ method pkg_$global$non_nullable_compared_to_null(local$x: Int, local$y: Int)
   ret := local$x
 }
 
-/returns_null.kt:(1373,1382): warning: Condition is always 'false'.
+/returns_null.kt:(1076,1085): warning: Condition is always 'false'.
 
-/returns_null.kt:(1386,1395): warning: Condition is always 'true'.
+/returns_null.kt:(1089,1098): warning: Condition is always 'true'.

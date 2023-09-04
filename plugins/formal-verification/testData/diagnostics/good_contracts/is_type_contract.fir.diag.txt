@@ -1,0 +1,21 @@
+/is_type_contract.kt:(121,129): info: Generated Viper text for isString:
+field pkg_kotlin$class_String$member_length: Int
+
+method pkg_$global$isString(local$x: dom$Nullable[dom$Any])
+  returns (ret: Bool)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+  ensures ret == true ==>
+    dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg_kotlin$class_String())
+{
+  ret := dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg_kotlin$class_String())
+}
+
+/is_type_contract.kt:(282,299): info: Generated Viper text for subtypeTransitive:
+method pkg_$global$subtypeTransitive(local$x: dom$Unit)
+  returns (ret: dom$Unit)
+  ensures true ==>
+    dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+{
+}
+
+/is_type_contract.kt:(515,524): warning: Check for instance is always 'true'.

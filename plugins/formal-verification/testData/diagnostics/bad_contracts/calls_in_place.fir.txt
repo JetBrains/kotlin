@@ -1,0 +1,61 @@
+FILE: calls_in_place.kt
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun unknown(f: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/Int|
+        [R|Contract description]
+         <
+            CallsInPlace(f, UNKNOWN)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Int|>(R|<local>/f|, R|kotlin/contracts/InvocationKind.UNKNOWN|)
+            }
+            )
+        }
+
+        ^unknown R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(Int(1))
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun incorrect_at_most_once(f: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/Int|
+        [R|Contract description]
+         <
+            CallsInPlace(f, AT_MOST_ONCE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Int|>(R|<local>/f|, R|kotlin/contracts/InvocationKind.AT_MOST_ONCE|)
+            }
+            )
+        }
+
+        ^incorrect_at_most_once R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(R|/unknown|(R|<local>/f|))
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun incorrect_exactly_once(f: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/Int|
+        [R|Contract description]
+         <
+            CallsInPlace(f, EXACTLY_ONCE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Int|>(R|<local>/f|, R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+            }
+            )
+        }
+
+        ^incorrect_exactly_once R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(Int(1)))
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun incorrect_at_least_once(f: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/Int|
+        [R|Contract description]
+         <
+            CallsInPlace(f, AT_LEAST_ONCE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Int|>(R|<local>/f|, R|kotlin/contracts/InvocationKind.AT_LEAST_ONCE|)
+            }
+            )
+        }
+
+        ^incorrect_at_least_once R|/unknown|(R|<local>/f|)
+    }

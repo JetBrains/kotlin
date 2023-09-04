@@ -1,0 +1,30 @@
+/is_type_contract.kt:(121,142): info: Generated Viper text for unverifiableTypeCheck:
+field pkg_kotlin$class_String$member_length: Int
+
+method pkg_$global$unverifiableTypeCheck(local$x: dom$Nullable[Int])
+  returns (ret: Bool)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  ensures true ==>
+    dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Unit())
+{
+  ret := dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg_kotlin$class_String())
+}
+
+/is_type_contract.kt:(121,142): warning: Viper verification error: Postcondition of pkg_$global$unverifiableTypeCheck might not hold. Assertion true ==> dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Unit()) might not hold. (<no position>)
+
+
+/is_type_contract.kt:(121,142): warning: Function unverifiableTypeCheck may not satisfy its contract.
+
+/is_type_contract.kt:(289,311): info: Generated Viper text for nullableNotNonNullable:
+method pkg_$global$nullableNotNonNullable(local$x: dom$Nullable[Int])
+  returns (ret: dom$Unit)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  ensures true ==>
+    dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int())
+{
+}
+
+/is_type_contract.kt:(289,311): warning: Viper verification error: Postcondition of pkg_$global$nullableNotNonNullable might not hold. Assertion true ==> dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int()) might not hold. (<no position>)
+
+
+/is_type_contract.kt:(289,311): warning: Function nullableNotNonNullable may not satisfy its contract.

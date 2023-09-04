@@ -11,14 +11,6 @@ fun <!VIPER_TEXT!>simple_returns_null<!>(x: Int?): Int? {
 }
 
 @OptIn(ExperimentalContracts::class)
-fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT, VIPER_VERIFICATION_ERROR!>returns_null_unverifiable<!>(x: Int?): Int? {
-    contract {
-        returns() implies false
-    }
-    return null
-}
-
-@OptIn(ExperimentalContracts::class)
 fun <!VIPER_TEXT!>returns_null_implies<!>(x: Boolean?): Boolean? {
     contract {
         returns(null) implies (x == null)
@@ -44,14 +36,6 @@ fun <!VIPER_TEXT!>returns_null_with_if<!>(x: Int?, y: Int?, z: Int?): Int? {
 fun <!VIPER_TEXT!>non_nullable_returns_not_null<!>(x: Int): Int {
     contract {
         returnsNotNull()
-    }
-    return x
-}
-
-@OptIn(ExperimentalContracts::class)
-fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT, VIPER_VERIFICATION_ERROR!>non_nullable_returns_null<!>(x: Int): Int {
-    contract {
-        returns(null)
     }
     return x
 }
