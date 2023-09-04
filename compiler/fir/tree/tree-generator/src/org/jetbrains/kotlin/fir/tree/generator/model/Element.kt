@@ -210,4 +210,3 @@ class TypeArgumentWithMultipleUpperBounds(name: String, override val upperBounds
     }
 }
 
-data class ArbitraryImportable(override val packageName: String, override val type: String) : Importable
