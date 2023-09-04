@@ -111,7 +111,10 @@ internal class AnnotationTranslator {
                 DRI(packageName = "", classNames = ERROR_CLASS_NAME)
             )
 
-            KtUnsupportedAnnotationValue -> TODO()
+            KtUnsupportedAnnotationValue -> ClassValue(
+                "<Unsupported Annotation Value>",
+                DRI(packageName = "", classNames = ERROR_CLASS_NAME)
+            )
         }
 
     private fun getDRIFrom(enumEntry: KtEnumEntryAnnotationValue): DRI {
@@ -129,6 +132,7 @@ internal class AnnotationTranslator {
 
         /**
          * Functional types can have **generated** [ParameterName] annotation
+         * @see ParameterName
          */
         internal fun KtAnnotated.getPresentableName(): String? =
             this.annotationsByClassId(parameterNameAnnotation)
