@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.analyzer.hasJdkCapability
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -231,20 +230,13 @@ open class JvmIrCodegenFactory(
             }
         }
 
-        val dependencies = psi2irContext.moduleDescriptor.collectAllDependencyModulesTransitively().map {
-            val kotlinLibrary = (it.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
-            if (it.hasJdkCapability) {
-                // For IDE environment only, i.e. when compiling for debugger
-                // Deserializer for built-ins module should exist because built-in types returned from SDK belong to that module,
-                // but JDK's built-ins module might not be in current module's dependencies
-                // We have to ensure that deserializer for built-ins module is created
-                irLinker.deserializeIrModuleHeader(
-                    it.builtIns.builtInsModule,
-                    null,
-                    _moduleName = it.builtIns.builtInsModule.name.asString()
-                )
+        val dependencies = if (ideCodegenSettings.shouldStubAndNotLinkUnboundSymbols) {
+            emptyList()
+        } else {
+            psi2irContext.moduleDescriptor.collectAllDependencyModulesTransitively().map {
+                val kotlinLibrary = (it.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
+                irLinker.deserializeIrModuleHeader(it, kotlinLibrary, _moduleName = it.name.asString())
             }
-            irLinker.deserializeIrModuleHeader(it, kotlinLibrary, _moduleName = it.name.asString())
         }
 
         val irProviders = if (ideCodegenSettings.shouldStubAndNotLinkUnboundSymbols) {
