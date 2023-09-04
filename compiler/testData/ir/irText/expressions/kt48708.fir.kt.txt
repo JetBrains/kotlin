@@ -1,6 +1,8 @@
 fun test(b: Boolean) {
   val x: Int = when {
-    b -> 3
+    b -> { // BLOCK
+      3
+    }
     else -> { // BLOCK
       throw Exception()
       0
@@ -11,3 +13,4 @@ fun test(b: Boolean) {
 
 fun takeInt(x: Int) {
 }
+

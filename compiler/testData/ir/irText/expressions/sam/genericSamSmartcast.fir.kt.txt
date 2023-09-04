@@ -1,9 +1,12 @@
 fun f(x: Any): String {
   when {
-    x is A<*> -> return x /*as A<*> */.call(block = local fun <anonymous>(y: Any?): @FlexibleNullability String? {
-      return "OK"
-    }
+    x is A<*> -> { // BLOCK
+      return x /*as A<*> */.call(block = local fun <anonymous>(y: Any?): @FlexibleNullability String? {
+        return "OK"
+      }
  /*-> @FlexibleNullability I<out @FlexibleNullability Any?>? */) /*!! String */
+    }
   }
   return "Fail"
 }
+

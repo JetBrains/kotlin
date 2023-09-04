@@ -7,7 +7,28 @@ fun testEmpty(ss: List<String>) {
   }
 }
 
+fun testEmptyBlock(ss: List<String>) {
+  { // BLOCK
+    val tmp0_iterator: Iterator<String> = ss.iterator()
+    while (tmp0_iterator.hasNext()) { // BLOCK
+      val s: String = tmp0_iterator.next()
+      { // BLOCK
+      }
+    }
+  }
+}
+
 fun testIterable(ss: List<String>) {
+  { // BLOCK
+    val tmp0_iterator: Iterator<String> = ss.iterator()
+    while (tmp0_iterator.hasNext()) { // BLOCK
+      val s: String = tmp0_iterator.next()
+      println(message = s)
+    }
+  }
+}
+
+fun testIterableBlock(ss: List<String>) {
   { // BLOCK
     val tmp0_iterator: Iterator<String> = ss.iterator()
     while (tmp0_iterator.hasNext()) { // BLOCK
@@ -42,3 +63,4 @@ fun testRange() {
     }
   }
 }
+

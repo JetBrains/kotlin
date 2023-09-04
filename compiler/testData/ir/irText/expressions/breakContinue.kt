@@ -1,8 +1,16 @@
+// FIR_IDENTICAL
 fun test1() {
     while (true) { break }
     do { break } while (true)
     while (true) { continue }
     do { continue } while (true)
+}
+
+fun test1NoBlocks() {
+    while (true) break
+    do break while (true)
+    while (true) continue
+    do continue while (true)
 }
 
 fun test2() {

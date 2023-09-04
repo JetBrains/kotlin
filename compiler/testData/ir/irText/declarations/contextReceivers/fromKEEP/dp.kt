@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ContextReceivers
 // WITH_STDLIB
 class View {

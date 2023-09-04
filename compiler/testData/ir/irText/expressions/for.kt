@@ -6,7 +6,16 @@ fun testEmpty(ss: List<String>) {
     for (s in ss);
 }
 
+fun testEmptyBlock(ss: List<String>) {
+    for (s in ss) {}
+}
+
 fun testIterable(ss: List<String>) {
+    for (s in ss)
+        println(s)
+}
+
+fun testIterableBlock(ss: List<String>) {
     for (s in ss) {
         println(s)
     }

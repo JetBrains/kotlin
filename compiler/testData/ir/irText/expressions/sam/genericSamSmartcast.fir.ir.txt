@@ -6,17 +6,18 @@ FILE fqName:<root> fileName:/genericSamSmartcast.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.A<*>
             GET_VAR 'x: kotlin.Any declared in <root>.f' type=kotlin.Any origin=null
-          then: RETURN type=kotlin.Nothing from='public final fun f (x: kotlin.Any): kotlin.String declared in <root>'
-            TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-              CALL 'public open fun call (block: @[FlexibleNullability] <root>.A.I<@[FlexibleNullability] T of <root>.A?>?): @[FlexibleNullability] kotlin.String? declared in <root>.A' type=@[FlexibleNullability] kotlin.String? origin=null
-                $this: TYPE_OP type=<root>.A<*> origin=IMPLICIT_CAST typeOperand=<root>.A<*>
-                  GET_VAR 'x: kotlin.Any declared in <root>.f' type=kotlin.Any origin=null
-                block: TYPE_OP type=@[FlexibleNullability] <root>.A.I<out @[FlexibleNullability] kotlin.Any?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.A.I<out @[FlexibleNullability] kotlin.Any?>?
-                  FUN_EXPR type=kotlin.Function1<kotlin.Any?, @[FlexibleNullability] kotlin.String?> origin=LAMBDA
-                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (y:kotlin.Any?) returnType:@[FlexibleNullability] kotlin.String?
-                      VALUE_PARAMETER name:y index:0 type:kotlin.Any?
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (y: kotlin.Any?): @[FlexibleNullability] kotlin.String? declared in <root>.f'
-                          CONST String type=kotlin.String value="OK"
+          then: BLOCK type=kotlin.Unit origin=null
+            RETURN type=kotlin.Nothing from='public final fun f (x: kotlin.Any): kotlin.String declared in <root>'
+              TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+                CALL 'public open fun call (block: @[FlexibleNullability] <root>.A.I<@[FlexibleNullability] T of <root>.A?>?): @[FlexibleNullability] kotlin.String? declared in <root>.A' type=@[FlexibleNullability] kotlin.String? origin=null
+                  $this: TYPE_OP type=<root>.A<*> origin=IMPLICIT_CAST typeOperand=<root>.A<*>
+                    GET_VAR 'x: kotlin.Any declared in <root>.f' type=kotlin.Any origin=null
+                  block: TYPE_OP type=@[FlexibleNullability] <root>.A.I<out @[FlexibleNullability] kotlin.Any?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.A.I<out @[FlexibleNullability] kotlin.Any?>?
+                    FUN_EXPR type=kotlin.Function1<kotlin.Any?, @[FlexibleNullability] kotlin.String?> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (y:kotlin.Any?) returnType:@[FlexibleNullability] kotlin.String?
+                        VALUE_PARAMETER name:y index:0 type:kotlin.Any?
+                        BLOCK_BODY
+                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (y: kotlin.Any?): @[FlexibleNullability] kotlin.String? declared in <root>.f'
+                            CONST String type=kotlin.String value="OK"
       RETURN type=kotlin.Nothing from='public final fun f (x: kotlin.Any): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="Fail"

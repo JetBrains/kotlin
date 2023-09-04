@@ -5,6 +5,12 @@
 fun test1(): Unit
 
 // CHECK:
+//   Mangled name: #test1NoBlocks(){}
+//   Public signature: /test1NoBlocks|-1258496237560959184[0]
+//   Public signature debug description: test1NoBlocks(){}
+fun test1NoBlocks(): Unit
+
+// CHECK:
 //   Mangled name: #test2(){}
 //   Public signature: /test2|4279114864133353152[0]
 //   Public signature debug description: test2(){}

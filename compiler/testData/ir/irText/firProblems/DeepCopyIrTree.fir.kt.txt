@@ -59,10 +59,12 @@ class DeepCopyIrTreeWithSymbols {
           val <destruct>: Pair<IrTypeParameter, IrTypeParameter> = <iterator>.next()
           val thisTypeParameter: IrTypeParameter = <destruct>.component1()
           val otherTypeParameter: IrTypeParameter = <destruct>.component2()
-          otherTypeParameter.<get-superTypes>().mapTo<IrType, IrType, MutableList<IrType>>(destination = thisTypeParameter.<get-superTypes>(), transform = local fun <anonymous>(it: IrType): IrType {
-            return <this>.<get-typeRemapper>().remapType(type = it)
-          }
+          { // BLOCK
+            otherTypeParameter.<get-superTypes>().mapTo<IrType, IrType, MutableList<IrType>>(destination = thisTypeParameter.<get-superTypes>(), transform = local fun <anonymous>(it: IrType): IrType {
+              return <this>.<get-typeRemapper>().remapType(type = it)
+            }
 )
+          }
         }
       }
     }

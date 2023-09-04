@@ -17,6 +17,17 @@ fun test1() {
   }
 }
 
+fun test1NoBlocks() {
+  while (true) break
+  { // BLOCK
+    dobreak    while (true)
+  }
+  while (true) continue
+  { // BLOCK
+    docontinue    while (true)
+  }
+}
+
 fun test2() {
   OUTER@ while (true) { // BLOCK
     INNER@ while (true) { // BLOCK
@@ -48,3 +59,4 @@ fun test3() {
     continue@L
   }
 }
+

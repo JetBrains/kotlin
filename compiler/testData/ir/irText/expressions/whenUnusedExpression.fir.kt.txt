@@ -1,12 +1,15 @@
 fun test(b: Boolean, i: Int) {
   when {
     b -> { // BLOCK
-      val tmp0_subject: Int = i
-      when {
-        EQEQ(arg0 = tmp0_subject, arg1 = 0) -> 1
-        else -> null
+      { // BLOCK
+        val tmp0_subject: Int = i
+        when {
+          EQEQ(arg0 = tmp0_subject, arg1 = 0) -> 1
+          else -> null
+        }
       }
     }
     else -> null
   } /*~> Unit */
 }
+

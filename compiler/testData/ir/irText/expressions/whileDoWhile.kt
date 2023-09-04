@@ -1,9 +1,13 @@
+// WITH_STDLIB
 fun test() {
     var x = 0
     while (x < 0);
+    while (x < 3) {}
     while (x < 5) x++
     while (x < 10) { x++ }
+
     do while (x < 0)
+    do {} while (x < 10)
     do x++ while (x < 15)
     do { x ++ } while (x < 20)
 }

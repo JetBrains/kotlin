@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun test1() {
     throw Throwable()
 }

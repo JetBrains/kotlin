@@ -11,14 +11,25 @@ fun testDestructuring(pp: List<Pair<Int, String>>): Unit
 fun testEmpty(ss: List<String>): Unit
 
 // CHECK:
+//   Mangled name: #testEmptyBlock(kotlin.collections.List<kotlin.String>){}
+//   Public signature: /testEmptyBlock|7381405936817238710[0]
+//   Public signature debug description: testEmptyBlock(kotlin.collections.List<kotlin.String>){}
+fun testEmptyBlock(ss: List<String>): Unit
+
+// CHECK:
 //   Mangled name: #testIterable(kotlin.collections.List<kotlin.String>){}
 //   Public signature: /testIterable|3066285127841729695[0]
 //   Public signature debug description: testIterable(kotlin.collections.List<kotlin.String>){}
 fun testIterable(ss: List<String>): Unit
 
 // CHECK:
+//   Mangled name: #testIterableBlock(kotlin.collections.List<kotlin.String>){}
+//   Public signature: /testIterableBlock|3651233344139713450[0]
+//   Public signature debug description: testIterableBlock(kotlin.collections.List<kotlin.String>){}
+fun testIterableBlock(ss: List<String>): Unit
+
+// CHECK:
 //   Mangled name: #testRange(){}
 //   Public signature: /testRange|5870058580411114415[0]
 //   Public signature debug description: testRange(){}
 fun testRange(): Unit
-

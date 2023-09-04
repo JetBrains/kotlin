@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -24,9 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
-import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
+import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -1077,7 +1072,7 @@ class Fir2IrVisitor(
                 return it
             }
         }
-        return statements.convertToIrExpressionOrBlock(source, origin)
+        return statements.convertToIrExpressionOrBlock(source, origin, this)
     }
 
     private fun FirBlock.convertToIrBlock(forceUnitType: Boolean): IrExpression {
@@ -1086,7 +1081,8 @@ class Fir2IrVisitor(
 
     private fun List<FirStatement>.convertToIrExpressionOrBlock(
         source: KtSourceElement?,
-        origin: IrStatementOrigin?
+        origin: IrStatementOrigin?,
+        parent: FirBlock,
     ): IrExpression {
         if (size == 1) {
             val firStatement = single()
@@ -1094,10 +1090,25 @@ class Fir2IrVisitor(
                 (firStatement !is FirBlock || firStatement.source?.kind != KtFakeSourceElementKind.DesugaredForLoop)
             ) {
                 return convertToIrExpression(firStatement)
+                    .wrapWithBlockOrCompositeIfParentIsReal(source, origin, parent)
             }
         }
         return convertToIrBlock(source, origin, forceUnitType = origin?.isLoop == true)
     }
+
+    private fun IrExpression.wrapWithBlockOrCompositeIfParentIsReal(
+        source: KtSourceElement?,
+        origin: IrStatementOrigin?,
+        parent: FirBlock,
+    ): IrExpression =
+        if (parent.source?.kind is KtRealSourceElementKind) {
+            source.convertWithOffsets { startOffset, endOffset ->
+                return if (origin == IrStatementOrigin.DO_WHILE_LOOP)
+                    IrCompositeImpl(startOffset, endOffset, irBuiltIns.unitType, null, listOf(this))
+                else IrBlockImpl(startOffset, endOffset, irBuiltIns.unitType, null, listOf(this))
+            }
+        } else
+            this
 
     private fun List<FirStatement>.convertToIrBlock(
         source: KtSourceElement?,
@@ -1111,7 +1122,7 @@ class Fir2IrVisitor(
         return source.convertWithOffsets { startOffset, endOffset ->
             if (origin == IrStatementOrigin.DO_WHILE_LOOP) {
                 IrCompositeImpl(
-                    startOffset, endOffset, type, origin,
+                    startOffset, endOffset, type, null,
                     mapToIrStatements(recognizePostfixIncDec = false).filterNotNull()
                 )
             } else {
@@ -1122,7 +1133,12 @@ class Fir2IrVisitor(
                 ) {
                     singleStatement
                 } else {
-                    IrBlockImpl(startOffset, endOffset, type, origin, irStatements.filterNotNull())
+                    IrBlockImpl(
+                        startOffset, endOffset,
+                        type,
+                        if (origin == IrStatementOrigin.FOR_LOOP) origin else null,
+                        irStatements.filterNotNull()
+                    )
                 }
             }
         }
@@ -1299,7 +1315,8 @@ class Fir2IrVisitor(
             ).apply {
                 loopMap[doWhileLoop] = this
                 label = doWhileLoop.label?.name
-                body = doWhileLoop.block.convertToIrExpressionOrBlock(origin)
+                body = if (doWhileLoop.block is FirEmptyExpressionBlock) null
+                       else doWhileLoop.block.convertToIrExpressionOrBlock(origin)
                 condition = convertToIrExpression(doWhileLoop.condition)
                 loopMap.remove(doWhileLoop)
             }
@@ -1320,7 +1337,8 @@ class Fir2IrVisitor(
                 loopMap[whileLoop] = this
                 label = whileLoop.label?.name
                 condition = convertToIrExpression(whileLoop.condition)
-                body = if (isForLoop) {
+                body = if (firLoopBody is FirEmptyExpressionBlock) null
+                else if (isForLoop) {
                     /*
                      * for loops in IR should have specific for of their body, because some of lowerings (e.g. `ForLoopLowering`) expects
                      *   exactly that shape:
@@ -1355,12 +1373,17 @@ class Fir2IrVisitor(
                             innerEndOffset,
                             irBuiltIns.unitType,
                             origin,
-                            loopVariables +
-                                    loopBodyStatements.drop(loopVariableIndex).convertToIrExpressionOrBlock(firLoopBody.source, null)
+                            loopBodyStatements.drop(loopVariableIndex).single().let {
+                                if (it is FirEmptyExpressionBlock) {
+                                    loopVariables
+                                } else {
+                                    loopVariables + convertToIrExpression(it as FirExpression)
+                                }
+                            }
                         )
                     }
                 } else {
-                    firLoopBody.convertToIrExpressionOrBlock()
+                    firLoopBody.convertToIrExpressionOrBlock(origin)
                 }
                 loopMap.remove(whileLoop)
             }
