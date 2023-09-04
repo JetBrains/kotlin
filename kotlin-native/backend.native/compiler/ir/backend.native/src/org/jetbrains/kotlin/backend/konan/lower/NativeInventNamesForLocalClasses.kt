@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 
 // TODO: consider replacing '$' by another delimeter that can't be used in class name specified with backticks (``)
-internal class NativeInventNamesForLocalClasses(val generationState: NativeGenerationState) : InventNamesForLocalClasses(allowTopLevelCallables = true) {
+internal class NativeInventNamesForLocalClasses(val generationState: NativeGenerationState) : InventNamesForLocalClasses(
+        allowTopLevelCallables = true,
+        generateNamesForRegeneratedObjects = true
+) {
     override fun computeTopLevelClassName(clazz: IrClass): String = clazz.name.asString()
     override fun sanitizeNameIfNeeded(name: String) = name
 
