@@ -1956,73 +1956,9 @@ standaloneTest('coroutines_suspendConversion') {
     flags = ['-XXLanguage:+SuspendConversion']
 }
 
-tasks.register("AbstractMutableCollection", KonanLocalTest) {
-    expectedExitStatus = 0
-    source = "runtime/collections/AbstractMutableCollection.kt"
-}
-
-tasks.register("BitSet", KonanLocalTest) {
-    expectedExitStatus = 0
-    source = "runtime/collections/BitSet.kt"
-}
-
 tasks.register("stack_array", KonanLocalTest) {
     useGoldenData = true
-    source = "runtime/collections/stack_array.kt"
-}
-
-tasks.register("array0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/array0.kt"
-}
-
-tasks.register("array1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/array1.kt"
-}
-
-tasks.register("array2", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/array2.kt"
-}
-
-tasks.register("array3", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/array3.kt"
-}
-
-tasks.register("array4", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/array4.kt"
-}
-
-tasks.register("array5", KonanLocalTest) {
-    source = "runtime/collections/array5.kt"
-}
-
-tasks.register("typed_array0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/typed_array0.kt"
-}
-
-tasks.register("typed_array1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/typed_array1.kt"
-}
-
-
-tasks.register("sort0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/sort0.kt"
-}
-
-tasks.register("sort1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/sort1.kt"
-}
-
-tasks.register("sortWith", KonanLocalTest) {
-    source = "runtime/collections/SortWith.kt"
+    source = "codegen/escapeAnalysis/stack_array.kt"
 }
 
 tasks.register("if_else", KonanLocalTest) {
@@ -2332,52 +2268,10 @@ standaloneTest("hypotenuse") {
     source = "runtime/basic/hypot.kt"
 }
 
-tasks.register("array_list1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/array_list1.kt"
-}
-
-tasks.register("array_list2", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/array_list2.kt"
-}
-
-tasks.register("hash_map0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/hash_map0.kt"
-}
-
-tasks.register("hash_map1", KonanLocalTest) {
-    disabled = isAggressiveGC // TODO: Investigate why too slow
-    useGoldenData = true
-    source = "runtime/collections/hash_map1.kt"
-}
-
-tasks.register("hash_set0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/hash_set0.kt"
-}
-
-tasks.register("listof0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/listof0.kt"
-}
-
 tasks.register("listof1", KonanLocalTest) {
     enabled = false
     useGoldenData = true
     source = "datagen/literals/listof1.kt"
-}
-
-
-tasks.register("moderately_large_array", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/moderately_large_array.kt"
-}
-
-tasks.register("moderately_large_array1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/moderately_large_array1.kt"
 }
 
 tasks.register("string_builder0", KonanLocalTest) {
@@ -2717,11 +2611,6 @@ tasks.register("break_continue", KonanLocalTest) {
 tasks.register("break1", KonanLocalTest) {
     useGoldenData = true
     source = "codegen/controlflow/break1.kt"
-}
-
-tasks.register("range0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/collections/range0.kt"
 }
 
 standaloneTest("args0") {

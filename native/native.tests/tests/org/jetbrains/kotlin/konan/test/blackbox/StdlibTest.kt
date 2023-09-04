@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase
     TC(
         name = "default",
         runnerType = TestRunnerType.DEFAULT,
-        freeCompilerArgs = [ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_X_FOREIGN_API, ENABLE_RANGE_UNTIL],
+        freeCompilerArgs = [
+            ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL,
+            ENABLE_X_FOREIGN_API, ENABLE_X_NATIVE_API, ENABLE_OBSOLETE_NATIVE_API],
         sourceLocations = [
             "libraries/stdlib/test/**.kt",
             "libraries/stdlib/common/test/**.kt",
@@ -47,7 +49,9 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
     TC(
         name = "default",
         runnerType = TestRunnerType.DEFAULT,
-        freeCompilerArgs = [ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_X_FOREIGN_API, ENABLE_RANGE_UNTIL,
+        freeCompilerArgs = [
+            ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL,
+            ENABLE_X_FOREIGN_API, ENABLE_X_NATIVE_API, ENABLE_OBSOLETE_NATIVE_API,
             "-Xcommon-sources=libraries/stdlib/common/test/jsCollectionFactories.kt",
             "-Xcommon-sources=libraries/stdlib/common/test/testUtils.kt",
             "-Xcommon-sources=libraries/stdlib/test/testUtils.kt",
@@ -75,5 +79,7 @@ internal const val STDLIB_IS_A_FRIEND = "-friend-modules=$KOTLIN_NATIVE_DISTRIBU
 private const val ENABLE_X_STDLIB_API = "-opt-in=kotlin.ExperimentalStdlibApi"
 private const val ENABLE_X_ENCODING_API = "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi"
 private const val ENABLE_X_FOREIGN_API = "-opt-in=kotlinx.cinterop.ExperimentalForeignApi"
+private const val ENABLE_X_NATIVE_API = "-opt-in=kotlin.experimental.ExperimentalNativeApi"
+private const val ENABLE_OBSOLETE_NATIVE_API = "-opt-in=kotlin.native.ObsoleteNativeApi"
 private const val ENABLE_RANGE_UNTIL = "-XXLanguage:+RangeUntilOperator" // keep until 1.8
 private const val DISABLED_STDLIB_TEST = "test.collections.CollectionTest.abstractCollectionToArray"
