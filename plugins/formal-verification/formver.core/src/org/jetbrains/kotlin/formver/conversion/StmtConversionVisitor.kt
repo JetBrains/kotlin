@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.formver.domains.TypeDomain
 import org.jetbrains.kotlin.formver.domains.TypeOfDomain
 import org.jetbrains.kotlin.formver.domains.UnitDomain
 import org.jetbrains.kotlin.formver.domains.convertType
-import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.embeddings.BooleanTypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.NullableTypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.embedName
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.AccessPredicate
 import org.jetbrains.kotlin.formver.viper.ast.Exp
@@ -362,9 +365,20 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
             UnsupportedFeatureBehaviour.THROW_EXCEPTION ->
                 TODO(msg)
             UnsupportedFeatureBehaviour.ASSUME_UNREACHABLE -> {
-                System.err.println(msg) // hack for while we're actively developing this to see what we're missing
+                data.config.addMinorError(msg)
                 data.addStatement(Stmt.Assume(Exp.BoolLit(false)))
                 UnitDomain.element
             }
         }
+}
+
+object StmtConversionVisitorExceptionWrapper : FirVisitor<Exp, StmtConversionContext<ResultTrackingContext>>() {
+    override fun visitElement(element: FirElement, data: StmtConversionContext<ResultTrackingContext>): Exp {
+        try {
+            return element.accept(StmtConversionVisitor, data)
+        } catch (e: Throwable) {
+            data.config.addErrorInfo("... while converting ${element.source.text}")
+            throw e
+        }
+    }
 }

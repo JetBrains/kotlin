@@ -155,7 +155,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             UnsupportedFeatureBehaviour.THROW_EXCEPTION ->
                 throw NotImplementedError("The embedding for type $type is not yet implemented.")
             UnsupportedFeatureBehaviour.ASSUME_UNREACHABLE -> {
-                System.err.println("Requested type $type, for which we do not yet have an embedding.")
+                config.addMinorError("Requested type $type, for which we do not yet have an embedding.")
                 UnitTypeEmbedding
             }
         }

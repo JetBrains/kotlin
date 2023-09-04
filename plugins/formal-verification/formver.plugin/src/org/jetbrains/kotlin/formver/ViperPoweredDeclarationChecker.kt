@@ -43,15 +43,16 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
     FirSimpleFunctionChecker() {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!config.conversionSelection.applicable(declaration)) return
-        val programConversionContext = ProgramConverter(session, config)
-        programConversionContext.registerForVerification(declaration)
-        val program = programConversionContext.program
-
-        getProgramForLogging(program)?.let {
-            reporter.reportOn(declaration.source, PluginErrors.VIPER_TEXT, declaration.name.asString(), it.toDebugOutput(), context)
-        }
-
+        var program: Program? = null
         try {
+            val programConversionContext = ProgramConverter(session, config)
+            programConversionContext.registerForVerification(declaration)
+            program = programConversionContext.program
+
+            getProgramForLogging(program)?.let {
+                reporter.reportOn(declaration.source, PluginErrors.VIPER_TEXT, declaration.name.asString(), it.toDebugOutput(), context)
+            }
+
             val verifier = Verifier()
             val onFailure = { err: VerifierError ->
                 reporter.reportOn(declaration.source, err.error, err.msg, context)
@@ -65,9 +66,16 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
             if (!success) {
                 reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT, declaration.name.asString(), context)
             }
-        } catch (e: Exception) {
-            System.err.println("Viper verification failed with an exception.  Viper text:\n${program.toDebugOutput()}\nException: $e")
-            throw e
+        } catch (e: Throwable) {
+            val error = config.formatErrorWithInfos(e.message ?: "No message provided")
+            reporter.reportOn(declaration.source, PluginErrors.INTERNAL_ERROR, error, context)
+            // Note that the below text is only visible during plugin development; Gradle hides it when running the plugin
+            // on another project.
+            System.err.println("Viper verification failed with an exception.  Viper text:\n${program?.toDebugOutput()}\nException: $e")
+        }
+
+        config.forEachMinorError {
+            reporter.reportOn(declaration.source, PluginErrors.MINOR_INTERNAL_ERROR, it, context)
         }
     }
 

@@ -28,7 +28,7 @@ class StmtConverter<out RTC : ResultTrackingContext>(
     override val resultCtx: RTC
         get() = resultCtxFactory.build(this)
 
-    override fun convert(stmt: FirStatement): Exp = stmt.accept(StmtConversionVisitor, this)
+    override fun convert(stmt: FirStatement): Exp = stmt.accept(StmtConversionVisitorExceptionWrapper, this)
     override fun convertAndStore(exp: FirExpression): Exp.LocalVar {
         val convertedExp = convert(exp)
         return convertedExp as? Exp.LocalVar ?: withResult(embedType(exp)) {

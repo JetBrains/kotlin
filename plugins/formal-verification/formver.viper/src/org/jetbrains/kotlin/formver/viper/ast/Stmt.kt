@@ -46,7 +46,7 @@ sealed interface Stmt : IntoViper<viper.silver.ast.Stmt> {
                 LocalVarAssign(lhs, rhs, position, info, trafos)
             is Exp.FieldAccess ->
                 FieldAssign(lhs, rhs, position, info, trafos)
-            else -> throw IllegalArgumentException("Expected an lvalue on the left-hand side of an assignment, but lhs was $lhs.")
+            else -> throw IllegalArgumentException("Expected an lvalue on the left-hand side of an assignment, but lhs was ${lhs.toViper()}.")
         }
     }
 
