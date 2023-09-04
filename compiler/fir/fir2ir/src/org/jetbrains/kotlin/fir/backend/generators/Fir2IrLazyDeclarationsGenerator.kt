@@ -11,13 +11,11 @@ import org.jetbrains.kotlin.fir.backend.convertWithOffsets
 import org.jetbrains.kotlin.fir.backend.irOrigin
 import org.jetbrains.kotlin.fir.backend.isStubPropertyForPureField
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
-import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
-import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
-import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
+import org.jetbrains.kotlin.fir.lazy.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertyPublicSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -113,6 +111,21 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         classifiersGenerator.declareIrClass(signature) { symbol ->
             Fir2IrLazyClass(components, startOffset, endOffset, firClassOrigin, firClass, symbol).apply {
                 parent = irParent
+            }
+        }
+    }
+
+    fun createIrLazyField(
+        fir: FirField,
+        signature: IdSignature,
+        lazyParent: IrDeclarationParent,
+        declarationOrigin: IrDeclarationOrigin
+    ): IrField {
+        return fir.convertWithOffsets { startOffset, endOffset ->
+            symbolTable.declareField(signature, symbolFactory = { IrFieldPublicSymbolImpl(signature) }) { symbol ->
+                Fir2IrLazyField(
+                    components, startOffset, endOffset, declarationOrigin, fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol
+                )
             }
         }
     }

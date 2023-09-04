@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
@@ -624,6 +625,17 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         val classId = (irParent as? IrClass)?.classId
         val containingClassLookupTag = classId?.toLookupTag()
         val signature = signatureComposer.composeSignature(field, containingClassLookupTag)
+
+        val parentIsExternal = irParent.isExternalParent()
+        if (field is FirJavaField && field.isStatic && field.isFinal && parentIsExternal && signature != null) {
+            // We are going to create IR for Java static final fields lazily because they can refer to some Kotlin const.
+            // This way we delay const evaluation of Java fields until IR tree is fully built, and we can run IR interpreter.
+            return lazyDeclarationsGenerator.createIrLazyField(field, signature, irParent!!, origin).apply {
+                setParent(irParent)
+                addDeclarationToParent(this, irParent)
+            }
+        }
+
         return field.convertWithOffsets { startOffset, endOffset ->
             if (signature != null) {
                 symbolTable.declareField(
