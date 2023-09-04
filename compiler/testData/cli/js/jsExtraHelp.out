@@ -141,6 +141,7 @@ where advanced options include:
   -Xuse-fir-extended-checkers Use extended analysis mode based on Front-end IR. Warning: this feature is far from being production-ready
   -Xuse-fir-ic               Compile using Front-end IR internal incremental compilation cycle. Warning: this feature is far from being production-ready
   -Xuse-fir-lt               Compile using LightTree parser with Front-end IR
+  -Xuse-ir-fake-override-builder Generate fake overrides via IR. See KT-61514
   -Xuse-k2                   Compile using experimental K2. K2 is a new compiler pipeline, no compatibility guarantees are yet provided
   -Xuse-mixed-named-arguments Enable Support named arguments in their own position even if the result appears as mixed
   -Xverbose-phases           Be verbose while performing these backend phases

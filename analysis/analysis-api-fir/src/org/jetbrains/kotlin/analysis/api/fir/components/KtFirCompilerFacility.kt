@@ -144,7 +144,8 @@ internal class KtFirCompilerFacility(
             linkViaSignatures = false,
             effectiveConfiguration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER] ?: EvaluatedConstTracker.create(),
             effectiveConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
-            allowNonCachedDeclarations = true
+            allowNonCachedDeclarations = true,
+            useIrFakeOverrideBuilder = effectiveConfiguration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
         )
 
         val fir2IrResult = Fir2IrConverter.createIrModuleFragment(

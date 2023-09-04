@@ -137,7 +137,8 @@ object GenerationUtils {
             evaluatedConstTracker = configuration
                 .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
             inlineConstTracker = configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
-            allowNonCachedDeclarations = false
+            allowNonCachedDeclarations = false,
+            useIrFakeOverrideBuilder = configuration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
         )
 
         val commonMemberStorage = Fir2IrCommonMemberStorage(signatureComposerForJvmFir2Ir(linkViaSignatures), FirJvmKotlinMangler())

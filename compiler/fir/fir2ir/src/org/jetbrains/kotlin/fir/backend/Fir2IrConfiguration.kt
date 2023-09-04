@@ -37,5 +37,5 @@ data class Fir2IrConfiguration(
     val evaluatedConstTracker: EvaluatedConstTracker,
     val inlineConstTracker: InlineConstTracker?,
     val allowNonCachedDeclarations: Boolean,
-    val useIrFakeOverrideBuilder: Boolean = false
+    val useIrFakeOverrideBuilder: Boolean,
 )

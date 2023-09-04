@@ -279,6 +279,7 @@ open class IncrementalFirJvmCompilerRunner(
                     .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
                 inlineConstTracker = configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
                 allowNonCachedDeclarations = false,
+                useIrFakeOverrideBuilder = configuration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
             )
             val irGenerationExtensions =
                 (projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) }.orEmpty()

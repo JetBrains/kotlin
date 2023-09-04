@@ -185,6 +185,7 @@ fun convertAnalyzedFirToIr(
             .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
         inlineConstTracker = input.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
         allowNonCachedDeclarations = false,
+        useIrFakeOverrideBuilder = input.configuration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
     )
     val (moduleFragment, components, pluginContext, irActualizedResult) =
         analysisResults.convertToIrAndActualizeForJvm(
