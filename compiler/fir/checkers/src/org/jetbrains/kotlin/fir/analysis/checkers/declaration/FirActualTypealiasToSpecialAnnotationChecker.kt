@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.mpp.ActualTypealiasToSpecialAnnotation
 
 internal object FirActualTypealiasToSpecialAnnotationChecker : FirTypeAliasChecker() {
     override fun check(declaration: FirTypeAlias, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
         if (!declaration.isActual) return
         val typealiasedClassSymbol = declaration.expandedConeType?.toSymbol(context.session) ?: return
         if (typealiasedClassSymbol.classKind != ClassKind.ANNOTATION_CLASS) {

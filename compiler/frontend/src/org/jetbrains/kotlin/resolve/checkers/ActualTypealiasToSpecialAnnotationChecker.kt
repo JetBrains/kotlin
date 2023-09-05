@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
 internal object ActualTypealiasToSpecialAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
         if (declaration !is KtTypeAlias || descriptor !is TypeAliasDescriptor || !descriptor.isActual) {
             return
         }

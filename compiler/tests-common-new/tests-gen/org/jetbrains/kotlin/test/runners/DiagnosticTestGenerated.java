@@ -22808,6 +22808,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("actualTypealiasToSpecialAnnotation_oldLanguageVersion.kt")
+            public void testActualTypealiasToSpecialAnnotation_oldLanguageVersion() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasToSpecialAnnotation_oldLanguageVersion.kt");
+            }
+
+            @Test
             @TestMetadata("actualTypealias_defaultParamsIncompatibility.kt")
             public void testActualTypealias_defaultParamsIncompatibility() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealias_defaultParamsIncompatibility.kt");
