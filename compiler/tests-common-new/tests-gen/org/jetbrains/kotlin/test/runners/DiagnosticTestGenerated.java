@@ -24329,9 +24329,21 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("actualTypealiasToNothing_oldLanguageVersion.kt")
+                public void testActualTypealiasToNothing_oldLanguageVersion() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/typealias/actualTypealiasToNothing_oldLanguageVersion.kt");
+                }
+
+                @Test
                 @TestMetadata("actualTypealiasToNullableType.kt")
                 public void testActualTypealiasToNullableType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/typealias/actualTypealiasToNullableType.kt");
+                }
+
+                @Test
+                @TestMetadata("actualTypealiasToNullableType_oldLanguageVersion.kt")
+                public void testActualTypealiasToNullableType_oldLanguageVersion() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/typealias/actualTypealiasToNullableType_oldLanguageVersion.kt");
                 }
 
                 @Test
