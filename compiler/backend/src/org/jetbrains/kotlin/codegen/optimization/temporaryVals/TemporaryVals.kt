@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.IincInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
 
@@ -161,31 +160,28 @@ class TemporaryValsAnalyzer {
         private val storeInsnToStoreData: Map<AbstractInsnNode, StoreData>
     ) : StoreLoadInterpreter<StoredValue>() {
 
-        override fun uninitialized(): StoredValue = StoredValue.Unknown
+        override fun newEmptyValue(local: Int): StoredValue = StoredValue.Unknown
 
         override fun newValue(type: Type?): StoredValue = StoredValue.Unknown
 
-        override fun valueParameter(type: Type): StoredValue = StoredValue.Unknown
-
-        override fun store(insn: VarInsnNode): StoredValue {
-            val temporaryValData = storeInsnToStoreData[insn]
-            if (temporaryValData != null) {
-                return temporaryValData.value
-            }
-            return StoredValue.Unknown
-        }
-
-        override fun load(insn: VarInsnNode, value: StoredValue) {
-            if (value is StoredValue.DirtyStore) {
+        override fun copyOperation(insn: AbstractInsnNode, value: StoredValue?): StoredValue {
+            if (value == null) {
+                val temporaryValData = storeInsnToStoreData[insn]
+                if (temporaryValData != null) {
+                    return temporaryValData.value
+                }
+            } else if (value is StoredValue.DirtyStore) {
                 // If we load a dirty value, invalidate all related temporary vals.
                 value.temporaryVals.forEach { it.isDirty = true }
             } else if (value is StoredValue.Store) {
                 // Keep track of a load instruction
                 value.temporaryVal.loads.add(insn)
             }
+            return StoredValue.Unknown
         }
 
-        override fun iinc(insn: IincInsnNode, value: StoredValue): StoredValue {
+        override fun unaryOperation(insn: AbstractInsnNode, value: StoredValue): StoredValue {
+            if (insn.opcode != Opcodes.IINC) return value
             when (value) {
                 is StoredValue.Store ->
                     value.temporaryVal.isDirty = true
@@ -222,37 +218,26 @@ class TemporaryValsAnalyzer {
                 else -> emptySet()
             }
 
-        override fun copyOperation(insn: AbstractInsnNode?, value: StoredValue?): StoredValue {
-            TODO("Not yet implemented")
-        }
-
         override fun newOperation(insn: AbstractInsnNode?): StoredValue {
-            TODO("Not yet implemented")
-        }
-
-        override fun unaryOperation(insn: AbstractInsnNode?, value: StoredValue?): StoredValue {
-            TODO("Not yet implemented")
+            error("Should not be called")
         }
 
         override fun binaryOperation(insn: AbstractInsnNode?, value1: StoredValue?, value2: StoredValue?): StoredValue {
-            TODO("Not yet implemented")
+            error("Should not be called")
         }
 
         override fun ternaryOperation(
-            insn: AbstractInsnNode?,
-            value1: StoredValue?,
-            value2: StoredValue?,
-            value3: StoredValue?,
+            insn: AbstractInsnNode?, value1: StoredValue?, value2: StoredValue?, value3: StoredValue?
         ): StoredValue {
-            TODO("Not yet implemented")
+            error("Should not be called")
         }
 
         override fun naryOperation(insn: AbstractInsnNode?, values: MutableList<out StoredValue>?): StoredValue {
-            TODO("Not yet implemented")
+            error("Should not be called")
         }
 
         override fun returnOperation(insn: AbstractInsnNode?, value: StoredValue?, expected: StoredValue?) {
-            TODO("Not yet implemented")
+            error("Should not be called")
         }
     }
 }

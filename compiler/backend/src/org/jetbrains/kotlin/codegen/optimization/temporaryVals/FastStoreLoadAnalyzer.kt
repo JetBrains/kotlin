@@ -36,7 +36,6 @@ package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 import org.jetbrains.kotlin.codegen.optimization.common.FastAnalyzer
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION
-import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
@@ -44,58 +43,24 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
 interface StoreLoadValue : Value
 
-abstract class StoreLoadInterpreter<V : StoreLoadValue> : Interpreter<V>(API_VERSION) {
-    abstract fun uninitialized(): V
-    abstract fun valueParameter(type: Type): V
-    abstract fun store(insn: VarInsnNode): V
-    abstract fun load(insn: VarInsnNode, value: V)
-    abstract fun iinc(insn: IincInsnNode, value: V): V
-}
+abstract class StoreLoadInterpreter<V : StoreLoadValue> : Interpreter<V>(API_VERSION)
 
-@Suppress("UNCHECKED_CAST")
 class StoreLoadFrame<V : StoreLoadValue>(val maxLocals: Int) : Frame<V>(maxLocals, 0) {
-    private val locals = arrayOfNulls<StoreLoadValue>(maxLocals)
-
-    operator fun get(index: Int): V =
-        locals[index] as V
-
-    operator fun set(index: Int, newValue: V) {
-        locals[index] = newValue
-    }
-
-    fun init(other: StoreLoadFrame<V>): StoreLoadFrame<V> {
-        System.arraycopy(other.locals, 0, this.locals, 0, locals.size)
-        return this
-    }
-
-    fun execute(insn: AbstractInsnNode, interpreter: StoreLoadInterpreter<V>) {
+    override fun execute(insn: AbstractInsnNode, interpreter: Interpreter<V>) {
         when (insn.opcode) {
             in Opcodes.ISTORE..Opcodes.ASTORE -> {
                 val varInsn = insn as VarInsnNode
-                locals[varInsn.`var`] = interpreter.store(varInsn)
+                setLocal(varInsn.`var`, interpreter.copyOperation(varInsn, null))
             }
             in Opcodes.ILOAD..Opcodes.ALOAD -> {
                 val varInsn = insn as VarInsnNode
-                interpreter.load(varInsn, this[varInsn.`var`])
+                interpreter.copyOperation(varInsn, this.getLocal(varInsn.`var`))
             }
             Opcodes.IINC -> {
                 val iincInsn = insn as IincInsnNode
-                interpreter.iinc(iincInsn, this[iincInsn.`var`])
+                interpreter.unaryOperation(iincInsn, this.getLocal(iincInsn.`var`))
             }
         }
-    }
-
-    fun merge(other: StoreLoadFrame<V>, interpreter: StoreLoadInterpreter<V>): Boolean {
-        var changes = false
-        for (i in locals.indices) {
-            val oldValue = this[i]
-            val newValue = interpreter.merge(oldValue, other[i])
-            if (newValue != oldValue) {
-                changes = true
-                this[i] = newValue
-            }
-        }
-        return changes
     }
 }
 
@@ -192,7 +157,7 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
         val oldFrame = getFrame(dest)
         val changes = when {
             oldFrame == null -> {
-                setFrame(dest, newFrame(frame.maxLocals, 0).init(frame))
+                setFrame(dest, newFrame(frame.maxLocals, 0).apply { init(frame) })
                 true
             }
             !isMergeNode[dest] -> {
