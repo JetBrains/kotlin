@@ -1031,5 +1031,10 @@ public class OverridingUtil {
         public String getDebugMessage() {
             return debugMessage;
         }
+
+        @Override
+        public String toString() {
+            return overridable + ": " + debugMessage;
+        }
     }
 }
