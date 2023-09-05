@@ -139,12 +139,16 @@ internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
     }
 
     override fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean) {
-        val destFrame = getFrame(dest)
-        if (destFrame == null) {
-            // Don't have to visit same instruction multiple times - we care only about "initial" stack state.
-            setFrame(dest, newFrame(frame.locals, frame.maxStackSize).apply { init(frame) })
-            updateQueue(true, dest)
+        val oldFrame = getFrame(dest)
+        val changes = when {
+            // Don't have to visit the same instruction multiple times - we care only about "initial" stack state.
+            oldFrame == null -> {
+                setFrame(dest, newFrame(frame.locals, frame.maxStackSize).apply { init(frame) })
+                true
+            }
+            else -> false
         }
+        updateQueue(changes, dest)
     }
 
 }
