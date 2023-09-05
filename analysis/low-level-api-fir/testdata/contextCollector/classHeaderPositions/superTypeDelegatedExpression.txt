@@ -1,0 +1,49 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final class Nested : R|test/MyInterface|
+        Static scope owner symbol: FirRegularClassSymbol public open class Base : R|kotlin/Any|
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol constructorParam: R|test/MyInterface|
+
+FILE: [ResolvedTo(IMPORTS)] superTypeDelegatedExpression.kt
+    public abstract [ResolvedTo(STATUS)] interface MyInterface : R|kotlin/Any| {
+    }
+    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|test/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class Nested : R|test/MyInterface| {
+            public [ResolvedTo(STATUS)] constructor(): R|test/Base.Nested| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class Child : R|test/Base|, R|test/MyInterface| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] constructorParam: R|test/MyInterface|): R|test/Child| {
+            super<R|test/Base|>()
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|test/MyInterface| = R|test/Base.Nested.Nested|()
+
+    }

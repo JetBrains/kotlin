@@ -326,7 +326,13 @@ private class ContextCollectorVisitor(
             regularClass.lazyResolveToPhase(FirResolvePhase.STATUS)
 
             context.withContainingClass(regularClass) {
+                processList(regularClass.contextReceivers)
                 processList(regularClass.typeParameters)
+
+                // we do it before we actually visit the constructors,
+                // because we don't want to have implicit this receiver
+                // for supertype callee positions
+                processList(regularClass.superTypeRefs)
 
                 context.withRegularClass(regularClass, holder) {
                     dumpContext(regularClass, ContextKind.BODY)

@@ -1,0 +1,40 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+
+FILE: [ResolvedTo(IMPORTS)] superTypeDelegatedTypeRef.kt
+    public abstract [ResolvedTo(STATUS)] interface MyInterface : R|kotlin/Any| {
+    }
+    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|test/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class Nested : R|test/MyInterface| {
+            public [ResolvedTo(STATUS)] constructor(): R|test/Base.Nested| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class Child : R|test/Base|, R|test/MyInterface| {
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|test/MyInterface| = R|test/Base.Nested.Nested|()
+
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Child| {
+            super<R|test/Base|>()
+        }
+
+    }

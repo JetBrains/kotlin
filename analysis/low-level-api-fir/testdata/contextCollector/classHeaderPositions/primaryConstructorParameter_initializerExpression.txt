@@ -1,0 +1,48 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final class Nested : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public open class Base : R|kotlin/Any|
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol name: R|kotlin/String| = String(name)
+
+FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameter_initializerExpression.kt
+    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] class Nested : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Base.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val fromBase: R|kotlin/String| = String()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(STATUS)] class Child : R|test/Base| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/String| = String(name)): R|test/Child| {
+            super<R|test/Base|>()
+        }
+
+    }

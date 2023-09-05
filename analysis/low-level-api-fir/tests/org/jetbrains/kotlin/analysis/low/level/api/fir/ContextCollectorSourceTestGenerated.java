@@ -103,6 +103,82 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/contextCollector/classHeaderPositions")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ClassHeaderPositions {
+        @Test
+        public void testAllFilesPresentInClassHeaderPositions() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector/classHeaderPositions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("contextReceiver.kt")
+        public void testContextReceiver() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/classHeaderPositions/contextReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("primaryConstructorParameter_initializerExpression.kt")
+        public void testPrimaryConstructorParameter_initializerExpression() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/classHeaderPositions/primaryConstructorParameter_initializerExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("primaryConstructorParameter_typeRef.kt")
+        public void testPrimaryConstructorParameter_typeRef() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/classHeaderPositions/primaryConstructorParameter_typeRef.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallArgumentsExpression.kt")
+        public void testSuperTypeCallArgumentsExpression() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/classHeaderPositions/superTypeCallArgumentsExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallArgumentsTypeRef.kt")
+        public void testSuperTypeCallArgumentsTypeRef() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/classHeaderPositions/superTypeCallArgumentsTypeRef.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallee.kt")
+        public void testSuperTypeCallee() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/classHeaderPositions/superTypeCallee.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeCalleeGenerics.kt")
+        public void testSuperTypeCalleeGenerics() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/classHeaderPositions/superTypeCalleeGenerics.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeDelegatedExpression.kt")
+        public void testSuperTypeDelegatedExpression() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/classHeaderPositions/superTypeDelegatedExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeDelegatedTypeRef.kt")
+        public void testSuperTypeDelegatedTypeRef() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/classHeaderPositions/superTypeDelegatedTypeRef.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeRef.kt")
+        public void testSuperTypeRef() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/classHeaderPositions/superTypeRef.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeRefGenerics.kt")
+        public void testSuperTypeRefGenerics() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/classHeaderPositions/superTypeRefGenerics.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/low-level-api-fir/testdata/contextCollector/scripts")
     @TestDataPath("$PROJECT_ROOT")
     public class Scripts {
