@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupport
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
@@ -17,7 +16,10 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -26,46 +28,47 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-
+import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 
 /**
  * After actualization, fake overrides can be incorrect.
  *
  * Fake overrides can change even in classes, which don't have expect/actuals in their superclasses.
- * And this change can be more untrivial than just substitute expect class with actual.
+ * And this change can be more non-trivial than just substituting expect class with actual.
  *
- * For example, if an expect class is actualized to common class, or several expect classes are actualized to same class,
+ * For example, if an expect class is actualized to a common class, or several expect classes are actualized to the same class,
  * several fake overrides can be merged with each other, or with real functions.
  *
- * To fix that, we are just rebuilding fake overrides from stretch, after actualization is done.
+ * To fix that, we are just rebuilding fake overrides from scratch, after actualization is done.
  *
  * This is done in 3 steps:
- * 1. Remove all fake overrides from all classes
- * 2. Build new fake overrides and map old one to some function now existing in class (possible real function, not fake override)
- * 3. Remap callsites of all functions using the map collected on step 2.
+ * 1. Remove all fake overrides from all declarations, and remove their symbols from the symbol table.
+ * 2. Build new fake overrides and map the old one to some function now existing in the class (which can also be a real function).
+ * 3. Remap call-sites of all functions using the map collected on step 2.
  *
- * Steps 1 and 3 are kinda trivial, expect we should remove all fake overrides from symbol table.
+ * Steps 1 and 3 are kinda trivial, except we should remove all fake overrides from symbol table.
  *
- * For matching in step 2, classes are processed in such order. That superclass is processed before class.
- * That allows us to match using overridden symbols. In particular, f/o is mapped to only function
- * overriding any of functions (possibly already mapped), which was overriden by initial fake override.
+ * For matching in step 2, classes are processed in such order, that the superclass is processed before each class.
+ * This allows us to match using `overriddenSymbols`. In particular, f/o is mapped to only function
+ * overriding any of functions (possibly already mapped), which was overridden by initial fake override.
  *
- * Here we assume that functions can be only merged, not split, i.e. if the same fake override was overriding several
+ * Here we assume that functions can only be merged, not split, i.e. if the same fake override was overriding several
  * super-functions, it's impossible to have different function overriding them after actualization.
  */
 class FakeOverrideRebuilder(
     val symbolTable: SymbolTable,
     val mangler: KotlinMangler.IrMangler,
-    val typeSystemContext: IrTypeSystemContext,
+    typeSystemContext: IrTypeSystemContext,
     val irModule: IrModuleFragment,
     // TODO: drop this argument in favor of using [IrModuleDescriptor::shouldSeeInternalsOf] in FakeOverrideBuilder KT-61384
     friendModules: Map<String, List<String>>
 ) {
     private val removedFakeOverrides = mutableMapOf<IrClassSymbol, List<IrSymbol>>()
-    private val processedClasses = mutableSetOf<IrClass>()
-    private val fakeOverrideMap = mutableMapOf<IrSymbol, IrSymbol>()
+    private val processedClasses = hashSetOf<IrClass>()
+
+    // Map from the old fake override symbol to the new (rebuilt) symbol.
+    private val fakeOverrideMap = hashMapOf<IrSymbol, IrSymbol>()
 
     private val fakeOverrideBuilder = FakeOverrideBuilder(
         LocalFakeOverridesStorage(),
@@ -102,6 +105,27 @@ class FakeOverrideRebuilder(
         }
     }
 
+    private fun IrOverridableDeclaration<*>.getOverriddenDeclarations(stopAtReal: Boolean): Set<IrOverridableDeclaration<*>> =
+        mutableSetOf<IrOverridableDeclaration<*>>().also { result ->
+            collectOverriddenDeclarations(this, result, hashSetOf(), stopAtReal)
+        }
+
+    private fun MutableMap<IrSymbol, IrSymbol>.processDeclaration(declaration: IrOverridableDeclaration<*>, irClass: IrClass) {
+        for (overridden in declaration.getOverriddenDeclarations(false)) {
+            val previousSymbol = put(overridden.symbol, declaration.symbol)
+            if (previousSymbol != null) {
+                val previous = previousSymbol.owner as IrDeclaration
+                error(
+                    "Multiple overrides in class ${irClass.fqNameWhenAvailable} for ${overridden.render()}:\n" +
+                            "  previous: ${previous.render()}\n" +
+                            "            declared in ${previous.parentAsClass.fqNameWhenAvailable}\n" +
+                            "       new: ${declaration.render()}\n" +
+                            "            declared in ${declaration.parentAsClass.fqNameWhenAvailable}"
+                )
+            }
+        }
+    }
+
     private fun rebuildClassFakeOverrides(irClass: IrClass) {
         if (irClass is IrLazyDeclarationBase) return
         if (!processedClasses.add(irClass)) return
@@ -110,29 +134,37 @@ class FakeOverrideRebuilder(
             c.getClass()?.let { rebuildClassFakeOverrides(it) }
         }
         fakeOverrideBuilder.provideFakeOverrides(irClass, CompatibilityMode.CURRENT)
+
         val overriddenMap = mutableMapOf<IrSymbol, IrSymbol>()
-        irClass.properties
-            .forEach { prop ->
-                val allOverridden = mutableSetOf<IrOverridableDeclaration<*>>()
-                collectOverriddenDeclarations(prop, allOverridden, mutableSetOf(), false)
-                for (overridden in allOverridden) {
-                    require(overriddenMap.put(overridden.symbol, prop.symbol) == null) { "Multiple overrides for ${overridden.render()} "}
+
+        for (declaration in irClass.declarations) {
+            when (declaration) {
+                is IrSimpleFunction -> overriddenMap.processDeclaration(declaration, irClass)
+                is IrProperty -> {
+                    overriddenMap.processDeclaration(declaration, irClass)
+                    declaration.getter?.let { overriddenMap.processDeclaration(it, irClass) }
+                    declaration.setter?.let { overriddenMap.processDeclaration(it, irClass) }
                 }
             }
-        irClass.simpleFunctions()
-            .forEach { func ->
-                val allOverridden = mutableSetOf<IrOverridableDeclaration<*>>()
-                collectOverriddenDeclarations(func, allOverridden, mutableSetOf(), false)
-                for (overridden in allOverridden) {
-                    require(overriddenMap.put(overridden.symbol, func.symbol) == null) { "Multiple overrides for ${overridden.render()} "}
-                }
-            }
+        }
+
         for (old in oldList) {
-            fakeOverrideMap[old] = mutableSetOf<IrOverridableDeclaration<*>>()
-                .apply { collectOverriddenDeclarations(old.owner as IrOverridableDeclaration<*>, this, mutableSetOf(), true) }
-                .map { overriddenMap[it.symbol] }
-                .distinct()
-                .single() ?: error("${old.owner.render()} is not overridden in ${irClass.render()}")
+            val overridden = mutableSetOf<IrOverridableDeclaration<*>>()
+            collectOverriddenDeclarations(old.owner as IrOverridableDeclaration<*>, overridden, hashSetOf(), true)
+            val newSymbols = overridden.mapTo(newHashSetWithExpectedSize(1)) {
+                overriddenMap[it.symbol]
+                    ?: error("No new fake override recorded for declaration in class ${irClass.fqNameWhenAvailable}: ${it.render()}")
+            }
+            when (newSymbols.size) {
+                0 -> error("No overridden found for declaration in class ${irClass.fqNameWhenAvailable}: ${old.owner.render()}")
+                1 -> fakeOverrideMap[old] = newSymbols.single()
+                else -> error(
+                    "Multiple overridden found for declaration in class ${irClass.fqNameWhenAvailable}: ${old.owner.render()}\n" +
+                            newSymbols.joinToString("\n") {
+                                "  - ${it.owner.render()} (declared in ${(it.owner as IrDeclaration).parentAsClass.fqNameWhenAvailable}"
+                            }
+                )
+            }
         }
     }
 }
@@ -204,9 +236,9 @@ private class RemoveFakeOverridesVisitor(
 }
 
 
-// TODO: KT-61561 it seams, this class is too generic to be here.
-// By some reason, we don't have utility class doing that, but we probably should, as we have DeepCopy util classes
-// Probably, it should also be generated, to avoid missing some plaves, where symbols can happen.
+// TODO: KT-61561 it seems this class is too generic to be here.
+// For some reason, we don't have utility class doing that, but we probably should, as we have DeepCopy util classes
+// Probably, it should also be generated, to avoid missing some places where symbols can happen.
 private class RemapFakeOverridesVisitor(val fakeOverridesMap: Map<IrSymbol, IrSymbol>) : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
