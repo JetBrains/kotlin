@@ -777,7 +777,7 @@ fun FirDeclaration.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session
     symbol.hasAnnotationOrInsideAnnotatedClass(classId, session)
 
 fun FirBasedSymbol<*>.getAnnotationFirstArgument(classId: ClassId, session: FirSession): FirExpression? {
-    val annotation = getAnnotationByClassId(classId, session) as? FirAnnotationCall
+    val annotation = getAnnotationByClassId(classId, session)
     return annotation?.argumentMapping?.mapping?.values?.firstOrNull()
 }
 

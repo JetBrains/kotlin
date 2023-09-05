@@ -5143,6 +5143,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("classInheritsJsNameFromOtherModule.kt")
+        public void testClassInheritsJsNameFromOtherModule() throws Exception {
+            runTest("js/js.translator/testData/box/inheritance/classInheritsJsNameFromOtherModule.kt");
+        }
+
+        @Test
         @TestMetadata("complexInitializationOrder.kt")
         public void testComplexInitializationOrder() throws Exception {
             runTest("js/js.translator/testData/box/inheritance/complexInitializationOrder.kt");
