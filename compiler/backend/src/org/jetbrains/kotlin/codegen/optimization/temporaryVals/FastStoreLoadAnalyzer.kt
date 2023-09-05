@@ -189,23 +189,25 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
     }
 
     override fun initLocals(current: StoreLoadFrame<V>) {
+        current.setReturn(interpreter.newReturnTypeValue(Type.getReturnType(method.desc)))
         val args = Type.getArgumentTypes(method.desc)
         var local = 0
-        if ((method.access and Opcodes.ACC_STATIC) == 0) {
+        val isInstanceMethod = (method.access and Opcodes.ACC_STATIC) == 0
+        if (isInstanceMethod) {
             val ctype = Type.getObjectType(owner)
-            current.setLocal(local, interpreter.newValue(ctype))
+            current.setLocal(local, interpreter.newParameterValue(true, local, ctype))
             local++
         }
         for (arg in args) {
-            current.setLocal(local, interpreter.newValue(arg))
+            current.setLocal(local, interpreter.newParameterValue(isInstanceMethod, local, arg))
             local++
             if (arg.size == 2) {
-                current.setLocal(local, interpreter.uninitialized())
+                current.setLocal(local, interpreter.newEmptyValue(local))
                 local++
             }
         }
         while (local < method.maxLocals) {
-            current.setLocal(local, interpreter.uninitialized())
+            current.setLocal(local, interpreter.newEmptyValue(local))
             local++
         }
     }

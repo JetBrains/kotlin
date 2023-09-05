@@ -110,20 +110,18 @@ open class FastMethodAnalyzer<V : Value>
         var local = 0
         val isInstanceMethod = (method.access and Opcodes.ACC_STATIC) == 0
         if (isInstanceMethod) {
-            current.setLocal(local, interpreter.newParameterValue(true, local, Type.getObjectType(owner)))
+            val ctype = Type.getObjectType(owner)
+            current.setLocal(local, interpreter.newParameterValue(true, local, ctype))
             local++
         }
         for (arg in args) {
-            current.setLocal(local, interpreter.newParameterValue(isInstanceMethod, local, arg))
-            local++
+            current.setLocal(local++, interpreter.newValue(arg))
             if (arg.size == 2) {
-                current.setLocal(local, interpreter.newEmptyValue(local))
-                local++
+                current.setLocal(local++, interpreter.newValue(null))
             }
         }
         while (local < method.maxLocals) {
-            current.setLocal(local, interpreter.newEmptyValue(local))
-            local++
+            current.setLocal(local++, interpreter.newValue(null))
         }
     }
 
