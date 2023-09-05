@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.viper.MangledName
+import org.jetbrains.kotlin.formver.viper.ast.Field
 import org.jetbrains.kotlin.formver.viper.ast.Method
 import org.jetbrains.kotlin.formver.viper.ast.Program
 
@@ -30,12 +31,13 @@ import org.jetbrains.kotlin.formver.viper.ast.Program
  */
 class ProgramConverter(val session: FirSession, override val config: PluginConfiguration) : ProgramConversionContext {
     private val methods: MutableMap<MangledName, Method> = mutableMapOf()
-    private val classes: MutableMap<ClassName, ClassEmbedding> = mutableMapOf()
+    private val classes: MutableMap<ClassName, ClassTypeEmbedding> = mutableMapOf()
+    private val fields: MutableList<Field> = mutableListOf()
 
     val program: Program
         get() = Program(
             domains = listOf(UnitDomain, NullableDomain, CastingDomain, TypeOfDomain, TypeDomain(classes.values.toList()), AnyDomain),
-            fields = SpecialFields.all + classes.values.flatMap { it.fields }.map { it.toField() },
+            fields = SpecialFields.all + fields,
             methods = SpecialMethods.all + methods.values.toList(),
         )
 
@@ -47,18 +49,16 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         return processFunction(symbol, null)
     }
 
-    override fun embedClass(symbol: FirRegularClassSymbol): ClassEmbedding {
-
-        val className = ClassName(symbol.classId.packageFqName, symbol.classId.shortClassName)
-        // If the class name is not contained in the classes hashmap, then add a new embedding.
-        return classes.getOrPut(className) {
-            // Get classes fields
-            val concreteFields = symbol.declarationSymbols
-                .filterIsInstance<FirPropertySymbol>()
-                .filter { it.hasBackingField }
-                .map { VariableEmbedding(it.callableId.embedName(), embedType(it.resolvedReturnType)) }
-
-            ClassEmbedding(className, concreteFields)
+    private fun embedClass(symbol: FirRegularClassSymbol): ClassTypeEmbedding {
+        val className = symbol.classId.embedName()
+        return when (val existingEmbedding = classes[className]) {
+            null -> {
+                val newEmbedding = ClassTypeEmbedding(className)
+                classes[className] = newEmbedding
+                processClass(symbol)
+                newEmbedding
+            }
+            else -> existingEmbedding
         }
     }
 
@@ -121,6 +121,14 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             signature.toMethod(bodySeqn)
         }
         return signature
+    }
+
+    private fun processClass(symbol: FirRegularClassSymbol) {
+        val concreteFields = symbol.declarationSymbols
+            .filterIsInstance<FirPropertySymbol>()
+            .filter { it.hasBackingField }
+            .map { Field(it.callableId.embedName(), embedType(it.resolvedReturnType).viperType) }
+        fields += concreteFields
     }
 
     private fun unimplementedTypeEmbedding(type: ConeKotlinType): TypeEmbedding =

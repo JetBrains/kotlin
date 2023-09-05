@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.formver.embeddings
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -42,7 +43,7 @@ data class GlobalName(val packageName: FqName, val name: Name) : MangledName {
         get() = "pkg_${packageName.asString()}\$global\$${name.asStringStripSpecialMarkers()}"
 }
 
-fun FirValueParameterSymbol.embedName(): LocalName = LocalName(name)
+fun FirValueParameterSymbol.embedName() = LocalName(name)
 fun CallableId.embedName(): MangledName = when {
     isLocal -> {
         LocalName(callableName)
@@ -56,3 +57,5 @@ fun CallableId.embedName(): MangledName = when {
         GlobalName(packageName, callableName)
     }
 }
+
+fun ClassId.embedName() = ClassName(packageFqName, shortClassName)
