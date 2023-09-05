@@ -278,6 +278,10 @@ enum class LanguageFeature(
     ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(sinceVersion = KOTLIN_1_9), // KT-36770
     NoSourceCodeInNotNullAssertionExceptions(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_4, kind = OTHER), // KT-57570
 
+    // 1.9.20 KMP stabilization. Unfortunately, we don't have 1.9.20 LV. So LV=1.9 is the best we can do.
+    // At least there won't be false positives for 1.8 users
+    MultiplatformRestrictions(KOTLIN_1_9, kind = BUG_FIX), // KT-61668
+
     // End of 1.* language features --------------------------------------------------
 
     // 2.0
