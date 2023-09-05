@@ -139,7 +139,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val targetDescription = chunk.map { input -> input.getModuleName() + "-" + input.getModuleType() }.let { names ->
                 names.singleOrNull() ?: names.joinToString()
             }
-            if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR) && configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE))  {
+            // K2 works with multi-module chunks only in PSI mode
+            if (chunk.size == 1 &&
+                configuration.getBoolean(CommonConfigurationKeys.USE_FIR) &&
+                configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
+            ) {
                 if (messageCollector.hasErrors()) return COMPILATION_ERROR
                 val projectEnvironment =
                     createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
