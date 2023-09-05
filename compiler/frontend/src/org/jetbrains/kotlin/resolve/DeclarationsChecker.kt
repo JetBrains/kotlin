@@ -637,7 +637,7 @@ class DeclarationsChecker(
         }
 
         checkExpectDeclarationHasNoExternalModifier(declaration)
-        if (declaration is KtFunction) {
+        if (declaration is KtFunction && languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
             declaration.modifierList?.getModifier(KtTokens.TAILREC_KEYWORD)?.let {
                 trace.report(EXPECTED_TAILREC_FUNCTION.on(it))
             }
@@ -645,8 +645,10 @@ class DeclarationsChecker(
     }
 
     private fun checkExpectDeclarationHasNoExternalModifier(declaration: KtDeclaration) {
-        declaration.modifierList?.getModifier(KtTokens.EXTERNAL_KEYWORD)?.let {
-            trace.report(EXPECTED_EXTERNAL_DECLARATION.on(it))
+        if (languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
+            declaration.modifierList?.getModifier(KtTokens.EXTERNAL_KEYWORD)?.let {
+                trace.report(EXPECTED_EXTERNAL_DECLARATION.on(it))
+            }
         }
     }
 
