@@ -8,22 +8,18 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.builder.buildConstructorCopy
-import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
-import org.jetbrains.kotlin.fir.types.withReplacedConeType
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.name.Name
@@ -212,58 +208,6 @@ private fun processConstructors(
                     processor(it)
 
             }
-        }
-    }
-}
-
-private class TypeAliasConstructorsSubstitutingScope(
-    private val typeAliasSymbol: FirTypeAliasSymbol,
-    private val delegatingScope: FirScope,
-    private val outerType: ConeClassLikeType?,
-) : FirScope() {
-
-    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        delegatingScope.processDeclaredConstructors wrapper@{ originalConstructorSymbol ->
-            val typeParameters = typeAliasSymbol.fir.typeParameters
-
-            processor(
-                buildConstructorCopy(originalConstructorSymbol.fir) {
-                    symbol = FirConstructorSymbol(originalConstructorSymbol.callableId)
-                    origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
-
-                    this.typeParameters.clear()
-                    typeParameters.mapTo(this.typeParameters) { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
-
-                    if (outerType != null) {
-                        // If the matched symbol is a type alias, and the expanded type is a nested class, e.g.,
-                        //
-                        //   class Outer {
-                        //     inner class Inner
-                        //   }
-                        //   typealias OI = Outer.Inner
-                        //   fun foo() { Outer().OI() }
-                        //
-                        // the chances are that `processor` belongs to [ScopeTowerLevel] (to resolve type aliases at top-level), which treats
-                        // the explicit receiver (`Outer()`) as an extension receiver, whereas the constructor of the nested class may regard
-                        // the same explicit receiver as a dispatch receiver (hence inconsistent receiver).
-                        // Here, we add a copy of the nested class constructor, along with the outer type as an extension receiver, so that it
-                        // can be seen as if resolving:
-                        //
-                        //   fun Outer.OI(): OI = ...
-                        //
-                        //
-                        receiverParameter = originalConstructorSymbol.fir.returnTypeRef.withReplacedConeType(outerType).let {
-                            buildReceiverParameter {
-                                typeRef = it
-                            }
-                        }
-                    }
-
-                }.apply {
-                    originalConstructorIfTypeAlias = originalConstructorSymbol.fir
-                    typeAliasForConstructor = typeAliasSymbol
-                }.symbol
-            )
         }
     }
 }
