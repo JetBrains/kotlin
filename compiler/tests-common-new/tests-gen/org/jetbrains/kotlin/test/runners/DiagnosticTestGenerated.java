@@ -1414,6 +1414,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("unnamedArgsInJavaAnnotations.kt")
+        public void testUnnamedArgsInJavaAnnotations() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/unnamedArgsInJavaAnnotations.kt");
+        }
+
+        @Test
         @TestMetadata("unproperDefaultInitializationInTailrec.kt")
         public void testUnproperDefaultInitializationInTailrec() throws Exception {
             runTest("compiler/testData/diagnostics/tests/unproperDefaultInitializationInTailrec.kt");
