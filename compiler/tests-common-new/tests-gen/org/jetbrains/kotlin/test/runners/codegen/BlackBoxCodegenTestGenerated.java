@@ -18118,6 +18118,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("javaAnnotationWithDefaultValueForenumArray.kt")
+        public void testJavaAnnotationWithDefaultValueForenumArray() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/javaAnnotationWithDefaultValueForenumArray.kt");
+        }
+
+        @Test
         @TestMetadata("KotlinDocumentationProvider.kt")
         public void testKotlinDocumentationProvider() throws Exception {
             runTest("compiler/testData/codegen/box/fir/KotlinDocumentationProvider.kt");

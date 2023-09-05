@@ -15846,6 +15846,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/JKEnumConstant.kt");
         }
 
+        @TestMetadata("javaAnnotationWithDefaultValueForenumArray.kt")
+        public void testJavaAnnotationWithDefaultValueForenumArray() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/javaAnnotationWithDefaultValueForenumArray.kt");
+        }
+
         @TestMetadata("jvmFieldInLocalClass.kt")
         public void testJvmFieldInLocalClass() throws Exception {
             runTest("compiler/testData/codegen/box/fir/jvmFieldInLocalClass.kt");

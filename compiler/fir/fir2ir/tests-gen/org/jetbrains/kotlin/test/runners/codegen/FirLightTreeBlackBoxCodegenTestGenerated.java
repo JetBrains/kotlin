@@ -19030,6 +19030,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("javaAnnotationWithDefaultValueForenumArray.kt")
+        public void testJavaAnnotationWithDefaultValueForenumArray() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/javaAnnotationWithDefaultValueForenumArray.kt");
+        }
+
+        @Test
         @TestMetadata("jvmFieldInLocalClass.kt")
         public void testJvmFieldInLocalClass() throws Exception {
             runTest("compiler/testData/codegen/box/fir/jvmFieldInLocalClass.kt");

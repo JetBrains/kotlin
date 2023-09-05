@@ -107,10 +107,14 @@ internal fun JavaAnnotationArgument.toFirExpression(
         )
         is JavaArrayAnnotationArgument -> buildArrayLiteral {
             val argumentTypeRef = expectedTypeRef?.let {
-                coneTypeOrNull =
-                    if (it is FirJavaTypeRef) it.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack) else it.coneType
+                val type = if (it is FirJavaTypeRef) {
+                    it.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
+                } else {
+                    it.coneType
+                }
+                coneTypeOrNull = type
                 buildResolvedTypeRef {
-                    type = it.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.arrayElementType()
+                    this.type = type.lowerBoundIfFlexible().arrayElementType()
                         ?: ConeErrorType(ConeSimpleDiagnostic("expected type is not array type"))
                 }
             }
@@ -118,7 +122,15 @@ internal fun JavaAnnotationArgument.toFirExpression(
                 getElements().mapTo(arguments) { it.toFirExpression(session, javaTypeParameterStack, argumentTypeRef) }
             }
         }
-        is JavaEnumValueAnnotationArgument -> buildEnumCall(session, enumClassId, entryName)
+        is JavaEnumValueAnnotationArgument -> buildEnumCall(
+            session,
+            // enumClassId can be null when a java annotation uses a Kotlin enum as parameter and declares the default value using
+            // a static import. In this case, the parameter default initializer will not have its type set, which isn't usually an
+            // issue except in edge cases like KT-47702 where we do need to evaluate the default values of annotations.
+            // As a fallback, we use the expected type which should be the type of the enum.
+            classId = enumClassId ?: expectedTypeRef?.coneTypeOrNull?.lowerBoundIfFlexible()?.classId,
+            entryName = entryName
+        )
         is JavaClassObjectAnnotationArgument -> buildGetClassCall {
             val resolvedClassTypeRef = getReferencedType().toFirResolvedTypeRef(session, javaTypeParameterStack)
             val resolvedTypeRef = buildResolvedTypeRef {
