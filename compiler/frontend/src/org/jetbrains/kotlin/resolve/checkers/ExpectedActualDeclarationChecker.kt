@@ -124,6 +124,7 @@ class ExpectedActualDeclarationChecker(
         module: ModuleDescriptor,
         context: DeclarationCheckerContext
     ) {
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
         val actualMembers = actuals
             .filter { (compatibility, _) -> compatibility.isCompatibleOrWeaklyIncompatible }
             .flatMap { (_, members) -> members }
