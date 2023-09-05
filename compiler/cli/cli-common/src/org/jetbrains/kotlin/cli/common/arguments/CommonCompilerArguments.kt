@@ -634,7 +634,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xexpect-actual-classes",
-        description = "The expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature.\n" +
+        description = "'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.\n" +
                 "Kotlin reports a warning every time you use them. You can use this flag to mute the warning."
     )
     var expectActualClasses = false

@@ -866,7 +866,7 @@ public interface Errors {
             ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER =
             DiagnosticFactory3.create(ERROR, DECLARATION_NAME);
 
-    DiagnosticFactory0<KtClassLikeDeclaration> EXPECT_ACTUAL_CLASSIFIERS_ARE_EXPERIMENTAL_WARNING = DiagnosticFactory0.create(WARNING, EXPECT_ACTUAL_MODIFIER);
+    DiagnosticFactory0<KtClassLikeDeclaration> EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING = DiagnosticFactory0.create(WARNING, EXPECT_ACTUAL_MODIFIER);
 
     DiagnosticFactory0<PsiElement> OPTIONAL_EXPECTATION_NOT_ON_EXPECTED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY = DiagnosticFactory0.create(ERROR);

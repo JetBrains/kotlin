@@ -2580,8 +2580,8 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ActualMissing::class
     }
 
-    interface ExpectActualClassifiersAreExperimentalWarning : KtFirDiagnostic<KtClassLikeDeclaration> {
-        override val diagnosticClass get() = ExpectActualClassifiersAreExperimentalWarning::class
+    interface ExpectActualClassifiersAreInBetaWarning : KtFirDiagnostic<KtClassLikeDeclaration> {
+        override val diagnosticClass get() = ExpectActualClassifiersAreInBetaWarning::class
     }
 
     interface NotAMultiplatformCompilation : KtFirDiagnostic<PsiElement> {

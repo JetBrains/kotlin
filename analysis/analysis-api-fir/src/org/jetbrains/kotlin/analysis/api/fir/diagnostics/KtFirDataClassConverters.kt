@@ -3688,8 +3688,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_CLASSIFIERS_ARE_EXPERIMENTAL_WARNING) { firDiagnostic ->
-        ExpectActualClassifiersAreExperimentalWarningImpl(
+    add(FirErrors.EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING) { firDiagnostic ->
+        ExpectActualClassifiersAreInBetaWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

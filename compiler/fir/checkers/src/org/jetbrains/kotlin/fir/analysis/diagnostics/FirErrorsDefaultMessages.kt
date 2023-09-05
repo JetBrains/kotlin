@@ -227,7 +227,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_LATEINIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PRIVATE_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PROPERTY_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_TAILREC_FUNCTION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_CLASSIFIERS_ARE_EXPERIMENTAL_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_OPT_IN_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_CLASS_AS_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY
@@ -1986,9 +1986,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'.")
         map.put(
-            EXPECT_ACTUAL_CLASSIFIERS_ARE_EXPERIMENTAL_WARNING,
-            "The expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. " +
-                        "You can use -Xexpect-actual-classes flag to suppress this warning."
+            EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING,
+            "'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. " +
+                    "You can use -Xexpect-actual-classes flag to suppress this warning. " +
+                    "Also see: https://youtrack.jetbrains.com/issue/KT-61573"
         )
         map.put(NOT_A_MULTIPLATFORM_COMPILATION, "'expect' and 'actual' declarations can be used only in multiplatform projects. Learn more about Kotlin Multiplatform: https://kotl.in/multiplatform-setup")
         map.put(EXPECT_ACTUAL_OPT_IN_ANNOTATION, "Opt-in annotations are prohibited to be 'expect' or 'actual'. Instead, declare annotation once in common sources.")

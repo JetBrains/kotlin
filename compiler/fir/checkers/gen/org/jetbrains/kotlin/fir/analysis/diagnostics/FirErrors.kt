@@ -657,7 +657,7 @@ object FirErrors {
     val AMBIGUOUS_EXPECTS by error2<KtNamedDeclaration, FirBasedSymbol<*>, Collection<FirModuleData>>(SourceElementPositioningStrategies.INCOMPATIBLE_DECLARATION)
     val NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS by error2<KtNamedDeclaration, FirBasedSymbol<*>, List<Pair<FirBasedSymbol<*>, Map<Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>>>(SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME)
     val ACTUAL_MISSING by error0<KtNamedDeclaration>(SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME)
-    val EXPECT_ACTUAL_CLASSIFIERS_ARE_EXPERIMENTAL_WARNING by warning0<KtClassLikeDeclaration>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING by warning0<KtClassLikeDeclaration>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
     val NOT_A_MULTIPLATFORM_COMPILATION by error0<PsiElement>()
     val EXPECT_ACTUAL_OPT_IN_ANNOTATION by error0<KtNamedDeclaration>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
     val ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION by error1<KtTypeAlias, ClassId>(SourceElementPositioningStrategies.TYPEALIAS_TYPE_REFERENCE)

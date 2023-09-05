@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtTypeAlias
 
-object ExpectActualClassifiersAreExperimentalChecker : DeclarationChecker {
+object ExpectActualClassifiersAreInBetaChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
         if (context.languageVersionSettings.getFlag(AnalysisFlags.muteExpectActualClassesWarning)) return
@@ -31,7 +31,7 @@ object ExpectActualClassifiersAreExperimentalChecker : DeclarationChecker {
         check(descriptor is ClassifierDescriptorWithTypeParameters)
 
         if (descriptor.isExpect || descriptor.isActual) {
-            context.trace.report(Errors.EXPECT_ACTUAL_CLASSIFIERS_ARE_EXPERIMENTAL_WARNING.on(declaration))
+            context.trace.report(Errors.EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING.on(declaration))
         }
     }
 }

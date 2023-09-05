@@ -39,7 +39,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
 
     override val classLikeCheckers: Set<FirClassLikeChecker>
         get() = setOf(
-            FirExpectActualClassifiersAreExperimentalChecker,
+            FirExpectActualClassifiersAreInBetaChecker,
         )
 
     override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker>

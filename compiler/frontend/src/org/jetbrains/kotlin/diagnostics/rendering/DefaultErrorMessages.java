@@ -430,9 +430,10 @@ public class DefaultErrorMessages {
                 new ListRenderer<>(TO_STRING, (elem) -> "'" + elem + "'"),
                 NAME);
 
-        MAP.put(EXPECT_ACTUAL_CLASSIFIERS_ARE_EXPERIMENTAL_WARNING,
-                "The expect/actual classes (including interfaces, objects, annotations, enums, actual typealiases) are an experimental feature. " +
-                "You can use -Xexpect-actual-classes flag to suppress this warning.");
+        MAP.put(EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING,
+                "'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. " +
+                "You can use -Xexpect-actual-classes flag to suppress this warning. " +
+                "Also see: https://youtrack.jetbrains.com/issue/KT-61573");
 
         MAP.put(OPTIONAL_EXPECTATION_NOT_ON_EXPECTED, "'@OptionalExpectation' can only be used on an expected annotation class");
         MAP.put(OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, "Declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry");

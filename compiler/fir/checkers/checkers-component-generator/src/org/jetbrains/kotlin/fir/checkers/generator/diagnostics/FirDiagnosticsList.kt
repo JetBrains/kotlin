@@ -1254,7 +1254,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val ACTUAL_MISSING by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME)
 
-        val EXPECT_ACTUAL_CLASSIFIERS_ARE_EXPERIMENTAL_WARNING by warning<KtClassLikeDeclaration>(PositioningStrategy.EXPECT_ACTUAL_MODIFIER)
+        val EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING by warning<KtClassLikeDeclaration>(PositioningStrategy.EXPECT_ACTUAL_MODIFIER)
 
         val NOT_A_MULTIPLATFORM_COMPILATION by error<PsiElement>()
 

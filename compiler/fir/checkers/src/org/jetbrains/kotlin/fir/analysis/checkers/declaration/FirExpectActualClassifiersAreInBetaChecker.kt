@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 
-object FirExpectActualClassifiersAreExperimentalChecker : FirClassLikeChecker() {
+object FirExpectActualClassifiersAreInBetaChecker : FirClassLikeChecker() {
     override fun check(declaration: FirClassLikeDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
         if (context.languageVersionSettings.getFlag(AnalysisFlags.muteExpectActualClassesWarning)) return
 
         if (declaration.isExpect || declaration.isActual) {
-            reporter.reportOn(declaration.source, FirErrors.EXPECT_ACTUAL_CLASSIFIERS_ARE_EXPERIMENTAL_WARNING, context)
+            reporter.reportOn(declaration.source, FirErrors.EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING, context)
         }
     }
 }

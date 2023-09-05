@@ -3109,10 +3109,10 @@ internal class ActualMissingImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.ActualMissing
 
-internal class ExpectActualClassifiersAreExperimentalWarningImpl(
+internal class ExpectActualClassifiersAreInBetaWarningImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtClassLikeDeclaration>(firDiagnostic, token), KtFirDiagnostic.ExpectActualClassifiersAreExperimentalWarning
+) : KtAbstractFirDiagnostic<KtClassLikeDeclaration>(firDiagnostic, token), KtFirDiagnostic.ExpectActualClassifiersAreInBetaWarning
 
 internal class NotAMultiplatformCompilationImpl(
     firDiagnostic: KtPsiDiagnostic,

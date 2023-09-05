@@ -23129,9 +23129,9 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("expectActualClassesAreExperimentalWarning.kt")
-            public void testExpectActualClassesAreExperimentalWarning() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualClassesAreExperimentalWarning.kt");
+            @TestMetadata("expectActualClassesAreInBetaWarning.kt")
+            public void testExpectActualClassesAreInBetaWarning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualClassesAreInBetaWarning.kt");
             }
 
             @Test
