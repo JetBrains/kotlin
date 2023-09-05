@@ -9,9 +9,10 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
@@ -71,8 +72,7 @@ class ClassicFrontend2NativeIrConverter(
             Psi2IrConfiguration(ignoreErrors = false, configuration.partialLinkageConfig.isEnabled),
             configuration.irMessageLogger::checkNoUnboundSymbols
         )
-        val konanManglerDescClass = kotlinNativeClass("org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc")
-        val manglerDesc = konanManglerDescClass.objectInstance as KotlinMangler.DescriptorMangler
+        val manglerDesc = KonanManglerDesc
         val konanIdSignaturerClass = kotlinNativeClass("org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer")
         val konanIdSignaturerConstructor = konanIdSignaturerClass.constructors.single()
         val konanIdSignaturerClassInstance = konanIdSignaturerConstructor.call(manglerDesc) as IdSignatureComposer
@@ -125,16 +125,13 @@ class ClassicFrontend2NativeIrConverter(
             diagnosticReporter = configuration.irMessageLogger
         )
 
-        val konanManglerIrClassKotlin = kotlinNativeClass("org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr")
-        val konanIrMangler = konanManglerIrClassKotlin.objectInstance as KotlinMangler.IrMangler
-
         return IrBackendInput.NativeBackendInput(
             moduleFragment,
             dependentIrModuleFragments = emptyList(),
             pluginContext,
             diagnosticReporter = DiagnosticReporterFactory.createReporter(),
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer.mangler,
-            irMangler = konanIrMangler,
+            irMangler = KonanManglerIr,
             firMangler = null,
         )
     }

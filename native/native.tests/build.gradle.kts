@@ -14,6 +14,7 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":generators:test-generator"))
+    testImplementation(project(":compiler:ir.serialization.native"))
     testImplementation(project(":native:kotlin-native-utils"))
     testImplementation(project(":native:executors"))
     testImplementation(project(":kotlin-util-klib-abi"))
