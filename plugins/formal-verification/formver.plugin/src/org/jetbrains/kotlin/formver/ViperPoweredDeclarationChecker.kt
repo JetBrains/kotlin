@@ -53,12 +53,15 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
 
         try {
             val verifier = Verifier()
-            val actuallyVerify = config.verificationSelection.applicable(declaration)
-
-            val success = verifier.verify(program, actuallyVerify) {
-                reporter.reportOn(declaration.source, it.error, it.msg, context)
+            val onFailure = { err: VerifierError ->
+                reporter.reportOn(declaration.source, err.error, err.msg, context)
             }
 
+            val consistent = verifier.checkConsistency(program, onFailure)
+            // If the Viper program is not consistent, that's our error; we shouldn't surface it to the user as an unverified contract.
+            if (!consistent || !config.verificationSelection.applicable(declaration)) return
+
+            val success = verifier.verify(program, onFailure)
             if (!success) {
                 reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT, declaration.name.asString(), context)
             }
