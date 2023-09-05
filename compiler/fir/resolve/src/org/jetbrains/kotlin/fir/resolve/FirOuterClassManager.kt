@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.constructType
 
 class FirOuterClassManager(
     private val session: FirSession,
@@ -29,19 +25,6 @@ class FirOuterClassManager(
         return symbolProvider.getClassLikeSymbolByClassId(outerClassId)
     }
 
-    fun outerType(classLikeType: ConeClassLikeType): ConeClassLikeType? {
-        val fullyExpandedType = classLikeType.fullyExpandedType(session)
-
-        val symbol = fullyExpandedType.lookupTag.toSymbol(session) ?: return null
-
-        if (symbol is FirRegularClassSymbol && !symbol.fir.isInner) return null
-
-        val containingSymbol = outerClass(symbol) ?: return null
-        val currentTypeArgumentsNumber = (symbol as? FirRegularClassSymbol)?.fir?.typeParameters?.count { it is FirTypeParameter } ?: 0
-
-        return containingSymbol.constructType(
-            fullyExpandedType.typeArguments.drop(currentTypeArgumentsNumber).toTypedArray(),
-            isNullable = false
-        )
-    }
+    fun outerType(classLikeType: ConeClassLikeType): ConeClassLikeType? =
+        outerType(classLikeType, session, ::outerClass)
 }
