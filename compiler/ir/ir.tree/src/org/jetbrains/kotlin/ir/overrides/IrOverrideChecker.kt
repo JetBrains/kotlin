@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.ir.overrides
 
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition.Contract.CONFLICTS_ONLY
+import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition.Contract.SUCCESS_ONLY
+import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition.Result.*
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextWithAdditionalAxioms
 import org.jetbrains.kotlin.ir.types.createIrTypeCheckerState
@@ -13,7 +16,10 @@ import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
-class IrOverrideChecker(private val typeSystem: IrTypeSystemContext) {
+class IrOverrideChecker(
+    private val typeSystem: IrTypeSystemContext,
+    private val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
+) {
     fun getBothWaysOverridability(
         overriderDescriptor: IrOverridableMember,
         candidateDescriptor: IrOverridableMember,
@@ -38,11 +44,12 @@ class IrOverrideChecker(private val typeSystem: IrTypeSystemContext) {
         subMember: IrOverridableMember,
         checkIsInlineFlag: Boolean,
     ): OverrideCompatibilityInfo {
-        return isOverridableByWithoutExternalConditions(superMember, subMember, checkIsInlineFlag)
-        // The frontend goes into external overridability condition details here, but don't deal with them in IR (yet?).
+        val basicResult = isOverridableByWithoutExternalConditions(superMember, subMember, checkIsInlineFlag)
+
+        return runExternalOverridabilityConditions(superMember, subMember, basicResult)
     }
 
-    fun isOverridableByWithoutExternalConditions(
+    private fun isOverridableByWithoutExternalConditions(
         superMember: IrOverridableMember,
         subMember: IrOverridableMember,
         checkIsInlineFlag: Boolean,
@@ -118,6 +125,48 @@ class IrOverrideChecker(private val typeSystem: IrTypeSystemContext) {
                     parameter.type
                 )
             ) return incompatible("Value parameter type mismatch")
+        }
+
+        return success()
+    }
+
+    private fun runExternalOverridabilityConditions(
+        superMember: IrOverridableMember,
+        subMember: IrOverridableMember,
+        basicResult: OverrideCompatibilityInfo,
+    ): OverrideCompatibilityInfo {
+        var wasSuccess = basicResult.result == OverrideCompatibilityInfo.Result.OVERRIDABLE
+
+        for (externalCondition in externalOverridabilityConditions) {
+            // Do not run CONFLICTS_ONLY while there was no success
+            if (externalCondition.contract == CONFLICTS_ONLY) continue
+            if (wasSuccess && externalCondition.contract == SUCCESS_ONLY) continue
+            val result =
+                externalCondition.isOverridable(superMember, subMember)
+            when (result) {
+                OVERRIDABLE -> wasSuccess = true
+                CONFLICT -> return conflict("External condition failed")
+                INCOMPATIBLE -> return incompatible("External condition")
+                UNKNOWN -> {}
+            }
+        }
+
+        if (!wasSuccess) return basicResult
+
+        // Search for conflicts from external conditions
+        for (externalCondition in externalOverridabilityConditions) {
+            // Run all conditions that was not run before (i.e. CONFLICTS_ONLY)
+            if (externalCondition.contract != CONFLICTS_ONLY) continue
+            val result =
+                externalCondition.isOverridable(superMember, subMember)
+            when (result) {
+                CONFLICT -> return conflict("External condition failed")
+                INCOMPATIBLE -> return incompatible("External condition")
+                OVERRIDABLE -> error(
+                    "Contract violation in ${externalCondition.javaClass} condition. It's not supposed to end with success"
+                )
+                UNKNOWN -> {}
+            }
         }
 
         return success()

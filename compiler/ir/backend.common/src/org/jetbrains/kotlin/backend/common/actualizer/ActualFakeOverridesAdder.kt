@@ -37,7 +37,7 @@ internal class ActualFakeOverridesAdder(
     private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext,
     private val typeSystemContext: IrTypeSystemContext
 ) : IrElementVisitorVoid {
-    private val overrideChecker = IrOverrideChecker(typeSystemContext)
+    private val overrideChecker = IrOverrideChecker(typeSystemContext, emptyList())
     private val missingActualMembersMap = mutableMapOf<IrClass, FakeOverrideInfo>()
 
     override fun visitClass(declaration: IrClass) {
@@ -93,7 +93,7 @@ internal class ActualFakeOverridesAdder(
                 @Suppress("UNCHECKED_CAST")
                 val override = klass.declarations.firstOrNull {
                     it is IrOverridableMember &&
-                            overrideChecker.isOverridableByWithoutExternalConditions(
+                            overrideChecker.isOverridableBy(
                                 superMember = memberFromSupertype,
                                 subMember = it,
                                 checkIsInlineFlag = false,

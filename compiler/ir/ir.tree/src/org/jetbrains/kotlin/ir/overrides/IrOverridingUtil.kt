@@ -33,9 +33,10 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
 class IrOverridingUtil(
     private val typeSystem: IrTypeSystemContext,
-    private val fakeOverrideBuilder: FakeOverrideBuilderStrategy
+    private val fakeOverrideBuilder: FakeOverrideBuilderStrategy,
+    private val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
 ) {
-    private val overrideChecker = IrOverrideChecker(typeSystem)
+    private val overrideChecker = IrOverrideChecker(typeSystem, externalOverridabilityConditions)
     private val originals = mutableMapOf<IrOverridableMember, IrOverridableMember>()
     private val IrOverridableMember.original get() = originals[this] ?: error("No original for ${this.render()}")
     private val originalSuperTypes = mutableMapOf<IrOverridableMember, IrType>()

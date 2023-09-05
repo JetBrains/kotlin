@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.linkage.partial.IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
+import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -81,7 +82,8 @@ class FakeOverrideBuilder(
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: DeclarationTable = FakeOverrideDeclarationTable(mangler) { builder, table ->
         IdSignatureSerializer(builder, table)
-    }
+    },
+    externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList(),
 ) : FakeOverrideBuilderStrategy(
     friendModules = friendModules,
     unimplementedOverridesStrategy = if (partialLinkageSupport.isEnabled)
@@ -91,7 +93,7 @@ class FakeOverrideBuilder(
 ) {
     private val haveFakeOverrides = mutableSetOf<IrClass>()
 
-    private val irOverridingUtil = IrOverridingUtil(typeSystem, this)
+    private val irOverridingUtil = IrOverridingUtil(typeSystem, this, externalOverridabilityConditions)
     private val irBuiltIns = typeSystem.irBuiltIns
 
     // TODO: The declaration table is needed for the signaturer.

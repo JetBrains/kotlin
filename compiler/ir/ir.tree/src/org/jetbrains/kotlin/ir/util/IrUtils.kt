@@ -1219,7 +1219,7 @@ fun IrClass.addFakeOverrides(
     implementedMembers: List<IrOverridableMember> = emptyList(),
     ignoredParentSymbols: List<IrSymbol> = emptyList()
 ) {
-    IrOverridingUtil(typeSystem, FakeOverrideBuilderForLowerings())
+    IrOverridingUtil(typeSystem, FakeOverrideBuilderForLowerings(), emptyList())
         .buildFakeOverridesForClassUsingOverriddenSymbols(this,
                                                           implementedMembers = implementedMembers,
                                                           compatibilityMode = false,

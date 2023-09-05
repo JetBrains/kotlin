@@ -76,7 +76,8 @@ class FakeOverrideRebuilder(
         mangler,
         typeSystemContext,
         friendModules,
-        PartialLinkageSupportForLinker.DISABLED
+        PartialLinkageSupportForLinker.DISABLED,
+        externalOverridabilityConditions = emptyList(), // TODO: KT-61370, KT-61804.
     )
 
     fun rebuildFakeOverrides() {
