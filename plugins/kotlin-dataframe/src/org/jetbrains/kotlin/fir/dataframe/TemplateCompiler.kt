@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClassCopy
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
@@ -474,7 +474,7 @@ class TemplateCompiler(
 
   fun FirSession.buildFirFromKtFiles(ktFiles: Collection<KtFile>): List<FirFile> {
     val firProvider = (firProvider as? FirProviderImpl)
-    val builder = RawFirBuilder(this, kotlinScopeProvider, BodyBuildingMode.NORMAL)
+    val builder = PsiRawFirBuilder(this, kotlinScopeProvider, BodyBuildingMode.NORMAL)
     return ktFiles.map {
       builder.buildFirFile(it).also { firFile ->
         firProvider?.recordFile(firFile)

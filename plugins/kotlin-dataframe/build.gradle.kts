@@ -2,13 +2,13 @@ import org.gradle.api.tasks.bundling.Jar
 
 plugins {
     id("java")
-    kotlin("jvm") version "1.8.255-SNAPSHOT"
+    kotlin("jvm") version "1.9.255-SNAPSHOT"
     kotlin("libs.publisher") version "0.0.60-dev-30"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "org.jetbrains.kotlinx.dataframe"
-version = "0.9.0-dev"
+version = "0.10.0-dev"
 
 val kotlinVersion: String by project.properties
 
@@ -45,7 +45,7 @@ dependencies {
         runtimeOnly(kotlin("compiler-embeddable", version = "1.8.0-dev-2843"))
     }
 
-    implementation("org.jetbrains.kotlinx:dataframe:0.9.0-dev")
+    implementation("org.jetbrains.kotlinx:dataframe:0.10.0-dev")
     //implementation("org.jetbrains.kotlinx.dataframe:bridge-generator:0.9.0-dev")
 
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
