@@ -20,6 +20,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 
+private const val OBJC_MARK = "objc:"
+private const val OBJC_CONSTRUCTOR_MARK = "#Constructor"
+private const val OBJC_PROPERTY_ACCESSOR_MARK = "#Accessor"
+
 abstract class ObjCFunctionNameMangleComputer<ValueParameter : Any> : PlatformSpecificFunctionNameMangleComputer<ValueParameter> {
 
     abstract fun getObjCMethodInfo(): ObjCMethodInfo?
@@ -45,13 +49,13 @@ abstract class ObjCFunctionNameMangleComputer<ValueParameter : Any> : PlatformSp
                 append(it)
                 append(MangleConstant.FQN_SEPARATOR)
             }
-            append(MangleConstant.OBJC_MARK)
+            append(OBJC_MARK)
             append(objcMethodInfo.selector)
             if (isObjCConstructor()) {
-                append(MangleConstant.OBJC_CONSTRUCTOR_MARK)
+                append(OBJC_CONSTRUCTOR_MARK)
             }
             if (isPropertyAccessor()) {
-                append(MangleConstant.OBJC_PROPERTY_ACCESSOR_MARK)
+                append(OBJC_PROPERTY_ACCESSOR_MARK)
             }
         }
     }

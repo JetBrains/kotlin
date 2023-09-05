@@ -43,13 +43,5 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
         const val LOCAL_DECLARATION_INDEX_PREFIX = '$'
 
         const val JAVA_FIELD_SUFFIX = "#jf"
-
-        const val FUN_PREFIX = "kfun"
-        const val CLASS_PREFIX = "kclass"
-        const val FIELD_PREFIX = "kfield"
-
-        const val OBJC_MARK = "objc:"
-        const val OBJC_CONSTRUCTOR_MARK = "#Constructor"
-        const val OBJC_PROPERTY_ACCESSOR_MARK = "#Accessor"
     }
 }
