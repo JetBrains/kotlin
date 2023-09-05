@@ -15,14 +15,19 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
+import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.outerType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -90,7 +95,7 @@ private class DeclarationBuckets {
     val extensionProperties = mutableListOf<Pair<FirProperty, String>>()
 }
 
-private fun groupTopLevelByName(declarations: List<FirDeclaration>): Map<Name, DeclarationBuckets> {
+private fun groupTopLevelByName(declarations: List<FirDeclaration>, context: CheckerContext): Map<Name, DeclarationBuckets> {
     val groups = mutableMapOf<Name, DeclarationBuckets>()
     for (declaration in declarations) {
         if (!declaration.isCollectable()) continue
@@ -114,12 +119,20 @@ private fun groupTopLevelByName(declarations: List<FirDeclaration>): Map<Name, D
                 if (declaration.classKind != ClassKind.OBJECT) {
                     declaration.declarations
                         .filterIsInstance<FirConstructor>()
-                        .mapTo(group.constructors) { it to FirRedeclarationPresenter.represent(it, declaration) }
+                        .mapTo(group.constructors) { it to FirRedeclarationPresenter.represent(it, declaration.symbol) }
                 }
             }
-            is FirTypeAlias ->
-                groups.getOrPut(declaration.name, ::DeclarationBuckets).classLikes +=
-                    declaration to FirRedeclarationPresenter.represent(declaration)
+            is FirTypeAlias -> {
+                val group = groups.getOrPut(declaration.name, ::DeclarationBuckets)
+                group.classLikes += declaration to FirRedeclarationPresenter.represent(declaration)
+
+                @OptIn(SymbolInternals::class)
+                declaration.expandedClassWithConstructorsScope(context)?.let { (_, scopeWithConstructors) ->
+                    scopeWithConstructors.processDeclaredConstructors {
+                        group.constructors += it.fir to FirRedeclarationPresenter.represent(it.fir, declaration.symbol)
+                    }
+                }
+            }
             else -> {}
         }
     }
@@ -173,8 +186,16 @@ fun collectConflictingLocalFunctionsFrom(block: FirBlock, context: CheckerContex
             is FirRegularClass ->
                 // TODO, KT-61243: Use declaredMemberScope
                 collectable.declarations.filterIsInstance<FirConstructor>().forEach {
-                    inspector.collect(it, FirRedeclarationPresenter.represent(it, collectable), functionDeclarations)
+                    inspector.collect(it, FirRedeclarationPresenter.represent(it, collectable.symbol), functionDeclarations)
                 }
+            is FirTypeAlias -> {
+                collectable.expandedClassWithConstructorsScope(context)?.let { (_, scopeWithConstructors) ->
+                    scopeWithConstructors.processDeclaredConstructors {
+                        @OptIn(SymbolInternals::class)
+                        inspector.collect(it.fir, FirRedeclarationPresenter.represent(it.fir, collectable.symbol), functionDeclarations)
+                    }
+                }
+            }
             else -> {}
         }
     }
@@ -224,7 +245,7 @@ private fun <D : FirDeclaration> FirDeclarationCollector<D>.collect(
 @Suppress("GrazieInspection")
 fun FirDeclarationCollector<FirDeclaration>.collectTopLevel(file: FirFile, packageMemberScope: FirPackageMemberScope) {
 
-    for ((declarationName, group) in groupTopLevelByName(file.declarations)) {
+    for ((declarationName, group) in groupTopLevelByName(file.declarations, context)) {
         val groupHasClassLikesOrProperties = group.classLikes.isNotEmpty() || group.properties.isNotEmpty()
         val groupHasSimpleFunctions = group.simpleFunctions.isNotEmpty()
 
@@ -257,15 +278,21 @@ fun FirDeclarationCollector<FirDeclaration>.collectTopLevel(file: FirFile, packa
             collect(group.properties, conflictingSymbol, conflictingPresentation, conflictingFile)
 
             if (groupHasSimpleFunctions) {
-                if (conflictingSymbol !is FirRegularClassSymbol) return
-                if (conflictingSymbol.classKind == ClassKind.OBJECT || conflictingSymbol.classKind == ClassKind.ENUM_ENTRY) return
+                val declaration = conflictingSymbol.fir
 
-                conflictingSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+                if (declaration !is FirClassLikeDeclaration) {
+                    return
+                }
 
-                val classWithSameName = conflictingSymbol.fir
-                classWithSameName.unsubstitutedScope(context).processDeclaredConstructors { constructor ->
-                    val ctorRepresentation = FirRedeclarationPresenter.represent(constructor.fir, classWithSameName)
-                    collect(group.simpleFunctions, conflictingSymbol = constructor, conflictingPresentation = ctorRepresentation)
+                declaration.expandedClassWithConstructorsScope(context)?.let { (expandedClass, scopeWithConstructors) ->
+                    if (expandedClass.classKind == ClassKind.OBJECT || expandedClass.classKind == ClassKind.ENUM_ENTRY) {
+                        return
+                    }
+
+                    scopeWithConstructors.processDeclaredConstructors { constructor ->
+                        val ctorRepresentation = FirRedeclarationPresenter.represent(constructor.fir, declaration.symbol)
+                        collect(group.simpleFunctions, conflictingSymbol = constructor, conflictingPresentation = ctorRepresentation)
+                    }
                 }
             }
         }
@@ -308,6 +335,29 @@ fun FirDeclarationCollector<FirDeclaration>.collectTopLevel(file: FirFile, packa
                 collect(group.extensionProperties, conflictingSymbol = it)
             }
         }
+    }
+}
+
+private fun FirClassLikeDeclaration.expandedClassWithConstructorsScope(context: CheckerContext): Pair<FirRegularClassSymbol, FirScope>? {
+    return when (this) {
+        is FirRegularClass -> symbol to unsubstitutedScope(context)
+        is FirTypeAlias -> {
+            val expandedType = expandedConeType
+            val expandedClass = expandedType?.toRegularClassSymbol(context.session)
+            val expandedTypeScope = expandedType?.scope(
+                context.session, context.scopeSession,
+                FakeOverrideTypeCalculator.DoNothing,
+                requiredMembersPhase = FirResolvePhase.STATUS,
+            )
+
+            if (expandedType != null && expandedClass != null && expandedTypeScope != null) {
+                val outerType = outerType(expandedType, context.session) { it.outerClassSymbol(context) }
+                expandedClass to TypeAliasConstructorsSubstitutingScope(symbol, expandedTypeScope, outerType)
+            } else {
+                null
+            }
+        }
+        else -> null
     }
 }
 

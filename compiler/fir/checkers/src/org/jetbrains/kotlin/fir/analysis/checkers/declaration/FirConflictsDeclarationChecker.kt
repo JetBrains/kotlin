@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.PACKAGE_MEMBER
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -58,7 +59,8 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
         declarationConflictingSymbols: Map<FirDeclaration, SmartSet<FirBasedSymbol<*>>>,
     ) {
         declarationConflictingSymbols.forEach { (conflictingDeclaration, symbols) ->
-            val source = conflictingDeclaration.source
+            val typeAliasForConstructorSource = (conflictingDeclaration as? FirConstructor)?.typeAliasForConstructor?.source
+            val source = typeAliasForConstructorSource ?: conflictingDeclaration.source
             if (symbols.isEmpty()) return@forEach
 
             val factory =
