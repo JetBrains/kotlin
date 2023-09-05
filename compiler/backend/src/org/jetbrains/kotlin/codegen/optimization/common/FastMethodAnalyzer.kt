@@ -34,7 +34,6 @@
 package org.jetbrains.kotlin.codegen.optimization.common
 
 import org.jetbrains.kotlin.codegen.inline.insnText
-import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -67,7 +66,7 @@ open class FastMethodAnalyzer<V : Value>
         if (nInsns == 0) return frames
 
         checkAssertions()
-        computeExceptionHandlersForEachInsn(method)
+        computeExceptionHandlers(method)
 
         val isTcbStart = BooleanArray(nInsns)
         for (tcb in method.tryCatchBlocks) {
@@ -192,26 +191,6 @@ open class FastMethodAnalyzer<V : Value>
         mergeControlFlowEdge(insnNode.label.indexOf(), current)
         if (insnOpcode != Opcodes.GOTO) {
             mergeControlFlowEdge(insn + 1, current)
-        }
-    }
-
-    private fun computeExceptionHandlersForEachInsn(m: MethodNode) {
-        for (tcb in m.tryCatchBlocks) {
-            var current: AbstractInsnNode = tcb.start
-            val end = tcb.end
-
-            while (current != end) {
-                if (current.isMeaningful) {
-                    val currentIndex = current.indexOf()
-                    var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[currentIndex]
-                    if (insnHandlers == null) {
-                        insnHandlers = SmartList()
-                        handlers[currentIndex] = insnHandlers
-                    }
-                    insnHandlers.add(tcb)
-                }
-                current = current.next
-            }
         }
     }
 

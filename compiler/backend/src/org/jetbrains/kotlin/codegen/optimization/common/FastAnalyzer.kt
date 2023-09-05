@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
@@ -46,6 +47,40 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F: Frame<V>>(
 
     protected fun AbstractInsnNode.indexOf() =
         method.instructions.indexOf(this)
+
+    protected fun computeExceptionHandlers(m: MethodNode, forEachInsn: Boolean = true) {
+        for (tcb in m.tryCatchBlocks) {
+            if (forEachInsn) computeExceptionHandlersForEachInsn(tcb) else computeExceptionHandlerFast(tcb)
+        }
+    }
+
+    private fun computeExceptionHandlersForEachInsn(tcb: TryCatchBlockNode) {
+        var current: AbstractInsnNode = tcb.start
+        val end = tcb.end
+
+        while (current != end) {
+            if (current.isMeaningful) {
+                val currentIndex = current.indexOf()
+                var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[currentIndex]
+                if (insnHandlers == null) {
+                    insnHandlers = SmartList()
+                    handlers[currentIndex] = insnHandlers
+                }
+                insnHandlers.add(tcb)
+            }
+            current = current.next
+        }
+    }
+
+    private fun computeExceptionHandlerFast(tcb: TryCatchBlockNode) {
+        val start = tcb.start.indexOf()
+        var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[start]
+        if (insnHandlers == null) {
+            insnHandlers = ArrayList()
+            handlers[start] = insnHandlers
+        }
+        insnHandlers.add(tcb)
+    }
 
     protected fun F.dump(): String {
         return buildString {

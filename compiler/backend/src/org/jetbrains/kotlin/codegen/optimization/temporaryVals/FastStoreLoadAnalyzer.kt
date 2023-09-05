@@ -35,8 +35,6 @@ package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.optimization.common.FastAnalyzer
-import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
-import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION
 import org.jetbrains.org.objectweb.asm.Type
@@ -119,7 +117,7 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
         if (nInsns == 0) return frames
 
         checkAssertions()
-        computeExceptionHandlersForEachInsn(method)
+        computeExceptionHandlers(method)
         initMergeNodes()
 
         val current = newFrame(method.maxLocals)
@@ -186,26 +184,6 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
             mergeControlFlowEdge(insn + 1, current)
         }
         mergeControlFlowEdge(insnNode.label.indexOf(), current)
-    }
-
-    private fun computeExceptionHandlersForEachInsn(m: MethodNode) {
-        for (tcb in m.tryCatchBlocks) {
-            var current: AbstractInsnNode = tcb.start
-            val end = tcb.end
-
-            while (current != end) {
-                if (current.isMeaningful) {
-                    val currentIndex = current.indexOf()
-                    var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[currentIndex]
-                    if (insnHandlers == null) {
-                        insnHandlers = SmartList()
-                        handlers[currentIndex] = insnHandlers
-                    }
-                    insnHandlers.add(tcb)
-                }
-                current = current.next
-            }
-        }
     }
 
     private fun initMergeNodes() {
