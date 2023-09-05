@@ -191,14 +191,16 @@ class DeclarationsChecker(
             return
         }
 
-        if (rhs.isNothing()) {
-            trace.report(ACTUAL_TYPE_ALIAS_TO_NOTHING.on(declaration))
-            return
-        }
+        if (languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
+            if (rhs.isNothing()) {
+                trace.report(ACTUAL_TYPE_ALIAS_TO_NOTHING.on(declaration))
+                return
+            }
 
-        if (rhs.isMarkedNullable) {
-            trace.report(ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE.on(declaration))
-            return
+            if (rhs.isMarkedNullable) {
+                trace.report(ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE.on(declaration))
+                return
+            }
         }
     }
 

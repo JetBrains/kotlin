@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -62,14 +63,16 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker() {
             reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION, context)
         }
 
-        @OptIn(UnexpandedTypeCheck::class)
-        // an earlier check ensures we have an ACTUAL_TYPE_ALIAS_NOT_TO_CLASS error on non-expanded type alias
-        if (expandedTypeRef.isNothing) {
-            reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NOTHING, context)
-        }
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
+            @OptIn(UnexpandedTypeCheck::class)
+            // an earlier check ensures we have an ACTUAL_TYPE_ALIAS_NOT_TO_CLASS error on non-expanded type alias
+            if (expandedTypeRef.isNothing) {
+                reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NOTHING, context)
+            }
 
-        if (expandedTypeRef.isMarkedNullable == true) {
-            reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE, context)
+            if (expandedTypeRef.isMarkedNullable == true) {
+                reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE, context)
+            }
         }
     }
 }
