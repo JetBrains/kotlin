@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.utils
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
 
 abstract class FirIdenticalCheckerHelper(private val testServices: TestServices) {
@@ -32,7 +33,7 @@ abstract class FirIdenticalCheckerHelper(private val testServices: TestServices)
 
     fun readContent(file: File, trimLines: Boolean): String {
         return if (trimLines) {
-            file.readLines().joinToString("\n") { it.trimEnd() }.trimEnd()
+            file.readLines().joinToString("\n") { it.trimEnd() }.trim()
         } else {
             file.readText()
         }
