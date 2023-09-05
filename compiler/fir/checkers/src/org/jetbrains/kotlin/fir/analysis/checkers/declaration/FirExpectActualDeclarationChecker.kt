@@ -234,6 +234,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
         if (expectSymbol !is FirClassSymbol ||
             actualSymbol !is FirTypeAliasSymbol ||
             expectSymbol.classKind == ClassKind.ANNOTATION_CLASS

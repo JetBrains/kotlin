@@ -23684,6 +23684,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 public void testMethodDefaultArgsViaActualTypealias() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualTypealias.kt");
                 }
+
+                @Test
+                @TestMetadata("methodDefaultArgsViaActualTypealias_oldLanguageVersion.kt")
+                public void testMethodDefaultArgsViaActualTypealias_oldLanguageVersion() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualTypealias_oldLanguageVersion.kt");
+                }
             }
 
             @Nested

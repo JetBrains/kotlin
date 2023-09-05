@@ -242,8 +242,9 @@ class ExpectedActualDeclarationChecker(
     private fun checkIfExpectHasDefaultArgumentsAndActualizedWithTypealias(
         expectDescriptor: MemberDescriptor,
         actualDeclaration: KtNamedDeclaration,
-        trace: BindingTrace,
+        context: DeclarationCheckerContext,
     ) {
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
         if (expectDescriptor !is ClassDescriptor ||
             actualDeclaration !is KtTypeAlias ||
             expectDescriptor.kind == ClassKind.ANNOTATION_CLASS
@@ -258,7 +259,7 @@ class ExpectedActualDeclarationChecker(
 
         if (membersWithDefaultValueParameters.isEmpty()) return
 
-        trace.report(
+        context.trace.report(
             Errors.DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS.on(
                 actualDeclaration,
                 expectDescriptor,
@@ -382,7 +383,7 @@ class ExpectedActualDeclarationChecker(
         // We want to report errors even if a candidate is incompatible, but it's single
         val expectSingleCandidate = (compatibility[Compatible] ?: compatibility.values.singleOrNull())?.singleOrNull()
         if (expectSingleCandidate != null) {
-            checkIfExpectHasDefaultArgumentsAndActualizedWithTypealias(expectSingleCandidate, reportOn, trace)
+            checkIfExpectHasDefaultArgumentsAndActualizedWithTypealias(expectSingleCandidate, reportOn, context)
             checkAnnotationsMatch(expectSingleCandidate, descriptor, reportOn, context)
         }
     }
