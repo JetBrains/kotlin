@@ -12,11 +12,17 @@ import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.resolve.dfa.symbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
@@ -34,8 +40,8 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker() {
 
     override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
         if (context.containingDeclarations.lastOrNull()?.source?.kind != KtRealSourceElementKind) return
-        val callableSymbol = expression.annotationTypeRef.toRegularClassSymbol(context.session)
-        if (callableSymbol?.origin !is FirDeclarationOrigin.Java) return
+        val callableSymbol = expression.annotationTypeRef.toClassLikeSymbol(context.session) as? FirClassSymbol<*> ?: return
+        if (callableSymbol.origin !is FirDeclarationOrigin.Java) return
 
         val lookupTag = expression.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return
         javaToKotlinNameMap[lookupTag.classId]?.let { betterName ->
