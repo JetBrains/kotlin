@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -23,6 +24,7 @@ internal class Kapt4ContextForStubGeneration(
     logger: KaptLogger,
     val analysisSession: KtAnalysisSession,
     val files: List<KtFile>,
+    val overriddenMetadataVersion: BinaryVersion? = null
 ) : KaptContext(options, withJdk, logger) {
     val classes: Iterable<KtLightClass> = buildSet {
         files.flatMapTo(this) { file ->

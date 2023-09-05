@@ -276,7 +276,7 @@ internal class Kapt4StubGenerator {
     private fun convertMetadataAnnotation(metadata: Metadata): JCAnnotation {
         val argumentsWithNames = mutableMapOf<String, Any>()
         if (metadata.kind != 1) argumentsWithNames[KIND_FIELD_NAME] = metadata.kind
-        argumentsWithNames[METADATA_VERSION_FIELD_NAME] = metadata.metadataVersion.toList()
+        argumentsWithNames[METADATA_VERSION_FIELD_NAME] = (overriddenMetadataVersion?.toArray() ?: metadata.metadataVersion).toList()
         if (metadata.data1.isNotEmpty()) argumentsWithNames[METADATA_DATA_FIELD_NAME] = metadata.data1.toList()
         if (metadata.data2.isNotEmpty()) argumentsWithNames[METADATA_STRINGS_FIELD_NAME] = metadata.data2.toList()
         if (metadata.extraString.isNotEmpty()) argumentsWithNames[METADATA_EXTRA_STRING_FIELD_NAME] = metadata.extraString

@@ -86,23 +86,27 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             logger.info(options.logString())
         }
 
-        var context: Kapt4ContextForStubGeneration? = null
         return try {
             KtAnalysisSessionProvider.getInstance(module.project).analyze(module) {
-                context = Kapt4ContextForStubGeneration(options, withJdk = false, logger, this, psiFiles.filterIsInstance<KtFile>())
+                Kapt4ContextForStubGeneration(
+                    options,
+                    false,
+                    logger,
+                    this,
+                    psiFiles.filterIsInstance<KtFile>(),
+                    configuration[CommonConfigurationKeys.METADATA_VERSION]
+                ).use { context ->
+                    if (options.mode.generateStubs)
+                        generateStubs(context)
 
-                if (options.mode.generateStubs)
-                    generateStubs(context!!)
-
-                if (options.mode.runAnnotationProcessing)
-                    runProcessors(context!!, options, logger)
+                    if (options.mode.runAnnotationProcessing)
+                        runProcessors(context, options, logger)
+                }
                 true
             }
         } catch (e: Exception) {
             logger.exception(e)
             false
-        } finally {
-            context?.close()
         }
     }
 
