@@ -326,13 +326,7 @@ private class ContextCollectorVisitor(
             regularClass.lazyResolveToPhase(FirResolvePhase.STATUS)
 
             context.withContainingClass(regularClass) {
-                processList(regularClass.contextReceivers)
-                processList(regularClass.typeParameters)
-
-                // we do it before we actually visit the constructors,
-                // because we don't want to have implicit this receiver
-                // for supertype callee positions
-                processList(regularClass.superTypeRefs)
+                processClassHeader(regularClass)
 
                 context.withRegularClass(regularClass, holder) {
                     dumpContext(regularClass, ContextKind.BODY)
@@ -349,6 +343,19 @@ private class ContextCollectorVisitor(
         if (regularClass.isLocal) {
             context.storeClassIfNotNested(regularClass, session)
         }
+    }
+
+    /**
+     * Process the parts of the class declaration which resolution is not affected
+     * by the class own supertypes.
+     *
+     * Processing those parts before adding the implicit receiver of the class
+     * to the [context] allows to not collect incorrect contexts for them later on.
+     */
+    private fun Processor.processClassHeader(regularClass: FirRegularClass) {
+        processList(regularClass.contextReceivers)
+        processList(regularClass.typeParameters)
+        processList(regularClass.superTypeRefs)
     }
 
     override fun visitConstructor(constructor: FirConstructor) = withProcessor {
