@@ -48,7 +48,7 @@ class CandidateInterceptor(
     val Key = ScopesGenerator.DataFramePlugin
 
     @OptIn(SymbolInternals::class)
-    override fun intercept(callInfo: CallInfo, symbol: FirBasedSymbol<*>, dispatchReceiverValue: ReceiverValue?): FirBasedSymbol<*> {
+    override fun intercept(callInfo: CallInfo, symbol: FirBasedSymbol<*>): FirBasedSymbol<*> {
         val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: emptyList()
         if (callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("DisableInterpretation")) == true }) {
             return symbol

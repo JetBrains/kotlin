@@ -124,7 +124,7 @@ class ScopesGenerator(
         return klass.symbol
     }
 
-    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         val names = mutableSetOf<Name>()
         scopeState[classSymbol.classId]?.let {
             it.properties.mapTo(names) { Name.identifier(it.name) }

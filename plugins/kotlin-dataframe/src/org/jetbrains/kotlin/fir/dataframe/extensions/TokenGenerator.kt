@@ -50,7 +50,7 @@ class TokenGenerator(session: FirSession, val tokens: Set<ClassId>, val tokenSta
         return klass.symbol
     }
 
-    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return tokenState[classSymbol.classId]?.properties?.mapTo(mutableSetOf()) { Name.identifier(it.name) } ?: emptySet()
     }
 

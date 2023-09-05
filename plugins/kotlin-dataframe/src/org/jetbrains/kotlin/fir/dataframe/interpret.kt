@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.dataframe.extensions.Arguments
 import org.jetbrains.kotlin.fir.dataframe.extensions.RefinedArgument
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -242,9 +243,9 @@ internal fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClass
     val symbol = coneClassLikeType.toSymbol(session) as FirRegularClassSymbol
     val declarationSymbols = if (symbol.isLocal && symbol.resolvedSuperTypes.isNotEmpty()) {
         val rootSchemaSymbol = symbol.resolvedSuperTypes.first().toSymbol(session) as FirRegularClassSymbol
-        rootSchemaSymbol.declaredMemberScope(session)
+        rootSchemaSymbol.declaredMemberScope(session, FirResolvePhase.BODY_RESOLVE)
     } else {
-        symbol.declaredMemberScope(session)
+        symbol.declaredMemberScope(session, FirResolvePhase.BODY_RESOLVE)
     }.let { scope ->
         val names = scope.getCallableNames()
         names.flatMap { scope.getProperties(it) }
@@ -282,7 +283,7 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
         shouldBeConvertedToFrameColumn(it) -> {
                 val nestedColumns = it.resolvedReturnType.typeArguments[0].type
                     ?.toRegularClassSymbol(session)
-                    ?.declaredMemberScope(session)
+                    ?.declaredMemberScope(session, FirResolvePhase.BODY_RESOLVE)
                     ?.collectAllProperties()
                     ?.filterIsInstance<FirPropertySymbol>()
                     ?.map { columnOf(it) }
@@ -294,7 +295,7 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
             val type = if (isDataRow(it)) it.resolvedReturnType.typeArguments[0].type!! else it.resolvedReturnType
             val nestedColumns = type
                 .toRegularClassSymbol(session)
-                ?.declaredMemberScope(session)
+                ?.declaredMemberScope(session, FirResolvePhase.BODY_RESOLVE)
                 ?.collectAllProperties()
                 ?.filterIsInstance<FirPropertySymbol>()
                 ?.map { columnOf(it) }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.dataframe.services.ExperimentalExtensionRegistra
 import org.jetbrains.kotlin.fir.dataframe.services.classpath.classpathFromClassloader
 import org.jetbrains.kotlin.fir.dataframe.services.commonFirWithPluginFrontendConfiguration
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
@@ -53,6 +55,7 @@ open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner()/*, RunnerWith
             JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK
             +JvmEnvironmentConfigurationDirectives.WITH_REFLECT
             +CodegenTestDirectives.DUMP_IR
+            FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
         }
         facadeStep(::FirFrontendFacade)
         commonFirWithPluginFrontendConfiguration()
