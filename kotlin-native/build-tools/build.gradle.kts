@@ -76,6 +76,7 @@ compileKotlin.apply {
             listOf(
                 "-Xskip-prerelease-check",
                 "-Xsuppress-version-warnings",
+                "-Xallow-unstable-dependencies"
             )
         )
     }
