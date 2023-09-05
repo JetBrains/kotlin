@@ -111,7 +111,6 @@ class TryK2IT : KGPBaseTest() {
                 assertOutputContains(
                     """
                     |##### 'kotlin.experimental.tryK2' results #####
-                    |:commonizeNativeDistribution: 2.0 language version
                     |:compileCommonMainKotlinMetadata: 2.0 language version
                     |:compileNativeMainKotlinMetadata: 2.0 language version
                     |:compileKotlinLinuxX64: 2.0 language version${
@@ -120,7 +119,7 @@ class TryK2IT : KGPBaseTest() {
                         else ""
                     }
                     |:compileKotlinMingwX64: 2.0 language version
-                    |##### 100% ${if (HostManager.hostIsMac) "(7/7)" else "(5/5)"} tasks have been compiled with Kotlin 2.0 #####
+                    |##### 100% ${if (HostManager.hostIsMac) "(6/6)" else "(4/4)"} tasks have been compiled with Kotlin 2.0 #####
                     """.trimMargin().normalizeLineEndings()
                 )
             }
@@ -300,39 +299,6 @@ class TryK2IT : KGPBaseTest() {
                     |##### 100% (4/4) tasks have been compiled with Kotlin 2.0 #####
                     """.trimMargin().normalizeLineEndings()
                 )
-            }
-        }
-    }
-
-    @DisplayName("report is printed for link native tasks")
-    @MppGradlePluginTests
-    @GradleTest
-    fun buildReportsForLinkTasks(gradleVersion: GradleVersion) {
-        val tasks = mutableListOf(
-            ":lib:linkExecutableDebugExecutableLinuxX64",
-            ":lib:linkSharedDebugSharedLinuxX64",
-            ":lib:linkStaticDebugStaticLinuxX64",
-            ":lib:linkDebugTestLinuxX64",
-        )
-
-        if (HostManager.hostIsMac) {
-            tasks += listOf(
-                ":lib:linkDebugFrameworkIosX64",
-                ":lib:linkDebugFrameworkIosArm64",
-                ":lib:linkReleaseFrameworkIosArm64",
-                ":lib:linkReleaseFrameworkIosX64",
-                ":lib:linkDebugTestIosSimulatorArm64",
-            )
-        }
-
-        project("native-configuration-cache", gradleVersion, enableGradleDebug = true) {
-            enableTryK2()
-            build("build") {
-                assertOutputContains("##### 'kotlin.experimental.tryK2' results #####")
-                tasks.forEach {
-                    assertOutputContains("$it: 2.0 language version")
-                }
-                assertOutputContains("##### 100% ")
             }
         }
     }

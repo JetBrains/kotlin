@@ -1130,9 +1130,6 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
 
-    @get:Internal
-    val kotlinExperimentalTryK2: Boolean = project.kotlinExperimentalTryK2
-
     private val isInIdeaSync = project.isInIdeaSync
 
     // Task action.
@@ -1171,7 +1168,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
                 addAll(extraOpts)
 
             }
-        addBuildMetricsForTaskAction(buildMetrics, languageVersion = parseTryK2(kotlinExperimentalTryK2)) {
+        addBuildMetricsForTaskAction(buildMetrics, languageVersion =  null) {
             outputFile.parentFile.mkdirs()
             KotlinNativeCInteropRunner.createExecutionContext(
                 task = this,

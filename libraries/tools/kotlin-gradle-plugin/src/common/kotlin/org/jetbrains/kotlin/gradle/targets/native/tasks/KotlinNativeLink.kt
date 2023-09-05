@@ -352,14 +352,11 @@ constructor(
     @get:Nested
     var kotlinPluginData: Provider<KotlinCompilerPluginData>? = null
 
-    @get:Internal
-    val kotlinExperimentalTryK2: Boolean = project.kotlinExperimentalTryK2
-
     @TaskAction
     fun compile() {
         val metricsReporter = metrics.get()
 
-        addBuildMetricsForTaskAction(metricsReporter = metricsReporter, languageVersion = parseTryK2(kotlinExperimentalTryK2)) {
+        addBuildMetricsForTaskAction(metricsReporter = metricsReporter, languageVersion = null) {
             validatedExportedLibraries()
 
             val output = outputFile.get()

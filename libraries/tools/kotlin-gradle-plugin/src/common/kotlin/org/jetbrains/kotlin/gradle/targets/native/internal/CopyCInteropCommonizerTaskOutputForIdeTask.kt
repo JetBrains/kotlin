@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
-import org.jetbrains.kotlin.compilerRunner.parseTryK2
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
@@ -43,7 +42,7 @@ internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
     @TaskAction
     protected fun copy() {
         val metricReporter = metrics.get()
-        addBuildMetricsForTaskAction(metricsReporter = metricReporter, languageVersion = parseTryK2(kotlinExperimentalTryK2)) {
+        addBuildMetricsForTaskAction(metricsReporter = metricReporter, languageVersion = null) {
             outputDirectory.mkdirs()
             for (group in commonizeCInteropTask.get().allInteropGroups.getOrThrow()) {
                 val source = commonizeCInteropTask.get().outputDirectory(group)

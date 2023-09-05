@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.base64Hash
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.ensureMaxFileNameLength
 import org.jetbrains.kotlin.commonizer.identityString
-import org.jetbrains.kotlin.compilerRunner.kotlinExperimentalTryK2
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.utils.changing
 import org.jetbrains.kotlin.gradle.utils.future
@@ -25,9 +23,6 @@ import java.io.File
 internal abstract class AbstractCInteropCommonizerTask : DefaultTask(), UsesBuildMetricsService {
     @get:OutputDirectory
     abstract val outputDirectory: File
-
-    @get:Internal
-    val kotlinExperimentalTryK2: Boolean = project.kotlinExperimentalTryK2
 }
 
 internal fun AbstractCInteropCommonizerTask.outputDirectory(group: CInteropCommonizerGroup): File {
