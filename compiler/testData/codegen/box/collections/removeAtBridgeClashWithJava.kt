@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-61751
 // FILE: removeAtBridgeClashWithJava.kt
 
 abstract class AJALI : JavaAbstractList<Int>()

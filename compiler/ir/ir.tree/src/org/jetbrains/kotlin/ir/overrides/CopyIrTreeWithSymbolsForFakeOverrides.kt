@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 // This is basically modelled after the inliner copier.
@@ -57,12 +59,27 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
                     ?: argument
             }
 
+        private fun IrType.mergeTypeAnnotations(other: IrType): IrType {
+            // Flexible types are represented as a type annotation in IR, so we need to keep it when substituting type during override.
+            // Note that it's incorrect to merge _all_ type annotations though, because for a Collection subclass:
+            //
+            //     abstract class Z : Collection<Int>
+            //
+            // `Z.contains` should have the signature `(Int) -> Boolean`, NOT `(@UnsafeVariance Int) -> Boolean` which would occur if we
+            // copied all type annotations.
+            return addAnnotations(buildList {
+                for (fqName in TYPE_ANNOTATIONS_TO_MERGE) {
+                    addIfNotNull(other.annotations.findAnnotation(fqName))
+                }
+            })
+        }
+
         override fun remapType(type: IrType): IrType {
             if (type !is IrSimpleType) return type
 
             return when (val substitutedType = typeArguments[type.classifier]) {
                 is IrDynamicType -> substitutedType
-                is IrSimpleType -> substitutedType.mergeNullability(type)
+                is IrSimpleType -> substitutedType.mergeNullability(type).mergeTypeAnnotations(type)
                 else -> type.buildSimpleType {
                     kotlinType = null
                     classifier = symbolRemapper.getReferencedClassifier(type.classifier)
@@ -110,4 +127,11 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
         parent,
         unimplementedOverridesStrategy
     )
+
+    private companion object {
+        // TODO: RawTypeAnnotation, FlexibleMutability, EnhancedNullability?
+        val TYPE_ANNOTATIONS_TO_MERGE = listOf(
+            FlexibleNullability.asSingleFqName(),
+        )
+    }
 }
