@@ -303,6 +303,27 @@ class TryK2IT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Native: check that only expected tasks use languageVersion")
+    @NativeGradlePluginTests
+    @GradleTest
+    fun smokeTestForNativeTasks(gradleVersion: GradleVersion) {
+        project("native-configuration-cache", gradleVersion) {
+            enableTryK2()
+            build("build") {
+                assertOutputContains(
+                    """
+                    |##### 'kotlin.experimental.tryK2' results #####
+                    |:compileKotlinJs: 2.0 language version
+                    |:compileProductionExecutableKotlinJs: 2.0 language version
+                    |:compileTestKotlinJs: 2.0 language version
+                    |:compileTestDevelopmentExecutableKotlinJs: 2.0 language version
+                    |##### 100% (4/4) tasks have been compiled with Kotlin 2.0 #####
+                    """.trimMargin().normalizeLineEndings()
+                )
+            }
+        }
+    }
+
     private fun TestProject.enableTryK2() = gradleProperties.appendText(
         """
         |
