@@ -33,25 +33,15 @@ data class PsiToIrInput(
         val isProducingLibrary: Boolean,
 )
 
-internal sealed class PsiToIrOutput(
+internal class PsiToIrOutput(
+        val irModules: Map<String, IrModuleFragment>,
         val irModule: IrModuleFragment,
         val symbols: KonanSymbols,
+        val irLinker: KonanIrLinker,
 ) : KotlinBackendIrHolder {
 
     override val kotlinIr: IrElement
         get() = irModule
-
-    class ForBackend(
-            val irModules: Map<String, IrModuleFragment>,
-            irModule: IrModuleFragment,
-            symbols: KonanSymbols,
-            val irLinker: KonanIrLinker,
-    ) : PsiToIrOutput(irModule, symbols)
-
-    class ForKlib(
-            irModule: IrModuleFragment,
-            symbols: KonanSymbols,
-    ) : PsiToIrOutput(irModule, symbols)
 }
 
 // TODO: Consider component-based approach
@@ -96,5 +86,5 @@ internal val PsiToIrPhase = createSimpleNamedCompilerPhase<PsiToIrContext, PsiTo
         postactions = getDefaultIrActions(),
         outputIfNotEnabled = { _, _, _, _ -> error("PsiToIr phase cannot be disabled") }
 ) { context, input ->
-    context.psiToIr(input, useLinkerWhenProducingLibrary = false)
+    context.psiToIr(input, useLinkerWhenProducingLibrary = true)
 }

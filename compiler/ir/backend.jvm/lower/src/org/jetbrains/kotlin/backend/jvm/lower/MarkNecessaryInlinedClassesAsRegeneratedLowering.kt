@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.ir.util.inlineDeclaration
 import org.jetbrains.kotlin.ir.util.isFunctionInlining
-import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_REFERENCE
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.functionInliningPhase
@@ -76,7 +75,7 @@ class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendCo
                 // Must pass `callee` explicitly because there can be problems if call was created for fake override
                 return this.inlineCall.getAllArgumentsWithIr(callee)
                     .filter { (param, arg) ->
-                        param.isInlineParameter() && (arg ?: param.defaultValue?.expression) is IrFunctionExpression ||
+                        param.isInlineParameter() && (arg ?: param.defaultValue?.expression) is IrFunctionReference ||
                                 arg is IrGetValue && arg.symbol.owner in inlinableParameters
                     }
                     .map { it.first }
@@ -144,7 +143,7 @@ class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendCo
                     return
                 }
 
-                if (expression.origin == INLINED_FUNCTION_REFERENCE) {
+                if (expression.origin == IrStatementOrigin.INLINED_FUNCTION_REFERENCE) {
                     saveDeclarationsFromStackIntoRegenerationPool()
                 }
                 super.visitCall(expression)

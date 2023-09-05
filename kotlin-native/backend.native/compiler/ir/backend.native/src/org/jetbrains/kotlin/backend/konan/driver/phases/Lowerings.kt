@@ -41,6 +41,19 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 /**
  * Run whole IR lowering pipeline over [irModuleFragment].
  */
+internal fun PhaseEngine<NativeGenerationState>.runInlinerLowerings(irModuleFragment: IrModuleFragment) {
+    val lowerings = getInlinerLowerings()
+    irModuleFragment.files.forEach { file ->
+        context.fileLowerState = FileLowerState()
+        lowerings.fold(file) { loweredFile, lowering ->
+            runPhase(lowering, loweredFile)
+        }
+    }
+}
+
+/**
+ * Run whole IR lowering pipeline over [irModuleFragment].
+ */
 internal fun PhaseEngine<NativeGenerationState>.runAllLowerings(irModuleFragment: IrModuleFragment) {
     val lowerings = getAllLowerings()
     irModuleFragment.files.forEach { file ->
@@ -345,7 +358,7 @@ private val inlinePhase = createFileLoweringPhase(
                     FunctionInlining(
                             context.context,
                             NativeInlineFunctionResolver(context.context, context),
-                            alwaysCreateTemporaryVariablesForArguments = context.shouldContainDebugInfo()
+                            alwaysCreateTemporaryVariablesForArguments = true
                     ).lower(irFile)
                 }
             }
@@ -504,14 +517,14 @@ private val constEvaluationPhase = createFileLoweringPhase(
 )
 
 private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull<AbstractNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>(
-        lowerBeforeInlinePhase,
-        arrayConstructorPhase,
-        lateinitPhase,
-        sharedVariablesPhase,
-        lowerOuterThisInInlineFunctionsPhase,
-        extractLocalClassesFromInlineBodies,
-        wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-        inlinePhase,
+//        lowerBeforeInlinePhase,
+//        arrayConstructorPhase,
+//        lateinitPhase,
+//        sharedVariablesPhase,
+//        lowerOuterThisInInlineFunctionsPhase,
+//        extractLocalClassesFromInlineBodies,
+//        wrapInlineDeclarationsWithReifiedTypeParametersLowering,
+//        inlinePhase,
         removeExpectDeclarationsPhase,
         stripTypeAliasDeclarationsPhase,
         assertsRemovalPhase.takeUnless { context.config.configuration.getBoolean(KonanConfigKeys.ENABLE_ASSERTIONS) },
@@ -558,6 +571,17 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         autoboxPhase,
 )
 
+private fun PhaseEngine<NativeGenerationState>.getInlinerLowerings() = listOfNotNull<AbstractNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>(
+        lowerBeforeInlinePhase,
+        arrayConstructorPhase,
+        lateinitPhase,
+        sharedVariablesPhase,
+        lowerOuterThisInInlineFunctionsPhase,
+        extractLocalClassesFromInlineBodies,
+        wrapInlineDeclarationsWithReifiedTypeParametersLowering,
+        inlinePhase,
+)
+
 private fun createFileLoweringPhase(
         name: String,
         description: String,
@@ -576,7 +600,7 @@ private fun createFileLoweringPhase(
         }
 )
 
-private fun createFileLoweringPhase(
+internal fun createFileLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
         name: String,
         description: String,
@@ -594,7 +618,7 @@ private fun createFileLoweringPhase(
         }
 )
 
-private fun createFileLoweringPhase(
+internal fun createFileLoweringPhase(
         op: (context: Context, irFile: IrFile) -> Unit,
         name: String,
         description: String,

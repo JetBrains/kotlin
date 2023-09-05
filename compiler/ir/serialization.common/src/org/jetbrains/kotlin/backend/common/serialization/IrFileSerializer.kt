@@ -543,6 +543,8 @@ open class IrFileSerializer(
     private fun serializeInlinedFunctionBlock(block: IrInlinedFunctionBlock): ProtoInlinedFunctionBlock {
         val proto = ProtoInlinedFunctionBlock.newBuilder()
 
+//        println("QZZ: ${block.inlineCall.dump()}")
+
         proto.inlineCall = serializeExpression(block.inlineCall)
         block.inlinedFunctionSymbol?.let { proto.inlinedFunctionSymbol = serializeIrSymbol(it) }
         block.inlinedExpression?.let { proto.inlinedExpression = serializeExpression(it) }
@@ -1224,6 +1226,8 @@ open class IrFileSerializer(
             .build()
 
     private fun serializeIrFunction(declaration: IrSimpleFunction): ProtoFunction {
+        //println("QXX: ${declaration.symbol.signature?.render()} ${declaration.render()}")
+
         val proto = ProtoFunction.newBuilder()
             .setBase(serializeIrFunctionBase(declaration, FunctionFlags.encode(declaration)))
 
@@ -1505,6 +1509,8 @@ open class IrFileSerializer(
                 ?: if (it is IrErrorDeclaration) protoIdSignature(idSig) else error("Not found ID for $idSig (${it.render()})")
             topLevelDeclarations.add(SerializedDeclaration(sigIndex, idSig.render(), byteArray))
             proto.addDeclarationId(sigIndex)
+
+            //println("QZZ: ${idSig.render()} ${it.render()}")
         }
 
         // TODO: is it Konan specific?

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
@@ -178,20 +179,17 @@ class IrBodyDeserializer(
     private fun deserializeInlinedFunctionBlock(
         proto: ProtoInlinedFunctionBlock, start: Int, end: Int, type: IrType
     ): IrInlinedFunctionBlock {
-        val statements = mutableListOf<IrStatement>()
-        val statementProtos = proto.statementList
+        val statements = proto.statementList.map { deserializeStatement(it) as IrStatement }
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
+        //val inlineCall = IrCallImpl(start, end, type, builtIns.booleanNotSymbol, 0, 1)//deserializeExpression(proto.inlineCall)
         val inlineCall = deserializeExpression(proto.inlineCall)
+        //println("ZZZ: ${inlineCall.dump()}")
         val inlinedFunctionSymbol = if (proto.hasInlinedFunctionSymbol())
             deserializeTypedSymbol<IrFunctionSymbol>(proto.inlinedFunctionSymbol, null)
         else null
         val inlinedExpression = if (proto.hasInlinedExpression())
             deserializeExpression(proto.inlinedExpression)
         else null
-
-        statementProtos.forEach {
-            statements.add(deserializeStatement(it) as IrStatement)
-        }
 
         return IrInlinedFunctionBlockImpl(
             start, end, type, inlineCall as IrFunctionAccessExpression,

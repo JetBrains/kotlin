@@ -24,11 +24,10 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -204,11 +203,11 @@ class FunctionInlining(
                 }
             }
 
-            val evaluationStatements = evaluateArguments(callSite, copiedCallee)
+            val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl()
+            val evaluationStatements = evaluateArguments(callSite, copiedCallee, irReturnableBlockSymbol)
             val statements = (copiedCallee.body as? IrBlockBody)?.statements
                 ?: error("Body not found for function ${callee.render()}")
 
-            val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl()
             val endOffset = statements.lastOrNull()?.endOffset ?: callee.endOffset
             /* creates irBuilder appending to the end of the given returnable block: thus why we initialize
              * irBuilder with (..., endOffset, endOffset).
@@ -218,11 +217,66 @@ class FunctionInlining(
             val transformer = ParameterSubstitutor()
             val newStatements = statements.map { it.transform(transformer, data = null) as IrStatement }
 
+            for (index in 0 until callSite.valueArgumentsCount) {
+                val argument = callSite.getValueArgument(index)
+                if (argument is IrFunctionExpression) {
+                    callSite.putValueArgument(
+                        index,
+                        IrFunctionReferenceImpl(
+                            argument.startOffset, argument.endOffset, argument.type, argument.function.symbol,
+                            0, argument.function.valueParameters.size
+                        )
+                    )
+                } else if (argument is IrFunctionReference) {
+
+                } else if (argument is IrPropertyReference) {
+
+                } else if (argument is IrBlock && argument.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
+
+                } else if (argument != null) {
+                    callSite.putValueArgument(index, IrCompositeImpl(argument.startOffset, argument.endOffset, argument.type))
+                }
+            }
+            callSite.dispatchReceiver?.let { argument ->
+                if (argument is IrFunctionExpression) {
+                    callSite.dispatchReceiver =
+                        IrFunctionReferenceImpl(
+                            argument.startOffset, argument.endOffset, argument.type, argument.function.symbol,
+                            0, argument.function.valueParameters.size
+                        )
+                } else if (argument is IrFunctionReference) {
+
+                } else if (argument is IrPropertyReference) {
+
+                } else if (argument is IrBlock && argument.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
+
+                } else {
+                    callSite.dispatchReceiver = IrCompositeImpl(argument.startOffset, argument.endOffset, argument.type)
+                }
+            }
+            callSite.extensionReceiver?.let { argument ->
+                if (argument is IrFunctionExpression) {
+                    callSite.extensionReceiver =
+                        IrFunctionReferenceImpl(
+                            argument.startOffset, argument.endOffset, argument.type, argument.function.symbol,
+                            0, argument.function.valueParameters.size
+                        )
+                } else if (argument is IrFunctionReference) {
+
+                } else if (argument is IrPropertyReference) {
+
+                } else if (argument is IrBlock && argument.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
+
+                } else {
+                    callSite.extensionReceiver = IrCompositeImpl(argument.startOffset, argument.endOffset, argument.type)
+                }
+            }
+
             val inlinedBlock = IrInlinedFunctionBlockImpl(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
                 type = callSite.type,
-                inlineCall = callSite,
+                inlineCall = callSite,//.deepCopyWithVariables().also { it.patchDeclarationParents(parent) },
                 inlinedFunctionSymbol = inlinedFunctionSymbol,
                 inlinedExpression = originalInlinedExpression,
                 origin = null,
@@ -320,7 +374,7 @@ class FunctionInlining(
             private fun inlinePropertyReference(expression: IrCall, propertyReference: IrPropertyReference): IrExpression {
                 val getterCall = IrCallImpl.fromSymbolOwner(
                     expression.startOffset, expression.endOffset, expression.type, propertyReference.getter!!,
-                    origin = INLINED_FUNCTION_REFERENCE
+                    origin = IrStatementOrigin.INLINED_FUNCTION_REFERENCE
                 )
 
                 fun tryToGetArg(i: Int): IrExpression? {
@@ -420,7 +474,7 @@ class FunctionInlining(
                             functionReferenceReturnType,
                             inlinedFunction.symbol,
                             classTypeParametersCount,
-                            INLINED_FUNCTION_REFERENCE
+                            IrStatementOrigin.INLINED_FUNCTION_REFERENCE
                         )
                     }
                     is IrSimpleFunction ->
@@ -431,7 +485,7 @@ class FunctionInlining(
                             inlinedFunction.symbol,
                             inlinedFunction.typeParameters.size,
                             inlinedFunction.valueParameters.size,
-                            INLINED_FUNCTION_REFERENCE
+                            IrStatementOrigin.INLINED_FUNCTION_REFERENCE
                         )
                     else -> error("Unknown function kind : ${inlinedFunction.render()}")
                 }.apply {
@@ -788,7 +842,11 @@ class FunctionInlining(
             return context.irBuiltIns.anyNType
         }
 
-        private fun evaluateArguments(callSite: IrFunctionAccessExpression, callee: IrFunction): List<IrStatement> {
+        private fun evaluateArguments(
+            callSite: IrFunctionAccessExpression,
+            callee: IrFunction,
+            irReturnableBlockSymbol: IrReturnableBlockSymbol,
+        ): List<IrStatement> {
             val arguments = buildParameterToArgument(callSite, callee)
             val evaluationStatements = mutableListOf<IrVariable>()
             val evaluationStatementsFromDefault = mutableListOf<IrVariable>()
@@ -822,7 +880,7 @@ class FunctionInlining(
                             argument.shouldBeSubstitutedViaTemporaryVariable()
 
                 if (shouldCreateTemporaryVariable) {
-                    val newVariable = createTemporaryVariable(parameter, variableInitializer, argument.isDefaultArg, callee)
+                    val newVariable = createTemporaryVariable(parameter, variableInitializer, argument.isDefaultArg, callee, irReturnableBlockSymbol)
                     if (argument.isDefaultArg) evaluationStatementsFromDefault.add(newVariable) else evaluationStatements.add(newVariable)
                     substituteMap[parameter] = IrGetValueWithoutLocation(newVariable.symbol)
                     return@forEach
@@ -841,12 +899,12 @@ class FunctionInlining(
             // This is needed because these two groups of variables need slightly different processing on (JVM) backend.
             val blockForNewStatements = IrCompositeImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType,
-                INLINED_FUNCTION_ARGUMENTS, statements = evaluationStatements
+                IrStatementOrigin.INLINED_FUNCTION_ARGUMENTS, statements = evaluationStatements
             )
 
             val blockForNewStatementsFromDefault = IrCompositeImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType,
-                INLINED_FUNCTION_DEFAULT_ARGUMENTS, statements = evaluationStatementsFromDefault
+                IrStatementOrigin.INLINED_FUNCTION_DEFAULT_ARGUMENTS, statements = evaluationStatementsFromDefault
             )
 
             return listOfNotNull(
@@ -862,28 +920,23 @@ class FunctionInlining(
             parameter: IrValueParameter,
             variableInitializer: IrExpression,
             isDefaultArg: Boolean,
-            callee: IrFunction
+            callee: IrFunction,
+            irReturnableBlockSymbol: IrReturnableBlockSymbol,
         ): IrVariable {
-            val functionSymbol = (currentScope.irElement as IrSymbolOwner).symbol as? IrFunctionSymbol
             val variable = currentScope.scope.createTemporaryVariable(
                 irExpression = IrBlockImpl(
                     if (isDefaultArg) variableInitializer.startOffset else UNDEFINED_OFFSET,
                     if (isDefaultArg) variableInitializer.endOffset else UNDEFINED_OFFSET,
                     if (inlineArgumentsWithTheirOriginalTypeAndOffset) parameter.getOriginalType() else variableInitializer.type,
-                    if (functionSymbol != null) INLINER_EXPRESSION_LOCATION_HINT else null
+                    IrStatementOrigin.INLINER_EXPRESSION_LOCATION_HINT
                 ).apply {
-                    if (functionSymbol != null) {
                         // TODO: Add a parameter and do only for K/N.
-                        statements.add(
-                            IrFunctionReferenceImpl(
-                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                context.irBuiltIns.anyType,
-                                functionSymbol,
-                                0, 0,
-                                origin = INLINER_EXPRESSION_LOCATION_HINT
-                            )
+                    statements.add(
+                        IrReturnImpl(
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingType, irReturnableBlockSymbol,
+                            IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType)
                         )
-                    }
+                    )
                     statements.add(variableInitializer)
                 },
                 nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers(),
@@ -923,9 +976,3 @@ class FunctionInlining(
             IrGetValueImpl(startOffset, endOffset, type, symbol, origin)
     }
 }
-
-object INLINED_FUNCTION_REFERENCE : IrStatementOriginImpl("INLINED_FUNCTION_REFERENCE")
-object INLINED_FUNCTION_ARGUMENTS : IrStatementOriginImpl("INLINED_FUNCTION_ARGUMENTS")
-object INLINED_FUNCTION_DEFAULT_ARGUMENTS : IrStatementOriginImpl("INLINED_FUNCTION_DEFAULT_ARGUMENTS")
-
-object INLINER_EXPRESSION_LOCATION_HINT : IrStatementOriginImpl("INLINER_EXPRESSION_LOCATION_HINT")

@@ -48,7 +48,7 @@ object KonanStubGeneratorExtensions : StubGeneratorExtensions() {
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun PsiToIrContext.psiToIr(
         input: PsiToIrInput,
-        useLinkerWhenProducingLibrary: Boolean
+        useLinkerWhenProducingLibrary: Boolean // TODO: always true.
 ): PsiToIrOutput {
     val symbolTable = symbolTable!!
     val (moduleDescriptor, environment, isProducingLibrary) = input
@@ -175,7 +175,9 @@ internal fun PsiToIrContext.psiToIr(
                     val kotlinLibrary = (dependency.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
                     val isFullyCachedLibrary = kotlinLibrary != null &&
                             config.cachedLibraries.isLibraryCached(kotlinLibrary) && kotlinLibrary != config.libraryToCache?.klib
-                    if (isProducingLibrary || isFullyCachedLibrary)
+                    if (isProducingLibrary && kotlinLibrary != null)
+                        linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary)
+                    else if (isFullyCachedLibrary)
                         linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
                     else
                         linker.deserializeIrModuleHeader(dependency, kotlinLibrary, dependency.name.asString())
@@ -227,7 +229,7 @@ internal fun PsiToIrContext.psiToIr(
 
     mainModule.acceptVoid(ManglerChecker(KonanManglerIr, Ir2DescriptorManglerAdapter(KonanManglerDesc)))
 
-    val modules = if (isProducingLibrary) emptyMap() else (irDeserializer as KonanIrLinker).modules
+    val modules = (irDeserializer as KonanIrLinker).modules
 
     if (config.configuration.getBoolean(KonanConfigKeys.FAKE_OVERRIDE_VALIDATOR)) {
         val fakeOverrideChecker = FakeOverrideChecker(KonanManglerIr, KonanManglerDesc)
@@ -254,12 +256,12 @@ internal fun PsiToIrContext.psiToIr(
     }
 
     return if (isProducingLibrary) {
-        PsiToIrOutput.ForKlib(mainModule, symbols)
+        PsiToIrOutput(modules, mainModule, symbols, irDeserializer)
     } else if (libraryToCache == null) {
-        PsiToIrOutput.ForBackend(modules, mainModule, symbols, irDeserializer as KonanIrLinker)
+        PsiToIrOutput(modules, mainModule, symbols, irDeserializer)
     } else {
         val libraryName = libraryToCache.klib.libraryName
         val libraryModule = modules[libraryName] ?: error("No module for the library being cached: $libraryName")
-        PsiToIrOutput.ForBackend(modules.filterKeys { it != libraryName }, libraryModule, symbols, irDeserializer as KonanIrLinker)
+        PsiToIrOutput(modules.filterKeys { it != libraryName }, libraryModule, symbols, irDeserializer)
     }
 }

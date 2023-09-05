@@ -59,7 +59,7 @@ internal class NativeInlineFunctionResolver(override val context: Context, val g
 
         if (shouldLower) {
             val functionIsCached = moduleDeserializer != null
-            lower(possiblyLoweredFunction, irFile, functionIsCached)
+            //lower(possiblyLoweredFunction, irFile, functionIsCached)
             if (!functionIsCached) {
                 generationState.inlineFunctionOrigins[function] =
                         InlineFunctionOriginInfo(context.inlineFunctionsSupport.savePartiallyLoweredInlineFunction(possiblyLoweredFunction),

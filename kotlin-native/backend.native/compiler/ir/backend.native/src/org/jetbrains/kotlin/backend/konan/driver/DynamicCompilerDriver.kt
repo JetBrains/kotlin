@@ -68,7 +68,6 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
             it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
         }
-        require(psiToIrOutput is PsiToIrOutput.ForBackend)
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
             it.objCExportedInterface = objCExportedInterface
             it.objCExportCodeSpec = objCCodeSpec
@@ -81,7 +80,6 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         val (psiToIrOutput, cAdapterElements) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
             it.runPhase(BuildCExports, frontendOutput)
         }
-        require(psiToIrOutput is PsiToIrOutput.ForBackend)
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
             it.cAdapterExportedElements = cAdapterElements
         }
@@ -119,11 +117,21 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             environment: KotlinCoreEnvironment
     ): SerializerOutput? {
         val frontendOutput = engine.runFrontend(config, environment) ?: return null
-        val psiToIrOutput = if (config.metadataKlib) {
-            null
-        } else {
-            engine.runPsiToIr(frontendOutput, isProducingLibrary = true) as PsiToIrOutput.ForKlib
-        }
+        if (config.metadataKlib)
+            return engine.runSerializer(frontendOutput.moduleDescriptor, null)
+        val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = true)
+        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
+        val llvmModuleSpecification = DefaultLlvmModuleSpecification(config.cachedLibraries)
+        val generationState = NativeGenerationState(
+                config,
+                backendContext,
+                null,
+                DependenciesTrackerImpl(llvmModuleSpecification, config, backendContext),
+                llvmModuleSpecification,
+                OutputFiles("zzz", config.target, config.produce),
+                "zzz",
+        )
+        engine.newEngine(generationState) { subEngine -> subEngine.runInlinerLowerings(psiToIrOutput.irModule) }
         return engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
     }
 
@@ -133,7 +141,6 @@ internal class DynamicCompilerDriver : CompilerDriver() {
     private fun produceBinary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
         val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
-        require(psiToIrOutput is PsiToIrOutput.ForBackend)
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
         engine.runBackend(backendContext, psiToIrOutput.irModule)
     }
@@ -170,7 +177,6 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
         engine.runPhase(CreateTestBundlePhase, frontendOutput)
         val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
-        require(psiToIrOutput is PsiToIrOutput.ForBackend)
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
         engine.runBackend(backendContext, psiToIrOutput.irModule)
     }
@@ -178,7 +184,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
     private fun createBackendContext(
             config: KonanConfig,
             frontendOutput: FrontendPhaseOutput.Full,
-            psiToIrOutput: PsiToIrOutput.ForBackend,
+            psiToIrOutput: PsiToIrOutput,
             additionalDataSetter: (Context) -> Unit = {}
     ) = Context(
             config,

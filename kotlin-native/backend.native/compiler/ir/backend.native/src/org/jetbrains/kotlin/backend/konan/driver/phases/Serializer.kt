@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 
 internal data class SerializerInput(
         val moduleDescriptor: ModuleDescriptor,
-        val psiToIrOutput: PsiToIrOutput.ForKlib?,
+        val psiToIrOutput: PsiToIrOutput?,
 )
 
 data class SerializerOutput(
@@ -64,7 +64,7 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
 
 internal fun <T : PhaseContext> PhaseEngine<T>.runSerializer(
         moduleDescriptor: ModuleDescriptor,
-        psiToIrResult: PsiToIrOutput.ForKlib?,
+        psiToIrResult: PsiToIrOutput?,
 ): SerializerOutput {
     val input = SerializerInput(moduleDescriptor, psiToIrResult)
     return this.runPhase(SerializerPhase, input)
