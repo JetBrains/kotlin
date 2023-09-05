@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
@@ -99,7 +99,7 @@ internal object FirRedeclarationPresenter {
         appendRepresentation(it.symbol.classId)
     }
 
-    fun represent(it: FirConstructor, owner: FirRegularClass) = buildString {
+    fun represent(it: FirConstructor, owner: FirClassLikeSymbol<*>) = buildString {
         repeat(it.contextReceivers.size) {
             append(',')
         }
@@ -110,7 +110,7 @@ internal object FirRedeclarationPresenter {
         append('>')
         append('[')
         append(']')
-        appendRepresentation(owner.symbol.classId)
+        appendRepresentation(owner.classId)
         append('(')
         it.valueParameters.forEach {
             appendRepresentation(it)
