@@ -381,18 +381,27 @@ fun IrConstructorCall.getAnnotationStringValue(name: String): String {
     return (getValueArgument(parameter.index) as IrConst<*>).value as String
 }
 
-inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? {
+inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? =
+    getAnnotationValueOrNullImpl(name) as T?
+
+@PublishedApi
+internal fun IrConstructorCall.getAnnotationValueOrNullImpl(name: String): Any? {
     val parameter = symbol.owner.valueParameters.atMostOne { it.name.asString() == name }
-    return parameter?.let { getValueArgument(it.index)?.let { (it as IrConst<*>).value as T } }
+    val argument = parameter?.let { getValueArgument(it.index) }
+    return (argument as IrConst<*>?)?.value
 }
 
-inline fun <reified T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? {
+inline fun <reified T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? =
+    getAnnotationArgumentValueImpl(fqName, argumentName) as T?
+
+@PublishedApi
+internal fun IrDeclaration.getAnnotationArgumentValueImpl(fqName: FqName, argumentName: String): Any? {
     val annotation = this.annotations.findAnnotation(fqName) ?: return null
     for (index in 0 until annotation.valueArgumentsCount) {
         val parameter = annotation.symbol.owner.valueParameters[index]
-        if (parameter.name == Name.identifier(argumentName)) {
-            val actual = annotation.getValueArgument(index) as? IrConst<*> ?: return null
-            return actual.value as T
+        if (parameter.name.asString() == argumentName) {
+            val actual = annotation.getValueArgument(index) as? IrConst<*>
+            return actual?.value
         }
     }
     return null
