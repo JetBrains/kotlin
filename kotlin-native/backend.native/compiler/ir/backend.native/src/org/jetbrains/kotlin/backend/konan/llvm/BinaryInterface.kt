@@ -30,6 +30,11 @@ import org.jetbrains.kotlin.name.Name
 // TODO: do not serialize descriptors of non-exported declarations.
 
 object KonanBinaryInterface {
+
+    internal const val MANGLE_FUN_PREFIX = "kfun"
+    internal const val MANGLE_CLASS_PREFIX = "kclass"
+    internal const val MANGLE_FIELD_PREFIX = "kfield"
+
     private val mangler = object : AbstractKonanIrMangler(withReturnType = true, allowOutOfScopeTypeParameters = true) {}
 
     private val exportChecker = mangler.getExportChecker(compatibleMode = true)
@@ -43,7 +48,7 @@ object KonanBinaryInterface {
             return funSymbolNameImpl(null)
         }
 
-    val IrField.symbolName: String get() = withPrefix(MangleConstant.FIELD_PREFIX, fieldSymbolNameImpl())
+    val IrField.symbolName: String get() = withPrefix(MANGLE_FIELD_PREFIX, fieldSymbolNameImpl())
 
     val IrClass.typeInfoSymbolName: String get() = typeInfoSymbolNameImpl(null)
 
@@ -70,7 +75,7 @@ object KonanBinaryInterface {
         }
 
         val mangle = mangler.run { mangleString(compatibleMode = true) }
-        return withPrefix(MangleConstant.FUN_PREFIX, containerName?.plus(".$mangle") ?: mangle)
+        return withPrefix(MANGLE_FUN_PREFIX, containerName?.plus(".$mangle") ?: mangle)
     }
 
     private fun IrField.fieldSymbolNameImpl(): String {
@@ -82,7 +87,7 @@ object KonanBinaryInterface {
 
     private fun IrClass.typeInfoSymbolNameImpl(containerName: String?): String {
         val fqName = fqNameForIrSerialization.toString()
-        return withPrefix(MangleConstant.CLASS_PREFIX, containerName?.plus(".$fqName") ?: fqName)
+        return withPrefix(MANGLE_CLASS_PREFIX, containerName?.plus(".$fqName") ?: fqName)
     }
 }
 
