@@ -158,6 +158,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("expectOptInAnnotation_oldLanguageVersion.kt")
+    public void testExpectOptInAnnotation_oldLanguageVersion() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectOptInAnnotation_oldLanguageVersion.kt");
+    }
+
+    @Test
     @TestMetadata("expectTailrec.kt")
     public void testExpectTailrec() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectTailrec.kt");

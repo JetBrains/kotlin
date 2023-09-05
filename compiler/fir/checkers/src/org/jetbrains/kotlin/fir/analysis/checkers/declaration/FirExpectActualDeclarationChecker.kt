@@ -298,7 +298,8 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
-        if (declaration is FirClass &&
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions) &&
+            declaration is FirClass &&
             declaration.classKind == ClassKind.ANNOTATION_CLASS &&
             !expectDeclarationSymbol.hasAnnotation(StandardClassIds.Annotations.OptionalExpectation, context.session) &&
             declaration.hasAnnotation(OptInNames.REQUIRES_OPT_IN_CLASS_ID, context.session)
