@@ -267,6 +267,16 @@ class TypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(TYPE_DOMAIN_
  * ```
  * domain TypeOf[T]  {
  *   function typeOf(x: T): Type
+ *
+ *   axiom {
+ *     forall x: Int :: { typeOf(x) }
+ *       typeOf(x) == IntType()
+ *   }
+ *
+ *   axiom {
+ *     forall x: Bool :: { typeOf(x) }
+ *       typeOf(x) == BooleanType()
+ *   }
  * }
  * ```
  */
@@ -284,5 +294,33 @@ object TypeOfDomain : BuiltinDomain("TypeOf") {
 
     override val functions: List<DomainFunc> = listOf(typeOfFunc)
 
-    override val axioms: List<DomainAxiom> = emptyList()
+    private val intVar = Var("i", Type.Int)
+    private val typeOfInt = createAnonymousDomainAxiom(
+        Exp.Forall1(
+            intVar.decl(),
+            Exp.Trigger1(
+                typeOf(intVar.use())
+            ),
+            Exp.EqCmp(
+                typeOf(intVar.use()),
+                TypeDomain.intType()
+            )
+        )
+    )
+
+    private val boolVar = Var("b", Bool)
+    private val typeOfBoolean = createAnonymousDomainAxiom(
+        Exp.Forall1(
+            boolVar.decl(),
+            Exp.Trigger1(
+                typeOf(boolVar.use())
+            ),
+            Exp.EqCmp(
+                typeOf(boolVar.use()),
+                TypeDomain.booleanType()
+            )
+        )
+    )
+
+    override val axioms: List<DomainAxiom> = listOf(typeOfInt, typeOfBoolean)
 }

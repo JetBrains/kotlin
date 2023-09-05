@@ -1,5 +1,6 @@
 /calls_in_place.kt:(162,169): info: Generated Viper text for unknown:
 method pkg_$global$unknown(local$f: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -13,6 +14,7 @@ method pkg_$global$unknown(local$f: Ref) returns (ret: Int)
 
 /calls_in_place.kt:(309,321): info: Generated Viper text for at_most_once:
 method pkg_$global$at_most_once(local$f: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -27,6 +29,7 @@ method pkg_$global$at_most_once(local$f: Ref) returns (ret: Int)
 
 /calls_in_place.kt:(466,488): info: Generated Viper text for incorrect_at_most_once:
 method pkg_$global$at_most_once(local$f: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -36,6 +39,7 @@ method pkg_$global$at_most_once(local$f: Ref) returns (ret: Int)
 
 
 method pkg_$global$incorrect_at_most_once(local$f: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -59,6 +63,7 @@ method pkg_$global$incorrect_at_most_once(local$f: Ref) returns (ret: Int)
 
 /calls_in_place.kt:(647,659): info: Generated Viper text for exactly_once:
 method pkg_$global$exactly_once(local$f: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -73,6 +78,7 @@ method pkg_$global$exactly_once(local$f: Ref) returns (ret: Int)
 
 /calls_in_place.kt:(804,826): info: Generated Viper text for incorrect_exactly_once:
 method pkg_$global$incorrect_exactly_once(local$f: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -96,6 +102,7 @@ method pkg_$global$incorrect_exactly_once(local$f: Ref) returns (ret: Int)
 
 /calls_in_place.kt:(974,987): info: Generated Viper text for at_least_once:
 method pkg_$global$exactly_once(local$f: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -105,6 +112,7 @@ method pkg_$global$exactly_once(local$f: Ref) returns (ret: Int)
 
 
 method pkg_$global$at_least_once(local$f: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -119,6 +127,7 @@ method pkg_$global$at_least_once(local$f: Ref) returns (ret: Int)
 
 /calls_in_place.kt:(1144,1167): info: Generated Viper text for incorrect_at_least_once:
 method pkg_$global$unknown(local$f: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -127,6 +136,7 @@ method pkg_$global$unknown(local$f: Ref) returns (ret: Int)
 
 
 method pkg_$global$incorrect_at_least_once(local$f: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -148,6 +158,7 @@ method pkg_$global$incorrect_at_least_once(local$f: Ref) returns (ret: Int)
 
 /calls_in_place.kt:(1326,1335): info: Generated Viper text for loopWhile:
 method pkg_$global$loopWhile(local$lambda: Ref) returns (ret: dom$Unit)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$lambda): dom$Type), dom$Type$Function())
   requires acc(local$lambda.special$function_object_call_counter, write)
   ensures acc(local$lambda.special$function_object_call_counter, write)
   ensures old(local$lambda.special$function_object_call_counter) <=
@@ -174,6 +185,7 @@ method pkg_$global$loopWhile(local$lambda: Ref) returns (ret: dom$Unit)
 
 /calls_in_place.kt:(1516,1525): info: Generated Viper text for loopUntil:
 method pkg_$global$loopUntil(local$lambda: Ref) returns (ret: dom$Unit)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$lambda): dom$Type), dom$Type$Function())
   requires acc(local$lambda.special$function_object_call_counter, write)
   ensures acc(local$lambda.special$function_object_call_counter, write)
   ensures old(local$lambda.special$function_object_call_counter) <=

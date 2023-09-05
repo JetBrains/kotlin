@@ -19,8 +19,8 @@ object InvokeFunctionObjectMethod : BuiltInMethod(SpecialFieldName("invoke_funct
 
     override val formalArgs: List<Declaration.LocalVarDecl> = listOf(thisArg.toLocalVarDecl())
     override val formalReturns: List<Declaration.LocalVarDecl> = listOf()
-    override val pres: List<Exp> = thisArg.invariants()
-    override val posts: List<Exp> = thisArg.invariants() + listOf(calls)
+    override val pres: List<Exp> = thisArg.accessInvariants()
+    override val posts: List<Exp> = thisArg.accessInvariants() + listOf(calls)
 }
 
 object SpecialMethods {

@@ -2,6 +2,7 @@
 field pkg_$class_Foo$member_x: Int
 
 method pkg_$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg_$class_Foo())
 {
   var anonymous$1: Int
   inhale acc(this.pkg_$class_Foo$member_x, write)
@@ -14,10 +15,12 @@ method pkg_$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
 field pkg_$class_Foo$member_x: Int
 
 method pkg_$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg_$class_Foo())
 
 
 method pkg_$class_Foo$member_call_member_fun(this: Ref)
   returns (ret: dom$Unit)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg_$class_Foo())
 {
   var anonymous$1: Int
   anonymous$1 := pkg_$class_Foo$member_member_fun(this)
@@ -27,10 +30,13 @@ method pkg_$class_Foo$member_call_member_fun(this: Ref)
 field pkg_$class_Foo$member_x: Int
 
 method pkg_$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg_$class_Foo())
 
 
 method pkg_$class_Foo$member_sibling_call(this: Ref, local$other: Ref)
   returns (ret: dom$Unit)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg_$class_Foo())
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$other): dom$Type), dom$Type$pkg_$class_Foo())
 {
   var anonymous$1: Int
   anonymous$1 := pkg_$class_Foo$member_member_fun(local$other)
@@ -40,9 +46,11 @@ method pkg_$class_Foo$member_sibling_call(this: Ref, local$other: Ref)
 field pkg_$class_Foo$member_x: Int
 
 method pkg_$class_Foo$member_Foo(local$x: Int) returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg_$class_Foo())
 
 
 method pkg_$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg_$class_Foo())
 
 
 method pkg_$global$outer_member_fun_call() returns (ret: dom$Unit)

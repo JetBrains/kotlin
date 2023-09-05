@@ -8,9 +8,13 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.formver.embeddings.MethodSignatureEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.formver.viper.ast.Exp
 
 interface MethodConversionContext : ProgramConversionContext {
     val signature: MethodSignatureEmbedding
+
+    val preconditions: List<Exp>
+    val postconditions: List<Exp>
 
     fun newAnonVar(type: TypeEmbedding): VariableEmbedding
 }

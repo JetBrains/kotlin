@@ -1,5 +1,6 @@
 /inlining.kt:(132,138): info: Generated Viper text for invoke:
 method pkg_$global$invoke(local$f: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -17,6 +18,7 @@ method pkg_$global$invoke(local$f: Ref) returns (ret: Int)
 /inlining.kt:(210,225): info: Generated Viper text for invoke_with_int:
 method pkg_$global$invoke_with_int(local$f: Ref, local$n: Int)
   returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -31,6 +33,7 @@ method pkg_$global$invoke_with_int(local$f: Ref, local$n: Int)
 
 /inlining.kt:(397,408): info: Generated Viper text for call_invoke:
 method pkg_$global$call_invoke(local$g: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   requires acc(local$g.special$function_object_call_counter, write)
   ensures acc(local$g.special$function_object_call_counter, write)
   ensures old(local$g.special$function_object_call_counter) <=
@@ -65,6 +68,7 @@ method pkg_$global$call_invoke(local$g: Ref) returns (ret: Int)
 
 /inlining.kt:(641,661): info: Generated Viper text for call_invoke_with_int:
 method pkg_$global$call_invoke_with_int(local$g: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   requires acc(local$g.special$function_object_call_counter, write)
   ensures acc(local$g.special$function_object_call_counter, write)
   ensures old(local$g.special$function_object_call_counter) <=
@@ -99,6 +103,7 @@ method pkg_$global$call_invoke_with_int(local$g: Ref) returns (ret: Int)
 
 /inlining.kt:(921,933): info: Generated Viper text for name_clashes:
 method pkg_$global$name_clashes(local$f: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -131,6 +136,7 @@ method pkg_$global$name_clashes(local$f: Ref) returns (ret: Int)
 
 /inlining.kt:(1178,1199): info: Generated Viper text for different_return_type:
 method pkg_$global$different_return_type(local$f: Ref) returns (ret: Bool)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=

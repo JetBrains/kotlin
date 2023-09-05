@@ -1,0 +1,18 @@
+FILE: is_operator.kt
+    public final fun is_non_nullable(x: R|kotlin/Int?|): R|kotlin/Boolean| {
+        ^is_non_nullable (R|<local>/x| is R|kotlin/Int|)
+    }
+    public final fun not_is_nullable(x: R|kotlin/Int?|): R|kotlin/Boolean| {
+        ^not_is_nullable (R|<local>/x| !is R|kotlin/Nothing|)
+    }
+    public final fun smart_cast(x: R|kotlin/Any?|): R|kotlin/Int| {
+        when () {
+            (R|<local>/x| is R|kotlin/Int|) ->  {
+                ^smart_cast R|<local>/x|
+            }
+            else ->  {
+                ^smart_cast Int(-1)
+            }
+        }
+
+    }

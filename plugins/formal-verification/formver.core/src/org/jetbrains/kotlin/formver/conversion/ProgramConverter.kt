@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -30,7 +29,7 @@ import org.jetbrains.kotlin.formver.viper.ast.Program
  * We need the FirSession to get access to the TypeContext.
  */
 class ProgramConverter(val session: FirSession, override val config: PluginConfiguration) : ProgramConversionContext {
-    private val methods: MutableMap<MangledName, Method> = mutableMapOf()
+    private val methods: MutableMap<MangledName, MethodEmbedding> = mutableMapOf()
     private val classes: MutableMap<ClassName, ClassTypeEmbedding> = mutableMapOf()
     private val fields: MutableList<Field> = mutableListOf()
 
@@ -38,14 +37,14 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         get() = Program(
             domains = listOf(UnitDomain, NullableDomain, CastingDomain, TypeOfDomain, TypeDomain(classes.values.toList()), AnyDomain),
             fields = SpecialFields.all + fields,
-            methods = SpecialMethods.all + methods.values.toList(),
+            methods = SpecialMethods.all + methods.values.map { it.viperMethod }.toList(),
         )
 
     fun registerForVerification(declaration: FirSimpleFunction) {
         processFunction(declaration.symbol, declaration.body)
     }
 
-    override fun embedFunction(symbol: FirFunctionSymbol<*>): MethodSignatureEmbedding {
+    override fun embedFunction(symbol: FirFunctionSymbol<*>): MethodEmbedding {
         return processFunction(symbol, null)
     }
 
@@ -81,31 +80,43 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         else -> unimplementedTypeEmbedding(type)
     }
 
-    private fun <D : FirFunction> embedSignature(symbol: FirFunctionSymbol<D>): MethodSignatureEmbedding {
+    private fun embedSignature(symbol: FirFunctionSymbol<*>): MethodSignatureEmbedding {
         val retType = symbol.resolvedReturnTypeRef.type
         val params = symbol.valueParameterSymbols.map {
             VariableEmbedding(it.embedName(), embedType(it.resolvedReturnType))
         }
         val receiver = symbol.receiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it)) }
-        return MethodSignatureEmbedding(
-            symbol,
-            receiver,
-            params,
-            embedType(retType)
-        )
+        return object : MethodSignatureEmbedding {
+            override val name = symbol.callableId.embedName()
+            override val receiver = receiver
+            override val params = params
+            override val returnType = embedType(retType)
+        }
     }
 
     private val FirFunctionSymbol<*>.receiverType: ConeKotlinType?
         get() = dispatchReceiverType ?: resolvedReceiverTypeRef?.type
 
-    private fun <D : FirFunction> processFunction(symbol: FirFunctionSymbol<D>, body: FirBlock?): MethodSignatureEmbedding {
+    private fun processFunction(symbol: FirFunctionSymbol<*>, body: FirBlock?): MethodEmbedding {
         val signature = embedSignature(symbol)
         // NOTE: we have a problem here if we initially specify a method without a body,
         // and then later decide to add a body anyway.  It's not a problem for now, but
         // worth being aware of.
-        methods.getOrPut(signature.name) {
+        return methods.getOrPut(signature.name) {
             val methodCtx = object : MethodConversionContext, ProgramConversionContext by this {
                 override val signature: MethodSignatureEmbedding = signature
+
+                override val preconditions =
+                    signature.formalArgs.flatMap { it.invariants() } + signature.formalArgs.flatMap { it.accessInvariants() }
+
+                private val contractPostconditions = symbol.resolvedContractDescription?.effects?.map {
+                    it.effect.accept(ContractDescriptionConversionVisitor, this)
+                } ?: emptyList()
+
+                override val postconditions = signature.formalArgs.flatMap { it.accessInvariants() } +
+                        signature.params.flatMap { it.dynamicInvariants() } +
+                        signature.returnVar.invariants() +
+                        contractPostconditions
 
                 private var nextAnonVarNumber = 0
                 override fun newAnonVar(type: TypeEmbedding): VariableEmbedding =
@@ -118,9 +129,8 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                 ctx.block
             }
 
-            signature.toMethod(bodySeqn)
+            MethodEmbedding(signature, methodCtx.preconditions, methodCtx.postconditions, bodySeqn)
         }
-        return signature
     }
 
     private fun processClass(symbol: FirRegularClassSymbol) {

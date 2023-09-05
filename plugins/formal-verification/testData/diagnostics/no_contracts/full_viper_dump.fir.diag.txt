@@ -2,6 +2,12 @@
 domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
+
+  axiom {
+    (forall u: dom$Unit ::
+      { (dom$TypeOf$typeOf(u): dom$Type) }
+      (dom$TypeOf$typeOf(u): dom$Type) == dom$Type$Unit())
+  }
 }
 
 domain dom$Nullable[T]  {
@@ -56,6 +62,18 @@ domain dom$Casting[A, B]  {
 domain dom$TypeOf[T]  {
 
   function dom$TypeOf$typeOf(x: T): dom$Type
+
+  axiom {
+    (forall i: Int ::
+      { (dom$TypeOf$typeOf(i): dom$Type) }
+      (dom$TypeOf$typeOf(i): dom$Type) == dom$Type$Int())
+  }
+
+  axiom {
+    (forall b: Bool ::
+      { (dom$TypeOf$typeOf(b): dom$Type) }
+      (dom$TypeOf$typeOf(b): dom$Type) == dom$Type$Boolean())
+  }
 }
 
 domain dom$Type  {

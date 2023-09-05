@@ -1,0 +1,26 @@
+/is_operator.kt:(4,19): info: Generated Viper text for is_non_nullable:
+method pkg_$global$is_non_nullable(local$x: dom$Nullable[Int])
+  returns (ret: Bool)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+{
+  ret := dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int())
+}
+
+/is_operator.kt:(67,82): info: Generated Viper text for not_is_nullable:
+method pkg_$global$not_is_nullable(local$x: dom$Nullable[Int])
+  returns (ret: Bool)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+{
+  ret := !dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Nothing())
+}
+
+/is_operator.kt:(135,145): info: Generated Viper text for smart_cast:
+method pkg_$global$smart_cast(local$x: dom$Nullable[dom$Any])
+  returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+{
+  if (dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int())) {
+    ret := (dom$Casting$cast(local$x, dom$Type$Int()): Int)
+  } else {
+    ret := -1}
+}

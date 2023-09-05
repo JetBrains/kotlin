@@ -37,6 +37,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("is_type_contract.kt")
+    public void testIs_type_contract() throws Exception {
+        runTest("plugins/formal-verification/testData/diagnostics/is_type_contract.kt");
+    }
+
+    @Test
     @TestMetadata("returns_booleans.kt")
     public void testReturns_booleans() throws Exception {
         runTest("plugins/formal-verification/testData/diagnostics/returns_booleans.kt");
@@ -121,6 +127,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         @TestMetadata("if.kt")
         public void testIf() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/if.kt");
+        }
+
+        @Test
+        @TestMetadata("is_operator.kt")
+        public void testIs_operator() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/is_operator.kt");
         }
 
         @Test

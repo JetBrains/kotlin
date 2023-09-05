@@ -1,6 +1,8 @@
 /returns_null.kt:(121,140): info: Generated Viper text for simple_returns_null:
 method pkg_$global$simple_returns_null(local$x: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ensures ret == (dom$Nullable$null(): dom$Nullable[Int])
   ensures ret != (dom$Nullable$null(): dom$Nullable[Int]) ==> false
 {
@@ -10,6 +12,8 @@ method pkg_$global$simple_returns_null(local$x: dom$Nullable[Int])
 /returns_null.kt:(300,325): info: Generated Viper text for returns_null_unverifiable:
 method pkg_$global$returns_null_unverifiable(local$x: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ensures true ==> false
 {
   ret := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
@@ -23,6 +27,8 @@ method pkg_$global$returns_null_unverifiable(local$x: dom$Nullable[Int])
 /returns_null.kt:(456,476): info: Generated Viper text for returns_null_implies:
 method pkg_$global$returns_null_implies(local$x: dom$Nullable[Bool])
   returns (ret: dom$Nullable[Bool])
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Boolean()))
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Boolean()))
   ensures ret == (dom$Nullable$null(): dom$Nullable[Bool]) ==>
     local$x == (dom$Nullable$null(): dom$Nullable[Bool])
   ensures ret != (dom$Nullable$null(): dom$Nullable[Bool]) ==>
@@ -35,6 +41,10 @@ method pkg_$global$returns_null_implies(local$x: dom$Nullable[Bool])
 method pkg_$global$returns_null_with_if(local$x: dom$Nullable[Int], local$y: dom$Nullable[Int],
   local$z: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$y): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$z): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ensures ret == (dom$Nullable$null(): dom$Nullable[Int]) ==>
     local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
     local$y == (dom$Nullable$null(): dom$Nullable[Int]) ||

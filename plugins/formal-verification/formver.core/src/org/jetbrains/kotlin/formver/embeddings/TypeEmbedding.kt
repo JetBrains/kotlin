@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.formver.conversion.SpecialFields
 import org.jetbrains.kotlin.formver.domains.AnyDomain
 import org.jetbrains.kotlin.formver.domains.NullableDomain
 import org.jetbrains.kotlin.formver.domains.TypeDomain
+import org.jetbrains.kotlin.formver.domains.TypeOfDomain
 import org.jetbrains.kotlin.formver.domains.UnitDomain
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
@@ -20,6 +21,10 @@ interface TypeEmbedding {
 
     // This represents the Viper type that an expression of this type has (e.g. an object is embedded as a Viper Ref type)
     val viperType: Type
+
+    fun subTypeInvariant(v: Exp) = TypeDomain.isSubtype(TypeOfDomain.typeOf(v), kotlinType)
+
+    fun accessInvariants(v: Exp): List<Exp> = emptyList()
 
     fun invariants(v: Exp): List<Exp> = emptyList()
 
@@ -47,6 +52,7 @@ object NothingTypeEmbedding : TypeEmbedding {
 object AnyTypeEmbedding : TypeEmbedding {
     override val kotlinType = TypeDomain.anyType()
     override val viperType = AnyDomain.toType()
+    override fun invariants(v: Exp) = listOf(subTypeInvariant(v))
 }
 
 object IntTypeEmbedding : TypeEmbedding {
@@ -64,14 +70,17 @@ data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding
     override val viperType: Type = NullableDomain.nullableType(elementType.viperType)
 
     val nullVal: Exp = NullableDomain.nullVal(elementType.viperType)
+
+    override fun invariants(v: Exp) = listOf(subTypeInvariant(v))
 }
 
 object FunctionTypeEmbedding : TypeEmbedding {
     override val kotlinType = TypeDomain.functionType()
     override val viperType: Type = Type.Ref
 
-    override fun invariants(v: Exp): List<Exp> =
-        listOf(v.fieldAccessPredicate(SpecialFields.FunctionObjectCallCounterField, PermExp.FullPerm()))
+    override fun invariants(v: Exp): List<Exp> = listOf(subTypeInvariant(v))
+
+    override fun accessInvariants(v: Exp) = listOf(v.fieldAccessPredicate(SpecialFields.FunctionObjectCallCounterField, PermExp.FullPerm()))
 
     override fun dynamicInvariants(v: Exp): List<Exp> =
         listOf(
@@ -85,4 +94,6 @@ object FunctionTypeEmbedding : TypeEmbedding {
 data class ClassTypeEmbedding(val name: ClassName) : TypeEmbedding {
     override val kotlinType = TypeDomain.classType(this.name)
     override val viperType = Type.Ref
+
+    override fun invariants(v: Exp) = listOf(subTypeInvariant(v))
 }

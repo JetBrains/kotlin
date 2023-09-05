@@ -5,6 +5,7 @@ field pkg_$class_Foo$member_b: Int
 
 method pkg_$class_Foo$member_Foo(local$a: Int, local$b: Int)
   returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg_$class_Foo())
 
 
 method pkg_$global$createFoo() returns (ret: dom$Unit)
@@ -32,6 +33,8 @@ field pkg_$class_Bar$member_a: dom$Nullable[Ref]
 
 method pkg_$class_Bar$member_Bar(local$a: dom$Nullable[Ref])
   returns (ret: Ref)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$a): dom$Type), dom$Type$special$Nullable(dom$Type$pkg_$class_Bar()))
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg_$class_Bar())
 
 
 method pkg_$global$createBar() returns (ret: dom$Unit)

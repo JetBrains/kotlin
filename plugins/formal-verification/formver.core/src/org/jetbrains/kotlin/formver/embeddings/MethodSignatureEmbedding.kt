@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.formver.conversion.ContractDescriptionConversionVisitor
 import org.jetbrains.kotlin.formver.conversion.ReturnVariableName
+import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.*
 
 /**
@@ -15,40 +14,16 @@ import org.jetbrains.kotlin.formver.viper.ast.*
  * In case the method has a receiver it becomes the first argument of the function.
  * Example: Foo.bar(x: Int) --> Foo$bar(this: Foo, x: Int)
  */
-class MethodSignatureEmbedding(
-    symbol: FirFunctionSymbol<*>,
-    val receiver: VariableEmbedding?,
-    val params: List<VariableEmbedding>,
-    val returnType: TypeEmbedding,
-) {
-    val name = symbol.callableId.embedName()
+interface MethodSignatureEmbedding {
+    val name: MangledName
+    val receiver: VariableEmbedding?
+    val params: List<VariableEmbedding>
+    val returnType: TypeEmbedding
 
-    val returnVar = VariableEmbedding(ReturnVariableName, returnType)
-
-    val formalArgs: List<VariableEmbedding> = listOfNotNull(receiver) + params
-
-    val preconditions = formalArgs.flatMap { it.invariants() }
-
-    private val contractPostconditions = symbol.resolvedContractDescription?.effects?.map {
-        it.effect.accept(ContractDescriptionConversionVisitor, this)
-    } ?: emptyList()
-
-    val postconditions =
-        params.flatMap { it.invariants() } + params.flatMap { it.dynamicInvariants() } + returnVar.invariants() + contractPostconditions
-
-    fun toMethod(
-        body: Stmt.Seqn?,
-        pos: Position = Position.NoPosition,
-        info: Info = Info.NoInfo,
-        trafos: Trafos = Trafos.NoTrafos,
-    ) = UserMethod(
-        name,
-        formalArgs.map { it.toLocalVarDecl() },
-        returnVar.toLocalVarDecl(),
-        preconditions,
-        postconditions,
-        body, pos, info, trafos,
-    )
+    val returnVar
+        get() = VariableEmbedding(ReturnVariableName, returnType)
+    val formalArgs: List<VariableEmbedding>
+        get() = listOfNotNull(receiver) + params
 
     fun toMethodCall(
         parameters: List<Exp>,

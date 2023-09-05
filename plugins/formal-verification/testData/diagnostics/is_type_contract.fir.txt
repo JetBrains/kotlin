@@ -1,0 +1,59 @@
+FILE: is_type_contract.kt
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun isString(x: R|kotlin/Any?|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x is kotlin/String
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| is R|kotlin/String|))
+            }
+            )
+        }
+
+        ^isString (R|<local>/x| is R|kotlin/String|)
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun subtypeTransitive(x: R|kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> x is kotlin/Any?
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| is R|kotlin/Any?|))
+            }
+            )
+        }
+
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun unverifiableTypeCheck(x: R|kotlin/Int?|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> x is kotlin/Unit
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| is R|kotlin/Unit|))
+            }
+            )
+        }
+
+        ^unverifiableTypeCheck (R|<local>/x| is R|kotlin/String|)
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun nullableNotNonNullable(x: R|kotlin/Int?|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> x is kotlin/Int
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| is R|kotlin/Int|))
+            }
+            )
+        }
+
+    }

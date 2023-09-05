@@ -36,5 +36,6 @@ class VariableEmbedding(val name: MangledName, val type: TypeEmbedding) {
     ): Exp.FieldAccess = Exp.FieldAccess(toLocalVar(), field, pos, info, trafos)
 
     fun invariants(): List<Exp> = type.invariants(toLocalVar())
+    fun accessInvariants(): List<Exp> = type.accessInvariants(toLocalVar())
     fun dynamicInvariants(): List<Exp> = type.dynamicInvariants(toLocalVar())
 }

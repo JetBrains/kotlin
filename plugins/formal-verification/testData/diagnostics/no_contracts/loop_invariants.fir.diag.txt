@@ -10,6 +10,7 @@ method pkg_$global$returns_boolean() returns (ret: Bool)
 
 method pkg_$global$dynamic_lambda_invariant(local$f: Ref)
   returns (ret: dom$Unit)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -38,6 +39,7 @@ method pkg_$global$returns_boolean() returns (ret: Bool)
 
 method pkg_$global$function_assignment(local$f: Ref)
   returns (ret: dom$Unit)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -69,6 +71,8 @@ method pkg_$global$returns_boolean() returns (ret: Bool)
 method pkg_$global$conditional_function_assignment(local$b: Bool, local$f: Ref,
   local$h: Ref)
   returns (ret: dom$Unit)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$h): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   requires acc(local$h.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)

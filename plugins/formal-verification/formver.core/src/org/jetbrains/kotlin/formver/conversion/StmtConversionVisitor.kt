@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
+import org.jetbrains.kotlin.formver.domains.TypeDomain
+import org.jetbrains.kotlin.formver.domains.TypeOfDomain
 import org.jetbrains.kotlin.formver.domains.UnitDomain
 import org.jetbrains.kotlin.formver.domains.convertType
 import org.jetbrains.kotlin.formver.embeddings.*
@@ -277,7 +279,7 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
         bodyCtx.convert(whileLoop.block)
         bodyCtx.convertAndCapture(whileLoop.condition)
 
-        data.addStatement(Stmt.While(condCtx.resultExp, invariants = data.signature.postconditions, bodyCtx.block))
+        data.addStatement(Stmt.While(condCtx.resultExp, invariants = data.postconditions, bodyCtx.block))
         return UnitDomain.element
     }
 
@@ -335,6 +337,16 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
     ): Exp =
         data.signature.receiver?.toLocalVar()
             ?: throw IllegalArgumentException("Can't resolve the 'this' receiver since the function does not have one.")
+
+    override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: StmtConversionContext<ResultTrackingContext>): Exp {
+        val argument = data.convert(typeOperatorCall.arguments[0])
+        val conversionType = data.embedType(typeOperatorCall.conversionTypeRef.coneType)
+        return when (typeOperatorCall.operation) {
+            FirOperation.IS -> TypeDomain.isSubtype(TypeOfDomain.typeOf(argument), conversionType.kotlinType)
+            FirOperation.NOT_IS -> Exp.Not(TypeDomain.isSubtype(TypeOfDomain.typeOf(argument), conversionType.kotlinType))
+            else -> handleUnimplementedElement("Can't embed type operator ${typeOperatorCall.operation}.", data)
+        }
+    }
 
     private val FirResolvable.calleeSymbol: FirBasedSymbol<*>
         get() = calleeReference.toResolvedBaseSymbol()!!
