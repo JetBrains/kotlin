@@ -326,7 +326,13 @@ class BodyResolveContext(
         return withTemporaryRegularContext(specialTowerDataContexts.getAnonymousFunctionContext(symbol)) {
             val inferenceSession = specialTowerDataContexts.getAnonymousFunctionInferenceSession(symbol)
             if (inferenceSession != null) {
-                withInferenceSession(inferenceSession, f)
+                if (inferenceSession is FirBuilderInferenceSession2) {
+                    withOuterConstraintStorage(inferenceSession.outerSystem.currentStorage()) {
+                        withInferenceSession(inferenceSession, f)
+                    }
+                } else {
+                    withInferenceSession(inferenceSession, f)
+                }
             } else {
                 f()
             }
@@ -372,6 +378,8 @@ class BodyResolveContext(
             if (this@BodyResolveContext.inferenceSession is FirBuilderInferenceSession2) {
                 inferenceSession = this@BodyResolveContext.inferenceSession
             }
+
+            outerConstraintStorage = this@BodyResolveContext.outerConstraintStorage
         }
 
     // withElement PUBLIC API
