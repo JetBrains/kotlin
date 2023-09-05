@@ -15832,6 +15832,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("doubleDelegationEqualsHashcode.kt")
+        public void testDoubleDelegationEqualsHashcode() throws Exception {
+            runTest("compiler/testData/codegen/box/delegation/doubleDelegationEqualsHashcode.kt");
+        }
+
+        @Test
         @TestMetadata("genericProperty.kt")
         public void testGenericProperty() throws Exception {
             runTest("compiler/testData/codegen/box/delegation/genericProperty.kt");
