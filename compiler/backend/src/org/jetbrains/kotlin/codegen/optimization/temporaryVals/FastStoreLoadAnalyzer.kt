@@ -34,6 +34,7 @@
 package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
 import org.jetbrains.kotlin.codegen.optimization.common.FastAnalyzer
+import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -69,11 +70,7 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
     method: MethodNode,
     interpreter: StoreLoadInterpreter<V>
 ) : FastAnalyzer<V, StoreLoadInterpreter<V>, StoreLoadFrame<V>>(owner, method, interpreter) {
-    private val isMergeNode = BooleanArray(nInsns)
-
-    override fun beforeAnalyze() {
-        initMergeNodes()
-    }
+    private val isMergeNode = FastMethodAnalyzer.findMergeNodes(method)
 
     override fun analyzeInstruction(
         insnNode: AbstractInsnNode,
@@ -123,34 +120,6 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
             mergeControlFlowEdge(insn + 1, current)
         }
         mergeControlFlowEdge(insnNode.label.indexOf(), current)
-    }
-
-    private fun initMergeNodes() {
-        for (insn in method.instructions) {
-            when (insn.type) {
-                AbstractInsnNode.JUMP_INSN -> {
-                    val jumpInsn = insn as JumpInsnNode
-                    isMergeNode[jumpInsn.label.indexOf()] = true
-                }
-                AbstractInsnNode.LOOKUPSWITCH_INSN -> {
-                    val switchInsn = insn as LookupSwitchInsnNode
-                    isMergeNode[switchInsn.dflt.indexOf()] = true
-                    for (label in switchInsn.labels) {
-                        isMergeNode[label.indexOf()] = true
-                    }
-                }
-                AbstractInsnNode.TABLESWITCH_INSN -> {
-                    val switchInsn = insn as TableSwitchInsnNode
-                    isMergeNode[switchInsn.dflt.indexOf()] = true
-                    for (label in switchInsn.labels) {
-                        isMergeNode[label.indexOf()] = true
-                    }
-                }
-            }
-        }
-        for (tcb in method.tryCatchBlocks) {
-            isMergeNode[tcb.handler.indexOf()] = true
-        }
     }
 
     override fun mergeControlFlowEdge(dest: Int, frame: StoreLoadFrame<V>, canReuse: Boolean) {
