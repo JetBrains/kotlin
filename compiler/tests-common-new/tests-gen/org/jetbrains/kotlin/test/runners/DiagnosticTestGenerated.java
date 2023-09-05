@@ -23332,6 +23332,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("memberScopeMismatch_oldLanguageVersion.kt")
+                public void testMemberScopeMismatch_oldLanguageVersion() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/memberScopeMismatch_oldLanguageVersion.kt");
+                }
+
+                @Test
                 @TestMetadata("nestedExpectOpenClass.kt")
                 public void testNestedExpectOpenClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/nestedExpectOpenClass.kt");

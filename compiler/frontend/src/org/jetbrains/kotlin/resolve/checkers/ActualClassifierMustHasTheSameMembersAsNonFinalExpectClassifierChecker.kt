@@ -25,6 +25,7 @@ import kotlin.contracts.contract
 
 object ActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
         val (actual, expect) = matchActualWithNonFinalExpect(declaration, descriptor, context) ?: return
 
         // The explicit casts won't be necessary when we start compiling kotlin with K2. K1 doesn't build CFG properly
