@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.konan.file.File
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.writeText
 
@@ -35,24 +34,10 @@ class CInteropIdeaSyncIT : KGPBaseTest() {
                 assertOutputContains(ideaSyncWarningMessage)
             }
 
-            /*
-            The implementation before fixing KT-52243 considered the cinterop task as *not* up-to-date
-            when it was previously running in the IDE and therefore failing leniently. It would have always tried to re-run
-            this task to anticipate untracked environmental changes.
-
-            This cannot be easily implemented whilst also fixing KT-52243, which is more desirable.
-            A new mechanism for 'run tasks at import' leniency is proposed (using --continue), which is supposed to replace
-            the special cinterop mechanism.
-
-            https://youtrack.jetbrains.com/issue/KT-52243/
-            https://github.com/JetBrains/kotlin/pull/4812#issuecomment-1117287222
-             */
-            runCatching {
-                /* Task is not considered up-to-date after lenient failure */
-                build("commonize", buildOptions = ideaSyncBuildOptions) {
-                    assertTasksExecuted(interopTaskName)
-                    assertOutputContains(ideaSyncWarningMessage)
-                }
+            /* Task is not considered up-to-date after lenient failure */
+            build("commonize", buildOptions = ideaSyncBuildOptions) {
+                assertTasksExecuted(interopTaskName)
+                assertOutputContains(ideaSyncWarningMessage)
             }
 
             /* Remove noise that causes failure */

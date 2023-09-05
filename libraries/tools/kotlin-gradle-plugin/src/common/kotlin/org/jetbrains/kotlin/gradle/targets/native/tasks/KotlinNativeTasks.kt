@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.GradleLoggerAdapter
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
+import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.saveToFile
@@ -1085,6 +1086,19 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
     @OutputFile
     val outputFileProvider: Provider<File> = project.provider { destinationDir.get().resolve(outputFileName) }
+
+    //Error file will be written only for errors during a project sync because for the sync task mustn't fail
+    //see: org.jetbrains.kotlin.gradle.targets.native.tasks.IdeaSyncKotlinNativeCInteropRunnerExecutionContext
+    @get:OutputFile
+    internal val errorFileProvider: Provider<File> = project.provider { destinationDir.get().resolve("cinterop_error.out") }
+
+    init {
+        //KTIJ-25563:
+        //Failed CInterop task is successful if it was run during import to have properly imported project.
+        //But successful task is up-to-date for next invocations.
+        //We have to check up-to-date-ness only if CInterop didn't generate an error file
+        outputs.upToDateWhen { !errorFileProvider.get().exists() }
+    }
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
