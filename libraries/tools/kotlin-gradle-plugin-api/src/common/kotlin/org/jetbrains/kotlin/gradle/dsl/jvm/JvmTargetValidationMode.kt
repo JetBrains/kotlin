@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.gradle.dsl.jvm
 
 /**
- * Controls JVM target validation mode between Kotlin JVM compilation task from this plugin and related Java compilation task from Gradle.
+ * Controls the JVM target validation mode between the Kotlin JVM compilation task from this plugin and
+ * the related Java compilation task from Gradle.
  *
  * See [org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile.jvmTargetValidationMode] for more details.
  *
