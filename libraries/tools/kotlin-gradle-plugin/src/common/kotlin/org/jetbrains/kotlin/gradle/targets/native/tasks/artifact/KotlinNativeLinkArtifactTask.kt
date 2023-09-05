@@ -184,8 +184,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     val konanHome: Provider<String> = project.provider { project.konanHome }
 
     @get:Internal
-    val kotlinExperimentalTryK2: Boolean
-        get() = project.kotlinExperimentalTryK2()
+    val kotlinExperimentalTryK2: Boolean = project.kotlinExperimentalTryK2
 
     private val runnerSettings = KotlinNativeCompilerRunner.Settings.of(konanHome.get(), konanDataDir.getOrNull(), project)
 

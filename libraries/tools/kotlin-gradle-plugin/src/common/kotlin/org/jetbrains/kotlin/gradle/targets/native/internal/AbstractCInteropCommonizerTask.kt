@@ -27,8 +27,7 @@ internal abstract class AbstractCInteropCommonizerTask : DefaultTask(), UsesBuil
     abstract val outputDirectory: File
 
     @get:Internal
-    val kotlinExperimentalTryK2: Boolean
-        get() = project.kotlinExperimentalTryK2()
+    val kotlinExperimentalTryK2: Boolean = project.kotlinExperimentalTryK2
 }
 
 internal fun AbstractCInteropCommonizerTask.outputDirectory(group: CInteropCommonizerGroup): File {

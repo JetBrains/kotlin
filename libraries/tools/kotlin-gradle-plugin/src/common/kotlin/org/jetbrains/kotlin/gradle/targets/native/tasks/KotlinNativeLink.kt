@@ -353,8 +353,7 @@ constructor(
     var kotlinPluginData: Provider<KotlinCompilerPluginData>? = null
 
     @get:Internal
-    val kotlinExperimentalTryK2: Boolean
-        get() = project.kotlinExperimentalTryK2()
+    val kotlinExperimentalTryK2: Boolean = project.kotlinExperimentalTryK2
 
     @TaskAction
     fun compile() {

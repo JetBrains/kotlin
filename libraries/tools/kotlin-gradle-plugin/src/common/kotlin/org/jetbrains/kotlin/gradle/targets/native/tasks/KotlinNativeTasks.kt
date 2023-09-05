@@ -1131,8 +1131,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
         .property(GradleBuildMetricsReporter())
 
     @get:Internal
-    val kotlinExperimentalTryK2: Boolean
-        get() = project.kotlinExperimentalTryK2()
+    val kotlinExperimentalTryK2: Boolean = project.kotlinExperimentalTryK2
 
     private val isInIdeaSync = project.isInIdeaSync
 

@@ -99,8 +99,7 @@ internal abstract class NativeDistributionCommonizerTask
         .property(GradleBuildMetricsReporter())
 
     @get:Internal
-    val kotlinExperimentalTryK2: Boolean
-        get() = project.kotlinExperimentalTryK2()
+    val kotlinExperimentalTryK2: Boolean = project.kotlinExperimentalTryK2
 
     @TaskAction
     protected fun run() {
