@@ -18054,6 +18054,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("kt61717.kt")
+                public void testKt61717() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/kt61717.kt");
+                }
+
+                @Test
                 @TestMetadata("multirecursion.kt")
                 public void testMultirecursion() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/multirecursion.kt");
