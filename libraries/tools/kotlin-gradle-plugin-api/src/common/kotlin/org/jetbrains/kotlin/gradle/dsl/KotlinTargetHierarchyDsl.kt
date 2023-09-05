@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 
+/**
+ * @suppress
+ */
 @Deprecated("Use 'KotlinHierarchyTemplate' instead")
 @ExperimentalKotlinGradlePluginApi
 interface KotlinTargetHierarchyDsl {
