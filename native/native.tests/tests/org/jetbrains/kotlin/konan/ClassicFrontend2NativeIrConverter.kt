@@ -112,7 +112,7 @@ class ClassicFrontend2NativeIrConverter(
             sourceFiles,
             irProviders = listOf(irDeserializer),
             linkerExtensions = pluginExtensions,
-        ).toKonanModule()
+        )
 
         val pluginContext = IrPluginContextImpl(
             generatorContext.moduleDescriptor,
@@ -137,11 +137,6 @@ class ClassicFrontend2NativeIrConverter(
             irMangler = konanIrMangler,
             firMangler = null,
         )
-    }
-
-    private fun IrModuleFragment.toKonanModule(): IrModuleFragment {
-        val konanIrModuleFragmentImplClass = kotlinNativeClass("org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleFragmentImpl")
-        return konanIrModuleFragmentImplClass.constructors.single().call(descriptor, irBuiltins, files) as IrModuleFragment
     }
 
     private fun kotlinNativeClass(name: String): KClass<out Any> {
