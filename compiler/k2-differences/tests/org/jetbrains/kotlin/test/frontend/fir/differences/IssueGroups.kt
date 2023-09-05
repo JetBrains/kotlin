@@ -326,19 +326,12 @@ val DiagnosticSmallClass.group
         else -> toString()
     }
 
-// Assignee: Unassigned -Resolved and created by: me and (Subtask of: KT-59443 or Subtask of: KT-59870 or Subtask of: KT-59871)
-val unresolvedUnassignedIssuesResponse by lazy {
-    getJson(
+// At least one of the corresponding issues is unresolved unassigned
+val unresolvedUnassignedDiagnostics by lazy {
+    diagnosticsWithinRequest(
+        // Assignee: Unassigned -Resolved and created by: me and (Subtask of: KT-59443 or Subtask of: KT-59870 or Subtask of: KT-59871)
         "https://youtrack.jetbrains.com/api/issues?fields=summary&query=Assignee%3A%20Unassigned%20-Resolved%20and%20created%20by%3A%20me%20and%20%28Subtask%20of%3A%20KT-59443%20or%20Subtask%20of%3A%20KT-59870%20or%20Subtask%20of%3A%20KT-59871%29",
-        API_HEADERS,
     )
 }
 
-val unresolvedUnassignedIssues by lazy {
-    Regex("""summary":"[^"]*\s(\w+)""")
-        .findAll(unresolvedUnassignedIssuesResponse)
-        .map { it.groupValues.last() }
-        .toSet()
-}
-
-val String.isUnresolvedUnassignedDiagnostic get() = this in unresolvedUnassignedIssues
+val String.isUnresolvedUnassignedDiagnostic get() = this in unresolvedUnassignedDiagnostics

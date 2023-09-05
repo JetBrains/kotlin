@@ -70,3 +70,12 @@ fun useAll(vararg closeables: Closeable?, block: () -> Unit) {
 
     usages.last()()
 }
+
+fun diagnosticsWithinRequest(url: String): Set<String> {
+    val response = getJson(url, API_HEADERS)
+
+    return Regex("""summary":"[^"]*\s(\w+)""")
+        .findAll(response)
+        .map { it.groupValues.last() }
+        .toSet()
+}

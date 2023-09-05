@@ -1041,8 +1041,21 @@ fun buildFailingPassingAdditionalTestsStatisticsMessage(
     }
 }
 
+val untouchedDiagnostics by lazy {
+    diagnosticsWithinRequest(
+        // (Open or Submitted) and created by: me and (Subtask of: KT-59443 or Subtask of: KT-59870 or Subtask of: KT-59871)
+        "https://youtrack.jetbrains.com/api/issues?fields=summary&query=%28Open%20or%20Submitted%29%20and%20created%20by%3A%20me%20and%20%28Subtask%20of%3A%20KT-59443%20or%20Subtask%20of%3A%20KT-59870%20or%20Subtask%20of%3A%20KT-59871%29",
+    )
+}
+
+val String.isUntouchedDiagnostic get() = this in untouchedDiagnostics
+
 fun updateKnownIssuesDescriptions(statistics: DiagnosticsStatistics) {
     for ((diagnostic, filesToEntries) in statistics) {
+        if (!diagnostic.isUntouchedDiagnostic) {
+            continue
+        }
+
         knownMissingDiagnostics[diagnostic]?.let { knownIssue ->
             updateIssueDescription(knownIssue, filesToEntries)
         }
