@@ -10,6 +10,8 @@ method pkg_$global$unknown(local$f: Ref) returns (ret: Int)
   var anonymous$1: Int
   special$invoke_function_object(local$f)
   ret := anonymous$1
+  goto label$ret
+  label label$ret
 }
 
 /calls_in_place.kt:(309,321): info: Generated Viper text for at_most_once:
@@ -25,6 +27,8 @@ method pkg_$global$at_most_once(local$f: Ref) returns (ret: Int)
   var anonymous$1: Int
   special$invoke_function_object(local$f)
   ret := anonymous$1
+  goto label$ret
+  label label$ret
 }
 
 /calls_in_place.kt:(466,478): info: Generated Viper text for exactly_once:
@@ -40,6 +44,8 @@ method pkg_$global$exactly_once(local$f: Ref) returns (ret: Int)
   var anonymous$1: Int
   special$invoke_function_object(local$f)
   ret := anonymous$1
+  goto label$ret
+  label label$ret
 }
 
 /calls_in_place.kt:(623,636): info: Generated Viper text for at_least_once:
@@ -65,6 +71,8 @@ method pkg_$global$at_least_once(local$f: Ref) returns (ret: Int)
   var anonymous$1: Int
   anonymous$1 := pkg_$global$exactly_once(local$f)
   ret := anonymous$1
+  goto label$ret
+  label label$ret
 }
 
 /calls_in_place.kt:(800,809): info: Generated Viper text for loopWhile:
@@ -92,6 +100,7 @@ method pkg_$global$loopWhile(local$lambda: Ref) returns (ret: dom$Unit)
     special$invoke_function_object(local$lambda)
     anonymous$1 := anonymous$3
   }
+  label label$ret
 }
 
 /calls_in_place.kt:(990,999): info: Generated Viper text for loopUntil:
@@ -119,4 +128,5 @@ method pkg_$global$loopUntil(local$lambda: Ref) returns (ret: dom$Unit)
     special$invoke_function_object(local$lambda)
     anonymous$1 := !anonymous$3
   }
+  label label$ret
 }

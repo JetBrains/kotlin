@@ -5,6 +5,8 @@ method pkg_$global$any_argument_return(local$x: dom$Any)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$Any())
 {
   ret := local$x
+  goto label$ret
+  label label$ret
 }
 
 /any.kt:(59,67): info: Generated Viper text for any_cast:
@@ -12,4 +14,6 @@ method pkg_$global$any_cast(local$x: Int) returns (ret: dom$Any)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$Any())
 {
   ret := (dom$Casting$cast(local$x, dom$Type$Any()): dom$Any)
+  goto label$ret
+  label label$ret
 }

@@ -12,6 +12,8 @@ method pkg_$global$return_when(local$a: Bool, local$b: Bool, local$c: Bool)
   } else {
     anonymous$1 := 3}
   ret := anonymous$1
+  goto label$ret
+  label label$ret
 }
 
 /when.kt:(153,164): info: Generated Viper text for when_return:
@@ -20,12 +22,18 @@ method pkg_$global$when_return(local$a: Bool, local$b: Bool, local$c: Bool)
 {
   if (local$a) {
     ret := 0
+    goto label$ret
   } elseif (local$b) {
     ret := 1
+    goto label$ret
   } elseif (local$c) {
     ret := 2
+    goto label$ret
   } else {
-    ret := 3}
+    ret := 3
+    goto label$ret
+  }
+  label label$ret
 }
 
 /when.kt:(323,341): info: Generated Viper text for single_branch_when:
@@ -37,6 +45,8 @@ method pkg_$global$single_branch_when(local$a: Bool) returns (ret: Int)
     local$x := 2
   }
   ret := local$x
+  goto label$ret
+  label label$ret
 }
 
 /when.kt:(431,443): info: Generated Viper text for no_else_when:
@@ -53,6 +63,8 @@ method pkg_$global$no_else_when(local$a: Bool, local$b: Bool, local$c: Bool)
     local$y := 3
   }
   ret := local$y
+  goto label$ret
+  label label$ret
 }
 
 /when.kt:(595,616): info: Generated Viper text for when_with_subject_var:
@@ -66,6 +78,8 @@ method pkg_$global$when_with_subject_var(local$x: Int) returns (ret: Int)
   } else {
     anonymous$1 := 42}
   ret := anonymous$1
+  goto label$ret
+  label label$ret
 }
 
 /when.kt:(716,738): info: Generated Viper text for when_with_subject_call:
@@ -88,10 +102,14 @@ method pkg_$global$when_with_subject_call(local$x: Int) returns (ret: Int)
       anonymous$1 := 42}
   }
   ret := anonymous$1
+  goto label$ret
+  label label$ret
 }
 
 /when.kt:(861,871): info: Generated Viper text for empty_when:
 method pkg_$global$empty_when() returns (ret: Int)
 {
   ret := 1
+  goto label$ret
+  label label$ret
 }

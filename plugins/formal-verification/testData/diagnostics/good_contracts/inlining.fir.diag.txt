@@ -13,6 +13,8 @@ method pkg_$global$invoke(local$f: Ref) returns (ret: Int)
   local$x := anonymous$1
   special$invoke_function_object(local$f)
   ret := anonymous$2
+  goto label$ret
+  label label$ret
 }
 
 /inlining.kt:(210,225): info: Generated Viper text for invoke_with_int:
@@ -29,6 +31,8 @@ method pkg_$global$invoke_with_int(local$f: Ref, local$n: Int)
   local$x := local$n + local$n
   special$invoke_function_object(local$f)
   ret := anonymous$1
+  goto label$ret
+  label label$ret
 }
 
 /inlining.kt:(397,408): info: Generated Viper text for call_invoke:
@@ -52,6 +56,8 @@ method pkg_$global$call_invoke(local$g: Ref) returns (ret: Int)
     inline$pkg_$global$invoke$local$x := anonymous$2
     special$invoke_function_object(local$g)
     anonymous$1 := anonymous$3
+    goto inline_label$pkg_$global$invoke$ret
+    label inline_label$pkg_$global$invoke$ret
   }
   local$z := anonymous$1
   if (true) {
@@ -62,8 +68,12 @@ method pkg_$global$call_invoke(local$g: Ref) returns (ret: Int)
     inline$pkg_$global$invoke$local$x := anonymous$5
     special$invoke_function_object(local$g)
     anonymous$4 := anonymous$6
+    goto inline_label$pkg_$global$invoke$ret
+    label inline_label$pkg_$global$invoke$ret
   }
   ret := anonymous$4
+  goto label$ret
+  label label$ret
 }
 
 /inlining.kt:(641,661): info: Generated Viper text for call_invoke_with_int:
@@ -87,6 +97,8 @@ method pkg_$global$call_invoke_with_int(local$g: Ref) returns (ret: Int)
     inline$pkg_$global$invoke_with_int$local$x := anonymous$2 + anonymous$2
     special$invoke_function_object(local$g)
     anonymous$1 := anonymous$3
+    goto inline_label$pkg_$global$invoke_with_int$ret
+    label inline_label$pkg_$global$invoke_with_int$ret
   }
   local$z := anonymous$1
   if (true) {
@@ -97,8 +109,12 @@ method pkg_$global$call_invoke_with_int(local$g: Ref) returns (ret: Int)
     inline$pkg_$global$invoke_with_int$local$x := anonymous$5 + anonymous$5
     special$invoke_function_object(local$g)
     anonymous$4 := anonymous$6
+    goto inline_label$pkg_$global$invoke_with_int$ret
+    label inline_label$pkg_$global$invoke_with_int$ret
   }
   ret := anonymous$4
+  goto label$ret
+  label label$ret
 }
 
 /inlining.kt:(921,933): info: Generated Viper text for name_clashes:
@@ -122,6 +138,8 @@ method pkg_$global$name_clashes(local$f: Ref) returns (ret: Int)
     inline$pkg_$global$invoke$local$x := anonymous$2
     special$invoke_function_object(local$f)
     anonymous$1 := anonymous$3
+    goto inline_label$pkg_$global$invoke$ret
+    label inline_label$pkg_$global$invoke$ret
   }
   local$x := anonymous$1
   if (true) {
@@ -130,8 +148,12 @@ method pkg_$global$name_clashes(local$f: Ref) returns (ret: Int)
     inline$pkg_$global$invoke_with_int$local$x := local$x + local$x
     special$invoke_function_object(local$f)
     anonymous$4 := anonymous$5
+    goto inline_label$pkg_$global$invoke_with_int$ret
+    label inline_label$pkg_$global$invoke_with_int$ret
   }
   ret := anonymous$4
+  goto label$ret
+  label label$ret
 }
 
 /inlining.kt:(1178,1199): info: Generated Viper text for different_return_type:
@@ -155,6 +177,8 @@ method pkg_$global$different_return_type(local$f: Ref) returns (ret: Bool)
     inline$pkg_$global$invoke$local$x := anonymous$2
     special$invoke_function_object(local$f)
     anonymous$1 := anonymous$3
+    goto inline_label$pkg_$global$invoke$ret
+    label inline_label$pkg_$global$invoke$ret
   }
   local$x := anonymous$1
   if (true) {
@@ -165,6 +189,10 @@ method pkg_$global$different_return_type(local$f: Ref) returns (ret: Bool)
     inline$pkg_$global$invoke$local$x := anonymous$5
     special$invoke_function_object(local$f)
     anonymous$4 := anonymous$6
+    goto inline_label$pkg_$global$invoke$ret
+    label inline_label$pkg_$global$invoke$ret
   }
   ret := local$x == anonymous$4
+  goto label$ret
+  label label$ret
 }

@@ -9,6 +9,8 @@ method pkg_$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
   anonymous$1 := this.pkg_$class_Foo$member_x
   exhale acc(this.pkg_$class_Foo$member_x, write)
   ret := anonymous$1
+  goto label$ret
+  label label$ret
 }
 
 /member_functions.kt:(84,99): info: Generated Viper text for call_member_fun:
@@ -24,6 +26,7 @@ method pkg_$class_Foo$member_call_member_fun(this: Ref)
 {
   var anonymous$1: Int
   anonymous$1 := pkg_$class_Foo$member_member_fun(this)
+  label label$ret
 }
 
 /member_functions.kt:(140,152): info: Generated Viper text for sibling_call:
@@ -40,6 +43,7 @@ method pkg_$class_Foo$member_sibling_call(this: Ref, local$other: Ref)
 {
   var anonymous$1: Int
   anonymous$1 := pkg_$class_Foo$member_member_fun(local$other)
+  label label$ret
 }
 
 /member_functions.kt:(207,228): info: Generated Viper text for outer_member_fun_call:
@@ -61,4 +65,5 @@ method pkg_$global$outer_member_fun_call() returns (ret: dom$Unit)
   anonymous$1 := pkg_$class_Foo$member_Foo(3)
   local$f := anonymous$1
   anonymous$2 := pkg_$class_Foo$member_member_fun(local$f)
+  label label$ret
 }

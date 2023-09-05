@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.formver.embeddings.MethodSignatureEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.viper.MangledName
@@ -27,9 +28,9 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
     fun withoutResult(): StmtConversionContext<NoopResultTracker>
     fun withResult(type: TypeEmbedding): StmtConversionContext<VarResultTrackingContext>
 
-    fun withInlineResolver(
-        inlineFunctionName: MangledName,
-        resultVar: VariableEmbedding,
+    fun withInlineContext(
+        inlineFunctionSignature: MethodSignatureEmbedding,
+        returnVar: VariableEmbedding,
         substitutionParams: Map<MangledName, MangledName>,
     ): StmtConversionContext<RTC>
 
@@ -38,8 +39,4 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
         ctx.action()
         return ctx.resultExp
     }
-
-    fun getVariableEmbedding(name: MangledName, type: TypeEmbedding): VariableEmbedding
-
-    fun getReturnVariableEmbedding(): VariableEmbedding
 }

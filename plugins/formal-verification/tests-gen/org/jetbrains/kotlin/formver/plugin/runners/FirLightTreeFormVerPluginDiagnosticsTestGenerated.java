@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.formver.plugin.runners;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -174,6 +174,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("inline.kt")
+        public void testInline() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inline.kt");
+        }
+
+        @Test
         @TestMetadata("is_operator.kt")
         public void testIs_operator() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/is_operator.kt");
@@ -201,6 +207,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         @TestMetadata("nullable.kt")
         public void testNullable() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/nullable.kt");
+        }
+
+        @Test
+        @TestMetadata("return_break_continue.kt")
+        public void testReturn_break_continue() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/return_break_continue.kt");
         }
 
         @Test

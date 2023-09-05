@@ -244,4 +244,5 @@ method special$invoke_function_object(anonymous$0: Ref)
 
 method pkg_$global$f() returns (ret: dom$Unit)
 {
+  label label$ret
 }

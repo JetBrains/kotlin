@@ -1,0 +1,84 @@
+/inline.kt:(42,48): info: Generated Viper text for double:
+method pkg_$global$double(local$x: Int) returns (ret: Int)
+{
+  var local$y: Int
+  local$y := local$x + local$x
+  ret := local$y
+  goto label$ret
+  label label$ret
+}
+
+/inline.kt:(140,149): info: Generated Viper text for quadruple:
+method pkg_$global$quadruple(local$x: Int) returns (ret: Int)
+{
+  var anonymous$1: Int
+  var anonymous$2: Int
+  if (true) {
+    var inline$pkg_$global$double$local$y: Int
+    inline$pkg_$global$double$local$y := local$x + local$x
+    anonymous$1 := inline$pkg_$global$double$local$y
+    goto inline_label$pkg_$global$double$ret
+    label inline_label$pkg_$global$double$ret
+  }
+  if (true) {
+    var inline$pkg_$global$double$local$y: Int
+    inline$pkg_$global$double$local$y := local$x + local$x
+    anonymous$2 := inline$pkg_$global$double$local$y
+    goto inline_label$pkg_$global$double$ret
+    label inline_label$pkg_$global$double$ret
+  }
+  ret := anonymous$1 + anonymous$2
+  goto label$ret
+  label label$ret
+}
+
+/inline.kt:(225,234): info: Generated Viper text for branching:
+method pkg_$global$branching(local$b: Bool) returns (ret: Int)
+{
+  if (local$b) {
+    ret := 1
+    goto label$ret
+  } else {
+    ret := 0
+    goto label$ret
+  }
+  label label$ret
+}
+
+/inline.kt:(365,378): info: Generated Viper text for use_branching:
+method pkg_$global$use_branching() returns (ret: Int)
+{
+  var anonymous$1: Int
+  var anonymous$3: Int
+  if (true) {
+    var anonymous$2: Bool
+    anonymous$2 := false
+    if (anonymous$2) {
+      anonymous$1 := 1
+      goto inline_label$pkg_$global$branching$ret
+      anonymous$1 := (dom$Casting$cast(dom$Unit$element(), dom$Type$Int()): Int)
+    } else {
+      anonymous$1 := 0
+      goto inline_label$pkg_$global$branching$ret
+      anonymous$1 := (dom$Casting$cast(dom$Unit$element(), dom$Type$Int()): Int)
+    }
+    label inline_label$pkg_$global$branching$ret
+  }
+  if (true) {
+    var anonymous$4: Bool
+    anonymous$4 := true
+    if (anonymous$4) {
+      anonymous$3 := 1
+      goto inline_label$pkg_$global$branching$ret
+      anonymous$3 := (dom$Casting$cast(dom$Unit$element(), dom$Type$Int()): Int)
+    } else {
+      anonymous$3 := 0
+      goto inline_label$pkg_$global$branching$ret
+      anonymous$3 := (dom$Casting$cast(dom$Unit$element(), dom$Type$Int()): Int)
+    }
+    label inline_label$pkg_$global$branching$ret
+  }
+  ret := anonymous$1 + anonymous$3
+  goto label$ret
+  label label$ret
+}

@@ -11,6 +11,8 @@ method pkg_$global$while_loop(local$b: Bool) returns (ret: Bool)
     anonymous$1 := local$b
   }
   ret := false
+  goto label$ret
+  label label$ret
 }
 
 /loop.kt:(120,144): info: Generated Viper text for while_function_condition:
@@ -28,4 +30,5 @@ method pkg_$global$while_function_condition() returns (ret: dom$Unit)
     anonymous$3 := pkg_$global$while_loop(true)
     anonymous$1 := anonymous$3
   }
+  label label$ret
 }

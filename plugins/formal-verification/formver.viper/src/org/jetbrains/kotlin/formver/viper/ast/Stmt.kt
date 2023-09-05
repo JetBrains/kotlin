@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.toScalaSeq
 import org.jetbrains.kotlin.formver.viper.toViper
 
-sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
+sealed interface Stmt : IntoViper<viper.silver.ast.Stmt> {
 
     data class LocalVarAssign(
         val lhs: Exp.LocalVar,
@@ -18,7 +18,7 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
         val position: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Stmt() {
+    ) : Stmt {
         override fun toViper(): viper.silver.ast.LocalVarAssign =
             viper.silver.ast.LocalVarAssign(lhs.toViper(), rhs.toViper(), position.toViper(), info.toViper(), trafos.toViper())
     }
@@ -29,7 +29,7 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
         val position: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Stmt() {
+    ) : Stmt {
         override fun toViper(): viper.silver.ast.FieldAssign =
             viper.silver.ast.FieldAssign(lhs.toViper(), rhs.toViper(), position.toViper(), info.toViper(), trafos.toViper())
     }
@@ -57,7 +57,7 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
         val position: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Stmt() {
+    ) : Stmt {
         override fun toViper(): viper.silver.ast.MethodCall = viper.silver.ast.MethodCall(
             methodName.mangled,
             args.map { it.toViper() }.toScalaSeq(),
@@ -73,7 +73,7 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
         val position: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Stmt() {
+    ) : Stmt {
         override fun toViper(): viper.silver.ast.Exhale = viper.silver.ast.Exhale(
             exp.toViper(),
             position.toViper(),
@@ -87,7 +87,7 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
         val position: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Stmt() {
+    ) : Stmt {
         override fun toViper(): viper.silver.ast.Inhale = viper.silver.ast.Inhale(
             exp.toViper(),
             position.toViper(),
@@ -101,7 +101,7 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
         val position: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Stmt() {
+    ) : Stmt {
         override fun toViper(): viper.silver.ast.Assert = viper.silver.ast.Assert(
             exp.toViper(),
             position.toViper(),
@@ -115,7 +115,7 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
         val position: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Stmt() {
+    ) : Stmt {
         override fun toViper(): viper.silver.ast.Assume = viper.silver.ast.Assume(
             exp.toViper(),
             position.toViper(),
@@ -130,7 +130,7 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
         val position: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Stmt() {
+    ) : Stmt {
         override fun toViper(): viper.silver.ast.Seqn = viper.silver.ast.Seqn(
             stmts.toViper().toScalaSeq(),
             scopedStmtsDeclaration.toViper().toScalaSeq(),
@@ -147,7 +147,7 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
         val position: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Stmt() {
+    ) : Stmt {
         override fun toViper(): viper.silver.ast.If = viper.silver.ast.If(
             cond.toViper(),
             then.toViper(),
@@ -165,7 +165,7 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
         val position: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Stmt() {
+    ) : Stmt {
         override fun toViper(): viper.silver.ast.While = viper.silver.ast.While(
             cond.toViper(),
             invariants.map { it.toViper() }.toScalaSeq(),
@@ -177,14 +177,14 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
     }
 
     data class Label(
-        val name: String,
+        val name: MangledName,
         val invariants: List<Exp>,
         val position: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Stmt() {
+    ) : Stmt {
         override fun toViper(): viper.silver.ast.Label = viper.silver.ast.Label(
-            name,
+            name.mangled,
             invariants.map { it.toViper() }.toScalaSeq(),
             position.toViper(),
             info.toViper(),
@@ -193,13 +193,13 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
     }
 
     data class Goto(
-        val name: String,
+        val name: MangledName,
         val position: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Stmt() {
+    ) : Stmt {
         override fun toViper(): viper.silver.ast.Goto = viper.silver.ast.Goto(
-            name,
+            name.mangled,
             position.toViper(),
             info.toViper(),
             trafos.toViper()

@@ -1,10 +1,12 @@
 /simple.kt:(84,100): info: Generated Viper text for without_contract:
 method pkg_$global$without_contract() returns (ret: dom$Unit)
 {
+  label label$ret
 }
 
 /simple.kt:(148,161): info: Generated Viper text for with_contract:
 method pkg_$global$with_contract() returns (ret: dom$Unit)
   ensures true
 {
+  label label$ret
 }

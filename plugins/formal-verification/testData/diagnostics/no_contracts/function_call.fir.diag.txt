@@ -2,6 +2,8 @@
 method pkg_$global$f(local$x: Int) returns (ret: Int)
 {
   ret := local$x
+  goto label$ret
+  label label$ret
 }
 
 /function_call.kt:(27,40): info: Generated Viper text for function_call:
@@ -14,6 +16,7 @@ method pkg_$global$function_call() returns (ret: dom$Unit)
   var anonymous$2: Int
   anonymous$1 := pkg_$global$f(0)
   anonymous$2 := pkg_$global$f(0)
+  label label$ret
 }
 
 /function_call.kt:(69,89): info: Generated Viper text for function_call_nested:
@@ -28,4 +31,5 @@ method pkg_$global$function_call_nested() returns (ret: dom$Unit)
   anonymous$3 := pkg_$global$f(0)
   anonymous$2 := pkg_$global$f(anonymous$3)
   anonymous$1 := pkg_$global$f(anonymous$2)
+  label label$ret
 }

@@ -26,6 +26,7 @@ method pkg_$global$createFoo() returns (ret: dom$Unit)
   anonymous$3 := local$f.pkg_$class_Foo$member_b
   exhale acc(local$f.pkg_$class_Foo$member_b, write)
   local$fb := anonymous$3
+  label label$ret
 }
 
 /classes.kt:(147,156): info: Generated Viper text for createBar:
@@ -44,4 +45,5 @@ method pkg_$global$createBar() returns (ret: dom$Unit)
   anonymous$1 := pkg_$class_Bar$member_Bar((dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
     dom$Type$special$Nullable(dom$Type$pkg_$class_Bar())): dom$Nullable[Ref]))
   local$b := anonymous$1
+  label label$ret
 }

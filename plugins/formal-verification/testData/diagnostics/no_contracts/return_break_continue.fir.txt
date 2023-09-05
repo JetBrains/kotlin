@@ -1,0 +1,12 @@
+FILE: return_break_continue.kt
+    public final fun test_return(): R|kotlin/Int| {
+        ^test_return Int(0)
+        ^test_return Int(1)
+    }
+    public final fun return_from_loop(): R|kotlin/Int| {
+        while(Boolean(true)) {
+            ^return_from_loop Int(0)
+        }
+
+        ^return_from_loop Int(1)
+    }

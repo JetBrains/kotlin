@@ -3,6 +3,7 @@ method pkg_$global$addition(local$x: Int) returns (ret: dom$Unit)
 {
   var local$y: Int
   local$y := local$x + local$x
+  label label$ret
 }
 
 /arithmetic.kt:(47,58): info: Generated Viper text for subtraction:
@@ -10,6 +11,7 @@ method pkg_$global$subtraction(local$x: Int) returns (ret: dom$Unit)
 {
   var local$y: Int
   local$y := local$x - local$x
+  label label$ret
 }
 
 /arithmetic.kt:(93,107): info: Generated Viper text for multiplication:
@@ -17,6 +19,7 @@ method pkg_$global$multiplication(local$x: Int) returns (ret: dom$Unit)
 {
   var local$y: Int
   local$y := local$x * local$x
+  label label$ret
 }
 
 /arithmetic.kt:(142,150): info: Generated Viper text for division:
@@ -25,4 +28,5 @@ method pkg_$global$division(local$x: Int) returns (ret: dom$Unit)
   var local$y: Int
   inhale local$x != 0
   local$y := local$x / local$x
+  label label$ret
 }

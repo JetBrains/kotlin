@@ -8,13 +8,19 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.formver.embeddings.MethodSignatureEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Exp
+import org.jetbrains.kotlin.formver.viper.ast.Label
 
 interface MethodConversionContext : ProgramConversionContext {
     val signature: MethodSignatureEmbedding
+    val returnLabel: Label
+    val returnVar: VariableEmbedding
 
     val preconditions: List<Exp>
     val postconditions: List<Exp>
+    fun resolveName(name: MangledName): MangledName
 
-    fun newAnonVar(type: TypeEmbedding): VariableEmbedding
+    fun getVariableEmbedding(name: MangledName, type: TypeEmbedding): VariableEmbedding =
+        VariableEmbedding(resolveName(name), type)
 }

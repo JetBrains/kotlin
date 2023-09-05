@@ -9,6 +9,8 @@ method pkg_$global$use_nullable_twice(local$x: dom$Nullable[Int])
   local$a := local$x
   local$b := local$x
   ret := local$a
+  goto label$ret
+  label label$ret
 }
 
 /nullable.kt:(88,111): info: Generated Viper text for pass_nullable_parameter:
@@ -26,6 +28,8 @@ method pkg_$global$pass_nullable_parameter(local$x: dom$Nullable[Int])
   var anonymous$1: dom$Nullable[Int]
   anonymous$1 := pkg_$global$use_nullable_twice(local$x)
   ret := local$x
+  goto label$ret
+  label label$ret
 }
 
 /nullable.kt:(175,203): info: Generated Viper text for nullable_nullable_comparison:
@@ -41,6 +45,8 @@ method pkg_$global$nullable_nullable_comparison(local$x: dom$Nullable[Int],
     local$y != (dom$Nullable$null(): dom$Nullable[Int]) &&
     (dom$Casting$cast(local$x, dom$Type$Int()): Int) ==
     (dom$Casting$cast(local$y, dom$Type$Int()): Int)
+  goto label$ret
+  label label$ret
 }
 
 /nullable.kt:(258,290): info: Generated Viper text for nullable_non_nullable_comparison:
@@ -52,6 +58,8 @@ method pkg_$global$nullable_non_nullable_comparison(local$x: dom$Nullable[Int],
 {
   ret := !(local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
     (dom$Casting$cast(local$x, dom$Type$Int()): Int) == 3)
+  goto label$ret
+  label label$ret
 }
 
 /nullable.kt:(345,360): info: Generated Viper text for null_comparison:
@@ -67,4 +75,6 @@ method pkg_$global$null_comparison(local$x: dom$Nullable[Int])
     (dom$Nullable$null(): dom$Nullable[dom$Unit]) &&
     (dom$Casting$cast(local$x, dom$Type$Int()): Int) ==
     (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$Int()): Int)
+  goto label$ret
+  label label$ret
 }

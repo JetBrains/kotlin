@@ -6,6 +6,8 @@ method pkg_$global$returns_null_unverifiable(local$x: dom$Nullable[Int])
   ensures true ==> false
 {
   ret := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
+  goto label$ret
+  label label$ret
 }
 
 /returns_null.kt:(121,146): warning: Viper verification error: Postcondition of pkg_$global$returns_null_unverifiable might not hold. Assertion true ==> false might not hold. (<no position>)
@@ -19,6 +21,8 @@ method pkg_$global$non_nullable_returns_null(local$x: Int)
   ensures false
 {
   ret := local$x
+  goto label$ret
+  label label$ret
 }
 
 /returns_null.kt:(277,302): warning: Viper verification error: Postcondition of pkg_$global$non_nullable_returns_null might not hold. Assertion false might not hold. (<no position>)

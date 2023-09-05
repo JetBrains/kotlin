@@ -6,6 +6,7 @@ method pkg_$global$unit_function(local$f: Ref) returns (ret: dom$Unit)
   ensures old(local$f.special$function_object_call_counter) <=
     local$f.special$function_object_call_counter
 {
+  label label$ret
 }
 
 /function_object.kt:(72,92): info: Generated Viper text for function_object_call:
@@ -19,6 +20,8 @@ method pkg_$global$function_object_call(local$g: Ref) returns (ret: Int)
   var anonymous$1: Int
   special$invoke_function_object(local$g)
   ret := anonymous$1
+  goto label$ret
+  label label$ret
 }
 
 /function_object.kt:(155,182): info: Generated Viper text for function_object_nested_call:
@@ -42,4 +45,6 @@ method pkg_$global$function_object_nested_call(local$f: Ref, local$g: Ref)
   special$invoke_function_object(local$f)
   special$invoke_function_object(local$f)
   ret := anonymous$3
+  goto label$ret
+  label label$ret
 }

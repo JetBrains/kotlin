@@ -2,6 +2,8 @@
 method pkg_$global$returns_boolean() returns (ret: Bool)
 {
   ret := false
+  goto label$ret
+  label label$ret
 }
 
 /loop_invariants.kt:(57,81): info: Generated Viper text for dynamic_lambda_invariant:
@@ -31,6 +33,7 @@ method pkg_$global$dynamic_lambda_invariant(local$f: Ref)
     anonymous$4 := pkg_$global$returns_boolean()
     anonymous$1 := anonymous$4
   }
+  label label$ret
 }
 
 /loop_invariants.kt:(155,174): info: Generated Viper text for function_assignment:
@@ -62,6 +65,7 @@ method pkg_$global$function_assignment(local$f: Ref)
     anonymous$4 := pkg_$global$returns_boolean()
     anonymous$1 := anonymous$4
   }
+  label label$ret
 }
 
 /loop_invariants.kt:(262,293): info: Generated Viper text for conditional_function_assignment:
@@ -107,4 +111,5 @@ method pkg_$global$conditional_function_assignment(local$b: Bool, local$f: Ref,
     anonymous$5 := pkg_$global$returns_boolean()
     anonymous$2 := anonymous$5
   }
+  label label$ret
 }

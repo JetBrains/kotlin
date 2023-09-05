@@ -56,9 +56,8 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: StmtConversionContext<ResultTrackingContext>): Exp {
         val expr = data.convert(returnExpression.result)
         val exprType = data.embedType(returnExpression.result)
-        // TODO: respect return-based control flow
-        val returnVar = data.getReturnVariableEmbedding()
-        data.addStatement(Stmt.LocalVarAssign(returnVar.toLocalVar(), expr.convertType(exprType, returnVar.type)))
+        data.addStatement(Stmt.LocalVarAssign(data.returnVar.toLocalVar(), expr.convertType(exprType, data.returnVar.type)))
+        data.addStatement(data.returnLabel.toGoto())
         return UnitDomain.element
     }
 
@@ -220,15 +219,18 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
     @OptIn(SymbolInternals::class)
     private fun processInlineFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext<VarResultTrackingContext>) {
         val symbol = functionCall.calleeNamedFunctionSymbol
+        val signature = data.embedFunction(symbol)
         val inlineBody = symbol.fir.body ?: throw Exception("Function symbol $symbol has a null body")
         val ctx = data.newBlock()
         val inlineArgs: List<MangledName> = symbol.valueParameterSymbols.map { it.embedName() }
         val callArgs = getFunctionCallArguments(functionCall).map { ctx.convertAndStore(it).name }
         val substitutionParams = inlineArgs.zip(callArgs).toMap()
 
-        val name = symbol.callableId.embedName()
-        val inlineCtx = ctx.withInlineResolver(name, ctx.resultCtx.resultVar, substitutionParams)
+        val inlineCtx = ctx.withInlineContext(signature, ctx.resultCtx.resultVar, substitutionParams)
         inlineCtx.convert(inlineBody)
+        // TODO: add these labels automatically.
+        inlineCtx.addDeclaration(inlineCtx.returnLabel.toDecl())
+        inlineCtx.addStatement(inlineCtx.returnLabel.toStmt())
         // Note: Putting the block inside the then branch of an if-true statement is a little a hack to make Viper respect the scoping
         data.addStatement(Stmt.If(Exp.BoolLit(true), inlineCtx.block, Stmt.Seqn(listOf(), listOf())))
     }

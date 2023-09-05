@@ -2,6 +2,8 @@
 method pkg_$global$negation(local$x: Bool) returns (ret: Bool)
 {
   ret := !local$x
+  goto label$ret
+  label label$ret
 }
 
 /boolean_logic.kt:(56,67): info: Generated Viper text for conjunction:
@@ -14,6 +16,8 @@ method pkg_$global$conjunction(local$x: Bool, local$y: Bool)
   } else {
     anonymous$1 := false}
   ret := anonymous$1
+  goto label$ret
+  label label$ret
 }
 
 /boolean_logic.kt:(127,151): info: Generated Viper text for conjunction_side_effects:
@@ -33,6 +37,8 @@ method pkg_$global$conjunction_side_effects(local$x: Bool, local$y: Bool)
   } else {
     anonymous$2 := false}
   ret := anonymous$2
+  goto label$ret
+  label label$ret
 }
 
 /boolean_logic.kt:(324,335): info: Generated Viper text for disjunction:
@@ -45,4 +51,6 @@ method pkg_$global$disjunction(local$x: Bool, local$y: Bool)
   } else {
     anonymous$1 := local$y}
   ret := anonymous$1
+  goto label$ret
+  label label$ret
 }

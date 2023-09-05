@@ -3,6 +3,8 @@ method pkg_$global$incorrectly_returns_false() returns (ret: Bool)
   ensures ret == true
 {
   ret := false
+  goto label$ret
+  label label$ret
 }
 
 /returns_booleans.kt:(121,146): warning: Viper verification error: Postcondition of pkg_$global$incorrectly_returns_false might not hold. Assertion ret == true might not hold. (<no position>)

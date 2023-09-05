@@ -8,6 +8,8 @@ method pkg_$global$isString(local$x: dom$Nullable[dom$Any])
     dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg_kotlin$class_String())
 {
   ret := dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg_kotlin$class_String())
+  goto label$ret
+  label label$ret
 }
 
 /is_type_contract.kt:(282,299): info: Generated Viper text for subtypeTransitive:
@@ -16,6 +18,7 @@ method pkg_$global$subtypeTransitive(local$x: dom$Unit)
   ensures true ==>
     dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
 {
+  label label$ret
 }
 
 /is_type_contract.kt:(515,524): warning: Check for instance is always 'true'.

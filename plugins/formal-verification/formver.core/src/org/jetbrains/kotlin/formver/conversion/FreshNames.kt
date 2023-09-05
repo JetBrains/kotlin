@@ -41,3 +41,13 @@ data class InlineName(val inlineFunctionName: MangledName, val name: MangledName
     override val mangled: String
         get() = "inline\$${inlineFunctionName.mangled}\$${name.mangled}"
 }
+
+data object ReturnLabelName : MangledName {
+    override val mangled: String
+        get() = "label\$ret"
+}
+
+data class InlineReturnLabelName(val inlineFunctionName: MangledName) : MangledName {
+    override val mangled: String
+        get() = "inline_label\$${inlineFunctionName.mangled}\$ret"
+}

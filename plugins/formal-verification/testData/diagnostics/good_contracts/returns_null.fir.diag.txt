@@ -7,6 +7,8 @@ method pkg_$global$simple_returns_null(local$x: dom$Nullable[Int])
   ensures ret != (dom$Nullable$null(): dom$Nullable[Int]) ==> false
 {
   ret := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
+  goto label$ret
+  label label$ret
 }
 
 /returns_null.kt:(300,320): info: Generated Viper text for returns_null_implies:
@@ -20,6 +22,8 @@ method pkg_$global$returns_null_implies(local$x: dom$Nullable[Bool])
     local$x != (dom$Nullable$null(): dom$Nullable[Bool])
 {
   ret := local$x
+  goto label$ret
+  label label$ret
 }
 
 /returns_null.kt:(511,531): info: Generated Viper text for returns_null_with_if:
@@ -47,8 +51,12 @@ method pkg_$global$returns_null_with_if(local$x: dom$Nullable[Int], local$y: dom
   (dom$Casting$cast(local$x, dom$Type$Int()): Int) ==
   (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$Int()): Int)) {
     ret := local$y
+    goto label$ret
   } else {
-    ret := local$z}
+    ret := local$z
+    goto label$ret
+  }
+  label label$ret
 }
 
 /returns_null.kt:(833,862): info: Generated Viper text for non_nullable_returns_not_null:
@@ -57,6 +65,8 @@ method pkg_$global$non_nullable_returns_not_null(local$x: Int)
   ensures true
 {
   ret := local$x
+  goto label$ret
+  label label$ret
 }
 
 /returns_null.kt:(981,1010): info: Generated Viper text for non_nullable_compared_to_null:
@@ -65,6 +75,8 @@ method pkg_$global$non_nullable_compared_to_null(local$x: Int, local$y: Int)
   ensures true ==> false || true
 {
   ret := local$x
+  goto label$ret
+  label label$ret
 }
 
 /returns_null.kt:(1076,1085): warning: Condition is always 'false'.

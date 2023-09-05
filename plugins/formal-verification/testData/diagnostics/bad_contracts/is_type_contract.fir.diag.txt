@@ -8,6 +8,8 @@ method pkg_$global$unverifiableTypeCheck(local$x: dom$Nullable[Int])
     dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Unit())
 {
   ret := dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg_kotlin$class_String())
+  goto label$ret
+  label label$ret
 }
 
 /is_type_contract.kt:(121,142): warning: Viper verification error: Postcondition of pkg_$global$unverifiableTypeCheck might not hold. Assertion true ==> dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Unit()) might not hold. (<no position>)
@@ -22,6 +24,7 @@ method pkg_$global$nullableNotNonNullable(local$x: dom$Nullable[Int])
   ensures true ==>
     dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int())
 {
+  label label$ret
 }
 
 /is_type_contract.kt:(289,311): warning: Viper verification error: Postcondition of pkg_$global$nullableNotNonNullable might not hold. Assertion true ==> dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int()) might not hold. (<no position>)

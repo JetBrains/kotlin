@@ -14,7 +14,9 @@ class MethodEmbedding(
     val preconditions: List<Exp>,
     val postconditions: List<Exp>,
     val body: Stmt.Seqn?,
+    val isInline: Boolean,
 ) : MethodSignatureEmbedding by signature {
+    val shouldIncludeInProgram = !isInline || body != null
     val viperMethod = UserMethod(
         name,
         formalArgs.map { it.toLocalVarDecl() },

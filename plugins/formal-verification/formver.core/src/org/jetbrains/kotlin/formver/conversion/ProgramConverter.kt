@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Field
-import org.jetbrains.kotlin.formver.viper.ast.Method
+import org.jetbrains.kotlin.formver.viper.ast.Label
 import org.jetbrains.kotlin.formver.viper.ast.Program
 
 /**
@@ -37,7 +38,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         get() = Program(
             domains = listOf(UnitDomain, NullableDomain, CastingDomain, TypeOfDomain, TypeDomain(classes.values.toList()), AnyDomain),
             fields = SpecialFields.all + fields,
-            methods = SpecialMethods.all + methods.values.map { it.viperMethod }.toList(),
+            methods = SpecialMethods.all + methods.values.filter { it.shouldIncludeInProgram }.map { it.viperMethod }.toList(),
         )
 
     fun registerForVerification(declaration: FirSimpleFunction) {
@@ -80,6 +81,9 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         else -> unimplementedTypeEmbedding(type)
     }
 
+    private var nextAnonVarNumber = 0
+    override fun newAnonName(): AnonymousName = AnonymousName(++nextAnonVarNumber)
+
     private fun embedSignature(symbol: FirFunctionSymbol<*>): MethodSignatureEmbedding {
         val retType = symbol.resolvedReturnTypeRef.type
         val params = symbol.valueParameterSymbols.map {
@@ -118,18 +122,23 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                         signature.returnVar.invariants() +
                         contractPostconditions
 
-                private var nextAnonVarNumber = 0
-                override fun newAnonVar(type: TypeEmbedding): VariableEmbedding =
-                    VariableEmbedding(AnonymousName(++nextAnonVarNumber), type)
+                // It seems like Viper will propagate the weakest precondition through the label correctly even in the absence of
+                // explicit invariants; we only need to add those if we want to make a stronger claim.
+                override val returnLabel: Label = Label(ReturnLabelName, listOf())
+                override val returnVar: VariableEmbedding = VariableEmbedding(ReturnVariableName, signature.returnType)
+
+                override fun resolveName(name: MangledName): MangledName = name
             }
 
             val bodySeqn = body?.let {
                 val ctx = StmtConverter(methodCtx, SeqnBuilder(), NoopResultTrackerFactory)
+                ctx.addDeclaration(methodCtx.returnLabel.toDecl())
                 ctx.convert(body)
+                ctx.addStatement(methodCtx.returnLabel.toStmt())
                 ctx.block
             }
 
-            MethodEmbedding(signature, methodCtx.preconditions, methodCtx.postconditions, bodySeqn)
+            MethodEmbedding(signature, methodCtx.preconditions, methodCtx.postconditions, bodySeqn, symbol.isInline)
         }
     }
 

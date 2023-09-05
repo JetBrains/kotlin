@@ -2,4 +2,6 @@
 method pkg_$global$inc(this: Int) returns (ret: Int)
 {
   ret := this + 1
+  goto label$ret
+  label label$ret
 }

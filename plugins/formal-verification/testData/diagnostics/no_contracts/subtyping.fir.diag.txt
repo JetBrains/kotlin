@@ -12,8 +12,12 @@ method pkg_$global$smart_cast(local$x: dom$Nullable[Int])
   (dom$Casting$cast(local$x, dom$Type$Int()): Int) ==
   (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$Int()): Int)) {
     ret := 0
+    goto label$ret
   } else {
-    ret := (dom$Casting$cast(local$x, dom$Type$Int()): Int)}
+    ret := (dom$Casting$cast(local$x, dom$Type$Int()): Int)
+    goto label$ret
+  }
+  label label$ret
 }
 
 /subtyping.kt:(112,128): info: Generated Viper text for return_subtyping:
@@ -21,6 +25,8 @@ method pkg_$global$return_subtyping() returns (ret: dom$Nullable[Int])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
   ret := (dom$Casting$cast(0, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
+  goto label$ret
+  label label$ret
 }
 
 /subtyping.kt:(159,179): info: Generated Viper text for assignment_subtyping:
@@ -29,6 +35,7 @@ method pkg_$global$assignment_subtyping() returns (ret: dom$Unit)
   var local$x: dom$Nullable[Bool]
   local$x := (dom$Casting$cast(false, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
   local$x := (dom$Casting$cast(true, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
+  label label$ret
 }
 
 /subtyping.kt:(232,250): info: Generated Viper text for nullable_parameter:
@@ -36,6 +43,7 @@ method pkg_$global$nullable_parameter(local$b: dom$Nullable[Bool])
   returns (ret: dom$Unit)
   requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$b): dom$Type), dom$Type$special$Nullable(dom$Type$Boolean()))
 {
+  label label$ret
 }
 
 /subtyping.kt:(272,300): info: Generated Viper text for function_parameter_subtyping:
@@ -48,4 +56,5 @@ method pkg_$global$function_parameter_subtyping() returns (ret: dom$Unit)
 {
   var anonymous$1: dom$Unit
   anonymous$1 := pkg_$global$nullable_parameter((dom$Casting$cast(false, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool]))
+  label label$ret
 }

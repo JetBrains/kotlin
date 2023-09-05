@@ -3,8 +3,12 @@ method pkg_$global$simple_if() returns (ret: Int)
 {
   if (true) {
     ret := 0
+    goto label$ret
   } else {
-    ret := 1}
+    ret := 1
+    goto label$ret
+  }
+  label label$ret
 }
 
 /if.kt:(98,113): info: Generated Viper text for if_on_parameter:
@@ -12,8 +16,12 @@ method pkg_$global$if_on_parameter(local$b: Bool) returns (ret: Int)
 {
   if (local$b) {
     ret := 0
+    goto label$ret
   } else {
-    ret := 1}
+    ret := 1
+    goto label$ret
+  }
+  label label$ret
 }
 
 /if.kt:(205,221): info: Generated Viper text for if_as_expression:
@@ -38,4 +46,6 @@ method pkg_$global$if_as_expression() returns (ret: Bool)
     anonymous$1 := true
   }
   ret := anonymous$1
+  goto label$ret
+  label label$ret
 }
