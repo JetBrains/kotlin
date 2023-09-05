@@ -511,7 +511,7 @@ internal class ObjCExportNamerImpl(
             parameters.forEachIndexed { index, (bridge, it) ->
                 val name = when (bridge) {
                     is MethodBridgeValueParameter.Mapped -> when {
-                        it is ReceiverParameterDescriptor -> it.getObjCName().asIdentifier(false) { "" }
+                        it is ReceiverParameterDescriptor -> "receiver"
                         method is PropertySetterDescriptor -> when (parameters.size) {
                             1 -> ""
                             else -> "value"
