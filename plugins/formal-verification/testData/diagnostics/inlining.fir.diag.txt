@@ -1,0 +1,164 @@
+/inlining.kt:(132,138): info: Generated Viper text for invoke:
+method pkg_$global$invoke(local$f: Ref) returns (ret: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+{
+  var local$x: Int
+  var anonymous$1: Int
+  var anonymous$2: Int
+  special$invoke_function_object(local$f)
+  local$x := anonymous$1
+  special$invoke_function_object(local$f)
+  ret := anonymous$2
+}
+
+/inlining.kt:(210,225): info: Generated Viper text for invoke_with_int:
+method pkg_$global$invoke_with_int(local$f: Ref, local$n: Int)
+  returns (ret: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+{
+  var local$x: Int
+  var anonymous$1: Int
+  local$x := local$n + local$n
+  special$invoke_function_object(local$f)
+  ret := anonymous$1
+}
+
+/inlining.kt:(397,408): info: Generated Viper text for call_invoke:
+method pkg_$global$call_invoke(local$g: Ref) returns (ret: Int)
+  requires acc(local$g.special$function_object_call_counter, write)
+  ensures acc(local$g.special$function_object_call_counter, write)
+  ensures old(local$g.special$function_object_call_counter) <=
+    local$g.special$function_object_call_counter
+  ensures local$g.special$function_object_call_counter >
+    old(local$g.special$function_object_call_counter)
+{
+  var local$z: Int
+  var anonymous$1: Int
+  var anonymous$4: Int
+  if (true) {
+    var inline$pkg_$global$invoke$local$x: Int
+    var anonymous$2: Int
+    var anonymous$3: Int
+    special$invoke_function_object(local$g)
+    inline$pkg_$global$invoke$local$x := anonymous$2
+    special$invoke_function_object(local$g)
+    anonymous$1 := anonymous$3
+  }
+  local$z := anonymous$1
+  if (true) {
+    var inline$pkg_$global$invoke$local$x: Int
+    var anonymous$5: Int
+    var anonymous$6: Int
+    special$invoke_function_object(local$g)
+    inline$pkg_$global$invoke$local$x := anonymous$5
+    special$invoke_function_object(local$g)
+    anonymous$4 := anonymous$6
+  }
+  ret := anonymous$4
+}
+
+/inlining.kt:(641,661): info: Generated Viper text for call_invoke_with_int:
+method pkg_$global$call_invoke_with_int(local$g: Ref) returns (ret: Int)
+  requires acc(local$g.special$function_object_call_counter, write)
+  ensures acc(local$g.special$function_object_call_counter, write)
+  ensures old(local$g.special$function_object_call_counter) <=
+    local$g.special$function_object_call_counter
+  ensures local$g.special$function_object_call_counter >
+    old(local$g.special$function_object_call_counter)
+{
+  var local$z: Int
+  var anonymous$1: Int
+  var anonymous$4: Int
+  if (true) {
+    var anonymous$2: Int
+    var inline$pkg_$global$invoke_with_int$local$x: Int
+    var anonymous$3: Int
+    anonymous$2 := 1
+    inline$pkg_$global$invoke_with_int$local$x := anonymous$2 + anonymous$2
+    special$invoke_function_object(local$g)
+    anonymous$1 := anonymous$3
+  }
+  local$z := anonymous$1
+  if (true) {
+    var anonymous$5: Int
+    var inline$pkg_$global$invoke_with_int$local$x: Int
+    var anonymous$6: Int
+    special$invoke_function_object(local$g)
+    inline$pkg_$global$invoke_with_int$local$x := anonymous$5 + anonymous$5
+    special$invoke_function_object(local$g)
+    anonymous$4 := anonymous$6
+  }
+  ret := anonymous$4
+}
+
+/inlining.kt:(921,933): info: Generated Viper text for name_clashes:
+method pkg_$global$name_clashes(local$f: Ref) returns (ret: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter >
+    old(local$f.special$function_object_call_counter)
+{
+  var local$x: Int
+  var anonymous$1: Int
+  var anonymous$4: Int
+  if (true) {
+    var inline$pkg_$global$invoke$local$x: Int
+    var anonymous$2: Int
+    var anonymous$3: Int
+    special$invoke_function_object(local$f)
+    inline$pkg_$global$invoke$local$x := anonymous$2
+    special$invoke_function_object(local$f)
+    anonymous$1 := anonymous$3
+  }
+  local$x := anonymous$1
+  if (true) {
+    var inline$pkg_$global$invoke_with_int$local$x: Int
+    var anonymous$5: Int
+    inline$pkg_$global$invoke_with_int$local$x := local$x + local$x
+    special$invoke_function_object(local$f)
+    anonymous$4 := anonymous$5
+  }
+  ret := anonymous$4
+}
+
+/inlining.kt:(1178,1199): info: Generated Viper text for different_return_type:
+method pkg_$global$different_return_type(local$f: Ref) returns (ret: Bool)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter >
+    old(local$f.special$function_object_call_counter)
+{
+  var local$x: Int
+  var anonymous$1: Int
+  var anonymous$4: Int
+  if (true) {
+    var inline$pkg_$global$invoke$local$x: Int
+    var anonymous$2: Int
+    var anonymous$3: Int
+    special$invoke_function_object(local$f)
+    inline$pkg_$global$invoke$local$x := anonymous$2
+    special$invoke_function_object(local$f)
+    anonymous$1 := anonymous$3
+  }
+  local$x := anonymous$1
+  if (true) {
+    var inline$pkg_$global$invoke$local$x: Int
+    var anonymous$5: Int
+    var anonymous$6: Int
+    special$invoke_function_object(local$f)
+    inline$pkg_$global$invoke$local$x := anonymous$5
+    special$invoke_function_object(local$f)
+    anonymous$4 := anonymous$6
+  }
+  ret := local$x == anonymous$4
+}

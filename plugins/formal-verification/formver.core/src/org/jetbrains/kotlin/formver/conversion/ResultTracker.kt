@@ -27,7 +27,7 @@ object NoopResultTracker : ResultTrackingContext {
 }
 
 abstract class VarResultTrackingContext(val resultVar: VariableEmbedding) : ResultTrackingContext {
-    override val resultExp: Exp
+    override val resultExp: Exp.LocalVar
         get() = resultVar.toLocalVar()
 }
 

@@ -36,3 +36,8 @@ data class SpecialFieldName(val name: String) : MangledName {
     override val mangled: String
         get() = "special\$$name"
 }
+
+data class InlineName(val inlineFunctionName: MangledName, val name: MangledName) : MangledName {
+    override val mangled: String
+        get() = "inline\$${inlineFunctionName.mangled}\$${name.mangled}"
+}

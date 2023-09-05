@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 
 interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConversionContext, SeqnBuildContext, ResultTrackingContext {
@@ -19,13 +21,25 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
         resultCtx.capture(convert(exp), embedType(exp))
     }
 
+    fun convertAndStore(exp: FirExpression): Exp.LocalVar
+
     fun newBlock(): StmtConversionContext<RTC>
     fun withoutResult(): StmtConversionContext<NoopResultTracker>
     fun withResult(type: TypeEmbedding): StmtConversionContext<VarResultTrackingContext>
+
+    fun withInlineResolver(
+        inlineFunctionName: MangledName,
+        resultVar: VariableEmbedding,
+        substitutionParams: Map<MangledName, MangledName>,
+    ): StmtConversionContext<RTC>
 
     fun withResult(type: TypeEmbedding, action: StmtConversionContext<VarResultTrackingContext>.() -> Unit): Exp {
         val ctx = withResult(type)
         ctx.action()
         return ctx.resultExp
     }
+
+    fun getVariableEmbedding(name: MangledName, type: TypeEmbedding): VariableEmbedding
+
+    fun getReturnVariableEmbedding(): VariableEmbedding
 }

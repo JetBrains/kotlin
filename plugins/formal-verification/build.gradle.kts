@@ -55,7 +55,10 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
-    javaLauncher.set(javaToolchains.launcherFor { languageVersion.set(JavaLanguageVersion.of(11))})
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(11))
+        jvmArgs = listOf("-Xss30M")
+    })
 }.also { confugureFirPluginAnnotationsDependency(it) }
 
 runtimeJar()

@@ -13,13 +13,16 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.AccessPredicate
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
@@ -52,7 +55,7 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
         val expr = data.convert(returnExpression.result)
         val exprType = data.embedType(returnExpression.result)
         // TODO: respect return-based control flow
-        val returnVar = data.signature.returnVar
+        val returnVar = data.getReturnVariableEmbedding()
         data.addStatement(Stmt.LocalVarAssign(returnVar.toLocalVar(), expr.convertType(exprType, returnVar.type)))
         return UnitDomain.element
     }
@@ -112,9 +115,9 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
     ): Exp {
         val type = data.embedType(propertyAccessExpression)
         return when (val symbol = propertyAccessExpression.calleeSymbol) {
-            is FirValueParameterSymbol -> VariableEmbedding(symbol.callableId.embedName(), type).toLocalVar()
+            is FirValueParameterSymbol -> data.getVariableEmbedding(symbol.callableId.embedName(), type).toLocalVar()
             is FirPropertySymbol -> {
-                val varEmbedding = VariableEmbedding(symbol.callableId.embedName(), type)
+                val varEmbedding = data.getVariableEmbedding(symbol.callableId.embedName(), type)
                 if (symbol.isLocal) {
                     return varEmbedding.toLocalVar()
                 } else {
@@ -190,6 +193,13 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
             return specialFunc.convertCall(argsFir.map(data::convert), data)
         }
 
+        val isInline = functionCall.calleeCallableSymbol.resolvedStatus.isInline
+        if (isInline) {
+            return data.withResult(data.embedType(functionCall)) {
+                processInlineFunctionCall(functionCall, this)
+            }
+        }
+
         val calleeSig = when (symbol) {
             is FirNamedFunctionSymbol -> data.embedFunction(symbol)
             is FirConstructorSymbol -> data.embedFunction(symbol)
@@ -203,6 +213,22 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
 
             data.addStatement(calleeSig.toMethodCall(args, this.resultCtx.resultVar))
         }
+    }
+
+    @OptIn(SymbolInternals::class)
+    private fun processInlineFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext<VarResultTrackingContext>) {
+        val symbol = functionCall.calleeNamedFunctionSymbol
+        val inlineBody = symbol.fir.body ?: throw Exception("Function symbol $symbol has a null body")
+        val ctx = data.newBlock()
+        val inlineArgs: List<MangledName> = symbol.valueParameterSymbols.map { it.embedName() }
+        val callArgs = getFunctionCallArguments(functionCall).map { ctx.convertAndStore(it).name }
+        val substitutionParams = inlineArgs.zip(callArgs).toMap()
+
+        val name = symbol.callableId.embedName()
+        val inlineCtx = ctx.withInlineResolver(name, ctx.resultCtx.resultVar, substitutionParams)
+        inlineCtx.convert(inlineBody)
+        // Note: Putting the block inside the then branch of an if-true statement is a little a hack to make Viper respect the scoping
+        data.addStatement(Stmt.If(Exp.BoolLit(true), inlineCtx.block, Stmt.Seqn(listOf(), listOf())))
     }
 
     override fun visitImplicitInvokeCall(
@@ -233,7 +259,7 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
         if (!symbol.isLocal) {
             throw Exception("StmtConversionVisitor should not encounter non-local properties.")
         }
-        val cvar = VariableEmbedding(symbol.callableId.embedName(), data.embedType(type))
+        val cvar = data.getVariableEmbedding(symbol.callableId.embedName(), data.embedType(type))
         data.addDeclaration(cvar.toLocalVarDecl())
         property.initializer?.let {
             val initializerExp = data.convert(it)
@@ -314,6 +340,8 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
         get() = calleeReference.toResolvedBaseSymbol()!!
     private val FirResolvable.calleeCallableSymbol: FirCallableSymbol<*>
         get() = calleeReference.toResolvedCallableSymbol()!!
+    private val FirResolvable.calleeNamedFunctionSymbol: FirNamedFunctionSymbol
+        get() = calleeReference.toResolvedNamedFunctionSymbol()!!
 
     private fun handleUnimplementedElement(msg: String, data: StmtConversionContext<ResultTrackingContext>): Exp =
         when (data.config.behaviour) {

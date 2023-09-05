@@ -31,6 +31,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("inlining.kt")
+    public void testInlining() throws Exception {
+        runTest("plugins/formal-verification/testData/diagnostics/inlining.kt");
+    }
+
+    @Test
     @TestMetadata("returns_booleans.kt")
     public void testReturns_booleans() throws Exception {
         runTest("plugins/formal-verification/testData/diagnostics/returns_booleans.kt");
