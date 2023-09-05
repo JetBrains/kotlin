@@ -70,7 +70,7 @@ class ExpectedActualDeclarationChecker(
                 declaration, descriptor, context.trace,
                 checkActualModifier, context
             )
-            checkOptInAnnotation(declaration, descriptor, descriptor, context.trace)
+            checkOptInAnnotation(declaration, descriptor, descriptor, context)
         }
         if (descriptor.isActualOrSomeContainerIsActual()) {
             val allDependsOnModules = moduleStructureOracle.findAllDependsOnPaths(descriptor.module).flatMap { it.nodes }.toHashSet()
@@ -376,7 +376,7 @@ class ExpectedActualDeclarationChecker(
                 if (expectedConstructor != null && actualConstructor != null) {
                     checkAnnotationConstructors(expectedConstructor, actualConstructor, trace, reportOn)
                 }
-                checkOptInAnnotation(reportOn, descriptor, expected, trace)
+                checkOptInAnnotation(reportOn, descriptor, expected, context)
             }
         }
         // We want to report errors even if a candidate is incompatible, but it's single
@@ -475,14 +475,15 @@ class ExpectedActualDeclarationChecker(
         reportOn: KtNamedDeclaration,
         descriptor: MemberDescriptor,
         expectDescriptor: MemberDescriptor,
-        trace: BindingTrace,
+        context: DeclarationCheckerContext,
     ) {
-        if (descriptor is ClassDescriptor &&
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions) &&
+            descriptor is ClassDescriptor &&
             descriptor.kind == ClassKind.ANNOTATION_CLASS &&
             descriptor.annotations.hasAnnotation(OptInNames.REQUIRES_OPT_IN_FQ_NAME) &&
             !expectDescriptor.annotations.hasAnnotation(OptionalAnnotationUtil.OPTIONAL_EXPECTATION_FQ_NAME)
         ) {
-            trace.report(Errors.EXPECT_ACTUAL_OPT_IN_ANNOTATION.on(reportOn))
+            context.trace.report(Errors.EXPECT_ACTUAL_OPT_IN_ANNOTATION.on(reportOn))
         }
     }
 
