@@ -86,7 +86,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         val params = symbol.valueParameterSymbols.map {
             VariableEmbedding(it.embedName(), embedType(it.resolvedReturnType))
         }
-        val receiver = symbol.dispatchReceiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it)) }
+        val receiver = symbol.receiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it)) }
         return MethodSignatureEmbedding(
             symbol,
             receiver,
@@ -94,6 +94,9 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             embedType(retType)
         )
     }
+
+    private val FirFunctionSymbol<*>.receiverType: ConeKotlinType?
+        get() = dispatchReceiverType ?: resolvedReceiverTypeRef?.type
 
     private fun <D : FirFunction> processFunction(symbol: FirFunctionSymbol<D>, body: FirBlock?): MethodSignatureEmbedding {
         val signature = embedSignature(symbol)

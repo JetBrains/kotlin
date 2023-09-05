@@ -1,0 +1,4 @@
+FILE: extension_function.kt
+    public final fun R|kotlin/Int|.inc(): R|kotlin/Int| {
+        ^inc this@R|/inc|.R|kotlin/Int.plus|(Int(1))
+    }

@@ -1,0 +1,1 @@
+fun Int.<!VIPER_TEXT!>inc<!>(): Int = this + 1
