@@ -22,16 +22,6 @@ class ArtifactsTest {
     private val localRepoPath = Paths.get(mavenLocal, "org/jetbrains/kotlin")
     private val expectedRepoPath = Paths.get("repo/artifacts-tests/src/test/resources/org/jetbrains/kotlin")
 
-    /**
-     * Experimental projects that might be published locally but are not epxected to be published by default.
-     * They still might be added to TeamCity maven.zip final artifacts with an additional code.
-     */
-    private val experimentalProjects = setOf(
-        "compiler-hosted",
-        "compiler-daemon",
-        "compiler",
-    )
-
     private val excludedProjects = setOf(
         "annotation-processor-example",
         "android-test-fixes",
@@ -60,16 +50,12 @@ class ArtifactsTest {
             })
         actualPoms.forEach { actual ->
             val expectedPomPath = actual.toExpectedPath()
-            val parentDirName = expectedPomPath.parent.fileName.toString()
-
-            if (parentDirName !in experimentalProjects) {
-                if (parentDirName !in excludedProjects) {
-                    val actualString = actual.toFile().readText().replace(kotlinVersion, "ArtifactsTest.version")
-                    assertEqualsToFile(expectedPomPath, actualString)
-                    visitedPoms.add(expectedPomPath)
-                } else {
-                    if (isTeamCityBuild) fail("Excluded project in actual artifacts: $actual")
-                }
+            if ("${expectedPomPath.parent.fileName}" !in excludedProjects) {
+                val actualString = actual.toFile().readText().replace(kotlinVersion, "ArtifactsTest.version")
+                assertEqualsToFile(expectedPomPath, actualString)
+                visitedPoms.add(expectedPomPath)
+            } else {
+                if (isTeamCityBuild) fail("Excluded project in actual artifacts: $actual")
             }
         }
 
