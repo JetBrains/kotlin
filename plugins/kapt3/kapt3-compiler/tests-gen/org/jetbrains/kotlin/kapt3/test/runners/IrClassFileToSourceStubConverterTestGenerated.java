@@ -488,6 +488,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("kt61729.kt")
+    public void testKt61729() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt61729.kt");
+    }
+
+    @Test
     @TestMetadata("lazyProperty.kt")
     public void testLazyProperty() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/lazyProperty.kt");
