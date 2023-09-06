@@ -14,6 +14,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
+import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
 
 // A temporary val is a local variables that is:
@@ -128,7 +129,7 @@ class TemporaryValsAnalyzer {
         val loads = LinkedHashSet<VarInsnNode>()
     }
 
-    private sealed class StoredValue : StoreLoadValue {
+    private sealed class StoredValue : Value {
         // `StoredValue` represent some abstract value that doesn't really have a definition of size.
         // `getSize` can return either 1 or 2, so we use 1 here.
         override fun getSize(): Int = 1

@@ -42,11 +42,9 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
-interface StoreLoadValue : Value
+abstract class StoreLoadInterpreter<V : Value> : Interpreter<V>(API_VERSION)
 
-abstract class StoreLoadInterpreter<V : StoreLoadValue> : Interpreter<V>(API_VERSION)
-
-class StoreLoadFrame<V : StoreLoadValue>(val maxLocals: Int) : Frame<V>(maxLocals, 0) {
+class StoreLoadFrame<V : Value>(val maxLocals: Int) : Frame<V>(maxLocals, 0) {
     override fun execute(insn: AbstractInsnNode, interpreter: Interpreter<V>) {
         when (insn.opcode) {
             in Opcodes.ISTORE..Opcodes.ASTORE -> {
@@ -65,7 +63,7 @@ class StoreLoadFrame<V : StoreLoadValue>(val maxLocals: Int) : Frame<V>(maxLocal
     }
 }
 
-class FastStoreLoadAnalyzer<V : StoreLoadValue>(
+class FastStoreLoadAnalyzer<V : Value>(
     owner: String,
     method: MethodNode,
     interpreter: StoreLoadInterpreter<V>
