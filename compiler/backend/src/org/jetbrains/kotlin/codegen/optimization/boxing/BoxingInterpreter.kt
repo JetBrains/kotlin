@@ -18,14 +18,12 @@ package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.topLevelClassInternalName
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -38,7 +36,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
-open class BoxingInterpreter(
+abstract class BoxingInterpreter(
     private val insnList: InsnList,
     private val generationState: GenerationState
 ) : OptimizationBasicInterpreter() {
@@ -208,13 +206,13 @@ open class BoxingInterpreter(
         return boxed
     }
 
-    protected open fun onNewBoxedValue(value: BoxedBasicValue) {}
-    protected open fun onUnboxing(insn: AbstractInsnNode, value: BoxedBasicValue, resultType: Type) {}
-    protected open fun onAreEqual(insn: AbstractInsnNode, value1: BoxedBasicValue, value2: BoxedBasicValue) {}
-    protected open fun onCompareTo(insn: AbstractInsnNode, value1: BoxedBasicValue, value2: BoxedBasicValue) {}
-    protected open fun onMethodCallWithBoxedValue(value: BoxedBasicValue) {}
-    protected open fun onMergeFail(value: BoxedBasicValue) {}
-    protected open fun onMergeSuccess(v: BoxedBasicValue, w: BoxedBasicValue) {}
+    protected abstract fun onNewBoxedValue(value: BoxedBasicValue)
+    protected abstract fun onUnboxing(insn: AbstractInsnNode, value: BoxedBasicValue, resultType: Type)
+    protected abstract fun onAreEqual(insn: AbstractInsnNode, value1: BoxedBasicValue, value2: BoxedBasicValue)
+    protected abstract fun onCompareTo(insn: AbstractInsnNode, value1: BoxedBasicValue, value2: BoxedBasicValue)
+    protected abstract fun onMethodCallWithBoxedValue(value: BoxedBasicValue)
+    protected abstract fun onMergeFail(value: BoxedBasicValue)
+    protected abstract fun onMergeSuccess(v: BoxedBasicValue, w: BoxedBasicValue)
 
 }
 
