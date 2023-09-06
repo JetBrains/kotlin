@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.cli.common.messages.IrMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.*
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
-import org.jetbrains.kotlin.cli.jvm.compiler.forAllFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
@@ -221,7 +218,7 @@ open class IncrementalFirJvmCompilerRunner(
                     val analysisResults =
                         compileModuleToAnalyzedFir(
                             compilerInput,
-                            compilerEnvironment,
+                            projectEnvironment,
                             emptyList(),
                             incrementalExcludesScope,
                             diagnosticsReporter,
@@ -308,9 +305,10 @@ open class IncrementalFirJvmCompilerRunner(
 
             diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
 
-            writeOutputs(
-                projectEnvironment,
+            writeOutputsIfNeeded(
+                projectEnvironment.project,
                 configuration,
+                messageCollector,
                 listOf(codegenOutput.generationState),
                 mainClassFqName
             )

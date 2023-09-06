@@ -135,13 +135,13 @@ fun writeOutput(
 }
 
 fun writeOutputsIfNeeded(
-    project: Project?,
-    projectConfiguration: CompilerConfiguration,
-    chunk: List<Module>,
-    outputs: List<GenerationState>,
+    project: Project,
+    configuration: CompilerConfiguration,
+    messageCollector: MessageCollector,
+    outputs: Collection<GenerationState>,
     mainClassFqName: FqName?
 ): Boolean {
-    if (projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).hasErrors()) {
+    if (messageCollector.hasErrors()) {
         return false
     }
 
@@ -154,16 +154,16 @@ fun writeOutputsIfNeeded(
         outputs.forEach(GenerationState::destroy)
     }
 
-    if (projectConfiguration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {
-        val singleModule = chunk.singleOrNull()
-        if (singleModule != null) {
-            return JavacWrapper.getInstance(project!!).use {
-                it.compile(File(singleModule.getOutputDirectory()))
+    if (configuration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {
+        val singleState = outputs.singleOrNull()
+        if (singleState != null) {
+            return JavacWrapper.getInstance(project).use {
+                it.compile(singleState.outDirectory)
             }
         } else {
-            projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+            messageCollector.report(
                 CompilerMessageSeverity.WARNING,
-                "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). " +
+                "A chunk contains multiple modules (${outputs.joinToString { it.moduleName }}). " +
                         "-Xuse-javac option couldn't be used to compile java files"
             )
         }
