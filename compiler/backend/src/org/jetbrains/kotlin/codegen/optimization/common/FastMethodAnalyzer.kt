@@ -50,10 +50,4 @@ class FastMethodAnalyzer<V : Value>
     private val createFrame: (Int, Int) -> Frame<V> = { nLocals, nStack -> Frame<V>(nLocals, nStack) }
 ) : FastAnalyzer<V, Interpreter<V>, Frame<V>>(owner, method, interpreter, pruneExceptionEdges) {
     override fun newFrame(nLocals: Int, nStack: Int): Frame<V> = createFrame(nLocals, nStack)
-
-    override fun beforeAnalyze() {
-        for (tcb in method.tryCatchBlocks) {
-            isTcbStart[tcb.start.indexOf() + 1] = true
-        }
-    }
 }

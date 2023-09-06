@@ -17,15 +17,15 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
 abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
     private val owner: String,
-    protected val method: MethodNode,
+    private val method: MethodNode,
     private val interpreter: I,
     private val pruneExceptionEdges: Boolean,
 ) {
     private val nInsns = method.instructions.size()
     private val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
 
-    protected val handlers: Array<MutableList<TryCatchBlockNode>?> = arrayOfNulls(nInsns)
-    protected val isTcbStart = BooleanArray(nInsns)
+    private val handlers: Array<MutableList<TryCatchBlockNode>?> = arrayOfNulls(nInsns)
+    private val isTcbStart = BooleanArray(nInsns)
     private val isMergeNode = findMergeNodes(method)
 
     private val queued = BooleanArray(nInsns)
@@ -39,6 +39,11 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
 
         checkAssertions()
         computeExceptionHandlers(method)
+
+        for (tcb in method.tryCatchBlocks) {
+            isTcbStart[tcb.start.indexOf() + 1] = true
+        }
+
         beforeAnalyze()
 
         analyzeMainLoop()
