@@ -11,13 +11,12 @@ import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.relativeTo
 
-@DisabledOnOs(
-    OS.WINDOWS,
-    disabledReason = "Compiler plugin is leaking file descriptor preventing cleaning the project"
+@OsCondition(
+    supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
+    enabledOnCI = [OS.LINUX], // Compiler plugin is leaking file descriptor preventing cleaning the project on Windows
 )
 @DisplayName("Scripting plugin")
 @OtherGradlePluginTests
