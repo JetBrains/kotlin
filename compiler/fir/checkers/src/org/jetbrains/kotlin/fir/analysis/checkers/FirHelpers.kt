@@ -833,8 +833,21 @@ fun ConeKotlinType.leastUpperBound(session: FirSession): ConeKotlinType {
 fun ConeKotlinType.fullyExpandedClassId(session: FirSession): ClassId? {
     return fullyExpandedType(session).classId
 }
+
 @OptIn(ExperimentalContracts::class)
 fun ConeKotlinType.hasDiagnosticKind(kind: DiagnosticKind): Boolean {
     contract { returns(true) implies (this@hasDiagnosticKind is ConeErrorType) }
     return this is ConeErrorType && (diagnostic as? ConeSimpleDiagnostic)?.kind == kind
+}
+
+fun FirResolvedQualifier.isStandalone(
+    context: CheckerContext,
+): Boolean {
+    val lastQualifiedAccess = context.callsOrAssignments.lastOrNull() as? FirQualifiedAccessExpression
+    // Note: qualifier isn't standalone when it's in receiver (SomeClass.foo) or getClass (SomeClass::class) position
+    if (lastQualifiedAccess?.explicitReceiver === this || lastQualifiedAccess?.dispatchReceiver === this) return false
+    val lastGetClass = context.getClassCalls.lastOrNull()
+    if (lastGetClass?.argument === this) return false
+
+    return true
 }

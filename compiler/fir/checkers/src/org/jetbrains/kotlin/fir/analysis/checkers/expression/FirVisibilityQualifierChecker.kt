@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isStandalone
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toInvisibleReferenceDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -18,20 +20,22 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
 
 object FirVisibilityQualifierChecker : FirResolvedQualifierChecker() {
     override fun check(expression: FirResolvedQualifier, context: CheckerContext, reporter: DiagnosticReporter) {
-        checkClassLikeSymbol(expression.symbol ?: return, expression, context, reporter)
+        checkClassLikeSymbol(expression.symbol ?: return, expression, expression.isStandalone(context), context, reporter)
     }
 
     @OptIn(SymbolInternals::class)
     private fun checkClassLikeSymbol(
         symbol: FirClassLikeSymbol<*>,
         expression: FirResolvedQualifier,
+        isStandalone: Boolean,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
         val firFile = context.containingFile ?: return
         val firClassLikeDeclaration = symbol.fir
@@ -50,14 +54,35 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker() {
             return
         }
 
+        // Validate standalone references to companion objects are visible. Qualified use is validated
+        // by call resolution cone diagnostics in coneDiagnosticToFirDiagnostic.
+        if (isStandalone) {
+            val invisibleCompanion = expression.symbol?.fullyExpandedClass(context.session)?.toInvisibleCompanion(context)
+            if (invisibleCompanion != null) {
+                if (expression !is FirErrorResolvedQualifier || expression.diagnostic !is ConeVisibilityError) {
+                    reporter.report(invisibleCompanion.toInvisibleReferenceDiagnostic(expression.source), context)
+                }
+
+                return
+            }
+        }
+
         if (firClassLikeDeclaration is FirTypeAlias) {
             firClassLikeDeclaration.expandedConeType?.toSymbol(context.session)?.let {
-                checkClassLikeSymbol(it, expression, context, reporter)
+                checkClassLikeSymbol(it, expression, isStandalone, context, reporter)
             }
         }
 
         symbol.getOwnerLookupTag()?.toSymbol(context.session)?.let {
-            checkClassLikeSymbol(it, expression, context, reporter)
+            checkClassLikeSymbol(it, expression, isStandalone = false, context, reporter)
+        }
+    }
+
+    @OptIn(SymbolInternals::class)
+    private fun FirRegularClassSymbol.toInvisibleCompanion(context: CheckerContext): FirRegularClassSymbol? {
+        val firFile = context.containingFile ?: return null
+        return companionObjectSymbol?.takeIf {
+            !context.session.visibilityChecker.isClassLikeVisible(it.fir, context.session, firFile, context.containingDeclarations)
         }
     }
 }

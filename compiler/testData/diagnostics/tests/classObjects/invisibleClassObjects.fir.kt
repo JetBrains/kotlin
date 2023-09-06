@@ -41,7 +41,7 @@ import a.<!INVISIBLE_REFERENCE!>D<!>.<!INVISIBLE_REFERENCE!>Companion<!>.quux
 fun test() {
     f(A)
     f(<!INVISIBLE_REFERENCE!>B<!>)
-    f(C)
+    f(<!INVISIBLE_REFERENCE!>C<!>)
     f(<!INVISIBLE_REFERENCE!>D<!>)
 
     A.foo()

@@ -6,6 +6,7 @@ fun test() {
   B.<!INVISIBLE_MEMBER!>D<!>
   <!INVISIBLE_MEMBER!>CCC<!>
   CCC.<!INVISIBLE_MEMBER!>classObjectVar<!>
+  E.F.G
 }
 
 class A() {
@@ -27,4 +28,11 @@ class CCC() {
   private companion object {
     val classObjectVar = 3
   }
+}
+
+class E {
+    class F {
+        companion object G
+    }
+    private companion object
 }

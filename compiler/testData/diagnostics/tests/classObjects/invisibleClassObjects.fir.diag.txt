@@ -12,6 +12,8 @@
 
 /b.kt:(225,226): error: Cannot access 'class B : Any': it is private in file.
 
+/b.kt:(234,235): error: Cannot access 'companion object Companion : Any': it is private in 'a/C'.
+
 /b.kt:(243,244): error: Cannot access 'class D : Any': it is private in file.
 
 /b.kt:(263,264): error: Cannot access 'class B : Any': it is private in file.
