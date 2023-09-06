@@ -13744,6 +13744,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("innerClassGenericBounds.kt")
+                public void testInnerClassGenericBounds() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/generics/innerClasses/innerClassGenericBounds.kt");
+                }
+
+                @Test
                 @TestMetadata("innerSuperCall.kt")
                 public void testInnerSuperCall() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/generics/innerClasses/innerSuperCall.kt");

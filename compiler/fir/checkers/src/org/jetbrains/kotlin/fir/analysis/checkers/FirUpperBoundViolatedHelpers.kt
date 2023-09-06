@@ -219,13 +219,15 @@ fun ConeClassLikeType.fullyExpandedTypeWithSource(
     useSiteSession: FirSession,
 ): ConeClassLikeType? {
     val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef) ?: return null
-    // Avoid issues with nested type aliases and context receivers on function types as source information isn't returned.
-    if (typeRefAndSourcesForArguments.size != typeArguments.size) return null
 
     // Add source information to arguments of non-expanded type, which is preserved during expansion.
-    val typeArguments =
-        typeArguments.zip(typeRefAndSourcesForArguments) { projection, source -> projection.withSource(source) }
-            .toTypedArray()
+    val typeArguments = typeArguments.mapIndexed { i, projection ->
+        // typeRefAndSourcesForArguments can have fewer elements than there are type arguments
+        // because in FIR, inner types of generic outer types have the generic arguments of the outer type added to the end of their list
+        // of type arguments but there is no source for them.
+        val source = typeRefAndSourcesForArguments.elementAtOrNull(i) ?: return@mapIndexed projection
+        projection.withSource(source)
+    }.toTypedArray()
 
     return withArguments(typeArguments).fullyExpandedType(useSiteSession)
 }
