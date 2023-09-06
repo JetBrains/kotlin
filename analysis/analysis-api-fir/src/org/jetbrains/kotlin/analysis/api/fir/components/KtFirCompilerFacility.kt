@@ -44,6 +44,8 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.hasBody
+import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.fir.pipeline.applyIrGenerationExtensions
 import org.jetbrains.kotlin.fir.pipeline.signatureComposerForJvmFir2Ir
 import org.jetbrains.kotlin.fir.psi
@@ -385,7 +387,15 @@ internal class KtFirCompilerFacility(
          * [org.jetbrains.kotlin.backend.jvm.lower.ReflectiveAccessLowering.visitGetField] (or visitSetField) generates the access without
          * asking.
          */
-        override fun isAccessorWithExplicitImplementation(accessor: IrSimpleFunction) = true
+        override fun isAccessorWithExplicitImplementation(accessor: IrSimpleFunction): Boolean {
+            if (accessor is AbstractFir2IrLazyDeclaration<*>) {
+                val fir = accessor.fir
+                if (fir is FirFunction && fir.hasBody) {
+                    return true
+                }
+            }
+            return false
+        }
     }
 
     private class CompilerFacilityFir2IrExtensions(
