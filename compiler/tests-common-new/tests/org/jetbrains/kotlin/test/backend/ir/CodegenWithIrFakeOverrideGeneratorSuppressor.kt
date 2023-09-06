@@ -10,23 +10,18 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ENABLE_IR_FAKE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 class CodegenWithIrFakeOverrideGeneratorSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-    override fun check(failedAssertions: List<WrappedException>) {
-        if (!mainDirectiveEnabled) return
-        if (failedAssertions.isEmpty() && suppressDirectiveEnabled) {
-            testServices.assertions.fail {
-                "Looks like this test can be unmuted. Remove $IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION directive "
-            }
-        }
-    }
-
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         return when {
             !mainDirectiveEnabled -> failedAssertions
-            suppressDirectiveEnabled -> emptyList()
+            suppressDirectiveEnabled ->
+                if (failedAssertions.isEmpty())
+                    listOf(
+                        AssertionError("Looks like this test can be unmuted. Remove $IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION directive.").wrap()
+                    )
+                else emptyList()
             else -> failedAssertions
         }
     }
