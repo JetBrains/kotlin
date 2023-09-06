@@ -379,9 +379,21 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
             }
 
             @Test
+            @TestMetadata("noParameterTypRefInPrimaryConstructorWithVararg.kt")
+            public void testNoParameterTypRefInPrimaryConstructorWithVararg() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInPrimaryConstructorWithVararg.kt");
+            }
+
+            @Test
             @TestMetadata("noParameterTypRefInPrimaryConsturctorVal.kt")
             public void testNoParameterTypRefInPrimaryConsturctorVal() throws Exception {
                 runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInPrimaryConsturctorVal.kt");
+            }
+
+            @Test
+            @TestMetadata("noParameterTypRefInPrimaryConsturctorValWithVararg.kt")
+            public void testNoParameterTypRefInPrimaryConsturctorValWithVararg() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInPrimaryConsturctorValWithVararg.kt");
             }
 
             @Test
@@ -394,6 +406,18 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
             @TestMetadata("noParameterTypRefInSetter.kt")
             public void testNoParameterTypRefInSetter() throws Exception {
                 runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInSetter.kt");
+            }
+
+            @Test
+            @TestMetadata("uncompletedTypRefInPrimaryConstructorWithVararg.kt")
+            public void testUncompletedTypRefInPrimaryConstructorWithVararg() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/uncompletedTypRefInPrimaryConstructorWithVararg.kt");
+            }
+
+            @Test
+            @TestMetadata("uncompletedTypRefInPrimaryConsturctorValWithVararg.kt")
+            public void testUncompletedTypRefInPrimaryConsturctorValWithVararg() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/uncompletedTypRefInPrimaryConsturctorValWithVararg.kt");
             }
         }
     }
