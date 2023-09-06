@@ -419,10 +419,9 @@ private fun isOverloadable(
     val conflictingIsLowPriority = hasLowPriorityAnnotation(conflicting.annotations)
     if (declarationIsLowPriority != conflictingIsLowPriority) return true
 
-    @OptIn(SymbolInternals::class)
     return declaration is FirCallableSymbol<*> &&
             conflicting is FirCallableSymbol<*> &&
-            session.declarationOverloadabilityHelper.isOverloadable(declaration.fir, conflicting.fir)
+            session.declarationOverloadabilityHelper.isOverloadable(declaration, conflicting)
 }
 
 /** Checks for redeclarations of value and type parameters, and local variables. */

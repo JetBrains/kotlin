@@ -6,19 +6,17 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.typeSpecificityComparatorProvider
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDeclarationOverloadabilityHelper {
-    override fun isOverloadable(a: FirCallableDeclaration, b: FirCallableDeclaration): Boolean {
+    override fun isOverloadable(a: FirCallableSymbol<*>, b: FirCallableSymbol<*>): Boolean {
         val sigA = createSignature(a)
         val sigB = createSignature(b)
 
@@ -26,8 +24,8 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
     }
 
     private fun isNotLessSpecific(
-        sigA: FlatSignature<FirCallableDeclaration>,
-        sigB: FlatSignature<FirCallableDeclaration>,
+        sigA: FlatSignature<FirCallableSymbol<*>>,
+        sigB: FlatSignature<FirCallableSymbol<*>>,
     ): Boolean = createEmptyConstraintSystem().isSignatureNotLessSpecific(
         sigA,
         sigB,
@@ -35,23 +33,23 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
         session.typeSpecificityComparatorProvider?.typeSpecificityComparator ?: TypeSpecificityComparator.NONE,
     )
 
-    private fun createSignature(declaration: FirCallableDeclaration): FlatSignature<FirCallableDeclaration> {
-        val valueParameters = (declaration as? FirFunction)?.valueParameters.orEmpty()
+    private fun createSignature(declaration: FirCallableSymbol<*>): FlatSignature<FirCallableSymbol<*>> {
+        val valueParameters = (declaration as? FirFunctionSymbol<*>)?.valueParameterSymbols.orEmpty()
 
         return FlatSignature(
             origin = declaration,
-            typeParameters = declaration.typeParameters.map { it.symbol.toLookupTag() },
+            typeParameters = declaration.typeParameterSymbols.map { it.toLookupTag() },
             valueParameterTypes = buildList<KotlinTypeMarker> {
-                declaration.contextReceivers.mapTo(this) { it.typeRef.coneType }
+                declaration.resolvedContextReceivers.mapTo(this) { it.typeRef.coneType }
                 declaration.receiverParameter?.let { add(it.typeRef.coneType) }
-                valueParameters.mapTo(this) { it.returnTypeRef.coneType }
+                valueParameters.mapTo(this) { it.resolvedReturnType }
             },
             hasExtensionReceiver = declaration.receiverParameter != null,
-            contextReceiverCount = declaration.contextReceivers.size,
+            contextReceiverCount = declaration.resolvedContextReceivers.size,
             hasVarargs = valueParameters.any { it.isVararg },
             numDefaults = 0,
             isExpect = declaration.isExpect,
-            isSyntheticMember = declaration.isSynthetic
+            isSyntheticMember = declaration.origin is FirDeclarationOrigin.Synthetic
         )
     }
 
