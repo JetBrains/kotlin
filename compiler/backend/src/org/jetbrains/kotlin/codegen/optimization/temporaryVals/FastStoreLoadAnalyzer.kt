@@ -42,8 +42,6 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
-abstract class StoreLoadInterpreter<V : Value> : Interpreter<V>(API_VERSION)
-
 class StoreLoadFrame<V : Value>(val maxLocals: Int) : Frame<V>(maxLocals, 0) {
     override fun execute(insn: AbstractInsnNode, interpreter: Interpreter<V>) {
         when (insn.opcode) {
@@ -66,8 +64,8 @@ class StoreLoadFrame<V : Value>(val maxLocals: Int) : Frame<V>(maxLocals, 0) {
 class FastStoreLoadAnalyzer<V : Value>(
     owner: String,
     method: MethodNode,
-    interpreter: StoreLoadInterpreter<V>
-) : FastAnalyzer<V, StoreLoadInterpreter<V>, StoreLoadFrame<V>>(owner, method, interpreter) {
+    interpreter: Interpreter<V>
+) : FastAnalyzer<V, Interpreter<V>, StoreLoadFrame<V>>(owner, method, interpreter) {
     private val isMergeNode = FastMethodAnalyzer.findMergeNodes(method)
 
     override fun analyzeInstruction(

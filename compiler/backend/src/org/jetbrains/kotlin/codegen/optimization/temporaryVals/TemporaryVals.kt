@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.isStoreOperation
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
+import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
 
@@ -155,7 +157,7 @@ class TemporaryValsAnalyzer {
 
     private class StoreTrackingInterpreter(
         private val storeInsnToStoreData: Map<VarInsnNode, StoreData>
-    ) : StoreLoadInterpreter<StoredValue>() {
+    ) : Interpreter<StoredValue>(API_VERSION) {
 
         override fun newEmptyValue(local: Int): StoredValue = StoredValue.Unknown
 
