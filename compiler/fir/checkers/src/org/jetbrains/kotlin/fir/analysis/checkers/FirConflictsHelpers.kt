@@ -54,26 +54,26 @@ private val FirNamedFunctionSymbol.hasMainFunctionStatus
 
 private val CallableId.isTopLevel get() = className == null
 
-private fun FirDeclaration.isCollectable(): Boolean {
-    if (this is FirCallableDeclaration) {
-        if (contextReceivers.any { it.typeRef.coneType.hasError() }) return false
-        if (typeParameters.any { it.toConeType().hasError() }) return false
+private fun FirBasedSymbol<*>.isCollectable(): Boolean {
+    if (this is FirCallableSymbol<*>) {
+        if (resolvedContextReceivers.any { it.typeRef.coneType.hasError() }) return false
+        if (typeParameterSymbols.any { it.toConeType().hasError() }) return false
         if (receiverParameter?.typeRef?.coneType?.hasError() == true) return false
-        if (this is FirFunction && valueParameters.any { it.returnTypeRef.coneType.hasError() }) return false
+        if (this is FirFunctionSymbol<*> && valueParameterSymbols.any { it.resolvedReturnType.hasError() }) return false
     }
 
     return when (this) {
         // - see tests with `fun () {}`.
         // you can't redeclare something that has no name.
-        is FirSimpleFunction -> source?.kind !is KtFakeSourceElementKind && name != SpecialNames.NO_NAME_PROVIDED
-        is FirRegularClass -> name != SpecialNames.NO_NAME_PROVIDED
+        is FirNamedFunctionSymbol -> source?.kind !is KtFakeSourceElementKind && name != SpecialNames.NO_NAME_PROVIDED
+        is FirRegularClassSymbol -> name != SpecialNames.NO_NAME_PROVIDED
         // - see testEnumValuesValueOf.
         // it generates a static function that has
         // the same signature as the function defined
         // explicitly.
-        is FirProperty -> source?.kind !is KtFakeSourceElementKind.EnumGeneratedDeclaration
+        is FirPropertySymbol -> source?.kind !is KtFakeSourceElementKind.EnumGeneratedDeclaration
         // class delegation field will be renamed after by the IR backend in a case of a name clash
-        is FirField -> source?.kind != KtFakeSourceElementKind.ClassDelegationField
+        is FirFieldSymbol -> source?.kind != KtFakeSourceElementKind.ClassDelegationField
         else -> true
     }
 }
@@ -102,7 +102,7 @@ private class DeclarationBuckets {
 private fun groupTopLevelByName(declarations: List<FirDeclaration>, context: CheckerContext): Map<Name, DeclarationBuckets> {
     val groups = mutableMapOf<Name, DeclarationBuckets>()
     for (declaration in declarations) {
-        if (!declaration.isCollectable()) continue
+        if (!declaration.symbol.isCollectable()) continue
 
         when (declaration) {
             is FirSimpleFunction ->
@@ -156,7 +156,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirReg
     // TODO, KT-61243: Use declaredMemberScope
     @OptIn(SymbolInternals::class)
     for (it in klass.fir.declarations) {
-        if (!it.isCollectable()) continue
+        if (!it.symbol.isCollectable()) continue
 
         when (it) {
             is FirSimpleFunction -> collect(it.symbol, FirRedeclarationPresenter.represent(it.symbol), functionDeclarations)
@@ -171,7 +171,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirReg
 fun collectConflictingLocalFunctionsFrom(block: FirBlock, context: CheckerContext): Map<FirFunctionSymbol<*>, Set<FirBasedSymbol<*>>> {
     val collectables =
         block.statements.filter {
-            (it is FirSimpleFunction || it is FirRegularClass) && (it as FirDeclaration).isCollectable()
+            (it is FirSimpleFunction || it is FirRegularClass) && (it as FirDeclaration).symbol.isCollectable()
         }
 
     if (collectables.isEmpty()) return emptyMap()
@@ -375,7 +375,7 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
             is FirCallableSymbol<*> -> session.firProvider.getFirCallableContainerFile(conflictingSymbol)
             else -> null
         }
-    if (!conflicting.isCollectable()) return
+    if (!conflictingSymbol.isCollectable()) return
     if (areCompatibleMainFunctions(declaration, containingFile, conflictingSymbol, actualConflictingFile, session)) return
     if (
         conflicting is FirMemberDeclaration &&
