@@ -98,6 +98,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("callConflictsOnExpectAndActualWeaklyCompatible.kt")
+    public void testCallConflictsOnExpectAndActualWeaklyCompatible() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/callConflictsOnExpectAndActualWeaklyCompatible.kt");
+    }
+
+    @Test
     @TestMetadata("checkNoActualForExpectInLastModule.kt")
     public void testCheckNoActualForExpectInLastModule() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/checkNoActualForExpectInLastModule.kt");

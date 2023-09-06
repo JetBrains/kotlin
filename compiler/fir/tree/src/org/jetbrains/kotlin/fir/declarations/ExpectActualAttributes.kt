@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatible
 
 private object ExpectForActualAttributeKey : FirDeclarationDataKey()
 
@@ -24,6 +25,13 @@ fun FirFunctionSymbol<*>.getSingleExpectForActualOrNull(): FirFunctionSymbol<*>?
 
 fun FirBasedSymbol<*>.getSingleExpectForActualOrNull(): FirBasedSymbol<*>? {
     return expectForActual?.values?.singleOrNull()?.singleOrNull()
+}
+
+fun FirBasedSymbol<*>.getSingleCompatibleOrWeaklyIncompatibleExpectForActualOrNull(): FirBasedSymbol<*>? {
+    val expectForActual = expectForActual ?: return null
+    val compatibleOrWeakCompatible: List<FirBasedSymbol<*>> =
+        expectForActual.entries.singleOrNull { it.key.isCompatibleOrWeaklyIncompatible }?.value ?: return null
+    return compatibleOrWeakCompatible.singleOrNull()
 }
 
 val FirBasedSymbol<*>.expectForActual: ExpectForActualData?

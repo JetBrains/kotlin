@@ -99,6 +99,10 @@ sealed class ExpectActualCompatibility<out D> {
     object Compatible : ExpectActualCompatibility<Nothing>()
 }
 
+val ExpectActualCompatibility<*>.isCompatibleOrWeaklyIncompatible: Boolean
+    get() = this is ExpectActualCompatibility.Compatible
+            || this is ExpectActualCompatibility.Incompatible.WeakIncompatible
+
 val ExpectActualCompatibility<*>.compatible: Boolean
     get() = this == ExpectActualCompatibility.Compatible
 
