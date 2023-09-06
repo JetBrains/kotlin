@@ -22,6 +22,8 @@ fun Element.generateCode(generationPath: File): GeneratedFile =
         printElement(this@generateCode)
     }
 
+private class ElementFieldPrinter(printer: SmartPrinter) : AbstractFieldPrinter<Field>(printer)
+
 context(ImportCollector)
 fun SmartPrinter.printElement(element: Element) {
     with(element) {
@@ -52,9 +54,10 @@ fun SmartPrinter.printElement(element: Element) {
         print(params.multipleUpperBoundsList())
         println(" {")
         withIndent {
+            val fieldPrinter = ElementFieldPrinter(this@printElement)
             allFields.forEach { field ->
                 if (field.isFinal && field.fromParent || field.isParameter) return@forEach
-                printField(field, isImplementation = false, override = field.fromParent) {
+                fieldPrinter.printField(field, override = field.fromParent) {
                     if (!field.isFinal) {
                         abstract()
                     }
