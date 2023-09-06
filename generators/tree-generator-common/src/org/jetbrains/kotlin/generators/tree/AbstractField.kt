@@ -34,6 +34,8 @@ abstract class AbstractField {
 
     var fromParent: Boolean = false
 
+    open val defaultValueInImplementation: String? get() = null
+
     override fun toString(): String {
         return name
     }

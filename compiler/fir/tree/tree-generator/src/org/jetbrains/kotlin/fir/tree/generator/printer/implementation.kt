@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.tree.generator.*
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.generators.tree.*
@@ -29,6 +30,19 @@ fun Implementation.generateCode(generationPath: File): GeneratedFile =
         addAllImports(usedTypes)
         printImplementation(this@generateCode)
     }
+
+private class ImplementationFieldPrinter(printer: SmartPrinter) : AbstractFieldPrinter<Field>(printer) {
+
+    private fun Field.isMutableOrEmptyIfList(): Boolean = when (this) {
+        is FieldList -> isMutableOrEmptyList
+        is FieldWithDefault -> origin.isMutableOrEmptyIfList()
+        else -> true
+    }
+
+    override fun forceMutable(field: Field): Boolean = field.isMutable && field.isMutableOrEmptyIfList()
+
+    override fun actualTypeOfField(field: Field) = field.getMutableType()
+}
 
 context(ImportCollector)
 fun SmartPrinter.printImplementation(implementation: Implementation) {
@@ -78,6 +92,8 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             }
         }
 
+        val fieldPrinter = ImplementationFieldPrinter(this@printImplementation)
+
         if (!isInterface && !isAbstract && fieldsWithoutDefault.isNotEmpty()) {
             if (isPublic) {
                 print(" @${firImplementationDetailType.render()} constructor")
@@ -90,7 +106,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                         if (field.nullable) print("?")
                         println(",")
                     } else if (!field.isFinal) {
-                        printField(field, isImplementation = true, override = true, inConstructor = true)
+                        fieldPrinter.printField(field, override = true, inConstructor = true)
                     }
                 }
             }
@@ -106,13 +122,11 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
         withIndent {
             if (isInterface || isAbstract) {
                 allFields.forEach {
-
-                    abstract()
-                    printField(it, isImplementation = true, override = true)
+                    fieldPrinter.printField(it, override = true, modality = Modality.ABSTRACT.takeIf { isAbstract })
                 }
             } else {
                 fieldsWithDefault.forEach {
-                    printFieldWithDefaultInImplementation(it)
+                    fieldPrinter.printField(it, override = true)
                 }
                 if (fieldsWithDefault.isNotEmpty()) {
                     println()
@@ -375,7 +389,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                     when {
                         field.withGetter -> {}
 
-                        field.origin is FieldList && !field.isMutableOrEmpty -> {
+                        field.origin is FieldList && !field.isMutableOrEmptyList -> {
                             println("${field.name}.clear()")
                             println("${field.name}.addAll($newValue)")
                         }
@@ -385,7 +399,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                 println("require($newValue != null)")
                             }
                             print("${field.name} = $newValue")
-                            if (field.origin is FieldList && field.isMutableOrEmpty) {
+                            if (field.origin is FieldList && field.isMutableOrEmptyList) {
                                 addImport(toMutableOrEmptyImport)
                                 print(".toMutableOrEmpty()")
                             }

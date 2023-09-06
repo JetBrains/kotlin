@@ -9,9 +9,6 @@ import org.jetbrains.kotlin.fir.tree.generator.firTransformerType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.generators.tree.*
 
-val Field.isVal: Boolean
-    get() = (this is FieldList && !isMutableOrEmpty) || (this is FieldWithDefault && origin is FieldList && !origin.isMutableOrEmpty) || !isMutable
-
 context(ImportCollector)
 fun Field.transformFunctionDeclaration(returnType: TypeRef): String {
     return transformFunctionDeclaration(name.replaceFirstChar(Char::uppercaseChar), returnType)
@@ -34,9 +31,9 @@ fun Field.replaceFunctionDeclaration(
     return "fun replace$capName(new$capName: ${typeWithNullable.render()})"
 }
 
-fun Field.getMutableType(forBuilder: Boolean = false): TypeRef = when (this) {
+fun Field.getMutableType(forBuilder: Boolean = false): TypeRefWithNullability = when (this) {
     is FieldList -> when {
-        isMutableOrEmpty && !forBuilder -> type(BASE_PACKAGE, "MutableOrEmptyList", kind = TypeKind.Class)
+        isMutableOrEmptyList && !forBuilder -> type(BASE_PACKAGE, "MutableOrEmptyList", kind = TypeKind.Class)
         isMutable -> StandardTypes.mutableList
         else -> StandardTypes.list
     }.withArgs(baseType).copy(nullable)

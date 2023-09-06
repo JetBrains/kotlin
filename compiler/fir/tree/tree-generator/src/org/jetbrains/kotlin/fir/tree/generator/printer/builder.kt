@@ -83,7 +83,7 @@ private fun SmartPrinter.printBuilder(builder: Builder) {
                         if (field.invisibleField) continue
                         val name = field.name
                         print(name)
-                        if (field.isMutableOrEmpty) {
+                        if (field.isMutableOrEmptyList) {
                             addImport(toMutableOrEmptyImport)
                             print(".toMutableOrEmpty()")
                         }
