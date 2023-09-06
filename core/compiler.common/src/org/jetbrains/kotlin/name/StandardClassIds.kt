@@ -197,6 +197,7 @@ object StandardClassIds {
         val AccessibleLateinitPropertyLiteral = "AccessibleLateinitPropertyLiteral".internalId()
 
         val OptionalExpectation = "OptionalExpectation".baseId()
+        val ImplicitlyActualizedByJvmDeclaration = "ImplicitlyActualizedByJvmDeclaration".jvmId()
 
         object Java {
             val Deprecated = "Deprecated".javaLangId()

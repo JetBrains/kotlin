@@ -20,6 +20,10 @@ annotation class MyOptIn
 @OptIn(MyOptIn::class)
 expect fun skippedAnnotationsOnExpectOnly()
 
+@OptIn(ExperimentalMultiplatform::class)
+@kotlin.jvm.ImplicitlyActualizedByJvmDeclaration
+expect class ImplicitlyActualizedByJvmDeclarationOnExpectOnly
+
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 package kotlin
@@ -28,3 +32,5 @@ package kotlin
 actual annotation class OptionalExpectationOnExpectOnly
 
 actual fun skippedAnnotationsOnExpectOnly() {}
+
+actual class ImplicitlyActualizedByJvmDeclarationOnExpectOnly

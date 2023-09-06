@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.mpp.MppJavaImplicitActualizatorMarker
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.*
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.types.KotlinType
 import java.io.File
 
-private val implicitlyActualizedAnnotationFqn = FqName("kotlin.jvm.ImplicitlyActualizedByJvmDeclaration")
+private val implicitlyActualizedAnnotationFqn = StandardClassIds.Annotations.ImplicitlyActualizedByJvmDeclaration.asSingleFqName()
 
 class ExpectedActualDeclarationChecker(
     val moduleStructureOracle: ModuleStructureOracle,
