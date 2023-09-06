@@ -28,7 +28,7 @@ FILE: parametrizedDataFrame.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.i: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_i)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/i|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(i)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
+                        ^ (this@R|<local>/i|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(i)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.i: R|kotlin/Int|
@@ -38,7 +38,7 @@ FILE: parametrizedDataFrame.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.new: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_new)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/new|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(new)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/new|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(new)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.new: R|kotlin/String|
@@ -58,7 +58,7 @@ FILE: parametrizedDataFrame.kt
 
             }
 
-            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/Schema|>(String(new), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|): R|kotlin/String| <inline=NoInline>  {
+            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/Schema|>(String(new), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|): R|kotlin/String| <inline=NoInline>  {
                 ^ String(a)
             }
             ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenSchema_3097929>|)

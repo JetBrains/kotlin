@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNullable
@@ -143,7 +144,9 @@ class FunctionTransformer(
         val receiver = buildString {
             append(call.explicitReceiver?.typeRef?.coneType?.classId?.asFqNameString()!!)
             if (call.explicitReceiver!!.typeRef.coneType.typeArguments.isNotEmpty()) {
-                if ((call.explicitReceiver!!.typeRef.coneType.typeArguments[0].type?.toSymbol(session)!! as FirRegularClassSymbol).isLocal) {
+                if (call.explicitReceiver!!.typeRef.coneType.typeArguments[0] is ConeStarProjection ||
+                    (call.explicitReceiver!!.typeRef.coneType.typeArguments[0].type?.toSymbol(session)!! as FirRegularClassSymbol).isLocal
+                ) {
                     append("<*>")
                 } else {
                     append("<")

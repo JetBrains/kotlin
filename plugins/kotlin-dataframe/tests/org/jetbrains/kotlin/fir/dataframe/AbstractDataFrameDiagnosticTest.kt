@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
+import org.jetbrains.kotlin.fir.dataframe.services.ExperimentalExtensionRegistrarConfigurator
 import org.jetbrains.kotlin.fir.dataframe.services.ObsoleteExtensionRegistrarConfigurator
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.DisableLazyResolveChecksAfterAnalysisChecker
@@ -43,11 +45,12 @@ abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
         defaultDirectives {
             +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
             +FirDiagnosticsDirectives.FIR_DUMP
+            FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
         }
 
         useConfigurators(
             ::DataFramePluginAnnotationsProvider,
-            ::ObsoleteExtensionRegistrarConfigurator
+            ::ExperimentalExtensionRegistrarConfigurator
         )
         useAfterAnalysisCheckers(
             ::DisableLazyResolveChecksAfterAnalysisChecker,

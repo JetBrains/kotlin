@@ -32,7 +32,7 @@ FILE: readCSV.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.full_name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_full_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/full_name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(full_name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/full_name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(full_name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.full_name: R|kotlin/String|
@@ -42,7 +42,7 @@ FILE: readCSV.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_html_url)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>| {
-                        ^ (this@R|<local>/html_url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(html_url)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|)
+                        ^ (this@R|<local>/html_url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(html_url)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.html_url: R|java/net/URL|
@@ -52,7 +52,7 @@ FILE: readCSV.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.stargazers_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_stargazers_count)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/stargazers_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(stargazers_count)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
+                        ^ (this@R|<local>/stargazers_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(stargazers_count)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.stargazers_count: R|kotlin/Int|
@@ -62,7 +62,7 @@ FILE: readCSV.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.topics: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_topics)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/topics|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(topics)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/topics|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(topics)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.topics: R|kotlin/String|
@@ -72,7 +72,7 @@ FILE: readCSV.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.watchers: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_watchers)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/watchers|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(watchers)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
+                        ^ (this@R|<local>/watchers|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(watchers)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.watchers: R|kotlin/Int|

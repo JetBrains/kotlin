@@ -32,7 +32,7 @@ FILE: main.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.full_name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_full_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/full_name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(full_name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/full_name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(full_name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.full_name: R|kotlin/String|
@@ -42,7 +42,7 @@ FILE: main.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_html_url)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>| {
-                        ^ (this@R|<local>/html_url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(html_url)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|)
+                        ^ (this@R|<local>/html_url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(html_url)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.html_url: R|java/net/URL|
@@ -52,7 +52,7 @@ FILE: main.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.stargazers_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_stargazers_count)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/stargazers_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(stargazers_count)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
+                        ^ (this@R|<local>/stargazers_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(stargazers_count)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.stargazers_count: R|kotlin/Int|
@@ -62,7 +62,7 @@ FILE: main.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.topics: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_topics)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/topics|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(topics)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/topics|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(topics)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.topics: R|kotlin/String|
@@ -72,7 +72,7 @@ FILE: main.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.watchers: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_watchers)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/watchers|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(watchers)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
+                        ^ (this@R|<local>/watchers|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(watchers)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.watchers: R|kotlin/Int|
@@ -96,7 +96,7 @@ FILE: main.kt
         }
         )
         (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|<local>/stargazers_count|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
-        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/filter|<R|org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572|>(<L> = filter@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|): R|kotlin/Boolean| <inline=NoInline>  {
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/filter|<R|org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572|>(<L> = filter@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|): R|kotlin/Boolean| <inline=NoInline>  {
             ^ CMP(>, (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/stargazers_count|.R|kotlin/Int.compareTo|(Int(50)))
         }
         ).R|org/jetbrains/kotlinx/dataframe/api/print|<R|org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572|>()
@@ -133,7 +133,7 @@ FILE: main.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.full_name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_full_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/full_name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(full_name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/full_name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(full_name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.full_name: R|kotlin/String|
@@ -143,7 +143,7 @@ FILE: main.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_html_url)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>| {
-                        ^ (this@R|<local>/html_url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(html_url)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|)
+                        ^ (this@R|<local>/html_url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(html_url)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.html_url: R|java/net/URL|
@@ -153,7 +153,7 @@ FILE: main.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.stargazers_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_stargazers_count)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/stargazers_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(stargazers_count)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
+                        ^ (this@R|<local>/stargazers_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(stargazers_count)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.stargazers_count: R|kotlin/Int|
@@ -163,7 +163,7 @@ FILE: main.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.topics: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_topics)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/topics|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(topics)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/topics|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(topics)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.topics: R|kotlin/String|
@@ -173,7 +173,7 @@ FILE: main.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.watchers: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_watchers)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/watchers|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(watchers)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
+                        ^ (this@R|<local>/watchers|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(watchers)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.watchers: R|kotlin/Int|
@@ -183,7 +183,7 @@ FILE: main.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.hello: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_hello)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/hello|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(hello)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
+                        ^ (this@R|<local>/hello|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(hello)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.hello: R|kotlin/Int|
@@ -203,21 +203,21 @@ FILE: main.kt
 
             }
 
-            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572|>(String(hello), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|): R|kotlin/Int| <inline=NoInline>  {
+            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572|>(String(hello), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|): R|kotlin/Int| <inline=NoInline>  {
                 ^ Int(42)
             }
             ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_102151291>|)
         }
         )).R|<local>/hello|
-        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/sortByDesc|<R|org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572|, R|kotlin/Int|>(<L> = sortByDesc@fun R|org/jetbrains/kotlinx/dataframe/api/SortDsl<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/SortDsl<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/Int>| <inline=NoInline>  {
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/sortByDesc|<R|org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572|, R|kotlin/Int|>(<L> = sortByDesc@fun R|org/jetbrains/kotlinx/dataframe/api/SortDsl<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/SortDsl<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/Int>| <inline=NoInline>  {
             ^ (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/stargazers_count|
         }
         ).R|org/jetbrains/kotlinx/dataframe/api/print|<R|org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572|>(rowsLimit = Int(10))
-        R|kotlin/io/println|(R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/count|<R|org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572|>(<L> = count@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|): R|kotlin/Boolean| <inline=NoInline>  {
+        R|kotlin/io/println|(R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/count|<R|org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572|>(<L> = count@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|): R|kotlin/Boolean| <inline=NoInline>  {
             ^ CMP(>, (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/stargazers_count|.R|kotlin/Int.compareTo|(Int(50)))
         }
         ))
-        R|kotlin/io/println|(R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/count|<R|org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572|>(<L> = count@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|): R|kotlin/Boolean| <inline=NoInline>  {
+        R|kotlin/io/println|(R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/count|<R|org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572|>(<L> = count@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/TokenReadCSVDefault_1639480572>|): R|kotlin/Boolean| <inline=NoInline>  {
             ^ ==((this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/stargazers_count|, Int(0))
         }
         ))

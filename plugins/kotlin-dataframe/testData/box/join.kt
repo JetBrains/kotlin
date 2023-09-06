@@ -17,7 +17,7 @@ import org.jetbrains.kotlinx.dataframe.api.sumOf
 import org.jetbrains.kotlinx.dataframe.api.with
 
 fun box(): String {
-    val df = DataFrame.readJsonDefault("/home/nikitak/IdeaProjects/dataframe-examples/datasets/achievements_all.json")
+    val df = DataFrame.readJsonDefault("/home/nikita/IdeaProjects/dataframe-examples/datasets/achievements_all.json")
 
     val df2 = df.explode { achievements }
 

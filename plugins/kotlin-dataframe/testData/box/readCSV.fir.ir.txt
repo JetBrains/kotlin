@@ -2,7 +2,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:df type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> [val]
-        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let [inline] declared in kotlin.StandardKt' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> origin=null
+        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> origin=null
           <T>: org.jetbrains.kotlinx.dataframe.DataFrame.Companion
           <R>: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572>
           $receiver: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=org.jetbrains.kotlinx.dataframe.DataFrame.Companion
@@ -14,7 +14,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1
                   CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1 [primary]
                     BLOCK_BODY
-                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DataFrameType1 modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
                   PROPERTY name:full_name visibility:public modality:ABSTRACT [val]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-full_name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1) returnType:kotlin.String
@@ -38,7 +38,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
-                      public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                     VALUE_PARAMETER name:other index:0 type:kotlin.Any?
                   FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -53,7 +53,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                   CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0 [primary]
                     BLOCK_BODY
-                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]'
                   PROPERTY name:full_name visibility:public modality:FINAL [val]
                     FUN name:<get-full_name> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
@@ -65,7 +65,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-full_name> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-full_name>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> origin=null
                               columnName: CONST String type=kotlin.String value="full_name"
                   PROPERTY name:full_name visibility:public modality:FINAL [val]
@@ -78,7 +78,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-full_name> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-full_name>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> origin=null
                               name: CONST String type=kotlin.String value="full_name"
                   PROPERTY name:html_url visibility:public modality:FINAL [val]
@@ -91,7 +91,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-html_url> (): org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<java.net.URL>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-html_url>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> origin=null
                               columnName: CONST String type=kotlin.String value="html_url"
                   PROPERTY name:html_url visibility:public modality:FINAL [val]
@@ -104,7 +104,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-html_url> (): java.net.URL declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
                           TYPE_OP type=java.net.URL origin=CAST typeOperand=java.net.URL
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-html_url>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> origin=null
                               name: CONST String type=kotlin.String value="html_url"
                   PROPERTY name:stargazers_count visibility:public modality:FINAL [val]
@@ -117,7 +117,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-stargazers_count> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-stargazers_count>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> origin=null
                               columnName: CONST String type=kotlin.String value="stargazers_count"
                   PROPERTY name:stargazers_count visibility:public modality:FINAL [val]
@@ -130,7 +130,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-stargazers_count> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-stargazers_count>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> origin=null
                               name: CONST String type=kotlin.String value="stargazers_count"
                   PROPERTY name:topics visibility:public modality:FINAL [val]
@@ -143,7 +143,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-topics> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-topics>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> origin=null
                               columnName: CONST String type=kotlin.String value="topics"
                   PROPERTY name:topics visibility:public modality:FINAL [val]
@@ -156,7 +156,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-topics> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-topics>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> origin=null
                               name: CONST String type=kotlin.String value="topics"
                   PROPERTY name:watchers visibility:public modality:FINAL [val]
@@ -169,7 +169,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-watchers> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-watchers>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> origin=null
                               columnName: CONST String type=kotlin.String value="watchers"
                   PROPERTY name:watchers visibility:public modality:FINAL [val]
@@ -182,12 +182,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-watchers> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-watchers>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1> origin=null
                               name: CONST String type=kotlin.String value="watchers"
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
-                      public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                     VALUE_PARAMETER name:other index:0 type:kotlin.Any?
                   FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -202,7 +202,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572
                   CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572 [primary]
                     BLOCK_BODY
-                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1'
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenReadCSVDefault_1639480572 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1]'
                   PROPERTY name:scope0 visibility:public modality:ABSTRACT [val]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572) returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
@@ -210,7 +210,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572
                   PROPERTY FAKE_OVERRIDE name:full_name visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract full_name: kotlin.String [val]
+                      public abstract full_name: kotlin.String
                     FUN FAKE_OVERRIDE name:<get-full_name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:full_name visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -218,7 +218,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1
                   PROPERTY FAKE_OVERRIDE name:html_url visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract html_url: java.net.URL [val]
+                      public abstract html_url: java.net.URL
                     FUN FAKE_OVERRIDE name:<get-html_url> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1) returnType:java.net.URL [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:html_url visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -226,7 +226,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1
                   PROPERTY FAKE_OVERRIDE name:stargazers_count visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract stargazers_count: kotlin.Int [val]
+                      public abstract stargazers_count: kotlin.Int
                     FUN FAKE_OVERRIDE name:<get-stargazers_count> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:stargazers_count visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -234,7 +234,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1
                   PROPERTY FAKE_OVERRIDE name:topics visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract topics: kotlin.String [val]
+                      public abstract topics: kotlin.String
                     FUN FAKE_OVERRIDE name:<get-topics> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:topics visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -242,7 +242,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1
                   PROPERTY FAKE_OVERRIDE name:watchers visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract watchers: kotlin.Int [val]
+                      public abstract watchers: kotlin.Int
                     FUN FAKE_OVERRIDE name:<get-watchers> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:watchers visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -250,25 +250,25 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
-                      public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                     VALUE_PARAMETER name:other index:0 type:kotlin.Any?
                   FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
                     overridden:
-                      public open fun hashCode (): kotlin.Int [fake_override] declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1
+                      public open fun hashCode (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
                     overridden:
-                      public open fun toString (): kotlin.String [fake_override] declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1
+                      public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.DataFrameType1
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame.Companion): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> declared in org.jetbrains.kotlinx.dataframe.box'
                   TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572>
-                    CALL 'public final fun readCSVDefault (fileOrUrl: kotlin.String): org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.api.PluginKt' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.TokenReadCSVDefault_1639480572> origin=null
+                    CALL 'public final fun readCSVDefault (fileOrUrl: kotlin.String): org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.TokenReadCSVDefault_1639480572> origin=null
                       $receiver: GET_VAR 'it: org.jetbrains.kotlinx.dataframe.DataFrame.Companion declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>' type=org.jetbrains.kotlinx.dataframe.DataFrame.Companion origin=null
                       fileOrUrl: CONST String type=kotlin.String value="https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv"
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-full_name> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=GET_PROPERTY
-          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0 origin=null
-          $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> [val] declared in org.jetbrains.kotlinx.dataframe.box' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0 origin=null
+          $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> declared in org.jetbrains.kotlinx.dataframe.box' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSVDefault_1639480572> origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in org.jetbrains.kotlinx.dataframe'
         CONST String type=kotlin.String value="OK"

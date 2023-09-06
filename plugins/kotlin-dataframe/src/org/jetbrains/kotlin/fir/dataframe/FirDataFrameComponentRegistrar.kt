@@ -133,7 +133,7 @@ class GeneratedNames : IGeneratedNames {
 }
 val PATH: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("annotation qualified name")
 
-// listOf("-P", "plugin:org.jetbrains.kotlinx.dataframe:path=/home/nikitak/IdeaProjects/run-df")
+// listOf("-P", "plugin:org.jetbrains.kotlinx.dataframe:path=/home/nikita/IdeaProjects/run-df")
 class DataFrameCommandLineProcessor : CommandLineProcessor {
     companion object {
         val RESOLUTION_DIRECTORY = CliOption(
