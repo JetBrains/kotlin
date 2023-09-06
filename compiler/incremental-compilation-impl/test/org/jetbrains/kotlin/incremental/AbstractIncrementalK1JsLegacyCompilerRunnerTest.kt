@@ -47,4 +47,6 @@ abstract class AbstractIncrementalK1JsLegacyCompilerRunnerTest : AbstractIncreme
         }
 
     protected open val scopeExpansionMode = CompileScopeExpansionMode.NEVER
+
+    override fun failFile(testDir: File): File = testDir.resolve("fail_js_legacy.txt")
 }

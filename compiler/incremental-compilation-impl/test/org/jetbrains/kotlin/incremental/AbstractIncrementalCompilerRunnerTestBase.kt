@@ -56,9 +56,11 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
             parseCommandLineArguments(parseAdditionalArgs(testDir), this)
         }
 
+    open fun failFile(testDir: File): File = testDir.resolve(FAIL_FILE_NAME)
+
     fun doTest(path: String) {
         val testDir = File(path)
-        val failFile = testDir.resolve(FAIL_FILE_NAME)
+        val failFile = failFile(testDir)
         var testPassed = false
         try {
             doTestImpl(testDir)
