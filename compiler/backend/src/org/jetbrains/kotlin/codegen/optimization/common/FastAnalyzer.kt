@@ -32,7 +32,10 @@ abstract class FastAnalyzer<V : Value, F : Frame<V>>(
     private val queue = IntArray(nInsns)
     private var top = 0
 
-    protected open fun visitControlFlowEdge(insnNode: AbstractInsnNode, successor: Int): Boolean = true
+    protected abstract fun newFrame(nLocals: Int, nStack: Int): F
+
+    @Suppress("UNCHECKED_CAST")
+    protected fun getFrame(insn: AbstractInsnNode): F? = frames[insn.indexOf()] as? F
 
     fun analyze(): Array<Frame<V>?> {
         if (nInsns == 0) return frames
@@ -84,71 +87,6 @@ abstract class FastAnalyzer<V : Value, F : Frame<V>>(
         }
     }
 
-    protected open fun beforeAnalyze() {}
-
-    private fun initLocals(current: F) {
-        current.setReturn(interpreter.newReturnTypeValue(Type.getReturnType(method.desc)))
-        val args = Type.getArgumentTypes(method.desc)
-        var local = 0
-        val isInstanceMethod = (method.access and Opcodes.ACC_STATIC) == 0
-        if (isInstanceMethod) {
-            val ctype = Type.getObjectType(owner)
-            current.setLocal(local, interpreter.newParameterValue(true, local, ctype))
-            local++
-        }
-        for (arg in args) {
-            current.setLocal(local, interpreter.newParameterValue(isInstanceMethod, local, arg))
-            local++
-            if (arg.size == 2) {
-                current.setLocal(local, interpreter.newEmptyValue(local))
-                local++
-            }
-        }
-        while (local < method.maxLocals) {
-            current.setLocal(local, interpreter.newEmptyValue(local))
-            local++
-        }
-    }
-
-    private fun processControlFlowEdge(current: F, insnNode: AbstractInsnNode, jump: Int, canReuse: Boolean = false) {
-        if (visitControlFlowEdge(insnNode, jump)) {
-            mergeControlFlowEdge(jump, current, canReuse)
-        }
-    }
-
-    protected open fun useFastMergeControlFlowEdge(): Boolean = false
-
-    /**
-     * Updates frame at the index [dest] with its old value if provided and previous control flow node frame [frame].
-     * Reuses old frame when possible and when [canReuse] is true.
-     * If updated, adds the frame to the queue
-     */
-    private fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean = false) {
-        val oldFrame = frames[dest]
-        val changes = when {
-            canReuse && !isMergeNode[dest] -> {
-                frames[dest] = frame
-                true
-            }
-            oldFrame == null -> {
-                frames[dest] = newFrame(frame.locals, frame.maxStackSize).apply { init(frame) }
-                true
-            }
-            !isMergeNode[dest] -> {
-                oldFrame.init(frame)
-                true
-            }
-            !useFastMergeControlFlowEdge() ->
-                try {
-                    oldFrame.merge(frame, interpreter)
-                } catch (e: AnalyzerException) {
-                    throw AnalyzerException(null, "${e.message}\nframe: ${frame.dump()}\noldFrame: ${oldFrame.dump()}")
-                }
-            else -> false
-        }
-        updateQueue(changes, dest)
-    }
-
     private fun analyzeInstruction(
         insnNode: AbstractInsnNode,
         insnIndex: Int,
@@ -197,10 +135,120 @@ abstract class FastAnalyzer<V : Value, F : Frame<V>>(
         }
     }
 
-    protected abstract fun newFrame(nLocals: Int, nStack: Int): F
+    private fun checkAssertions() {
+        if (method.instructions.any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })
+            throw AssertionError("Subroutines are deprecated since Java 6")
+    }
 
-    @Suppress("UNCHECKED_CAST")
-    protected fun getFrame(insn: AbstractInsnNode): F? = frames[insn.indexOf()] as? F
+    protected open fun useFastComputeExceptionHandlers(): Boolean = false
+
+    private fun computeExceptionHandlers(m: MethodNode) {
+        for (tcb in m.tryCatchBlocks) {
+            if (useFastComputeExceptionHandlers()) computeExceptionHandlerFast(tcb) else computeExceptionHandlersForEachInsn(tcb)
+        }
+    }
+
+    private fun computeExceptionHandlersForEachInsn(tcb: TryCatchBlockNode) {
+        var current: AbstractInsnNode = tcb.start
+        val end = tcb.end
+
+        while (current != end) {
+            if (current.isMeaningful) {
+                val currentIndex = current.indexOf()
+                var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[currentIndex]
+                if (insnHandlers == null) {
+                    insnHandlers = SmartList()
+                    handlers[currentIndex] = insnHandlers
+                }
+                insnHandlers.add(tcb)
+            }
+            current = current.next
+        }
+    }
+
+    private fun computeExceptionHandlerFast(tcb: TryCatchBlockNode) {
+        val start = tcb.start.indexOf()
+        var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[start]
+        if (insnHandlers == null) {
+            insnHandlers = ArrayList()
+            handlers[start] = insnHandlers
+        }
+        insnHandlers.add(tcb)
+    }
+
+    protected open fun beforeAnalyze() {}
+
+    private fun initLocals(current: F) {
+        current.setReturn(interpreter.newReturnTypeValue(Type.getReturnType(method.desc)))
+        val args = Type.getArgumentTypes(method.desc)
+        var local = 0
+        val isInstanceMethod = (method.access and Opcodes.ACC_STATIC) == 0
+        if (isInstanceMethod) {
+            val ctype = Type.getObjectType(owner)
+            current.setLocal(local, interpreter.newParameterValue(true, local, ctype))
+            local++
+        }
+        for (arg in args) {
+            current.setLocal(local, interpreter.newParameterValue(isInstanceMethod, local, arg))
+            local++
+            if (arg.size == 2) {
+                current.setLocal(local, interpreter.newEmptyValue(local))
+                local++
+            }
+        }
+        while (local < method.maxLocals) {
+            current.setLocal(local, interpreter.newEmptyValue(local))
+            local++
+        }
+    }
+
+    protected open fun visitControlFlowEdge(insnNode: AbstractInsnNode, successor: Int): Boolean = true
+
+    private fun processControlFlowEdge(current: F, insnNode: AbstractInsnNode, jump: Int, canReuse: Boolean = false) {
+        if (visitControlFlowEdge(insnNode, jump)) {
+            mergeControlFlowEdge(jump, current, canReuse)
+        }
+    }
+
+    protected open fun useFastMergeControlFlowEdge(): Boolean = false
+
+    /**
+     * Updates frame at the index [dest] with its old value if provided and previous control flow node frame [frame].
+     * Reuses old frame when possible and when [canReuse] is true.
+     * If updated, adds the frame to the queue
+     */
+    private fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean = false) {
+        val oldFrame = frames[dest]
+        val changes = when {
+            canReuse && !isMergeNode[dest] -> {
+                frames[dest] = frame
+                true
+            }
+            oldFrame == null -> {
+                frames[dest] = newFrame(frame.locals, frame.maxStackSize).apply { init(frame) }
+                true
+            }
+            !isMergeNode[dest] -> {
+                oldFrame.init(frame)
+                true
+            }
+            !useFastMergeControlFlowEdge() ->
+                try {
+                    oldFrame.merge(frame, interpreter)
+                } catch (e: AnalyzerException) {
+                    throw AnalyzerException(null, "${e.message}\nframe: ${frame.dump()}\noldFrame: ${oldFrame.dump()}")
+                }
+            else -> false
+        }
+        updateQueue(changes, dest)
+    }
+
+    private fun updateQueue(changes: Boolean, dest: Int) {
+        if (changes && !queued[dest]) {
+            queued[dest] = true
+            queue[top++] = dest
+        }
+    }
 
     private fun visitMeaningfulInstruction(insnNode: AbstractInsnNode, insnType: Int, insnOpcode: Int, current: F, insn: Int) {
         when {
@@ -251,56 +299,8 @@ abstract class FastAnalyzer<V : Value, F : Frame<V>>(
         processControlFlowEdge(current, insnNode, insnNode.label.indexOf())
     }
 
-    private fun checkAssertions() {
-        if (method.instructions.any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })
-            throw AssertionError("Subroutines are deprecated since Java 6")
-    }
-
     protected fun AbstractInsnNode.indexOf() =
         method.instructions.indexOf(this)
-
-    protected open fun useFastComputeExceptionHandlers(): Boolean = false
-
-    private fun computeExceptionHandlers(m: MethodNode) {
-        for (tcb in m.tryCatchBlocks) {
-            if (useFastComputeExceptionHandlers()) computeExceptionHandlerFast(tcb) else computeExceptionHandlersForEachInsn(tcb)
-        }
-    }
-
-    private fun computeExceptionHandlersForEachInsn(tcb: TryCatchBlockNode) {
-        var current: AbstractInsnNode = tcb.start
-        val end = tcb.end
-
-        while (current != end) {
-            if (current.isMeaningful) {
-                val currentIndex = current.indexOf()
-                var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[currentIndex]
-                if (insnHandlers == null) {
-                    insnHandlers = SmartList()
-                    handlers[currentIndex] = insnHandlers
-                }
-                insnHandlers.add(tcb)
-            }
-            current = current.next
-        }
-    }
-
-    private fun computeExceptionHandlerFast(tcb: TryCatchBlockNode) {
-        val start = tcb.start.indexOf()
-        var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[start]
-        if (insnHandlers == null) {
-            insnHandlers = ArrayList()
-            handlers[start] = insnHandlers
-        }
-        insnHandlers.add(tcb)
-    }
-
-    private fun updateQueue(changes: Boolean, dest: Int) {
-        if (changes && !queued[dest]) {
-            queued[dest] = true
-            queue[top++] = dest
-        }
-    }
 
     private fun Frame<V>.dump(): String {
         return buildString {
