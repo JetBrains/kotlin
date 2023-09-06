@@ -17,9 +17,9 @@ dependencies {
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupyter.api)
-    testRuntimeOnly(libs.junit.jupyter.engine)
-    testImplementation(libs.junit.jupyter.params)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.jupiter.params)
     runtimeOnly(libs.junit.vintage.engine)
     testImplementation(libs.junit4)
 }

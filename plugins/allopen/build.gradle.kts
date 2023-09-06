@@ -24,8 +24,8 @@ dependencies {
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 
     testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupyter.api)
-    testRuntimeOnly(libs.junit.jupyter.engine)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))

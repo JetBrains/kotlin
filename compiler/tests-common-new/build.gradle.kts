@@ -19,8 +19,8 @@ dependencies {
     testImplementation(projectTests(":generators:test-generator"))
 
     testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupyter.api)
-    testRuntimeOnly(libs.junit.jupyter.engine)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testApi(libs.junit.platform.launcher)
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))

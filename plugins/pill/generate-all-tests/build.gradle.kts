@@ -25,7 +25,7 @@ dependencies {
 
     testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
     testRuntimeOnly(platform(libs.junit.bom))
-    testRuntimeOnly(libs.junit.jupyter.engine)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
     if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         testRuntimeOnly(project(":core:descriptors.runtime"))

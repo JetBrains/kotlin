@@ -49,8 +49,8 @@ dependencies {
 
     testImplementation(toolsJar())
     testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupyter.api)
-    testRuntimeOnly(libs.junit.jupyter.engine)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(project(":analysis:symbol-light-classes"))
 }
 

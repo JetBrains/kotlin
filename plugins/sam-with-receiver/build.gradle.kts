@@ -18,8 +18,8 @@ dependencies {
     testImplementation(project(":kotlin-scripting-jvm-host-unshaded"))
 
     testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupyter.api)
-    testRuntimeOnly(libs.junit.jupyter.engine)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
 
     testApi(projectTests(":compiler:tests-common-new"))

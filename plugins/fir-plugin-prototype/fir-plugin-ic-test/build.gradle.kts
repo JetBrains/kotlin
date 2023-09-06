@@ -9,7 +9,7 @@ dependencies {
     testApi(project(":plugins:fir-plugin-prototype"))
     testApi(project(":compiler:incremental-compilation-impl"))
     testApi(projectTests(":compiler:incremental-compilation-impl"))
-    testImplementation(libs.junit.jupyter.api)
+    testImplementation(libs.junit.jupiter.api)
 
     testCompileOnly(intellijCore())
 

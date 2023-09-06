@@ -35,8 +35,8 @@ dependencies {
     embedded(project(":analysis:symbol-light-classes")) { isTransitive = false }
 
     testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupyter.api)
-    testRuntimeOnly(libs.junit.jupyter.engine)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testApi(projectTests(":kotlin-annotation-processing-compiler"))
     testImplementation(project(":analysis:analysis-api-standalone"))
     testRuntimeOnly(toolsJar())

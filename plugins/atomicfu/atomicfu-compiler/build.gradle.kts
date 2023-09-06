@@ -103,8 +103,8 @@ dependencies {
     testCompileOnly("org.jetbrains.kotlinx:atomicfu:0.21.0")
 
     testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupyter.api)
-    testRuntimeOnly(libs.junit.jupyter.engine)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
     testRuntimeOnly(kotlinStdlib())
     testRuntimeOnly(project(":kotlin-preloader")) // it's required for ant tests
