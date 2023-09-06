@@ -372,6 +372,72 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends Ab
         }
 
         @Test
+        @TestMetadata("varargInAnnotationPrimaryConstructor.kt")
+        public void testVarargInAnnotationPrimaryConstructor() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/varargInAnnotationPrimaryConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("varargInAnnotationPrimaryConstructorAsProperty.kt")
+        public void testVarargInAnnotationPrimaryConstructorAsProperty() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/varargInAnnotationPrimaryConstructorAsProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("varargInAnnotationPrimaryConstructorAsPropertyWithoutType.kt")
+        public void testVarargInAnnotationPrimaryConstructorAsPropertyWithoutType() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/varargInAnnotationPrimaryConstructorAsPropertyWithoutType.kt");
+        }
+
+        @Test
+        @TestMetadata("varargInAnnotationPrimaryConstructorWithoutType.kt")
+        public void testVarargInAnnotationPrimaryConstructorWithoutType() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/varargInAnnotationPrimaryConstructorWithoutType.kt");
+        }
+
+        @Test
+        @TestMetadata("varargInPrimaryConstructor.kt")
+        public void testVarargInPrimaryConstructor() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/varargInPrimaryConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("varargInPrimaryConstructorAsProperty.kt")
+        public void testVarargInPrimaryConstructorAsProperty() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/varargInPrimaryConstructorAsProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("varargInPrimaryConstructorAsPropertyWithoutType.kt")
+        public void testVarargInPrimaryConstructorAsPropertyWithoutType() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/varargInPrimaryConstructorAsPropertyWithoutType.kt");
+        }
+
+        @Test
+        @TestMetadata("varargInPrimaryConstructorAsPropertyWithoutType2.kt")
+        public void testVarargInPrimaryConstructorAsPropertyWithoutType2() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/varargInPrimaryConstructorAsPropertyWithoutType2.kt");
+        }
+
+        @Test
+        @TestMetadata("varargInPrimaryConstructorWithoutType.kt")
+        public void testVarargInPrimaryConstructorWithoutType() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/varargInPrimaryConstructorWithoutType.kt");
+        }
+
+        @Test
+        @TestMetadata("varargInSecondaryConstructor.kt")
+        public void testVarargInSecondaryConstructor() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/varargInSecondaryConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("varargInSecondaryConstructorWithoutType.kt")
+        public void testVarargInSecondaryConstructorWithoutType() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/varargInSecondaryConstructorWithoutType.kt");
+        }
+
+        @Test
         @TestMetadata("varargWithoutType.kt")
         public void testVarargWithoutType() throws Exception {
             runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/varargWithoutType.kt");
