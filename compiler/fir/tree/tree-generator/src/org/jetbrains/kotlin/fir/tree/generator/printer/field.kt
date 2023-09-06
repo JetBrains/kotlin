@@ -6,69 +6,31 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
+import org.jetbrains.kotlin.generators.tree.AbstractFieldPrinter
 import org.jetbrains.kotlin.utils.SmartPrinter
 
+internal class FieldPrinter(printer: SmartPrinter) : AbstractFieldPrinter<Field>(printer) {
+    override fun isVal(field: Field): Boolean = field.isVal
 
-fun SmartPrinter.printField(field: Field, isImplementation: Boolean, override: Boolean, inConstructor: Boolean = false, notNull: Boolean = false, modifiers: SmartPrinter.() -> Unit = {}) {
-    if (!field.isVal && field.isVolatile) {
-        println("@Volatile")
-    }
+    override fun getType(field: Field, isImplementation: Boolean, notNull: Boolean): String =
+        if (isImplementation) field.getMutableType(notNull = notNull) else field.getTypeWithArguments(notNull = notNull)
+}
 
-    field.optInAnnotation?.let {
-        println(if (inConstructor) "@property:${it.type}" else "@${it.type}")
-    }
-
-    modifiers()
-
-    if (override) {
-        print("override ")
-    }
-    if (field.isLateinit) {
-        print("lateinit ")
-    }
-    if (isImplementation && !field.isVal || field.isFinal && field.isMutable) {
-        print("var")
-    } else {
-        print("val")
-    }
-    val type = if (isImplementation) field.getMutableType(notNull = notNull) else field.getTypeWithArguments(notNull = notNull)
-    print(" ${field.name}: $type")
-    if (inConstructor) print(",")
-    println()
+fun SmartPrinter.printField(
+    field: Field,
+    isImplementation: Boolean,
+    override: Boolean,
+    inConstructor: Boolean = false,
+    notNull: Boolean = false,
+    modifiers: SmartPrinter.() -> Unit = {},
+) {
+    FieldPrinter(this).printField(field, isImplementation, override, inConstructor, notNull, defaultValue = null, modifiers)
 }
 
 fun SmartPrinter.printFieldWithDefaultInImplementation(field: Field) {
-    if (!field.isVal && field.isVolatile) {
-        println("@Volatile")
-    }
-    field.optInAnnotation?.let {
-        println("@OptIn(${it.type}::class)")
-    }
     val defaultValue = field.defaultValueInImplementation
-    print("override ")
-    if (field.isVal) {
-        print("val")
-    } else {
-        print("var")
-    }
-    print(" ${field.name}: ${field.getMutableType()} ")
-    if (field.withGetter) {
-        if (field.customSetter != null) {
-            println()
-            pushIndent()
-        }
-        print("get() ")
-    }
     requireNotNull(defaultValue) {
         "No default value for $field"
     }
-    println("= $defaultValue")
-    field.customSetter?.let {
-        println("set(value) {")
-        pushIndent()
-        println(it)
-        popIndent()
-        println("}")
-        popIndent()
-    }
+    FieldPrinter(this).printField(field, isImplementation = true, override = true, notNull = false, defaultValue = defaultValue)
 }
