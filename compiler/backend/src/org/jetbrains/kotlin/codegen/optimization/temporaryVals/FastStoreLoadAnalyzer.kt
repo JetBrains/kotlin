@@ -67,35 +67,8 @@ class FastStoreLoadAnalyzer<V : Value>(
     owner: String,
     method: MethodNode,
     interpreter: Interpreter<V>
-) : FastAnalyzer<V, Interpreter<V>, StoreLoadFrame<V>>(owner, method, interpreter) {
+) : FastAnalyzer<V, Interpreter<V>, StoreLoadFrame<V>>(owner, method, interpreter, pruneExceptionEdges = false) {
     private val isMergeNode = FastMethodAnalyzer.findMergeNodes(method)
-
-    override fun analyzeInstruction(
-        insnNode: AbstractInsnNode,
-        insnIndex: Int,
-        insnType: Int,
-        insnOpcode: Int,
-        currentlyAnalyzing: StoreLoadFrame<V>,
-        current: StoreLoadFrame<V>,
-        handler: StoreLoadFrame<V>,
-    ) {
-        if (insnType == AbstractInsnNode.LABEL ||
-            insnType == AbstractInsnNode.LINE ||
-            insnType == AbstractInsnNode.FRAME ||
-            insnOpcode == Opcodes.NOP
-        ) {
-            visitNopInsn(insnNode, currentlyAnalyzing, insnIndex)
-        } else {
-            current.init(currentlyAnalyzing).execute(insnNode, interpreter)
-            visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insnIndex)
-        }
-
-        handlers[insnIndex]?.forEach { tcb ->
-            val jump = tcb.handler.indexOf()
-            handler.init(currentlyAnalyzing)
-            mergeControlFlowEdge(jump, handler)
-        }
-    }
 
     override fun newFrame(nLocals: Int, nStack: Int): StoreLoadFrame<V> = StoreLoadFrame(nLocals)
 

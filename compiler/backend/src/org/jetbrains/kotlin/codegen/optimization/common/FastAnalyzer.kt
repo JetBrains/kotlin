@@ -19,11 +19,13 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
     protected val owner: String,
     protected val method: MethodNode,
     protected val interpreter: I,
+    private val pruneExceptionEdges: Boolean,
 ) {
-    protected val nInsns = method.instructions.size()
-    protected val handlers: Array<MutableList<TryCatchBlockNode>?> = arrayOfNulls(nInsns)
-
+    private val nInsns = method.instructions.size()
     private val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
+
+    protected val handlers: Array<MutableList<TryCatchBlockNode>?> = arrayOfNulls(nInsns)
+    protected val isTcbStart = BooleanArray(nInsns)
 
     private val queued = BooleanArray(nInsns)
     private val queue = IntArray(nInsns)
@@ -56,11 +58,9 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
             queued[insn] = false
 
             val insnNode = method.instructions[insn]
-            val insnOpcode = insnNode.opcode
-            val insnType = insnNode.type
 
             try {
-                analyzeInstruction(insnNode, insn, insnType, insnOpcode, f, current, handler)
+                analyzeInstruction(insnNode, insn, f, current, handler)
             } catch (e: AnalyzerException) {
                 throw AnalyzerException(
                     e.node,
@@ -111,15 +111,53 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
 
     protected abstract fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean = false)
 
-    protected abstract fun analyzeInstruction(
+    private fun analyzeInstruction(
         insnNode: AbstractInsnNode,
         insnIndex: Int,
-        insnType: Int,
-        insnOpcode: Int,
         currentlyAnalyzing: F,
         current: F,
         handler: F
-    )
+    ) {
+        val insnOpcode = insnNode.opcode
+        val insnType = insnNode.type
+
+        if (insnType == AbstractInsnNode.LABEL ||
+            insnType == AbstractInsnNode.LINE ||
+            insnType == AbstractInsnNode.FRAME ||
+            insnOpcode == Opcodes.NOP
+        ) {
+            visitNopInsn(insnNode, currentlyAnalyzing, insnIndex)
+        } else {
+            current.init(currentlyAnalyzing)
+            if (insnOpcode != Opcodes.RETURN) {
+                // Don't care about possibly incompatible return type
+                current.execute(insnNode, interpreter)
+            }
+            visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insnIndex)
+        }
+
+        // Jump by an exception edge clears the stack, putting exception on top.
+        // So, unless we have a store operation, anything we change on stack would be lost,
+        // and there's no need to analyze exception handler again.
+        // Add an exception edge from TCB start to make sure handler itself is still visited.
+        if (!pruneExceptionEdges ||
+            insnOpcode in Opcodes.ISTORE..Opcodes.ASTORE ||
+            insnOpcode == Opcodes.IINC ||
+            isTcbStart[insnIndex]
+        ) {
+            handlers[insnIndex]?.forEach { tcb ->
+                val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
+                val jump = tcb.handler.indexOf()
+
+                handler.init(currentlyAnalyzing)
+                if (handler.maxStackSize > 0) {
+                    handler.clearStack()
+                    handler.push(interpreter.newExceptionValue(tcb, handler, exnType))
+                }
+                mergeControlFlowEdge(jump, handler)
+            }
+        }
+    }
 
     protected abstract fun newFrame(nLocals: Int, nStack: Int): F
 
@@ -133,7 +171,7 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
         frames[index] = newFrame
     }
 
-    protected fun visitMeaningfulInstruction(insnNode: AbstractInsnNode, insnType: Int, insnOpcode: Int, current: F, insn: Int) {
+    private fun visitMeaningfulInstruction(insnNode: AbstractInsnNode, insnType: Int, insnOpcode: Int, current: F, insn: Int) {
         when {
             insnType == AbstractInsnNode.JUMP_INSN ->
                 visitJumpInsnNode(insnNode as JumpInsnNode, current, insn, insnOpcode)
@@ -148,7 +186,7 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
         }
     }
 
-    protected fun visitNopInsn(insnNode: AbstractInsnNode, current: F, insn: Int) {
+    private fun visitNopInsn(insnNode: AbstractInsnNode, current: F, insn: Int) {
         processControlFlowEdge(current, insnNode, insn + 1, canReuse = true)
     }
 

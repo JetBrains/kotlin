@@ -34,9 +34,6 @@
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
 import org.jetbrains.kotlin.codegen.optimization.common.FastAnalyzer
-import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
@@ -51,47 +48,12 @@ internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
     owner: String,
     method: MethodNode,
     interpreter: Interpreter<V>
-) : FastAnalyzer<V, Interpreter<V>, F>(owner, method, interpreter) {
+) : FastAnalyzer<V, Interpreter<V>, F>(owner, method, interpreter, pruneExceptionEdges = false) {
     @Suppress("UNCHECKED_CAST")
     override fun newFrame(nLocals: Int, nStack: Int): F = Frame<V>(nLocals, nStack) as F
 
     // Don't have to visit the same exception handler multiple times - we care only about stack state at TCB start.
     override fun useFastComputeExceptionHandlers(): Boolean = true
-
-    override fun analyzeInstruction(
-        insnNode: AbstractInsnNode,
-        insnIndex: Int,
-        insnType: Int,
-        insnOpcode: Int,
-        currentlyAnalyzing: F,
-        current: F,
-        handler: F,
-    ) {
-        if (insnType == AbstractInsnNode.LABEL ||
-            insnType == AbstractInsnNode.LINE ||
-            insnType == AbstractInsnNode.FRAME ||
-            insnOpcode == Opcodes.NOP
-        ) {
-            visitNopInsn(insnNode, currentlyAnalyzing, insnIndex)
-        } else {
-            current.init(currentlyAnalyzing)
-            if (insnOpcode != Opcodes.RETURN) {
-                // Don't care about possibly incompatible return type
-                current.execute(insnNode, interpreter)
-            }
-            visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insnIndex)
-        }
-
-        handlers[insnIndex]?.forEach { tcb ->
-            val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
-            val jump = tcb.handler.indexOf()
-
-            handler.init(currentlyAnalyzing)
-            handler.clearStack()
-            handler.push(interpreter.newExceptionValue(tcb, handler, exnType))
-            mergeControlFlowEdge(jump, handler)
-        }
-    }
 
     override fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean) {
         val oldFrame = getFrame(dest)

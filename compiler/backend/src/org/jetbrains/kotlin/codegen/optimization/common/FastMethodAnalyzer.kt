@@ -33,8 +33,6 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
-import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
@@ -49,58 +47,16 @@ class FastMethodAnalyzer<V : Value>
     owner: String,
     method: MethodNode,
     interpreter: Interpreter<V>,
-    private val pruneExceptionEdges: Boolean = false,
+    pruneExceptionEdges: Boolean = false,
     private val createFrame: (Int, Int) -> Frame<V> = { nLocals, nStack -> Frame<V>(nLocals, nStack) }
-) : FastAnalyzer<V, Interpreter<V>, Frame<V>>(owner, method, interpreter) {
+) : FastAnalyzer<V, Interpreter<V>, Frame<V>>(owner, method, interpreter, pruneExceptionEdges) {
     private val isMergeNode = findMergeNodes(method)
-    private val isTcbStart = BooleanArray(nInsns)
 
     override fun newFrame(nLocals: Int, nStack: Int): Frame<V> = createFrame(nLocals, nStack)
 
     override fun beforeAnalyze() {
         for (tcb in method.tryCatchBlocks) {
             isTcbStart[tcb.start.indexOf() + 1] = true
-        }
-    }
-
-    override fun analyzeInstruction(
-        insnNode: AbstractInsnNode,
-        insnIndex: Int,
-        insnType: Int,
-        insnOpcode: Int,
-        currentlyAnalyzing: Frame<V>,
-        current: Frame<V>,
-        handler: Frame<V>,
-    ) {
-        if (insnType == AbstractInsnNode.LABEL ||
-            insnType == AbstractInsnNode.LINE ||
-            insnType == AbstractInsnNode.FRAME ||
-            insnOpcode == Opcodes.NOP
-        ) {
-            visitNopInsn(insnNode, currentlyAnalyzing, insnIndex)
-        } else {
-            current.init(currentlyAnalyzing).execute(insnNode, interpreter)
-            visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insnIndex)
-        }
-
-        // Jump by an exception edge clears the stack, putting exception on top.
-        // So, unless we have a store operation, anything we change on stack would be lost,
-        // and there's no need to analyze exception handler again.
-        // Add an exception edge from TCB start to make sure handler itself is still visited.
-        if (!pruneExceptionEdges ||
-            insnOpcode in Opcodes.ISTORE..Opcodes.ASTORE ||
-            insnOpcode == Opcodes.IINC ||
-            isTcbStart[insnIndex]
-        ) {
-            handlers[insnIndex]?.forEach { tcb ->
-                val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
-                val jump = tcb.handler.indexOf()
-
-                handler.init(currentlyAnalyzing)
-                handler.clearStack()
-                handler.push(interpreter.newExceptionValue(tcb, handler, exnType))
-                mergeControlFlowEdge(jump, handler)
-            }
         }
     }
 
