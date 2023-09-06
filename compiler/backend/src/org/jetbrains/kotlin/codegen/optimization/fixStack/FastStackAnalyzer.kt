@@ -56,8 +56,6 @@ internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
 
     protected open fun visitControlFlowEdge(insnNode: AbstractInsnNode, successor: Int): Boolean = true
 
-    protected open fun visitControlFlowExceptionEdge(insn: Int, successor: Int): Boolean = true
-
     // Don't have to visit the same exception handler multiple times - we care only about stack state at TCB start.
     override fun useFastComputeExceptionHandlers(): Boolean = true
 
@@ -84,12 +82,11 @@ internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
         handlers[insnIndex]?.forEach { tcb ->
             val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
             val jump = tcb.handler.indexOf()
-            if (visitControlFlowExceptionEdge(insnIndex, jump)) {
-                handler.init(currentlyAnalyzing)
-                handler.clearStack()
-                handler.push(interpreter.newValue(exnType))
-                mergeControlFlowEdge(jump, handler)
-            }
+
+            handler.init(currentlyAnalyzing)
+            handler.clearStack()
+            handler.push(interpreter.newExceptionValue(tcb, handler, exnType))
+            mergeControlFlowEdge(jump, handler)
         }
     }
 
