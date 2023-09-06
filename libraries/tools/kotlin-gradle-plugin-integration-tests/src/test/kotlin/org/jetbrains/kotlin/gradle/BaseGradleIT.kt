@@ -287,7 +287,7 @@ abstract class BaseGradleIT {
         val useParsableDiagnosticsFormatting: Boolean = true,
         val showDiagnosticsStacktrace: Boolean? = false, // false by default to not clutter the testdata + stacktraces change often
         val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
-        val konanDataDir: Path = Paths.get("build/.konan"),
+        val konanDataDir: Path = konanDir,
     ) {
         val safeAndroidGradlePluginVersion: AGPVersion
             get() = androidGradlePluginVersion ?: error("AGP version is expected to be set")
@@ -961,7 +961,7 @@ abstract class BaseGradleIT {
                 add("-Pkotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError")
             }
 
-            add("-Pkonan.data.dir=${options.konanDataDir.absolutePathString()}")
+            add("-Pkonan.data.dir=${options.konanDataDir.toAbsolutePath().normalize()}")
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
             add("--console=plain")
