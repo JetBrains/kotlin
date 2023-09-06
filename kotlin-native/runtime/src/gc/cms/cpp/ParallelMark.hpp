@@ -56,7 +56,7 @@ public:
 
 private:
     std::atomic<uint64_t> epoch_ = 0;
-    std::atomic<Phase> phase_ = Phase::kIdle;
+    Phase phase_ = Phase::kIdle;
     mutable std::mutex mutex_;
     mutable std::condition_variable cond_;
 };
