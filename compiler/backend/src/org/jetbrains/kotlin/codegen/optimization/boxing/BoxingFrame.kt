@@ -10,12 +10,13 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 
-class BoxingFrame(nLocals: Int, nStack: Int, private val boxingInterpreter: BoxingInterpreter) : Frame<BasicValue>(nLocals, nStack) {
+class BoxingFrame(nLocals: Int, nStack: Int) : Frame<BasicValue>(nLocals, nStack) {
     override fun merge(frame: Frame<out BasicValue>, interpreter: Interpreter<BasicValue>): Boolean {
         if (stackSize != frame.stackSize) {
             throw AnalyzerException(null, "Incompatible stack heights")
         }
 
+        val boxingInterpreter = interpreter as BoxingInterpreter
         var changed = false
         for (i in 0 until locals) {
             val local = getLocal(i)

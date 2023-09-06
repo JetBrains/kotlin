@@ -44,7 +44,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
         val interpreter = RedundantBoxingInterpreter(node, generationState)
         val analyzer = FastMethodAnalyzer<BasicValue>(
             internalClassName, node, interpreter, pruneExceptionEdges = false
-        ) { nLocals, nStack -> BoxingFrame(nLocals, nStack, interpreter) }
+        ) { nLocals, nStack -> BoxingFrame(nLocals, nStack) }
         val frames = analyzer.analyze()
 
         interpretPopInstructionsForBoxedValues(interpreter, node, frames)
