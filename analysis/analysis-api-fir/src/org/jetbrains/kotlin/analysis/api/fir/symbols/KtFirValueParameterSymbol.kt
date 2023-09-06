@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.varargElementType
+import org.jetbrains.kotlin.fir.types.arrayElementType
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KtFirValueParameterSymbol(
     override val firSymbol: FirValueParameterSymbol,
@@ -49,7 +51,12 @@ internal class KtFirValueParameterSymbol(
     override val returnType by cached {
         val returnType = firSymbol.resolvedReturnType
         if (firSymbol.isVararg) {
-            builder.typeBuilder.buildKtType(returnType.varargElementType())
+            // There SHOULD always be an array element type (even if it is an error type, e.g., unresolved).
+            val arrayElementType = returnType.arrayElementType()
+                ?: errorWithAttachment("No array element type for vararg value parameter") {
+                    withFirSymbolEntry("symbol", firSymbol)
+                }
+            builder.typeBuilder.buildKtType(arrayElementType)
         } else {
             builder.typeBuilder.buildKtType(returnType)
         }

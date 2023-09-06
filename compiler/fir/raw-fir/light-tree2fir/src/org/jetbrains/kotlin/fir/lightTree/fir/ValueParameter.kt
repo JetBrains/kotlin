@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.lightTree.fir
@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.appliesToPrimaryConstructorParameter
 import org.jetbrains.kotlin.fir.builder.filterUseSiteTarget
 import org.jetbrains.kotlin.fir.builder.initContainingClassAttr
+import org.jetbrains.kotlin.fir.builder.wrapIntoArray
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.correspondingProperty
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -77,13 +79,18 @@ class ValueParameter(
             source = this@ValueParameter.source
             moduleData = this@ValueParameter.moduleData
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = this@ValueParameter.returnTypeRef
+            isVararg = modifiers.hasVararg()
+            returnTypeRef = if (isVararg && this@ValueParameter.returnTypeRef is FirErrorTypeRef) {
+                this@ValueParameter.returnTypeRef.wrapIntoArray()
+            } else {
+                this@ValueParameter.returnTypeRef
+            }
+
             this.name = this@ValueParameter.name
             symbol = FirValueParameterSymbol(name)
             defaultValue = this@ValueParameter.defaultValue
             isCrossinline = modifiers.hasCrossinline()
             isNoinline = modifiers.hasNoinline()
-            isVararg = modifiers.hasVararg()
             containingFunctionSymbol = this@ValueParameter.containingFunctionSymbol
                 ?: error("containingFunctionSymbol should present when converting ValueParameter to a FirValueParameter")
 

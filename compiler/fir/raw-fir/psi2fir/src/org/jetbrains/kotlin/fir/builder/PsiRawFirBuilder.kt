@@ -635,15 +635,24 @@ open class PsiRawFirBuilder(
         ): FirValueParameter {
             val name = convertValueParameterName(nameAsSafeName, valueParameterDeclaration) { nameIdentifier?.node?.text }
             return buildValueParameter {
-                source = toFirSourceElement()
+                val parameterSource = toFirSourceElement()
+                source = parameterSource
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
+                isVararg = isVarArg
                 returnTypeRef = when {
                     typeReference != null -> typeReference.toFirOrErrorType()
                     defaultTypeRef != null -> defaultTypeRef
-                    valueParameterDeclaration.shouldExplicitParameterTypeBePresent -> createNoTypeForParameterTypeRef()
+                    valueParameterDeclaration.shouldExplicitParameterTypeBePresent -> createNoTypeForParameterTypeRef(parameterSource)
                     else -> null.toFirOrImplicitType()
+                }.let {
+                    if (isVararg && it is FirErrorTypeRef) {
+                        it.wrapIntoArray()
+                    } else {
+                        it
+                    }
                 }
+
                 this.name = name
                 symbol = FirValueParameterSymbol(name)
                 defaultValue = if (hasDefaultValue()) {
@@ -651,7 +660,6 @@ open class PsiRawFirBuilder(
                 } else null
                 isCrossinline = hasModifier(CROSSINLINE_KEYWORD)
                 isNoinline = hasModifier(NOINLINE_KEYWORD)
-                isVararg = isVarArg
                 containingFunctionSymbol = functionSymbol
                 addAnnotationsFrom(
                     this@toFirValueParameter,
@@ -673,14 +681,23 @@ open class PsiRawFirBuilder(
 
         private fun KtParameter.toFirProperty(firParameter: FirValueParameter): FirProperty {
             require(hasValOrVar())
-            val type = typeReference.convertSafe<FirTypeRef>() ?: createNoTypeForParameterTypeRef()
             val status = FirDeclarationStatusImpl(visibility, modality).apply {
                 isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                 isActual = hasActualModifier()
                 isOverride = hasModifier(OVERRIDE_KEYWORD)
                 isConst = hasModifier(CONST_KEYWORD)
             }
+
             val propertySource = toFirSourceElement(KtFakeSourceElementKind.PropertyFromParameter)
+            // We can't just reuse a type from firParameter to avoid annotation leak.
+            val type = (typeReference.convertSafe<FirTypeRef>() ?: createNoTypeForParameterTypeRef(propertySource)).let {
+                if (it is FirErrorTypeRef && firParameter.isVararg) {
+                    it.wrapIntoArray()
+                } else {
+                    it
+                }
+            }
+
             val propertyName = nameAsSafeName
             val parameterAnnotations = mutableListOf<FirAnnotationCall>()
             for (annotationEntry in annotationEntries) {
@@ -2163,11 +2180,12 @@ open class PsiRawFirBuilder(
                         returnTypeRef = unwrappedElement.returnTypeReference.toFirOrErrorType()
                         for (valueParameter in unwrappedElement.parameters) {
                             parameters += buildFunctionTypeParameter {
-                                this.source = valueParameter.toFirSourceElement()
+                                val parameterSource = valueParameter.toFirSourceElement()
+                                this.source = parameterSource
                                 name = valueParameter.nameAsName
                                 returnTypeRef = when {
                                     valueParameter.typeReference != null -> valueParameter.typeReference.toFirOrErrorType()
-                                    else -> createNoTypeForParameterTypeRef()
+                                    else -> createNoTypeForParameterTypeRef(parameterSource)
                                 }
                             }
                         }
@@ -2357,12 +2375,13 @@ open class PsiRawFirBuilder(
                         ) { ktParameter.nameIdentifier?.node?.text }
 
                         buildProperty {
-                            source = ktParameter.toFirSourceElement()
+                            val parameterSource = ktParameter.toFirSourceElement()
+                            source = parameterSource
                             moduleData = baseModuleData
                             origin = FirDeclarationOrigin.Source
                             returnTypeRef = when {
                                 ktParameter.typeReference != null -> ktParameter.typeReference.toFirOrErrorType()
-                                else -> createNoTypeForParameterTypeRef()
+                                else -> createNoTypeForParameterTypeRef(parameterSource)
                             }
                             isVar = false
                             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)

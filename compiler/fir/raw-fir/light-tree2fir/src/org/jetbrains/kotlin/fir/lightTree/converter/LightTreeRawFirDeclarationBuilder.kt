@@ -2311,9 +2311,10 @@ class LightTreeRawFirDeclarationBuilder(
                         }
                     }
                     container += buildFunctionTypeParameter {
-                        source = node.toFirSourceElement()
+                        val parameterSource = node.toFirSourceElement()
+                        source = parameterSource
                         this.name = name
-                        this.returnTypeRef = typeRef ?: createNoTypeForParameterTypeRef()
+                        this.returnTypeRef = typeRef ?: createNoTypeForParameterTypeRef(parameterSource)
                     }
                 }
             }
@@ -2373,7 +2374,7 @@ class LightTreeRawFirDeclarationBuilder(
             modifiers = modifiers,
             returnTypeRef = firType
                 ?: when {
-                    valueParameterDeclaration.shouldExplicitParameterTypeBePresent -> createNoTypeForParameterTypeRef()
+                    valueParameterDeclaration.shouldExplicitParameterTypeBePresent -> createNoTypeForParameterTypeRef(valueParameterSource)
                     else -> implicitType
                 },
             source = valueParameterSource,

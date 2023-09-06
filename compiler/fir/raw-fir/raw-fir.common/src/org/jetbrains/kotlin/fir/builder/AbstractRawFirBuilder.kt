@@ -1078,8 +1078,9 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         symbol = FirErrorPropertySymbol(diagnostic)
     }
 
-    protected fun createNoTypeForParameterTypeRef(): FirErrorTypeRef {
+    protected fun createNoTypeForParameterTypeRef(parameterSource: KtSourceElement): FirErrorTypeRef {
         return buildErrorTypeRef {
+            source = parameterSource
             diagnostic = ConeSimpleDiagnostic("No type for parameter", DiagnosticKind.ValueParameterWithNoTypeAnnotation)
         }
     }
