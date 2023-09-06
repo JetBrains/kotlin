@@ -33,8 +33,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
-import org.jetbrains.org.objectweb.asm.tree.*
-import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
@@ -50,75 +49,11 @@ class FastMethodAnalyzer<V : Value>
     pruneExceptionEdges: Boolean = false,
     private val createFrame: (Int, Int) -> Frame<V> = { nLocals, nStack -> Frame<V>(nLocals, nStack) }
 ) : FastAnalyzer<V, Interpreter<V>, Frame<V>>(owner, method, interpreter, pruneExceptionEdges) {
-    private val isMergeNode = findMergeNodes(method)
-
     override fun newFrame(nLocals: Int, nStack: Int): Frame<V> = createFrame(nLocals, nStack)
 
     override fun beforeAnalyze() {
         for (tcb in method.tryCatchBlocks) {
             isTcbStart[tcb.start.indexOf() + 1] = true
-        }
-    }
-
-    /**
-     * Updates frame at the index [dest] with its old value if provided and previous control flow node frame [frame].
-     * Reuses old frame when possible and when [canReuse] is true.
-     * If updated, adds the frame to the queue
-     */
-    override fun mergeControlFlowEdge(dest: Int, frame: Frame<V>, canReuse: Boolean) {
-        val oldFrame = getFrame(dest)
-        val changes = when {
-            canReuse && !isMergeNode[dest] -> {
-                setFrame(dest, frame)
-                true
-            }
-            oldFrame == null -> {
-                setFrame(dest, newFrame(frame.locals, frame.maxStackSize).apply { init(frame) })
-                true
-            }
-            !isMergeNode[dest] -> {
-                oldFrame.init(frame)
-                true
-            }
-            else ->
-                try {
-                    oldFrame.merge(frame, interpreter)
-                } catch (e: AnalyzerException) {
-                    throw AnalyzerException(null, "${e.message}\nframe: ${frame.dump()}\noldFrame: ${oldFrame.dump()}")
-                }
-        }
-        updateQueue(changes, dest)
-    }
-
-    companion object {
-        fun findMergeNodes(method: MethodNode): BooleanArray {
-            val isMergeNode = BooleanArray(method.instructions.size())
-            for (insn in method.instructions) {
-                when (insn.type) {
-                    AbstractInsnNode.JUMP_INSN -> {
-                        val jumpInsn = insn as JumpInsnNode
-                        isMergeNode[method.instructions.indexOf(jumpInsn.label)] = true
-                    }
-                    AbstractInsnNode.LOOKUPSWITCH_INSN -> {
-                        val switchInsn = insn as LookupSwitchInsnNode
-                        isMergeNode[method.instructions.indexOf(switchInsn.dflt)] = true
-                        for (label in switchInsn.labels) {
-                            isMergeNode[method.instructions.indexOf(label)] = true
-                        }
-                    }
-                    AbstractInsnNode.TABLESWITCH_INSN -> {
-                        val switchInsn = insn as TableSwitchInsnNode
-                        isMergeNode[method.instructions.indexOf(switchInsn.dflt)] = true
-                        for (label in switchInsn.labels) {
-                            isMergeNode[method.instructions.indexOf(label)] = true
-                        }
-                    }
-                }
-            }
-            for (tcb in method.tryCatchBlocks) {
-                isMergeNode[method.instructions.indexOf(tcb.handler)] = true
-            }
-            return isMergeNode
         }
     }
 }

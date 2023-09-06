@@ -34,7 +34,6 @@
 package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
 import org.jetbrains.kotlin.codegen.optimization.common.FastAnalyzer
-import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.IincInsnNode
@@ -68,24 +67,5 @@ class FastStoreLoadAnalyzer<V : Value>(
     method: MethodNode,
     interpreter: Interpreter<V>
 ) : FastAnalyzer<V, Interpreter<V>, StoreLoadFrame<V>>(owner, method, interpreter, pruneExceptionEdges = false) {
-    private val isMergeNode = FastMethodAnalyzer.findMergeNodes(method)
-
     override fun newFrame(nLocals: Int, nStack: Int): StoreLoadFrame<V> = StoreLoadFrame(nLocals)
-
-    override fun mergeControlFlowEdge(dest: Int, frame: StoreLoadFrame<V>, canReuse: Boolean) {
-        val oldFrame = getFrame(dest)
-        val changes = when {
-            oldFrame == null -> {
-                setFrame(dest, newFrame(frame.maxLocals, 0).apply { init(frame) })
-                true
-            }
-            !isMergeNode[dest] -> {
-                oldFrame.init(frame)
-                true
-            }
-            else ->
-                oldFrame.merge(frame, interpreter)
-        }
-        updateQueue(changes, dest)
-    }
 }

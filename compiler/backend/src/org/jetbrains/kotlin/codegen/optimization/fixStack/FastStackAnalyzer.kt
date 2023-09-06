@@ -54,18 +54,5 @@ internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
 
     // Don't have to visit the same exception handler multiple times - we care only about stack state at TCB start.
     override fun useFastComputeExceptionHandlers(): Boolean = true
-
-    override fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean) {
-        val oldFrame = getFrame(dest)
-        val changes = when {
-            // Don't have to visit the same instruction multiple times - we care only about "initial" stack state.
-            oldFrame == null -> {
-                setFrame(dest, newFrame(frame.locals, frame.maxStackSize).apply { init(frame) })
-                true
-            }
-            else -> false
-        }
-        updateQueue(changes, dest)
-    }
-
+    override fun useFastMergeControlFlowEdge(): Boolean = true
 }

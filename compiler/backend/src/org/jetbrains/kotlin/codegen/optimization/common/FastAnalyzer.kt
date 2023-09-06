@@ -16,9 +16,9 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
 abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
-    protected val owner: String,
+    private val owner: String,
     protected val method: MethodNode,
-    protected val interpreter: I,
+    private val interpreter: I,
     private val pruneExceptionEdges: Boolean,
 ) {
     private val nInsns = method.instructions.size()
@@ -26,6 +26,7 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
 
     protected val handlers: Array<MutableList<TryCatchBlockNode>?> = arrayOfNulls(nInsns)
     protected val isTcbStart = BooleanArray(nInsns)
+    private val isMergeNode = findMergeNodes(method)
 
     private val queued = BooleanArray(nInsns)
     private val queue = IntArray(nInsns)
@@ -109,7 +110,38 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
         }
     }
 
-    protected abstract fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean = false)
+    protected open fun useFastMergeControlFlowEdge(): Boolean = false
+
+    /**
+     * Updates frame at the index [dest] with its old value if provided and previous control flow node frame [frame].
+     * Reuses old frame when possible and when [canReuse] is true.
+     * If updated, adds the frame to the queue
+     */
+    private fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean = false) {
+        val oldFrame = getFrame(dest)
+        val changes = when {
+            canReuse && !isMergeNode[dest] -> {
+                setFrame(dest, frame)
+                true
+            }
+            oldFrame == null -> {
+                setFrame(dest, newFrame(frame.locals, frame.maxStackSize).apply { init(frame) })
+                true
+            }
+            !isMergeNode[dest] -> {
+                oldFrame.init(frame)
+                true
+            }
+            !useFastMergeControlFlowEdge() ->
+                try {
+                    oldFrame.merge(frame, interpreter)
+                } catch (e: AnalyzerException) {
+                    throw AnalyzerException(null, "${e.message}\nframe: ${frame.dump()}\noldFrame: ${oldFrame.dump()}")
+                }
+            else -> false
+        }
+        updateQueue(changes, dest)
+    }
 
     private fun analyzeInstruction(
         insnNode: AbstractInsnNode,
@@ -292,6 +324,38 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
                 append("  ]\n")
             }
             append("}\n")
+        }
+    }
+
+    companion object {
+        fun findMergeNodes(method: MethodNode): BooleanArray {
+            val isMergeNode = BooleanArray(method.instructions.size())
+            for (insn in method.instructions) {
+                when (insn.type) {
+                    AbstractInsnNode.JUMP_INSN -> {
+                        val jumpInsn = insn as JumpInsnNode
+                        isMergeNode[method.instructions.indexOf(jumpInsn.label)] = true
+                    }
+                    AbstractInsnNode.LOOKUPSWITCH_INSN -> {
+                        val switchInsn = insn as LookupSwitchInsnNode
+                        isMergeNode[method.instructions.indexOf(switchInsn.dflt)] = true
+                        for (label in switchInsn.labels) {
+                            isMergeNode[method.instructions.indexOf(label)] = true
+                        }
+                    }
+                    AbstractInsnNode.TABLESWITCH_INSN -> {
+                        val switchInsn = insn as TableSwitchInsnNode
+                        isMergeNode[method.instructions.indexOf(switchInsn.dflt)] = true
+                        for (label in switchInsn.labels) {
+                            isMergeNode[method.instructions.indexOf(label)] = true
+                        }
+                    }
+                }
+            }
+            for (tcb in method.tryCatchBlocks) {
+                isMergeNode[method.instructions.indexOf(tcb.handler)] = true
+            }
+            return isMergeNode
         }
     }
 }
