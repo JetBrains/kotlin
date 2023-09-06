@@ -117,7 +117,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/returnType>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(returnType_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/returnType>|.name: R|kotlin/String|
@@ -127,7 +127,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/returnType>|.vararg: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
                     @R|kotlin/jvm/JvmName|(name = String(returnType_vararg)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>| {
-                        ^ (this@R|<local>/vararg|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(vararg)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|)
+                        ^ (this@R|<local>/vararg|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(vararg)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/returnType>|.vararg: R|kotlin/Boolean|
@@ -160,7 +160,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/parameters>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(parameters_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/parameters>|.name: R|kotlin/String|
@@ -170,7 +170,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/parameters>|.returnType: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/returnType>|
                     @R|kotlin/jvm/JvmName|(name = String(parameters_returnType)) public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/returnType>| {
-                        ^ (this@R|<local>/returnType|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(returnType)) as R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/returnType>|)
+                        ^ (this@R|<local>/returnType|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(returnType)) as R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/returnType>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/parameters>|.returnType: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/returnType>|
@@ -180,7 +180,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/parameters>|.defaultValue: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     @R|kotlin/jvm/JvmName|(name = String(parameters_defaultValue)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>| {
-                        ^ (this@R|<local>/defaultValue|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(defaultValue)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|)
+                        ^ (this@R|<local>/defaultValue|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(defaultValue)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/parameters>|.defaultValue: R|kotlin/String?|
@@ -210,7 +210,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/functionReturnType>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(functionReturnType_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/functionReturnType>|.name: R|kotlin/String|
@@ -220,7 +220,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/functionReturnType>|.vararg: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
                     @R|kotlin/jvm/JvmName|(name = String(functionReturnType_vararg)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>| {
-                        ^ (this@R|<local>/vararg|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(vararg)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|)
+                        ^ (this@R|<local>/vararg|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(vararg)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/functionReturnType>|.vararg: R|kotlin/Boolean|
@@ -268,7 +268,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.receiverType: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_receiverType)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/receiverType|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(receiverType)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/receiverType|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(receiverType)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.receiverType: R|kotlin/String|
@@ -278,7 +278,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.function: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_function)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/function|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(function)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/function|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(function)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.function: R|kotlin/String|
@@ -288,7 +288,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.functionReturnType: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/functionReturnType>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_functionReturnType)) public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/functionReturnType>| {
-                        ^ (this@R|<local>/functionReturnType|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(functionReturnType)) as R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/functionReturnType>|)
+                        ^ (this@R|<local>/functionReturnType|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(functionReturnType)) as R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/functionReturnType>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.functionReturnType: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/functionReturnType>|
@@ -298,7 +298,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.parameters: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/parameters>>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_parameters)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/parameters>>| {
-                        ^ (this@R|<local>/parameters|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(parameters)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/parameters>>|)
+                        ^ (this@R|<local>/parameters|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(parameters)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/parameters>>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.parameters: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/parameters>|
@@ -308,7 +308,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.approximation: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_approximation)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/approximation|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(approximation)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/approximation|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(approximation)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.approximation: R|kotlin/String|
@@ -318,7 +318,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.converter: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_converter)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/converter|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(converter)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/converter|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(converter)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.converter: R|kotlin/String|
@@ -328,7 +328,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.lens: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_lens)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-                        ^ (this@R|<local>/lens|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(lens)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
+                        ^ (this@R|<local>/lens|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(lens)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.lens: R|kotlin/String|
@@ -338,7 +338,7 @@ FILE: extractPluginSchemaWithUnfold.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.supported: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_supported)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>| {
-                        ^ (this@R|<local>/supported|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(supported)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|)
+                        ^ (this@R|<local>/supported|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(supported)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.supported: R|kotlin/Boolean|

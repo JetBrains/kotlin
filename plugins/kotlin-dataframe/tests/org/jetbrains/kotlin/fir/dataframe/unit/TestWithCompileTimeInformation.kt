@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.model.TestModule
@@ -52,6 +53,7 @@ abstract class TestWithCompileTimeInformation : BaseTestRunner() {
         baseFirDiagnosticTestConfiguration()
         defaultDirectives {
             +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
+            FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
         }
 
         useConfigurators(

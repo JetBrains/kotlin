@@ -6,7 +6,7 @@ FILE: transformReplaceFunctionCall.kt
         ^box String(OK)
     }
     public final fun test(): R|kotlin/Unit| {
-        lval df: R|org/jetbrains/kotlinx/dataframe/AnyFrame| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1)))
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1)))
         (this@R|org/jetbrains/kotlinx/dataframe/test|, R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenAdd_6048346>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenAdd_6048346>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class DataFrameType1 : R|kotlin/Any| {
                 public constructor(): R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
@@ -25,7 +25,7 @@ FILE: transformReplaceFunctionCall.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.col1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_col1)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/col1|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(col1)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
+                        ^ (this@R|<local>/col1|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(col1)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
                     }
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.col1: R|kotlin/Int|
@@ -45,7 +45,7 @@ FILE: transformReplaceFunctionCall.kt
 
             }
 
-            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|kotlin/Any?|>(String(col1), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<kotlin/Any?>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<kotlin/Any?>|): R|kotlin/Int| <inline=NoInline>  {
+            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|kotlin/Any?|>(String(col1), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<kotlin/Any?>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/AddDataRow<kotlin/Any?>|): R|kotlin/Int| <inline=NoInline>  {
                 ^ Int(42)
             }
             ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenAdd_6048346>|)

@@ -35,7 +35,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ActivePlayer
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -49,30 +49,30 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
   FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:df type:org.jetbrains.kotlinx.dataframe.DataFrame<*> [val]
-        CALL 'public final fun read (path: kotlin.String, header: kotlin.collections.List<kotlin.String>): org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.io.GuessKt' type=org.jetbrains.kotlinx.dataframe.DataFrame<*> origin=null
+        CALL 'public final fun read (path: kotlin.String, header: kotlin.collections.List<kotlin.String>): org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.io' type=org.jetbrains.kotlinx.dataframe.DataFrame<*> origin=null
           $receiver: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=org.jetbrains.kotlinx.dataframe.DataFrame.Companion
           path: CONST String type=kotlin.String value=""
       VAR name:df type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> [val]
-        CALL 'public final fun cast <T> (): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.CastKt.cast> declared in org.jetbrains.kotlinx.dataframe.api.CastKt' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> origin=null
+        CALL 'public final fun cast <T> (): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.cast> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> origin=null
           <T>: org.jetbrains.kotlinx.dataframe.ActivePlayer
-          $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<*> [val] declared in org.jetbrains.kotlinx.dataframe.main' type=org.jetbrains.kotlinx.dataframe.DataFrame<*> origin=null
+          $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.main' type=org.jetbrains.kotlinx.dataframe.DataFrame<*> origin=null
       VAR name:format type:@[FlexibleNullability] java.time.format.DateTimeFormatter? [val]
         CALL 'public open fun ofPattern (p0: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] java.time.format.DateTimeFormatter? declared in java.time.format.DateTimeFormatter' type=@[FlexibleNullability] java.time.format.DateTimeFormatter? origin=null
           p0: CONST String type=kotlin.String value="MM/dd/yy HH:mm:ss"
       VAR name:df1 type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796> [val]
-        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let [inline] declared in kotlin.StandardKt' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796> origin=null
+        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796> origin=null
           <T>: org.jetbrains.kotlinx.dataframe.api.Convert<org.jetbrains.kotlinx.dataframe.ActivePlayer, kotlin.String>
           <R>: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796>
-          $receiver: CALL 'public final fun convert <T, C> (columns: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.ConvertKt.convert>, org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.ConvertKt.convert>, org.jetbrains.kotlinx.dataframe.columns.ColumnSet<C of org.jetbrains.kotlinx.dataframe.api.ConvertKt.convert>>): org.jetbrains.kotlinx.dataframe.api.Convert<T of org.jetbrains.kotlinx.dataframe.api.ConvertKt.convert, C of org.jetbrains.kotlinx.dataframe.api.ConvertKt.convert> declared in org.jetbrains.kotlinx.dataframe.api.ConvertKt' type=org.jetbrains.kotlinx.dataframe.api.Convert<org.jetbrains.kotlinx.dataframe.ActivePlayer, kotlin.String> origin=null
+          $receiver: CALL 'public final fun convert <T, C> (columns: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.convert>, @[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.convert>, org.jetbrains.kotlinx.dataframe.columns.ColumnSet<C of org.jetbrains.kotlinx.dataframe.api.convert>>): org.jetbrains.kotlinx.dataframe.api.Convert<T of org.jetbrains.kotlinx.dataframe.api.convert, C of org.jetbrains.kotlinx.dataframe.api.convert> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.api.Convert<org.jetbrains.kotlinx.dataframe.ActivePlayer, kotlin.String> origin=null
             <T>: org.jetbrains.kotlinx.dataframe.ActivePlayer
             <C>: kotlin.String
-            $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> [val] declared in org.jetbrains.kotlinx.dataframe.main' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> origin=null
-            columns: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>, org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>, org.jetbrains.kotlinx.dataframe.columns.ColumnSet<kotlin.String>> origin=LAMBDA
-              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>, it:org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>) returnType:org.jetbrains.kotlinx.dataframe.columns.ColumnSet<kotlin.String>
+            $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> declared in org.jetbrains.kotlinx.dataframe.main' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> origin=null
+            columns: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>, @[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>, org.jetbrains.kotlinx.dataframe.columns.ColumnSet<kotlin.String>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>, it:@[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>) returnType:org.jetbrains.kotlinx.dataframe.columns.ColumnSet<kotlin.String>
                 $receiver: VALUE_PARAMETER name:$this$convert type:org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>
-                VALUE_PARAMETER name:it index:0 type:org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>
+                VALUE_PARAMETER name:it index:0 type:@[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>): org.jetbrains.kotlinx.dataframe.columns.ColumnSet<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main'
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: @[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>): org.jetbrains.kotlinx.dataframe.columns.ColumnSet<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main'
                     CALL 'public final fun <get-timestamp> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe' type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=GET_PROPERTY
                       $receiver: GET_VAR '$this$convert: org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>' type=org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer> origin=null
           block: FUN_EXPR type=kotlin.Function1<org.jetbrains.kotlinx.dataframe.api.Convert<org.jetbrains.kotlinx.dataframe.ActivePlayer, kotlin.String>, org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796>> origin=LAMBDA
@@ -83,7 +83,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
                   CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1 [primary]
                     BLOCK_BODY
-                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DataFrameType1 modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
                   PROPERTY name:char visibility:public modality:ABSTRACT [val]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-char> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.Int
@@ -115,7 +115,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
-                      public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                     VALUE_PARAMETER name:other index:0 type:kotlin.Any?
                   FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -130,7 +130,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
                   CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0 [primary]
                     BLOCK_BODY
-                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]'
                   PROPERTY name:char visibility:public modality:FINAL [val]
                     FUN name:<get-char> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
@@ -142,7 +142,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-char> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-char>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
                               columnName: CONST String type=kotlin.String value="char"
                   PROPERTY name:char visibility:public modality:FINAL [val]
@@ -155,7 +155,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-char> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-char>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
                               name: CONST String type=kotlin.String value="char"
                   PROPERTY name:level visibility:public modality:FINAL [val]
@@ -168,7 +168,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-level> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-level>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
                               columnName: CONST String type=kotlin.String value="level"
                   PROPERTY name:level visibility:public modality:FINAL [val]
@@ -181,7 +181,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-level> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-level>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
                               name: CONST String type=kotlin.String value="level"
                   PROPERTY name:race visibility:public modality:FINAL [val]
@@ -194,7 +194,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-race> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-race>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
                               columnName: CONST String type=kotlin.String value="race"
                   PROPERTY name:race visibility:public modality:FINAL [val]
@@ -207,7 +207,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-race> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-race>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
                               name: CONST String type=kotlin.String value="race"
                   PROPERTY name:charclass visibility:public modality:FINAL [val]
@@ -220,7 +220,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-charclass> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-charclass>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
                               columnName: CONST String type=kotlin.String value="charclass"
                   PROPERTY name:charclass visibility:public modality:FINAL [val]
@@ -233,7 +233,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-charclass> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-charclass>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
                               name: CONST String type=kotlin.String value="charclass"
                   PROPERTY name:zone visibility:public modality:FINAL [val]
@@ -246,7 +246,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-zone> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-zone>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
                               columnName: CONST String type=kotlin.String value="zone"
                   PROPERTY name:zone visibility:public modality:FINAL [val]
@@ -259,7 +259,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-zone> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-zone>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
                               name: CONST String type=kotlin.String value="zone"
                   PROPERTY name:guild visibility:public modality:FINAL [val]
@@ -272,7 +272,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-guild> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-guild>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
                               columnName: CONST String type=kotlin.String value="guild"
                   PROPERTY name:guild visibility:public modality:FINAL [val]
@@ -285,7 +285,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-guild> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-guild>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
                               name: CONST String type=kotlin.String value="guild"
                   PROPERTY name:timestamp visibility:public modality:FINAL [val]
@@ -298,7 +298,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-timestamp> (): org.jetbrains.kotlinx.dataframe.DataColumn<java.time.LocalDateTime> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<java.time.LocalDateTime> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<java.time.LocalDateTime>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-timestamp>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
                               columnName: CONST String type=kotlin.String value="timestamp"
                   PROPERTY name:timestamp visibility:public modality:FINAL [val]
@@ -311,12 +311,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='public final fun <get-timestamp> (): java.time.LocalDateTime declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0'
                           TYPE_OP type=java.time.LocalDateTime origin=CAST typeOperand=java.time.LocalDateTime
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0.<get-timestamp>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1> origin=null
                               name: CONST String type=kotlin.String value="timestamp"
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
-                      public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                     VALUE_PARAMETER name:other index:0 type:kotlin.Any?
                   FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -331,7 +331,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796
                   CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796 [primary]
                     BLOCK_BODY
-                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1'
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenWith_113141796 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1]'
                   PROPERTY name:scope0 visibility:public modality:ABSTRACT [val]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796) returnType:org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0
@@ -339,7 +339,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796
                   PROPERTY FAKE_OVERRIDE name:char visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract char: kotlin.Int [val]
+                      public abstract char: kotlin.Int
                     FUN FAKE_OVERRIDE name:<get-char> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:char visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -347,7 +347,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
                   PROPERTY FAKE_OVERRIDE name:level visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract level: kotlin.Int [val]
+                      public abstract level: kotlin.Int
                     FUN FAKE_OVERRIDE name:<get-level> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:level visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -355,7 +355,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
                   PROPERTY FAKE_OVERRIDE name:race visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract race: kotlin.String [val]
+                      public abstract race: kotlin.String
                     FUN FAKE_OVERRIDE name:<get-race> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:race visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -363,7 +363,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
                   PROPERTY FAKE_OVERRIDE name:charclass visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract charclass: kotlin.String [val]
+                      public abstract charclass: kotlin.String
                     FUN FAKE_OVERRIDE name:<get-charclass> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:charclass visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -371,7 +371,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
                   PROPERTY FAKE_OVERRIDE name:zone visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract zone: kotlin.String [val]
+                      public abstract zone: kotlin.String
                     FUN FAKE_OVERRIDE name:<get-zone> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:zone visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -379,7 +379,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
                   PROPERTY FAKE_OVERRIDE name:guild visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract guild: kotlin.Int [val]
+                      public abstract guild: kotlin.Int
                     FUN FAKE_OVERRIDE name:<get-guild> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:guild visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -387,7 +387,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
                   PROPERTY FAKE_OVERRIDE name:timestamp visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract timestamp: java.time.LocalDateTime [val]
+                      public abstract timestamp: java.time.LocalDateTime
                     FUN FAKE_OVERRIDE name:<get-timestamp> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1) returnType:java.time.LocalDateTime [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:timestamp visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -395,20 +395,20 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
-                      public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                     VALUE_PARAMETER name:other index:0 type:kotlin.Any?
                   FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
                     overridden:
-                      public open fun hashCode (): kotlin.Int [fake_override] declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                      public open fun hashCode (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
                     overridden:
-                      public open fun toString (): kotlin.String [fake_override] declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
+                      public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.DataFrameType1
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.api.Convert<org.jetbrains.kotlinx.dataframe.ActivePlayer, kotlin.String>): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796> declared in org.jetbrains.kotlinx.dataframe.main'
                   TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796>
-                    CALL 'public final fun with <T, C, R> (rowConverter: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.DataRow<T of org.jetbrains.kotlinx.dataframe.api.ConvertKt.with>, C of org.jetbrains.kotlinx.dataframe.api.ConvertKt.with, R of org.jetbrains.kotlinx.dataframe.api.ConvertKt.with>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.ConvertKt.with> [inline] declared in org.jetbrains.kotlinx.dataframe.api.ConvertKt' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.TokenWith_113141796> origin=null
+                    CALL 'public final fun with <T, C, R> (rowConverter: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.DataRow<T of org.jetbrains.kotlinx.dataframe.api.with>, C of org.jetbrains.kotlinx.dataframe.api.with, R of org.jetbrains.kotlinx.dataframe.api.with>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.with> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.TokenWith_113141796> origin=null
                       <T>: org.jetbrains.kotlinx.dataframe.ActivePlayer
                       <C>: kotlin.String
                       <R>: @[FlexibleNullability] java.time.LocalDateTime?
@@ -421,12 +421,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/platformType.kt
                             RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): @[FlexibleNullability] java.time.LocalDateTime? declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>'
                               CALL 'public open fun parse (p0: @[FlexibleNullability] kotlin.CharSequence?, p1: @[FlexibleNullability] java.time.format.DateTimeFormatter?): @[FlexibleNullability] java.time.LocalDateTime? declared in java.time.LocalDateTime' type=@[FlexibleNullability] java.time.LocalDateTime? origin=null
                                 p0: GET_VAR 'it: kotlin.String declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.<anonymous>' type=kotlin.String origin=null
-                                p1: GET_VAR 'val format: @[FlexibleNullability] java.time.format.DateTimeFormatter? [val] declared in org.jetbrains.kotlinx.dataframe.main' type=@[FlexibleNullability] java.time.format.DateTimeFormatter? origin=null
+                                p1: GET_VAR 'val format: @[FlexibleNullability] java.time.format.DateTimeFormatter? declared in org.jetbrains.kotlinx.dataframe.main' type=@[FlexibleNullability] java.time.format.DateTimeFormatter? origin=null
       VAR name:date type:java.time.LocalDateTime [val]
-        CALL 'public abstract fun get (index: kotlin.Int): T of org.jetbrains.kotlinx.dataframe.DataColumn [fake_override,operator] declared in org.jetbrains.kotlinx.dataframe.DataColumn' type=java.time.LocalDateTime origin=null
+        CALL 'public abstract fun get (index: kotlin.Int): T of org.jetbrains.kotlinx.dataframe.DataColumn declared in org.jetbrains.kotlinx.dataframe.DataColumn' type=java.time.LocalDateTime origin=null
           $this: CALL 'public final fun <get-timestamp> (): org.jetbrains.kotlinx.dataframe.DataColumn<java.time.LocalDateTime> declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.DataColumn<java.time.LocalDateTime> origin=GET_PROPERTY
-            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0 origin=null
-            $receiver: GET_VAR 'val df1: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796> [val] declared in org.jetbrains.kotlinx.dataframe.main' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796> origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.main.<anonymous>.Scope0 origin=null
+            $receiver: GET_VAR 'val df1: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796> declared in org.jetbrains.kotlinx.dataframe.main' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.main.<anonymous>.TokenWith_113141796> origin=null
           index: CONST Int type=kotlin.Int value=0
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY

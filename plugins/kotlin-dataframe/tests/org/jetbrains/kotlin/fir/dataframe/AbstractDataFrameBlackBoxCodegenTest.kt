@@ -55,7 +55,6 @@ open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner()/*, RunnerWith
             JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK
             +JvmEnvironmentConfigurationDirectives.WITH_REFLECT
             +CodegenTestDirectives.DUMP_IR
-            FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
         }
         facadeStep(::FirFrontendFacade)
         commonFirWithPluginFrontendConfiguration()
