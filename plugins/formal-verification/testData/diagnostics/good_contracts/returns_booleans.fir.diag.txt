@@ -1,5 +1,5 @@
 /returns_booleans.kt:(121,133): info: Generated Viper text for returns_true:
-method pkg_$global$returns_true() returns (ret: Bool)
+method pkg$$global$returns_true() returns (ret: Bool)
   ensures true
   ensures ret == true
 {
@@ -9,7 +9,7 @@ method pkg_$global$returns_true() returns (ret: Bool)
 }
 
 /returns_booleans.kt:(268,281): info: Generated Viper text for returns_false:
-method pkg_$global$returns_false() returns (ret: Bool)
+method pkg$$global$returns_false() returns (ret: Bool)
   ensures true
   ensures ret == false
 {
@@ -19,7 +19,7 @@ method pkg_$global$returns_false() returns (ret: Bool)
 }
 
 /returns_booleans.kt:(418,435): info: Generated Viper text for conditional_basic:
-method pkg_$global$conditional_basic(local$b: Bool) returns (ret: Bool)
+method pkg$$global$conditional_basic(local$b: Bool) returns (ret: Bool)
   ensures ret == true ==> true
   ensures ret == false ==> local$b
 {
@@ -29,7 +29,7 @@ method pkg_$global$conditional_basic(local$b: Bool) returns (ret: Bool)
 }
 
 /returns_booleans.kt:(612,636): info: Generated Viper text for binary_logic_expressions:
-method pkg_$global$binary_logic_expressions(local$a: Bool, local$b: Bool)
+method pkg$$global$binary_logic_expressions(local$a: Bool, local$b: Bool)
   returns (ret: Bool)
   ensures ret == false ==> local$b && false
   ensures ret == true ==> (true || local$a) && (local$b || true)
@@ -40,7 +40,7 @@ method pkg_$global$binary_logic_expressions(local$a: Bool, local$b: Bool)
 }
 
 /returns_booleans.kt:(855,866): info: Generated Viper text for logical_not:
-method pkg_$global$logical_not(local$b: Bool) returns (ret: Bool)
+method pkg$$global$logical_not(local$b: Bool) returns (ret: Bool)
   ensures ret == true ==> !local$b && local$b
   ensures ret == false ==> local$b || !local$b
 {
@@ -50,19 +50,19 @@ method pkg_$global$logical_not(local$b: Bool) returns (ret: Bool)
 }
 
 /returns_booleans.kt:(1052,1075): info: Generated Viper text for call_fun_with_contracts:
-method pkg_$global$binary_logic_expressions(local$a: Bool, local$b: Bool)
+method pkg$$global$binary_logic_expressions(local$a: Bool, local$b: Bool)
   returns (ret: Bool)
   ensures ret == false ==> local$b && false
   ensures ret == true ==> (true || local$a) && (local$b || true)
 
 
-method pkg_$global$call_fun_with_contracts(local$b: Bool)
+method pkg$$global$call_fun_with_contracts(local$b: Bool)
   returns (ret: Bool)
   ensures ret == true
 {
   var local$a: Bool
   var anonymous$1: Bool
-  anonymous$1 := pkg_$global$binary_logic_expressions(local$b, local$b)
+  anonymous$1 := pkg$$global$binary_logic_expressions(local$b, local$b)
   local$a := anonymous$1
   ret := local$a
   goto label$ret

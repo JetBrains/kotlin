@@ -53,7 +53,8 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         val className = symbol.classId.embedName()
         return when (val existingEmbedding = classes[className]) {
             null -> {
-                val newEmbedding = ClassTypeEmbedding(className)
+                val superTypes = symbol.resolvedSuperTypes.map(::embedType)
+                val newEmbedding = ClassTypeEmbedding(className, superTypes)
                 classes[className] = newEmbedding
                 processClass(symbol)
                 newEmbedding

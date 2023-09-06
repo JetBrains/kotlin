@@ -1,5 +1,5 @@
 /subtyping.kt:(4,14): info: Generated Viper text for smart_cast:
-method pkg_$global$smart_cast(local$x: dom$Nullable[Int])
+method pkg$$global$smart_cast(local$x: dom$Nullable[Int])
   returns (ret: Int)
   requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
@@ -21,7 +21,7 @@ method pkg_$global$smart_cast(local$x: dom$Nullable[Int])
 }
 
 /subtyping.kt:(112,128): info: Generated Viper text for return_subtyping:
-method pkg_$global$return_subtyping() returns (ret: dom$Nullable[Int])
+method pkg$$global$return_subtyping() returns (ret: dom$Nullable[Int])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
   ret := (dom$Casting$cast(0, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
@@ -30,7 +30,7 @@ method pkg_$global$return_subtyping() returns (ret: dom$Nullable[Int])
 }
 
 /subtyping.kt:(159,179): info: Generated Viper text for assignment_subtyping:
-method pkg_$global$assignment_subtyping() returns (ret: dom$Unit)
+method pkg$$global$assignment_subtyping() returns (ret: dom$Unit)
 {
   var local$x: dom$Nullable[Bool]
   local$x := (dom$Casting$cast(false, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
@@ -39,7 +39,7 @@ method pkg_$global$assignment_subtyping() returns (ret: dom$Unit)
 }
 
 /subtyping.kt:(232,250): info: Generated Viper text for nullable_parameter:
-method pkg_$global$nullable_parameter(local$b: dom$Nullable[Bool])
+method pkg$$global$nullable_parameter(local$b: dom$Nullable[Bool])
   returns (ret: dom$Unit)
   requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$b): dom$Type), dom$Type$special$Nullable(dom$Type$Boolean()))
 {
@@ -47,14 +47,14 @@ method pkg_$global$nullable_parameter(local$b: dom$Nullable[Bool])
 }
 
 /subtyping.kt:(272,300): info: Generated Viper text for function_parameter_subtyping:
-method pkg_$global$nullable_parameter(local$b: dom$Nullable[Bool])
+method pkg$$global$nullable_parameter(local$b: dom$Nullable[Bool])
   returns (ret: dom$Unit)
   requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$b): dom$Type), dom$Type$special$Nullable(dom$Type$Boolean()))
 
 
-method pkg_$global$function_parameter_subtyping() returns (ret: dom$Unit)
+method pkg$$global$function_parameter_subtyping() returns (ret: dom$Unit)
 {
   var anonymous$1: dom$Unit
-  anonymous$1 := pkg_$global$nullable_parameter((dom$Casting$cast(false, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool]))
+  anonymous$1 := pkg$$global$nullable_parameter((dom$Casting$cast(false, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool]))
   label label$ret
 }

@@ -17,3 +17,16 @@ fun <!VIPER_TEXT!>subtypeTransitive<!>(x: Unit) {
         returns() implies (<!USELESS_IS_CHECK!>x is Any?<!>)
     }
 }
+
+open class Foo()
+
+class Bar() : Foo()
+
+@OptIn(ExperimentalContracts::class)
+fun <!VIPER_TEXT!>subtypeSuperType<!>(bar: Bar) {
+    contract {
+        // Kotlin knows that this check will always succeed and marks it as useless, however, we still want to test that
+        // Viper can prove this as well.
+        returns() implies (<!USELESS_IS_CHECK!>bar is Foo<!>)
+    }
+}

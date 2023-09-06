@@ -1,69 +1,69 @@
 /member_functions.kt:(32,42): info: Generated Viper text for member_fun:
-field pkg_$class_Foo$member_x: Int
+field pkg$$class_Foo$member_x: Int
 
-method pkg_$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg_$class_Foo())
+method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
 {
   var anonymous$1: Int
-  inhale acc(this.pkg_$class_Foo$member_x, write)
-  anonymous$1 := this.pkg_$class_Foo$member_x
-  exhale acc(this.pkg_$class_Foo$member_x, write)
+  inhale acc(this.pkg$$class_Foo$member_x, write)
+  anonymous$1 := this.pkg$$class_Foo$member_x
+  exhale acc(this.pkg$$class_Foo$member_x, write)
   ret := anonymous$1
   goto label$ret
   label label$ret
 }
 
 /member_functions.kt:(84,99): info: Generated Viper text for call_member_fun:
-field pkg_$class_Foo$member_x: Int
+field pkg$$class_Foo$member_x: Int
 
-method pkg_$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg_$class_Foo())
+method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
 
 
-method pkg_$class_Foo$member_call_member_fun(this: Ref)
+method pkg$$class_Foo$member_call_member_fun(this: Ref)
   returns (ret: dom$Unit)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg_$class_Foo())
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
 {
   var anonymous$1: Int
-  anonymous$1 := pkg_$class_Foo$member_member_fun(this)
+  anonymous$1 := pkg$$class_Foo$member_member_fun(this)
   label label$ret
 }
 
 /member_functions.kt:(140,152): info: Generated Viper text for sibling_call:
-field pkg_$class_Foo$member_x: Int
+field pkg$$class_Foo$member_x: Int
 
-method pkg_$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg_$class_Foo())
+method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
 
 
-method pkg_$class_Foo$member_sibling_call(this: Ref, local$other: Ref)
+method pkg$$class_Foo$member_sibling_call(this: Ref, local$other: Ref)
   returns (ret: dom$Unit)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg_$class_Foo())
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$other): dom$Type), dom$Type$pkg_$class_Foo())
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$other): dom$Type), dom$Type$pkg$$class_Foo())
 {
   var anonymous$1: Int
-  anonymous$1 := pkg_$class_Foo$member_member_fun(local$other)
+  anonymous$1 := pkg$$class_Foo$member_member_fun(local$other)
   label label$ret
 }
 
 /member_functions.kt:(207,228): info: Generated Viper text for outer_member_fun_call:
-field pkg_$class_Foo$member_x: Int
+field pkg$$class_Foo$member_x: Int
 
-method pkg_$class_Foo$member_Foo(local$x: Int) returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg_$class_Foo())
-
-
-method pkg_$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg_$class_Foo())
+method pkg$$class_Foo$member_Foo(local$x: Int) returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
 
 
-method pkg_$global$outer_member_fun_call() returns (ret: dom$Unit)
+method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
+
+
+method pkg$$global$outer_member_fun_call() returns (ret: dom$Unit)
 {
   var local$f: Ref
   var anonymous$1: Ref
   var anonymous$2: Int
-  anonymous$1 := pkg_$class_Foo$member_Foo(3)
+  anonymous$1 := pkg$$class_Foo$member_Foo(3)
   local$f := anonymous$1
-  anonymous$2 := pkg_$class_Foo$member_member_fun(local$f)
+  anonymous$2 := pkg$$class_Foo$member_member_fun(local$f)
   label label$ret
 }

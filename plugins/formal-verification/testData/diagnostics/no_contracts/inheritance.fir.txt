@@ -1,0 +1,58 @@
+FILE: inheritance.kt
+    public open class Foo : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final val y: R|kotlin/Int| = Int(3)
+            public get(): R|kotlin/Int|
+
+        public final var b: R|kotlin/Boolean| = Boolean(false)
+            public get(): R|kotlin/Boolean|
+            public set(value: R|kotlin/Boolean|): R|kotlin/Unit|
+
+        public final fun getY(): R|kotlin/Int| {
+            ^getY this@R|/Foo|.R|/Foo.y|
+        }
+
+    }
+    public open class Bar : R|Foo| {
+        public constructor(x: R|kotlin/Int|): R|Bar| {
+            super<R|Foo|>(R|<local>/x|)
+        }
+
+        public final val z: R|kotlin/Int| = Int(5)
+            public get(): R|kotlin/Int|
+
+        public final fun sum(): R|kotlin/Int| {
+            ^sum this@R|/Bar|.R|/Foo.x|.R|kotlin/Int.plus|(this@R|/Bar|.R|/Bar.z|)
+        }
+
+    }
+    public final class Baz : R|Bar| {
+        public constructor(): R|Baz| {
+            super<R|Bar|>(Int(1))
+        }
+
+    }
+    public final fun callSuperMethod(bar: R|Bar|): R|kotlin/Int| {
+        ^callSuperMethod R|<local>/bar|.R|/Foo.getY|()
+    }
+    public final fun accessSuperField(bar: R|Bar|): R|kotlin/Boolean| {
+        ^accessSuperField R|<local>/bar|.R|/Foo.b|
+    }
+    public final fun accessNewField(bar: R|Bar|): R|kotlin/Int| {
+        ^accessNewField R|<local>/bar|.R|/Bar.z|
+    }
+    public final fun callNewMethod(bar: R|Bar|): R|kotlin/Int| {
+        ^callNewMethod R|<local>/bar|.R|/Bar.sum|()
+    }
+    public final fun setSuperField(bar: R|Bar|): R|kotlin/Unit| {
+        R|<local>/bar|.R|/Foo.b| = Boolean(true)
+    }
+    public final fun accessSuperSuperField(baz: R|Baz|): R|kotlin/Int| {
+        ^accessSuperSuperField R|<local>/baz|.R|/Foo.x|
+    }

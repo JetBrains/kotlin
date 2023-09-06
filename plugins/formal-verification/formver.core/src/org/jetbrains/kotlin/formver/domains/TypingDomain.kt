@@ -105,6 +105,8 @@ const val TYPE_DOMAIN_NAME = "Type"
  *     (forall t: Type :: { isSubtype(NothingType(), t) }
  *       isSubtype(NothingType(), t))
  *   }
+ *
+ *   // Axioms of the form isSubtype(ClassType(), superType)
  * }
  * ```
  */
@@ -257,9 +259,18 @@ class TypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(TYPE_DOMAIN_
             )
         }
 
+    private val isSubtypeSuperType =
+        classes.flatMap { cls ->
+            cls.superTypes.map { superType ->
+                createAnonymousDomainAxiom(
+                    isSubtype(cls.kotlinType, superType.kotlinType)
+                )
+            }
+        }
+
     override val axioms: List<DomainAxiom> =
         nullableTypesNotNonNullable + isNullableNonNullable + isNullableNullable + nonNullableTypesSubtypeAny + nullableTypesDifferent +
-                subtypeReflexive + subtypeTransitive + subtypeAntiSymmetric + nonNullableSubtypeNullable + nullableCovariant + nothingBottom
+                subtypeReflexive + subtypeTransitive + subtypeAntiSymmetric + nonNullableSubtypeNullable + nullableCovariant + nothingBottom + isSubtypeSuperType
 }
 
 /**

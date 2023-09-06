@@ -1,5 +1,5 @@
 /extension_function.kt:(8,11): info: Generated Viper text for inc:
-method pkg_$global$inc(this: Int) returns (ret: Int)
+method pkg$$global$inc(this: Int) returns (ret: Int)
 {
   ret := this + 1
   goto label$ret

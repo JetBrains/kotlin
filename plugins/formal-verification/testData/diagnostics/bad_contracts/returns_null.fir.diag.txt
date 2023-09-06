@@ -1,5 +1,5 @@
 /returns_null.kt:(121,146): info: Generated Viper text for returns_null_unverifiable:
-method pkg_$global$returns_null_unverifiable(local$x: dom$Nullable[Int])
+method pkg$$global$returns_null_unverifiable(local$x: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
   requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
@@ -10,13 +10,13 @@ method pkg_$global$returns_null_unverifiable(local$x: dom$Nullable[Int])
   label label$ret
 }
 
-/returns_null.kt:(121,146): warning: Viper verification error: Postcondition of pkg_$global$returns_null_unverifiable might not hold. Assertion true ==> false might not hold. (<no position>)
+/returns_null.kt:(121,146): warning: Viper verification error: Postcondition of pkg$$global$returns_null_unverifiable might not hold. Assertion true ==> false might not hold. (<no position>)
 
 
 /returns_null.kt:(121,146): warning: Function returns_null_unverifiable may not satisfy its contract.
 
 /returns_null.kt:(277,302): info: Generated Viper text for non_nullable_returns_null:
-method pkg_$global$non_nullable_returns_null(local$x: Int)
+method pkg$$global$non_nullable_returns_null(local$x: Int)
   returns (ret: Int)
   ensures false
 {
@@ -25,7 +25,7 @@ method pkg_$global$non_nullable_returns_null(local$x: Int)
   label label$ret
 }
 
-/returns_null.kt:(277,302): warning: Viper verification error: Postcondition of pkg_$global$non_nullable_returns_null might not hold. Assertion false might not hold. (<no position>)
+/returns_null.kt:(277,302): warning: Viper verification error: Postcondition of pkg$$global$non_nullable_returns_null might not hold. Assertion false might not hold. (<no position>)
 
 
 /returns_null.kt:(277,302): warning: Function non_nullable_returns_null may not satisfy its contract.

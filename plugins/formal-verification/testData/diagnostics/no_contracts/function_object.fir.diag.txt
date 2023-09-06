@@ -1,5 +1,5 @@
 /function_object.kt:(4,17): info: Generated Viper text for unit_function:
-method pkg_$global$unit_function(local$f: Ref) returns (ret: dom$Unit)
+method pkg$$global$unit_function(local$f: Ref) returns (ret: dom$Unit)
   requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -10,7 +10,7 @@ method pkg_$global$unit_function(local$f: Ref) returns (ret: dom$Unit)
 }
 
 /function_object.kt:(72,92): info: Generated Viper text for function_object_call:
-method pkg_$global$function_object_call(local$g: Ref) returns (ret: Int)
+method pkg$$global$function_object_call(local$g: Ref) returns (ret: Int)
   requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   requires acc(local$g.special$function_object_call_counter, write)
   ensures acc(local$g.special$function_object_call_counter, write)
@@ -25,7 +25,7 @@ method pkg_$global$function_object_call(local$g: Ref) returns (ret: Int)
 }
 
 /function_object.kt:(155,182): info: Generated Viper text for function_object_nested_call:
-method pkg_$global$function_object_nested_call(local$f: Ref, local$g: Ref)
+method pkg$$global$function_object_nested_call(local$f: Ref, local$g: Ref)
   returns (ret: Int)
   requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())

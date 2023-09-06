@@ -1,5 +1,5 @@
 /return_break_continue.kt:(4,15): info: Generated Viper text for test_return:
-method pkg_$global$test_return() returns (ret: Int)
+method pkg$$global$test_return() returns (ret: Int)
 {
   ret := 0
   goto label$ret
@@ -9,7 +9,7 @@ method pkg_$global$test_return() returns (ret: Int)
 }
 
 /return_break_continue.kt:(58,74): info: Generated Viper text for return_from_loop:
-method pkg_$global$return_from_loop() returns (ret: Int)
+method pkg$$global$return_from_loop() returns (ret: Int)
 {
   var anonymous$1: Bool
   anonymous$1 := true

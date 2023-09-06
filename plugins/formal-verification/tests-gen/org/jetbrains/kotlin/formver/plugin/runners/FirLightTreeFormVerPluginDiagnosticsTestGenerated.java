@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.formver.plugin.runners;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -171,6 +171,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         @TestMetadata("if.kt")
         public void testIf() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/if.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritance.kt")
+        public void testInheritance() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inheritance.kt");
         }
 
         @Test

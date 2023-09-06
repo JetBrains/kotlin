@@ -91,7 +91,7 @@ object FunctionTypeEmbedding : TypeEmbedding {
         )
 }
 
-data class ClassTypeEmbedding(val name: ClassName) : TypeEmbedding {
+data class ClassTypeEmbedding(val name: ClassName, val superTypes: List<TypeEmbedding>) : TypeEmbedding {
     override val kotlinType = TypeDomain.classType(this.name)
     override val viperType = Type.Ref
 

@@ -18,6 +18,15 @@ import org.jetbrains.kotlin.name.Name
  * If there is a risk of collision, add a prefix.
  */
 
+interface FqMangledName : MangledName {
+    val packageName: FqName
+    val postfix: String
+
+    // We need to replace the dots in the package name as Viper doesn't allow dots in names
+    override val mangled: String
+        get() = "pkg\$${packageName.asString().replace('.', '$')}\$$postfix"
+}
+
 /**
  * Representation for Kotlin local variable names.
  */
@@ -26,9 +35,8 @@ data class LocalName(val name: Name) : MangledName {
         get() = "local\$${name.asStringStripSpecialMarkers()}"
 }
 
-data class ClassName(val packageName: FqName, val className: Name) : MangledName {
-    override val mangled: String
-        get() = "pkg_${packageName.asString()}\$class_${className.asString()}"
+data class ClassName(override val packageName: FqName, val className: Name) : FqMangledName {
+    override val postfix: String = "class_${className.asString()}"
 }
 
 data class ClassMemberName(val className: ClassName, val name: Name) : MangledName {
@@ -38,9 +46,8 @@ data class ClassMemberName(val className: ClassName, val name: Name) : MangledNa
 
 /** Global name not associated with a class.
  */
-data class GlobalName(val packageName: FqName, val name: Name) : MangledName {
-    override val mangled: String
-        get() = "pkg_${packageName.asString()}\$global\$${name.asStringStripSpecialMarkers()}"
+data class GlobalName(override val packageName: FqName, val name: Name) : FqMangledName {
+    override val postfix: String = "global$${name.asStringStripSpecialMarkers()}"
 }
 
 fun FirValueParameterSymbol.embedName() = LocalName(name)

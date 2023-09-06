@@ -28,3 +28,29 @@ FILE: is_type_contract.kt
         }
 
     }
+    public open class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Bar : R|Foo| {
+        public constructor(): R|Bar| {
+            super<R|Foo|>()
+        }
+
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun subtypeSuperType(bar: R|Bar|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> bar is Foo
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|((R|<local>/bar| is R|Foo|))
+            }
+            )
+        }
+
+    }

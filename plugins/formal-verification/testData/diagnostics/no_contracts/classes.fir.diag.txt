@@ -1,14 +1,14 @@
 /classes.kt:(39,48): info: Generated Viper text for createFoo:
-field pkg_$class_Foo$member_a: Int
+field pkg$$class_Foo$member_a: Int
 
-field pkg_$class_Foo$member_b: Int
+field pkg$$class_Foo$member_b: Int
 
-method pkg_$class_Foo$member_Foo(local$a: Int, local$b: Int)
+method pkg$$class_Foo$member_Foo(local$a: Int, local$b: Int)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg_$class_Foo())
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
 
 
-method pkg_$global$createFoo() returns (ret: dom$Unit)
+method pkg$$global$createFoo() returns (ret: dom$Unit)
 {
   var local$f: Ref
   var anonymous$1: Ref
@@ -16,34 +16,34 @@ method pkg_$global$createFoo() returns (ret: dom$Unit)
   var anonymous$2: Int
   var local$fb: Int
   var anonymous$3: Int
-  anonymous$1 := pkg_$class_Foo$member_Foo(10, 20)
+  anonymous$1 := pkg$$class_Foo$member_Foo(10, 20)
   local$f := anonymous$1
-  inhale acc(local$f.pkg_$class_Foo$member_a, write)
-  anonymous$2 := local$f.pkg_$class_Foo$member_a
-  exhale acc(local$f.pkg_$class_Foo$member_a, write)
+  inhale acc(local$f.pkg$$class_Foo$member_a, write)
+  anonymous$2 := local$f.pkg$$class_Foo$member_a
+  exhale acc(local$f.pkg$$class_Foo$member_a, write)
   local$fa := anonymous$2
-  inhale acc(local$f.pkg_$class_Foo$member_b, write)
-  anonymous$3 := local$f.pkg_$class_Foo$member_b
-  exhale acc(local$f.pkg_$class_Foo$member_b, write)
+  inhale acc(local$f.pkg$$class_Foo$member_b, write)
+  anonymous$3 := local$f.pkg$$class_Foo$member_b
+  exhale acc(local$f.pkg$$class_Foo$member_b, write)
   local$fb := anonymous$3
   label label$ret
 }
 
 /classes.kt:(147,156): info: Generated Viper text for createBar:
-field pkg_$class_Bar$member_a: dom$Nullable[Ref]
+field pkg$$class_Bar$member_a: dom$Nullable[Ref]
 
-method pkg_$class_Bar$member_Bar(local$a: dom$Nullable[Ref])
+method pkg$$class_Bar$member_Bar(local$a: dom$Nullable[Ref])
   returns (ret: Ref)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$a): dom$Type), dom$Type$special$Nullable(dom$Type$pkg_$class_Bar()))
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg_$class_Bar())
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$a): dom$Type), dom$Type$special$Nullable(dom$Type$pkg$$class_Bar()))
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
 
 
-method pkg_$global$createBar() returns (ret: dom$Unit)
+method pkg$$global$createBar() returns (ret: dom$Unit)
 {
   var local$b: Ref
   var anonymous$1: Ref
-  anonymous$1 := pkg_$class_Bar$member_Bar((dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
-    dom$Type$special$Nullable(dom$Type$pkg_$class_Bar())): dom$Nullable[Ref]))
+  anonymous$1 := pkg$$class_Bar$member_Bar((dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
+    dom$Type$special$Nullable(dom$Type$pkg$$class_Bar())): dom$Nullable[Ref]))
   local$b := anonymous$1
   label label$ret
 }
