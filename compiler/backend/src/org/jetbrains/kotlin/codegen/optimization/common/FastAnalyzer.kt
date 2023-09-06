@@ -15,10 +15,10 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
-abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
+abstract class FastAnalyzer<V : Value, F : Frame<V>>(
     private val owner: String,
     private val method: MethodNode,
-    private val interpreter: I,
+    private val interpreter: Interpreter<V>,
     private val pruneExceptionEdges: Boolean,
 ) {
     private val nInsns = method.instructions.size()

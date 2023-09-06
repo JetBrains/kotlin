@@ -48,7 +48,7 @@ internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
     owner: String,
     method: MethodNode,
     interpreter: Interpreter<V>
-) : FastAnalyzer<V, Interpreter<V>, F>(owner, method, interpreter, pruneExceptionEdges = false) {
+) : FastAnalyzer<V, F>(owner, method, interpreter, pruneExceptionEdges = false) {
     @Suppress("UNCHECKED_CAST")
     override fun newFrame(nLocals: Int, nStack: Int): F = Frame<V>(nLocals, nStack) as F
 

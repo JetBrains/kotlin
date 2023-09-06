@@ -66,6 +66,6 @@ class FastStoreLoadAnalyzer<V : Value>(
     owner: String,
     method: MethodNode,
     interpreter: Interpreter<V>
-) : FastAnalyzer<V, Interpreter<V>, StoreLoadFrame<V>>(owner, method, interpreter, pruneExceptionEdges = false) {
+) : FastAnalyzer<V, StoreLoadFrame<V>>(owner, method, interpreter, pruneExceptionEdges = false) {
     override fun newFrame(nLocals: Int, nStack: Int): StoreLoadFrame<V> = StoreLoadFrame(nLocals)
 }

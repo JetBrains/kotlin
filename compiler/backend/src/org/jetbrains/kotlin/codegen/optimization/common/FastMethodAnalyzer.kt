@@ -48,6 +48,6 @@ class FastMethodAnalyzer<V : Value>
     interpreter: Interpreter<V>,
     pruneExceptionEdges: Boolean = false,
     private val createFrame: (Int, Int) -> Frame<V> = { nLocals, nStack -> Frame<V>(nLocals, nStack) }
-) : FastAnalyzer<V, Interpreter<V>, Frame<V>>(owner, method, interpreter, pruneExceptionEdges) {
+) : FastAnalyzer<V, Frame<V>>(owner, method, interpreter, pruneExceptionEdges) {
     override fun newFrame(nLocals: Int, nStack: Int): Frame<V> = createFrame(nLocals, nStack)
 }
