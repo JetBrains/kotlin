@@ -364,9 +364,7 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
     conflictingFile: FirFile? = null,
 ) {
     conflictingSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-    @OptIn(SymbolInternals::class)
-    val conflicting = conflictingSymbol.fir
-    if (conflictingSymbol == declaration || declaration.moduleData != conflicting.moduleData) return
+    if (conflictingSymbol == declaration || declaration.moduleData != conflictingSymbol.moduleData) return
     val actualConflictingPresentation = conflictingPresentation ?: FirRedeclarationPresenter.represent(conflictingSymbol)
     if (actualConflictingPresentation != declarationPresentation) return
     val actualConflictingFile =
@@ -377,6 +375,8 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
         }
     if (!conflictingSymbol.isCollectable()) return
     if (areCompatibleMainFunctions(declaration, containingFile, conflictingSymbol, actualConflictingFile, session)) return
+    @OptIn(SymbolInternals::class)
+    val conflicting = conflictingSymbol.fir
     if (
         conflicting is FirMemberDeclaration &&
         !session.visibilityChecker.isVisible(conflicting, session, containingFile, emptyList(), dispatchReceiver = null)
