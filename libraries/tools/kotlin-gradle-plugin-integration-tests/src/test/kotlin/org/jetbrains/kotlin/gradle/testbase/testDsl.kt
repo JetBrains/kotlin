@@ -447,7 +447,7 @@ private fun TestProject.withBuildSummary(
     }
 }
 
-val konanDir get() = Paths.get(".").resolve("build").resolve(".konan")
+val konanDir get() = Paths.get(".").resolve("../../../build").resolve("konan-for-gradle-tests")
 
 /**
  * On changing test kit dir location update related location in 'cleanTestKitCache' task.

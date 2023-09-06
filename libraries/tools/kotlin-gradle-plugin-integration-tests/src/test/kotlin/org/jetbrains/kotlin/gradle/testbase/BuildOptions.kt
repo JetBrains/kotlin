@@ -214,7 +214,7 @@ data class BuildOptions(
         }
 
         konanDataDir?.let {
-            arguments.add("-Pkonan.data.dir=${konanDataDir.absolutePathString()}")
+            arguments.add("-Pkonan.data.dir=${konanDataDir.toAbsolutePath().normalize()}")
         }
 
         arguments.addAll(freeArgs)
