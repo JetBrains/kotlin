@@ -77,7 +77,7 @@ class FastMethodAnalyzer<V : Value>
             insnType == AbstractInsnNode.FRAME ||
             insnOpcode == Opcodes.NOP
         ) {
-            mergeControlFlowEdge(insnIndex + 1, currentlyAnalyzing, canReuse = true)
+            visitNopInsn(insnNode, currentlyAnalyzing, insnIndex)
         } else {
             current.init(currentlyAnalyzing).execute(insnNode, interpreter)
             visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insnIndex)

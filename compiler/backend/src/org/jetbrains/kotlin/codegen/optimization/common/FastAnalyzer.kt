@@ -103,9 +103,9 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
         }
     }
 
-    protected fun processControlFlowEdge(current: F, insnNode: AbstractInsnNode, jump: Int) {
+    private fun processControlFlowEdge(current: F, insnNode: AbstractInsnNode, jump: Int, canReuse: Boolean = false) {
         if (visitControlFlowEdge(insnNode, jump)) {
-            mergeControlFlowEdge(jump, current)
+            mergeControlFlowEdge(jump, current, canReuse)
         }
     }
 
@@ -146,6 +146,10 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
             else -> {
             }
         }
+    }
+
+    protected fun visitNopInsn(insnNode: AbstractInsnNode, current: F, insn: Int) {
+        processControlFlowEdge(current, insnNode, insn + 1, canReuse = true)
     }
 
     private fun visitOpInsn(insnNode: AbstractInsnNode, current: F, insn: Int) {

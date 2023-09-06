@@ -36,7 +36,8 @@ package org.jetbrains.kotlin.codegen.optimization.fixStack
 import org.jetbrains.kotlin.codegen.optimization.common.FastAnalyzer
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
@@ -66,7 +67,11 @@ internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
         current: F,
         handler: F,
     ) {
-        if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
+        if (insnType == AbstractInsnNode.LABEL ||
+            insnType == AbstractInsnNode.LINE ||
+            insnType == AbstractInsnNode.FRAME ||
+            insnOpcode == Opcodes.NOP
+        ) {
             visitNopInsn(insnNode, currentlyAnalyzing, insnIndex)
         } else {
             current.init(currentlyAnalyzing)
@@ -86,10 +91,6 @@ internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
             handler.push(interpreter.newExceptionValue(tcb, handler, exnType))
             mergeControlFlowEdge(jump, handler)
         }
-    }
-
-    private fun visitNopInsn(insnNode: AbstractInsnNode, f: F, insn: Int) {
-        processControlFlowEdge(f, insnNode, insn + 1)
     }
 
     override fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean) {

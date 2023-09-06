@@ -79,8 +79,12 @@ class FastStoreLoadAnalyzer<V : Value>(
         current: StoreLoadFrame<V>,
         handler: StoreLoadFrame<V>,
     ) {
-        if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
-            mergeControlFlowEdge(insnIndex + 1, currentlyAnalyzing)
+        if (insnType == AbstractInsnNode.LABEL ||
+            insnType == AbstractInsnNode.LINE ||
+            insnType == AbstractInsnNode.FRAME ||
+            insnOpcode == Opcodes.NOP
+        ) {
+            visitNopInsn(insnNode, currentlyAnalyzing, insnIndex)
         } else {
             current.init(currentlyAnalyzing).execute(insnNode, interpreter)
             visitMeaningfulInstruction(insnNode, insnType, insnOpcode, current, insnIndex)
