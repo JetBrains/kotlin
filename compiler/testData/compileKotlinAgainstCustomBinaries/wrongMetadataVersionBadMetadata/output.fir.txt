@@ -2,7 +2,7 @@ $TMP_DIR$/library-after.jar!/META-INF/main.kotlin_module: error: module was comp
 compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionBadMetadata/source.kt:5:16: error: unresolved reference 'A'.
 fun baz(param: A, nested: A.Nested) {
                ^
-compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionBadMetadata/source.kt:5:27: error: unresolved reference 'A.Nested'.
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionBadMetadata/source.kt:5:27: error: unresolved reference 'A'.
 fun baz(param: A, nested: A.Nested) {
                           ^
 compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionBadMetadata/source.kt:6:23: error: unresolved reference 'A'.
