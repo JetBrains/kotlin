@@ -36,8 +36,10 @@ package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 import org.jetbrains.kotlin.codegen.optimization.common.FastAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION
-import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.IincInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
@@ -91,32 +93,7 @@ class FastStoreLoadAnalyzer<V : Value>(
         }
     }
 
-    override fun newFrame(nLocals: Int, nStack: Int): StoreLoadFrame<V> = StoreLoadFrame<V>(nLocals)
-
-    override fun visitOpInsn(insnNode: AbstractInsnNode, current: StoreLoadFrame<V>, insn: Int) {
-        mergeControlFlowEdge(insn + 1, current)
-    }
-
-    override fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: StoreLoadFrame<V>) {
-        mergeControlFlowEdge(insnNode.dflt.indexOf(), current)
-        for (label in insnNode.labels) {
-            mergeControlFlowEdge(label.indexOf(), current)
-        }
-    }
-
-    override fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: StoreLoadFrame<V>) {
-        mergeControlFlowEdge(insnNode.dflt.indexOf(), current)
-        for (label in insnNode.labels) {
-            mergeControlFlowEdge(label.indexOf(), current)
-        }
-    }
-
-    override fun visitJumpInsnNode(insnNode: JumpInsnNode, current: StoreLoadFrame<V>, insn: Int, insnOpcode: Int) {
-        if (insnOpcode != Opcodes.GOTO) {
-            mergeControlFlowEdge(insn + 1, current)
-        }
-        mergeControlFlowEdge(insnNode.label.indexOf(), current)
-    }
+    override fun newFrame(nLocals: Int, nStack: Int): StoreLoadFrame<V> = StoreLoadFrame(nLocals)
 
     override fun mergeControlFlowEdge(dest: Int, frame: StoreLoadFrame<V>, canReuse: Boolean) {
         val oldFrame = getFrame(dest)

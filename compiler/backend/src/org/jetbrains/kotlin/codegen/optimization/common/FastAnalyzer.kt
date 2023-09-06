@@ -29,6 +29,8 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
     private val queue = IntArray(nInsns)
     private var top = 0
 
+    protected open fun visitControlFlowEdge(insnNode: AbstractInsnNode, successor: Int): Boolean = true
+
     fun analyze(): Array<Frame<V>?> {
         if (nInsns == 0) return frames
 
@@ -101,6 +103,12 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
         }
     }
 
+    protected fun processControlFlowEdge(current: F, insnNode: AbstractInsnNode, jump: Int) {
+        if (visitControlFlowEdge(insnNode, jump)) {
+            mergeControlFlowEdge(jump, current)
+        }
+    }
+
     protected abstract fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean = false)
 
     protected abstract fun analyzeInstruction(
@@ -140,10 +148,35 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
         }
     }
 
-    protected abstract fun visitJumpInsnNode(insnNode: JumpInsnNode, current: F, insn: Int, insnOpcode: Int)
-    protected abstract fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: F)
-    protected abstract fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: F)
-    protected abstract fun visitOpInsn(insnNode: AbstractInsnNode, current: F, insn: Int)
+    private fun visitOpInsn(insnNode: AbstractInsnNode, current: F, insn: Int) {
+        processControlFlowEdge(current, insnNode, insn + 1)
+    }
+
+    private fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: F) {
+        processControlFlowEdge(current, insnNode, insnNode.dflt.indexOf())
+        // In most cases order of visiting switch labels should not matter
+        // The only one is a tableswitch being added in the beginning of coroutine method, these switch' labels may lead
+        // in the middle of try/catch block, and FastAnalyzer is not ready for this (trying to restore stack before it was saved)
+        // So we just fix the order of labels being traversed: the first one should be one at the method beginning
+        // Using 'asReversed' is because nodes are processed in LIFO order
+        for (label in insnNode.labels.asReversed()) {
+            processControlFlowEdge(current, insnNode, label.indexOf())
+        }
+    }
+
+    private fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: F) {
+        processControlFlowEdge(current, insnNode, insnNode.dflt.indexOf())
+        for (label in insnNode.labels) {
+            processControlFlowEdge(current, insnNode, label.indexOf())
+        }
+    }
+
+    private fun visitJumpInsnNode(insnNode: JumpInsnNode, current: F, insn: Int, insnOpcode: Int) {
+        if (insnOpcode != Opcodes.GOTO) {
+            processControlFlowEdge(current, insnNode, insn + 1)
+        }
+        processControlFlowEdge(current, insnNode, insnNode.label.indexOf())
+    }
 
     private fun checkAssertions() {
         if (method.instructions.any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })

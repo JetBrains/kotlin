@@ -104,36 +104,6 @@ class FastMethodAnalyzer<V : Value>
         }
     }
 
-    override fun visitOpInsn(insnNode: AbstractInsnNode, current: Frame<V>, insn: Int) {
-        mergeControlFlowEdge(insn + 1, current)
-    }
-
-    override fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: Frame<V>) {
-        mergeControlFlowEdge(insnNode.dflt.indexOf(), current)
-        // In most cases order of visiting switch labels should not matter
-        // The only one is a tableswitch being added in the beginning of coroutine method, these switch' labels may lead
-        // in the middle of try/catch block, and FixStackAnalyzer is not ready for this (trying to restore stack before it was saved)
-        // So we just fix the order of labels being traversed: the first one should be one at the method beginning
-        // Using 'reversed' is because nodes are processed in LIFO order
-        for (label in insnNode.labels.asReversed()) {
-            mergeControlFlowEdge(label.indexOf(), current)
-        }
-    }
-
-    override fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: Frame<V>) {
-        mergeControlFlowEdge(insnNode.dflt.indexOf(), current)
-        for (label in insnNode.labels) {
-            mergeControlFlowEdge(label.indexOf(), current)
-        }
-    }
-
-    override fun visitJumpInsnNode(insnNode: JumpInsnNode, current: Frame<V>, insn: Int, insnOpcode: Int) {
-        mergeControlFlowEdge(insnNode.label.indexOf(), current)
-        if (insnOpcode != Opcodes.GOTO) {
-            mergeControlFlowEdge(insn + 1, current)
-        }
-    }
-
     /**
      * Updates frame at the index [dest] with its old value if provided and previous control flow node frame [frame].
      * Reuses old frame when possible and when [canReuse] is true.

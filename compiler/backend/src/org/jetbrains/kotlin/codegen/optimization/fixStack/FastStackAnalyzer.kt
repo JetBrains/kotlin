@@ -54,8 +54,6 @@ internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
     @Suppress("UNCHECKED_CAST")
     override fun newFrame(nLocals: Int, nStack: Int): F = Frame<V>(nLocals, nStack) as F
 
-    protected open fun visitControlFlowEdge(insnNode: AbstractInsnNode, successor: Int): Boolean = true
-
     // Don't have to visit the same exception handler multiple times - we care only about stack state at TCB start.
     override fun useFastComputeExceptionHandlers(): Boolean = true
 
@@ -90,49 +88,8 @@ internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
         }
     }
 
-    override fun visitOpInsn(insnNode: AbstractInsnNode, current: F, insn: Int) {
-        processControlFlowEdge(current, insnNode, insn + 1)
-    }
-
     private fun visitNopInsn(insnNode: AbstractInsnNode, f: F, insn: Int) {
         processControlFlowEdge(f, insnNode, insn + 1)
-    }
-
-    override fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: F) {
-        var jump = insnNode.dflt.indexOf()
-        processControlFlowEdge(current, insnNode, jump)
-        // In most cases order of visiting switch labels should not matter
-        // The only one is a tableswitch being added in the beginning of coroutine method, these switch' labels may lead
-        // in the middle of try/catch block, and FixStackAnalyzer is not ready for this (trying to restore stack before it was saved)
-        // So we just fix the order of labels being traversed: the first one should be one at the method beginning
-        // Using 'reversed' is because nodes are processed in LIFO order
-        for (label in insnNode.labels.reversed()) {
-            jump = label.indexOf()
-            processControlFlowEdge(current, insnNode, jump)
-        }
-    }
-
-    override fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: F) {
-        var jump = insnNode.dflt.indexOf()
-        processControlFlowEdge(current, insnNode, jump)
-        for (label in insnNode.labels) {
-            jump = label.indexOf()
-            processControlFlowEdge(current, insnNode, jump)
-        }
-    }
-
-    override fun visitJumpInsnNode(insnNode: JumpInsnNode, current: F, insn: Int, insnOpcode: Int) {
-        if (insnOpcode != Opcodes.GOTO) {
-            processControlFlowEdge(current, insnNode, insn + 1)
-        }
-        val jump = insnNode.label.indexOf()
-        processControlFlowEdge(current, insnNode, jump)
-    }
-
-    private fun processControlFlowEdge(current: F, insnNode: AbstractInsnNode, jump: Int) {
-        if (visitControlFlowEdge(insnNode, jump)) {
-            mergeControlFlowEdge(jump, current)
-        }
     }
 
     override fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean) {
