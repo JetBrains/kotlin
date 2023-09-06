@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.types.toConeTypeProjection
 internal object ErrorClassTypeQualifierBuilder {
     fun createQualifiersForUnresolvedType(
         coneDiagnostic: ConeUnresolvedError,
-        builder: KtSymbolByFirBuilder
+        builder: KtSymbolByFirBuilder,
     ): List<KtClassTypeQualifier> {
         return when (coneDiagnostic) {
             is ConeUnresolvedTypeQualifierError ->
@@ -53,7 +53,7 @@ internal object ErrorClassTypeQualifierBuilder {
         firSymbol: FirClassLikeSymbol<*>,
         builder: KtSymbolByFirBuilder
     ): List<KtClassTypeQualifier.KtResolvedClassTypeQualifier> {
-        return generateSequence(firSymbol) { firSymbol.getContainingClassSymbol(builder.rootSession) }.mapTo(mutableListOf()) { classSymbol ->
+        return generateSequence(firSymbol) { it.getContainingClassSymbol(builder.rootSession) }.mapTo(mutableListOf()) { classSymbol ->
             KtClassTypeQualifier.KtResolvedClassTypeQualifier(
                 builder.classifierBuilder.buildClassLikeSymbol(classSymbol),
                 emptyList(),

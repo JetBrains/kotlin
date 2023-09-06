@@ -246,5 +246,11 @@ public class FirStandaloneNormalAnalysisSourceModuleRendererTestGenerated extend
         public void testContextFunctionTypes() throws Exception {
             runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/contextFunctionTypes.kt");
         }
+
+        @Test
+        @TestMetadata("extraTypeArguments.kt")
+        public void testExtraTypeArguments() throws Exception {
+            runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/extraTypeArguments.kt");
+        }
     }
 }
