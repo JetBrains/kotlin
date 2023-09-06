@@ -82,15 +82,13 @@ private val FirBasedSymbol<*>.resolvedStatus
     get() = when (this) {
         is FirCallableSymbol<*> -> resolvedStatus
         is FirClassLikeSymbol<*> -> resolvedStatus
-        else -> error("$this has no resolvedStatus")
+        else -> null
     }
 
-@OptIn(SymbolInternals::class)
 private fun isExpectAndActual(declaration1: FirBasedSymbol<*>, declaration2: FirBasedSymbol<*>): Boolean {
-    if (declaration1.fir !is FirMemberDeclaration) return false
-    if (declaration2.fir !is FirMemberDeclaration) return false
-    return (declaration1.resolvedStatus.isExpect && declaration2.resolvedStatus.isActual) ||
-            (declaration1.resolvedStatus.isActual && declaration2.resolvedStatus.isExpect)
+    val status1 = declaration1.resolvedStatus ?: return false
+    val status2 = declaration2.resolvedStatus ?: return false
+    return (status1.isExpect && status2.isActual) || (status1.isActual && status2.isExpect)
 }
 
 private class DeclarationBuckets {
