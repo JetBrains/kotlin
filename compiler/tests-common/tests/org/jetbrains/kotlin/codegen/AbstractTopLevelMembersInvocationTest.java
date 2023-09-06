@@ -23,6 +23,9 @@ import kotlin.sequences.SequencesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.util.JUnit4Assertions;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -52,13 +55,18 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
         assert !sourceFiles.isEmpty() : getTestName(true) + " should contain at least one .kt file";
         Collections.sort(sourceFiles);
 
+        CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(
+                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
+                CollectionsKt.plus(classPath, KtTestUtil.getAnnotationsJar()), Collections.emptyList()
+        );
+        if (LanguageVersion.LATEST_STABLE.compareTo(LanguageVersion.KOTLIN_2_0) >= 0) {
+            configuration.put(CommonConfigurationKeys.USE_FIR, true);
+        }
         myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),
-                KotlinTestUtils.newConfiguration(
-                        ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
-                        CollectionsKt.plus(classPath, KtTestUtil.getAnnotationsJar()), Collections.emptyList()
-                ),
-                EnvironmentConfigFiles.JVM_CONFIG_FILES);
+                configuration,
+                EnvironmentConfigFiles.JVM_CONFIG_FILES
+        );
 
         loadFiles(ArrayUtil.toStringArray(sourceFiles));
 
