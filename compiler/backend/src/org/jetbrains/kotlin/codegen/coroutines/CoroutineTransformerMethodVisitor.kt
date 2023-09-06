@@ -671,7 +671,7 @@ class CoroutineTransformerMethodVisitor(
                 val value = frame.getLocal(slot)
                 if (value.type == null || (shouldOptimiseUnusedVariables && !livenessFrame.isAlive(slot))) continue
 
-                if (value == StrictBasicValue.NULL_VALUE) {
+                if (value === StrictBasicValue.NULL_VALUE) {
                     referencesToSpill += slot to null
                     continue
                 }

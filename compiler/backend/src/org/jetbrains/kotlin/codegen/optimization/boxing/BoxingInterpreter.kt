@@ -170,7 +170,7 @@ abstract class BoxingInterpreter(
 
     private fun merge(v: BasicValue, w: BasicValue, isLocalVariable: Boolean) =
         when {
-            v == StrictBasicValue.UNINITIALIZED_VALUE || w == StrictBasicValue.UNINITIALIZED_VALUE ->
+            v === StrictBasicValue.UNINITIALIZED_VALUE || w === StrictBasicValue.UNINITIALIZED_VALUE ->
                 StrictBasicValue.UNINITIALIZED_VALUE
             v is BoxedBasicValue -> {
                 if (w is BoxedBasicValue) {
