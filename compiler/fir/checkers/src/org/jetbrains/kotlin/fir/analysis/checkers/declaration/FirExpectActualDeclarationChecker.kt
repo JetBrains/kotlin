@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatc
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.*
+import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatible
 
 @Suppress("DuplicatedCode")
 object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
@@ -205,7 +206,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
     ) {
         val filesWithAtLeastWeaklyCompatibleExpects = compatibility.asSequence()
             .filter { (compatibility, _) ->
-                compatibility.isCompatibleOrWeakCompatible()
+                compatibility.isCompatibleOrWeaklyIncompatible
             }
             .map { (_, members) -> members }
             .flatten()
@@ -271,10 +272,6 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
 
     fun Map<out ExpectActualCompatibility<*>, *>.allStrongIncompatibilities(): Boolean {
         return keys.all { it is Incompatible.StrongIncompatible }
-    }
-
-    private fun ExpectActualCompatibility<FirBasedSymbol<*>>.isCompatibleOrWeakCompatible(): Boolean {
-        return this is Compatible || this is Incompatible.WeakIncompatible
     }
 
     // we don't require `actual` modifier on
