@@ -16,6 +16,7 @@ object AbstractExpectActualAnnotationMatchChecker {
     private val SKIPPED_CLASS_IDS = setOf(
         StandardClassIds.Annotations.Deprecated,
         StandardClassIds.Annotations.DeprecatedSinceKotlin,
+        StandardClassIds.Annotations.ImplicitlyActualizedByJvmDeclaration,
         StandardClassIds.Annotations.OptionalExpectation,
         StandardClassIds.Annotations.RequireKotlin,
         StandardClassIds.Annotations.SinceKotlin,
