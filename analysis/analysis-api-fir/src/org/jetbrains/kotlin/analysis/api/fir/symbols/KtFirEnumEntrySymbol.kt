@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirEnumEntrySymb
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntryInitializerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -45,7 +44,7 @@ internal class KtFirEnumEntrySymbol(
 
     override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
 
-    override val enumEntryInitializer: KtEnumEntryInitializerSymbol? by cached {
+    override val enumEntryInitializer: KtFirEnumEntryInitializerSymbol? by cached {
         if (firSymbol.fir.initializer == null) {
             return@cached null
         }
@@ -56,7 +55,10 @@ internal class KtFirEnumEntrySymbol(
         check(initializerExpression is FirAnonymousObjectExpression) {
             "Unexpected enum entry initializer: ${initializerExpression?.javaClass}"
         }
-        KtFirAnonymousObjectSymbol(initializerExpression.anonymousObject.symbol, analysisSession)
+
+        val classifierBuilder = analysisSession.firSymbolBuilder.classifierBuilder
+        classifierBuilder.buildAnonymousObjectSymbol(initializerExpression.anonymousObject.symbol) as? KtFirEnumEntryInitializerSymbol
+            ?: error("The anonymous object symbol for an enum entry initializer should be a ${KtFirEnumEntryInitializerSymbol::class.simpleName}")
     }
 
     context(KtAnalysisSession)

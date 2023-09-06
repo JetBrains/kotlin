@@ -7,25 +7,21 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirEnumEntryInitializerSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 
 internal class KtFirEnumEntryInitializerSymbolPointer(
-    private val ownerPointer: KtSymbolPointer<KtEnumEntrySymbol>,
-) : KtSymbolPointer<KtAnonymousObjectSymbol>() {
+    private val ownerPointer: KtSymbolPointer<KtFirEnumEntrySymbol>,
+) : KtSymbolPointer<KtFirEnumEntryInitializerSymbol>() {
     @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtAnonymousObjectSymbol? {
+    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtFirEnumEntryInitializerSymbol? {
         require(analysisSession is KtFirAnalysisSession)
         val owner = with(analysisSession) {
             ownerPointer.restoreSymbol()
         }
-
-        val initializer = owner?.firSymbol?.fir?.initializer as? FirAnonymousObjectExpression ?: return null
-        return analysisSession.firSymbolBuilder.classifierBuilder.buildAnonymousObjectSymbol(initializer.anonymousObject.symbol)
+        return owner?.enumEntryInitializer
     }
 
     override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||

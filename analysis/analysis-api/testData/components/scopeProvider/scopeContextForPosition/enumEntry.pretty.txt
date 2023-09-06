@@ -1,7 +1,7 @@
 element: e
 implicit receivers:
   type: `<anonymous>`
-  owner symbol: KtFirAnonymousObjectSymbol
+  owner symbol: KtFirEnumEntryInitializerSymbol
 
   type: kotlin.Enum.Companion
   owner symbol: KtFirNamedClassOrObjectSymbol

@@ -4,7 +4,7 @@ implicit receivers:
     annotationsList: []
     ownTypeArguments: []
     type: <anonymous>
-  owner symbol: KtFirAnonymousObjectSymbol
+  owner symbol: KtFirEnumEntryInitializerSymbol
 
   type: KtUsualClassType:
     annotationsList: []
