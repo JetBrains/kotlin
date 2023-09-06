@@ -60,7 +60,8 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
         while (top > 0) {
             val insn = queue[--top]
 
-            val f = getFrame(insn)!!
+            @Suppress("UNCHECKED_CAST")
+            val f = frames[insn] as F
             queued[insn] = false
 
             val insnNode = method.instructions[insn]
@@ -123,14 +124,14 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
      * If updated, adds the frame to the queue
      */
     private fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean = false) {
-        val oldFrame = getFrame(dest)
+        val oldFrame = frames[dest]
         val changes = when {
             canReuse && !isMergeNode[dest] -> {
-                setFrame(dest, frame)
+                frames[dest] = frame
                 true
             }
             oldFrame == null -> {
-                setFrame(dest, newFrame(frame.locals, frame.maxStackSize).apply { init(frame) })
+                frames[dest] = newFrame(frame.locals, frame.maxStackSize).apply { init(frame) }
                 true
             }
             !isMergeNode[dest] -> {
@@ -200,13 +201,6 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
 
     @Suppress("UNCHECKED_CAST")
     protected fun getFrame(insn: AbstractInsnNode): F? = frames[insn.indexOf()] as? F
-
-    @Suppress("UNCHECKED_CAST")
-    protected fun getFrame(index: Int): F? = frames[index] as? F
-
-    protected fun setFrame(index: Int, newFrame: F) {
-        frames[index] = newFrame
-    }
 
     private fun visitMeaningfulInstruction(insnNode: AbstractInsnNode, insnType: Int, insnOpcode: Int, current: F, insn: Int) {
         when {
@@ -301,14 +295,14 @@ abstract class FastAnalyzer<V : Value, I : Interpreter<V>, F : Frame<V>>(
         insnHandlers.add(tcb)
     }
 
-    protected fun updateQueue(changes: Boolean, dest: Int) {
+    private fun updateQueue(changes: Boolean, dest: Int) {
         if (changes && !queued[dest]) {
             queued[dest] = true
             queue[top++] = dest
         }
     }
 
-    protected fun F.dump(): String {
+    private fun Frame<V>.dump(): String {
         return buildString {
             append("{\n")
             append("  locals: [\n")
