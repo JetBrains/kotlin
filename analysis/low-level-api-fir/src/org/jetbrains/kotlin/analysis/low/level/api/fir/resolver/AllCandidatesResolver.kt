@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
@@ -95,8 +97,10 @@ class AllCandidatesResolver(private val firSession: FirSession) {
 
     @OptIn(PrivateForInline::class, SymbolInternals::class)
     private fun initializeBodyResolveContext(firResolveSession: LLFirResolveSession, element: KtElement) {
+        val firFile = element.containingKtFile.getOrBuildFirFile(firResolveSession)
+
         // Set up needed context to get all candidates.
-        val towerContext = firResolveSession.getTowerContextProvider(element.containingKtFile).getClosestAvailableParentContext(element)
+        val towerContext = ContextCollector.process(firFile, bodyResolveComponents, element)?.towerDataContext
         towerContext?.let { bodyResolveComponents.context.replaceTowerDataContext(it) }
         val containingDeclarations =
             element.parentsOfType<KtDeclaration>().map { it.resolveToFirSymbol(firResolveSession).fir }.toList().asReversed()
@@ -104,7 +108,6 @@ class AllCandidatesResolver(private val firSession: FirSession) {
 
         // `towerContext` from above should already contain all the scopes for the file,
         // so we just set it manually without calling `withFile`
-        val firFile = element.containingKtFile.getOrBuildFirFile(firResolveSession)
         bodyResolveComponents.context.file = firFile
     }
 
