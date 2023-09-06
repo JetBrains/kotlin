@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -122,7 +121,7 @@ private fun groupTopLevelByName(declarations: List<FirDeclaration>, context: Che
                 val group = groups.getOrPut(declaration.nameOrSpecialName, ::DeclarationBuckets)
                 group.classLikes += declaration.symbol to representation
 
-                declaration.expandedClassWithConstructorsScope(context)?.let { (expandedClass, scopeWithConstructors) ->
+                declaration.symbol.expandedClassWithConstructorsScope(context)?.let { (expandedClass, scopeWithConstructors) ->
                     if (expandedClass.classKind == ClassKind.OBJECT) {
                         return@let
                     }
@@ -184,7 +183,7 @@ fun collectConflictingLocalFunctionsFrom(block: FirBlock, context: CheckerContex
             is FirSimpleFunction ->
                 inspector.collect(collectable.symbol, FirRedeclarationPresenter.represent(collectable.symbol), functionDeclarations)
             is FirClassLikeDeclaration -> {
-                collectable.expandedClassWithConstructorsScope(context)?.let { (_, scopeWithConstructors) ->
+                collectable.symbol.expandedClassWithConstructorsScope(context)?.let { (_, scopeWithConstructors) ->
                     scopeWithConstructors.processDeclaredConstructors {
                         inspector.collect(it, FirRedeclarationPresenter.represent(it, collectable.symbol), functionDeclarations)
                     }
@@ -235,7 +234,6 @@ private fun <D : FirBasedSymbol<*>> FirDeclarationCollector<D>.collect(
  * | constructors of classes | X               |              |            |            |                     |
  * | properties              |                 |              | X          | X          | X                   |
  */
-@OptIn(SymbolInternals::class)
 @Suppress("GrazieInspection")
 fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(file: FirFile, packageMemberScope: FirPackageMemberScope) {
 
@@ -272,19 +270,17 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(file: FirFile, pa
             collect(group.properties, conflictingSymbol, conflictingPresentation, conflictingFile)
 
             if (groupHasSimpleFunctions) {
-                val declaration = conflictingSymbol.fir
-
-                if (declaration !is FirClassLikeDeclaration) {
+                if (conflictingSymbol !is FirClassLikeSymbol<*>) {
                     return
                 }
 
-                declaration.expandedClassWithConstructorsScope(context)?.let { (expandedClass, scopeWithConstructors) ->
+                conflictingSymbol.expandedClassWithConstructorsScope(context)?.let { (expandedClass, scopeWithConstructors) ->
                     if (expandedClass.classKind == ClassKind.OBJECT || expandedClass.classKind == ClassKind.ENUM_ENTRY) {
                         return
                     }
 
                     scopeWithConstructors.processDeclaredConstructors { constructor ->
-                        val ctorRepresentation = FirRedeclarationPresenter.represent(constructor, declaration.symbol)
+                        val ctorRepresentation = FirRedeclarationPresenter.represent(constructor, conflictingSymbol)
                         collect(group.simpleFunctions, conflictingSymbol = constructor, conflictingPresentation = ctorRepresentation)
                     }
                 }
@@ -332,11 +328,11 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(file: FirFile, pa
     }
 }
 
-private fun FirClassLikeDeclaration.expandedClassWithConstructorsScope(context: CheckerContext): Pair<FirRegularClassSymbol, FirScope>? {
+private fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(context: CheckerContext): Pair<FirRegularClassSymbol, FirScope>? {
     return when (this) {
-        is FirRegularClass -> symbol to unsubstitutedScope(context)
-        is FirTypeAlias -> {
-            val expandedType = expandedConeType
+        is FirRegularClassSymbol -> this to unsubstitutedScope(context)
+        is FirTypeAliasSymbol -> {
+            val expandedType = resolvedExpandedTypeRef.coneType as? ConeClassLikeType
             val expandedClass = expandedType?.toRegularClassSymbol(context.session)
             val expandedTypeScope = expandedType?.scope(
                 context.session, context.scopeSession,
@@ -346,7 +342,7 @@ private fun FirClassLikeDeclaration.expandedClassWithConstructorsScope(context: 
 
             if (expandedType != null && expandedClass != null && expandedTypeScope != null) {
                 val outerType = outerType(expandedType, context.session) { it.outerClassSymbol(context) }
-                expandedClass to TypeAliasConstructorsSubstitutingScope(symbol, expandedTypeScope, outerType)
+                expandedClass to TypeAliasConstructorsSubstitutingScope(this, expandedTypeScope, outerType)
             } else {
                 null
             }
