@@ -47,10 +47,11 @@ val String.safeModuleName: String
 val IrModuleFragment.safeName: String
     get() = name.asString().safeModuleName
 
-fun generateProxyIrModuleWith(safeName: String, externalName: String) = JsIrModule(
+fun generateProxyIrModuleWith(safeName: String, externalName: String, importedWithEffectInModuleWithName: String? = null) = JsIrModule(
     safeName,
     externalName,
-    listOf(JsIrProgramFragment(safeName, "<proxy-file>"))
+    listOf(JsIrProgramFragment(safeName, "<proxy-file>")),
+    importedWithEffectInModuleWithName = importedWithEffectInModuleWithName
 )
 
 enum class JsGenerationGranularity {
@@ -264,15 +265,25 @@ class IrModuleToJsTransformer(
     }
 
     private fun generateJsIrProgramPerFile(exportData: List<IrAndExportedDeclarations>, mode: TranslationMode): JsIrProgram {
+        val mainModule = exportData.last()
+        var someModuleHasEffect = false
+
         val modulesPerFile = buildList {
             for (module in exportData) {
+                var hasModuleLevelEffect = false
                 var hasFileWithJsExportedDeclaration = false
 
                 for (fileExports in module.files) {
                     if (fileExports.file.couldBeSkipped()) continue
                     val programFragments = generateProgramFragment(fileExports, mode)
 
-                    add(fileExports.toJsIrModule(programFragments.mainFragment))
+                    fileExports.toJsIrModule(module, programFragments.mainFragment).let {
+                        add(it)
+                        if (it.importedWithEffectInModuleWithName != null) {
+                            someModuleHasEffect = true
+                            hasModuleLevelEffect = true
+                        }
+                    }
 
                     programFragments.exportFragment?.let {
                         add(fileExports.toJsIrModuleForExport(module, it))
@@ -280,8 +291,8 @@ class IrModuleToJsTransformer(
                     }
                 }
 
-                if (hasFileWithJsExportedDeclaration) {
-                    add(module.toJsIrProxyModule())
+                if (hasFileWithJsExportedDeclaration || hasModuleLevelEffect || (module === mainModule && someModuleHasEffect)) {
+                    add(module.toJsIrProxyModule(mainModule.fragment.safeName.takeIf { module !== mainModule && hasModuleLevelEffect }))
                 }
             }
         }
@@ -289,11 +300,12 @@ class IrModuleToJsTransformer(
         return JsIrProgram(modulesPerFile)
     }
 
-    private fun IrFileExports.toJsIrModule(programFragment: JsIrProgramFragment): JsIrModule {
+    private fun IrFileExports.toJsIrModule(module: IrAndExportedDeclarations, programFragment: JsIrProgramFragment): JsIrModule {
         return JsIrModule(
             moduleFragmentToNameMapper.getSafeNameFor(file),
             moduleFragmentToNameMapper.getExternalNameFor(file),
             listOf(programFragment),
+            importedWithEffectInModuleWithName = runIf(programFragment.hasEffect) { module.fragment.safeName }
         )
     }
 
@@ -306,10 +318,11 @@ class IrModuleToJsTransformer(
         )
     }
 
-    private fun IrAndExportedDeclarations.toJsIrProxyModule(): JsIrModule {
+    private fun IrAndExportedDeclarations.toJsIrProxyModule(importedWithEffectInModuleWithName: String? = null): JsIrModule {
         return generateProxyIrModuleWith(
             fragment.safeName,
             moduleFragmentToNameMapper.getExternalNameFor(fragment),
+            importedWithEffectInModuleWithName
         )
     }
 
@@ -391,6 +404,7 @@ class IrModuleToJsTransformer(
         }
 
         result.initializers.statements += staticContext.initializerBlock.statements
+        result.eagerInitializers.statements += staticContext.eagerInitializerBlock.statements
 
         if (mainArguments != null) {
             JsMainFunctionDetector(backendContext).getMainFunctionOrNull(fileExports.file)?.let {

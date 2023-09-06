@@ -37,6 +37,7 @@ object ImportType {
     const val ALL = 0
     const val ITEMS = 1
     const val DEFAULT = 2
+    const val EFFECT = 3
 }
 
 object ExportType {

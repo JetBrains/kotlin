@@ -25,6 +25,7 @@ class JsStaticContext(
     val classModels = mutableMapOf<IrClassSymbol, JsIrClassModel>()
 
     val initializerBlock = JsCompositeBlock()
+    val eagerInitializerBlock = JsCompositeBlock()
 
     val isPerFile: Boolean get() = mode.granularity === JsGenerationGranularity.PER_FILE
 }

@@ -2148,6 +2148,24 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
             }
 
             @Test
+            @TestMetadata("eagerInitializationGlobal1.kt")
+            public void testEagerInitializationGlobal1() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/eagerInitializationGlobal1.kt");
+            }
+
+            @Test
+            @TestMetadata("eagerInitializationGlobal2.kt")
+            public void testEagerInitializationGlobal2() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/eagerInitializationGlobal2.kt");
+            }
+
+            @Test
+            @TestMetadata("eagerInitializationGlobal3.kt")
+            public void testEagerInitializationGlobal3() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/eagerInitializationGlobal3.kt");
+            }
+
+            @Test
             @TestMetadata("inheritance.kt")
             public void testInheritance() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/inheritance.kt");

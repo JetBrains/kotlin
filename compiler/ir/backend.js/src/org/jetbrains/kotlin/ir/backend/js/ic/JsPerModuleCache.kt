@@ -27,6 +27,7 @@ class JsPerModuleCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMu
     private fun ModuleArtifact.fetchModuleInfo() = File(artifactsDir, JS_MODULE_HEADER).useCodedInputIfExists {
         val crossModuleReferencesHash = ICHash.fromProtoStream(this)
         val reexportedInModuleWithName = ifTrue { readString() }
+        val importedWithEffectInModuleWithName = ifTrue { readString() }
         val (definitions, nameBindings, optionalCrossModuleImports) = fetchJsIrModuleHeaderNames()
 
         CachedModuleInfo(
@@ -38,6 +39,7 @@ class JsPerModuleCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMu
                 nameBindings = nameBindings,
                 optionalCrossModuleImports = optionalCrossModuleImports,
                 reexportedInModuleWithName = reexportedInModuleWithName,
+                importedWithEffectInModuleWithName = importedWithEffectInModuleWithName,
                 associatedModule = null
             ),
             crossModuleReferencesHash = crossModuleReferencesHash
@@ -48,6 +50,7 @@ class JsPerModuleCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMu
         File(cacheDir, JS_MODULE_HEADER).useCodedOutput {
             crossModuleReferencesHash.toProtoStream(this)
             ifNotNull(jsIrHeader.reexportedInModuleWithName) { writeStringNoTag(it) }
+            ifNotNull(jsIrHeader.importedWithEffectInModuleWithName) { writeStringNoTag(it) }
             commitJsIrModuleHeaderNames(jsIrHeader)
         }
     }

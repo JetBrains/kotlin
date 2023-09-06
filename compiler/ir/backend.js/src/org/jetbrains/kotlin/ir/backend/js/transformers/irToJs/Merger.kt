@@ -22,6 +22,7 @@ class Merger(
 
     private val isEsModules = moduleKind == ModuleKind.ES
     private val importStatements = mutableMapOf<String, JsStatement>()
+    private val importStatementsWithEffect = mutableListOf<JsStatement>()
     private val importedModulesMap = mutableMapOf<JsImportedModuleKey, JsImportedModule>()
 
     private val additionalExports = mutableListOf<JsStatement>()
@@ -57,6 +58,7 @@ class Merger(
                 }
 
                 rename(f.initializers)
+                rename(f.eagerInitializers)
                 f.mainFunction?.let { rename(it) }
                 f.testFunInvocation?.let { rename(it) }
                 f.suiteFn?.let { f.suiteFn = rename(it) }
@@ -67,6 +69,8 @@ class Merger(
             val importName = nameMap[tag] ?: error("Missing name for declaration '$tag'")
             importStatements.putIfAbsent(tag, crossModuleJsImport.renameImportedSymbolInternalName(importName))
         }
+
+        importStatementsWithEffect.addAll(crossModuleReferences.jsImportsWithEffect)
 
         if (crossModuleReferences.exports.isNotEmpty()) {
             val internalModuleName = ReservedJsNames.makeInternalModuleName()
@@ -213,7 +217,7 @@ class Merger(
         fragments.forEach {
             moduleBody += it.declarations.statements
             classModels += it.classes
-            initializerBlock.statements += it.initializers.statements
+            initializerBlock.statements += it.initializers.statements + it.eagerInitializers.statements
             polyfillDeclarationBlock.statements += it.polyfills.statements
         }
 
@@ -248,7 +252,7 @@ class Merger(
         val exportStatements = declareAndCallJsExporter() + additionalExports + transitiveJsExport()
 
         val importedJsModules = this.importedModulesMap.values.toList() + this.crossModuleReferences.importedModules
-        val importStatements = this.importStatements.values.toList()
+        val importStatements = this.importStatements.values.toList() + this.importStatementsWithEffect.toList()
 
         val program = JsProgram()
 
@@ -342,6 +346,7 @@ class Merger(
             is JsImport -> JsImport(
                 module,
                 when (target) {
+                    is JsImport.Target.Effect -> JsImport.Target.Effect
                     is JsImport.Target.All -> JsImport.Target.All(alias = name.makeRef())
                     is JsImport.Target.Default -> JsImport.Target.Default(name = name.makeRef())
                     is JsImport.Target.Elements -> JsImport.Target.Elements(

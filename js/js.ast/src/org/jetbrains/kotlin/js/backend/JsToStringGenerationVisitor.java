@@ -1404,7 +1404,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             p.print("}");
         }
 
-        p.print(" from ");
+        if (!(target == JsImport.Target.Effect.INSTANCE)) {
+            p.print(" from ");
+        }
+
         p.print(javaScriptString(jsImport.getModule()));
     }
 

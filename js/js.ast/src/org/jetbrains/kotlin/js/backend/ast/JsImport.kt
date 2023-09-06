@@ -15,6 +15,7 @@ class JsImport(
         get() = (target as Target.Elements).elements
 
     sealed class Target {
+        object Effect : Target()
         class Elements(val elements: MutableList<Element>) : Target()
         class Default(val name: JsNameRef) : Target() {
             constructor(name: String) : this(JsNameRef(name))
@@ -36,6 +37,7 @@ class JsImport(
 
     override fun acceptChildren(visitor: JsVisitor) {
         when (target) {
+            is Target.Effect -> {}
             is Target.All -> visitor.accept(target.alias)
             is Target.Default -> visitor.accept(target.name)
             is Target.Elements -> target.elements.forEach {

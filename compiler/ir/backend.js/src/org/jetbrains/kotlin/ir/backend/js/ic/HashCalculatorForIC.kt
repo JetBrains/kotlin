@@ -221,6 +221,10 @@ internal fun CrossModuleReferences.crossModuleReferencesHashForIC() = HashCalcul
         update(exports[tag]!!)
     }
 
+    updateForEach(importsWithEffect.sortedBy { it.moduleExporter.externalName }) { import ->
+        update(import.moduleExporter.externalName)
+    }
+
     updateForEach(imports.keys.sorted()) { tag ->
         val import = imports[tag]!!
         update(tag)

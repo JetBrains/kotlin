@@ -132,6 +132,7 @@ private class JsIrAstSerializer {
 
         writeCompositeBlock(fragment.declarations)
         writeCompositeBlock(fragment.initializers)
+        writeCompositeBlock(fragment.eagerInitializers)
         writeCompositeBlock(fragment.exports)
         writeCompositeBlock(fragment.polyfills)
 
@@ -328,6 +329,9 @@ private class JsIrAstSerializer {
                 writeString(import.module)
 
                 when (val target = import.target) {
+                    is JsImport.Target.Effect -> {
+                        writeByte(ImportType.EFFECT)
+                    }
                     is JsImport.Target.All -> {
                         writeByte(ImportType.ALL)
                         writeInt(internalizeName(target.alias.name!!))

@@ -22,6 +22,7 @@ class JsIrProgramFragment(val name: String, val packageFqn: String) {
     var dts: TypeScriptFragment? = null
     val classes = mutableMapOf<JsName, JsIrIcClassModel>()
     val initializers = JsCompositeBlock()
+    val eagerInitializers = JsCompositeBlock()
     var mainFunction: JsStatement? = null
     var testFunInvocation: JsStatement? = null
     var suiteFn: JsName? = null
@@ -34,6 +35,7 @@ class JsIrModule(
     val externalModuleName: String,
     val fragments: List<JsIrProgramFragment>,
     val reexportedInModuleWithName: String? = null,
+    val importedWithEffectInModuleWithName: String? = null,
 ) {
     fun makeModuleHeader(): JsIrModuleHeader {
         val nameBindings = mutableMapOf<String, String>()
@@ -55,6 +57,7 @@ class JsIrModule(
             nameBindings = nameBindings,
             optionalCrossModuleImports = optionalCrossModuleImports,
             reexportedInModuleWithName = reexportedInModuleWithName.takeIf { hasDeclarationsToReexport },
+            importedWithEffectInModuleWithName = importedWithEffectInModuleWithName,
             associatedModule = this
         )
     }
@@ -67,6 +70,7 @@ class JsIrModuleHeader(
     val nameBindings: Map<String, String>,
     val optionalCrossModuleImports: Set<String>,
     val reexportedInModuleWithName: String? = null,
+    val importedWithEffectInModuleWithName: String? = null,
     var associatedModule: JsIrModule?,
 ) {
     val externalNames: Set<String> by lazy(LazyThreadSafetyMode.NONE) { nameBindings.keys - definitions }
@@ -94,12 +98,14 @@ class JsIrProgram(private var modules: List<JsIrModule>) {
 class CrossModuleDependenciesResolver(private val moduleKind: ModuleKind, private val headers: List<JsIrModuleHeader>) {
     fun resolveCrossModuleDependencies(relativeRequirePath: Boolean): Map<JsIrModuleHeader, CrossModuleReferences> {
         val reexportModuleToHeader = headers.groupBy { it.reexportedInModuleWithName }
+        val importedInModuleWithEffect = headers.groupBy { it.importedWithEffectInModuleWithName }
         val headerToBuilder = headers.associateWith {
             JsIrModuleCrossModuleReferenceBuilder(
                 moduleKind,
                 it,
                 relativeRequirePath,
                 reexportModuleToHeader[it.moduleName] ?: emptyList(),
+                importedInModuleWithEffect[it.moduleName] ?: emptyList(),
             )
         }
         val definitionModule = mutableMapOf<String, JsIrModuleCrossModuleReferenceBuilder>()
@@ -143,6 +149,7 @@ private class JsIrModuleCrossModuleReferenceBuilder(
     val header: JsIrModuleHeader,
     val relativeRequirePath: Boolean,
     val transitiveExportFrom: List<JsIrModuleHeader>,
+    val importWithEffectFrom: List<JsIrModuleHeader>,
 ) {
     val imports = mutableListOf<CrossModuleRef>()
     val exports = mutableSetOf<String>()
@@ -186,10 +193,14 @@ private class JsIrModuleCrossModuleReferenceBuilder(
                 CrossModuleTransitiveExport(import(it).internalName, relativeRequirePath(it) ?: it.externalModuleName)
             }
         }
+
+        val importsWithEffect = importWithEffectFrom.map { CrossModuleImportWithEffect(import(it)) }
+
         return CrossModuleReferences(
             moduleKind,
             importedModules.values.toList(),
             transitiveExport,
+            importsWithEffect,
             exportNames,
             resultImports
         )
@@ -220,8 +231,9 @@ private class JsIrModuleCrossModuleReferenceBuilder(
     }
 }
 
-class CrossModuleImport(val exportedAs: String, val moduleExporter: JsImportedModule)
 
+class CrossModuleImport(val exportedAs: String, val moduleExporter: JsImportedModule)
+class CrossModuleImportWithEffect(val moduleExporter: JsImportedModule)
 class CrossModuleTransitiveExport(val internalName: JsName, val externalName: String)
 
 fun CrossModuleTransitiveExport.getRequireEsmName() = "$externalName$ESM_EXTENSION"
@@ -230,12 +242,15 @@ class CrossModuleReferences(
     val moduleKind: ModuleKind,
     val importedModules: List<JsImportedModule>, // additional Kotlin imported modules
     val transitiveExportFrom: List<CrossModuleTransitiveExport>, // the list of modules which provide their exports for transitive export
+    val importsWithEffect: List<CrossModuleImportWithEffect>, // the list of modules which provide their effects for import
     val exports: Map<String, String>, // tag -> index
     val imports: Map<String, CrossModuleImport>, // tag -> import statement
 ) {
     // built from imports
     var jsImports = emptyMap<String, JsStatement>() // tag -> import statement
         private set
+
+    val jsImportsWithEffect: List<JsStatement> = importsWithEffect.map { it.generateCrossModuleImportStatement() }
 
     fun initJsImportsForModule(module: JsIrModule) {
         val tagToName = module.fragments.flatMap { it.nameBindings.entries }.associate { it.key to it.value }
@@ -252,6 +267,17 @@ class CrossModuleReferences(
         }
     }
 
+    private fun CrossModuleImportWithEffect.generateCrossModuleImportStatement(): JsStatement {
+        return when (moduleKind) {
+            ModuleKind.ES -> generateJsImportStatement()
+            else -> error("Should not appear in non ES-modules compilations")
+        }
+    }
+
+    private fun CrossModuleImportWithEffect.generateJsImportStatement(): JsStatement {
+        return JsImport(moduleExporter.getRequireName(true), JsImport.Target.Effect)
+    }
+
     private fun CrossModuleImport.generateImportVariableDeclaration(importedAs: JsName): JsStatement {
         val exportRef = JsNameRef(exportedAs, ReservedJsNames.makeCrossModuleNameRef(moduleExporter.internalName))
         return JsVars(JsVars.JsVar(importedAs, exportRef))
@@ -265,7 +291,7 @@ class CrossModuleReferences(
     }
 
     companion object {
-        fun Empty(moduleKind: ModuleKind) = CrossModuleReferences(moduleKind, listOf(), emptyList(), emptyMap(), emptyMap())
+        fun Empty(moduleKind: ModuleKind) = CrossModuleReferences(moduleKind, listOf(), emptyList(), emptyList(), emptyMap(), emptyMap())
     }
 }
 
@@ -279,3 +305,4 @@ fun JsStatement.renameImportedSymbolInternalName(newName: JsName): JsStatement {
 
 val List<JsIrProgramFragment>.mainFragment: JsIrProgramFragment get() = first()
 val List<JsIrProgramFragment>.exportFragment: JsIrProgramFragment? get() = getOrNull(1)
+val JsIrProgramFragment.hasEffect: Boolean get() = eagerInitializers.statements.isNotEmpty()

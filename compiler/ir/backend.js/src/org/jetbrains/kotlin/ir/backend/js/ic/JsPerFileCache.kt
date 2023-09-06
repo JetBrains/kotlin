@@ -78,7 +78,11 @@ class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMult
     private fun JsIrProgramFragment.getExportFragmentExternalName(moduleArtifact: ModuleArtifact) =
         moduleFragmentToExternalName.getExternalNameForExporterFile(name, packageFqn, moduleArtifact.moduleExternalName)
 
-    private fun JsIrProgramFragment.asIrModuleHeader(moduleName: String, reexportedIn: String? = null): JsIrModuleHeader {
+    private fun JsIrProgramFragment.asIrModuleHeader(
+        moduleName: String,
+        reexportedIn: String? = null,
+        importWithEffectIn: String? = null,
+    ): JsIrModuleHeader {
         return JsIrModuleHeader(
             moduleName = moduleName,
             externalModuleName = moduleName,
@@ -86,14 +90,25 @@ class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMult
             nameBindings = nameBindings.mapValues { v -> v.value.toString() },
             optionalCrossModuleImports = optionalCrossModuleImports,
             reexportedInModuleWithName = reexportedIn,
+            importedWithEffectInModuleWithName = importWithEffectIn,
             associatedModule = null
         )
     }
 
     private fun SrcFileArtifact.loadJsIrModuleHeaders(moduleArtifact: ModuleArtifact) = with(loadJsIrFragments()) {
         LoadedJsIrModuleHeaders(
-            mainFragment.run { asIrModuleHeader(getMainFragmentExternalName(moduleArtifact)) },
-            exportFragment?.run { asIrModuleHeader(mainFragment.getExportFragmentExternalName(moduleArtifact), moduleArtifact.moduleExternalName) },
+            mainFragment.run {
+                asIrModuleHeader(
+                    getMainFragmentExternalName(moduleArtifact),
+                    importWithEffectIn = runIf(hasEffect) { moduleArtifact.moduleExternalName }
+                )
+            },
+            exportFragment?.run {
+                asIrModuleHeader(
+                    mainFragment.getExportFragmentExternalName(moduleArtifact),
+                    reexportedIn = moduleArtifact.moduleExternalName
+                )
+            },
         )
     }
 
@@ -108,6 +123,8 @@ class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMult
             reexportedIn = cachedFileInfo.moduleArtifact.moduleExternalName
         }
 
+
+        val importWithEffectIn = ifTrue { readString() }
         val (definitions, nameBindings, optionalCrossModuleImports) = fetchJsIrModuleHeaderNames()
 
         it.jsIrHeader = JsIrModuleHeader(
@@ -117,6 +134,7 @@ class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMult
             nameBindings = nameBindings,
             optionalCrossModuleImports = optionalCrossModuleImports,
             reexportedInModuleWithName = reexportedIn,
+            importedWithEffectInModuleWithName = importWithEffectIn,
             associatedModule = null,
         )
     }
@@ -149,12 +167,13 @@ class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMult
         }
     }
 
-    private fun CodedOutputStream.commitSingleFileInfo(cachedFileInfo: CachedFileInfo.SerializableCachedFileInfo) {
+    private fun CodedOutputStream.commitSingleFileInfo(cachedFileInfo: CachedFileInfo) {
         writeStringNoTag(cachedFileInfo.jsIrHeader.externalModuleName)
         cachedFileInfo.crossFileReferencesHash.toProtoStream(this)
         if (cachedFileInfo is CachedFileInfo.ExportFileCachedInfo) {
             ifNotNull(cachedFileInfo.tsDeclarationsHash, ::writeInt64NoTag)
         }
+        ifNotNull(cachedFileInfo.jsIrHeader.importedWithEffectInModuleWithName) { writeStringNoTag(it) }
         commitJsIrModuleHeaderNames(cachedFileInfo.jsIrHeader)
     }
 
@@ -167,18 +186,16 @@ class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMult
         }
         is CachedFileInfo.ModuleProxyFileCachedInfo -> {
             moduleHeaderArtifact?.useCodedOutput {
-                writeStringNoTag(jsIrHeader.externalModuleName)
-                crossFileReferencesHash.toProtoStream(this)
-                commitJsIrModuleHeaderNames(jsIrHeader)
+                commitSingleFileInfo(this@commitFileInfo)
             }
         }
         is CachedFileInfo.ExportFileCachedInfo -> {}
     }
 
-    private fun ModuleArtifact.generateModuleProxyFileCachedInfo(): CachedFileInfo {
+    private fun ModuleArtifact.generateModuleProxyFileCachedInfo(importedWithEffectInModuleWithName: String? = null): CachedFileInfo {
         return CachedFileInfo.ModuleProxyFileCachedInfo(
             this,
-            generateProxyIrModuleWith(moduleExternalName, moduleExternalName).makeModuleHeader()
+            generateProxyIrModuleWith(moduleExternalName, moduleExternalName, importedWithEffectInModuleWithName).makeModuleHeader()
         )
     }
 
@@ -230,7 +247,11 @@ class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMult
 
     override fun loadJsIrModule(cacheInfo: CachedFileInfo): JsIrModule {
         if (cacheInfo !is CachedFileInfo.SerializableCachedFileInfo) {
-            return generateProxyIrModuleWith(cacheInfo.jsIrHeader.externalModuleName, cacheInfo.jsIrHeader.externalModuleName)
+            return generateProxyIrModuleWith(
+                cacheInfo.jsIrHeader.externalModuleName,
+                cacheInfo.jsIrHeader.externalModuleName,
+                cacheInfo.jsIrHeader.importedWithEffectInModuleWithName
+            )
         }
 
         val fragments = cacheInfo.fileArtifact.loadJsIrFragments()
@@ -244,8 +265,11 @@ class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMult
     }
 
     override fun loadProgramHeadersFromCache(): List<CachedFileInfo> {
+        var someModuleHasEffect = false
+        val mainModuleArtifact = moduleArtifacts.last()
         return moduleArtifacts
             .flatMap { moduleArtifact ->
+                var hasModuleLevelEffect = false
                 var hasFileWithJsExportedDeclaration = false
                 moduleArtifact.fileArtifacts
                     .flatMap { srcFileArtifact ->
@@ -257,11 +281,21 @@ class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMult
                         if (!hasFileWithJsExportedDeclaration && cachedFileInfo.hasExportFile()) {
                             hasFileWithJsExportedDeclaration = true
                         }
+                        if (!hasModuleLevelEffect && cachedFileInfo.hasModuleLevelEffect()) {
+                            someModuleHasEffect = true
+                            hasModuleLevelEffect = true
+                        }
 
                         cachedFileInfo
                     }
-                    .butIf(hasFileWithJsExportedDeclaration) {
-                        it.plus(moduleArtifact.fetchModuleProxyFileInfo() ?: moduleArtifact.generateModuleProxyFileCachedInfo())
+                    .butIf(hasFileWithJsExportedDeclaration || hasModuleLevelEffect || (someModuleHasEffect && moduleArtifact === mainModuleArtifact)) { list ->
+                        val importWithEffectIn = mainModuleArtifact.moduleExternalName.takeIf {
+                            hasModuleLevelEffect && moduleArtifact !== mainModuleArtifact
+                        }
+                        val fetchedProxyFileInfo = moduleArtifact.fetchModuleProxyFileInfo()?.takeIf {
+                            it.jsIrHeader.importedWithEffectInModuleWithName == importWithEffectIn
+                        }
+                        list.plus(fetchedProxyFileInfo ?: moduleArtifact.generateModuleProxyFileCachedInfo(importWithEffectIn))
                     }
             }
             .onEach { headerToCachedInfo[it.jsIrHeader] = it }
@@ -288,4 +322,6 @@ class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMult
     private data class LoadedJsIrModuleHeaders(val mainHeader: JsIrModuleHeader, val exportHeader: JsIrModuleHeader?)
 
     private fun List<JsPerFileCache.CachedFileInfo>.hasExportFile(): Boolean = size > 1
+    private fun List<JsPerFileCache.CachedFileInfo>.hasModuleLevelEffect(): Boolean =
+        last().jsIrHeader.importedWithEffectInModuleWithName != null
 }

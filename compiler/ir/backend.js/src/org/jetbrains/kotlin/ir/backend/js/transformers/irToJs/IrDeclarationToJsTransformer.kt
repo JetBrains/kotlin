@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.ir.backend.js.lower.JsCodeOutliningLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -41,8 +42,13 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
         if (declaration.isExternal) return JsEmpty
 
         if (declaration.initializer != null) {
+            val eagerInitializationAnnotation = context.staticContext.backendContext.propertyLazyInitialization.eagerInitialization
             val initializer = declaration.initializer!!.accept(IrElementToJsExpressionTransformer(), context)
-            context.staticContext.initializerBlock.statements += jsAssignment(fieldName.makeRef(), initializer).makeStmt()
+            val initializerBlock = when {
+                declaration.correspondingPropertySymbol?.owner?.hasAnnotation(eagerInitializationAnnotation) == true -> context.staticContext.eagerInitializerBlock
+                else -> context.staticContext.initializerBlock
+            }
+            initializerBlock.statements += jsAssignment(fieldName.makeRef(), initializer).makeStmt()
         }
 
         return JsVars(JsVars.JsVar(fieldName))

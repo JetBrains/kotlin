@@ -94,6 +94,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
 
             readRepeated { declarations.statements += readStatement() }
             readRepeated { initializers.statements += readStatement() }
+            readRepeated { eagerInitializers.statements += readStatement() }
             readRepeated { exports.statements += readStatement() }
             readRepeated { polyfills.statements += readStatement() }
 
@@ -238,6 +239,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                             JsImport(
                                 readString(),
                                 when (val type = readByte().toInt()) {
+                                    ImportType.EFFECT -> JsImport.Target.Effect
                                     ImportType.ALL -> JsImport.Target.All(nameTable[readInt()].makeRef())
                                     ImportType.DEFAULT -> JsImport.Target.Default(nameTable[readInt()].makeRef())
                                     ImportType.ITEMS -> JsImport.Target.Elements(readList {

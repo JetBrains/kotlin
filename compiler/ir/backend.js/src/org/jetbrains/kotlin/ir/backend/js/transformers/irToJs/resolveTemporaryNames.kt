@@ -119,6 +119,7 @@ private fun JsNode.computeScopes(): Scope {
 
         override fun visitImport(import: JsImport) {
             when (val target = import.target) {
+                is JsImport.Target.Effect -> {}
                 is JsImport.Target.All -> target.alias.name?.let { currentScope.declaredNames += it }
                 is JsImport.Target.Default -> target.name.name?.let { currentScope.declaredNames += it }
                 is JsImport.Target.Elements -> target.elements.forEach {
