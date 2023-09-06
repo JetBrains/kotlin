@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
@@ -34,18 +34,18 @@ internal object FirRedeclarationPresenter {
         append(it.callableName)
     }
 
-    private fun StringBuilder.appendRepresentation(it: FirValueParameter) {
+    private fun StringBuilder.appendRepresentation(it: FirValueParameterSymbol) {
         if (it.isVararg) {
             append("vararg ")
         }
     }
 
-    private fun StringBuilder.appendRepresentationBeforeCallableId(it: FirCallableDeclaration) {
-        repeat(it.contextReceivers.size) {
+    private fun StringBuilder.appendRepresentationBeforeCallableId(it: FirCallableSymbol<*>) {
+        repeat(it.resolvedContextReceivers.size) {
             append(',')
         }
         append('<')
-        repeat(it.typeParameters.size) {
+        repeat(it.typeParameterSymbols.size) {
             append(',')
         }
         append('>')
@@ -56,55 +56,55 @@ internal object FirRedeclarationPresenter {
         append(']')
     }
 
-    private fun StringBuilder.appendValueParameters(it: FirSimpleFunction) {
+    private fun StringBuilder.appendValueParameters(it: FirNamedFunctionSymbol) {
         append('(')
-        it.valueParameters.forEach {
+        it.valueParameterSymbols.forEach {
             appendRepresentation(it)
             append(',')
         }
         append(')')
     }
 
-    fun represent(declaration: FirDeclaration): String? = when (declaration) {
-        is FirSimpleFunction -> represent(declaration)
-        is FirRegularClass -> represent(declaration)
-        is FirTypeAlias -> represent(declaration)
-        is FirProperty -> represent(declaration)
+    fun represent(declaration: FirBasedSymbol<*>): String? = when (declaration) {
+        is FirNamedFunctionSymbol -> represent(declaration)
+        is FirRegularClassSymbol -> represent(declaration)
+        is FirTypeAliasSymbol -> represent(declaration)
+        is FirPropertySymbol -> represent(declaration)
         else -> null
     }
 
-    fun represent(it: FirSimpleFunction) = buildString {
+    fun represent(it: FirNamedFunctionSymbol) = buildString {
         appendRepresentationBeforeCallableId(it)
         if (it.isOperator) {
             append("operator ")
         }
-        appendRepresentation(it.symbol.callableId)
+        appendRepresentation(it.callableId)
         appendValueParameters(it)
     }
 
 
-    fun represent(it: FirVariable) = buildString {
+    fun represent(it: FirVariableSymbol<*>) = buildString {
         appendRepresentationBeforeCallableId(it)
-        appendRepresentation(it.symbol.callableId)
+        appendRepresentation(it.callableId)
     }
 
-    fun represent(it: FirTypeAlias) = representClassLike(it)
-    fun represent(it: FirRegularClass) = representClassLike(it)
+    fun represent(it: FirTypeAliasSymbol) = representClassLike(it)
+    fun represent(it: FirRegularClassSymbol) = representClassLike(it)
 
-    private fun representClassLike(it: FirClassLikeDeclaration) = buildString {
+    private fun representClassLike(it: FirClassLikeSymbol<*>) = buildString {
         append('<')
         append('>')
         append('[')
         append(']')
-        appendRepresentation(it.symbol.classId)
+        appendRepresentation(it.classId)
     }
 
-    fun represent(it: FirConstructor, owner: FirClassLikeSymbol<*>) = buildString {
-        repeat(it.contextReceivers.size) {
+    fun represent(it: FirConstructorSymbol, owner: FirClassLikeSymbol<*>) = buildString {
+        repeat(it.resolvedContextReceivers.size) {
             append(',')
         }
         append('<')
-        repeat(it.typeParameters.size) {
+        repeat(it.typeParameterSymbols.size) {
             append(',')
         }
         append('>')
@@ -112,7 +112,7 @@ internal object FirRedeclarationPresenter {
         append(']')
         appendRepresentation(owner.classId)
         append('(')
-        it.valueParameters.forEach {
+        it.valueParameterSymbols.forEach {
             appendRepresentation(it)
             append(',')
         }
