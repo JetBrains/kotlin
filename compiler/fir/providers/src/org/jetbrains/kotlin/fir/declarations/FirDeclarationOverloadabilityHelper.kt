@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 interface FirDeclarationOverloadabilityHelper : FirSessionComponent {
-    fun isOverloadable(a: FirCallableDeclaration, b: FirCallableDeclaration): Boolean
+    fun isOverloadable(a: FirCallableSymbol<*>, b: FirCallableSymbol<*>): Boolean
 }
 
 val FirSession.declarationOverloadabilityHelper: FirDeclarationOverloadabilityHelper by FirSession.sessionComponentAccessor()
