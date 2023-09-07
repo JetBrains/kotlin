@@ -169,11 +169,6 @@ val Element.safeDecapitalizedName: String get() = if (name == "Class") "klass" e
 val ImplementationWithArg.generics: String
     get() = argument?.let { "<${it.type}>" } ?: ""
 
-val AbstractElement.generics: String
-    get() = typeArguments.takeIf { it.isNotEmpty() }
-        ?.let { it.joinToString(", ", "<", ">") { it.name } }
-        ?: ""
-
 val Field.generics: String
     get() = arguments.takeIf { it.isNotEmpty() }
         ?.let { it.joinToString(", ", "<", ">") { it.typeWithArguments } }
