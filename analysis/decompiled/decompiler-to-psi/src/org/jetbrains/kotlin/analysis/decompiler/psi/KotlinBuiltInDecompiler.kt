@@ -53,10 +53,11 @@ class BuiltInDefinitionFile(
     version: BuiltInsBinaryVersion,
     val packageDirectory: VirtualFile,
     val isMetadata: Boolean,
+    private val filterOutClassesExistingAsJvmClassFile: Boolean,
 ) : KotlinMetadataStubBuilder.FileWithMetadata.Compatible(proto, version, BuiltInSerializerProtocol) {
     override val classesToDecompile: List<ProtoBuf.Class>
         get() = super.classesToDecompile.let { classes ->
-            if (isMetadata || !FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES) classes
+            if (isMetadata || !filterOutClassesExistingAsJvmClassFile) classes
             else classes.filter { classProto ->
                 shouldDecompileBuiltInClass(nameResolver.getClassId(classProto.fqName))
             }
@@ -81,7 +82,13 @@ class BuiltInDefinitionFile(
 
             val proto = ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
             val result =
-                BuiltInDefinitionFile(proto, version, file.parent, file.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION)
+                BuiltInDefinitionFile(
+                    proto,
+                    version,
+                    file.parent,
+                    file.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION,
+                    filterOutClassesExistingAsJvmClassFile = !BuiltInsVirtualFileProvider.getInstance().isBundledBuiltin(file),
+                )
             val packageProto = result.proto.`package`
             if (result.classesToDecompile.isEmpty() &&
                 packageProto.typeAliasCount == 0 && packageProto.functionCount == 0 && packageProto.propertyCount == 0

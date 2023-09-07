@@ -17,6 +17,10 @@ import java.net.URL
 abstract class BuiltInsVirtualFileProvider {
     abstract fun getBuiltInVirtualFiles(): Set<VirtualFile>
 
+    open fun isBundledBuiltin(file: VirtualFile): Boolean {
+        return file in getBuiltInVirtualFiles()
+    }
+
     companion object {
         fun getInstance(): BuiltInsVirtualFileProvider =
             ApplicationManager.getApplication().getService(BuiltInsVirtualFileProvider::class.java)
