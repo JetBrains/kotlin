@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirMo
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
+import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderInternals
+import org.jetbrains.kotlin.fir.declarations.sealedInheritorsAttr
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.name.ClassId
 
@@ -28,10 +30,11 @@ internal class LLFirSealedClassInheritorsProcessorFactoryForTests : FirSealedCla
 private class SealedClassInheritorsProviderForTests(
     private val inheritorsByModule: Map<KtModule, Map<ClassId, List<ClassId>>>
 ) : SealedClassInheritorsProvider() {
+    @OptIn(SealedClassInheritorsProviderInternals::class)
     override fun getSealedClassInheritors(firClass: FirRegularClass): List<ClassId> {
         val ktModule = firClass.llFirModuleData.ktModule
         val inheritorsForModuleMap = inheritorsByModule.getValue(ktModule)
-        return inheritorsForModuleMap[firClass.classId].orEmpty()
+        return inheritorsForModuleMap[firClass.classId] ?: firClass.sealedInheritorsAttr?.value ?: emptyList()
     }
 
 }
