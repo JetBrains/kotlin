@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFieldConfigurator
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder.Companion.baseFirElement
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.generators.tree.SimpleTypeArgument
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuilder) {
