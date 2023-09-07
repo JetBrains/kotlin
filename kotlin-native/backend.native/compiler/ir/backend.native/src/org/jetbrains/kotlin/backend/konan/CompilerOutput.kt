@@ -126,10 +126,19 @@ private fun linkAllDependencies(generationState: NativeGenerationState, generate
     // TODO: Possibly slow, maybe to a separate phase?
     val optimizedRuntimeModules = RuntimeLinkageStrategy.pick(generationState, runtimeModules).run()
 
-    (optimizedRuntimeModules + additionalModules).forEach {
-        val failed = llvmLinkModules2(generationState, generationState.llvm.module, it)
+    // When the main module `generationState.llvmModule` is very large it is much faster to
+    // link all the auxiliary modules together first before linking with the main module.
+    val linkedModules = (optimizedRuntimeModules + additionalModules).reduceOrNull { acc, module ->
+        val failed = llvmLinkModules2(generationState, acc, module)
         if (failed != 0) {
-            error("Failed to link ${it.getName()}")
+            error("Failed to link ${module.getName()}")
+        }
+        return@reduceOrNull acc
+    }
+    linkedModules?.let {
+        val failed = llvmLinkModules2(generationState, generationState.llvmModule, it)
+        if (failed != 0) {
+            error("Failed to link runtime and additional modules into main module")
         }
     }
 }
