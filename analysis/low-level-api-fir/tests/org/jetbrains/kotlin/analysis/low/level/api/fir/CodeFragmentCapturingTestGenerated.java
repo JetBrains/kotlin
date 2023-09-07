@@ -55,6 +55,24 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
     }
 
     @Test
+    @TestMetadata("extensionReceiverProperty.kt")
+    public void testExtensionReceiverProperty() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionReceiverPropertyExplicit.kt")
+    public void testExtensionReceiverPropertyExplicit() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverPropertyExplicit.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionReceiverPropertyLabeled.kt")
+    public void testExtensionReceiverPropertyLabeled() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverPropertyLabeled.kt");
+    }
+
+    @Test
     @TestMetadata("initializer.kt")
     public void testInitializer() throws Exception {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/initializer.kt");

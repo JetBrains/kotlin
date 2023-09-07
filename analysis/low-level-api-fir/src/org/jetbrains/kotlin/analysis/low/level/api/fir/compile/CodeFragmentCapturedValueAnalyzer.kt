@@ -139,7 +139,10 @@ private class CodeFragmentCapturedValueVisitor(
                                 register(CodeFragmentCapturedSymbol(capturedValue, symbol, typeRef, contextReceiverNumber))
                             }
                         }
-                        is FirFunctionSymbol<*> -> {
+                        is FirFunctionSymbol<*>, is FirPropertySymbol -> {
+                            @Suppress("USELESS_IS_CHECK") // Smart-cast is not applied from a 'when' condition in K1
+                            require(symbol is FirCallableSymbol<*>)
+
                             if (contextReceiverNumber >= 0) {
                                 val contextReceiver = symbol.resolvedContextReceivers[contextReceiverNumber]
                                 val labelName = contextReceiver.labelName

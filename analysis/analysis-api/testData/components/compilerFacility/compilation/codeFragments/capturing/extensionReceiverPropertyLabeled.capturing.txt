@@ -1,0 +1,4 @@
+ExtensionReceiver[name: ext; isMutated: false; displayText: this@ext]
+    val R|kotlin/Int|.ext: R|kotlin/String|
+        get(): R|kotlin/String|
+    R|kotlin/Int|
