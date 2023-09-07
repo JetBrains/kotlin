@@ -132,11 +132,6 @@ internal class KtFirImportOptimizer(
                 super.visitImplicitInvokeCall(implicitInvokeCall)
             }
 
-            override fun visitProperty(property: FirProperty) {
-                if (property.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return
-                super.visitProperty(property)
-            }
-
             override fun visitComponentCall(componentCall: FirComponentCall) {
                 processFunctionCall(componentCall)
                 super.visitComponentCall(componentCall)

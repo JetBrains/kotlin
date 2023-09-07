@@ -137,6 +137,18 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiImportOptimizerTe
     }
 
     @Test
+    @TestMetadata("unusedType_underscoreNameInCatchSection.kt")
+    public void testUnusedType_underscoreNameInCatchSection() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedType_underscoreNameInCatchSection.kt");
+    }
+
+    @Test
+    @TestMetadata("unusedType_underscoreVariableInDestructuringDeclaration.kt")
+    public void testUnusedType_underscoreVariableInDestructuringDeclaration() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedType_underscoreVariableInDestructuringDeclaration.kt");
+    }
+
+    @Test
     @TestMetadata("usedAliasedAndRegularImportsFromSamePackage.kt")
     public void testUsedAliasedAndRegularImportsFromSamePackage() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedAliasedAndRegularImportsFromSamePackage.kt");
