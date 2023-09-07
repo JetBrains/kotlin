@@ -31,10 +31,15 @@ fun useB(b: B) {
     B.bConst
 }
 
+fun useC(b: String) {
+    C(b)
+}
+
 fun runAppAndReturnOk(): String {
     useI(A())
     useA(A())
     useB(B())
+    useC("test")
 
     return "OK"
 }

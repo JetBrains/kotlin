@@ -29,3 +29,5 @@ class B : A() {
         const val bConst: Int = 90
     }
 }
+
+value class C(private val b: String)
