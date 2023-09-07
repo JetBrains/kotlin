@@ -67,6 +67,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("KT-61728.kt")
+    public void testKT_61728() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/contextCollector/KT-61728.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaArguments.kt")
     public void testLambdaArguments() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/contextCollector/lambdaArguments.kt");
