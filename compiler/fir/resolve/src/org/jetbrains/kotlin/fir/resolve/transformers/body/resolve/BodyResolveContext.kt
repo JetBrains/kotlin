@@ -541,7 +541,8 @@ class BodyResolveContext(
         }
     }
 
-    fun <T> withScopesForCodeFragment(codeFragment: FirCodeFragment, holder: SessionHolder, f: () -> T): T {
+    @OptIn(PrivateForInline::class)
+    fun <T> withCodeFragment(codeFragment: FirCodeFragment, holder: SessionHolder, f: () -> T): T {
         val codeFragmentContext = codeFragment.codeFragmentContext ?: error("Context is not set for a code fragment")
         val towerDataContext = codeFragmentContext.towerDataContext
 
@@ -566,7 +567,7 @@ class BodyResolveContext(
         )
 
         return withTowerDataContexts(newContext) {
-            f()
+            withContainer(codeFragment, f)
         }
     }
 
