@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.HashMap
 
 /**
  * Generate a Swift API file for the given Kotlin IR module.
@@ -178,39 +180,71 @@ class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVo
         }
     }
 
-    private data class Names(val swift: String, val c: String, val symbol: String) {
+    private data class Names(val swift: String, val c: String, val path: List<String>, val symbol: String) {
         companion object {
             operator fun invoke(declaration: IrFunction): Names {
-                val property = declaration.propertyIfAccessor.takeIf { declaration.isPropertyAccessor }
+                val symbolName = "_" + with(KonanBinaryInterface) { declaration.symbolName }
+                val path: List<String>
+                val cName: String
+                val swiftName: String
 
-                val name = when {
-                    property != null -> property.getNameWithAssert().identifier.let { identifier ->
+                val property = declaration.propertyIfAccessor.takeIf { declaration.isPropertyAccessor }
+                when {
+                    property != null -> {
+                        swiftName = property.getNameWithAssert().identifier
+                        path = property.parent.kotlinFqName.pathSegments().map { it.identifier } + listOf(swiftName)
+                        val pathString = path.joinToString(separator = "_")
                         when {
-                            declaration.isGetter -> "get_${identifier}"
-                            declaration.isSetter -> "set_${identifier}"
-                            else -> error("A property accessor is expected to either be setter or getter")
+                            declaration.isGetter -> cName = "__kn_get_$pathString"
+                            declaration.isSetter -> cName = "__kn_set_$pathString"
+                            else -> error("A property accessor is expected to either be a setter or getter")
                         }
                     }
-                    else -> declaration.name.identifier
+                    else -> {
+                        swiftName = declaration.name.identifier
+                        path = declaration.kotlinFqName.pathSegments().map { it.identifier }
+                        val pathString = path.joinToString(separator = "_")
+                        cName = "__kn_$pathString"
+                    }
                 }
 
-                val cName = "__kn_${name}"
-                val symbolName = "_" + with(KonanBinaryInterface) { declaration.symbolName }
-
-                return Names(name, cName, symbolName)
+                return Names(swiftName, cName, path, symbolName)
             }
         }
     }
 
+    private data class Namespace<T>(
+            val name: String,
+            val elements: MutableList<T> = mutableListOf(),
+            val children: MutableMap<String, Namespace<T>> = mutableMapOf(),
+    ) {
+        fun <R> reduce(transform: (List<String>, List<T>, List<R>) -> R): R {
+            fun reduceFrom(node: Namespace<T>, rootPath: List<String> = emptyList(), transform: (List<String>, List<T>, List<R>) -> R): R =
+                    transform(rootPath + node.name, node.elements, node.children.map { reduceFrom(it.value, rootPath + node.name, transform) })
+            return reduceFrom(this, emptyList(), transform)
+        }
+
+        fun insert(path: List<String>, value: T) {
+            if (path.isEmpty()) {
+                elements.add(value)
+                return
+            }
+
+            val key = path.first()
+            val next = children.getOrPut(key) { Namespace<T>(key) }
+            next.insert(path.drop(1), value)
+        }
+    }
+
     private val swiftImports = mutableListOf<SwiftCode.Import>(SwiftCode.Import.Module("Foundation"))
-    private val swiftDeclarations = mutableListOf<SwiftCode.Declaration>(
+    private val swiftDeclarations = Namespace("", elements = mutableListOf<SwiftCode.Declaration>(
             bridgeFromKotlin,
             bridgeToKotlin,
             withUnsafeSlots,
             withUnsafeTemporaryBufferAllocation,
             objHolder,
             pointerExtensions,
-    )
+    ))
 
     // FIXME: we shouldn't manually generate c headers for our existing code, but here we are.
     private val cImports = CCode.build {
@@ -230,7 +264,49 @@ class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVo
         )
     }
 
-    fun buildSwiftShimFile() = SwiftCode.File(swiftImports, swiftDeclarations)
+    fun buildSwiftShimFile() = SwiftCode.File {
+        fun SwiftCode.Declaration.patchStatic() = when (this) {
+            is SwiftCode.Declaration.Function -> this.copy(isStatic = true)
+            is SwiftCode.Declaration.Variable -> when (this) {
+                is SwiftCode.Declaration.StoredVariable -> this.copy(isStatic = true)
+                is SwiftCode.Declaration.ComputedVariable -> this.copy(isStatic = true)
+                is SwiftCode.Declaration.Constant -> this.copy(isStatic = true)
+            }
+            else -> this
+        }
+
+        data class Declarations(val inline: List<SwiftCode.Declaration>, val outline: List<SwiftCode.Declaration>)
+
+        swiftImports.forEach { +it }
+
+        swiftDeclarations.reduce<Declarations> { path, elements, children ->
+            val namePath = path.dropWhile { it.isEmpty() }.takeIf { it.isNotEmpty() }
+            if (namePath != null) {
+                val name = namePath.fold<String, SwiftCode.Type.Nominal?>(null) { ac, el -> ac?.nested(el) ?: el.type }!!
+
+                val inline = listOf(enum(namePath.last(), visibility = public) {
+                    children.forEach { it.inline.forEach { +it.patchStatic() } }
+                })
+
+                val outline = children.flatMap { it.outline } + elements.map {
+                    extension(name, visibility = public) {
+                        +it.patchStatic()
+                    }
+                }
+
+                Declarations(inline, outline)
+
+            } else {
+                Declarations(
+                        inline = children.flatMap { it.inline },
+                        outline = children.flatMap { it.outline } + elements
+                )
+            }
+        }.let {
+            it.inline.forEach { +it }
+            it.outline.forEach { +it }
+        }
+    }
 
     fun buildSwiftBridgingHeader() = CCode.build {
         CCode.File(cImports + pragma("clang assume_nonnull begin") + cDeclarations + pragma("clang assume_nonnull end"))
@@ -241,11 +317,12 @@ class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVo
     }
 
     override fun visitProperty(declaration: IrProperty) {
-        val name = declaration.name.identifier
+        val propertyNames: Names
         val bridge = bridgeFor(declaration.getter!!.returnType) ?: return
 
         val getter = declaration.getter!!.let {
             val names = Names(it)
+            propertyNames = names
             generateCFunction(it, names)?.also(cDeclarations::add) ?: return
             val swift = generateSwiftFunction(it, names) ?: return
 
@@ -255,7 +332,7 @@ class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVo
             checkNotNull(swift.code)
 
             SwiftCode.build {
-                get(swift.code.block)
+                get(swift.code)
             }
         }
         val setter = declaration.setter?.let {
@@ -269,12 +346,12 @@ class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVo
             checkNotNull(swift.code)
 
             SwiftCode.build {
-                set(null, swift.code.block)
+                set(null, swift.code)
             }
         }
 
-        swiftDeclarations.add(SwiftCode.build {
-            `var`(name, type = bridge.swiftType, get = getter, set = setter)
+        swiftDeclarations.insert(propertyNames.path.dropLast(1), SwiftCode.build {
+            `var`(propertyNames.swift, type = bridge.swiftType, get = getter, set = setter)
         })
     }
 
@@ -285,11 +362,11 @@ class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVo
 
         val names = Names(declaration)
 
-        @Suppress("unused_variable")
-        val cFunction = generateCFunction(declaration, names)?.also { cDeclarations.add(it) } ?: return
+        val cFunction = generateCFunction(declaration, names) ?: return
+        cDeclarations.add(cFunction)
 
-        @Suppress("unused_variable")
-        val swiftFunction = generateSwiftFunction(declaration, names)?.also { swiftDeclarations.add(it) } ?: return
+        val swiftFunction = generateSwiftFunction(declaration, names) ?: return
+        swiftDeclarations.insert(names.path.dropLast(1), swiftFunction)
     }
 
     private fun isSupported(declaration: IrFunction): Boolean {
