@@ -92,6 +92,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
         }
 
         @Test
+        @TestMetadata("fragmentFunction.kt")
+        public void testFragmentFunction() throws Exception {
+            runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/fragmentFunction.kt");
+        }
+
+        @Test
         @TestMetadata("imports.kt")
         public void testImports() throws Exception {
             runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/imports.kt");
