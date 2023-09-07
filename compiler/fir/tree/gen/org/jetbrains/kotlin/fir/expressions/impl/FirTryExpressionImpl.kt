@@ -31,6 +31,7 @@ internal class FirTryExpressionImpl(
     override val catches: MutableList<FirCatch>,
     override var finallyBlock: FirBlock?,
 ) : FirTryExpression() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         calleeReference.accept(visitor, data)

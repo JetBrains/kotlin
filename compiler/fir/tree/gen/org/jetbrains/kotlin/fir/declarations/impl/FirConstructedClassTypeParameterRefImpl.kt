@@ -20,6 +20,7 @@ internal class FirConstructedClassTypeParameterRefImpl(
     override val source: KtSourceElement?,
     override val symbol: FirTypeParameterSymbol,
 ) : FirConstructedClassTypeParameterRef() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirConstructedClassTypeParameterRefImpl {

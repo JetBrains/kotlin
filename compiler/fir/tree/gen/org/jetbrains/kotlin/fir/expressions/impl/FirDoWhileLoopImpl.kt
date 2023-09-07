@@ -29,6 +29,7 @@ internal class FirDoWhileLoopImpl(
     override var condition: FirExpression,
     override var label: FirLabel?,
 ) : FirDoWhileLoop() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         block.accept(visitor, data)

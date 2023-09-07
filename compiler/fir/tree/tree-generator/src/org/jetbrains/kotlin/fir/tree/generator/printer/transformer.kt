@@ -37,7 +37,7 @@ private class TransformerPrinter(
     override val visitorDataType: TypeRef
         get() = dataTypeVariable
 
-    override fun visitMethodReturnType(element: Element) = element.transformerType
+    override fun visitMethodReturnType(element: Element) = element.transformerClass
 
     override val allowTypeParametersInVisitorMethods: Boolean
         get() = true

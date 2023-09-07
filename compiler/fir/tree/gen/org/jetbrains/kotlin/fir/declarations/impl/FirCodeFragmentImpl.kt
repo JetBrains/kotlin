@@ -33,6 +33,7 @@ internal class FirCodeFragmentImpl(
     override val symbol: FirCodeFragmentSymbol,
     override var block: FirBlock,
 ) : FirCodeFragment() {
+
     init {
         symbol.bind(this)
         resolveState = resolvePhase.asResolveState()

@@ -55,6 +55,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override val typeParameters: MutableList<FirTypeParameter>,
     override var status: FirDeclarationStatus,
 ) : FirBackingField() {
+
     init {
         symbol.bind(this)
         resolveState = resolvePhase.asResolveState()

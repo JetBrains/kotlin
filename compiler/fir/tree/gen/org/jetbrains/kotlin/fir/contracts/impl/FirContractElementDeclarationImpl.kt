@@ -20,6 +20,7 @@ internal class FirContractElementDeclarationImpl(
     override val source: KtSourceElement?,
     override val effect: ConeContractDescriptionElement,
 ) : FirContractElementDeclaration() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirContractElementDeclarationImpl {

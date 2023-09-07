@@ -21,6 +21,7 @@ internal class FirExplicitSuperReference(
     override val labelName: String?,
     override var superTypeRef: FirTypeRef,
 ) : FirSuperReference() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         superTypeRef.accept(visitor, data)
     }

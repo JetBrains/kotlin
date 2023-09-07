@@ -34,6 +34,7 @@ internal class FirIncrementDecrementExpressionImpl(
     override var expression: FirExpression,
     override val operationSource: KtSourceElement?,
 ) : FirIncrementDecrementExpression() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         expression.accept(visitor, data)

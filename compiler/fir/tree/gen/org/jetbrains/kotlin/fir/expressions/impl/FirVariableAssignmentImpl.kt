@@ -26,6 +26,7 @@ internal class FirVariableAssignmentImpl(
     override var lValue: FirExpression,
     override var rValue: FirExpression,
 ) : FirVariableAssignment() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         lValue.accept(visitor, data)

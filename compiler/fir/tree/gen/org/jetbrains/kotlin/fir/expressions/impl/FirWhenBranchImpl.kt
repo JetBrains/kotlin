@@ -22,6 +22,7 @@ internal class FirWhenBranchImpl(
     override var condition: FirExpression,
     override var result: FirBlock,
 ) : FirWhenBranch() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         condition.accept(visitor, data)
         result.accept(visitor, data)

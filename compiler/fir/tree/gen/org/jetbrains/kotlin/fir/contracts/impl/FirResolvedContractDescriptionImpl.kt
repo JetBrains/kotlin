@@ -25,6 +25,7 @@ internal class FirResolvedContractDescriptionImpl(
     override val unresolvedEffects: MutableList<FirContractElementDeclaration>,
     override val diagnostic: ConeDiagnostic?,
 ) : FirResolvedContractDescription() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         effects.forEach { it.accept(visitor, data) }
         unresolvedEffects.forEach { it.accept(visitor, data) }

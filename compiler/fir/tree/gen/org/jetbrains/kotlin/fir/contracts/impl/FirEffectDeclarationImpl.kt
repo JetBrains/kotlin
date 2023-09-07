@@ -20,6 +20,7 @@ internal class FirEffectDeclarationImpl(
     override val source: KtSourceElement?,
     override val effect: ConeEffectDeclaration,
 ) : FirEffectDeclaration() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEffectDeclarationImpl {

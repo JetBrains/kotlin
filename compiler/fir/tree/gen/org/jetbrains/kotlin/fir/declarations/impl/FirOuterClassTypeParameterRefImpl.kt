@@ -21,6 +21,7 @@ class FirOuterClassTypeParameterRefImpl @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val symbol: FirTypeParameterSymbol,
 ) : FirOuterClassTypeParameterRef() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirOuterClassTypeParameterRefImpl {

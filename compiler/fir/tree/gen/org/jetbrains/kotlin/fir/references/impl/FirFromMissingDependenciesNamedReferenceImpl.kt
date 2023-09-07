@@ -20,6 +20,7 @@ internal class FirFromMissingDependenciesNamedReferenceImpl(
     override val source: KtSourceElement?,
     override val name: Name,
 ) : FirFromMissingDependenciesNamedReference() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFromMissingDependenciesNamedReferenceImpl {

@@ -38,6 +38,7 @@ internal class FirTypeAliasImpl(
     override var expandedTypeRef: FirTypeRef,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
 ) : FirTypeAlias() {
+
     init {
         symbol.bind(this)
         resolveState = resolvePhase.asResolveState()

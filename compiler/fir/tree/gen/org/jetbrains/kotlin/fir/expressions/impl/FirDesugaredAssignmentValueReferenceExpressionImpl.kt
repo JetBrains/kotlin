@@ -31,6 +31,7 @@ internal class FirDesugaredAssignmentValueReferenceExpressionImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val expressionRef: FirExpressionRef<FirExpression>,
 ) : FirDesugaredAssignmentValueReferenceExpression() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
     }

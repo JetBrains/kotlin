@@ -22,6 +22,7 @@ internal class FirCatchImpl(
     override var parameter: FirProperty,
     override var block: FirBlock,
 ) : FirCatch() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         parameter.accept(visitor, data)
         block.accept(visitor, data)

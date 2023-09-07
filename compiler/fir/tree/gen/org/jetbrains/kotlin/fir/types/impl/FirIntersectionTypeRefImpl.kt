@@ -27,6 +27,7 @@ internal class FirIntersectionTypeRefImpl(
     override var leftType: FirTypeRef,
     override var rightType: FirTypeRef,
 ) : FirIntersectionTypeRef() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         leftType.accept(visitor, data)

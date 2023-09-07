@@ -34,6 +34,7 @@ internal class FirWhenExpressionImpl(
     override var exhaustivenessStatus: ExhaustivenessStatus?,
     override val usedAsExpression: Boolean,
 ) : FirWhenExpression() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         calleeReference.accept(visitor, data)

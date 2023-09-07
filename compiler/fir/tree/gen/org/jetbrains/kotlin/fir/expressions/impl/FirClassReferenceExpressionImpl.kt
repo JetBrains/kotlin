@@ -30,6 +30,7 @@ internal class FirClassReferenceExpressionImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var classTypeRef: FirTypeRef,
 ) : FirClassReferenceExpression() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         classTypeRef.accept(visitor, data)

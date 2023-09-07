@@ -31,6 +31,7 @@ internal class FirConstExpressionImpl<T> (
     override var kind: ConstantValueKind<T>,
     override val value: T,
 ) : FirConstExpression<T>() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
     }

@@ -147,3 +147,119 @@ fun SmartPrinter.printFunctionDeclaration(
     }
     print(typeParameters.multipleUpperBoundsList())
 }
+
+private val dataTP = TypeVariable("D")
+private val dataParameter = FunctionParameter("data", dataTP)
+
+context(ImportCollector)
+fun SmartPrinter.printAcceptMethod(
+    element: AbstractElement<*, *>,
+    visitorClass: ClassRef<PositionTypeParameterRef>,
+    hasImplementation: Boolean,
+    kDoc: String?,
+) {
+    if (!element.hasAcceptMethod) return
+    println()
+    printKDoc(kDoc)
+    val resultTP = TypeVariable("R")
+    printFunctionDeclaration(
+        name = "accept",
+        parameters = listOf(
+            FunctionParameter("visitor", visitorClass.withArgs(resultTP, dataTP)),
+            dataParameter,
+        ),
+        returnType = resultTP,
+        typeParameters = listOf(resultTP, dataTP),
+        override = !element.isRootElement,
+    )
+    if (hasImplementation) {
+        println(" =")
+        withIndent {
+            print("visitor.", element.visitFunctionName, "(this, ", dataParameter.name, ")")
+        }
+    }
+    println()
+}
+
+context(ImportCollector)
+fun SmartPrinter.printTransformMethod(
+    element: AbstractElement<*, *>,
+    transformerClass: ClassRef<PositionTypeParameterRef>,
+    implementation: String?,
+    returnType: TypeRefWithNullability,
+    kDoc: String?,
+) {
+    if (!element.hasTransformMethod) return
+    println()
+    printKDoc(kDoc)
+    if (returnType is TypeParameterRef && implementation != null) {
+        println("@Suppress(\"UNCHECKED_CAST\")")
+    }
+    printFunctionDeclaration(
+        name = "transform",
+        parameters = listOf(
+            FunctionParameter("transformer", transformerClass.withArgs(dataTP)),
+            dataParameter,
+        ),
+        returnType = returnType,
+        typeParameters = listOfNotNull(returnType as? TypeVariable, dataTP),
+        override = !element.isRootElement,
+    )
+    if (implementation != null) {
+        println(" =")
+        withIndent {
+            print(implementation, " as ", returnType.render())
+        }
+    }
+    println()
+}
+
+context(ImportCollector)
+fun SmartPrinter.printAcceptChildrenMethod(
+    element: FieldContainer,
+    visitorClass: ClassRef<PositionTypeParameterRef>,
+    visitorResultType: TypeRef,
+    modality: Modality? = null,
+    override: Boolean = false,
+    kDoc: String?,
+) {
+    if (!element.hasAcceptChildrenMethod) return
+    println()
+    printKDoc(kDoc)
+    printFunctionDeclaration(
+        name = "acceptChildren",
+        parameters = listOf(
+            FunctionParameter("visitor", visitorClass.withArgs(visitorResultType, dataTP)),
+            dataParameter,
+        ),
+        returnType = StandardTypes.unit,
+        typeParameters = listOfNotNull(visitorResultType as? TypeVariable, dataTP),
+        modality = modality,
+        override = override,
+    )
+}
+
+context(ImportCollector)
+fun SmartPrinter.printTransformChildrenMethod(
+    element: FieldContainer,
+    transformerClass: ClassRef<PositionTypeParameterRef>,
+    returnType: TypeRef,
+    modality: Modality? = null,
+    override: Boolean = false,
+    kDoc: String?,
+) {
+    if (!element.hasTransformChildrenMethod) return
+    println()
+    printKDoc(kDoc)
+    printFunctionDeclaration(
+        name = "transformChildren",
+        parameters = listOf(
+            FunctionParameter("transformer", transformerClass.withArgs(dataTP)),
+            dataParameter,
+        ),
+        returnType = returnType,
+        typeParameters = listOf(dataTP),
+        modality = modality,
+        override = override,
+    )
+}
