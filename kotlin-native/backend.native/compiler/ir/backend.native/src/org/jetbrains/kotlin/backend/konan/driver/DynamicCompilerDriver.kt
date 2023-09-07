@@ -86,7 +86,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
         psiToIrOutput.irModules
-                .filter { config.resolve.includedLibraries.contains(it.value.konanLibrary) }
+                .filter { config.resolve.includedLibraries.contains(it.value.descriptor.konanLibrary) }
                 .forEach { (_, module) -> generateSwiftFiles(module, config) }
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
         engine.runBackend(backendContext, psiToIrOutput.irModule)
