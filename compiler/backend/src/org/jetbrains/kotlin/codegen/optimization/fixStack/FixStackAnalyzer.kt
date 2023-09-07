@@ -46,8 +46,7 @@ internal class FixStackAnalyzer(
         owner, method, FixStackInterpreter(), { nLocals, nStack -> FixStackFrame(nLocals, nStack) }
     ) {
         override fun visitControlFlowEdge(insnNode: AbstractInsnNode, successor: Int): Boolean {
-            if (!skipBreakContinueGotoEdges) return true
-            return !(insnNode is JumpInsnNode && context.breakContinueGotoNodes.contains(insnNode))
+            return !(skipBreakContinueGotoEdges && insnNode is JumpInsnNode && context.breakContinueGotoNodes.contains(insnNode))
         }
     }
 

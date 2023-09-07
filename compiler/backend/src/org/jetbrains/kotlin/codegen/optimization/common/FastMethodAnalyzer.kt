@@ -45,4 +45,9 @@ class FastMethodAnalyzer<V : Value>
     interpreter: Interpreter<V>,
     pruneExceptionEdges: Boolean = false,
     newFrame: (Int, Int) -> Frame<V> = { nLocals, nStack -> Frame<V>(nLocals, nStack) }
-) : FastAnalyzer<V, Frame<V>>(owner, method, interpreter, pruneExceptionEdges, newFrame)
+) : FastAnalyzer<V, Frame<V>>(
+    owner, method, interpreter, pruneExceptionEdges,
+    useFastComputeExceptionHandlers = false,
+    useFastMergeControlFlowEdge = false,
+    newFrame
+)

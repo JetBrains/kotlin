@@ -67,4 +67,10 @@ class FastStoreLoadAnalyzer<V : Value>(
     method: MethodNode,
     interpreter: Interpreter<V>,
     newFrame: (Int, Int) -> StoreLoadFrame<V> = { nLocals, _ -> StoreLoadFrame(nLocals) }
-) : FastAnalyzer<V, StoreLoadFrame<V>>(owner, method, interpreter, pruneExceptionEdges = false, newFrame)
+) : FastAnalyzer<V, StoreLoadFrame<V>>(
+    owner, method, interpreter,
+    pruneExceptionEdges = false,
+    useFastComputeExceptionHandlers = false,
+    useFastMergeControlFlowEdge = false,
+    newFrame
+)

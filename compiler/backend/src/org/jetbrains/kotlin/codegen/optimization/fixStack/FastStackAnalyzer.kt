@@ -46,9 +46,11 @@ internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
     method: MethodNode,
     interpreter: Interpreter<V>,
     newFrame: (Int, Int) -> F
-) : FastAnalyzer<V, F>(owner, method, interpreter, pruneExceptionEdges = false, newFrame) {
-
+) : FastAnalyzer<V, F>(
+    owner, method, interpreter,
+    pruneExceptionEdges = false,
     // Don't have to visit the same exception handler multiple times - we care only about stack state at TCB start.
-    override fun useFastComputeExceptionHandlers(): Boolean = true
-    override fun useFastMergeControlFlowEdge(): Boolean = true
-}
+    useFastComputeExceptionHandlers = true,
+    useFastMergeControlFlowEdge = true,
+    newFrame
+)

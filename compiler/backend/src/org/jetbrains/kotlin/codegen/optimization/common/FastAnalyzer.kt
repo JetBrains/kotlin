@@ -20,6 +20,8 @@ abstract class FastAnalyzer<V : Value, F : Frame<V>>(
     private val method: MethodNode,
     private val interpreter: Interpreter<V>,
     private val pruneExceptionEdges: Boolean,
+    private val useFastComputeExceptionHandlers: Boolean,
+    private val useFastMergeControlFlowEdge: Boolean,
     private val newFrame: (Int, Int) -> F
 ) {
     private val nInsns = method.instructions.size()
@@ -139,11 +141,9 @@ abstract class FastAnalyzer<V : Value, F : Frame<V>>(
             throw AssertionError("Subroutines are deprecated since Java 6")
     }
 
-    protected open fun useFastComputeExceptionHandlers(): Boolean = false
-
     private fun computeExceptionHandlers(m: MethodNode) {
         for (tcb in m.tryCatchBlocks) {
-            if (useFastComputeExceptionHandlers()) computeExceptionHandlerFast(tcb) else computeExceptionHandlersForEachInsn(tcb)
+            if (useFastComputeExceptionHandlers) computeExceptionHandlerFast(tcb) else computeExceptionHandlersForEachInsn(tcb)
         }
     }
 
@@ -209,8 +209,6 @@ abstract class FastAnalyzer<V : Value, F : Frame<V>>(
         }
     }
 
-    protected open fun useFastMergeControlFlowEdge(): Boolean = false
-
     /**
      * Updates frame at the index [dest] with its old value if provided and previous control flow node frame [frame].
      * Reuses old frame when possible and when [canReuse] is true.
@@ -231,7 +229,7 @@ abstract class FastAnalyzer<V : Value, F : Frame<V>>(
                 oldFrame.init(frame)
                 true
             }
-            !useFastMergeControlFlowEdge() ->
+            !useFastMergeControlFlowEdge ->
                 try {
                     oldFrame.merge(frame, interpreter)
                 } catch (e: AnalyzerException) {
