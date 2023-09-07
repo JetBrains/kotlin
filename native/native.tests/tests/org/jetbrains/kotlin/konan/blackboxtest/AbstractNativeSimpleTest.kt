@@ -12,11 +12,24 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunners.createProperTestRunner
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.SimpleTestRunSettings
 import org.junit.jupiter.api.extension.ExtendWith
+import kotlin.test.fail
 
 @ExtendWith(NativeSimpleTestSupport::class)
 abstract class AbstractNativeSimpleTest {
     internal lateinit var testRunSettings: SimpleTestRunSettings
     internal lateinit var testRunProvider: SimpleTestRunProvider
+
+    fun muteForK2(isK2: Boolean, test: () -> Unit) {
+        if (!isK2) {
+            return test()
+        }
+        try {
+            test()
+        } catch (e: Throwable) {
+            return
+        }
+        fail("Looks like this test can be unmuted. Remove the call to `muteForK2`.")
+    }
 
     internal fun runExecutableAndVerify(testCase: TestCase, executable: TestExecutable) {
         val testRun = testRunProvider.getTestRun(testCase, executable)
