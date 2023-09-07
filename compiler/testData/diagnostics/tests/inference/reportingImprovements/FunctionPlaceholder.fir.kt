@@ -10,7 +10,7 @@ fun test() {
     foo <!ARGUMENT_TYPE_MISMATCH!>{ x -> x}<!>
     foo <!ARGUMENT_TYPE_MISMATCH!>{ x: Int -> x}<!>
 
-    bar { it <!UNRESOLVED_REFERENCE!>+<!> 1 }
-    bar { x -> x <!UNRESOLVED_REFERENCE!>+<!> 1}
+    bar { it + 1 }
+    bar { x -> x + 1}
     bar { x: Int -> x + 1}
 }

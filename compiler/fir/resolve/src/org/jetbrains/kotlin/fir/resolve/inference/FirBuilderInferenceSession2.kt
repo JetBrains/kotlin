@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -53,7 +54,17 @@ class FirBuilderInferenceSession2(
         }
     }
 
-    override fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement {
+    override fun <T> processPartiallyResolvedCall(
+        call: T,
+        resolutionMode: ResolutionMode,
+        completionMode: ConstraintSystemCompletionMode
+    ) where T : FirResolvable, T : FirStatement {
+        if (completionMode == ConstraintSystemCompletionMode.PARTIAL) return
+
+        if (call is FirExpression) {
+            call.updateReturnTypeWithCurrentSubstitutor(resolutionMode)
+        }
+
         if (!resolutionMode.forceFullCompletion) return
 
         val candidate = call.candidate() ?: return
@@ -63,10 +74,6 @@ class FirBuilderInferenceSession2(
 
         (resolutionMode as? ResolutionMode.ContextIndependent.ForDeclaration)?.declaration?.let(outerCandidate.updateDeclarations::add)
         outerSystem.addOtherSystem(candidate.system.currentStorage(), isAddingOuter = false)
-
-        if (call is FirExpression) {
-            call.updateReturnTypeWithCurrentSubstitutor(resolutionMode)
-        }
     }
 
     private fun FirExpression.updateReturnTypeWithCurrentSubstitutor(
@@ -77,8 +84,13 @@ class FirBuilderInferenceSession2(
             fixVariablesForMemberScope(resolvedType, outerCandidate)?.let { additionalBindings += it }
         }
 
-        val updatedType =
-            (outerSystem.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor).substituteOrNull(resolvedType)
+        val substitutor =
+            (this as? FirResolvable)?.candidate()?.system?.buildCurrentSubstitutor(additionalBindings)
+                ?: outerSystem.buildCurrentSubstitutor(additionalBindings)
+
+
+        val updatedType = (substitutor as ConeSubstitutor).substituteOrNull(resolvedType)
+
         if (updatedType != null) {
             replaceConeTypeOrNull(updatedType)
         }
@@ -100,6 +112,7 @@ class FirBuilderInferenceSession2(
         type: ConeTypeVariableType,
         myCandidate: Candidate,
     ): Pair<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
+        if ("".hashCode() == 0) return null
         val coneTypeVariableTypeConstructor = type.lookupTag
         val myCs = myCandidate.system
 
@@ -134,6 +147,7 @@ class FirBuilderInferenceSession2(
     private fun FirExpression.isLambda(): Boolean {
         if (this is FirWrappedArgumentExpression) return expression.isLambda()
         if (this is FirAnonymousFunctionExpression) return true
+        if (this is FirCallableReferenceAccess) return true
         return false
     }
 

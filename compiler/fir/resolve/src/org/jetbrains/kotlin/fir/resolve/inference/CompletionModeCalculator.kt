@@ -43,6 +43,10 @@ fun Candidate.computeCompletionMode(
 
 private typealias CsCompleterContext = ConstraintSystemCompletionContext
 
+/**
+ * SomeType <: T
+ * T <: A
+ */
 private class CalculatorForNestedCall(
     private val candidate: Candidate,
     private val returnType: ConeKotlinType?,

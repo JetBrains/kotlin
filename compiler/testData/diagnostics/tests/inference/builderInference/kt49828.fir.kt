@@ -141,7 +141,7 @@ fun main() {
     }
     val list12 = buildList {
         add("one")
-        foo00(get(0), 0f)
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo00<!>(get(0), 0f)
     }
 
     // Below are multi-arguments resolution ambiguities

@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPo
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
+import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
@@ -196,7 +198,10 @@ fun Candidate.resolveSubCallArgument(
      *   placeholder type with value 0, but argument contains type with proper literal value
      */
     val type: ConeKotlinType = context.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.fir as FirCallableDeclaration).type
-    val argumentType = candidate.substitutor.substituteOrSelf(type)
+
+    val argumentType =
+        ChainedSubstitutor(candidate.substitutor, system.buildCurrentSubstitutor() as ConeSubstitutor).substituteOrSelf(type)
+
     resolvePlainArgumentType(
         csBuilder,
         argument,
