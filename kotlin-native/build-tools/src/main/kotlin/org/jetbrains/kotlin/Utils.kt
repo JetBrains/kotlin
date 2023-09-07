@@ -204,14 +204,13 @@ private val Project.hasPlatformLibs: Boolean
         return false
     }
 
-private val Project.isCrossDist: Boolean
-    get() {
-        if (!isDefaultNativeHome) {
-            return File(buildDistribution(project.kotlinNativeDist.absolutePath).runtime(project.testTarget))
+private fun Project.isCrossDist(target: KonanTarget): Boolean {
+    if (!isDefaultNativeHome) {
+        return File(buildDistribution(project.kotlinNativeDist.absolutePath).runtime(target))
                 .exists()
-        }
-        return false
     }
+    return false
+}
 
 fun Task.dependsOnDist() {
     val target = project.testTarget
@@ -223,7 +222,7 @@ fun Task.dependsOnDist() {
             dependsOn(":kotlin-native:${target.name}CrossDist")
         }
     } else {
-        if (!project.isCrossDist) {
+        if (!project.isCrossDist(project.testTarget)) {
             dependsOn(":kotlin-native:${target.name}CrossDist")
         }
     }
@@ -237,7 +236,7 @@ fun Task.dependsOnCrossDist(target: KonanTarget) {
             dependsOn(":kotlin-native:${target.name}CrossDist")
         }
     } else {
-        if (!project.isCrossDist) {
+        if (!project.isCrossDist(target)) {
             dependsOn(":kotlin-native:${target.name}CrossDist")
         }
     }
