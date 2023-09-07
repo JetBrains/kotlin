@@ -31,7 +31,7 @@ import java.util.HashMap
  * as it requires a bit more work.
  *
  */
-class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVoid {
+class IrBasedSwiftGenerator : IrElementVisitorVoid {
     companion object {
         private val initRuntimeIfNeeded = CCode.build {
             function(void, "initRuntimeIfNeeded", attributes = listOf(asm("_Kotlin_initRuntimeIfNeeded")))
