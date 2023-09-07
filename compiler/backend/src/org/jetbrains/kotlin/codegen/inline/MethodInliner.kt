@@ -810,7 +810,8 @@ class MethodInliner(
 
         removeFakeVariablesInitializationIfPresent(node)
 
-        val frames = FastStackAnalyzer("<fake>", node, FixStackInterpreter()).analyze()
+        val analyzer = FastStackAnalyzer("<fake>", node, FixStackInterpreter()) { nLocals, nStack -> Frame(nLocals, nStack) }
+        val frames = analyzer.analyze()
 
         val localReturnsNormalizer = LocalReturnsNormalizer()
 

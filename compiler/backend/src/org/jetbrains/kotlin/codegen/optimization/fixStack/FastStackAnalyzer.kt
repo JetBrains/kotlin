@@ -39,19 +39,14 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
-/**
- * @see org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
- */
 // This is a very specific version of method bytecode analyzer that doesn't perform any DFA,
 // but infers stack types for reachable instructions instead.
 internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
     owner: String,
     method: MethodNode,
     interpreter: Interpreter<V>,
-    private val createFrame: (Int, Int) -> Frame<V> = { nLocals, nStack -> Frame<V>(nLocals, nStack) }
-) : FastAnalyzer<V, F>(owner, method, interpreter, pruneExceptionEdges = false) {
-    @Suppress("UNCHECKED_CAST")
-    override fun newFrame(nLocals: Int, nStack: Int): F = createFrame(nLocals, nStack) as F
+    newFrame: (Int, Int) -> F
+) : FastAnalyzer<V, F>(owner, method, interpreter, pruneExceptionEdges = false, newFrame) {
 
     // Don't have to visit the same exception handler multiple times - we care only about stack state at TCB start.
     override fun useFastComputeExceptionHandlers(): Boolean = true

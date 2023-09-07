@@ -20,6 +20,7 @@ abstract class FastAnalyzer<V : Value, F : Frame<V>>(
     private val method: MethodNode,
     private val interpreter: Interpreter<V>,
     private val pruneExceptionEdges: Boolean,
+    private val newFrame: (Int, Int) -> F
 ) {
     private val nInsns = method.instructions.size()
     private val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
@@ -31,8 +32,6 @@ abstract class FastAnalyzer<V : Value, F : Frame<V>>(
     private val queued = BooleanArray(nInsns)
     private val queue = IntArray(nInsns)
     private var top = 0
-
-    protected abstract fun newFrame(nLocals: Int, nStack: Int): F
 
     @Suppress("UNCHECKED_CAST")
     fun getFrame(insn: AbstractInsnNode): F? = frames[insn.indexOf()] as? F

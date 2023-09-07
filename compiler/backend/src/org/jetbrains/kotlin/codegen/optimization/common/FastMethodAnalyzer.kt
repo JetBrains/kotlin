@@ -38,16 +38,11 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
-/**
- * @see org.jetbrains.kotlin.codegen.optimization.fixStack.FastStackAnalyzer
- */
 class FastMethodAnalyzer<V : Value>
 @JvmOverloads constructor(
     owner: String,
     method: MethodNode,
     interpreter: Interpreter<V>,
     pruneExceptionEdges: Boolean = false,
-    private val createFrame: (Int, Int) -> Frame<V> = { nLocals, nStack -> Frame<V>(nLocals, nStack) }
-) : FastAnalyzer<V, Frame<V>>(owner, method, interpreter, pruneExceptionEdges) {
-    override fun newFrame(nLocals: Int, nStack: Int): Frame<V> = createFrame(nLocals, nStack)
-}
+    newFrame: (Int, Int) -> Frame<V> = { nLocals, nStack -> Frame<V>(nLocals, nStack) }
+) : FastAnalyzer<V, Frame<V>>(owner, method, interpreter, pruneExceptionEdges, newFrame)
