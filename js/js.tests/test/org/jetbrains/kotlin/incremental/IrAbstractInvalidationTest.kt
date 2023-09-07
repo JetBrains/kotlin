@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -108,13 +109,15 @@ abstract class IrAbstractInvalidationTest(
         val metadataSerializer =
             KlibMetadataIncrementalSerializer(configuration, sourceModule.project, sourceModule.jsFrontEndResult.hasErrors)
 
+        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
         generateKLib(
             sourceModule,
             outputKlibFile.canonicalPath,
             nopack = false,
             jsOutputName = moduleName,
             icData = icData,
-            moduleFragment = moduleFragment
+            moduleFragment = moduleFragment,
+            diagnosticReporter = diagnosticReporter
         ) { file ->
             metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
         }

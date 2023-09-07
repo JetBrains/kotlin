@@ -51,6 +51,7 @@ class JsKlibBackendFacade(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
                 configuration,
                 configuration.irMessageLogger,
+                inputArtifact.diagnosticReporter,
                 inputArtifact.sourceFiles,
                 klibPath = outputFile,
                 JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList(),

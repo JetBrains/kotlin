@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.incremental.md5
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -76,13 +77,15 @@ class FilePathsInKlibTest : CodegenTestCase() {
         val metadataSerializer =
             KlibMetadataIncrementalSerializer(module.compilerConfiguration, module.project, module.jsFrontEndResult.hasErrors)
 
+        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
         generateKLib(
             module,
             outputKlibPath = destination.path,
             nopack = false,
             jsOutputName = MODULE_NAME,
             icData = icData,
-            moduleFragment = moduleFragment
+            moduleFragment = moduleFragment,
+            diagnosticReporter = diagnosticReporter
         ) { file ->
             metadataSerializer.serializeScope(file, module.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
         }

@@ -21,7 +21,8 @@ class JsIrModuleSerializer(
     normalizeAbsolutePaths: Boolean,
     sourceBaseDirs: Collection<String>,
     private val languageVersionSettings: LanguageVersionSettings,
-    shouldCheckSignaturesOnUniqueness: Boolean = true
+    shouldCheckSignaturesOnUniqueness: Boolean = true,
+    private val jsIrFileMetadataFactory: JsIrFileMetadataFactory = JsIrFileEmptyMetadataFactory
 ) : IrModuleSerializer<JsIrFileSerializer>(messageLogger, compatibilityMode, normalizeAbsolutePaths, sourceBaseDirs) {
 
     private val globalDeclarationTable = JsGlobalDeclarationTable(
@@ -37,5 +38,6 @@ class JsIrModuleSerializer(
             normalizeAbsolutePaths = normalizeAbsolutePaths,
             sourceBaseDirs = sourceBaseDirs,
             languageVersionSettings = languageVersionSettings,
+            jsIrFileMetadataFactory = jsIrFileMetadataFactory
         )
 }

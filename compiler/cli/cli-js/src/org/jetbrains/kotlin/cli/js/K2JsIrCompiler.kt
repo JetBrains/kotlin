@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_EXCEPTION
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_LOG
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -461,6 +462,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     sourceModule.jsFrontEndResult.hasErrors
                 )
 
+            val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
             generateKLib(
                 sourceModule,
                 outputKlibPath,
@@ -468,9 +470,16 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 jsOutputName = arguments.irPerModuleOutputName,
                 icData = icData,
                 moduleFragment = moduleFragment,
+                diagnosticReporter = diagnosticsReporter,
                 builtInsPlatform = if (arguments.wasm) BuiltInsPlatform.WASM else BuiltInsPlatform.JS
             ) { file ->
                 metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
+            }
+
+            val messageCollector = environmentForJS.configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            reportCollectedDiagnostics(environmentForJS.configuration, diagnosticsReporter, messageCollector)
+            if (diagnosticsReporter.hasErrors) {
+                throw CompilationErrorException()
             }
         }
         return sourceModule
@@ -556,6 +565,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 jsOutputName = arguments.irPerModuleOutputName,
                 useWasmPlatform = arguments.wasm
             )
+
+            reportCollectedDiagnostics(moduleStructure.compilerConfiguration, diagnosticsReporter, messageCollector)
+            if (diagnosticsReporter.hasErrors) {
+                throw CompilationErrorException()
+            }
         }
 
         return moduleStructure

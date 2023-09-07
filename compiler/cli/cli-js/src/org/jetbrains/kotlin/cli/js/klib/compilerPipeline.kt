@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -116,6 +117,15 @@ inline fun <F> compileModuleToAnalyzedFir(
     return outputs
 }
 
+internal fun reportCollectedDiagnostics(
+    compilerConfiguration: CompilerConfiguration,
+    diagnosticsReporter: BaseDiagnosticsCollector,
+    messageCollector: MessageCollector
+) {
+    val renderName = compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderName)
+}
+
 open class AnalyzedFirOutput(val output: List<ModuleCompilerAnalyzedOutput>) {
     protected open fun checkSyntaxErrors(messageCollector: MessageCollector) = false
 
@@ -125,8 +135,7 @@ open class AnalyzedFirOutput(val output: List<ModuleCompilerAnalyzedOutput>) {
         messageCollector: MessageCollector,
     ): Boolean {
         if (checkSyntaxErrors(messageCollector) || diagnosticsReporter.hasErrors) {
-            val renderName = moduleStructure.compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderName)
+            reportCollectedDiagnostics(moduleStructure.compilerConfiguration, diagnosticsReporter, messageCollector)
             return true
         }
 
@@ -318,6 +327,7 @@ fun serializeFirKlib(
         moduleStructure.compilerConfiguration[CommonConfigurationKeys.MODULE_NAME]!!,
         moduleStructure.compilerConfiguration,
         moduleStructure.compilerConfiguration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
+        diagnosticsReporter,
         fir2KlibSerializer.sourceFiles,
         klibPath = outputKlibPath,
         moduleStructure.allDependencies,

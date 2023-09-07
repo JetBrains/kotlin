@@ -62,6 +62,7 @@ class FirJsKlibBackendFacade(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
                 configuration,
                 configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
+                inputArtifact.diagnosticReporter,
                 inputArtifact.sourceFiles,
                 klibPath = outputFile,
                 libraries.map { it.library },

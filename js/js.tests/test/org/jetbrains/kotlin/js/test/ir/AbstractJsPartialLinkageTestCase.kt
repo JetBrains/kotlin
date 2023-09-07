@@ -112,12 +112,19 @@ abstract class AbstractJsPartialLinkageTestCase(private val compilerType: Compil
                 "-Xir-produce-klib-file",
                 "-ir-output-dir", klibFile.parentFile.absolutePath,
                 "-ir-output-name", moduleName,
-                "-Werror" // Halt on any unexpected warning.
+                // Halt on any unexpected warning.
+                "-Werror",
+                // Tests suppress the INVISIBLE_REFERENCE check.
+                // However, JS doesn't produce the INVISIBLE_REFERENCE error;
+                // As result, it triggers a suppression error warning about the redundant suppression.
+                // This flag is used to disable the warning.
+                "-Xdont-warn-on-error-suppression"
             ),
             dependencies.toCompilerArgs(),
             listOf(
                 "-language-version", "2.0",
-                "-Xsuppress-version-warnings" // Don't fail on language version warnings.
+                // Don't fail on language version warnings.
+                "-Xsuppress-version-warnings"
             ).takeIf { compilerType.useFir },
             kotlinSourceFilePaths
         )

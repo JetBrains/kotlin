@@ -364,10 +364,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     fun testProjectWithExportedNamesClash(gradleVersion: GradleVersion) {
         project("kotlin-js-invalid-project-with-exported-clash", gradleVersion) {
             build("compileKotlinJs") {
-                assertOutputContains("""
-                   |There are clashes of declaration names that annotated with @JsExport in module 'kotlin-js-invalid-project-with-exported-clash'.
-                   |  * Next files contain declarations with @JsExport and name 'best'
-                """.trimMargin())
+                assertOutputContains("Exporting name 'best' in ES modules may clash")
             }
         }
     }
