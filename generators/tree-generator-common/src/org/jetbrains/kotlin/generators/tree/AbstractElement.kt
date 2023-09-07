@@ -29,9 +29,15 @@ interface AbstractElement<Element : AbstractElement<Element, Field>, Field : Abs
         get() = parents
 
     override fun getTypeWithArguments(notNull: Boolean): String = type + generics
+
+    override val allFields: List<Field>
 }
 
 val AbstractElement<*, *>.generics: String
     get() = typeArguments.takeIf { it.isNotEmpty() }
         ?.let { it.joinToString(", ", "<", ">") { it.name } }
+        ?: ""
+val AbstractElement<*, *>.typeParameters: String
+    get() = typeArguments.takeIf { it.isNotEmpty() }
+        ?.joinToString(", ", "<", "> ")
         ?: ""

@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.tree.generator.firImplementationDetailType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 class GeneratedFile(val file: File, val newText: String)
 
@@ -158,12 +158,6 @@ fun Element.multipleUpperBoundsList(): String {
     } ?: ""
 }
 
-fun ImplementationKind?.braces(): String = when (this) {
-    ImplementationKind.Interface, ImplementationKind.SealedInterface -> ""
-    ImplementationKind.OpenClass, ImplementationKind.AbstractClass, ImplementationKind.SealedClass -> "()"
-    else -> throw IllegalStateException(this.toString())
-}
-
 val Element.safeDecapitalizedName: String get() = if (name == "Class") "klass" else name.replaceFirstChar(Char::lowercaseChar)
 
 val ImplementationWithArg.generics: String
@@ -172,9 +166,4 @@ val ImplementationWithArg.generics: String
 val Field.generics: String
     get() = arguments.takeIf { it.isNotEmpty() }
         ?.let { it.joinToString(", ", "<", ">") { it.typeWithArguments } }
-        ?: ""
-
-val Element.typeParameters: String
-    get() = typeArguments.takeIf { it.isNotEmpty() }
-        ?.joinToString(", ", "<", "> ")
         ?: ""

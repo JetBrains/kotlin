@@ -8,86 +8,40 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
-import org.jetbrains.kotlin.generators.tree.Importable
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.util.get
-import org.jetbrains.kotlin.generators.tree.typeWithArguments
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
-fun Element.generateCode(generationPath: File): GeneratedFile {
-    val dir = generationPath.resolve(packageName.replace(".", "/"))
-    val file = File(dir, "$type.kt")
-    val stringBuilder = StringBuilder()
-    SmartPrinter(stringBuilder).apply {
-        printCopyright()
-        println("package $packageName")
-        println()
-        val imports = collectImports()
-        imports.forEach { println("import $it") }
-        if (imports.isNotEmpty()) {
-            println()
-        }
-        printGeneratedMessage()
-        printElement(this@generateCode)
+private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Element, Field>(printer) {
+
+    override val fieldPrinter = FieldPrinter(printer)
+
+    private val Element.isInterface: Boolean
+        get() = kind?.isInterface ?: false
+
+    override fun pureAbstractElementType(element: Element): String? {
+        val needPureAbstractElement =
+            !element.isInterface && !element.allParents.any { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }
+        return if (needPureAbstractElement) pureAbstractElementType.type else null
     }
-    return GeneratedFile(file, stringBuilder.toString())
-}
 
-fun SmartPrinter.printElement(element: Element) {
-    with(element) {
-        val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
-        fun abstract() {
-            if (!isInterface) {
-                print("abstract ")
-            }
-        }
+    override fun multipleUpperBoundsList(element: Element): String = element.multipleUpperBoundsList()
 
-        fun override() {
-            if (this != AbstractFirTreeBuilder.baseFirElement) {
-                print("override ")
-            }
-        }
-
-        print("${kind!!.title} $type")
-        if (typeArguments.isNotEmpty()) {
-            print(typeArguments.joinToString(", ", "<", ">") { it.toString() })
-        }
-        val needPureAbstractElement = !isInterface && !allParents.any { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }
-
-        if (parents.isNotEmpty() || needPureAbstractElement) {
-            print(" : ")
-            if (needPureAbstractElement) {
-                print("${pureAbstractElementType.type}()")
-                if (parents.isNotEmpty()) {
-                    print(", ")
+    override fun SmartPrinter.printAdditionalMethods(element: Element) {
+        with(element) {
+            fun abstract() {
+                if (!element.isInterface) {
+                    print("abstract ")
                 }
             }
-            print(
-                parents.joinToString(", ") {
-                    var result = it.type
-                    parentsArguments[it]?.let { arguments ->
-                        result += arguments.values.joinToString(", ", "<", ">") { it.typeWithArguments }
-                    }
-                    result + it.kind.braces()
-                },
-            )
-        }
-        print(multipleUpperBoundsList())
-        println(" {")
-        withIndent {
-            allFields.forEach { field ->
-                if (field.isFinal && field.fromParent || field.isParameter) return@forEach
-                printField(field, isImplementation = false, override = field.fromParent) {
-                    if (!field.isFinal) {
-                        abstract()
-                    }
+
+            fun override() {
+                if (this != AbstractFirTreeBuilder.baseFirElement) {
+                    print("override ")
                 }
-            }
-            if (allFields.isNotEmpty()) {
-                println()
             }
 
             override()
@@ -150,6 +104,28 @@ fun SmartPrinter.printElement(element: Element) {
                 println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement")
             }
         }
-        println("}")
     }
+}
+
+fun Element.generateCode(generationPath: File): GeneratedFile {
+    val dir = generationPath.resolve(packageName.replace(".", "/"))
+    val file = File(dir, "$type.kt")
+    val stringBuilder = StringBuilder()
+    SmartPrinter(stringBuilder).apply {
+        printCopyright()
+        println("package $packageName")
+        println()
+        val imports = collectImports()
+        imports.forEach { println("import $it") }
+        if (imports.isNotEmpty()) {
+            println()
+        }
+        printGeneratedMessage()
+        printElement(this@generateCode)
+    }
+    return GeneratedFile(file, stringBuilder.toString())
+}
+
+fun SmartPrinter.printElement(element: Element) {
+    ElementPrinter(this).printElement(element)
 }
