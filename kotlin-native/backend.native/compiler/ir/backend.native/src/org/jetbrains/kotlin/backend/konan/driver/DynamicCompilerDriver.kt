@@ -18,17 +18,15 @@ import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
-import org.jetbrains.kotlin.backend.konan.swift.IrBasedSwiftGenerator
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.file.use
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
-import java.io.FileWriter
+import org.jetbrains.kotlin.library.uniqueName
 
 /**
  * Dynamic driver does not "know" upfront which phases will be executed.
@@ -72,6 +70,16 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             outputDirectory.mkdirs()
             engine.runPhase(WriteSwiftGenerationOutputPhase, WriteSwiftGenerationInput(moduleName, swiftProducer, cProducer, outputDirectory))
         }
+        config.resolvedLibraries.getFullList()
+                .filterIsInstance<KonanLibrary>()
+                .filter { it.swiftSourcesPaths.isNotEmpty() || it.objcHeadersPaths.isNotEmpty() }
+                .forEach { konanLibrary ->
+                    val outputDirectory = java.io.File(config.outputPath).absoluteFile.parentFile.resolve(konanLibrary.uniqueName)
+                    val swiftOutputDirectory = outputDirectory.resolve("included_swift").also { it.mkdirs() }
+                    val objcOutputDirectory = outputDirectory.resolve("included_objc").also { it.mkdirs() }
+                    val input = ExtractEmbeddedSwiftExtensionsInput(konanLibrary, swiftOutputDirectory, objcOutputDirectory)
+                    engine.runPhase(ExtractEmbeddedSwiftExtensionsPhase, input)
+                }
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
         engine.runBackend(backendContext, psiToIrOutput.irModule)
     }
