@@ -23,10 +23,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.KtInMemoryTextSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
-import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -78,6 +75,7 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.readSourceFileWithMapping
 import org.jetbrains.kotlin.text
+import org.jetbrains.kotlin.util.PrivateForInline
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.reflect.KClass
@@ -271,9 +269,7 @@ class FirResult(
   val scopeDeclarations: List<FirDeclaration>
 )
 
-class TemplateCompiler(
-//  val projectConfiguration: CompilerConfiguration
-) {
+class TemplateCompiler(val flag: FlagContainer) {
   private companion object {
       private val lock = Any()
   }
@@ -313,6 +309,7 @@ class TemplateCompiler(
     scopeDeclarations: List<FirDeclaration>,
     produceIr: Boolean = false
   ): TemplateResult {
+    flag.shouldIntercept = false
     compiling = true
     try {
       val next = counter.incrementAndGet()
@@ -343,6 +340,7 @@ class TemplateCompiler(
       return TemplateResult(outputs, /*irOutput*/)
     } finally {
       compiling = false
+      flag.shouldIntercept = true
     }
   }
 
@@ -561,7 +559,7 @@ class FirBodyResolveTransformerAdapter(
     implicitTypeOnly = false,
     scopeSession = scopeSession,
     outerBodyResolveContext = BodyResolveContext(
-      ReturnTypeCalculatorForFullBodyResolve,
+      ReturnTypeCalculatorForFullBodyResolve.Default,
       DataFlowAnalyzerContext(session),
       scopeDeclarations.filterIsInstance<FirClassLikeDeclaration>().toSet()
     )
