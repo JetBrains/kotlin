@@ -18179,6 +18179,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
             }
 
             @Test
+            @TestMetadata("kt52213.kt")
+            public void testKt52213() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt52213.kt");
+            }
+
+            @Test
             @TestMetadata("kt52373.kt")
             public void testKt52373() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt52373.kt");
@@ -18188,6 +18194,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
             @TestMetadata("kt52459.kt")
             public void testKt52459() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt52459.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53551.kt")
+            public void testKt53551() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt53551.kt");
             }
 
             @Test
@@ -18206,6 +18218,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
             @TestMetadata("kt56508.kt")
             public void testKt56508() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt56508.kt");
+            }
+
+            @Test
+            @TestMetadata("kt58476.kt")
+            public void testKt58476() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt58476.kt");
             }
 
             @Test

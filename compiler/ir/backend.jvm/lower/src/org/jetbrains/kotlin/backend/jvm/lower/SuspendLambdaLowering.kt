@@ -247,7 +247,10 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                     override fun visitGetValue(expression: IrGetValue): IrExpression {
                         val parameter = (expression.symbol.owner as? IrValueParameter)?.takeIf { it.parent == irFunction }
                             ?: return expression
-                        val lvar = localVals[parameter.index + if (irFunction.extensionReceiverParameter != null) 1 else 0]
+                        val varIndex = if (parameter.index < 0) irFunction.contextReceiverParametersCount
+                        else if (parameter.index < irFunction.contextReceiverParametersCount || irFunction.extensionReceiverParameter == null) parameter.index
+                        else parameter.index + 1
+                        val lvar = localVals[varIndex]
                             ?: return expression
                         return IrGetValueImpl(expression.startOffset, expression.endOffset, lvar.symbol)
                     }
