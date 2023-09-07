@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
-import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.isSubclassOf
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -76,12 +75,12 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
     }
 
     override fun platformOverrideVisibilityCheck(
-        candidateInDerivedClass: FirBasedSymbol<*>,
+        packageNameOfDerivedClass: FqName,
         symbolInBaseClass: FirBasedSymbol<*>,
         visibilityInBaseClass: Visibility,
     ): Boolean = when (visibilityInBaseClass) {
         JavaVisibilities.ProtectedAndPackage, JavaVisibilities.ProtectedStaticVisibility -> true
-        JavaVisibilities.PackageVisibility -> symbolInBaseClass.isInPackage(candidateInDerivedClass.packageFqName())
+        JavaVisibilities.PackageVisibility -> symbolInBaseClass.isInPackage(packageNameOfDerivedClass)
         else -> true
     }
 

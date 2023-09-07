@@ -24826,6 +24826,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("packagePrivateAndPublic.kt")
+                public void testPackagePrivateAndPublic() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/packagePrivateAndPublic.kt");
+                }
+
+                @Test
                 @TestMetadata("returnTypeMismatch.kt")
                 public void testReturnTypeMismatch() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/returnTypeMismatch.kt");

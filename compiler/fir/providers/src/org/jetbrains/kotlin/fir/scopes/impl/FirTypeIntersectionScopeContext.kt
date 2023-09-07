@@ -39,7 +39,8 @@ class FirTypeIntersectionScopeContext(
 ) {
     private val overrideService = session.overrideService
 
-    private val isReceiverClassExpect = dispatchReceiverType.toRegularClassSymbol(session)?.isExpect == true
+    private val dispatchClassSymbol: FirRegularClassSymbol? = dispatchReceiverType.toRegularClassSymbol(session)
+    private val isReceiverClassExpect = dispatchClassSymbol?.isExpect == true
 
     val intersectionOverrides: FirCache<FirCallableSymbol<*>, MemberWithBaseScope<FirCallableSymbol<*>>, ResultOfIntersection.NonTrivial<*>> =
         session.intersectionOverrideStorage.cacheByScope.getValue(dispatchReceiverType)
@@ -150,9 +151,9 @@ class FirTypeIntersectionScopeContext(
         val result = mutableListOf<ResultOfIntersection<D>>()
 
         while (allMembersWithScope.size > 1) {
-            val groupWithPrivate =
+            val groupWithInvisible =
                 overrideService.extractBothWaysOverridable(allMembersWithScope.maxByVisibility(), allMembersWithScope, overrideChecker)
-            val group = groupWithPrivate.filter { !Visibilities.isPrivate(it.member.fir.visibility) }.ifEmpty { groupWithPrivate }
+            val group = groupWithInvisible.filter { it.isVisible() }.ifEmpty { groupWithInvisible }
             val nonSubsumed = if (forClassUseSiteScope) group.nonSubsumed() else group
             val mostSpecific = overrideService.selectMostSpecificMembers(nonSubsumed, ReturnTypeCalculatorForFullBodyResolve.Default)
             val nonTrivial = if (forClassUseSiteScope) {
@@ -184,6 +185,17 @@ class FirTypeIntersectionScopeContext(
         }
 
         return result
+    }
+
+    private fun MemberWithBaseScope<*>.isVisible(): Boolean {
+        // Checking for private is not enough because package-private declarations can be hidden, too, if they're in a different package.
+        val dispatchClassSymbol = dispatchClassSymbol ?: return true
+
+        return session.visibilityChecker.isVisibleForOverriding(
+            dispatchClassSymbol.moduleData,
+            dispatchClassSymbol.classId.packageFqName,
+            member.fir
+        )
     }
 
     fun <D : FirCallableSymbol<*>> createIntersectionOverride(

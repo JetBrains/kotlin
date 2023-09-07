@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 
 object FirNativeSessionFactory : FirAbstractSessionFactory() {
+    @OptIn(SessionConfiguration::class)
     fun createLibrarySession(
         mainModuleName: Name,
         resolvedLibraries: List<KotlinResolvedLibrary>,
@@ -39,6 +40,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             languageVersionSettings,
             extensionRegistrars,
             registerExtraComponents = { session ->
+                session.register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
                 registerExtraComponents(session)
             },
             createKotlinScopeProvider = { FirKotlinScopeProvider() },
