@@ -27,7 +27,7 @@ fun Project.preparePublication() {
         val isSonatypePublish: Boolean by extra(repoProvider == "sonatype")
         val isSonatypeRelease: Boolean by extra(isSonatypePublish && isRelease)
 
-        val deployRepoUrl = properties["deployRepoUrl"]?.toString() ?: properties["deploy-url"]?.toString()
+        val deployRepoUrl = (properties["deployRepoUrl"] ?: properties["deploy-url"])?.toString()?.takeIf { it.isNotBlank() }
         val deployFolder = properties["deployRepoFolder"]?.toString()
             ?.let { "file://${rootProject.buildDir}/$it" }
         val sonatypeSnapshotsUrl = if (isSonatypePublish && !isRelease) {
