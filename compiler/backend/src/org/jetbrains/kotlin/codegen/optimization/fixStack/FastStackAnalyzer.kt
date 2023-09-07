@@ -47,10 +47,11 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 internal open class FastStackAnalyzer<V : Value, F : Frame<V>>(
     owner: String,
     method: MethodNode,
-    interpreter: Interpreter<V>
+    interpreter: Interpreter<V>,
+    private val createFrame: (Int, Int) -> Frame<V> = { nLocals, nStack -> Frame<V>(nLocals, nStack) }
 ) : FastAnalyzer<V, F>(owner, method, interpreter, pruneExceptionEdges = false) {
     @Suppress("UNCHECKED_CAST")
-    override fun newFrame(nLocals: Int, nStack: Int): F = Frame<V>(nLocals, nStack) as F
+    override fun newFrame(nLocals: Int, nStack: Int): F = createFrame(nLocals, nStack) as F
 
     // Don't have to visit the same exception handler multiple times - we care only about stack state at TCB start.
     override fun useFastComputeExceptionHandlers(): Boolean = true

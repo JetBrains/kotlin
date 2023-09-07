@@ -51,7 +51,7 @@ class FixStackMethodTransformer : MethodTransformer() {
     }
 
     private fun analyzeAndTransformBreakContinueGotos(context: FixStackContext, internalClassName: String, methodNode: MethodNode) {
-        val analyzer = FixStackAnalyzer(internalClassName, methodNode, context)
+        val analyzer = FixStackAnalyzer(internalClassName, methodNode, context, skipBreakContinueGotoEdges = true)
         analyzer.analyze()
 
         methodNode.maxStack = methodNode.maxStack + analyzer.maxExtraStackSize
