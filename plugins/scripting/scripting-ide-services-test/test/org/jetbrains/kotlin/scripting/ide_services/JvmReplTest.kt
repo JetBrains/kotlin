@@ -283,6 +283,7 @@ class JvmIdeServicesTest : TestCase() {
             jvm {
                 updateClasspath(scriptCompilationClasspathFromContext("test", classLoader = DependsOn::class.java.classLoader))
             }
+            compilerOptions("-Xallow-unstable-dependencies")
             defaultImports(DependsOn::class)
             refineConfiguration {
                 onAnnotations(DependsOn::class, handler = { configureMavenDepsOnAnnotations(it, resolver) })
