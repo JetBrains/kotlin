@@ -13,11 +13,26 @@ def update_content(file_name, prefix, replacement):
     with open(file_name, 'w', encoding='utf-8') as file:
         file.writelines(data)
 
+def git_add(*files):
+    subprocess.run(['git', 'add', *files], check=True)
+
+def git_commit(message):
+    subprocess.run(['git', 'commit', message])
+
+
 if __name__ == '__main__':
     version = sys.argv[1]
     properties = 'gradle.properties'
     kotlinc = '.idea/kotlinc.xml'
     update_content(properties, 'bootstrap.kotlin.default.version', f'bootstrap.kotlin.default.version={version}\n')
     update_content(kotlinc, '    <option name="version" value=', f'    <option name="version" value="{version}" />\n')
-    subprocess.run(['git', 'add', properties, kotlinc], check=True)
-    subprocess.run(['git', 'commit', '-m', f'Advance bootstrap to {version}'])
+    git_add(properties, kotlinc)
+    git_commit(f'Advance bootstrap to {version}')
+
+    subprocess.run(['sed', '-i', '-e', "'/<components>/,/<\/components>/d'", 'gradle/verification-metadata.xml'])
+    subprocess.run(['./gradlew', '-i', '--write-verification-metadata', 'sha256,md5', '-Pkotlin.native.enabled=true', 'resolveDependencies'])
+    status_output = subprocess.run(['git', 'status', '--porcelain'], capture_output=True).stdout
+    if len(status_output) != 0:
+        verification_metadata = "verification-metadata.xml"
+        git_add(f'gradle/{verification_metadata}')
+        git_commit(f'[Build] Update {verification_metadata}')
