@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
-import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
+import org.jetbrains.kotlin.fir.tree.generator.printer.generics
+import org.jetbrains.kotlin.generators.tree.typeWithArguments
 import org.jetbrains.kotlin.fir.tree.generator.util.set
 import org.jetbrains.kotlin.generators.tree.FieldContainer
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.Importable
+import org.jetbrains.kotlin.generators.tree.TypeArgument
 import org.jetbrains.kotlin.generators.tree.ImplementationKindOwner
 
 interface AbstractElement : FieldContainer, ImplementationKindOwner {
@@ -34,6 +36,8 @@ interface AbstractElement : FieldContainer, ImplementationKindOwner {
         get() = false
 
     override val allParents: List<ImplementationKindOwner> get() = parents
+
+    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
 }
 
 class Element(override val name: String, kind: Kind) : AbstractElement {
@@ -180,26 +184,3 @@ class ElementWithArguments(val element: Element, override val typeArguments: Lis
         return element.hashCode()
     }
 }
-
-sealed class TypeArgument(val name: String) {
-    abstract val upperBounds: List<Importable>
-}
-
-class SimpleTypeArgument(name: String, val upperBound: Importable?) : TypeArgument(name) {
-    override val upperBounds: List<Importable> = listOfNotNull(upperBound)
-
-    override fun toString(): String {
-        var result = name
-        if (upperBound != null) {
-            result += " : ${upperBound.typeWithArguments}"
-        }
-        return result
-    }
-}
-
-class TypeArgumentWithMultipleUpperBounds(name: String, override val upperBounds: List<Importable>) : TypeArgument(name) {
-    override fun toString(): String {
-        return name
-    }
-}
-

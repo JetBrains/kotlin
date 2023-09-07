@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.firImplementationDetailType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
-import org.jetbrains.kotlin.generators.tree.Importable
-import org.jetbrains.kotlin.generators.tree.ImplementationKindOwner
-import java.io.File
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import java.io.File
 
 class GeneratedFile(val file: File, val newText: String)
 
@@ -167,20 +165,6 @@ fun ImplementationKind?.braces(): String = when (this) {
 }
 
 val Element.safeDecapitalizedName: String get() = if (name == "Class") "klass" else name.replaceFirstChar(Char::lowercaseChar)
-
-val Importable.typeWithArguments: String get() = getTypeWithArguments()
-
-fun Importable.getTypeWithArguments(notNull: Boolean = false): String = when (this) {
-    is AbstractElement -> type + generics
-    is Implementation -> type + element.generics
-    is FirField -> element.getTypeWithArguments(notNull) + if (nullable && !notNull) "?" else ""
-    is Field -> type + generics + if (nullable && !notNull) "?" else ""
-    is Type -> type + generics
-    is ImplementationWithArg -> type + generics
-    is LeafBuilder -> type + implementation.element.generics
-    is IntermediateBuilder -> type
-    else -> throw IllegalArgumentException()
-}
 
 val ImplementationWithArg.generics: String
     get() = argument?.let { "<${it.type}>" } ?: ""

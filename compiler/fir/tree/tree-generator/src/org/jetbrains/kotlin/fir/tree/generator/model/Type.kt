@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
+import org.jetbrains.kotlin.fir.tree.generator.printer.generics
 import org.jetbrains.kotlin.generators.tree.Importable
 
 data class Type(override val packageName: String?, override val type: String, val firType: Boolean = false) : Importable {
     val arguments = mutableListOf<String>()
+
+    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
 }

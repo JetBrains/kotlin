@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
+import org.jetbrains.kotlin.fir.tree.generator.printer.generics
 import org.jetbrains.kotlin.generators.tree.*
 
 class ImplementationWithArg(
@@ -12,6 +13,8 @@ class ImplementationWithArg(
     val argument: Importable?
 ) : FieldContainer by implementation, ImplementationKindOwner by implementation {
     val element: Element get() = implementation.element
+
+    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
 }
 
 class Implementation(val element: Element, val name: String?) : FieldContainer, ImplementationKindOwner {
@@ -36,6 +39,8 @@ class Implementation(val element: Element, val name: String?) : FieldContainer, 
                 builder = null
             }
         }
+
+    override fun getTypeWithArguments(notNull: Boolean): String = type + element.generics
 
     override val packageName = element.packageName + ".impl"
     val usedTypes = mutableListOf<Importable>()

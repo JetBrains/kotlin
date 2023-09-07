@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
-import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
+import org.jetbrains.kotlin.fir.tree.generator.printer.generics
+import org.jetbrains.kotlin.generators.tree.typeWithArguments
 import org.jetbrains.kotlin.generators.tree.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.Importable
 import org.jetbrains.kotlin.generators.tree.AbstractField
@@ -29,6 +30,8 @@ sealed class Field : AbstractField() {
     open var notNull: Boolean = false
 
     var withBindThis = true
+
+    override fun getTypeWithArguments(notNull: Boolean): String = type + generics + if (nullable && !notNull) "?" else ""
 
     fun copy(): Field = internalCopy().also {
         updateFieldsInCopy(it)
@@ -206,6 +209,9 @@ class FirField(
     override var isMutableOrEmpty: Boolean = false
     override var isLateinit: Boolean = false
     override var isParameter: Boolean = false
+
+    override fun getTypeWithArguments(notNull: Boolean): String =
+        element.getTypeWithArguments(notNull) + if (nullable && !notNull) "?" else ""
 
     override fun internalCopy(): Field {
         return FirField(
