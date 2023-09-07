@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.utils.toMetadataVersion
 
 class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCustomBinariesTest() {
     override val languageVersion: LanguageVersion
@@ -44,5 +45,13 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
 
     fun testFirAgainstFirUsingFlag() {
         compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")), additionalOptions = listOf("-Xuse-k2"))
+    }
+
+    fun testStrictMetadataVersionSemanticsOldVersion() {
+        val nextMetadataVersion = languageVersion.toMetadataVersion().next()
+        val library = compileLibrary(
+            "library", additionalOptions = listOf("-Xgenerate-strict-metadata-version", "-Xmetadata-version=$nextMetadataVersion")
+        )
+        compileKotlin("source.kt", tmpdir, listOf(library))
     }
 }

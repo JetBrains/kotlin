@@ -342,14 +342,6 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
-    fun testStrictMetadataVersionSemanticsOldVersion() {
-        val nextMetadataVersion = languageVersion.toMetadataVersion().next()
-        val library = compileLibrary(
-            "library", additionalOptions = listOf("-Xgenerate-strict-metadata-version", "-Xmetadata-version=$nextMetadataVersion")
-        )
-        compileKotlin("source.kt", tmpdir, listOf(library))
-    }
-
     fun testMetadataVersionDerivedFromLanguage() {
         for (languageVersion in LanguageVersion.entries) {
             if (languageVersion.isUnsupported) continue
