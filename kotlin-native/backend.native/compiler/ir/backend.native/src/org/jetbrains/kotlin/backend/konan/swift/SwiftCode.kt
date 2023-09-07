@@ -21,6 +21,7 @@ sealed interface SwiftCode {
 
     companion object {
         inline fun <R> build(build: Builder.() -> R): R = object : Builder {}.build()
+        inline fun <R : SwiftCode> buildList(body: ListBuilder<R>.() -> Unit): List<R> = ListBuilderImpl<R>().apply(body).build()
     }
 
     interface Builder {
@@ -29,7 +30,7 @@ sealed interface SwiftCode {
 
         val String.identifier get() = Expression.Identifier(this)
 
-        val String.type get() = Type.Nominal(this)
+        val String.type get() = Type.Named(this)
 
         val String.literal get() = Expression.StringLiteral(this)
 
@@ -43,15 +44,33 @@ sealed interface SwiftCode {
         val Number.literal get() = Expression.NumericLiteral(this)
     }
 
-    interface DeclarationsBuilder : Builder {
-        operator fun <T : Declaration> T.unaryPlus(): T
+    interface ListBuilder<Element : SwiftCode> : Builder {
+        operator fun <T : Element> T.unaryPlus(): T
+
+        fun build(): List<Element>
     }
 
-    interface StatementsBuilder : Builder {
-        operator fun <T : Statement> T.unaryPlus(): T
+    class ListBuilderImpl<Element : SwiftCode>(private val elements: MutableList<Element> = mutableListOf()) : ListBuilder<Element> {
+        override operator fun <T : Element> T.unaryPlus(): T = this.also(elements::add)
+
+        override fun build(): List<Element> = elements.toList()
     }
 
-    sealed interface Import : SwiftCode {
+    abstract class Block<out Element : SwiftCode>(val elements: List<Element> = emptyList()) : SwiftCode {
+        constructor(block: ListBuilder<Element>.() -> Unit) : this(ListBuilderImpl<Element>().apply(block).build())
+
+        override fun render(): String = elements.joinToString(separator = "\n") { it.render() }
+
+        fun renderAsBlock() = render().prependIndent(DEFAULT_INDENT).let { "{\n$it\n}" }
+    }
+
+    class CodeBlock(body: ListBuilder<Statement>.() -> Unit) : Block<Statement>(body)
+
+    class DeclarationsBlock(body: ListBuilder<Declaration>.() -> Unit) : Block<Declaration>(body)
+
+    class EnumBlock(body: ListBuilder<EnumMember>.() -> Unit) : Block<EnumMember>(body)
+
+    sealed interface Import : FileMember {
         data class Module(val name: String) : Import {
             override fun render(): String = "import $name"
         }
@@ -72,7 +91,11 @@ sealed interface SwiftCode {
         }
     }
 
-    sealed interface Declaration : Statement {
+    sealed interface EnumMember : SwiftCode
+
+    sealed interface FileMember : SwiftCode
+
+    sealed interface Declaration : Statement, EnumMember, FileMember {
         enum class Visibility(private val displayName: String) : SwiftCode {
             PRIVATE("private"),
             FILEPRIVATE("fileprivate"),
@@ -160,6 +183,7 @@ sealed interface SwiftCode {
         sealed interface Variable : Declaration {
             val name: String
             val type: Type?
+            val isStatic: Boolean
         }
 
         data class Constant(
@@ -167,6 +191,7 @@ sealed interface SwiftCode {
                 override val type: Type? = null,
                 val value: Expression? = null,
                 val retention: ReferenceRetention,
+                override val isStatic: Boolean = false,
                 override val attributes: List<Attribute> = emptyList(),
                 override val visibility: Visibility = Visibility.INTERNAL,
         ) : Variable {
@@ -174,6 +199,7 @@ sealed interface SwiftCode {
                 return listOfNotNull(
                         attributes.render(),
                         visibility.renderAsPrefix(),
+                        "static ".takeIf { isStatic },
                         retention.render().takeIf { it.isNotEmpty() }?.let { "$it " },
                         "let ",
                         name,
@@ -188,6 +214,7 @@ sealed interface SwiftCode {
                 override val type: Type? = null,
                 val value: Expression? = null,
                 val retention: ReferenceRetention = ReferenceRetention.Strong,
+                override val isStatic: Boolean = false,
                 override val attributes: List<Attribute> = emptyList(),
                 override val visibility: Visibility = Visibility.INTERNAL,
                 val willSet: Observer? = null,
@@ -205,6 +232,7 @@ sealed interface SwiftCode {
                 return listOfNotNull(
                         attributes.render(),
                         visibility.renderAsPrefix(),
+                        "static ".takeIf { isStatic },
                         retention.render().takeIf { it.isNotEmpty() }?.let { "$it " },
                         "var ",
                         name,
@@ -220,6 +248,7 @@ sealed interface SwiftCode {
         data class ComputedVariable(
                 override val name: String,
                 override val type: Type,
+                override val isStatic: Boolean = false,
                 override val attributes: List<Attribute> = emptyList(),
                 override val visibility: Visibility = Visibility.INTERNAL,
                 val get: Accessor? = null,
@@ -237,6 +266,7 @@ sealed interface SwiftCode {
                 return listOfNotNull(
                         attributes.render(),
                         visibility.renderAsPrefix(),
+                        "static ".takeIf { isStatic },
                         "var ",
                         name,
                         type.render().let { ": $it" },
@@ -245,6 +275,123 @@ sealed interface SwiftCode {
                                 ?.let { " {\n${it.prependIndent(DEFAULT_INDENT)}\n}" }
                 ).joinToString(separator = "")
             }
+        }
+
+        abstract class UserType<T : SwiftCode>(
+                val name: String,
+                val genericTypes: List<GenericParameter> = emptyList(),
+                val inheritedTypes: List<Type.Nominal> = emptyList(),
+                val genericTypeConstraints: List<GenericConstraint> = emptyList(),
+                override val attributes: List<Attribute> = emptyList(),
+                override val visibility: Visibility = Visibility.INTERNAL,
+                val block: Block<T>,
+        ) : Declaration {
+            abstract val kind: String
+
+            override fun render(): String = listOfNotNull(
+                    attributes.render(),
+                    visibility.renderAsPrefix(),
+                    "$kind ",
+                    name,
+                    genericTypes.render(),
+                    inheritedTypes.takeIf { it.isNotEmpty() }?.joinToString(separator = " & ") { it.render() }?.let { ": $it" },
+                    genericTypeConstraints.takeIf { it.isNotEmpty() }?.render()?.let { "\n$it" },
+                    block.renderAsBlock().let { " $it" }
+            ).joinToString(separator = "")
+        }
+
+        class Enum(
+                name: String,
+                genericTypes: List<GenericParameter> = emptyList(),
+                inheritedTypes: List<Type.Nominal> = emptyList(),
+                genericTypeConstraints: List<GenericConstraint> = emptyList(),
+                attributes: List<Attribute> = emptyList(),
+                visibility: Visibility = Visibility.INTERNAL,
+                block: EnumBlock,
+        ) : UserType<EnumMember>(name, genericTypes, inheritedTypes, genericTypeConstraints, attributes, visibility, block) {
+            data class Case(
+                    val name: String,
+                    val associatedValues: List<Parameter> = emptyList(),
+                    val value: Expression? = null
+            ) : EnumMember {
+                data class Parameter(
+                        val argumentName: String? = null,
+                        val type: FunctionArgumentType,
+                        val defaultValue: Expression? = null,
+                ) : SwiftCode {
+                    override fun render(): String {
+                        return listOfNotNull(
+                                argumentName?.let { "$it:" },
+                                type.render(),
+                                defaultValue?.let { "= " + it.render() }
+                        ).joinToString(separator = " ")
+                    }
+                }
+
+                override fun render(): String = listOfNotNull(
+                        name,
+                        associatedValues.takeIf { it.isNotEmpty() }?.joinToString(prefix = "(", postfix = ")") { it.render() },
+                        value?.let { " = " + it.render() }
+                ).joinToString(separator = "")
+            }
+
+            override val kind get() = "enum"
+        }
+
+        class Struct(
+                name: String,
+                genericTypes: List<GenericParameter> = emptyList(),
+                inheritedTypes: List<Type.Nominal> = emptyList(),
+                genericTypeConstraints: List<GenericConstraint> = emptyList(),
+                attributes: List<Attribute> = emptyList(),
+                visibility: Visibility = Visibility.INTERNAL,
+                block: DeclarationsBlock,
+        ) : UserType<Declaration>(name, genericTypes, inheritedTypes, genericTypeConstraints, attributes, visibility, block) {
+            override val kind get() = "struct"
+        }
+
+        class Class(
+                name: String,
+                val isFinal: Boolean = false,
+                genericTypes: List<GenericParameter> = emptyList(),
+                inheritedTypes: List<Type.Nominal> = emptyList(),
+                genericTypeConstraints: List<GenericConstraint> = emptyList(),
+                attributes: List<Attribute> = emptyList(),
+                visibility: Visibility = Visibility.INTERNAL,
+                block: DeclarationsBlock,
+        ) : UserType<Declaration>(name, genericTypes, inheritedTypes, genericTypeConstraints, attributes, visibility, block) {
+            override val kind get() = (if (isFinal) "final " else "") + "class"
+        }
+
+        class Actor(
+                name: String,
+                genericTypes: List<GenericParameter> = emptyList(),
+                inheritedTypes: List<Type.Nominal> = emptyList(),
+                genericTypeConstraints: List<GenericConstraint> = emptyList(),
+                attributes: List<Attribute> = emptyList(),
+                visibility: Visibility = Visibility.INTERNAL,
+                block: DeclarationsBlock,
+        ) : UserType<Declaration>(name, genericTypes, inheritedTypes, genericTypeConstraints, attributes, visibility, block) {
+            override val kind get() = "actor"
+        }
+
+        class Extension<T : SwiftCode>(
+                val type: Type.Nominal,
+                val inheritedTypes: List<Type.Nominal> = emptyList(),
+                val genericTypeConstraints: List<GenericConstraint> = emptyList(),
+                override val attributes: List<Attribute> = emptyList(),
+                override val visibility: Visibility = Visibility.INTERNAL,
+                val block: Block<T>,
+        ) : Declaration {
+            override fun render(): String = listOfNotNull(
+                    attributes.render(),
+                    visibility.renderAsPrefix(),
+                    "extension ",
+                    type.render(),
+                    inheritedTypes.takeIf { it.isNotEmpty() }?.joinToString(separator = " & ") { it.render() }?.let { ": $it" },
+                    genericTypeConstraints.takeIf { it.isNotEmpty() }?.render()?.let { "\n$it" },
+                    block.renderAsBlock().let { " $it" }
+            ).joinToString(separator = "")
         }
     }
 
@@ -498,13 +645,14 @@ sealed interface SwiftCode {
     }
 
     sealed interface Type : FunctionArgumentType {
+        sealed interface Nominal: Type
         sealed interface PossiblyGeneric : Type
 
-        data class Nominal(val name: String) : PossiblyGeneric {
+        data class Named(val name: String) : Nominal, PossiblyGeneric {
             override fun render(): String = name
         }
 
-        data class Nested(val receiver: Type?, val name: String) : PossiblyGeneric {
+        data class Nested(val receiver: Type?, val name: String) : Nominal, PossiblyGeneric {
             override fun render(): String {
                 val receiver = receiver?.render() ?: ""
                 val name = name.escapeIdentifierIfNeeded()
@@ -512,7 +660,7 @@ sealed interface SwiftCode {
             }
         }
 
-        data class GenericInstantiation(val target: PossiblyGeneric, val arguments: List<Type>) : Type {
+        data class GenericInstantiation(val target: PossiblyGeneric, val arguments: List<Type>) : Nominal {
             override fun render(): String = target.render() + arguments.render()
         }
 
@@ -541,7 +689,7 @@ sealed interface SwiftCode {
         data class Function(val arguments: List<Type> = emptyList(), val result: Type?) : Type {
             override fun render(): String {
                 val arguments = arguments.joinToString(separator = ", ") { it.render() }
-                val result = (result ?: Nominal("Swift.Void")).render()
+                val result = (result ?: Named("Swift.Void")).render()
                 return "($arguments) -> $result"
             }
         }
@@ -573,57 +721,17 @@ sealed interface SwiftCode {
         }
     }
 
-    class File : SwiftCode {
-        class Builder(
-                var imports: MutableList<Import> = mutableListOf(),
-                var declarations: MutableList<Declaration> = mutableListOf()
-        ) : DeclarationsBuilder {
-            fun Import.add() {
-                this@Builder.imports.add(this)
-            }
-
-            override fun <T : Declaration> T.unaryPlus(): T = also { this@Builder.declarations.add(it) }
-        }
-
-        private val imports: List<Import>
-        private val declarations: List<Declaration>
-
-        constructor(imports: List<Import>, declarations: List<Declaration>) {
-            this.declarations = declarations
-            this.imports = imports
-        }
-
-        constructor(block: Builder.() -> Unit) {
-            val builder = Builder().apply(block)
-            this.declarations = builder.declarations.toList()
-            this.imports = builder.imports.toList()
-        }
+    class File(val elements: List<FileMember> = emptyList()) : SwiftCode {
+        constructor(block: ListBuilder<FileMember>.() -> Unit) : this(ListBuilderImpl<FileMember>().apply(block).build())
 
         override fun render() = renderLines().joinToString(separator = "\n")
 
         fun renderLines(): Sequence<String> = sequence {
+            val (imports, declarations) = elements.partition { it is Import }
             imports.forEach { yield(it.render() + "\n") }
             yield("\n")
             declarations.forEach { yield(it.render() + "\n\n") }
         }
-    }
-
-    class CodeBlock(val statements: List<Statement>) : SwiftCode {
-        class Builder(
-                var statements: MutableList<Statement> = mutableListOf()
-        ) : StatementsBuilder, DeclarationsBuilder {
-            override fun <T : Declaration> T.unaryPlus(): T = also { this@Builder.statements.add(this) }
-
-            override fun <T : Statement> T.unaryPlus() = also { this@Builder.statements.add(it) }
-        }
-
-        constructor(block: Builder.() -> Unit) : this(Builder().apply(block).statements.toList())
-
-        override fun render(): String = statements.joinToString(separator = "\n") { it.render() }
-
-        fun renderAsBlock() = render().prependIndent(DEFAULT_INDENT).let { "{\n$it\n}" }
-
-        val block: Builder.() -> Unit get() = { this@CodeBlock.statements.forEach { +it } }
     }
 
     data class Attribute(val name: String, val arguments: List<Argument>? = null) : SwiftCode {
@@ -688,7 +796,7 @@ private fun List<SwiftCode.Type>.render() = takeIf { it.isNotEmpty() }?.joinToSt
 private fun List<SwiftCode.GenericParameter>.render() = takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") { it.render() } ?: ""
 
 @JvmName("renderAsGenericWhereClause")
-private fun List<SwiftCode.GenericConstraint>.render() = joinToString(prefix = "where ") { it.render() }
+private fun List<SwiftCode.GenericConstraint>.render() = takeIf { it.isNotEmpty() }?.joinToString(prefix = "where ") { it.render() } ?: ""
 
 @JvmName("renderAsCaptureList")
 private fun List<SwiftCode.Expression.Closure.Capture>.render() = takeIf { it.isNotEmpty() }?.joinToString(prefix = "[", postfix = "]") { it.render() } ?: ""
@@ -702,9 +810,9 @@ private fun List<SwiftCode.Declaration.Function.Parameter>.render() = joinToStri
 
 //region imports
 
-fun SwiftCode.File.Builder.import(name: String) = SwiftCode.Import.Module(name)
+fun SwiftCode.Builder.import(name: String) = SwiftCode.Import.Module(name)
 
-fun SwiftCode.File.Builder.import(type: SwiftCode.Import.Symbol.Type, module: String, name: String) = SwiftCode.Import.Symbol(type, module, name)
+fun SwiftCode.Builder.import(type: SwiftCode.Import.Symbol.Type, module: String, name: String) = SwiftCode.Import.Symbol(type, module, name)
 
 //endregion
 
@@ -736,7 +844,7 @@ fun SwiftCode.Builder.function(
         attributes: List<SwiftCode.Attribute> = emptyList(),
         visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
         genericTypeConstraints: List<SwiftCode.GenericConstraint> = emptyList(),
-        body: (SwiftCode.StatementsBuilder.() -> Unit)? = null
+        body: (SwiftCode.ListBuilder<SwiftCode.Statement>.() -> Unit)? = null
 ): SwiftCode.Declaration.Function {
     return SwiftCode.Declaration.Function(
             name,
@@ -767,24 +875,26 @@ fun SwiftCode.Builder.`var`(
         name: String,
         type: SwiftCode.Type? = null,
         value: SwiftCode.Expression? = null,
+        isStatic: Boolean = false,
         retention: SwiftCode.ReferenceRetention = SwiftCode.ReferenceRetention.Strong,
         attributes: List<SwiftCode.Attribute> = emptyList(),
         visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
         willSet: SwiftCode.Declaration.StoredVariable.Observer? = null,
         didSet: SwiftCode.Declaration.StoredVariable.Observer? = null,
 ): SwiftCode.Declaration.StoredVariable {
-    return SwiftCode.Declaration.StoredVariable(name, type, value, retention, attributes, visibility, willSet = willSet, didSet = didSet)
+    return SwiftCode.Declaration.StoredVariable(name, type, value, retention, isStatic, attributes, visibility, willSet = willSet, didSet = didSet)
 }
 
 fun SwiftCode.Builder.`var`(
         name: String,
         type: SwiftCode.Type,
+        isStatic: Boolean = false,
         attributes: List<SwiftCode.Attribute> = emptyList(),
         visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
         get: SwiftCode.Declaration.ComputedVariable.Accessor? = null,
         set: SwiftCode.Declaration.ComputedVariable.Accessor? = null,
 ): SwiftCode.Declaration.ComputedVariable {
-    return SwiftCode.Declaration.ComputedVariable(name, type, attributes, visibility, get = get, set = set)
+    return SwiftCode.Declaration.ComputedVariable(name, type, isStatic, attributes, visibility, get = get, set = set)
 }
 
 fun SwiftCode.Builder.let(
@@ -792,34 +902,147 @@ fun SwiftCode.Builder.let(
         type: SwiftCode.Type? = null,
         value: SwiftCode.Expression? = null,
         retention: SwiftCode.ReferenceRetention = SwiftCode.ReferenceRetention.Strong,
+        isStatic: Boolean = false,
         attributes: List<SwiftCode.Attribute> = emptyList(),
         visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
 ): SwiftCode.Declaration.Constant {
-    return SwiftCode.Declaration.Constant(name, type, value, retention, attributes, visibility)
+    return SwiftCode.Declaration.Constant(name, type, value, retention, isStatic, attributes, visibility)
 }
 
 fun SwiftCode.Builder.willSet(
         arg: String? = null,
-        body: SwiftCode.CodeBlock.Builder.() -> Unit
+        body: SwiftCode.ListBuilder<SwiftCode.Statement>.() -> Unit
 ) = SwiftCode.Declaration.StoredVariable.Observer("willSet", argumentName = arg, SwiftCode.CodeBlock(body))
 
 fun SwiftCode.Builder.didSet(
         arg: String? = null,
-        body: SwiftCode.CodeBlock.Builder.() -> Unit
+        body: SwiftCode.ListBuilder<SwiftCode.Statement>.() -> Unit
 ) = SwiftCode.Declaration.StoredVariable.Observer("didSet", argumentName = arg, SwiftCode.CodeBlock(body))
 
 fun SwiftCode.Builder.get(
-        body: SwiftCode.CodeBlock.Builder.() -> Unit
+        body: SwiftCode.ListBuilder<SwiftCode.Statement>.() -> Unit
 ) = SwiftCode.Declaration.ComputedVariable.Accessor("get", argumentName = null, SwiftCode.CodeBlock(body))
+
+fun SwiftCode.Builder.get(
+        body: SwiftCode.CodeBlock,
+) = SwiftCode.Declaration.ComputedVariable.Accessor("get", argumentName = null, body)
 
 fun SwiftCode.Builder.set(
         arg: String? = null,
-        body: SwiftCode.CodeBlock.Builder.() -> Unit
+        body: SwiftCode.ListBuilder<SwiftCode.Statement>.() -> Unit
 ) = SwiftCode.Declaration.ComputedVariable.Accessor("set", argumentName = arg, SwiftCode.CodeBlock(body))
+
+fun SwiftCode.Builder.set(
+        arg: String? = null,
+        body: SwiftCode.CodeBlock,
+) = SwiftCode.Declaration.ComputedVariable.Accessor("set", argumentName = arg, body)
 
 fun SwiftCode.Type.isEqualTo(type: SwiftCode.Type) = SwiftCode.GenericConstraint(this, type, isExact = true)
 
 fun SwiftCode.Type.isSubtypeOf(type: SwiftCode.Type) = SwiftCode.GenericConstraint(this, type, isExact = false)
+
+fun SwiftCode.Builder.struct(
+        name: String,
+        genericTypes: List<SwiftCode.GenericParameter> = emptyList(),
+        inheritedTypes: List<SwiftCode.Type.Nominal> = emptyList(),
+        genericTypeConstraints: List<SwiftCode.GenericConstraint> = emptyList(),
+        attributes: List<SwiftCode.Attribute> = emptyList(),
+        visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
+        block: SwiftCode.ListBuilder<SwiftCode.Declaration>.() -> Unit
+) = SwiftCode.Declaration.Struct(
+        name,
+        genericTypes,
+        inheritedTypes,
+        genericTypeConstraints,
+        attributes,
+        visibility,
+        SwiftCode.DeclarationsBlock(block)
+)
+
+fun SwiftCode.Builder.`class`(
+        name: String,
+        isFinal: Boolean = false,
+        genericTypes: List<SwiftCode.GenericParameter> = emptyList(),
+        inheritedTypes: List<SwiftCode.Type.Nominal> = emptyList(),
+        genericTypeConstraints: List<SwiftCode.GenericConstraint> = emptyList(),
+        attributes: List<SwiftCode.Attribute> = emptyList(),
+        visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
+        block: SwiftCode.ListBuilder<SwiftCode.Declaration>.() -> Unit
+) = SwiftCode.Declaration.Class(
+        name,
+        isFinal,
+        genericTypes,
+        inheritedTypes,
+        genericTypeConstraints,
+        attributes,
+        visibility,
+        SwiftCode.DeclarationsBlock(block)
+)
+
+fun SwiftCode.Builder.actor(
+        name: String,
+        genericTypes: List<SwiftCode.GenericParameter> = emptyList(),
+        inheritedTypes: List<SwiftCode.Type.Nominal> = emptyList(),
+        genericTypeConstraints: List<SwiftCode.GenericConstraint> = emptyList(),
+        attributes: List<SwiftCode.Attribute> = emptyList(),
+        visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
+        block: SwiftCode.ListBuilder<SwiftCode.Declaration>.() -> Unit
+) = SwiftCode.Declaration.Actor(
+        name,
+        genericTypes,
+        inheritedTypes,
+        genericTypeConstraints,
+        attributes,
+        visibility,
+        SwiftCode.DeclarationsBlock(block)
+)
+
+fun SwiftCode.Builder.enum(
+        name: String,
+        genericTypes: List<SwiftCode.GenericParameter> = emptyList(),
+        inheritedTypes: List<SwiftCode.Type.Nominal> = emptyList(),
+        genericTypeConstraints: List<SwiftCode.GenericConstraint> = emptyList(),
+        attributes: List<SwiftCode.Attribute> = emptyList(),
+        visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
+        block: SwiftCode.ListBuilder<SwiftCode.EnumMember>.() -> Unit
+) = SwiftCode.Declaration.Enum(
+        name,
+        genericTypes,
+        inheritedTypes,
+        genericTypeConstraints,
+        attributes, visibility,
+        SwiftCode.EnumBlock(block)
+)
+
+fun SwiftCode.Builder.extension(
+        type: SwiftCode.Type.Nominal,
+        inheritedTypes: List<SwiftCode.Type.Nominal> = emptyList(),
+        genericTypeConstraints: List<SwiftCode.GenericConstraint> = emptyList(),
+        attributes: List<SwiftCode.Attribute> = emptyList(),
+        visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
+        block: SwiftCode.ListBuilder<SwiftCode.Declaration>.() -> Unit
+) = SwiftCode.Declaration.Extension(
+        type,
+        inheritedTypes,
+        genericTypeConstraints,
+        attributes,
+        visibility,
+        SwiftCode.DeclarationsBlock(block)
+)
+
+fun SwiftCode.Builder.case(
+        name: String,
+) = SwiftCode.Declaration.Enum.Case(name)
+
+fun SwiftCode.Builder.case(
+        name: String,
+        associatedValues: List<SwiftCode.Declaration.Enum.Case.Parameter>
+) = SwiftCode.Declaration.Enum.Case(name, associatedValues = associatedValues)
+
+fun SwiftCode.Builder.case(
+        name: String,
+        value: SwiftCode.Expression
+) = SwiftCode.Declaration.Enum.Case(name, value = value)
 
 //endregion
 
@@ -833,7 +1056,7 @@ val SwiftCode.Builder.`break` get() = SwiftCode.Statement.Break
 
 val SwiftCode.Builder.`continue` get() = SwiftCode.Statement.Continue
 
-fun SwiftCode.Builder.defer(body: SwiftCode.StatementsBuilder.() -> Unit) = SwiftCode.Statement.Defer(SwiftCode.CodeBlock(body))
+fun SwiftCode.Builder.defer(body: SwiftCode.ListBuilder<SwiftCode.Statement>.() -> Unit) = SwiftCode.Statement.Defer(SwiftCode.CodeBlock(body))
 
 //endregion
 
@@ -865,7 +1088,7 @@ fun SwiftCode.Builder.closure(
         returnType: SwiftCode.Type? = null,
         isAsync: Boolean = false,
         isThrowing: Boolean = false,
-        body: SwiftCode.StatementsBuilder.() -> Unit
+        body: SwiftCode.ListBuilder<SwiftCode.Statement>.() -> Unit
 ) = SwiftCode.Expression.Closure(
         captures,
         parameters,
@@ -906,11 +1129,11 @@ fun SwiftCode.Builder.capture(
 
 //region Types
 
-val SwiftCode.Builder.any: SwiftCode.Type.Nominal get() = "Any".type
+val SwiftCode.Builder.any: SwiftCode.Type.Named get() = "Any".type
 
-val SwiftCode.Builder.anyObject: SwiftCode.Type.Nominal get() = "AnyObject".type
+val SwiftCode.Builder.anyObject: SwiftCode.Type.Named get() = "AnyObject".type
 
-val SwiftCode.Builder.self: SwiftCode.Type.Nominal get() = "Self".type
+val SwiftCode.Builder.self: SwiftCode.Type.Named get() = "Self".type
 
 val SwiftCode.Type.metatype: SwiftCode.Type.Metatype get() = SwiftCode.Type.Metatype(this)
 
@@ -920,7 +1143,7 @@ val SwiftCode.Type.opaque: SwiftCode.Type.Opaque get() = SwiftCode.Type.Opaque(t
 
 val SwiftCode.Type.optional: SwiftCode.Type.Optional get() = SwiftCode.Type.Optional(this)
 
-fun SwiftCode.Type.contextualField(name: String) = SwiftCode.Type.Nested(this, name)
+fun SwiftCode.Type.nested(name: String) = SwiftCode.Type.Nested(this, name)
 
 fun SwiftCode.Type.PossiblyGeneric.withGenericArguments(vararg arguments: SwiftCode.Type) = SwiftCode.Type.GenericInstantiation(this, arguments.toList())
 
