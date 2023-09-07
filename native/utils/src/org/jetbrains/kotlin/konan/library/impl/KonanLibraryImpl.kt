@@ -64,16 +64,29 @@ open class BitcodeLibraryImpl(
         }
 }
 
+open class SwiftExtendedLibraryImpl(
+    private val access: SwiftExtendedLibraryAccess<SwiftExtendedLibraryLayout>
+) : SwiftExtendedLibrary {
+    override val swiftSourcesPaths: List<String>
+        get() = access.realFiles { it.swiftSourcesDir.listFilesOrEmpty.map { it.absolutePath } }
+
+    override val objcHeadersPaths: List<String>
+        get() = access.realFiles { it.objcHeadersDir.listFilesOrEmpty.map { it.absolutePath } }
+}
+
 class KonanLibraryImpl(
     targeted: TargetedLibraryImpl,
     metadata: MetadataLibraryImpl,
     ir: IrLibraryImpl,
-    bitcode: BitcodeLibraryImpl
+    bitcode: BitcodeLibraryImpl,
+    swiftExtendedLibrary: SwiftExtendedLibrary,
 ) : KonanLibrary,
     BaseKotlinLibrary by targeted,
     MetadataLibrary by metadata,
     IrLibrary by ir,
-    BitcodeLibrary by bitcode {
+    BitcodeLibrary by bitcode,
+    SwiftExtendedLibrary by swiftExtendedLibrary
+{
 
     override val linkerOpts: List<String>
         get() = manifestProperties.propertyList(KLIB_PROPERTY_LINKED_OPTS, escapeInQuotes = true)
@@ -93,14 +106,16 @@ fun createKonanLibrary(
     val metadataAccess = MetadataLibraryAccess<MetadataKotlinLibraryLayout>(libraryFile, component)
     val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile, component)
     val bitcodeAccess = BitcodeLibraryAccess<BitcodeKotlinLibraryLayout>(libraryFile, component, target)
+    val swiftSourcesAccess = SwiftExtendedLibraryAccess<SwiftExtendedLibraryLayout>(libraryFile, component)
 
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
     val targeted = TargetedLibraryImpl(targetedAccess, base)
     val metadata = MetadataLibraryImpl(metadataAccess)
     val ir = IrMonoliticLibraryImpl(irAccess)
     val bitcode = BitcodeLibraryImpl(bitcodeAccess, targeted)
+    val swiftExtendedLibrary = SwiftExtendedLibraryImpl(swiftSourcesAccess)
 
-    return KonanLibraryImpl(targeted, metadata, ir, bitcode)
+    return KonanLibraryImpl(targeted, metadata, ir, bitcode, swiftExtendedLibrary)
 }
 
 fun createKonanLibraryComponents(

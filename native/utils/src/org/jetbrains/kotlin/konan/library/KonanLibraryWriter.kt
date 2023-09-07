@@ -17,4 +17,10 @@ interface BitcodeWriter : TargetedWriter {
     fun addNativeBitcode(library: String)
 }
 
-interface KonanLibraryWriter : MetadataWriter, BaseWriter, IrWriter, BitcodeWriter
+interface SwiftExtendedWriter {
+    fun addSwiftSource(file: String)
+
+    fun addObjCHeader(file: String)
+}
+
+interface KonanLibraryWriter : MetadataWriter, BaseWriter, IrWriter, BitcodeWriter, SwiftExtendedWriter

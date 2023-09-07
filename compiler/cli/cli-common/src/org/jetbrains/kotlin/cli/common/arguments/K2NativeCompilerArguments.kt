@@ -478,6 +478,12 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xkonan-data-dir", description = "Custom path for konan distributions location")
     var konanDataDir: String? = null
 
+    @Argument(value="-include-swift-source", valueDescription = "<path>", description = "Pack external swift source into the klib")
+    var swiftSources: Array<String>? = null
+
+    @Argument(value="-include-objc-header", valueDescription = "<path>", description = "Pack external objc header into the klib")
+    var objcHeaders: Array<String>? = null
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
         super.configureAnalysisFlags(collector, languageVersion).also {
             val optInList = it[AnalysisFlags.optIn] as List<*>

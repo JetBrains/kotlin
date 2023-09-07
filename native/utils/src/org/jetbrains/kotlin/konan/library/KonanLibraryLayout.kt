@@ -47,4 +47,16 @@ interface BitcodeKotlinLibraryLayout : TargetedKotlinLibraryLayout, KotlinLibrar
         get() = mainBitcodeFile.path
 }
 
-interface KonanLibraryLayout : MetadataKotlinLibraryLayout, BitcodeKotlinLibraryLayout, IrKotlinLibraryLayout
+interface SwiftExtendedLibraryLayout : KotlinLibraryLayout {
+    val swiftSourcesDir: File
+        get() = File(componentDir, "swiftSources")
+
+    val objcHeadersDir: File
+        get() = File(componentDir, "objcHeaders")
+}
+
+interface KonanLibraryLayout :
+    MetadataKotlinLibraryLayout,
+    BitcodeKotlinLibraryLayout,
+    IrKotlinLibraryLayout,
+    SwiftExtendedLibraryLayout

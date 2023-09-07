@@ -72,7 +72,9 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
             nopack = nopack,
             shortName = shortLibraryName,
             manifestProperties = manifestProperties,
-            dataFlowGraph = input.serializerOutput.dataFlowGraph
+            dataFlowGraph = input.serializerOutput.dataFlowGraph,
+            swiftSources = configuration.getList(KonanConfigKeys.SWIFT_SOURCES),
+            objcHeaders = configuration.getList(KonanConfigKeys.OBJC_HEADERS) ,
     )
 }
 

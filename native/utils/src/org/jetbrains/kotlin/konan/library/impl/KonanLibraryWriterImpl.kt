@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.konan.library.impl
 
-import org.jetbrains.kotlin.konan.library.BitcodeWriter
-import org.jetbrains.kotlin.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
+import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
@@ -25,21 +22,22 @@ class KonanLibraryLayoutForWriter(
  * Requires non-null [target].
  */
 class KonanLibraryWriterImpl(
-        moduleName: String,
-        versions: KotlinLibraryVersioning,
-        target: KonanTarget,
-        builtInsPlatform: BuiltInsPlatform,
-        nopack: Boolean = false,
-        shortName: String? = null,
+    moduleName: String,
+    versions: KotlinLibraryVersioning,
+    target: KonanTarget,
+    builtInsPlatform: BuiltInsPlatform,
+    nopack: Boolean = false,
+    shortName: String? = null,
 
-        val layout: KonanLibraryLayoutForWriter,
+    val layout: KonanLibraryLayoutForWriter,
 
-        base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, listOf(target.visibleName), nopack, shortName),
-        bitcode: BitcodeWriter = BitcodeWriterImpl(layout),
-        metadata: MetadataWriter = MetadataWriterImpl(layout),
-        ir: IrWriter = IrMonoliticWriterImpl(layout)
+    base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, listOf(target.visibleName), nopack, shortName),
+    bitcode: BitcodeWriter = BitcodeWriterImpl(layout),
+    metadata: MetadataWriter = MetadataWriterImpl(layout),
+    ir: IrWriter = IrMonoliticWriterImpl(layout),
+    swiftExtended: SwiftExtendedWriter = SwiftExtendedWriterImpl(layout)
 
-) : BaseWriter by base, BitcodeWriter by bitcode, MetadataWriter by metadata, IrWriter by ir, KonanLibraryWriter
+) : BaseWriter by base, BitcodeWriter by bitcode, MetadataWriter by metadata, IrWriter by ir, SwiftExtendedWriter by swiftExtended, KonanLibraryWriter
 
 fun buildLibrary(
     natives: List<String>,
@@ -54,7 +52,9 @@ fun buildLibrary(
     nopack: Boolean,
     shortName: String?,
     manifestProperties: Properties?,
-    dataFlowGraph: ByteArray?
+    dataFlowGraph: ByteArray?,
+    swiftSources: List<String>,
+    objcHeaders: List<String>,
 ): KonanLibraryLayout {
 
     val libFile = File(output)
@@ -84,6 +84,9 @@ fun buildLibrary(
     manifestProperties?.let { library.addManifestAddend(it) }
     library.addLinkDependencies(linkDependencies)
     dataFlowGraph?.let { library.addDataFlowGraph(it) }
+
+    swiftSources.forEach { library.addSwiftSource(it) }
+    objcHeaders.forEach { library.addObjCHeader(it) }
 
     library.commit()
     return library.layout

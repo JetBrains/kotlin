@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.konan.library.impl
 
-import org.jetbrains.kotlin.konan.library.BitcodeWriter
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.BitcodeKotlinLibraryLayout
-import org.jetbrains.kotlin.konan.library.TargetedKotlinLibraryLayout
+import org.jetbrains.kotlin.konan.library.*
 
 open class TargetedWriterImpl(val targetLayout: TargetedKotlinLibraryLayout) {
     init {
@@ -36,5 +34,24 @@ class BitcodeWriterImpl(
     override fun addNativeBitcode(library: String) {
         val basename = File(library).name
         File(library).copyTo(File(bitcodeLayout.nativeDir, basename))
+    }
+}
+
+class SwiftExtendedWriterImpl(
+    private val libraryLayout: SwiftExtendedLibraryLayout
+) : SwiftExtendedWriter {
+
+    init {
+        libraryLayout.objcHeadersDir.mkdirs()
+        libraryLayout.swiftSourcesDir.mkdirs()
+    }
+    override fun addSwiftSource(file: String) {
+        val basename = File(file).name
+        File(file).copyTo(File(libraryLayout.swiftSourcesDir, basename))
+    }
+
+    override fun addObjCHeader(file: String) {
+        val basename = File(file).name
+        File(file).copyTo(File(libraryLayout.objcHeadersDir, basename))
     }
 }
