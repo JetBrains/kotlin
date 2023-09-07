@@ -3,15 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+
+// CHECK-LABEL: define zeroext i1 @"kfun:C#equals(kotlin.Any?){}kotlin.Boolean"(%struct.ObjHeader* %0, %struct.ObjHeader* %1)
+// CHECK: call %struct.ObjHeader* @"kfun:#<C-unbox>(kotlin.Any?){}C?"
 value class C(val x: Any)
-val c = C(42)
+// Note: <C-unbox> is also called from bridges for equals, hashCode and toString.
 
 fun main() {
-    println(c.x)
+    println(C(42) == C(13))
 }
-// CHECK: {{call|invoke}} %struct.ObjHeader* @"kfun:#<C-unbox>
-
-// Note: <C-unbox> is called from IR of generated methods like
-// FUN BRIDGE_METHOD(target=FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals
-// FUN BRIDGE_METHOD(target=FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode
-// FUN BRIDGE_METHOD(target=FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString

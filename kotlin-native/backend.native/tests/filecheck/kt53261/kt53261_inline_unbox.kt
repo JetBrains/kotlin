@@ -3,8 +3,42 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+import kotlin.native.concurrent.*
+import kotlinx.cinterop.*
+
 fun main(arr: Array<String>) {
-    println(arr[0].toInt() + 1)
+    println(arr.size.toByte() == arr[0].toByte())
+    println(arr.size.toUByte() == arr[0].toUByte())
+    println(arr.size.toShort() == arr[0].toShort())
+    println(arr.size.toUShort() == arr[0].toUShort())
+    println(arr.size.toInt() == arr[0].toInt())
+    println(arr.size.toUInt() == arr[0].toUInt())
+    println(arr.size.toLong() == arr[0].toLong())
+    println(arr.size.toULong() == arr[0].toULong())
+    println(arr.size.toFloat() == arr[0].toFloat())
+    println(arr.size.toDouble() == arr[0].toDouble())
+    println(Char(arr.size) == arr[0][0])
+    println((arr.size == 1) == (arr[0] == "1")) // Boolean
+
+    memScoped {
+        val var1: IntVar = alloc()
+        val var2: IntVar = alloc()
+        println(var1.ptr.rawValue == var2.ptr.rawValue)
+    }
+
+    println(Result.success(arr.size) == Result.success(arr[0].toInt()))
+    println(vectorOf(arr.size, arr.size, arr.size, arr.size) == vectorOf(arr[0].toInt(), arr[0].toInt(), arr[0].toInt(), arr[0].toInt()))
+
+    val w1 = Worker.start()
+    val w2 = Worker.start()
+    println(w1 == w2)
+
+    val f1 = w1.requestTermination()
+    val f2 = w2.requestTermination()
+    println(f1 == f2)
+
+    f1.result
+    f2.result
 }
 // CHECK-NOT: {{call|invoke}} i64 @"kfun:kotlin#<Long-unbox>
 // CHECK-NOT: {{call|invoke}} i64 @"kfun:kotlin#<ULong-unbox>

@@ -3,7 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-fun main(arr: Array<String>) {
-    println(arr[0].toInt() + 1)
+import kotlinx.cinterop.*
+
+// CHECK-LABEL: define zeroext i1 @"kfun:kotlinx.cinterop.CPointer#equals(kotlin.Any?){}kotlin.Boolean"(i8* %0, %struct.ObjHeader* %1)
+// CHECK: call i8* @"kfun:kotlinx.cinterop#<CPointer-unbox>(kotlin.Any?){}kotlinx.cinterop.CPointer<-1:0>?"
+
+fun main() = memScoped {
+    val var1: IntVar = alloc()
+    val var2: IntVar = alloc()
+    println(var1.ptr == var2.ptr)
 }
-// CHECK: {{call|invoke}} i8* @"kfun:kotlinx.cinterop#<CPointer-unbox>
