@@ -245,18 +245,15 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestBrokenLibrary("library", "test/A\$Anno.class")
     }
 
-    // TODO: unmute this test after switching LanguageVersion.LATEST_STABLE to 2.0.
-    fun testReleaseCompilerAgainstPreReleaseLibrary() = muteForK2 {
+    fun testReleaseCompilerAgainstPreReleaseLibrary() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir)
     }
 
-    // TODO: unmute this test after switching LanguageVersion.LATEST_STABLE to 2.0.
-    fun testReleaseCompilerAgainstPreReleaseLibraryJs() = muteForK2 {
+    fun testReleaseCompilerAgainstPreReleaseLibraryJs() {
         doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
     }
 
-    // TODO: unmute this test after switching LanguageVersion.LATEST_STABLE to 2.0.
-    fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() = muteForK2 {
+    fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-prerelease-check")
     }
 
@@ -268,8 +265,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-metadata-version-check")
     }
 
-    // TODO: unmute this test after switching LanguageVersion.LATEST_STABLE to 2.0.
-    fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheckAllowUnstableDependencies() = muteForK2 {
+    fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheckAllowUnstableDependencies() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xallow-unstable-dependencies", "-Xskip-prerelease-check")
     }
 
