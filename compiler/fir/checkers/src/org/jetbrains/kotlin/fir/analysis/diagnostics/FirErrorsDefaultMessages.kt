@@ -2005,10 +2005,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
-            "{2}.\n" +
+            "{3}.\n" +
                     "All annotations from expect ''{0}'' must be present with the same arguments on actual ''{1}'', otherwise they might behave incorrectly.",
             FirExpectActualAnnotationIncompatibilityDiagnosticRenderers.SYMBOL_RENDERER,
             FirExpectActualAnnotationIncompatibilityDiagnosticRenderers.SYMBOL_RENDERER,
+            NOT_RENDERED,
             FirExpectActualAnnotationIncompatibilityDiagnosticRenderers.INCOMPATIBILITY,
         )
         map.put(

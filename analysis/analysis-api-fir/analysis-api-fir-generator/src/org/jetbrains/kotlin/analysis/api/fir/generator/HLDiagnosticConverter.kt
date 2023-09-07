@@ -214,6 +214,14 @@ internal object FirToKtConversionCreator {
                 "org.jetbrains.kotlin.psi"
             )
         ),
+        KtSourceElement::class to HLFunctionCallConversion(
+            "({0} as? KtPsiSourceElement)?.psi",
+            PsiElement::class.createType(nullable = true),
+            importsToAdd = listOf(
+                "org.jetbrains.kotlin.psi",
+                "org.jetbrains.kotlin.KtPsiSourceElement"
+            )
+        ),
     )
 
     private val typeMapping: Map<KClass<*>, HLFunctionCallConversion> = mapOf(

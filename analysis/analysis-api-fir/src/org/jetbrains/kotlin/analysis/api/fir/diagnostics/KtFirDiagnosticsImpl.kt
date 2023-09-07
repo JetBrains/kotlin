@@ -3133,6 +3133,7 @@ internal class ActualTypealiasToSpecialAnnotationImpl(
 internal class ActualAnnotationsNotMatchExpectImpl(
     override val expectSymbol: KtSymbol,
     override val actualSymbol: KtSymbol,
+    override val actualAnnotationTargetSourceElement: PsiElement?,
     override val incompatibilityType: ExpectActualAnnotationsIncompatibilityType<FirAnnotation>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

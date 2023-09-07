@@ -213,4 +213,6 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
         actualMember: DeclarationSymbolMarker,
         checkClassScopesCompatibility: Boolean,
     ): Map<out DeclarationSymbolMarker, ExpectActualCompatibility<*>>
+
+    fun DeclarationSymbolMarker.getSourceElement(): SourceElementMarker
 }

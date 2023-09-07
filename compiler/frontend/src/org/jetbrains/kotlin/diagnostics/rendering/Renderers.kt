@@ -70,6 +70,9 @@ object Renderers {
     }
 
     @JvmField
+    val NOT_RENDERED = Renderer<Any?> { _ -> "" }
+
+    @JvmField
     val NAME = Renderer<Named> { it.name.asString() }
 
     @JvmField

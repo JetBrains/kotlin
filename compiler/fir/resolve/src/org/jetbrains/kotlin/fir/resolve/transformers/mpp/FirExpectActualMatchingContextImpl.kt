@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
+import org.jetbrains.kotlin.mpp.SourceElementMarker
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -479,6 +480,8 @@ class FirExpectActualMatchingContextImpl private constructor(
         val mapping = actualClass.asSymbol().fir.memberExpectForActual
         return mapping?.get(actualMember to expectClass) ?: emptyMap()
     }
+
+    override fun DeclarationSymbolMarker.getSourceElement(): SourceElementMarker = FirSourceElement(asSymbol().source)
 
     object Factory : FirExpectActualMatchingContextFactory {
         override fun create(

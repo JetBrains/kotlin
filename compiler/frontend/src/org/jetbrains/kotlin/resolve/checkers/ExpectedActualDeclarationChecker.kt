@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.types.KotlinType
 import java.io.File
+import java.util.*
 
 private val implicitlyActualizedAnnotationFqn = StandardClassIds.Annotations.ImplicitlyActualizedByJvmDeclaration.asSingleFqName()
 
@@ -514,11 +515,13 @@ class ExpectedActualDeclarationChecker(
         val matchingContext = ClassicExpectActualMatchingContext(actualDescriptor.module)
         val incompatibility =
             AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(expectDescriptor, actualDescriptor, matchingContext) ?: return
+        val actualAnnotationTargetSourceElement = (incompatibility.actualAnnotationTargetElement as ClassicSourceElement).element
         context.trace.report(
             Errors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT.on(
                 reportOn,
                 incompatibility.expectSymbol as DeclarationDescriptor,
                 incompatibility.actualSymbol as DeclarationDescriptor,
+                Optional.ofNullable(actualAnnotationTargetSourceElement),
                 incompatibility.type.mapAnnotationType { it.annotationSymbol as AnnotationDescriptor }
             )
         )

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability;
 import org.jetbrains.kotlin.resolve.calls.tower.WrongResolutionToClassifier;
 import org.jetbrains.kotlin.resolve.calls.util.BuilderLambdaLabelingInfo;
 import org.jetbrains.kotlin.resolve.deprecation.DescriptorBasedDeprecationInfo;
+import org.jetbrains.kotlin.resolve.multiplatform.ClassicSourceElement;
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType;
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible;
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff;
@@ -42,10 +43,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.ClassicPositioningStrategies.ACTUAL_DECLARATION_NAME;
 import static org.jetbrains.kotlin.diagnostics.ClassicPositioningStrategies.INCOMPATIBLE_DECLARATION;
@@ -875,9 +873,9 @@ public interface Errors {
     DiagnosticFactory0<KtNamedDeclaration> EXPECT_ACTUAL_OPT_IN_ANNOTATION = DiagnosticFactory0.create(ERROR, EXPECT_ACTUAL_MODIFIER);
     DiagnosticFactory1<KtTypeAlias, ClassId> ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION =
             DiagnosticFactory1.create(ERROR, TYPEALIAS_TYPE_REFERENCE);
-    DiagnosticFactory3<KtNamedDeclaration, DeclarationDescriptor, DeclarationDescriptor,
+    DiagnosticFactory4<KtNamedDeclaration, DeclarationDescriptor, DeclarationDescriptor, Optional<SourceElement>,
             ExpectActualAnnotationsIncompatibilityType<AnnotationDescriptor>> ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT =
-            DiagnosticFactory3.create(WARNING, DECLARATION_NAME_ONLY);
+            DiagnosticFactory4.create(WARNING, DECLARATION_NAME_ONLY);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

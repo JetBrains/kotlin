@@ -2601,6 +2601,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ActualAnnotationsNotMatchExpect::class
         val expectSymbol: KtSymbol
         val actualSymbol: KtSymbol
+        val actualAnnotationTargetSourceElement: PsiElement?
         val incompatibilityType: ExpectActualAnnotationsIncompatibilityType<FirAnnotation>
     }
 

@@ -38,6 +38,13 @@ object AbstractExpectActualAnnotationMatchChecker {
          */
         val expectSymbol: DeclarationSymbolMarker,
         val actualSymbol: DeclarationSymbolMarker,
+
+        /**
+         * Link to source code element (possibly holding null, if no source) from actual declaration
+         * where mismatched actual annotation is set (or should be set if it is missing).
+         * Needed for the implementation of IDE intention.
+         */
+        val actualAnnotationTargetElement: SourceElementMarker,
         val type: IncompatibilityType<ExpectActualMatchingContext.AnnotationCallInfo>,
     )
 
@@ -122,7 +129,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         return expectParams.zip(actualParams).firstNotNullOfOrNull { (expectParam, actualParam) ->
             areAnnotationsSetOnDeclarationsCompatible(expectParam, actualParam)?.let {
                 // Write containing declarations into diagnostic
-                Incompatibility(expectSymbol, actualSymbol, it.type)
+                Incompatibility(expectSymbol, actualSymbol, actualParam.getSourceElement(), it.type)
             }
         }
     }
@@ -150,6 +157,7 @@ object AbstractExpectActualAnnotationMatchChecker {
                 return Incompatibility(
                     expectSymbol,
                     actualSymbol,
+                    actualSymbol.getSourceElement(),
                     IncompatibilityType.MissingOnActual(expectAnnotation)
                 )
             }
@@ -163,7 +171,7 @@ object AbstractExpectActualAnnotationMatchChecker {
                     // In the case of repeatable annotations, we can't choose on which to report
                     IncompatibilityType.MissingOnActual(expectAnnotation)
                 }
-                return Incompatibility(expectSymbol, actualSymbol, incompatibilityType)
+                return Incompatibility(expectSymbol, actualSymbol, actualSymbol.getSourceElement(), incompatibilityType)
             }
         }
         return null

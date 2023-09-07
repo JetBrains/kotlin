@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
+import org.jetbrains.kotlin.mpp.SourceElementMarker
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -523,4 +524,9 @@ internal abstract class IrExpectActualMatchingContext(
         actualMember: DeclarationSymbolMarker,
         checkClassScopesCompatibility: Boolean,
     ): Map<out DeclarationSymbolMarker, ExpectActualCompatibility<*>> = error("Should not be called")
+
+    // It's a stub, because not needed anywhere
+    private object IrSourceElementStub : SourceElementMarker
+
+    override fun DeclarationSymbolMarker.getSourceElement(): SourceElementMarker = IrSourceElementStub
 }

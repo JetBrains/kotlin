@@ -442,4 +442,8 @@ class ClassicExpectActualMatchingContext(
             }
         }
     }
+
+    override fun DeclarationSymbolMarker.getSourceElement(): SourceElementMarker {
+        return ClassicSourceElement((asDescriptor() as? DeclarationDescriptorWithSource)?.source)
+    }
 }

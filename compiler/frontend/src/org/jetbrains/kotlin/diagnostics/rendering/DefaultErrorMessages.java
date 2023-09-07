@@ -444,10 +444,11 @@ public class DefaultErrorMessages {
                 "`actual typealias` to annotation which affects code compilation can lead to incorrect behavior. Instead, use ''{0}'' annotation directly.",
                 TO_STRING);
         MAP.put(ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
-                "{2}.\n" +
+                "{3}.\n" +
                 "All annotations from expect `{0}` must be present with the same arguments on actual `{1}`, otherwise they might behave incorrectly.",
                 ExpectActualAnnotationIncompatibilityDiagnosticRenderers.DESCRIPTOR_RENDERER,
                 ExpectActualAnnotationIncompatibilityDiagnosticRenderers.DESCRIPTOR_RENDERER,
+                NOT_RENDERED,
                 ExpectActualAnnotationIncompatibilityDiagnosticRenderers.INCOMPATIBILITY);
 
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
