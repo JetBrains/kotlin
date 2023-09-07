@@ -71,6 +71,7 @@ class CompilerOutputTest : AbstractNativeSimpleTest() {
     ): TestCompilationResult<out TestCompilationArtifact.KLIB> {
         val testCase = generateTestCaseWithSingleModule(source, TestCompilerArgs(freeCompilerArgs))
         val compilation = LibraryCompilation(
+            pipelineType = null,
             settings = testRunSettings,
             freeCompilerArgs = testCase.freeCompilerArgs,
             sourceModules = testCase.modules,
