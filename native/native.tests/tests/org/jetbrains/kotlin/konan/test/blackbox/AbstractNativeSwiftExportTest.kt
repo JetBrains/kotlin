@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
 import java.io.File
+import java.nio.file.Files
 
 /**
  * Trivial test infrastructure for Swift Export.
@@ -104,12 +105,18 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
         importedHeaders: List<File> = emptyList(),
         libraryDirectories: List<File> = emptyList(),
     ): Int {
+        val aggregatedHeader = Files.createTempFile("bridge", "h").toFile().also { bridge ->
+            importedHeaders.forEach { header ->
+                bridge.appendText("#include <${header.absolutePath}> ")
+            }
+        }
+
         val process = ProcessBuilder(
             // TODO: Use swiftc from a determined toolchain
             "swiftc",
             *libraryDirectories.flatMap { listOf("-L", it.absolutePath) }.toTypedArray(),
             *libraries.map { "-l$it" }.toTypedArray(),
-            *importedHeaders.flatMap { listOf("-import-objc-header", it.absolutePath) }.toTypedArray(),
+            "-import-objc-header", aggregatedHeader.absolutePath,
             "-o", output.absolutePath,
             *sources.map { it.absolutePath }.toTypedArray(),
         )
