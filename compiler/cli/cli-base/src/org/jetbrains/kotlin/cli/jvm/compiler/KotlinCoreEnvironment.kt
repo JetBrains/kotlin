@@ -140,11 +140,28 @@ class KotlinCoreEnvironment private constructor(
                     val fastJarFs = applicationEnvironment.fastJarFileSystem
                     if (fastJarFs == null) {
                         messageCollector?.report(
-                            CompilerMessageSeverity.STRONG_WARNING,
+                            STRONG_WARNING,
                             "Your JDK doesn't seem to support mapped buffer unmapping, so the slower (old) version of JAR FS will be used"
                         )
                         applicationEnvironment.jarFileSystem
-                    } else fastJarFs
+                    } else {
+                        val outputJar = configuration.get(JVMConfigurationKeys.OUTPUT_JAR)
+                        if (outputJar == null) {
+                            fastJarFs
+                        } else {
+                            val contentRoots = configuration.get(CLIConfigurationKeys.CONTENT_ROOTS)
+                            if (contentRoots?.any { it is JvmClasspathRoot && it.file.path == outputJar.path } == true) {
+                                // See KT-61883
+                                messageCollector?.report(
+                                    STRONG_WARNING,
+                                    "JAR from the classpath ${outputJar.path} is reused as output JAR, so the slower (old) version of JAR FS will be used"
+                                )
+                                applicationEnvironment.jarFileSystem
+                            } else {
+                                fastJarFs
+                            }
+                        }
+                    }
                 }
 
                 else -> applicationEnvironment.jarFileSystem
