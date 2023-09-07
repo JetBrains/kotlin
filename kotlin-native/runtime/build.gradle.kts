@@ -493,6 +493,9 @@ val stdLibSrcDirs =  interopSrcDirs + listOf(
         project(":kotlin-stdlib-common").file("../native-wasm/src/")
 )
 
+val swiftSources = project.fileTree("src/main/swift").also { it.include("**/*.swift") }.files
+val objcHeaders = project.fileTree("src/main/swift").also { it.include("**/*.h") }.files
+
 lateinit var stdlibBuildTask: TaskProvider<Task>
 
 konanArtifacts {
@@ -523,6 +526,9 @@ konanArtifacts {
         testCommonSrcDir.forEach { commonSrcDir(it) }
         commonSrcDir(interopRuntimeCommonSrcDir)
         stdLibSrcDirs.forEach { srcDir(it) }
+
+        addSwiftSources(swiftSources)
+        addObjCHeaders(objcHeaders)
     }
 
     stdlibBuildTask = project.findKonanBuildTask("stdlib", project.platformManager.hostPlatform.target).apply {
