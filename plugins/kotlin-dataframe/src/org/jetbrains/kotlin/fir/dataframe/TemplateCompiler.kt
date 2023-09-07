@@ -203,7 +203,7 @@ abstract class FirMetaContext(
     }
 
     fun errorNotFound(fir: KClass<out FirElement>): Nothing =
-        error("Could not find a ${fir::class}")
+        error("Could not find a ${fir}")
 
     @PublishedApi
     internal fun <Fir : FirElement> findSelectedFirElement(
