@@ -32,6 +32,7 @@ internal class FirFileAnnotationsContainerImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val containingFileSymbol: FirFileSymbol,
 ) : FirFileAnnotationsContainer() {
+
     init {
         resolveState = resolvePhase.asResolveState()
     }

@@ -77,7 +77,7 @@ class Element(override val name: String, override val propertyName: String, kind
         get() = emptyList() // Use Implementation#transformableChildren instead
 
     var baseTransformerType: Element? = null
-    val transformerType: Element get() = baseTransformerType ?: this
+    val transformerClass: Element get() = baseTransformerType ?: this
 
     override val visitFunctionName: String
         get() = "visit$name"

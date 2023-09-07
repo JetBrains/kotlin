@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 internal class FirStarProjectionImpl(
     override val source: KtSourceElement?,
 ) : FirStarProjection() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirStarProjectionImpl {

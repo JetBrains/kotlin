@@ -5,30 +5,77 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.tree.generator.firTransformerType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
+import org.jetbrains.kotlin.utils.SmartPrinter
 
 context(ImportCollector)
-fun Field.transformFunctionDeclaration(returnType: TypeRef): String {
-    return transformFunctionDeclaration(name.replaceFirstChar(Char::uppercaseChar), returnType)
+fun SmartPrinter.transformFunctionDeclaration(
+    field: Field,
+    returnType: TypeRef,
+    override: Boolean,
+    implementationKind: ImplementationKind,
+) {
+    transformFunctionDeclaration(field.name.replaceFirstChar(Char::uppercaseChar), returnType, override, implementationKind)
 }
 
 context(ImportCollector)
-fun transformFunctionDeclaration(transformName: String, returnType: TypeRef): String {
-    return "fun <D> transform$transformName(transformer: ${firTransformerType.render()}<D>, data: D): " +
-            returnType.render()
+fun SmartPrinter.transformOtherChildrenFunctionDeclaration(
+    element: TypeRef,
+    override: Boolean,
+    implementationKind: ImplementationKind,
+) {
+    transformFunctionDeclaration("OtherChildren", element, override, implementationKind)
 }
 
 context(ImportCollector)
-fun Field.replaceFunctionDeclaration(
-    overridenType: TypeRefWithNullability? = null,
+private fun SmartPrinter.transformFunctionDeclaration(
+    transformName: String,
+    returnType: TypeRef,
+    override: Boolean,
+    implementationKind: ImplementationKind,
+) {
+    val dataTP = TypeVariable("D")
+    printFunctionDeclaration(
+        name = "transform$transformName",
+        parameters = listOf(
+            FunctionParameter("transformer", firTransformerType.withArgs(dataTP)),
+            FunctionParameter("data", dataTP),
+        ),
+        returnType = returnType,
+        typeParameters = listOf(dataTP),
+        modality = Modality.ABSTRACT.takeIf {
+            implementationKind == ImplementationKind.AbstractClass || implementationKind == ImplementationKind.SealedClass
+        },
+        override = override,
+    )
+}
+
+context(ImportCollector)
+fun SmartPrinter.replaceFunctionDeclaration(
+    field: Field,
+    override: Boolean,
+    implementationKind: ImplementationKind,
+    overriddenType: TypeRefWithNullability? = null,
     forceNullable: Boolean = false,
-): String {
-    val capName = name.replaceFirstChar(Char::uppercaseChar)
-    val type = overridenType ?: typeRef
+) {
+    val capName = field.name.replaceFirstChar(Char::uppercaseChar)
+    val type = overriddenType ?: field.typeRef
     val typeWithNullable = if (forceNullable) type.copy(nullable = true) else type
-    return "fun replace$capName(new$capName: ${typeWithNullable.render()})"
+
+    printFunctionDeclaration(
+        name = "replace$capName",
+        parameters = listOf(FunctionParameter("new$capName", typeWithNullable)),
+        returnType = StandardTypes.unit,
+        modality = Modality.ABSTRACT.takeIf {
+            implementationKind == ImplementationKind.AbstractClass || implementationKind == ImplementationKind.SealedClass
+        },
+        override = override,
+    )
 }
 
 fun Field.getMutableType(forBuilder: Boolean = false): TypeRefWithNullability = when (this) {

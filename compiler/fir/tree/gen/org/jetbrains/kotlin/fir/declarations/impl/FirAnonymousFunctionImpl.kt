@@ -57,6 +57,7 @@ internal class FirAnonymousFunctionImpl(
     override val typeParameters: MutableList<FirTypeParameter>,
     override var typeRef: FirTypeRef,
 ) : FirAnonymousFunction() {
+
     init {
         symbol.bind(this)
         resolveState = resolvePhase.asResolveState()

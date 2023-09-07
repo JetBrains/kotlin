@@ -26,6 +26,7 @@ internal class FirResolvedCallableReferenceImpl(
     override val inferredTypeArguments: MutableList<ConeKotlinType>,
     override val mappedArguments: CallableReferenceMappedArguments,
 ) : FirResolvedCallableReference() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedCallableReferenceImpl {

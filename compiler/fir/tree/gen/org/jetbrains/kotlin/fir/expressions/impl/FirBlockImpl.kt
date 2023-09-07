@@ -30,6 +30,7 @@ internal class FirBlockImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val statements: MutableList<FirStatement>,
 ) : FirBlock() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         statements.forEach { it.accept(visitor, data) }

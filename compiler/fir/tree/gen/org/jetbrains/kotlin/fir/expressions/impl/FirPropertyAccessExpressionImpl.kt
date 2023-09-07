@@ -40,6 +40,7 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
 ) : FirPropertyAccessExpression() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         calleeReference.accept(visitor, data)

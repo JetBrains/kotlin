@@ -32,6 +32,7 @@ internal class FirCheckNotNullCallImpl(
     override var argumentList: FirArgumentList,
     override var calleeReference: FirReference,
 ) : FirCheckNotNullCall() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         argumentList.accept(visitor, data)

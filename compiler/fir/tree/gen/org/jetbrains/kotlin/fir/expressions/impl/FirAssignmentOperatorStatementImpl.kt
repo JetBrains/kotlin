@@ -28,6 +28,7 @@ internal class FirAssignmentOperatorStatementImpl(
     override var leftArgument: FirExpression,
     override var rightArgument: FirExpression,
 ) : FirAssignmentOperatorStatement() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         leftArgument.accept(visitor, data)

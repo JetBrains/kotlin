@@ -33,6 +33,7 @@ internal class FirDanglingModifierListImpl(
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirDanglingModifierSymbol,
 ) : FirDanglingModifierList() {
+
     init {
         symbol.bind(this)
         resolveState = resolvePhase.asResolveState()

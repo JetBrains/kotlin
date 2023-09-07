@@ -38,6 +38,7 @@ internal class FirScriptImpl(
     override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override val resultPropertyName: Name?,
 ) : FirScript() {
+
     init {
         symbol.bind(this)
         resolveState = resolvePhase.asResolveState()

@@ -30,6 +30,7 @@ internal class FirResolvedReifiedParameterReferenceImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirTypeParameterSymbol,
 ) : FirResolvedReifiedParameterReference() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
     }

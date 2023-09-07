@@ -31,6 +31,7 @@ internal class FirInaccessibleReceiverExpressionImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var calleeReference: FirThisReference,
 ) : FirInaccessibleReceiverExpression() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         calleeReference.accept(visitor, data)

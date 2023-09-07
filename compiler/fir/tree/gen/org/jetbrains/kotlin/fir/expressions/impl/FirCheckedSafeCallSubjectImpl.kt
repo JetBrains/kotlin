@@ -31,6 +31,7 @@ internal class FirCheckedSafeCallSubjectImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val originalReceiverRef: FirExpressionRef<FirExpression>,
 ) : FirCheckedSafeCallSubject() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
     }

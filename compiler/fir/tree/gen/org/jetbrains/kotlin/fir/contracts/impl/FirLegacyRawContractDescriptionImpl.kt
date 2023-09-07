@@ -22,6 +22,7 @@ internal class FirLegacyRawContractDescriptionImpl(
     override var contractCall: FirFunctionCall,
     override val diagnostic: ConeDiagnostic?,
 ) : FirLegacyRawContractDescription() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         contractCall.accept(visitor, data)
     }

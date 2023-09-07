@@ -40,6 +40,7 @@ internal class FirIntegerLiteralOperatorCallImpl(
     override var dispatchReceiver: FirExpression?,
     override var extensionReceiver: FirExpression?,
 ) : FirIntegerLiteralOperatorCall() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         contextReceiverArguments.forEach { it.accept(visitor, data) }

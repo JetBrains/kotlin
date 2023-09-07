@@ -32,6 +32,7 @@ internal class FirVarargArgumentsExpressionImpl(
     override val arguments: MutableList<FirExpression>,
     override var varargElementType: FirTypeRef,
 ) : FirVarargArgumentsExpression() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         arguments.forEach { it.accept(visitor, data) }

@@ -40,6 +40,7 @@ internal class FirTypeParameterImpl(
     override val bounds: MutableList<FirTypeRef>,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
 ) : FirTypeParameter() {
+
     init {
         symbol.bind(this)
         resolveState = resolvePhase.asResolveState()

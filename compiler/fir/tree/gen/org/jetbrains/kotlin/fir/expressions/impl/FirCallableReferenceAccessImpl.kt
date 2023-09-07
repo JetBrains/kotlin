@@ -42,6 +42,7 @@ internal class FirCallableReferenceAccessImpl(
     override var calleeReference: FirNamedReference,
     override var hasQuestionMarkAtLHS: Boolean,
 ) : FirCallableReferenceAccess() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         contextReceiverArguments.forEach { it.accept(visitor, data) }

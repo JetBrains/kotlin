@@ -31,6 +31,7 @@ internal class FirFunctionTypeRefImpl(
     override val isSuspend: Boolean,
     override val contextReceiverTypeRefs: MutableList<FirTypeRef>,
 ) : FirFunctionTypeRef() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         receiverTypeRef?.accept(visitor, data)

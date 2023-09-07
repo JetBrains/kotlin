@@ -22,6 +22,7 @@ internal class FirFunctionTypeParameterImpl(
     override val name: Name?,
     override var returnTypeRef: FirTypeRef,
 ) : FirFunctionTypeParameter() {
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
     }
