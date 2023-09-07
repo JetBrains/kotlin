@@ -58,36 +58,20 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         }
     }
 
-    private fun generateSwiftFiles(module: IrModuleFragment, config: KonanConfig) {
-        val moduleName = module.name.asStringStripSpecialMarkers()
-        val swiftGenerator = IrBasedSwiftGenerator(moduleName)
-        swiftGenerator.visitModuleFragment(module)
-
-        val outputDirectory = java.io.File(config.outputPath).absoluteFile.parentFile
-        outputDirectory.mkdirs()
-
-        java.io.File(outputDirectory.path, "${moduleName}.swift").let {
-            it.createNewFile()
-            FileWriter(it).use { writer ->
-                swiftGenerator.buildSwiftShimFile().renderLines().forEach { writer.write(it) }
-            }
-        }
-
-        java.io.File(outputDirectory.path, "${moduleName}.h").let {
-            it.createNewFile()
-            FileWriter(it).use { writer ->
-                swiftGenerator.buildSwiftBridgingHeader().renderLines().forEach { writer.write(it) }
-            }
-        }
-    }
-
     private fun produceSwiftArtifacts(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
         val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
-        psiToIrOutput.irModules
+        val swiftGenerationOutputs = psiToIrOutput.irModules
                 .filter { config.resolve.includedLibraries.contains(it.value.descriptor.konanLibrary) }
-                .forEach { (_, module) -> generateSwiftFiles(module, config) }
+                .map { (_, module) ->
+                    engine.runPhase(SwiftGenerationPhase, SwiftGenerationInput(module))
+                }
+        swiftGenerationOutputs.forEach { (moduleName, swiftProducer, cProducer) ->
+            val outputDirectory = java.io.File(config.outputPath).absoluteFile.parentFile
+            outputDirectory.mkdirs()
+            engine.runPhase(WriteSwiftGenerationOutputPhase, WriteSwiftGenerationInput(moduleName, swiftProducer, cProducer, outputDirectory))
+        }
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
         engine.runBackend(backendContext, psiToIrOutput.irModule)
     }
