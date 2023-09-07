@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.HashMap
 
 /**
  * Generate a Swift API file for the given Kotlin IR module.
@@ -33,35 +31,11 @@ import java.util.HashMap
  */
 class IrBasedSwiftGenerator : IrElementVisitorVoid {
     companion object {
-        private val initRuntimeIfNeeded = CCode.build {
-            function(void, "initRuntimeIfNeeded", attributes = listOf(asm("_Kotlin_initRuntimeIfNeeded")))
-        }
+        private val initRuntimeIfNeeded = CCode.build { function(void, "initRuntimeIfNeeded") }
 
-        private val switchThreadStateToNative = CCode.build {
-            function(void, "switchThreadStateToNative", attributes = listOf(asm("_Kotlin_mm_switchThreadStateNative")))
-        }
+        private val switchThreadStateToNative = CCode.build { function(void, "switchThreadStateToNative") }
 
-        private val switchThreadStateToRunnable = CCode.build {
-            function(void, "switchThreadStateToRunnable", attributes = listOf(asm("_Kotlin_mm_switchThreadStateRunnable")))
-        }
-
-        // id Kotlin_SwiftExport_refToSwiftObject(ObjHeader *obj);
-        private val refToSwiftObject = CCode.build {
-            function(void.pointer, "refToSwiftObject", arguments = listOf(variable(void.pointer)), attributes = listOf(asm("_Kotlin_SwiftExport_refToSwiftObject")))
-        }
-
-        // ObjHeader *Kotlin_SwiftExport_swiftObjectToRef(id obj);
-        private val swiftObjectToRef = CCode.build {
-            function(void.pointer, "swiftObjectToRef", arguments = listOf(variable(void.pointer), variable(void.pointer)), attributes = listOf(asm("_Kotlin_SwiftExport_swiftObjectToRef")))
-        }
-
-        private val enterFrame = CCode.build {
-            function(void, "EnterFrame", listOf(variable(void.pointer), variable(int), variable(int)))
-        }
-
-        private val leaveFrame = CCode.build {
-            function(void, "LeaveFrame", listOf(variable(void.pointer), variable(int), variable(int)))
-        }
+        private val switchThreadStateToRunnable = CCode.build { function(void, "switchThreadStateToRunnable") }
 
         private val bridgeFromKotlin = SwiftCode.build {
             val T = "T".type
@@ -70,12 +44,7 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
                     parameters = listOf(parameter(parameterName = "obj", type = "UnsafeMutableRawPointer".type)),
                     genericTypes = listOf(T.name.genericParameter(constraint = "AnyObject".type)),
                     returnType = T,
-                    attributes = listOf(attribute("inline", "__always".identifier)),
-                    visibility = private
-            ) {
-                +let("ptr", value = refToSwiftObject.name!!.identifier.call("obj".identifier))
-                +`return`("Unmanaged".type.withGenericArguments(T).access("fromOpaque").call("ptr".identifier).access("takeUnretainedValue").call())
-            }
+            )
         }
 
         private val bridgeToKotlin = SwiftCode.build {
@@ -85,72 +54,7 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
                     parameters = listOf(parameter(parameterName = "obj", type = T), parameter(argumentName = "slot", type = "UnsafeMutableRawPointer".type)),
                     genericTypes = listOf(T.name.genericParameter(constraint = "AnyObject".type)),
                     returnType = "UnsafeMutableRawPointer".type,
-                    attributes = listOf(attribute("inline", "__always".identifier)),
-                    visibility = private
-            ) {
-                +let("ptr", value = "Unmanaged".type.withGenericArguments(T).access("passUnretained").call("obj".identifier).access("toOpaque").call())
-                +`return`(swiftObjectToRef.name!!.identifier.call("ptr".identifier, "slot".identifier))
-            }
-        }
-
-        private val pointerExtensions = SwiftCode.build {
-            """
-            extension UnsafeMutableBufferPointer {
-                subscript(pointerAt offset: Int) -> UnsafeMutablePointer<Element> {
-                    return self.baseAddress!.advanced(by: offset)
-                }
-            }
-            """.trimIndent().declaration()
-        }
-
-        private val withUnsafeTemporaryBufferAllocation = SwiftCode.build {
-            """
-            func withUnsafeTemporaryBufferAllocation<H, E, R>(
-                ofHeader: H.Type = H.self,
-                element: E.Type = E.self,
-                count: Int,
-                body: (UnsafeMutablePointer<H>, UnsafeMutableBufferPointer<E>) throws -> R
-            ) rethrows -> R {
-                assert(count >= 0)
-                assert(MemoryLayout<E>.size > 0)
-                
-                let headerElementsCount = MemoryLayout<H>.size == 0 ? 0 : 1 + (MemoryLayout<H>.stride - 1) / MemoryLayout<E>.stride
-                
-                return try withUnsafeTemporaryAllocation(of: E.self, capacity: count + headerElementsCount) { buffer in
-                    try buffer.baseAddress!.withMemoryRebound(to: H.self, capacity: 1) { header in
-                        try body(header, .init(rebasing: buffer[headerElementsCount...]))
-                    }
-                }
-            }
-            """.trimIndent().declaration(attributes = listOf(attribute("inline", "__always".identifier)))
-        }
-
-        private val withUnsafeSlots = SwiftCode.build {
-            """
-            func withUnsafeSlots<R>(
-                count: Int,
-                body: (UnsafeMutableBufferPointer<UnsafeMutableRawPointer>) throws -> R
-            ) rethrows -> R {
-                guard count > 0 else { return try body(.init(start: nil, count: 0)) }
-                return try withUnsafeTemporaryBufferAllocation(ofHeader: KObjHolderFrameInfo.self, element: UnsafeMutableRawPointer.self, count: count) { header, slots in
-                    header.initialize(to: .init(count: UInt32(count)))
-                    EnterFrame(header, 0, CInt(count))
-                    defer { LeaveFrame(header, 0, CInt(count))}
-                    return try body(slots)
-                }
-            }
-            """.trimIndent().declaration(attributes = listOf(attribute("inline", "__always".identifier)))
-        }
-
-        private val objHolder = SwiftCode.build {
-            """
-            private struct KObjHolderFrameInfo {
-                var arena: UnsafeMutableRawPointer? = nil
-                var previous: UnsafeMutableRawPointer? = nil
-                var parameters: UInt32 = 0
-                var count: UInt32
-            }
-            """.trimIndent().declaration()
+            )
         }
     }
 
@@ -237,14 +141,7 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
     }
 
     private val swiftImports = mutableListOf<SwiftCode.Import>(SwiftCode.Import.Module("Foundation"))
-    private val swiftDeclarations = Namespace("", elements = mutableListOf<SwiftCode.Declaration>(
-            bridgeFromKotlin,
-            bridgeToKotlin,
-            withUnsafeSlots,
-            withUnsafeTemporaryBufferAllocation,
-            objHolder,
-            pointerExtensions,
-    ))
+    private val swiftDeclarations = Namespace("", elements = mutableListOf<SwiftCode.Declaration>())
 
     // FIXME: we shouldn't manually generate c headers for our existing code, but here we are.
     private val cImports = CCode.build {
@@ -252,17 +149,7 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
                 include("stdint.h"),
         )
     }
-    private val cDeclarations = CCode.build {
-        mutableListOf<CCode>(
-                declare(initRuntimeIfNeeded),
-                declare(switchThreadStateToRunnable),
-                declare(switchThreadStateToNative),
-                declare(refToSwiftObject),
-                declare(swiftObjectToRef),
-                declare(enterFrame),
-                declare(leaveFrame),
-        )
-    }
+    private val cDeclarations = mutableListOf<CCode>()
 
     fun buildSwiftShimFile() = SwiftCode.File {
         fun SwiftCode.Declaration.patchStatic() = when (this) {

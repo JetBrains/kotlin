@@ -105,9 +105,9 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
         importedHeaders: List<File> = emptyList(),
         libraryDirectories: List<File> = emptyList(),
     ): Int {
-        val aggregatedHeader = Files.createTempFile("bridge", "h").toFile().also { bridge ->
+        val aggregatedHeader = Files.createTempFile("bridge", ".h").toFile().also { bridge ->
             importedHeaders.forEach { header ->
-                bridge.appendText("#include <${header.absolutePath}> ")
+                bridge.appendText("#include <${header.absolutePath}>\n")
             }
         }
 

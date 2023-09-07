@@ -129,6 +129,14 @@ open class KonanLibrary(name: String,
 
     override val defaultBaseDir: File
         get() = project.konanLibsBaseDir
+
+    fun addSwiftSources(sources: Collection<File>) {
+        tasks().forEach { it.configure { swiftSources.addAll(sources.map { project.files(it) }) } }
+    }
+
+    fun addObjCHeaders(headers: Collection<File>) {
+        tasks().forEach { it.configure { objcHeaders.addAll(headers.map { project.files(it) }) } }
+    }
 }
 
 open class KonanBitcode(name: String,

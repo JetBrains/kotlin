@@ -393,8 +393,13 @@ open class KonanCompileLibraryTask: KonanCompileTask() {
     override val artifactSuffix: String
         @Internal get() = if (!noPack) produce.suffix(konanTarget) else ""
 
+    @InputFiles val swiftSources = mutableSetOf<FileCollection>()
+    @InputFiles val objcHeaders = mutableSetOf<FileCollection>()
+
     override fun buildCommonArgs() = super.buildCommonArgs().apply {
         addKey("-nopack", noPack)
+        addFileArgs("-include-swift-source", swiftSources)
+        addFileArgs("-include-objc-header", objcHeaders)
     }
 
     override val produce: CompilerOutputKind get() = CompilerOutputKind.LIBRARY
