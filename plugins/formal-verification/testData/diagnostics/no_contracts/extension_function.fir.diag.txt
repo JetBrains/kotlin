@@ -5,3 +5,14 @@ method pkg$$global$inc(this: Int) returns (ret: Int)
   goto label$ret
   label label$ret
 }
+
+/extension_function.kt:(35,56): info: Generated Viper text for extension_method_call:
+method pkg$kotlin$class_Int$member_inc(this: Int) returns (ret: Int)
+
+
+method pkg$$global$extension_method_call() returns (ret: dom$Unit)
+{
+  var anonymous$1: Int
+  anonymous$1 := pkg$kotlin$class_Int$member_inc(3)
+  label label$ret
+}
