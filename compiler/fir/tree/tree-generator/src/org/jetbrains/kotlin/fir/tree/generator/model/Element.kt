@@ -6,21 +6,14 @@
 package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
-import org.jetbrains.kotlin.fir.tree.generator.printer.generics
-import org.jetbrains.kotlin.generators.tree.typeWithArguments
 import org.jetbrains.kotlin.fir.tree.generator.util.set
-import org.jetbrains.kotlin.generators.tree.FieldContainer
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.Importable
 import org.jetbrains.kotlin.generators.tree.TypeArgument
-import org.jetbrains.kotlin.generators.tree.ImplementationKindOwner
+import org.jetbrains.kotlin.generators.tree.typeWithArguments
+import org.jetbrains.kotlin.generators.tree.AbstractElement as CommonAbstractElement
 
-interface AbstractElement : FieldContainer, ImplementationKindOwner {
-    val name: String
-    val fields: Set<Field>
-    val parents: List<AbstractElement>
-    val typeArguments: List<TypeArgument>
-    val parentsArguments: Map<AbstractElement, Map<Importable, Importable>>
+interface AbstractElement : CommonAbstractElement<AbstractElement, Field> {
     val baseTransformerType: AbstractElement?
     val transformerType: AbstractElement
     val doesNotNeedImplementation: Boolean
@@ -29,15 +22,7 @@ interface AbstractElement : FieldContainer, ImplementationKindOwner {
     val allFirFields: List<Field>
     val defaultImplementation: Implementation?
     val customImplementations: List<Implementation>
-    val overridenFields: Map<Field, Map<Importable, Boolean>>
     val useNullableForReplace: Set<Field>
-
-    val isSealed: Boolean
-        get() = false
-
-    override val allParents: List<ImplementationKindOwner> get() = parents
-
-    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
 }
 
 class Element(override val name: String, kind: Kind) : AbstractElement {
