@@ -226,10 +226,8 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode) {
             get() = "${instructions.indexOf(this)}: $insnText"
 
         fun analyzePopInstructions(frames: Array<Frame<BasicValue>?>) {
-            val insns = instructions.toArray()
-            for (i in frames.indices) {
+            for ((i, insn) in instructions.withIndex()) {
                 val frame = frames[i] ?: continue
-                val insn = insns[i]
                 when (insn.opcode) {
                     Opcodes.POP -> analyzePop(insn, frame)
                     Opcodes.POP2 -> analyzePop2(insn, frame)
