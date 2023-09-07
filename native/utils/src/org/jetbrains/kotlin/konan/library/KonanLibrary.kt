@@ -15,7 +15,13 @@ interface BitcodeLibrary : TargetedLibrary {
     val bitcodePaths: List<String>
 }
 
-interface KonanLibrary : BitcodeLibrary, KotlinLibrary {
+interface SwiftExtendedLibrary {
+    val swiftSourcesPaths: List<String>
+
+    val objcHeadersPaths: List<String>
+}
+
+interface KonanLibrary : BitcodeLibrary, KotlinLibrary, SwiftExtendedLibrary {
     val linkerOpts: List<String>
 }
 

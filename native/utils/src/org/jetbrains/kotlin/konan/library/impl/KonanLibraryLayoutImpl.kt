@@ -30,6 +30,15 @@ class BitcodeLibraryLayoutImpl(klib: File, component: String, target: KonanTarge
 
 }
 
+class SwiftExtendedLibraryLayoutImpl(klib: File, component: String) : KotlinLibraryLayoutImpl(klib, component), SwiftExtendedLibraryLayout {
+    override val extractingToTemp: SwiftExtendedLibraryLayout by lazy {
+        ExtractingSwiftExtendedLibrary(this)
+    }
+
+    override fun directlyFromZip(zipFileSystem: FileSystem): KotlinLibraryLayout =
+        FromZipSwiftExtendedLibraryLayoutImpl(this, zipFileSystem)
+}
+
 open class TargetedLibraryAccess<L : KotlinLibraryLayout>(klib: File, component: String, val target: KonanTarget?) :
     BaseLibraryAccess<L>(klib, component) {
     override val layout = TargetedLibraryLayoutImpl(klib, component, target)
@@ -40,11 +49,19 @@ open class BitcodeLibraryAccess<L : KotlinLibraryLayout>(klib: File, component: 
     override val layout = BitcodeLibraryLayoutImpl(klib, component, target)
 }
 
+open class SwiftExtendedLibraryAccess<L : KotlinLibraryLayout>(klib: File, component: String) :
+    BaseLibraryAccess<L>(klib, component) {
+    override val layout = SwiftExtendedLibraryLayoutImpl(klib, component)
+}
+
 private open class FromZipTargetedLibraryImpl(zipped: TargetedLibraryLayoutImpl, zipFileSystem: FileSystem) :
     FromZipBaseLibraryImpl(zipped, zipFileSystem), TargetedKotlinLibraryLayout
 
 private class FromZipBitcodeLibraryImpl(zipped: BitcodeLibraryLayoutImpl, zipFileSystem: FileSystem) :
     FromZipTargetedLibraryImpl(zipped, zipFileSystem), BitcodeKotlinLibraryLayout
+
+private class FromZipSwiftExtendedLibraryLayoutImpl(zipped: SwiftExtendedLibraryLayoutImpl, zipFileSystem: FileSystem) :
+    FromZipBaseLibraryImpl(zipped, zipFileSystem), SwiftExtendedLibraryLayout
 
 open class ExtractingTargetedLibraryImpl(zipped: TargetedLibraryLayoutImpl) :
     ExtractingKotlinLibraryLayout(zipped),
@@ -58,4 +75,10 @@ class ExtractingBitcodeLibraryImpl(zipped: BitcodeLibraryLayoutImpl) :
 
     override val kotlinDir: File by lazy { zipped.extractDir(zipped.kotlinDir) }
     override val nativeDir: File by lazy { zipped.extractDir(zipped.nativeDir) }
+}
+
+open class ExtractingSwiftExtendedLibrary(zipped: SwiftExtendedLibraryLayoutImpl) :
+    ExtractingKotlinLibraryLayout(zipped), SwiftExtendedLibraryLayout {
+    override val swiftSourcesDir: File by lazy { zipped.extractDir(zipped.swiftSourcesDir) }
+    override val objcHeadersDir: File by lazy { zipped.extractDir(zipped.objcHeadersDir) }
 }
