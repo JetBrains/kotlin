@@ -79,7 +79,7 @@ class ExpectedActualDeclarationChecker(
                 declaration,
                 descriptor,
                 checkActualModifier,
-                context.trace,
+                context,
                 moduleVisibilityFilter = { it in allDependsOnModules }
             )
         }
@@ -295,9 +295,10 @@ class ExpectedActualDeclarationChecker(
         reportOn: KtNamedDeclaration,
         descriptor: MemberDescriptor,
         checkActualModifier: Boolean,
-        trace: BindingTrace,
+        context: DeclarationCheckerContext,
         moduleVisibilityFilter: ModuleFilter
     ) {
+        val trace = context.trace
         val compatibility = ExpectedActualResolver
             .findExpectedForActual(descriptor, moduleVisibilityFilter, shouldCheckAbsenceOfDefaultParamsInActual = true)
             ?: return
@@ -382,7 +383,7 @@ class ExpectedActualDeclarationChecker(
         val expectSingleCandidate = (compatibility[Compatible] ?: compatibility.values.singleOrNull())?.singleOrNull()
         if (expectSingleCandidate != null) {
             checkIfExpectHasDefaultArgumentsAndActualizedWithTypealias(expectSingleCandidate, reportOn, trace)
-            checkAnnotationsMatch(expectSingleCandidate, descriptor, reportOn, trace)
+            checkAnnotationsMatch(expectSingleCandidate, descriptor, reportOn, context)
         }
     }
 
@@ -489,12 +490,13 @@ class ExpectedActualDeclarationChecker(
         expectDescriptor: MemberDescriptor,
         actualDescriptor: MemberDescriptor,
         reportOn: KtNamedDeclaration,
-        trace: BindingTrace
+        context: DeclarationCheckerContext
     ) {
-        val context = ClassicExpectActualMatchingContext(actualDescriptor.module)
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
+        val matchingContext = ClassicExpectActualMatchingContext(actualDescriptor.module)
         val incompatibility =
-            AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(expectDescriptor, actualDescriptor, context) ?: return
-        trace.report(
+            AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(expectDescriptor, actualDescriptor, matchingContext) ?: return
+        context.trace.report(
             Errors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT.on(
                 reportOn,
                 incompatibility.expectSymbol as DeclarationDescriptor,

@@ -729,6 +729,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("annotationMatching_oldLanguageVersion.kt")
+        public void testAnnotationMatching_oldLanguageVersion() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/annotationMatching_oldLanguageVersion.kt");
+        }
+
+        @Test
         @TestMetadata("annotationTarget.kt")
         public void testAnnotationTarget() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/annotationTarget.kt");
