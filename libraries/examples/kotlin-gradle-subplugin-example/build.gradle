@@ -111,6 +111,12 @@ tasks.withType(PublishToMavenRepository)
             }
         }
 
+afterEvaluate {
+    tasks.named("generateMetadataFileForPluginMavenPublication") {
+        enabled = false
+    }
+}
+
 tasks.named("publishPlugins") {
     enabled = false
 }
