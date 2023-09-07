@@ -37,12 +37,16 @@ internal sealed interface TestCompilationArtifact {
 
         val kotlinBinary: File get() = buildDir.resolve("lib${artifactName}.dylib")
 
-        val swiftSources: List<File> get() = buildDir.list()!!
-            .filter { it.endsWith(".swift") }
-            .map { buildDir.resolve(it) }
+        val swiftSources: List<File>
+            get() = buildDir.walk()
+                .filter { it.extension == "swift" }
+                .map { buildDir.resolve(it) }
+                .toList()
 
-        val cBridgingHeaders: List<File> get() = buildDir.list()!!
-            .filter { it.endsWith(".h") }
-            .map { buildDir.resolve(it) }
+        val cBridgingHeaders: List<File>
+            get() = buildDir.walk()
+                .filter { it.extension == "h" }
+                .map { buildDir.resolve(it) }
+                .toList()
     }
 }
