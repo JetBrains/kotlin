@@ -206,7 +206,7 @@ KtConstructorSymbol:
         isDelegatedProperty: false
         isExpect: false
         isExtension: false
-        isFromPrimaryConstructor: false
+        isFromPrimaryConstructor: true
         isLateInit: false
         isOverride: false
         isStatic: false
