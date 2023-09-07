@@ -181,17 +181,18 @@ class FirDataFrameExtensionRegistrar(
                 Mode.EXPERIMENTAL -> {
                     +::ReturnTypeBasedReceiverInjector
                     +{ it: FirSession ->
-                        val templateCompiler = TemplateCompiler()
+                        val flag = FlagContainer(shouldIntercept = true)
+                        val templateCompiler = TemplateCompiler(flag)
                         templateCompiler.session = it
-                        FunctionTransformer(it, FirMetaContextImpl(it, templateCompiler), refinedToOriginal)
+                        CandidateInterceptor(it, ::nextFunction, callableState, refinedToOriginal, this::nextName, mode, FirMetaContextImpl(it, templateCompiler), refinedToOriginal, flag)
                     }
                 }
             }
-
-            +{ it: FirSession -> CandidateInterceptor(it, ::nextFunction, callableState, refinedToOriginal, this::nextName, mode) }
         }
     }
 }
+
+class FlagContainer(var shouldIntercept: Boolean)
 
 class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
 
