@@ -10,6 +10,14 @@ fun <!VIPER_TEXT!>isString<!>(x: Any?): Boolean {
 }
 
 @OptIn(ExperimentalContracts::class)
+fun Any.<!VIPER_TEXT!>isString<!>(): Boolean {
+    contract {
+        returns(true) implies (this@isString is String)
+    }
+    return this is String
+}
+
+@OptIn(ExperimentalContracts::class)
 fun <!VIPER_TEXT!>subtypeTransitive<!>(x: Unit) {
     contract {
         // Kotlin knows that this check will always succeed and marks it as useless, however, we still want to test that

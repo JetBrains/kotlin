@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.formver.viper.ast.Exp.*
 
 object ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, MethodConversionContext, ConeKotlinType, ConeDiagnostic>() {
     private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.embeddedVar(data: MethodConversionContext): VariableEmbedding =
-        data.signature.params[parameterIndex]
-
+        if (parameterIndex == -1) data.signature.receiver!! else data.signature.params[parameterIndex]
 
     private fun VariableEmbedding.nullCmp(isNegated: Boolean): Exp =
         if (type is NullableTypeEmbedding) {

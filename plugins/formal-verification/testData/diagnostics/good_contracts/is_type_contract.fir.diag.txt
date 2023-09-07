@@ -12,7 +12,20 @@ method pkg$$global$isString(local$x: dom$Nullable[dom$Any])
   label label$ret
 }
 
-/is_type_contract.kt:(282,299): info: Generated Viper text for subtypeTransitive:
+/is_type_contract.kt:(286,294): info: Generated Viper text for isString:
+field pkg$kotlin$class_String$member_length: Int
+
+method pkg$$global$isString(this: dom$Any) returns (ret: Bool)
+  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$Any())
+  ensures ret == true ==>
+    dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$kotlin$class_String())
+{
+  ret := dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$kotlin$class_String())
+  goto label$ret
+  label label$ret
+}
+
+/is_type_contract.kt:(455,472): info: Generated Viper text for subtypeTransitive:
 method pkg$$global$subtypeTransitive(local$x: dom$Unit)
   returns (ret: dom$Unit)
   ensures true ==>
@@ -21,9 +34,9 @@ method pkg$$global$subtypeTransitive(local$x: dom$Unit)
   label label$ret
 }
 
-/is_type_contract.kt:(515,524): warning: Check for instance is always 'true'.
+/is_type_contract.kt:(688,697): warning: Check for instance is always 'true'.
 
-/is_type_contract.kt:(615,631): info: Generated Viper text for subtypeSuperType:
+/is_type_contract.kt:(788,804): info: Generated Viper text for subtypeSuperType:
 method pkg$$global$subtypeSuperType(local$bar: Ref) returns (ret: dom$Unit)
   requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
   ensures true ==>
@@ -32,4 +45,4 @@ method pkg$$global$subtypeSuperType(local$bar: Ref) returns (ret: dom$Unit)
   label label$ret
 }
 
-/is_type_contract.kt:(848,858): warning: Check for instance is always 'true'.
+/is_type_contract.kt:(1021,1031): warning: Check for instance is always 'true'.
