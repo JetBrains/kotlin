@@ -7,12 +7,9 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.getAnnotationRetention
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.AnnotationsPosition
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.declarations.FirAnnotationsPlatformSpecificSupportComponent
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -23,6 +20,7 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
         StandardClassIds.Annotations.Deprecated,
         StandardClassIds.Annotations.Target,
         JvmStandardClassIds.Annotations.Java.Target,
+        JvmStandardClassIds.Annotations.JvmName,
     )
 
     override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments + setOf(
