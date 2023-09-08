@@ -1507,6 +1507,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("AnnotatedCatchValueParameter.kt")
+            public void testAnnotatedCatchValueParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/AnnotatedCatchValueParameter.kt");
+            }
+
+            @Test
             @TestMetadata("AnnotatedConstructor.kt")
             public void testAnnotatedConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/AnnotatedConstructor.kt");
