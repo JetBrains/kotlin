@@ -76,7 +76,15 @@ internal class KtFe10DescKotlinPropertySymbol(
         get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
 
     override val initializer: KtInitializerValue?
-        get() = withValidityAssertion { createKtInitializerValue(source as? KtProperty, descriptor, analysisContext) }
+        get() = withValidityAssertion {
+            val initializer = when (val psi = psi) {
+                is KtProperty -> psi.initializer
+                is KtParameter -> psi
+                else -> null
+            }
+
+            createKtInitializerValue(initializer, descriptor, analysisContext)
+        }
 
     override val getter: KtPropertyGetterSymbol
         get() = withValidityAssertion {

@@ -80,7 +80,7 @@ KtConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: null
+        initializer: KtNonConstantInitializerValue(vararg val ints)
         isActual: false
         isConst: false
         isDelegatedProperty: false

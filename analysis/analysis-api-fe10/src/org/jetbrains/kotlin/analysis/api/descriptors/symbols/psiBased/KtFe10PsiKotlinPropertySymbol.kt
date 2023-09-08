@@ -105,7 +105,7 @@ internal class KtFe10PsiKotlinPropertySymbol(
         get() = withValidityAssertion { descriptor?.isExpect ?: psi.hasExpectModifier() }
 
     override val initializer: KtInitializerValue?
-        get() = withValidityAssertion { createKtInitializerValue(psi, descriptor, analysisContext) }
+        get() = withValidityAssertion { createKtInitializerValue(psi.initializer, descriptor, analysisContext) }
 
     override val isVal: Boolean
         get() = withValidityAssertion { !psi.isVar }
