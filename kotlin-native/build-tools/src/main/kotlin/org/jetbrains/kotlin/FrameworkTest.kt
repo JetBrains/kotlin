@@ -12,11 +12,9 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.native.executors.*
 import java.io.File
 import java.io.FileWriter
 import java.io.Serializable
-import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -28,7 +26,6 @@ import java.nio.file.Paths
  * @property swiftSources  Swift-language test sources that use a given framework
  * @property frameworks names of frameworks
  */
-@OptIn(ExperimentalStdlibApi::class)
 open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     @Input
     lateinit var swiftSources: List<String>
@@ -187,53 +184,15 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         // Build test executable as a first action of the task before executing the test
         buildTestExecutable()
         doBeforeRun?.execute(this)
-        if (project.compileOnlyTests) {
-            return
-        }
-        runTest(executorService = project.executor, testExecutable = Paths.get(executable))
-    }
-
-    /**
-     * Returns path to directory that contains `libswiftCore.dylib` for the current
-     * test target.
-     */
-    private fun getSwiftLibsPathForTestTarget(): String {
-        val configs = project.testTargetConfigurables as AppleConfigurables
-        val swiftPlatform = configs.platformName().toLowerCase()
-        val simulatorPath = when (configs.targetTriple.isSimulator) {
-            true -> xcode.getLatestSimulatorRuntimeFor(configs.target.family, configs.osVersionMin)
-                    ?.bundlePath
-                    ?.let { "$it/Contents/Resources/RuntimeRoot/usr/lib/swift" }
-            else -> null
-        }
-        // Use default path from toolchain if we cannot get `bundlePath` for target.
-        // It may be the case for simulators if Xcode/macOS is old.
-        return simulatorPath ?: configs.absoluteTargetToolchain + "/usr/lib/swift-5.0/$swiftPlatform"
-    }
-
-    private fun buildEnvironment(): Map<String, String> {
-        val configs = project.testTargetConfigurables
-        // Hopefully, lexicographical comparison will work.
-        val newMacos = System.getProperty("os.version").compareTo("10.14.4") >= 0
-        val dyldLibraryPathKey = if (configs.targetTriple.isSimulator) {
-            "SIMCTL_CHILD_DYLD_LIBRARY_PATH"
-        } else {
-            "DYLD_LIBRARY_PATH"
-        }
-        // TODO: macos_arm64?
-        return if (newMacos && configs.target == KonanTarget.MACOS_X64) emptyMap() else mapOf(
-                dyldLibraryPathKey to getSwiftLibsPathForTestTarget()
-        )
-    }
-
-    private fun runTest(executorService: ExecutorService, testExecutable: Path, args: List<String> = emptyList()) {
+        val testExecutable = Paths.get(executable)
         val (stdOut, stdErr, exitCode) = runProcess(
-                executor = { executorService.add(Action {
-                    environment = buildEnvironment()
-                    workingDir = Paths.get(testOutput).toFile()
-                }).execute(it) },
-                executable = testExecutable.toString(),
-                args = args)
+                executor = {
+                    project.executor.execute {
+                        it.execute(this)
+                        workingDir = Paths.get(testOutput).toFile()
+                    }
+                },
+                executable = testExecutable.toString())
 
         val testExecName = testExecutable.fileName
         println("""
@@ -244,8 +203,6 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         val timeoutMessage = if (exitCode == -1) {
             "WARNING: probably a timeout\n"
         } else ""
-        check(exitCode == expectedExitStatus ?: 0) { "${timeoutMessage}Execution of $testExecName failed with exit code: $exitCode " }
+        check(exitCode == (expectedExitStatus ?: 0)) { "${timeoutMessage}Execution of $testExecName failed with exit code: $exitCode " }
     }
-
-    private val xcode by lazy { Xcode.findCurrent() }
 }
