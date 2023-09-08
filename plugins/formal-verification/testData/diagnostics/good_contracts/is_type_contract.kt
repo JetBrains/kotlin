@@ -1,3 +1,5 @@
+@file:Suppress("USELESS_IS_CHECK")
+
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -20,21 +22,40 @@ fun Any.<!VIPER_TEXT!>isString<!>(): Boolean {
 @OptIn(ExperimentalContracts::class)
 fun <!VIPER_TEXT!>subtypeTransitive<!>(x: Unit) {
     contract {
-        // Kotlin knows that this check will always succeed and marks it as useless, however, we still want to test that
-        // Viper can prove this as well.
-        returns() implies (<!USELESS_IS_CHECK!>x is Any?<!>)
+        returns() implies (x is Any?)
     }
 }
 
-open class Foo()
+open class Foo() {
+    val bar = Bar()
+}
 
 class Bar() : Foo()
 
 @OptIn(ExperimentalContracts::class)
+fun <!VIPER_TEXT!>constructorReturnType<!>(): Boolean {
+    contract {
+        returns(true)
+    }
+    return Foo() is Foo
+}
+
+@OptIn(ExperimentalContracts::class)
 fun <!VIPER_TEXT!>subtypeSuperType<!>(bar: Bar) {
     contract {
-        // Kotlin knows that this check will always succeed and marks it as useless, however, we still want to test that
-        // Viper can prove this as well.
-        returns() implies (<!USELESS_IS_CHECK!>bar is Foo<!>)
+        returns() implies (bar is Foo)
     }
 }
+
+@OptIn(ExperimentalContracts::class)
+fun <!VIPER_TEXT!>typeOfField<!>(foo: Foo): Boolean {
+    contract {
+        returns(true)
+    }
+    if (foo.bar is Bar) {
+        return true
+    } else {
+        return false
+    }
+}
+

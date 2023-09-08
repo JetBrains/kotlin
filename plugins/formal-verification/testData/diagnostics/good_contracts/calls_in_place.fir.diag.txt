@@ -1,6 +1,5 @@
 /calls_in_place.kt:(162,169): info: Generated Viper text for unknown:
 method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -8,6 +7,7 @@ method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
   ensures true
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   special$invoke_function_object(local$f)
   ret := anonymous$1
   goto label$ret
@@ -16,7 +16,6 @@ method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
 
 /calls_in_place.kt:(309,321): info: Generated Viper text for at_most_once:
 method pkg$$global$at_most_once(local$f: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -25,6 +24,7 @@ method pkg$$global$at_most_once(local$f: Ref) returns (ret: Int)
     old(local$f.special$function_object_call_counter) + 1
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   special$invoke_function_object(local$f)
   ret := anonymous$1
   goto label$ret
@@ -33,7 +33,6 @@ method pkg$$global$at_most_once(local$f: Ref) returns (ret: Int)
 
 /calls_in_place.kt:(466,478): info: Generated Viper text for exactly_once:
 method pkg$$global$exactly_once(local$f: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -42,6 +41,7 @@ method pkg$$global$exactly_once(local$f: Ref) returns (ret: Int)
     old(local$f.special$function_object_call_counter) + 1
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   special$invoke_function_object(local$f)
   ret := anonymous$1
   goto label$ret
@@ -50,7 +50,6 @@ method pkg$$global$exactly_once(local$f: Ref) returns (ret: Int)
 
 /calls_in_place.kt:(623,636): info: Generated Viper text for at_least_once:
 method pkg$$global$exactly_once(local$f: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -60,7 +59,6 @@ method pkg$$global$exactly_once(local$f: Ref) returns (ret: Int)
 
 
 method pkg$$global$at_least_once(local$f: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -69,6 +67,7 @@ method pkg$$global$at_least_once(local$f: Ref) returns (ret: Int)
     old(local$f.special$function_object_call_counter)
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   anonymous$1 := pkg$$global$exactly_once(local$f)
   ret := anonymous$1
   goto label$ret
@@ -77,7 +76,6 @@ method pkg$$global$at_least_once(local$f: Ref) returns (ret: Int)
 
 /calls_in_place.kt:(800,809): info: Generated Viper text for loopWhile:
 method pkg$$global$loopWhile(local$lambda: Ref) returns (ret: dom$Unit)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$lambda): dom$Type), dom$Type$Function())
   requires acc(local$lambda.special$function_object_call_counter, write)
   ensures acc(local$lambda.special$function_object_call_counter, write)
   ensures old(local$lambda.special$function_object_call_counter) <=
@@ -87,6 +85,7 @@ method pkg$$global$loopWhile(local$lambda: Ref) returns (ret: dom$Unit)
 {
   var anonymous$1: Bool
   var anonymous$2: Bool
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$lambda): dom$Type), dom$Type$Function())
   special$invoke_function_object(local$lambda)
   anonymous$1 := anonymous$2
   while (anonymous$1)
@@ -105,7 +104,6 @@ method pkg$$global$loopWhile(local$lambda: Ref) returns (ret: dom$Unit)
 
 /calls_in_place.kt:(990,999): info: Generated Viper text for loopUntil:
 method pkg$$global$loopUntil(local$lambda: Ref) returns (ret: dom$Unit)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$lambda): dom$Type), dom$Type$Function())
   requires acc(local$lambda.special$function_object_call_counter, write)
   ensures acc(local$lambda.special$function_object_call_counter, write)
   ensures old(local$lambda.special$function_object_call_counter) <=
@@ -115,6 +113,7 @@ method pkg$$global$loopUntil(local$lambda: Ref) returns (ret: dom$Unit)
 {
   var anonymous$1: Bool
   var anonymous$2: Bool
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$lambda): dom$Type), dom$Type$Function())
   special$invoke_function_object(local$lambda)
   anonymous$1 := !anonymous$2
   while (anonymous$1)

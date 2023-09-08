@@ -1,10 +1,10 @@
 /returns_null.kt:(121,146): info: Generated Viper text for returns_null_unverifiable:
 method pkg$$global$returns_null_unverifiable(local$x: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ensures true ==> false
 {
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ret := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
   goto label$ret
   label label$ret

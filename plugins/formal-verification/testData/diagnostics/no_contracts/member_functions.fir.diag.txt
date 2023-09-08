@@ -2,9 +2,9 @@
 field pkg$$class_Foo$member_x: Int
 
 method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
   inhale acc(this.pkg$$class_Foo$member_x, write)
   anonymous$1 := this.pkg$$class_Foo$member_x
   exhale acc(this.pkg$$class_Foo$member_x, write)
@@ -17,14 +17,13 @@ method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
 field pkg$$class_Foo$member_x: Int
 
 method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
 
 
 method pkg$$class_Foo$member_call_member_fun(this: Ref)
   returns (ret: dom$Unit)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
   anonymous$1 := pkg$$class_Foo$member_member_fun(this)
   label label$ret
 }
@@ -33,15 +32,14 @@ method pkg$$class_Foo$member_call_member_fun(this: Ref)
 field pkg$$class_Foo$member_x: Int
 
 method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
 
 
 method pkg$$class_Foo$member_sibling_call(this: Ref, local$other: Ref)
   returns (ret: dom$Unit)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$other): dom$Type), dom$Type$pkg$$class_Foo())
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$other): dom$Type), dom$Type$pkg$$class_Foo())
   anonymous$1 := pkg$$class_Foo$member_member_fun(local$other)
   label label$ret
 }
@@ -54,7 +52,6 @@ method pkg$$class_Foo$member_Foo(local$x: Int) returns (ret: Ref)
 
 
 method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
 
 
 method pkg$$global$outer_member_fun_call() returns (ret: dom$Unit)

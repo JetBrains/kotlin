@@ -1,31 +1,31 @@
-/is_type_contract.kt:(121,129): info: Generated Viper text for isString:
+/is_type_contract.kt:(157,165): info: Generated Viper text for isString:
 field pkg$kotlin$class_String$member_length: Int
 
 method pkg$$global$isString(local$x: dom$Nullable[dom$Any])
   returns (ret: Bool)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
   ensures ret == true ==>
     dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg$kotlin$class_String())
 {
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
   ret := dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg$kotlin$class_String())
   goto label$ret
   label label$ret
 }
 
-/is_type_contract.kt:(286,294): info: Generated Viper text for isString:
+/is_type_contract.kt:(322,330): info: Generated Viper text for isString:
 field pkg$kotlin$class_String$member_length: Int
 
 method pkg$$global$isString(this: dom$Any) returns (ret: Bool)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$Any())
   ensures ret == true ==>
     dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$kotlin$class_String())
 {
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$Any())
   ret := dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$kotlin$class_String())
   goto label$ret
   label label$ret
 }
 
-/is_type_contract.kt:(455,472): info: Generated Viper text for subtypeTransitive:
+/is_type_contract.kt:(491,508): info: Generated Viper text for subtypeTransitive:
 method pkg$$global$subtypeTransitive(local$x: dom$Unit)
   returns (ret: dom$Unit)
   ensures true ==>
@@ -34,15 +34,52 @@ method pkg$$global$subtypeTransitive(local$x: dom$Unit)
   label label$ret
 }
 
-/is_type_contract.kt:(688,697): warning: Check for instance is always 'true'.
+/is_type_contract.kt:(686,707): info: Generated Viper text for constructorReturnType:
+field pkg$$class_Foo$member_bar: Ref
 
-/is_type_contract.kt:(788,804): info: Generated Viper text for subtypeSuperType:
-method pkg$$global$subtypeSuperType(local$bar: Ref) returns (ret: dom$Unit)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
-  ensures true ==>
-    dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Foo())
+method pkg$$class_Foo$member_Foo() returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+
+
+method pkg$$global$constructorReturnType() returns (ret: Bool)
+  ensures ret == true
 {
+  var anonymous$1: Ref
+  anonymous$1 := pkg$$class_Foo$member_Foo()
+  ret := dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$1): dom$Type), dom$Type$pkg$$class_Foo())
+  goto label$ret
   label label$ret
 }
 
-/is_type_contract.kt:(1021,1031): warning: Check for instance is always 'true'.
+/is_type_contract.kt:(832,848): info: Generated Viper text for subtypeSuperType:
+field pkg$$class_Foo$member_bar: Ref
+
+method pkg$$global$subtypeSuperType(local$bar: Ref) returns (ret: dom$Unit)
+  ensures true ==>
+    dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Foo())
+{
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
+  label label$ret
+}
+
+/is_type_contract.kt:(965,976): info: Generated Viper text for typeOfField:
+field pkg$$class_Foo$member_bar: Ref
+
+method pkg$$global$typeOfField(local$foo: Ref) returns (ret: Bool)
+  ensures ret == true
+{
+  var anonymous$1: Ref
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$pkg$$class_Foo())
+  inhale acc(local$foo.pkg$$class_Foo$member_bar, write)
+  anonymous$1 := local$foo.pkg$$class_Foo$member_bar
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$1): dom$Type), dom$Type$pkg$$class_Bar())
+  exhale acc(local$foo.pkg$$class_Foo$member_bar, write)
+  if (dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$1): dom$Type), dom$Type$pkg$$class_Bar())) {
+    ret := true
+    goto label$ret
+  } else {
+    ret := false
+    goto label$ret
+  }
+  label label$ret
+}

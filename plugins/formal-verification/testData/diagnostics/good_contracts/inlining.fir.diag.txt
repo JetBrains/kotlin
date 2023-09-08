@@ -1,6 +1,5 @@
 /inlining.kt:(132,138): info: Generated Viper text for invoke:
 method pkg$$global$invoke(local$f: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -9,6 +8,7 @@ method pkg$$global$invoke(local$f: Ref) returns (ret: Int)
   var local$x: Int
   var anonymous$1: Int
   var anonymous$2: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   special$invoke_function_object(local$f)
   local$x := anonymous$1
   special$invoke_function_object(local$f)
@@ -20,7 +20,6 @@ method pkg$$global$invoke(local$f: Ref) returns (ret: Int)
 /inlining.kt:(210,225): info: Generated Viper text for invoke_with_int:
 method pkg$$global$invoke_with_int(local$f: Ref, local$n: Int)
   returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -28,6 +27,7 @@ method pkg$$global$invoke_with_int(local$f: Ref, local$n: Int)
 {
   var local$x: Int
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   local$x := local$n + local$n
   special$invoke_function_object(local$f)
   ret := anonymous$1
@@ -37,7 +37,6 @@ method pkg$$global$invoke_with_int(local$f: Ref, local$n: Int)
 
 /inlining.kt:(397,408): info: Generated Viper text for call_invoke:
 method pkg$$global$call_invoke(local$g: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   requires acc(local$g.special$function_object_call_counter, write)
   ensures acc(local$g.special$function_object_call_counter, write)
   ensures old(local$g.special$function_object_call_counter) <=
@@ -48,6 +47,7 @@ method pkg$$global$call_invoke(local$g: Ref) returns (ret: Int)
   var local$z: Int
   var anonymous$1: Int
   var anonymous$4: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   if (true) {
     var inline$pkg$$global$invoke$local$x: Int
     var anonymous$2: Int
@@ -78,7 +78,6 @@ method pkg$$global$call_invoke(local$g: Ref) returns (ret: Int)
 
 /inlining.kt:(641,661): info: Generated Viper text for call_invoke_with_int:
 method pkg$$global$call_invoke_with_int(local$g: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   requires acc(local$g.special$function_object_call_counter, write)
   ensures acc(local$g.special$function_object_call_counter, write)
   ensures old(local$g.special$function_object_call_counter) <=
@@ -89,6 +88,7 @@ method pkg$$global$call_invoke_with_int(local$g: Ref) returns (ret: Int)
   var local$z: Int
   var anonymous$1: Int
   var anonymous$4: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   if (true) {
     var anonymous$2: Int
     var inline$pkg$$global$invoke_with_int$local$x: Int
@@ -119,7 +119,6 @@ method pkg$$global$call_invoke_with_int(local$g: Ref) returns (ret: Int)
 
 /inlining.kt:(921,933): info: Generated Viper text for name_clashes:
 method pkg$$global$name_clashes(local$f: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -130,6 +129,7 @@ method pkg$$global$name_clashes(local$f: Ref) returns (ret: Int)
   var local$x: Int
   var anonymous$1: Int
   var anonymous$4: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   if (true) {
     var inline$pkg$$global$invoke$local$x: Int
     var anonymous$2: Int
@@ -158,7 +158,6 @@ method pkg$$global$name_clashes(local$f: Ref) returns (ret: Int)
 
 /inlining.kt:(1178,1199): info: Generated Viper text for different_return_type:
 method pkg$$global$different_return_type(local$f: Ref) returns (ret: Bool)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -169,6 +168,7 @@ method pkg$$global$different_return_type(local$f: Ref) returns (ret: Bool)
   var local$x: Int
   var anonymous$1: Int
   var anonymous$4: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   if (true) {
     var inline$pkg$$global$invoke$local$x: Int
     var anonymous$2: Int

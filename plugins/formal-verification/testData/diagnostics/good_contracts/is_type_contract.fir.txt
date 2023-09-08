@@ -1,4 +1,5 @@
 FILE: is_type_contract.kt
+    @FILE:R|kotlin/Suppress|(names = vararg(String(USELESS_IS_CHECK)))
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun isString(x: R|kotlin/Any?|): R|kotlin/Boolean|
         [R|Contract description]
          <
@@ -48,12 +49,30 @@ FILE: is_type_contract.kt
             super<R|kotlin/Any|>()
         }
 
+        public final val bar: R|Bar| = R|/Bar.Bar|()
+            public get(): R|Bar|
+
     }
     public final class Bar : R|Foo| {
         public constructor(): R|Bar| {
             super<R|Foo|>()
         }
 
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun constructorReturnType(): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true))
+            }
+            )
+        }
+
+        ^constructorReturnType (R|/Foo.Foo|() is R|Foo|)
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun subtypeSuperType(bar: R|Bar|): R|kotlin/Unit|
         [R|Contract description]
@@ -66,6 +85,29 @@ FILE: is_type_contract.kt
                 this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|((R|<local>/bar| is R|Foo|))
             }
             )
+        }
+
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun typeOfField(foo: R|Foo|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true))
+            }
+            )
+        }
+
+        when () {
+            (R|<local>/foo|.R|/Foo.bar| is R|Bar|) ->  {
+                ^typeOfField Boolean(true)
+            }
+            else ->  {
+                ^typeOfField Boolean(false)
+            }
         }
 
     }

@@ -132,6 +132,9 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
                         // We do not track permissions over time and thus have to inhale and exhale the permission when reading a field.
                         data.addStatement(Stmt.Inhale(accPred))
                         data.addStatement(Stmt.assign(resultExp, fieldAccess))
+                        resultCtx.resultVar.provenInvariants().forEach {
+                            data.addStatement(Stmt.Inhale(it))
+                        }
                         data.addStatement(Stmt.Exhale(accPred))
                     }
                 }

@@ -3,10 +3,10 @@ field pkg$kotlin$class_String$member_length: Int
 
 method pkg$$global$unverifiableTypeCheck(local$x: dom$Nullable[Int])
   returns (ret: Bool)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ensures true ==>
     dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Unit())
 {
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ret := dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg$kotlin$class_String())
   goto label$ret
   label label$ret
@@ -20,10 +20,10 @@ method pkg$$global$unverifiableTypeCheck(local$x: dom$Nullable[Int])
 /is_type_contract.kt:(289,311): info: Generated Viper text for nullableNotNonNullable:
 method pkg$$global$nullableNotNonNullable(local$x: dom$Nullable[Int])
   returns (ret: dom$Unit)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ensures true ==>
     dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int())
 {
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   label label$ret
 }
 

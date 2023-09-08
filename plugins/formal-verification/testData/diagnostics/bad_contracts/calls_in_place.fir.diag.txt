@@ -1,6 +1,5 @@
 /calls_in_place.kt:(198,205): info: Generated Viper text for unknown:
 method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -8,6 +7,7 @@ method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
   ensures true
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   special$invoke_function_object(local$f)
   ret := anonymous$1
   goto label$ret
@@ -16,7 +16,6 @@ method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
 
 /calls_in_place.kt:(345,367): info: Generated Viper text for incorrect_at_most_once:
 method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -25,7 +24,6 @@ method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
 
 
 method pkg$$global$incorrect_at_most_once(local$f: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -35,6 +33,7 @@ method pkg$$global$incorrect_at_most_once(local$f: Ref) returns (ret: Int)
 {
   var anonymous$1: Int
   var anonymous$2: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   anonymous$1 := pkg$$global$unknown(local$f)
   special$invoke_function_object(local$f)
   ret := anonymous$2
@@ -51,7 +50,6 @@ method pkg$$global$incorrect_at_most_once(local$f: Ref) returns (ret: Int)
 
 /calls_in_place.kt:(521,543): info: Generated Viper text for incorrect_exactly_once:
 method pkg$$global$incorrect_exactly_once(local$f: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -61,6 +59,7 @@ method pkg$$global$incorrect_exactly_once(local$f: Ref) returns (ret: Int)
 {
   var anonymous$1: Int
   var anonymous$2: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   special$invoke_function_object(local$f)
   special$invoke_function_object(local$f)
   ret := anonymous$2
@@ -77,7 +76,6 @@ method pkg$$global$incorrect_exactly_once(local$f: Ref) returns (ret: Int)
 
 /calls_in_place.kt:(691,714): info: Generated Viper text for incorrect_at_least_once:
 method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -86,7 +84,6 @@ method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
 
 
 method pkg$$global$incorrect_at_least_once(local$f: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -95,6 +92,7 @@ method pkg$$global$incorrect_at_least_once(local$f: Ref) returns (ret: Int)
     old(local$f.special$function_object_call_counter)
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   anonymous$1 := pkg$$global$unknown(local$f)
   ret := anonymous$1
   goto label$ret

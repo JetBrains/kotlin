@@ -1,11 +1,11 @@
 /nullable.kt:(4,22): info: Generated Viper text for use_nullable_twice:
 method pkg$$global$use_nullable_twice(local$x: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
   var local$a: dom$Nullable[Int]
   var local$b: dom$Nullable[Int]
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   local$a := local$x
   local$b := local$x
   ret := local$a
@@ -16,16 +16,15 @@ method pkg$$global$use_nullable_twice(local$x: dom$Nullable[Int])
 /nullable.kt:(88,111): info: Generated Viper text for pass_nullable_parameter:
 method pkg$$global$use_nullable_twice(local$x: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 
 
 method pkg$$global$pass_nullable_parameter(local$x: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
   var anonymous$1: dom$Nullable[Int]
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   anonymous$1 := pkg$$global$use_nullable_twice(local$x)
   ret := local$x
   goto label$ret
@@ -36,9 +35,9 @@ method pkg$$global$pass_nullable_parameter(local$x: dom$Nullable[Int])
 method pkg$$global$nullable_nullable_comparison(local$x: dom$Nullable[Int],
   local$y: dom$Nullable[Int])
   returns (ret: Bool)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$y): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$y): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ret := local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
     local$y == (dom$Nullable$null(): dom$Nullable[Int]) ||
     local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
@@ -53,9 +52,9 @@ method pkg$$global$nullable_nullable_comparison(local$x: dom$Nullable[Int],
 method pkg$$global$nullable_non_nullable_comparison(local$x: dom$Nullable[Int],
   local$y: dom$Nullable[Int])
   returns (ret: Bool)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$y): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$y): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ret := !(local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
     (dom$Casting$cast(local$x, dom$Type$Int()): Int) == 3)
   goto label$ret
@@ -65,8 +64,8 @@ method pkg$$global$nullable_non_nullable_comparison(local$x: dom$Nullable[Int],
 /nullable.kt:(345,360): info: Generated Viper text for null_comparison:
 method pkg$$global$null_comparison(local$x: dom$Nullable[Int])
   returns (ret: Bool)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ret := local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
     (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
     (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||

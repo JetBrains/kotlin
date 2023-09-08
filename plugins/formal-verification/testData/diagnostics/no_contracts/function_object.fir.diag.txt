@@ -1,23 +1,23 @@
 /function_object.kt:(4,17): info: Generated Viper text for unit_function:
 method pkg$$global$unit_function(local$f: Ref) returns (ret: dom$Unit)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
     local$f.special$function_object_call_counter
 {
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   label label$ret
 }
 
 /function_object.kt:(72,92): info: Generated Viper text for function_object_call:
 method pkg$$global$function_object_call(local$g: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   requires acc(local$g.special$function_object_call_counter, write)
   ensures acc(local$g.special$function_object_call_counter, write)
   ensures old(local$g.special$function_object_call_counter) <=
     local$g.special$function_object_call_counter
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   special$invoke_function_object(local$g)
   ret := anonymous$1
   goto label$ret
@@ -27,8 +27,6 @@ method pkg$$global$function_object_call(local$g: Ref) returns (ret: Int)
 /function_object.kt:(155,182): info: Generated Viper text for function_object_nested_call:
 method pkg$$global$function_object_nested_call(local$f: Ref, local$g: Ref)
   returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   requires acc(local$g.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -41,6 +39,8 @@ method pkg$$global$function_object_nested_call(local$f: Ref, local$g: Ref)
   var anonymous$1: Int
   var anonymous$2: Int
   var anonymous$3: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   special$invoke_function_object(local$g)
   special$invoke_function_object(local$f)
   special$invoke_function_object(local$f)

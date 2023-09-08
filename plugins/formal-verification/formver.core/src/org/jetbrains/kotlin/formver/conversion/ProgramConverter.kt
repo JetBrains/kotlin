@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Field
 import org.jetbrains.kotlin.formver.viper.ast.Label
 import org.jetbrains.kotlin.formver.viper.ast.Program
+import org.jetbrains.kotlin.formver.viper.ast.Stmt
 
 /**
  * Tracks the top-level information about the program.
@@ -111,6 +112,11 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             val methodCtx = object : MethodConversionContext, ProgramConversionContext by this {
                 override val signature: MethodSignatureEmbedding = signature
 
+                // It seems like Viper will propagate the weakest precondition through the label correctly even in the absence of
+                // explicit invariants; we only need to add those if we want to make a stronger claim.
+                override val returnLabel: Label = Label(ReturnLabelName, listOf())
+                override val returnVar: VariableEmbedding = VariableEmbedding(ReturnVariableName, signature.returnType)
+
                 override val preconditions =
                     signature.formalArgs.flatMap { it.invariants() } + signature.formalArgs.flatMap { it.accessInvariants() }
 
@@ -121,18 +127,22 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                 override val postconditions = signature.formalArgs.flatMap { it.accessInvariants() } +
                         signature.params.flatMap { it.dynamicInvariants() } +
                         signature.returnVar.invariants() +
+                        signature.returnVar.provenInvariants() +
                         contractPostconditions
-
-                // It seems like Viper will propagate the weakest precondition through the label correctly even in the absence of
-                // explicit invariants; we only need to add those if we want to make a stronger claim.
-                override val returnLabel: Label = Label(ReturnLabelName, listOf())
-                override val returnVar: VariableEmbedding = VariableEmbedding(ReturnVariableName, signature.returnType)
 
                 override fun resolveName(name: MangledName): MangledName = name
             }
 
             val bodySeqn = body?.let {
                 val ctx = StmtConverter(methodCtx, SeqnBuilder(), NoopResultTrackerFactory)
+                signature.formalArgs.forEach { arg ->
+                    arg.provenInvariants().forEach {
+                        // Ideally we would want to assume these rather than inhale them to prevent inconsistencies with permissions.
+                        // Unfortunately Silicon for some reason does not allow Assumes. However, it doesn't matter as long as the
+                        // provenInvariants don't contain permissions.
+                        ctx.addStatement(Stmt.Inhale(it))
+                    }
+                }
                 ctx.addDeclaration(methodCtx.returnLabel.toDecl())
                 ctx.convert(body)
                 ctx.addStatement(methodCtx.returnLabel.toStmt())

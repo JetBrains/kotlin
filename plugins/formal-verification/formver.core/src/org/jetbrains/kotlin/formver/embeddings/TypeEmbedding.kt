@@ -26,13 +26,18 @@ interface TypeEmbedding {
 
     fun accessInvariants(v: Exp): List<Exp> = emptyList()
 
+    // This is a list of invariants that are already known to be true, thus they are just assumed by Viper instead of explicitly proven.
+    // An example of this is when other systems (e.g. the type checker) have already proven these.
+    fun provenInvariants(v: Exp): List<Exp> = emptyList()
+
     fun invariants(v: Exp): List<Exp> = emptyList()
 
     /**
      * Invariants that should correlate the old and new value of a value of this type
-     * over a function call.  This is exclusively necessary for CallsInPlace.
-     *
-     * TODO: add support for these in loops, too.
+     * over a function call. When a caller gives away permissions to the callee, these
+     * dynamic invariants give properties about the modifications of the argument as
+     * part of the functions post conditions.
+     * This is exclusively necessary for CallsInPlace.
      */
     fun dynamicInvariants(v: Exp): List<Exp> = emptyList()
 }
@@ -52,7 +57,7 @@ object NothingTypeEmbedding : TypeEmbedding {
 object AnyTypeEmbedding : TypeEmbedding {
     override val kotlinType = TypeDomain.anyType()
     override val viperType = AnyDomain.toType()
-    override fun invariants(v: Exp) = listOf(subTypeInvariant(v))
+    override fun provenInvariants(v: Exp) = listOf(subTypeInvariant(v))
 }
 
 object IntTypeEmbedding : TypeEmbedding {
@@ -71,14 +76,14 @@ data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding
 
     val nullVal: Exp = NullableDomain.nullVal(elementType.viperType)
 
-    override fun invariants(v: Exp) = listOf(subTypeInvariant(v))
+    override fun provenInvariants(v: Exp) = listOf(subTypeInvariant(v))
 }
 
 object FunctionTypeEmbedding : TypeEmbedding {
     override val kotlinType = TypeDomain.functionType()
     override val viperType: Type = Type.Ref
 
-    override fun invariants(v: Exp): List<Exp> = listOf(subTypeInvariant(v))
+    override fun provenInvariants(v: Exp): List<Exp> = listOf(subTypeInvariant(v))
 
     override fun accessInvariants(v: Exp) = listOf(v.fieldAccessPredicate(SpecialFields.FunctionObjectCallCounterField, PermExp.FullPerm()))
 
@@ -95,5 +100,5 @@ data class ClassTypeEmbedding(val name: ClassName, val superTypes: List<TypeEmbe
     override val kotlinType = TypeDomain.classType(this.name)
     override val viperType = Type.Ref
 
-    override fun invariants(v: Exp) = listOf(subTypeInvariant(v))
+    override fun provenInvariants(v: Exp) = listOf(subTypeInvariant(v))
 }

@@ -12,7 +12,6 @@ method pkg$$global$returns_boolean() returns (ret: Bool)
 
 method pkg$$global$dynamic_lambda_invariant(local$f: Ref)
   returns (ret: dom$Unit)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -20,6 +19,7 @@ method pkg$$global$dynamic_lambda_invariant(local$f: Ref)
 {
   var anonymous$1: Bool
   var anonymous$2: Bool
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   anonymous$2 := pkg$$global$returns_boolean()
   anonymous$1 := anonymous$2
   while (anonymous$1)
@@ -42,7 +42,6 @@ method pkg$$global$returns_boolean() returns (ret: Bool)
 
 method pkg$$global$function_assignment(local$f: Ref)
   returns (ret: dom$Unit)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -51,6 +50,7 @@ method pkg$$global$function_assignment(local$f: Ref)
   var local$g: Ref
   var anonymous$1: Bool
   var anonymous$2: Bool
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   local$g := local$f
   anonymous$2 := pkg$$global$returns_boolean()
   anonymous$1 := anonymous$2
@@ -75,8 +75,6 @@ method pkg$$global$returns_boolean() returns (ret: Bool)
 method pkg$$global$conditional_function_assignment(local$b: Bool, local$f: Ref,
   local$h: Ref)
   returns (ret: dom$Unit)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$h): dom$Type), dom$Type$Function())
   requires acc(local$f.special$function_object_call_counter, write)
   requires acc(local$h.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -90,6 +88,8 @@ method pkg$$global$conditional_function_assignment(local$b: Bool, local$f: Ref,
   var anonymous$1: Ref
   var anonymous$2: Bool
   var anonymous$3: Bool
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$h): dom$Type), dom$Type$Function())
   if (local$b) {
     anonymous$1 := local$f
   } else {

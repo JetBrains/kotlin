@@ -6,9 +6,9 @@ field pkg$$class_Foo$member_y: Int
 field pkg$$class_Foo$member_b: Bool
 
 method pkg$$class_Foo$member_getY(this: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
   inhale acc(this.pkg$$class_Foo$member_y, write)
   anonymous$1 := this.pkg$$class_Foo$member_y
   exhale acc(this.pkg$$class_Foo$member_y, write)
@@ -27,10 +27,10 @@ field pkg$$class_Foo$member_b: Bool
 field pkg$$class_Bar$member_z: Int
 
 method pkg$$class_Bar$member_sum(this: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Bar())
 {
   var anonymous$1: Int
   var anonymous$2: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Bar())
   inhale acc(this.pkg$$class_Foo$member_x, write)
   anonymous$1 := this.pkg$$class_Foo$member_x
   exhale acc(this.pkg$$class_Foo$member_x, write)
@@ -52,13 +52,12 @@ field pkg$$class_Foo$member_b: Bool
 field pkg$$class_Bar$member_z: Int
 
 method pkg$$class_Foo$member_getY(this: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
 
 
 method pkg$$global$callSuperMethod(local$bar: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
   anonymous$1 := pkg$$class_Foo$member_getY((dom$Casting$cast(local$bar, dom$Type$pkg$$class_Foo()): Ref))
   ret := anonymous$1
   goto label$ret
@@ -75,9 +74,9 @@ field pkg$$class_Foo$member_b: Bool
 field pkg$$class_Bar$member_z: Int
 
 method pkg$$global$accessSuperField(local$bar: Ref) returns (ret: Bool)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
 {
   var anonymous$1: Bool
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
   inhale acc(local$bar.pkg$$class_Foo$member_b, write)
   anonymous$1 := local$bar.pkg$$class_Foo$member_b
   exhale acc(local$bar.pkg$$class_Foo$member_b, write)
@@ -96,9 +95,9 @@ field pkg$$class_Foo$member_b: Bool
 field pkg$$class_Bar$member_z: Int
 
 method pkg$$global$accessNewField(local$bar: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
   inhale acc(local$bar.pkg$$class_Bar$member_z, write)
   anonymous$1 := local$bar.pkg$$class_Bar$member_z
   exhale acc(local$bar.pkg$$class_Bar$member_z, write)
@@ -117,13 +116,12 @@ field pkg$$class_Foo$member_b: Bool
 field pkg$$class_Bar$member_z: Int
 
 method pkg$$class_Bar$member_sum(this: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Bar())
 
 
 method pkg$$global$callNewMethod(local$bar: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
   anonymous$1 := pkg$$class_Bar$member_sum(local$bar)
   ret := anonymous$1
   goto label$ret
@@ -140,9 +138,9 @@ field pkg$$class_Foo$member_b: Bool
 field pkg$$class_Bar$member_z: Int
 
 method pkg$$global$setSuperField(local$bar: Ref) returns (ret: dom$Unit)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
 {
   var anonymous$1: Bool
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
   inhale acc(local$bar.pkg$$class_Foo$member_b, write)
   anonymous$1 := local$bar.pkg$$class_Foo$member_b
   exhale acc(local$bar.pkg$$class_Foo$member_b, write)
@@ -160,9 +158,9 @@ field pkg$$class_Foo$member_b: Bool
 field pkg$$class_Bar$member_z: Int
 
 method pkg$$global$accessSuperSuperField(local$baz: Ref) returns (ret: Int)
-  requires dom$Type$isSubtype((dom$TypeOf$typeOf(local$baz): dom$Type), dom$Type$pkg$$class_Baz())
 {
   var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$baz): dom$Type), dom$Type$pkg$$class_Baz())
   inhale acc(local$baz.pkg$$class_Foo$member_x, write)
   anonymous$1 := local$baz.pkg$$class_Foo$member_x
   exhale acc(local$baz.pkg$$class_Foo$member_x, write)
