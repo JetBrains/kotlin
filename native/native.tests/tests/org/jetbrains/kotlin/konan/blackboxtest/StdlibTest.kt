@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest
 
+import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty
+import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestRunnerType
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline
@@ -32,6 +34,7 @@ import org.junit.jupiter.api.TestFactory
         ignoredTests = [DISABLED_STDLIB_TEST]
     )
 )
+@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "2m")
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class StdlibTest : AbstractNativeBlackBoxTest() {
     @TestFactory
@@ -59,6 +62,7 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
         ignoredTests = [DISABLED_STDLIB_TEST]
     )
 )
+@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "2m")
 @FirPipeline
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class FirStdlibTest : AbstractNativeBlackBoxTest() {
