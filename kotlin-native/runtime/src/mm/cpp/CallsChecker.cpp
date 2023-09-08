@@ -38,6 +38,8 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "_ZNSt15__exception_ptr13exception_ptrD1Ev", // std::__exception_ptr::exception_ptr::~exception_ptr()
         "_ZNSt18condition_variableD1Ev", // std::condition_variable::~condition_variable()
         "_ZNSt3__112__next_primeEm", // std::__1::__next_prime(unsigned long)
+        "_ZNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEE7reserveEm", // std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::reserve(unsigned long)
+        "_ZNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEE9push_backEc", // std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::push_back(char)
         "_ZNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEED1Ev", // std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >::~basic_string()
         "_ZNSt3__16chrono12steady_clock3nowEv", // std::__1::chrono::steady_clock::now()
         "_ZNSt3__19to_stringEi", // std::__1::to_string(int)
