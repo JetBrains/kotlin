@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.generator.Packages.symbols
 import org.jetbrains.kotlin.ir.generator.Packages.tree
 import org.jetbrains.kotlin.ir.generator.Packages.types
 import org.jetbrains.kotlin.ir.generator.Packages.visitors
-import org.jetbrains.kotlin.ir.generator.util.type
+import org.jetbrains.kotlin.generators.tree.type
 
 object Packages {
     const val tree = "org.jetbrains.kotlin.ir"

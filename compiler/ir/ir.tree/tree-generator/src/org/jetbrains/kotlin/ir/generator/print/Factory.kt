@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.generator.model.Model
 import org.jetbrains.kotlin.ir.generator.util.GeneratedFile
 import org.jetbrains.kotlin.ir.generator.util.parameterizedByIfAny
 import org.jetbrains.kotlin.ir.generator.util.tryParameterizedBy
-import org.jetbrains.kotlin.ir.generator.util.type
+import org.jetbrains.kotlin.generators.tree.type
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
