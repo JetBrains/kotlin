@@ -2013,6 +2013,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/DeepCopyIrTree.kt");
         }
 
+        @TestMetadata("delegatedSetterShouldBeSpecialized.kt")
+        public void testDelegatedSetterShouldBeSpecialized() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/delegatedSetterShouldBeSpecialized.kt");
+        }
+
         @TestMetadata("deprecated.kt")
         public void testDeprecated() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/deprecated.kt");

@@ -2305,6 +2305,12 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
         }
 
         @Test
+        @TestMetadata("delegatedSetterShouldBeSpecialized.kt")
+        public void testDelegatedSetterShouldBeSpecialized() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/delegatedSetterShouldBeSpecialized.kt");
+        }
+
+        @Test
         @TestMetadata("deprecated.kt")
         public void testDeprecated() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/deprecated.kt");

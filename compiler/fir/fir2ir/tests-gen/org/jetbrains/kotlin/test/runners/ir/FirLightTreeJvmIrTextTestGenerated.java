@@ -2665,6 +2665,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
         }
 
         @Test
+        @TestMetadata("delegatedSetterShouldBeSpecialized.kt")
+        public void testDelegatedSetterShouldBeSpecialized() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/delegatedSetterShouldBeSpecialized.kt");
+        }
+
+        @Test
         @TestMetadata("DelegationAndInheritanceFromJava.kt")
         public void testDelegationAndInheritanceFromJava() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/DelegationAndInheritanceFromJava.kt");

@@ -22,7 +22,7 @@ FILE fqName:k fileName:/box.kt
             <V>: @[FlexibleNullability] kotlin.String?
             $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p1$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static]' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            property: PROPERTY_REFERENCE 'public final p1: @[FlexibleNullability] kotlin.String?' field=null getter='public final fun <get-p1> (): @[FlexibleNullability] kotlin.String? declared in k' setter='public final fun <set-p1> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.reflect.KMutableProperty0<*> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: PROPERTY_REFERENCE 'public final p1: @[FlexibleNullability] kotlin.String?' field=null getter='public final fun <get-p1> (): @[FlexibleNullability] kotlin.String? declared in k' setter='public final fun <set-p1> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
             value: GET_VAR '<set-?>: @[FlexibleNullability] kotlin.String? declared in k.<set-p1>' type=@[FlexibleNullability] kotlin.String? origin=null
   PROPERTY name:p2 visibility:public modality:FINAL [delegated,var]
     FIELD PROPERTY_DELEGATE name:p2$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static]
@@ -47,7 +47,7 @@ FILE fqName:k fileName:/box.kt
             <V>: @[FlexibleNullability] kotlin.String?
             $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p2$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static]' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            property: PROPERTY_REFERENCE 'public final p2: @[FlexibleNullability] kotlin.String?' field=null getter='public final fun <get-p2> (): @[FlexibleNullability] kotlin.String? declared in k' setter='public final fun <set-p2> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.reflect.KMutableProperty0<*> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: PROPERTY_REFERENCE 'public final p2: @[FlexibleNullability] kotlin.String?' field=null getter='public final fun <get-p2> (): @[FlexibleNullability] kotlin.String? declared in k' setter='public final fun <set-p2> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
             value: GET_VAR '<set-?>: @[FlexibleNullability] kotlin.String? declared in k.<set-p2>' type=@[FlexibleNullability] kotlin.String? origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY

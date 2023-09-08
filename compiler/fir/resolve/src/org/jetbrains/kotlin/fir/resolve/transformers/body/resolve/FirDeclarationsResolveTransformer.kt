@@ -265,7 +265,9 @@ open class FirDeclarationsResolveTransformer(
         (property.getter?.body?.statements?.singleOrNull() as? FirReturnExpression)?.let { returnExpression ->
             (returnExpression.result as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
         }
-        (property.setter?.body?.statements?.singleOrNull() as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
+        (property.setter?.body?.statements?.singleOrNull() as? FirReturnExpression)?.let { returnExpression ->
+            (returnExpression.result as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
+        }
         (property.delegate as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
     }
 
