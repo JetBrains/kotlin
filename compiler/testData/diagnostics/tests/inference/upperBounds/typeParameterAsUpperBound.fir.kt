@@ -1,7 +1,7 @@
 // !CHECK_TYPE
 
 
-@<!INVISIBLE_REFERENCE!>kotlin.internal.<!INVISIBLE_REFERENCE!>InlineOnly<!><!>
+@kotlin.internal.<!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>InlineOnly<!>
 public inline fun <C, R> C.ifEmpty(f: () -> R): R where C : Collection<*>, C : R = if (isEmpty()) f() else this
 
 public fun <T> listOf(t: T): List<T> = TODO()

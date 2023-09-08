@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SKIP_TXT
 // FILE: a.kt
 package p

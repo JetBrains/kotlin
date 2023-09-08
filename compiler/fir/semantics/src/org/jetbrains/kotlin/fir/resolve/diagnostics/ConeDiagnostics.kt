@@ -104,11 +104,16 @@ class ConeHiddenCandidateError(
     override val reason: String get() = "HIDDEN: ${describeSymbol(candidateSymbol)} is deprecated with DeprecationLevel.HIDDEN"
 }
 
-class ConeVisibilityError(
+open class ConeVisibilityError(
     override val symbol: FirBasedSymbol<*>
 ) : ConeDiagnosticWithSymbol<FirBasedSymbol<*>> {
     override val reason: String get() = "HIDDEN: ${describeSymbol(symbol)} is invisible"
 }
+
+class ConeTypeVisibilityError(
+    symbol: FirBasedSymbol<*>,
+    val smallestUnresolvablePrefix: List<FirQualifierPart>,
+) : ConeVisibilityError(symbol)
 
 class ConeInapplicableWrongReceiver(override val candidates: Collection<AbstractCandidate>) : ConeDiagnosticWithCandidates {
     override val reason: String

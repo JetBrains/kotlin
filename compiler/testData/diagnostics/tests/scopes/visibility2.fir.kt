@@ -30,7 +30,7 @@ fun test() {
     <!INVISIBLE_REFERENCE!>foo<!>()
 
     val u : <!INVISIBLE_REFERENCE!>A<!> = <!INVISIBLE_REFERENCE!>A<!>()
-    val a : <!INVISIBLE_REFERENCE!>java.util.Arrays.ArrayList<Int><!>;
+    val a : java.util.Arrays.<!INVISIBLE_REFERENCE!>ArrayList<!><Int>;
 
     val po = <!INVISIBLE_REFERENCE!>PO<!>
 }

@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.fir.recordTypeLookup
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolutionResult
 import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeVisibilityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDefaultValueInFunctionType
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeResolver
@@ -148,16 +150,10 @@ class FirSpecificTypeResolverTransformer(
     ): FirResolvedTypeRef {
         return when {
             resolvedType is ConeErrorType -> {
-                buildErrorType(typeRef, resolvedType, scopeClassDeclaration)
+                buildErrorType(typeRef, resolvedType, resolvedType.diagnostic, scopeClassDeclaration)
             }
             diagnostic != null -> {
-                buildErrorTypeRef {
-                    source = typeRef.source
-                    this.diagnostic = diagnostic
-                    type = resolvedType
-                    delegatedTypeRef = typeRef
-                    partiallyResolvedTypeRef = tryCalculatingPartiallyResolvedTypeRef(typeRef, scopeClassDeclaration)
-                }
+                buildErrorType(typeRef, resolvedType, diagnostic, scopeClassDeclaration)
             }
             else -> {
                 buildResolvedTypeRef {
@@ -172,11 +168,11 @@ class FirSpecificTypeResolverTransformer(
 
     private fun buildErrorType(
         typeRef: FirTypeRef,
-        resolvedType: ConeErrorType,
+        resolvedType: ConeKotlinType,
+        diagnostic: ConeDiagnostic,
         scopeClassDeclaration: ScopeClassDeclaration,
     ): FirErrorTypeRef {
         return buildErrorTypeRef {
-            var diagnostic = resolvedType.diagnostic
             val typeRefSourceKind = typeRef.source?.kind
             val diagnosticSource = (diagnostic as? ConeUnexpectedTypeArgumentsError)?.source
 
@@ -192,22 +188,45 @@ class FirSpecificTypeResolverTransformer(
 
             delegatedTypeRef = typeRef
             type = resolvedType
+
             val partiallyResolvedTypeRef = tryCalculatingPartiallyResolvedTypeRef(typeRef, scopeClassDeclaration)
             this.partiallyResolvedTypeRef = partiallyResolvedTypeRef
 
-            if (diagnostic is ConeUnresolvedTypeQualifierError) {
-                val totalQualifierCount = diagnostic.qualifiers.size
-                val resolvedQualifierCount = (partiallyResolvedTypeRef?.delegatedTypeRef as? FirUserTypeRef)?.qualifier?.size
-                    ?: calculatePartiallyResolvablePackageSegments(diagnostic.qualifiers)
-
-                val unresolvedQualifierCount = totalQualifierCount - resolvedQualifierCount
-
-                if (unresolvedQualifierCount > 1) {
-                    diagnostic = ConeUnresolvedTypeQualifierError(diagnostic.qualifiers.dropLast(unresolvedQualifierCount - 1), false)
+            this.diagnostic = when {
+                diagnostic is ConeUnresolvedTypeQualifierError -> {
+                    ConeUnresolvedTypeQualifierError(smallestUnresolvablePrefix(diagnostic.qualifiers, partiallyResolvedTypeRef), diagnostic.isNullable)
                 }
+                diagnostic is ConeVisibilityError && typeRef is FirUserTypeRef -> {
+                    ConeTypeVisibilityError(diagnostic.symbol, smallestUnresolvablePrefix(typeRef.qualifier, partiallyResolvedTypeRef))
+                }
+                else -> diagnostic
             }
+        }
+    }
 
-            this.diagnostic = diagnostic
+    /**
+     * Returns the smallest non-resolvable prefix of the given [qualifiers].
+     *
+     * Examples:
+     *
+     * - Given `A.B.C` and `A.B` can be resolved, then `A.B.C` will be returned
+     * - Given `A.B.C` and `A` cannot be resolved, then `A` will be returned
+     * - Given `a.b.C` and package `a` exists but package `a.b` doesn't exist, `a.b.` will be returned.
+     */
+    private fun smallestUnresolvablePrefix(
+        qualifiers: List<FirQualifierPart>,
+        partiallyResolvedTypeRef: FirResolvedTypeRef?,
+    ): List<FirQualifierPart> {
+        val totalQualifierCount = qualifiers.size
+        val resolvedQualifierCount = (partiallyResolvedTypeRef?.delegatedTypeRef as? FirUserTypeRef)?.qualifier?.size
+            ?: calculatePartiallyResolvablePackageSegments(qualifiers)
+
+        val unresolvedQualifierCount = totalQualifierCount - resolvedQualifierCount
+
+        return if (unresolvedQualifierCount > 1) {
+            qualifiers.dropLast(unresolvedQualifierCount - 1)
+        } else {
+            qualifiers
         }
     }
 
