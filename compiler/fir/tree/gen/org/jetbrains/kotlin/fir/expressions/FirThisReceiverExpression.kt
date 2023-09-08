@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 
 /*
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
+    @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
     abstract override val contextReceiverArguments: List<FirExpression>

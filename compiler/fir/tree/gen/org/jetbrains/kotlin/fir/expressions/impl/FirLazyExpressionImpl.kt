@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 
 /*
  * This file was generated automatically
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 internal class FirLazyExpressionImpl(
     override val source: KtSourceElement?,
 ) : FirLazyExpression() {
+    @OptIn(UnresolvedExpressionTypeAccess::class)
     override val coneTypeOrNull: ConeKotlinType? get() = error("FirLazyExpression should be calculated before accessing")
     override val annotations: List<FirAnnotation> get() = error("FirLazyExpression should be calculated before accessing")
 

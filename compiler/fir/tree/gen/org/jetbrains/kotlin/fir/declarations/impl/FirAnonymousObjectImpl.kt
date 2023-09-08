@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  * DO NOT MODIFY IT MANUALLY
  */
 
+@OptIn(ResolveStateAccess::class)
 internal class FirAnonymousObjectImpl(
     override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
@@ -55,7 +56,6 @@ internal class FirAnonymousObjectImpl(
 
     init {
         symbol.bind(this)
-        @OptIn(ResolveStateAccess::class)
         resolveState = resolvePhase.asResolveState()
     }
 

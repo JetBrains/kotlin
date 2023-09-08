@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  * DO NOT MODIFY IT MANUALLY
  */
 
+@OptIn(ResolveStateAccess::class)
 internal class FirDanglingModifierListImpl(
     override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
@@ -40,7 +41,6 @@ internal class FirDanglingModifierListImpl(
 ) : FirDanglingModifierList() {
     init {
         symbol.bind(this)
-        @OptIn(ResolveStateAccess::class)
         resolveState = resolvePhase.asResolveState()
     }
 

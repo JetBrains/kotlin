@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
@@ -86,7 +87,7 @@ inline fun buildThisReceiverExpression(init: FirThisReceiverExpressionBuilder.()
     return FirThisReceiverExpressionBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class, UnresolvedExpressionTypeAccess::class)
 inline fun buildThisReceiverExpressionCopy(original: FirThisReceiverExpression, init: FirThisReceiverExpressionBuilder.() -> Unit): FirThisReceiverExpression {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  * DO NOT MODIFY IT MANUALLY
  */
 
+@OptIn(ResolveStateAccess::class)
 class FirFieldImpl @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
@@ -70,7 +71,6 @@ class FirFieldImpl @FirImplementationDetail constructor(
 
     init {
         symbol.bind(this)
-        @OptIn(ResolveStateAccess::class)
         resolveState = resolvePhase.asResolveState()
     }
 

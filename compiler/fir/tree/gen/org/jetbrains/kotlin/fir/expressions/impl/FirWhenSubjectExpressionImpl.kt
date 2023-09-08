@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 
 /*
  * This file was generated automatically
@@ -29,6 +30,7 @@ internal class FirWhenSubjectExpressionImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val whenRef: FirExpressionRef<FirWhenExpression>,
 ) : FirWhenSubjectExpression() {
+    @OptIn(UnresolvedExpressionTypeAccess::class)
     override val coneTypeOrNull: ConeKotlinType? get() = whenRef.value.subject?.coneTypeOrNull ?: StandardClassIds.Unit.constructClassLikeType()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

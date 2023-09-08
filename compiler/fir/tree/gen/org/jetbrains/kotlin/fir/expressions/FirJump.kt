@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 
 /*
  * This file was generated automatically
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 sealed class FirJump<E : FirTargetElement> : FirExpression() {
     abstract override val source: KtSourceElement?
+    @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
     abstract val target: FirTarget<E>

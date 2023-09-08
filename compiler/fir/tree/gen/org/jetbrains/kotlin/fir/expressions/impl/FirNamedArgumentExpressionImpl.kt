@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 
 /*
  * This file was generated automatically
@@ -29,6 +30,7 @@ internal class FirNamedArgumentExpressionImpl(
     override val isSpread: Boolean,
     override val name: Name,
 ) : FirNamedArgumentExpression() {
+    @OptIn(UnresolvedExpressionTypeAccess::class)
     override val coneTypeOrNull: ConeKotlinType? get() = expression.coneTypeOrNull
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

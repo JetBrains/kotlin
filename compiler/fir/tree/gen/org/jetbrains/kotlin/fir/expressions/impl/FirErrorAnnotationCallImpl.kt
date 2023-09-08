@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 
 /*
  * This file was generated automatically
@@ -39,6 +40,7 @@ internal class FirErrorAnnotationCallImpl(
     override val diagnostic: ConeDiagnostic,
     override var argumentMapping: FirAnnotationArgumentMapping,
 ) : FirErrorAnnotationCall() {
+    @OptIn(UnresolvedExpressionTypeAccess::class)
     override val coneTypeOrNull: ConeKotlinType? get() = annotationTypeRef.coneTypeOrNull
     override val annotations: List<FirAnnotation> get() = emptyList()
     override var annotationResolvePhase: FirAnnotationResolvePhase = FirAnnotationResolvePhase.Types

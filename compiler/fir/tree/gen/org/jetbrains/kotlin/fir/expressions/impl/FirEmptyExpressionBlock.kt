@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 
 /*
  * This file was generated automatically
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 class FirEmptyExpressionBlock : FirBlock() {
     override val source: KtSourceElement? get() = null
+    @OptIn(UnresolvedExpressionTypeAccess::class)
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: List<FirAnnotation> get() = emptyList()
     override val statements: List<FirStatement> get() = emptyList()

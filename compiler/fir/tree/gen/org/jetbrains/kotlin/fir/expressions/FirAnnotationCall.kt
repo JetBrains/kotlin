@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 
 /*
  * This file was generated automatically
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
     abstract override val source: KtSourceElement?
+    @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
     abstract override val useSiteTarget: AnnotationUseSiteTarget?
