@@ -26541,6 +26541,49 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/javaInterop/objectMethods/cloneableClassWithoutClone.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PrimitiveVsWrapperTypeInInheritance extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInPrimitiveVsWrapperTypeInInheritance() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("anotherKotlinClassInTheMiddle.kt")
+            public void testAnotherKotlinClassInTheMiddle() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/anotherKotlinClassInTheMiddle.kt");
+            }
+
+            @TestMetadata("diamond.kt")
+            public void testDiamond() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/diamond.kt");
+            }
+
+            @TestMetadata("double.kt")
+            public void testDouble() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/double.kt");
+            }
+
+            @TestMetadata("generic.kt")
+            public void testGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/generic.kt");
+            }
+
+            @TestMetadata("int.kt")
+            public void testInt() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/int.kt");
+            }
+
+            @TestMetadata("nullableInt.kt")
+            public void testNullableInt() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/nullableInt.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/javaVisibility")

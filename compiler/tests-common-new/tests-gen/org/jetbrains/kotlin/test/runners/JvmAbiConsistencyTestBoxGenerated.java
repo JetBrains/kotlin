@@ -31304,6 +31304,52 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
                 runTest("compiler/testData/codegen/box/javaInterop/objectMethods/cloneableClassWithoutClone.kt");
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance")
+        @TestDataPath("$PROJECT_ROOT")
+        public class PrimitiveVsWrapperTypeInInheritance {
+            @Test
+            public void testAllFilesPresentInPrimitiveVsWrapperTypeInInheritance() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("anotherKotlinClassInTheMiddle.kt")
+            public void testAnotherKotlinClassInTheMiddle() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/anotherKotlinClassInTheMiddle.kt");
+            }
+
+            @Test
+            @TestMetadata("diamond.kt")
+            public void testDiamond() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/diamond.kt");
+            }
+
+            @Test
+            @TestMetadata("double.kt")
+            public void testDouble() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/double.kt");
+            }
+
+            @Test
+            @TestMetadata("generic.kt")
+            public void testGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/generic.kt");
+            }
+
+            @Test
+            @TestMetadata("int.kt")
+            public void testInt() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/int.kt");
+            }
+
+            @Test
+            @TestMetadata("nullableInt.kt")
+            public void testNullableInt() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/nullableInt.kt");
+            }
+        }
     }
 
     @Nested

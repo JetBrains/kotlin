@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.overrides.IrJavaIncompatibilityRulesOverridabilityCondition
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
@@ -36,7 +37,9 @@ class JvmFir2IrExtensions(
     private val mangler: KotlinMangler.IrMangler,
 ) : Fir2IrExtensions, JvmGeneratorExtensions {
     override val parametersAreAssignable: Boolean get() = true
-    override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList() // TODO: KT-61370
+    override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>
+        get() = listOf(IrJavaIncompatibilityRulesOverridabilityCondition())
+
     override val classNameOverride: MutableMap<IrClass, JvmClassName> = mutableMapOf()
     override val cachedFields = CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
 
