@@ -53,7 +53,17 @@ class FirBuilderInferenceSession2(
         }
     }
 
-    override fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement {
+    override fun <T> processPartiallyResolvedCall(
+        call: T,
+        resolutionMode: ResolutionMode,
+        completionMode: ConstraintSystemCompletionMode
+    ) where T : FirResolvable, T : FirStatement {
+        if (completionMode == ConstraintSystemCompletionMode.PARTIAL) return
+
+        if (call is FirExpression) {
+            call.updateReturnTypeWithCurrentSubstitutor(resolutionMode)
+        }
+
         if (!resolutionMode.forceFullCompletion) return
 
         val candidate = call.candidate() ?: return
@@ -63,10 +73,6 @@ class FirBuilderInferenceSession2(
 
         (resolutionMode as? ResolutionMode.ContextIndependent.ForDeclaration)?.declaration?.let(outerCandidate.updateDeclarations::add)
         outerSystem.addOtherSystem(candidate.system.currentStorage(), isAddingOuter = false)
-
-        if (call is FirExpression) {
-            call.updateReturnTypeWithCurrentSubstitutor(resolutionMode)
-        }
     }
 
     private fun FirExpression.updateReturnTypeWithCurrentSubstitutor(
@@ -77,8 +83,13 @@ class FirBuilderInferenceSession2(
             fixVariablesForMemberScope(resolvedType, outerCandidate)?.let { additionalBindings += it }
         }
 
-        val updatedType =
-            (outerSystem.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor).substituteOrNull(resolvedType)
+        val substitutor =
+            (this as? FirResolvable)?.candidate()?.system?.buildCurrentSubstitutor(additionalBindings)
+                ?: outerSystem.buildCurrentSubstitutor(additionalBindings)
+
+
+        val updatedType = (substitutor as ConeSubstitutor).substituteOrNull(resolvedType)
+
         if (updatedType != null) {
             replaceConeTypeOrNull(updatedType)
         }
@@ -100,6 +111,7 @@ class FirBuilderInferenceSession2(
         type: ConeTypeVariableType,
         myCandidate: Candidate,
     ): Pair<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
+        if ("".hashCode() == 0) return null
         val coneTypeVariableTypeConstructor = type.lookupTag
         val myCs = myCandidate.system
 

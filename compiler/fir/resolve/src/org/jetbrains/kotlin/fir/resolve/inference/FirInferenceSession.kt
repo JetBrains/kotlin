@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 
 abstract class FirInferenceSession {
@@ -28,7 +29,11 @@ abstract class FirInferenceSession {
      */
     open fun <T> shouldAvoidFullCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = false
 
-    abstract fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement
+    abstract fun <T> processPartiallyResolvedCall(
+        call: T,
+        resolutionMode: ResolutionMode,
+        completionMode: ConstraintSystemCompletionMode
+    ) where T : FirResolvable, T : FirStatement
     abstract fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
 
     open fun <R> onCandidatesResolution(call: FirFunctionCall, candidatesResolutionCallback: () -> R) = candidatesResolutionCallback()
@@ -39,7 +44,11 @@ abstract class FirInferenceSession {
 abstract class FirStubInferenceSession : FirInferenceSession() {
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = true
 
-    override fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement {}
+    override fun <T> processPartiallyResolvedCall(
+        call: T,
+        resolutionMode: ResolutionMode,
+        completionMode: ConstraintSystemCompletionMode
+    ) where T : FirResolvable, T : FirStatement {}
     override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
 
 }

@@ -45,7 +45,11 @@ class FirDelegatedPropertyInferenceSession(
     override fun <T> shouldAvoidFullCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement =
         call.isAnyOfDelegateOperators()
 
-    override fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement {
+    override fun <T> processPartiallyResolvedCall(
+        call: T,
+        resolutionMode: ResolutionMode,
+        completionMode: ConstraintSystemCompletionMode
+    ) where T : FirResolvable, T : FirStatement {
         if (resolutionMode != ResolutionMode.ContextDependent.Delegate && !call.isAnyOfDelegateOperators()) return
 
         val candidate = call.candidate
