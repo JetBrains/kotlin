@@ -505,7 +505,8 @@ class BodyResolveContext(
         }
     }
 
-    fun <T> withScopesForScript(
+    @OptIn(PrivateForInline::class)
+    fun <T> withScript(
         owner: FirScript,
         holder: SessionHolder,
         f: () -> T
@@ -537,7 +538,9 @@ class BodyResolveContext(
         )
 
         return withTowerDataContexts(newContexts) {
-            f()
+            withContainer(owner) {
+                f()
+            }
         }
     }
 

@@ -294,7 +294,7 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitScript(script: FirScript) {
-        context.withScopesForScript(script, holder) {
+        context.withScript(script, holder) {
             withInterceptor {
                 super.visitScript(script)
             }
