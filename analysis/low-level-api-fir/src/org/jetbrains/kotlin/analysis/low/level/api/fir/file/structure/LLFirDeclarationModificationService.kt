@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiComment
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableM
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
 import org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics.MODULE_OUT_OF_BLOCK_MODIFICATION
@@ -39,7 +42,70 @@ import org.jetbrains.kotlin.psi.KtElement
  * @see org.jetbrains.kotlin.analysis.providers.topics.KotlinModuleOutOfBlockModificationListener
  */
 @LLFirInternals
-class LLFirDeclarationModificationService(val project: Project) {
+class LLFirDeclarationModificationService(val project: Project) : Disposable {
+    init {
+        ApplicationManager.getApplication().addApplicationListener(
+            object : ApplicationListener {
+                override fun writeActionFinished(action: Any) {
+                    flushModifications()
+                }
+            },
+            this,
+        )
+    }
+
+    private var inBlockModificationQueue: MutableSet<ChangeType.InBlock>? = null
+
+    private fun addModificationToQueue(modification: ChangeType.InBlock) {
+        val queue = inBlockModificationQueue ?: HashSet<ChangeType.InBlock>().also { inBlockModificationQueue = it }
+        queue += modification
+    }
+
+    /**
+     * We can avoid processing of in-block modification with the same [KtModule] because they
+     * will be invalidated anyway by OOBM
+     */
+    private fun dropOutdatedModifications(ktModuleWithOutOfBlockModification: KtModule) {
+        processQueue { value, iterator ->
+            if (value.ktModule == ktModuleWithOutOfBlockModification) iterator.remove()
+        }
+    }
+
+    /**
+     * Process valid elements in the current queue.
+     * Non-valid elements will be dropped from the queue during this iteration.
+     *
+     * @param action will be executed for each valid element in the queue;
+     * **value** is a current element;
+     * **iterator** is the corresponding iterator for this element.
+     */
+    private inline fun processQueue(action: (value: ChangeType.InBlock, iterator: MutableIterator<ChangeType.InBlock>) -> Unit) {
+        val queue = inBlockModificationQueue ?: return
+        val iterator = queue.iterator()
+        while (iterator.hasNext()) {
+            val element = iterator.next()
+            if (!element.blockOwner.isValid) {
+                iterator.remove()
+                continue
+            }
+
+            action(element, iterator)
+        }
+    }
+
+    /**
+     * Force the service to publish delayed modifications. This action is required to fix inconsistencies in FirFile tree.
+     */
+    fun flushModifications() {
+        ApplicationManager.getApplication().assertIsWriteThread()
+
+        processQueue { value, _ ->
+            inBlockModification(value.blockOwner, value.ktModule)
+        }
+
+        inBlockModificationQueue = null
+    }
+
     sealed class ModificationType {
         object NewElement : ModificationType()
         object Unknown : ModificationType()
@@ -65,13 +131,28 @@ class LLFirDeclarationModificationService(val project: Project) {
 
         when (val changeType = calculateChangeType(element, modificationType)) {
             is ChangeType.Invisible -> {}
-            is ChangeType.InBlock -> inBlockModification(changeType.blockOwner)
+            is ChangeType.InBlock -> addModificationToQueue(changeType)
             is ChangeType.OutOfBlock -> outOfBlockModification(element)
         }
     }
 
-    private fun inBlockModification(declaration: KtElement) {
-        val ktModule = ProjectStructureProvider.getModule(project, declaration, contextualModule = null)
+    private fun calculateChangeType(element: PsiElement, modificationType: ModificationType): ChangeType = when {
+        // If PSI is not valid, well something bad happened; OOBM won't hurt
+        !element.isValid -> ChangeType.OutOfBlock
+        element is PsiWhiteSpace || element is PsiComment -> ChangeType.Invisible
+        // TODO improve for Java KTIJ-21684
+        element.language !is KotlinLanguage -> ChangeType.OutOfBlock
+        else -> {
+            val inBlockModificationOwner = nonLocalDeclarationForLocalChange(element)
+            if (inBlockModificationOwner != null && (element.parent != inBlockModificationOwner || modificationType != ModificationType.NewElement)) {
+                ChangeType.InBlock(inBlockModificationOwner, project)
+            } else {
+                ChangeType.OutOfBlock
+            }
+        }
+    }
+
+    private fun inBlockModification(declaration: KtElement, ktModule: KtModule) {
         val resolveSession = ktModule.getFirResolveSession(project)
         val firDeclaration = when (declaration) {
             is KtCodeFragment -> declaration.getOrBuildFirFile(resolveSession).codeFragment
@@ -102,6 +183,9 @@ class LLFirDeclarationModificationService(val project: Project) {
 
     private fun outOfBlockModification(element: PsiElement) {
         val ktModule = ProjectStructureProvider.getModule(project, element, contextualModule = null)
+
+        // We should check outdated modifications before to avoid cache dropping (e.g., KtModule cache)
+        dropOutdatedModifications(ktModule)
         project.analysisMessageBus.syncPublisher(MODULE_OUT_OF_BLOCK_MODIFICATION).onModification(ktModule)
     }
 
@@ -112,25 +196,11 @@ class LLFirDeclarationModificationService(val project: Project) {
         return nonLocalDeclarationForLocalChange(changedElement)
     }
 
+    override fun dispose() {}
+
     companion object {
         fun getInstance(project: Project): LLFirDeclarationModificationService =
             project.getService(LLFirDeclarationModificationService::class.java)
-    }
-}
-
-private fun calculateChangeType(element: PsiElement, modificationType: ModificationType): ChangeType = when {
-    // If PSI is not valid, well something bad happened, OOBM won't hurt
-    !element.isValid -> ChangeType.OutOfBlock
-    element is PsiWhiteSpace || element is PsiComment -> ChangeType.Invisible
-    // TODO improve for Java KTIJ-21684
-    element.language !is KotlinLanguage -> ChangeType.OutOfBlock
-    else -> {
-        val inBlockModificationOwner = nonLocalDeclarationForLocalChange(element)
-        if (inBlockModificationOwner != null && (element.parent != inBlockModificationOwner || modificationType != ModificationType.NewElement)) {
-            ChangeType.InBlock(inBlockModificationOwner)
-        } else {
-            ChangeType.OutOfBlock
-        }
     }
 }
 
@@ -141,5 +211,13 @@ private fun nonLocalDeclarationForLocalChange(psi: PsiElement): KtAnnotated? {
 private sealed class ChangeType {
     object OutOfBlock : ChangeType()
     object Invisible : ChangeType()
-    class InBlock(val blockOwner: KtAnnotated) : ChangeType()
+
+    class InBlock(val blockOwner: KtAnnotated, val project: Project) : ChangeType() {
+        val ktModule: KtModule by lazy(LazyThreadSafetyMode.NONE) {
+            ProjectStructureProvider.getModule(project, blockOwner, contextualModule = null)
+        }
+
+        override fun equals(other: Any?): Boolean = other === this || other is InBlock && other.blockOwner == blockOwner
+        override fun hashCode(): Int = blockOwner.hashCode()
+    }
 }

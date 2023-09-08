@@ -77,12 +77,20 @@ internal fun testInBlockModification(
 
     val textBefore = declarationToRender.render()
 
-    val isOutOfBlock = LLFirDeclarationModificationService.getInstance(elementToModify.project).modifyElement(elementToModify)
+    val modificationService = LLFirDeclarationModificationService.getInstance(elementToModify.project)
+    val isOutOfBlock = modificationService.modifyElement(elementToModify)
     if (isOutOfBlock) {
         return "IN-BLOCK MODIFICATION IS NOT APPLICABLE FOR THIS PLACE"
     }
 
     elementToModify.modify()
+
+    val textAfterPsiModification = declarationToRender.render()
+    testServices.assertions.assertEquals(textBefore, textAfterPsiModification) {
+        "The declaration before and after modification must be in the same state, because changes in not flushed yet"
+    }
+
+    modificationService.flushModifications()
 
     val textAfterModification = declarationToRender.render()
     testServices.assertions.assertNotEquals(textBefore, textAfterModification) {
