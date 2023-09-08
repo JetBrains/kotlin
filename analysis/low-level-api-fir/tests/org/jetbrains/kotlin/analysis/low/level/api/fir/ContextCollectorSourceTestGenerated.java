@@ -258,6 +258,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
         }
 
         @Test
+        @TestMetadata("insideLetOnNullableReceiver.kt")
+        public void testInsideLetOnNullableReceiver() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/insideLetOnNullableReceiver.kt");
+        }
+
+        @Test
         @TestMetadata("insideLoop.kt")
         public void testInsideLoop() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/insideLoop.kt");
