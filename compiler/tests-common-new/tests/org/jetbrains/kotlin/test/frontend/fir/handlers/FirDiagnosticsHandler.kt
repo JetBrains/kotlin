@@ -212,7 +212,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 val calleeDeclaration = element.calleeReference.toResolvedCallableSymbol() ?: return
                 val isInvokeCallWithDynamicReceiver = calleeDeclaration.name == OperatorNameConventions.INVOKE
                         && element is FirQualifiedAccessExpression
-                        && element.dispatchReceiver?.coneTypeOrNull?.isFunctionTypeWithDynamicReceiver(firFile.moduleData.session) == true
+                        && element.dispatchReceiver?.resolvedType?.isFunctionTypeWithDynamicReceiver(firFile.moduleData.session) == true
 
                 if (calleeDeclaration.origin !is FirDeclarationOrigin.DynamicScope && !isInvokeCallWithDynamicReceiver) {
                     return
@@ -293,14 +293,13 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
     private fun DebugDiagnosticConsumer.reportExpressionTypeDiagnostic(element: FirExpression) {
         report(DebugInfoDiagnosticFactory1.EXPRESSION_TYPE, element) {
+            val type = element.resolvedType
+            val originalType = (element as? FirSmartCastExpression)?.takeIf { it.isStable }?.originalExpression?.resolvedType
 
-            val type = element.coneTypeSafe<ConeKotlinType>()
-            val originalType = (element as? FirSmartCastExpression)?.takeIf { it.isStable }?.originalExpression?.coneTypeOrNull
-
-            if (type != null && originalType != null) {
+            if (originalType != null) {
                 "${originalType.renderForDebugInfo()} & ${type.renderForDebugInfo()}"
             } else {
-                type?.renderForDebugInfo() ?: "Type is unknown"
+                type.renderForDebugInfo()
             }
         }
     }

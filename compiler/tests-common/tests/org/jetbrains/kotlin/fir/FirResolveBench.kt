@@ -275,7 +275,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
 
                     override fun visitFunctionCall(functionCall: FirFunctionCall) {
                         val callee = functionCall.calleeReference
-                        val type = functionCall.coneTypeOrNull
+                        val type = functionCall.resolvedType
                         if (type is ConeErrorType) {
                             errorFunctionCallTypes++
                             val psi = callee.psi
@@ -289,7 +289,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
 
                     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
                         val callee = qualifiedAccessExpression.calleeReference
-                        val type = qualifiedAccessExpression.coneTypeOrNull
+                        val type = qualifiedAccessExpression.resolvedType
                         if (type is ConeErrorType) {
                             errorQualifiedAccessTypes++
                             val psi = callee.psi
