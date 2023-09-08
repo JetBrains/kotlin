@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneTypeOrNull
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -42,7 +42,7 @@ abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker()
         val resolvedReference = expression.calleeReference?.resolved ?: return
         val referencedSymbol = resolvedReference.resolvedSymbol as? FirCallableSymbol ?: return
 
-        val containingClassId = (expression as? FirQualifiedAccessExpression)?.dispatchReceiver?.coneTypeOrNull?.classId
+        val containingClassId = (expression as? FirQualifiedAccessExpression)?.dispatchReceiver?.resolvedType?.classId
         if (containingClassId == null || containingClassId.packageFqName != StandardNames.KOTLIN_REFLECT_FQ_NAME) return
 
         if (!isAllowedReflectionApi(referencedSymbol.name, containingClassId, context)) {

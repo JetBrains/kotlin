@@ -46,9 +46,9 @@ object FirMissingDependencyClassChecker : FirFunctionCallChecker() {
             }
         }
 
-        expression.coneTypeOrNull?.let(::consider)
-        expression.extensionReceiver?.coneTypeOrNull?.let(::consider)
-        expression.argumentList.arguments.forEach { it.coneTypeOrNull?.let(::consider) }
+        consider(expression.resolvedType)
+        expression.extensionReceiver?.resolvedType?.let(::consider)
+        expression.argumentList.arguments.forEach { consider(it.resolvedType) }
     }
 
     private fun ConeKotlinType.forEachClassLikeType(action: (ConeClassLikeType) -> Unit) {

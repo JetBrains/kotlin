@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.renderForDebugging
+import org.jetbrains.kotlin.fir.types.*
 
 class ErrorNodeDiagnosticCollectorComponent(
     session: FirSession,
@@ -89,7 +86,7 @@ class ErrorNodeDiagnosticCollectorComponent(
     }
 
     private fun FirExpression?.cannotBeResolved(): Boolean {
-        return when (val diagnostic = (this?.coneTypeOrNull as? ConeErrorType)?.diagnostic) {
+        return when (val diagnostic = (this?.resolvedType as? ConeErrorType)?.diagnostic) {
             is ConeUnresolvedNameError, is ConeInstanceAccessBeforeSuperCall, is ConeAmbiguousSuper -> true
             is ConeSimpleDiagnostic -> diagnostic.kind == DiagnosticKind.NotASupertype ||
                     diagnostic.kind == DiagnosticKind.SuperNotAvailable ||

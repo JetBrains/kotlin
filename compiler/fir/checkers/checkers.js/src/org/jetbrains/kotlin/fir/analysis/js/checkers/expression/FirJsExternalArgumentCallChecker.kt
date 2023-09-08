@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
-import org.jetbrains.kotlin.fir.types.coneTypeOrNull
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExternalArgument
 
@@ -26,7 +26,7 @@ object FirJsExternalArgumentCallChecker : FirCallChecker() {
         for ((argument, parameter) in arguments) {
             if (parameter.hasAnnotation(JsExternalArgument, context.session)) {
                 val unwrappedArg = argument.unwrapArgument()
-                val type = unwrappedArg.coneTypeOrNull ?: continue
+                val type = unwrappedArg.resolvedType
                 val symbol = type.toRegularClassSymbol(context.session)
                 if (symbol?.isEffectivelyExternal(context.session) == false || type is ConeDynamicType) {
                     reporter.reportOn(

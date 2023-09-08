@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSingleCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
-import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.types.isUnit
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 
@@ -59,7 +59,7 @@ object FirAssignmentPluginFunctionCallChecker : FirFunctionCallChecker() {
         calleeReference.name == ASSIGN_METHOD && isAnnotated(session)
 
     private fun FirFunctionCall.isAnnotated(session: FirSession): Boolean =
-        session.annotationMatchingService.isAnnotated(explicitReceiver?.coneTypeOrNull?.toRegularClassSymbol(session))
+        session.annotationMatchingService.isAnnotated(explicitReceiver?.resolvedType?.toRegularClassSymbol(session))
 
     private fun FirFunctionCall.isReturnTypeUnit() = toResolvedCallableSymbol()?.resolvedReturnType?.isUnit ?: false
 }

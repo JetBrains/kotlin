@@ -36,7 +36,7 @@ object FirNamedVarargChecker : FirCallChecker() {
             else LanguageFeature.AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
         )
 
-        fun checkArgument(argument: FirExpression, isVararg: Boolean, expectedArrayType: ConeKotlinType?) {
+        fun checkArgument(argument: FirExpression, isVararg: Boolean, expectedArrayType: ConeKotlinType) {
             if (argument !is FirNamedArgumentExpression) return
             if (argument.isSpread) {
                 if (isVararg && (expression as? FirResolvable)?.calleeReference !is FirErrorNamedReference) {
@@ -44,11 +44,11 @@ object FirNamedVarargChecker : FirCallChecker() {
                 }
                 return
             }
-            val type = argument.expression.coneTypeOrNull
+            val type = argument.expression.resolvedType
             if (type is ConeErrorType) return
             if (argument.expression is FirArrayLiteral) return
 
-            if (allowAssignArray && type?.isArrayType == true) return
+            if (allowAssignArray && type.isArrayType) return
 
             if (isAnnotation) {
                 reporter.reportOn(
@@ -57,7 +57,6 @@ object FirNamedVarargChecker : FirCallChecker() {
                     context
                 )
             } else {
-                require(expectedArrayType != null) { "expectedArrayType must be passed for function call" }
                 reporter.reportOn(
                     argument.expression.source,
                     FirErrors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION,
@@ -69,7 +68,7 @@ object FirNamedVarargChecker : FirCallChecker() {
 
         if (expression is FirArrayLiteral) {
             // FirArrayLiteral has the `vararg` argument expression pre-flattened and doesn't have an argument mapping.
-            expression.arguments.forEach { checkArgument(it, it is FirNamedArgumentExpression, expression.coneTypeOrNull) }
+            expression.arguments.forEach { checkArgument(it, it is FirNamedArgumentExpression, expression.resolvedType) }
         } else {
             val argumentMap = expression.resolvedArgumentMapping ?: return
             for ((argument, parameter) in argumentMap) {

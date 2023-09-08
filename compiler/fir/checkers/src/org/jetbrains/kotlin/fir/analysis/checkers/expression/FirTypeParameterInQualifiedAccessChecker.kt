@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterInQualifiedAccess
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -36,7 +37,7 @@ object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessExpressionCh
         val secondLast = context.callsOrAssignments.elementAtOrNull(context.callsOrAssignments.size - 2)
         if (secondLast is FirQualifiedAccessExpression && secondLast.explicitReceiver == expression) return
 
-        val diagnostic = expression.coneTypeOrNull?.coneTypeParameterInQualifiedAccess ?: return
+        val diagnostic = expression.resolvedType.coneTypeParameterInQualifiedAccess ?: return
         val source = expression.calleeReference.source ?: return
         reporter.reportOn(source, FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, diagnostic.symbol, context)
     }
@@ -49,7 +50,7 @@ object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessExpressionCh
         val explicitReceiver = expression.explicitReceiver
         val typeParameterSymbol =
             (explicitReceiver as? FirResolvedReifiedParameterReference)?.symbol
-                ?: explicitReceiver?.coneTypeOrNull?.coneTypeParameterInQualifiedAccess?.symbol
+                ?: explicitReceiver?.resolvedType?.coneTypeParameterInQualifiedAccess?.symbol
                 ?: return
         if (expression is FirCallableReferenceAccess) {
             reporter.reportOn(expression.source, FirErrors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS, context)

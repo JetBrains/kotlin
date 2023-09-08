@@ -237,7 +237,7 @@ private fun FirFunctionCall.isCompileTimeBuiltinCall(): Boolean {
     val symbol = calleeReference.resolvedSymbol as? FirCallableSymbol
     if (!symbol.fromKotlin()) return false
 
-    val coneType = this.dispatchReceiver?.coneTypeSafe<ConeKotlinType>()
+    val coneType = this.dispatchReceiver?.resolvedType
     val receiverClassId = coneType?.lowerBoundIfFlexible()?.classId
 
     if (receiverClassId in StandardClassIds.unsignedTypes) return false
