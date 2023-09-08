@@ -13,7 +13,7 @@ FILE: errorOnStubReceiver.fir.kt
     public final fun main(): R|kotlin/Unit| {
         R|kotlin/collections/buildList|<R|Bar|>(<L> = buildList@fun R|kotlin/collections/MutableList<Bar>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|/Bar.Bar|())
-            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|Stub (chain inference): TypeVariable(E)|>|(Int(0)).R|/test|()
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|Bar|>|(Int(0)).R|/test|()
         }
         )
         R|kotlin/collections/buildList|<R|Bar|>(<L> = buildList@fun R|kotlin/collections/MutableList<Bar>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {

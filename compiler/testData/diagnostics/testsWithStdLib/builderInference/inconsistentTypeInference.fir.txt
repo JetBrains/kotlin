@@ -2,7 +2,7 @@ FILE: inconsistentTypeInference.fir.kt
     public final fun foo(): R|kotlin/Unit| {
         R|kotlin/collections/buildList|<R|kotlin/String|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String(Boom))
-            R|kotlin/io/println|(this@R|special/anonymous|.R|kotlin/collections/plus|<R|kotlin/Int|>(Int(1)).R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/Int|>|(Int(0)))
+            R|kotlin/io/println|(this@R|special/anonymous|.R|kotlin/collections/plus|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(Int(1)).R|SubstitutionOverride<kotlin/collections/List.get: R|it(kotlin/Comparable<*> & java/io/Serializable)|>|(Int(0)))
         }
         )
     }
