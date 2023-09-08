@@ -13,6 +13,7 @@ method pkg$$global$returns_boolean() returns (ret: Bool)
 method pkg$$global$dynamic_lambda_invariant(local$f: Ref)
   returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
+  requires special$duplicable(local$f)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
     local$f.special$function_object_call_counter
@@ -45,6 +46,7 @@ method pkg$$global$returns_boolean() returns (ret: Bool)
 method pkg$$global$function_assignment(local$f: Ref)
   returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
+  requires special$duplicable(local$f)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
     local$f.special$function_object_call_counter
@@ -81,6 +83,8 @@ method pkg$$global$conditional_function_assignment(local$b: Bool, local$f: Ref,
   returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
   requires acc(local$h.special$function_object_call_counter, write)
+  requires special$duplicable(local$f)
+  requires special$duplicable(local$h)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$h.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=

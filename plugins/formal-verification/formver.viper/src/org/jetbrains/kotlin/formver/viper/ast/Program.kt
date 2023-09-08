@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.formver.viper.toViper
 data class Program(
     val domains: List<Domain>,
     val fields: List<Field>,
-    /* no functions */
+    val functions: List<Function>,
     /* no predicates */
     val methods: List<Method>,
     /* no extensions */
@@ -24,7 +24,7 @@ data class Program(
     override fun toViper(): viper.silver.ast.Program = viper.silver.ast.Program(
         domains.toViper().toScalaSeq(),
         fields.toViper().toScalaSeq(),
-        emptySeq(), /* functions */
+        functions.toViper().toScalaSeq(),
         emptySeq(), /* predicates */
         methods.toViper().toScalaSeq(),
         emptySeq(), /* extensions */
@@ -36,6 +36,7 @@ data class Program(
     fun toShort(): Program = Program(
         domains.filter { it.includeInShortDump },
         fields.filter { it.includeInShortDump },
+        functions.filter { it.includeInShortDump },
         methods.filter { it.includeInShortDump },
         pos,
         info,

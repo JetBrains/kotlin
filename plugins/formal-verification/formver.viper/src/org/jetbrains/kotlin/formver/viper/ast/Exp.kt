@@ -351,6 +351,24 @@ sealed interface Exp : IntoViper<viper.silver.ast.Exp> {
         override fun toViper(): viper.silver.ast.Result = Result(type.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
+    data class FuncApp(
+        val functionName: MangledName,
+        val args: List<Exp>,
+        override val type: Type,
+        val pos: Position = Position.NoPosition,
+        val info: Info = Info.NoInfo,
+        val trafos: Trafos = Trafos.NoTrafos,
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.FuncApp = FuncApp(
+            functionName.mangled,
+            args.toViper().toScalaSeq(),
+            pos.toViper(),
+            info.toViper(),
+            type.toViper(),
+            trafos.toViper()
+        )
+    }
+
     /**
      * IMPORTANT: typeVarMap needs to be set even when the type variables are
      * not instantiated. In that case map the generic type variables to themselves.

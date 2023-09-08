@@ -1,6 +1,7 @@
 /function_object.kt:(4,17): info: Generated Viper text for unit_function:
 method pkg$$global$unit_function(local$f: Ref) returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
+  requires special$duplicable(local$f)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
     local$f.special$function_object_call_counter
@@ -12,6 +13,7 @@ method pkg$$global$unit_function(local$f: Ref) returns (ret: dom$Unit)
 /function_object.kt:(72,92): info: Generated Viper text for function_object_call:
 method pkg$$global$function_object_call(local$g: Ref) returns (ret: Int)
   requires acc(local$g.special$function_object_call_counter, write)
+  requires special$duplicable(local$g)
   ensures acc(local$g.special$function_object_call_counter, write)
   ensures old(local$g.special$function_object_call_counter) <=
     local$g.special$function_object_call_counter
@@ -29,6 +31,8 @@ method pkg$$global$function_object_nested_call(local$f: Ref, local$g: Ref)
   returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   requires acc(local$g.special$function_object_call_counter, write)
+  requires special$duplicable(local$f)
+  requires special$duplicable(local$g)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$g.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=

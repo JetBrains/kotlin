@@ -190,10 +190,10 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext<ResultTrackingContext>): Exp {
         val symbol = functionCall.calleeCallableSymbol
         val id = symbol.callableId
-        val specialFunc = SpecialFunctions.byCallableId[id]
+        val specialFunc = SpecialKotlinFunctions.byCallableId[id]
         val argsFir = getFunctionCallArguments(functionCall)
         if (specialFunc != null) {
-            if (specialFunc !is SpecialFunctionImplementation) return UnitDomain.element
+            if (specialFunc !is SpecialKotlinFunctionImplementation) return UnitDomain.element
             return specialFunc.convertCall(argsFir.map(data::convert), data)
         }
 

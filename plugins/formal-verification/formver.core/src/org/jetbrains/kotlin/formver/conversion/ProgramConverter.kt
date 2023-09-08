@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.contracts.description.KtCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
@@ -19,10 +20,7 @@ import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.viper.MangledName
-import org.jetbrains.kotlin.formver.viper.ast.Field
-import org.jetbrains.kotlin.formver.viper.ast.Label
-import org.jetbrains.kotlin.formver.viper.ast.Program
-import org.jetbrains.kotlin.formver.viper.ast.Stmt
+import org.jetbrains.kotlin.formver.viper.ast.*
 
 /**
  * Tracks the top-level information about the program.
@@ -39,6 +37,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         get() = Program(
             domains = listOf(UnitDomain, NullableDomain, CastingDomain, TypeOfDomain, TypeDomain(classes.values.toList()), AnyDomain),
             fields = SpecialFields.all + fields,
+            functions = SpecialFunctions.all,
             methods = SpecialMethods.all + methods.values.filter { it.shouldIncludeInProgram }.map { it.viperMethod }.toList(),
         )
 
@@ -112,6 +111,20 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         // and then later decide to add a body anyway.  It's not a problem for now, but
         // worth being aware of.
         return methods.getOrPut(signature.name) {
+            val contractVisitor = ContractDescriptionConversionVisitor(this@ProgramConverter, signature)
+            val parameterIndices = (signature.params.indices.toSet() + setOfNotNull(signature.receiver?.let { -1 })).toMutableSet()
+            val nonDuplicableIndices = symbol.resolvedContractDescription?.effects?.mapNotNull { decl ->
+                (decl.effect as? KtCallsEffectDeclaration<*, *>)?.valueParameterReference?.parameterIndex
+            }?.toSet() ?: emptySet()
+
+            val duplicableParameters =
+                (parameterIndices - nonDuplicableIndices).map { contractVisitor.embeddedVarByIndex(it) }.filter { it.type is FunctionTypeEmbedding }
+                    .map { DuplicableFunction.toFuncApp(listOf(it.toLocalVar())) }
+            val contractPostconditions =
+                symbol.resolvedContractDescription?.effects?.map {
+                    it.effect.accept(contractVisitor, Unit)
+                } ?: emptyList()
+
             val methodCtx = object : MethodConversionContext, ProgramConversionContext by this {
                 override val signature: MethodSignatureEmbedding = signature
 
@@ -121,11 +134,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                 override val returnVar: VariableEmbedding = VariableEmbedding(ReturnVariableName, signature.returnType)
 
                 override val preconditions =
-                    signature.formalArgs.flatMap { it.invariants() } + signature.formalArgs.flatMap { it.accessInvariants() }
-
-                private val contractPostconditions = symbol.resolvedContractDescription?.effects?.map {
-                    it.effect.accept(ContractDescriptionConversionVisitor, this)
-                } ?: emptyList()
+                    signature.formalArgs.flatMap { it.invariants() } + signature.formalArgs.flatMap { it.accessInvariants() } + duplicableParameters
 
                 override val postconditions = signature.formalArgs.flatMap { it.accessInvariants() } +
                         signature.params.flatMap { it.dynamicInvariants() } +

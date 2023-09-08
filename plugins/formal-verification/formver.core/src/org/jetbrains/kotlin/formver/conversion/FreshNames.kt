@@ -32,7 +32,7 @@ data object ThisReceiverName : MangledName {
         get() = "this"
 }
 
-data class SpecialFieldName(val name: String) : MangledName {
+data class SpecialName(val name: String) : MangledName {
     override val mangled: String
         get() = "special\$$name"
 }

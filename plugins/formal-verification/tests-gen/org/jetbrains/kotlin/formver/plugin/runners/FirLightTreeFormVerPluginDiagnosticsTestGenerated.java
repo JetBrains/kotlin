@@ -40,6 +40,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("calls_in_place_leak.kt")
+        public void testCalls_in_place_leak() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/calls_in_place_leak.kt");
+        }
+
+        @Test
         @TestMetadata("is_type_contract.kt")
         public void testIs_type_contract() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/is_type_contract.kt");

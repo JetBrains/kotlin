@@ -235,6 +235,9 @@ domain dom$Any  {
 
 field special$function_object_call_counter: Int
 
+function special$duplicable(anonymous$0: Ref): Bool
+
+
 method special$invoke_function_object(anonymous$0: Ref)
   requires acc(anonymous$0.special$function_object_call_counter, write)
   ensures acc(anonymous$0.special$function_object_call_counter, write)

@@ -1,0 +1,41 @@
+/calls_in_place_leak.kt:(84,90): info: Generated Viper text for escape:
+method pkg$$global$escape(local$f: Ref) returns (ret: dom$Unit)
+  requires acc(local$f.special$function_object_call_counter, write)
+  requires special$duplicable(local$f)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+{
+  var anonymous$1: dom$Unit
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
+  special$invoke_function_object(local$f)
+  label label$ret
+}
+
+/calls_in_place_leak.kt:(294,316): info: Generated Viper text for invalid_calls_in_place:
+method pkg$$global$escape(local$f: Ref) returns (ret: dom$Unit)
+  requires acc(local$f.special$function_object_call_counter, write)
+  requires special$duplicable(local$f)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+
+
+method pkg$$global$invalid_calls_in_place(local$f: Ref)
+  returns (ret: dom$Unit)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures true
+{
+  var anonymous$1: dom$Unit
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
+  anonymous$1 := pkg$$global$escape(local$f)
+  label label$ret
+}
+
+/calls_in_place_leak.kt:(294,316): warning: Viper verification error: The precondition of method pkg$$global$escape might not hold. Assertion special$duplicable(local$f) might not hold. (<no position>)
+
+
+/calls_in_place_leak.kt:(294,316): warning: Function invalid_calls_in_place may not satisfy its contract.

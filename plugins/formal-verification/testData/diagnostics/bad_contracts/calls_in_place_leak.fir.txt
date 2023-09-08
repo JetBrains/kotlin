@@ -1,0 +1,19 @@
+FILE: calls_in_place_leak.kt
+    public final fun escape(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    @R|kotlin/Suppress|(names = vararg(String(LEAKED_IN_PLACE_LAMBDA))) @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun invalid_calls_in_place(f: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(f, UNKNOWN)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/f|)
+            }
+            )
+        }
+
+        R|/escape|(R|<local>/f|)
+    }

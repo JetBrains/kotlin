@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.formver.embeddings.FunctionTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
-import org.jetbrains.kotlin.formver.viper.ast.*
+import org.jetbrains.kotlin.formver.viper.ast.BuiltInMethod
+import org.jetbrains.kotlin.formver.viper.ast.Declaration
+import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Exp.*
 
-object InvokeFunctionObjectMethod : BuiltInMethod(SpecialFieldName("invoke_function_object")) {
+object InvokeFunctionObjectMethod : BuiltInMethod(SpecialName("invoke_function_object")) {
     private val thisArg = VariableEmbedding(AnonymousName(0), FunctionTypeEmbedding)
     private val calls = EqCmp(
         Add(Old(thisArg.toFieldAccess(SpecialFields.FunctionObjectCallCounterField)), IntLit(1)),

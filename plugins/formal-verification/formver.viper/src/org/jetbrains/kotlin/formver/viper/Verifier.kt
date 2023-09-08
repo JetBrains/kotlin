@@ -61,7 +61,7 @@ class Verifier {
         val viperProgram = program.toViper()
         var success = true
 
-        val results = verifier.verify(viperProgram, emptySeq<SilverCfg>(), Option.None<String>().toScala())
+        val results = verifier.verify(viperProgram, emptySeq<SilverCfg>(), null.toScalaOption<String?>())
 
         for (result in results) {
             if (result.isFatal) {

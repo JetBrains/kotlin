@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.formver.viper.ast
 
-import org.jetbrains.kotlin.formver.viper.IntoViper
-import org.jetbrains.kotlin.formver.viper.MangledName
-import org.jetbrains.kotlin.formver.viper.toScalaOption
-import org.jetbrains.kotlin.formver.viper.toScalaSeq
+import org.jetbrains.kotlin.formver.viper.*
 
 abstract class Method(
     val name: MangledName,
@@ -28,8 +25,8 @@ abstract class Method(
             name.mangled,
             formalArgs.map { it.toViper() }.toScalaSeq(),
             formalReturns.map { it.toViper() }.toScalaSeq(),
-            pres.map { it.toViper() }.toScalaSeq(),
-            posts.map { it.toViper() }.toScalaSeq(),
+            pres.toViper().toScalaSeq(),
+            posts.toViper().toScalaSeq(),
             body.toScalaOption().map { it.toViper() },
             pos.toViper(),
             info.toViper(),

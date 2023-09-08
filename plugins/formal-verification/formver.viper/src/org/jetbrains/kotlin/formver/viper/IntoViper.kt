@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.formver.viper
 
+import scala.Option
+
 interface IntoViper<out T> {
     fun toViper(): T
 }
+
+fun <T, V> Option<T>.toViper(): Option<V> where T : IntoViper<V> = map { it.toViper() }
 
 fun <T, V> List<T>.toViper(): List<V> where T : IntoViper<V> =
     map { it.toViper() }

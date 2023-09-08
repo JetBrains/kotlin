@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.formver.viper.ast.BuiltinField
 import org.jetbrains.kotlin.formver.viper.ast.Type
 
 object SpecialFields {
-    val FunctionObjectCallCounterField = BuiltinField(SpecialFieldName("function_object_call_counter"), Type.Int)
+    val FunctionObjectCallCounterField = BuiltinField(SpecialName("function_object_call_counter"), Type.Int)
     val all = listOf(
         FunctionObjectCallCounterField
     )

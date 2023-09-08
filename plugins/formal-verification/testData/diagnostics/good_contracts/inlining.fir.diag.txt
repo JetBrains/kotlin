@@ -1,6 +1,7 @@
 /inlining.kt:(132,138): info: Generated Viper text for invoke:
 method pkg$$global$invoke(local$f: Ref) returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
+  requires special$duplicable(local$f)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
     local$f.special$function_object_call_counter
@@ -21,6 +22,7 @@ method pkg$$global$invoke(local$f: Ref) returns (ret: Int)
 method pkg$$global$invoke_with_int(local$f: Ref, local$n: Int)
   returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
+  requires special$duplicable(local$f)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
     local$f.special$function_object_call_counter

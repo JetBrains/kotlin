@@ -14,7 +14,7 @@ FILE: calls_in_place.kt
 
         ^unknown R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(Int(1))
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun incorrect_at_most_once(f: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/Suppress|(names = vararg(String(WRONG_INVOCATION_KIND))) @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun incorrect_at_most_once(f: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/Int|
         [R|Contract description]
          <
             CallsInPlace(f, AT_MOST_ONCE)
@@ -29,7 +29,7 @@ FILE: calls_in_place.kt
 
         ^incorrect_at_most_once R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(R|/unknown|(R|<local>/f|))
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun incorrect_exactly_once(f: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/Suppress|(names = vararg(String(WRONG_INVOCATION_KIND))) @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun incorrect_exactly_once(f: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/Int|
         [R|Contract description]
          <
             CallsInPlace(f, EXACTLY_ONCE)
@@ -44,7 +44,7 @@ FILE: calls_in_place.kt
 
         ^incorrect_exactly_once R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(Int(1)))
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun incorrect_at_least_once(f: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/Suppress|(names = vararg(String(WRONG_INVOCATION_KIND))) @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun incorrect_at_least_once(f: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/Int|
         [R|Contract description]
          <
             CallsInPlace(f, AT_LEAST_ONCE)
