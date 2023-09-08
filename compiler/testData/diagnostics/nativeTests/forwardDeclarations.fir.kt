@@ -100,4 +100,4 @@ fun testUnCheckedAs1(x : lib2.FwdStruct) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATI
 fun testUnCheckedAs2(x : lib2.FwdObjcClass) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x as objcnames.classes.FwdObjcClass<!>
 fun testUnCheckedAs3(x : lib2.FwdProtocol) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x as objcnames.protocols.FwdProtocol<!>
 
-fun testUnCheckedAs4(x : lib.FwdStruct) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x <!CAST_NEVER_SUCCEEDS!>as<!> objcnames.classes.FwdObjcClass<!>
+fun testUnCheckedAs4(x : lib.FwdStruct) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x as objcnames.classes.FwdObjcClass<!>

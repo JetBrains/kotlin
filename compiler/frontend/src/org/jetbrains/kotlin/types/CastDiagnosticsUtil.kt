@@ -25,8 +25,11 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
@@ -59,10 +62,37 @@ object CastDiagnosticsUtil {
         // This is an oversimplification (which does not render the method incomplete):
         // we consider any type parameter capable of taking any value, which may be made more precise if we considered bounds
         if (TypeUtils.isTypeParameter(lhsType) || TypeUtils.isTypeParameter(rhsType)) return true
+        if (isCastToAForwardDeclaration(lhsType, rhsType)) return true
 
         if (isFinal(lhsType) || isFinal(rhsType)) return false
         if (isTrait(lhsType) || isTrait(rhsType)) return true
         return false
+    }
+
+    private val forwardDeclarationPackages: Set<FqName> = listOf(
+        "objcnames.protocols",
+        "objcnames.classes",
+        "cnames.structs",
+    ).map(::FqName).toSet()
+
+    /**
+     * forwardDeclarationPackages are special packages where the forward declaration stubs are placed. Casting to these types from a real
+     * type might be possible. Here, we check only that a type has a supertype with a name that could result in a valid cast. The cast is
+     * further checked in NativeForwardDeclarationRttiChecker.
+     */
+    private fun isCastToAForwardDeclaration(realType: KotlinType, forwardDeclarationType: KotlinType): Boolean {
+        val isACastToAForwardDeclarationType =
+            forwardDeclarationType.constructor.declarationDescriptor.classId?.packageFqName in forwardDeclarationPackages
+        if (!isACastToAForwardDeclarationType) return false
+
+        val forwardDeclarationClassName =
+            forwardDeclarationType.constructor.declarationDescriptor.classId?.relativeClassName ?: return false
+        val isAnySuperClassifierNamedAsTheForwardDeclaration = realType.constructor.declarationDescriptor
+            ?.getAllSuperClassifiers()?.any { superClassifier ->
+                superClassifier.classId?.relativeClassName == forwardDeclarationClassName
+            } ?: false
+
+        return isAnySuperClassifierNamedAsTheForwardDeclaration
     }
 
     /**
