@@ -18180,6 +18180,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("nestedClassesWithSelfTypes.kt")
+                public void testNestedClassesWithSelfTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/nestedClassesWithSelfTypes.kt");
+                }
+
+                @Test
                 @TestMetadata("recursiveInIn.kt")
                 public void testRecursiveInIn() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/recursiveInIn.kt");
