@@ -23668,6 +23668,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("companionMethodViaActualTypealias.kt")
+                public void testCompanionMethodViaActualTypealias() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/companionMethodViaActualTypealias.kt");
+                }
+
+                @Test
                 @TestMetadata("constructor.kt")
                 public void testConstructor() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/constructor.kt");
@@ -23713,6 +23719,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("methodDefaultArgsViaActualTypealias_oldLanguageVersion.kt")
                 public void testMethodDefaultArgsViaActualTypealias_oldLanguageVersion() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualTypealias_oldLanguageVersion.kt");
+                }
+
+                @Test
+                @TestMetadata("nestedClassMethodsViaActualTypealias.kt")
+                public void testNestedClassMethodsViaActualTypealias() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/nestedClassMethodsViaActualTypealias.kt");
                 }
             }
 

@@ -26,13 +26,11 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
+import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatchChecker
@@ -239,16 +237,9 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         reporter: DiagnosticReporter,
     ) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
-        if (expectSymbol !is FirClassSymbol ||
-            actualSymbol !is FirTypeAliasSymbol ||
-            expectSymbol.classKind == ClassKind.ANNOTATION_CLASS
-        ) return
+        if (expectSymbol !is FirClassSymbol || actualSymbol !is FirTypeAliasSymbol) return
 
-        val membersWithDefaultValueParameters =
-            expectSymbol.declaredMemberScope(expectSymbol.moduleData.session, memberRequiredPhase = null)
-                .run { collectAllFunctions() + getDeclaredConstructors() }
-                .filter { it.valueParameterSymbols.any(FirValueParameterSymbol::hasDefaultValue) }
-
+        val membersWithDefaultValueParameters = getMembersWithDefaultValueParametersUnlessAnnotation(expectSymbol)
         if (membersWithDefaultValueParameters.isEmpty()) return
 
         reporter.reportOn(
@@ -258,6 +249,31 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
             membersWithDefaultValueParameters,
             context
         )
+    }
+
+    private fun getMembersWithDefaultValueParametersUnlessAnnotation(classSymbol: FirClassSymbol<*>): List<FirFunctionSymbol<*>> {
+        val result = mutableListOf<FirFunctionSymbol<*>>()
+
+        fun collectFunctions(classSymbol: FirClassSymbol<*>) {
+            if (classSymbol.classKind == ClassKind.ANNOTATION_CLASS) {
+                return
+            }
+            val memberScope = classSymbol.declaredMemberScope(classSymbol.moduleData.session, memberRequiredPhase = null)
+            val functionsAndConstructors = memberScope
+                .run { collectAllFunctions() + getDeclaredConstructors() }
+
+            functionsAndConstructors.filterTo(result) { it.valueParameterSymbols.any(FirValueParameterSymbol::hasDefaultValue) }
+
+            val nestedClasses = memberScope.getClassifierNames()
+                .mapNotNull { memberScope.getSingleClassifier(it) as? FirClassSymbol<*> }
+
+            for (nestedClassSymbol in nestedClasses) {
+                collectFunctions(nestedClassSymbol)
+            }
+        }
+
+        collectFunctions(classSymbol)
+        return result
     }
 
     private fun checkAnnotationsMatch(
