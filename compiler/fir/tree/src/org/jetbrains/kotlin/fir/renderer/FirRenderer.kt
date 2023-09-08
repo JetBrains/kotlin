@@ -1198,10 +1198,12 @@ class FirRenderer(
         }
 
         override fun visitResolvedReifiedParameterReference(resolvedReifiedParameterReference: FirResolvedReifiedParameterReference) {
+            @OptIn(UnresolvedExpressionTypeAccess::class)
             renderType(resolvedReifiedParameterReference.coneTypeOrNull)
         }
 
         override fun visitInaccessibleReceiverExpression(inaccessibleReceiverExpression: FirInaccessibleReceiverExpression) {
+            @OptIn(UnresolvedExpressionTypeAccess::class)
             renderType(inaccessibleReceiverExpression.coneTypeOrNull)
             visitElement(inaccessibleReceiverExpression)
         }

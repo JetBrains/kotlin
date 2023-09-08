@@ -82,6 +82,7 @@ fun generateExplicitReceiverTemporaryVariable(
         }
         ?.let { receiver ->
             // val <receiver> = x
+            @OptIn(UnresolvedExpressionTypeAccess::class)
             generateTemporaryVariable(
                 moduleData = session.moduleData,
                 source = source,
