@@ -28,7 +28,7 @@ inline val FirMemberDeclaration.effectiveVisibility: EffectiveVisibility
     get() = (status as? FirResolvedDeclarationStatus)?.effectiveVisibility ?: EffectiveVisibility.Local
 
 inline val FirMemberDeclaration.allowsToHaveFakeOverride: Boolean
-    get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake
+    get() = visibility.allowsToHaveFakeOverride
 
 inline val FirMemberDeclaration.isOverridable: Boolean
     get() = status.modality != Modality.FINAL && status.visibility != Visibilities.Private
@@ -70,9 +70,6 @@ inline val FirRegularClass.isData: Boolean get() = status.isData
 inline val FirFunction.hasBody: Boolean get() = body != null
 
 inline val FirPropertyAccessor.hasBody: Boolean get() = body != null
-inline val FirPropertyAccessor.allowsToHaveFakeOverride: Boolean get() = visibility.allowsToHaveFakeOverride
-
-inline val FirProperty.allowsToHaveFakeOverride: Boolean get() = visibility.allowsToHaveFakeOverride
 
 inline val Visibility.allowsToHaveFakeOverride: Boolean
     get() = !Visibilities.isPrivate(this) && this != Visibilities.InvisibleFake
