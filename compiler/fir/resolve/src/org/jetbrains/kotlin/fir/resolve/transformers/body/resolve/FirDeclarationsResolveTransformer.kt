@@ -618,7 +618,7 @@ open class FirDeclarationsResolveTransformer(
 
     fun withScript(script: FirScript, action: () -> FirScript): FirScript {
         dataFlowAnalyzer.enterScript(script)
-        val result = context.withScopesForScript(script, components) {
+        val result = context.withScript(script, components) {
             action()
         }
         dataFlowAnalyzer.exitScript() // TODO: FirScript should be a FirControlFlowGraphOwner, KT-59683

@@ -50,7 +50,7 @@ internal abstract class LLFirAbstractBodyTargetResolver(
     }
 
     override fun withScript(firScript: FirScript, action: () -> Unit) {
-        transformer.context.withScopesForScript(firScript, transformer.components, action)
+        transformer.context.withScript(firScript, transformer.components, action)
     }
 
     override fun withFile(firFile: FirFile, action: () -> Unit) {
