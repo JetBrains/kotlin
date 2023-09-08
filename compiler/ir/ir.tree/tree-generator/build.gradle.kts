@@ -11,7 +11,6 @@ runtimeOnly.extendsFrom(compileOnly)
 dependencies {
     implementation(project(":generators"))
     implementation(project(":generators:tree-generator-common"))
-    implementation(project(":core:compiler.common"))
     implementation(project(":compiler:util"))
     implementation("com.squareup:kotlinpoet:1.11.0")
 

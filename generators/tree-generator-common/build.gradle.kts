@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core:compiler.common"))
+    api(project(":core:compiler.common"))
 }
 
 sourceSets {

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.generator.print
 
 import com.squareup.kotlinpoet.*
-import org.jetbrains.kotlin.generators.tree.TypeKind
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.ir.generator.config.ElementConfigOrRef
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Element.Companion.elementName2typeName

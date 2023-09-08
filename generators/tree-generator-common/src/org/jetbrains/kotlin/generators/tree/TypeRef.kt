@@ -1,12 +1,10 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.generator.util
+package org.jetbrains.kotlin.generators.tree
 
-import com.squareup.kotlinpoet.asClassName
-import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
 import kotlin.reflect.KClass
@@ -110,9 +108,13 @@ class TypeVariable(
 ) : NamedTypeParameterRef(name)
 
 fun <P : TypeParameterRef> KClass<*>.asRef(): ClassRef<P> {
-    val poet = this.asClassName()
-    val kind = if (this.java.isInterface) TypeKind.Interface else TypeKind.Class
-    return ClassRef(kind, poet.packageName, *poet.simpleNames.toTypedArray())
+    val qualifiedName = this.qualifiedName ?: error("$this doesn't have qualified name and thus cannot be converted to ClassRef")
+    val kind = if (java.isInterface) TypeKind.Interface else TypeKind.Class
+    val parts = qualifiedName.split('.')
+    val indexWhereClassNameStarts = parts.indexOfFirst { it.first().isUpperCase() }
+    val packageName = parts.take(indexWhereClassNameStarts).joinToString(separator = ".")
+    val simpleNames = parts.drop(indexWhereClassNameStarts)
+    return ClassRef(kind, packageName, *simpleNames.toTypedArray())
 }
 
 inline fun <reified T : Any> type() = T::class.asRef<PositionTypeParameterRef>()

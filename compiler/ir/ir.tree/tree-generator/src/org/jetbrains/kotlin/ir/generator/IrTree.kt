@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
-import org.jetbrains.kotlin.generators.tree.TypeKind
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.ir.generator.config.AbstractTreeBuilder
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig.Category.*

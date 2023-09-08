@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.generator.config
 
-import org.jetbrains.kotlin.ir.generator.util.TypeRef
-import org.jetbrains.kotlin.ir.generator.util.TypeVariable
-import org.jetbrains.kotlin.ir.generator.util.type
+import org.jetbrains.kotlin.generators.tree.TypeRef
+import org.jetbrains.kotlin.generators.tree.TypeVariable
+import org.jetbrains.kotlin.generators.tree.type
 import org.jetbrains.kotlin.types.Variance
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
