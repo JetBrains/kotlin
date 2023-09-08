@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.model.safeSubstitute
 
 data class ReturnArgumentsAnalysisResult(
     val returnArguments: Collection<FirExpression>,
-    val inferenceSession: FirInferenceSession?
+    val inferenceSession: FirInferenceSession?,
 )
 
 interface LambdaAnalyzer {
@@ -45,13 +45,13 @@ class PostponedArgumentsAnalyzer(
     private val resolutionContext: ResolutionContext,
     private val lambdaAnalyzer: LambdaAnalyzer,
     private val components: InferenceComponents,
-    private val callResolver: FirCallResolver
+    private val callResolver: FirCallResolver,
 ) {
 
     fun analyze(
         c: PostponedArgumentsAnalyzerContext,
         argument: PostponedResolvedAtom,
-        candidate: Candidate
+        candidate: Candidate,
     ) {
         when (argument) {
             is ResolvedLambdaAtom ->
@@ -132,7 +132,11 @@ class PostponedArgumentsAnalyzer(
         val notFixedTypeVariablesInInputTypes =
             lambda.inputTypes
                 .flatMap {
-                    with(c) { it.extractTypeVariables(includeTypeItself = true) }
+                    with(c) {
+                        it.extractTypeVariables(
+                            includeTypeItself = resolutionContext.bodyResolveContext.inferenceSession is FirBuilderInferenceSession2
+                        )
+                    }
                 }.filterTo(mutableSetOf()) { it in c.notFixedTypeVariables }
 
         val results = lambdaAnalyzer.analyzeAndGetLambdaReturnArguments(
@@ -160,7 +164,7 @@ class PostponedArgumentsAnalyzer(
         lambda: ResolvedLambdaAtom,
         candidate: Candidate,
         results: ReturnArgumentsAnalysisResult,
-        substitute: (ConeKotlinType) -> ConeKotlinType = c.createSubstituteFunctorForLambdaAnalysis()
+        substitute: (ConeKotlinType) -> ConeKotlinType = c.createSubstituteFunctorForLambdaAnalysis(),
     ) {
         val (returnArguments, _) = results
 
@@ -228,7 +232,7 @@ fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
     csBuilder: ConstraintSystemBuilder,
     context: ResolutionContext,
     expectedType: ConeKotlinType? = null,
-    returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
+    returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null,
 ): ResolvedLambdaAtom {
     val fixedExpectedType = (csBuilder.buildCurrentSubstitutor() as ConeSubstitutor)
         .substituteOrSelf(expectedType ?: this.expectedType)
