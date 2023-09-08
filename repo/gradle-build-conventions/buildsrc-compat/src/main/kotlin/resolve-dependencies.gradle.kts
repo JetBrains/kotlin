@@ -1,8 +1,32 @@
-import java.net.URI
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 import org.spdx.sbom.gradle.SpdxSbomExtension
+import java.net.URI
 
+
+allprojects {
+    configurations.all {
+        if (name == "cli_bcApiDependenciesMetadata") {
+            incoming.beforeResolve {
+                print("$name is going to be resolved!")
+                try {
+                    resolve()
+                } catch (e: Throwable) {
+                    println("!!!ERROR!!!: $e")
+                    var subCause: Throwable? = e.cause
+                    while (subCause != null) {
+                        println("Caused by $subCause")
+                        subCause = subCause.cause
+                    }
+                }
+            }
+
+            incoming.afterResolve {
+                println("Yay! $name was successfully resolved!")
+            }
+        }
+    }
+}
 
 /*
  * When called with `--write-verification-metadata` resolves all build dependencies including implicit dependecies for all platforms and
