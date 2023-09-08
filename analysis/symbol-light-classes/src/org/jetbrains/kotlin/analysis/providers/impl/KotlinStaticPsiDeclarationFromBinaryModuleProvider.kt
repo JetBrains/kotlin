@@ -11,7 +11,9 @@ import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsClassImpl
 import com.intellij.psi.impl.compiled.ClsFileImpl
+import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProvider
@@ -24,6 +26,8 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
 private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
     private val project: Project,
@@ -34,17 +38,23 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
 ) : KotlinPsiDeclarationProvider(), AbstractDeclarationFromBinaryModuleProvider {
     private val psiManager by lazyPub { PsiManager.getInstance(project) }
 
-    private fun clsClassImplsByFqName(
+    private val javaFileManager by lazyPub { project.getService(JavaFileManager::class.java) }
+
+    private val virtualFileCache = ContainerUtil.createConcurrentSoftMap<KtBinaryModule, ConcurrentMap<FqName, Set<VirtualFile>>>()
+
+    private fun clsClassImplsInPackage(
         fqName: FqName,
-        isPackageName: Boolean = true,
     ): Collection<ClsClassImpl> {
         return binaryModules
-            .flatMap {
-                val virtualFilesFromKotlinModule = if (isPackageName) virtualFilesFromKotlinModule(it, fqName) else emptySet()
-                // NB: this assumes Kotlin module has a valid `kotlin_module` info,
-                // i.e., package part info for the given `fqName` points to exact class paths we're looking for,
-                // and thus it's redundant to walk through the folders in an exhaustive way.
-                virtualFilesFromKotlinModule.ifEmpty { virtualFilesFromModule(it, fqName, isPackageName) }
+            .flatMap { binaryModule ->
+                val mapPerModule = virtualFileCache.getOrPut(binaryModule) { ConcurrentHashMap() }
+                mapPerModule.getOrPut(fqName) {
+                    val virtualFilesFromKotlinModule = virtualFilesFromKotlinModule(binaryModule, fqName)
+                    // NB: this assumes Kotlin module has a valid `kotlin_module` info,
+                    // i.e., package part info for the given `fqName` points to exact class paths we're looking for,
+                    // and thus it's redundant to walk through the folders in an exhaustive way.
+                    virtualFilesFromKotlinModule.ifEmpty { virtualFilesFromModule(binaryModule, fqName, isPackageName = true) }
+                }
             }
             .mapNotNull {
                 createClsJavaClassFromVirtualFile(it)
@@ -72,14 +82,14 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
                 parentClsClass.innerClasses.find { it.name == innerClassName }
             }
         }
-        return clsClassImplsByFqName(classId.asSingleFqName(), isPackageName = false)
+        return listOfNotNull(javaFileManager.findClass(classId.asFqNameString(), scope))
     }
 
     // TODO(dimonchik0036): support 'is' accessor
     override fun getProperties(callableId: CallableId): Collection<PsiMember> {
         val classes = callableId.classId?.let { classId ->
             getClassesByClassId(classId)
-        } ?: clsClassImplsByFqName(callableId.packageName)
+        } ?: clsClassImplsInPackage(callableId.packageName)
         return classes.flatMap { psiClass ->
             psiClass.children
                 .filterIsInstance<PsiMember>()
@@ -100,7 +110,7 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
     override fun getFunctions(callableId: CallableId): Collection<PsiMethod> {
         val classes = callableId.classId?.let { classId ->
             getClassesByClassId(classId)
-        } ?: clsClassImplsByFqName(callableId.packageName)
+        } ?: clsClassImplsInPackage(callableId.packageName)
         return classes.flatMap { psiClass ->
             psiClass.methods.filter { psiMethod ->
                 psiMethod.name == callableId.callableName.identifier
@@ -116,13 +126,30 @@ class KotlinStaticPsiDeclarationProviderFactory(
     private val binaryModules: Collection<KtBinaryModule>,
     private val jarFileSystem: CoreJarFileSystem,
 ) : KotlinPsiDeclarationProviderFactory() {
-    override fun createPsiDeclarationProvider(searchScope: GlobalSearchScope): KotlinPsiDeclarationProvider {
-        return KotlinStaticPsiDeclarationFromBinaryModuleProvider(
+    // TODO: For now, [createPsiDeclarationProvider] is always called with the project scope, hence singleton.
+    //  If we come up with a better / optimal search scope, we may need a different way to cache scope-to-provider mapping.
+    private val provider: KotlinStaticPsiDeclarationFromBinaryModuleProvider by lazy {
+        val searchScope = GlobalSearchScope.allScope(project)
+        KotlinStaticPsiDeclarationFromBinaryModuleProvider(
             project,
             searchScope,
             project.createPackagePartProvider(searchScope),
             binaryModules,
             jarFileSystem,
         )
+    }
+
+    override fun createPsiDeclarationProvider(searchScope: GlobalSearchScope): KotlinPsiDeclarationProvider {
+        return if (searchScope == provider.scope) {
+            provider
+        } else {
+            KotlinStaticPsiDeclarationFromBinaryModuleProvider(
+                project,
+                searchScope,
+                project.createPackagePartProvider(searchScope),
+                binaryModules,
+                jarFileSystem,
+            )
+        }
     }
 }
