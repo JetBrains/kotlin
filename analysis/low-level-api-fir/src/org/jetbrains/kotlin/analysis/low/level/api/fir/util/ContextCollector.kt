@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.yieldIfNotNull
+import java.util.ArrayList
 
 object ContextCollector {
     enum class ContextKind {
@@ -181,6 +182,8 @@ private class ContextCollectorVisitor(
 
     private var isActive = true
 
+    private val parents = ArrayList<FirElement>()
+
     private val context = BodyResolveContext(
         returnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve.Default,
         dataFlowAnalyzerContext = DataFlowAnalyzerContext(session)
@@ -192,7 +195,9 @@ private class ContextCollectorVisitor(
         dumpContext(element, ContextKind.SELF)
 
         onActive {
-            element.acceptChildren(this)
+            withParent(element) {
+                element.acceptChildren(this)
+            }
         }
     }
 
@@ -229,7 +234,7 @@ private class ContextCollectorVisitor(
         // So here we modify the types inside the 'context', then make a snapshot, and restore the types back.
         val oldReceiverTypes = mutableListOf<Pair<Int, ConeKotlinType>>()
 
-        val cfgNode = getControlFlowNode(fir)
+        val cfgNode = getClosestControlFlowNode(fir)
 
         if (cfgNode != null) {
             val flow = cfgNode.flow
@@ -266,6 +271,23 @@ private class ContextCollectorVisitor(
         }
 
         return Context(towerDataContextSnapshot, smartCasts)
+    }
+
+    private fun getClosestControlFlowNode(fir: FirElement): CFGNode<*>? {
+        val selfNode = getControlFlowNode(fir)
+        if (selfNode != null) {
+            return selfNode
+        }
+
+        // For some specific elements, such as types or references, there is usually no associated 'CFGNode'.
+        for (parent in parents.asReversed()) {
+            val parentNode = getControlFlowNode(parent)
+            if (parentNode != null) {
+                return parentNode
+            }
+        }
+
+        return null
     }
 
     private fun getControlFlowNode(fir: FirElement): CFGNode<*>? {
@@ -324,7 +346,7 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitRegularClass(regularClass: FirRegularClass) = withProcessor {
+    override fun visitRegularClass(regularClass: FirRegularClass) = withProcessor(regularClass) {
         dumpContext(regularClass, ContextKind.SELF)
 
         processSignatureAnnotations(regularClass)
@@ -368,7 +390,7 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitConstructor(constructor: FirConstructor) = withProcessor {
+    override fun visitConstructor(constructor: FirConstructor) = withProcessor(constructor) {
         dumpContext(constructor, ContextKind.SELF)
 
         processSignatureAnnotations(constructor)
@@ -421,7 +443,7 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) = withProcessor {
+    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) = withProcessor(simpleFunction) {
         dumpContext(simpleFunction, ContextKind.SELF)
 
         processSignatureAnnotations(simpleFunction)
@@ -447,7 +469,7 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitProperty(property: FirProperty) = withProcessor {
+    override fun visitProperty(property: FirProperty) = withProcessor(property) {
         dumpContext(property, ContextKind.SELF)
 
         processSignatureAnnotations(property)
@@ -494,7 +516,7 @@ private class ContextCollectorVisitor(
      * It's not accessible from the delegated constructor, it's just added to the
      * `Foo` class body.
      */
-    override fun visitField(field: FirField) = withProcessor {
+    override fun visitField(field: FirField) = withProcessor(field) {
         dumpContext(field, ContextKind.SELF)
 
         processSignatureAnnotations(field)
@@ -512,7 +534,7 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) = withProcessor {
+    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) = withProcessor(propertyAccessor) {
         dumpContext(propertyAccessor, ContextKind.SELF)
 
         processSignatureAnnotations(propertyAccessor)
@@ -528,7 +550,7 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitValueParameter(valueParameter: FirValueParameter) = withProcessor {
+    override fun visitValueParameter(valueParameter: FirValueParameter) = withProcessor(valueParameter) {
         dumpContext(valueParameter, ContextKind.SELF)
 
         processSignatureAnnotations(valueParameter)
@@ -545,7 +567,7 @@ private class ContextCollectorVisitor(
 
     }
 
-    override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) = withProcessor {
+    override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) = withProcessor(anonymousInitializer) {
         dumpContext(anonymousInitializer, ContextKind.SELF)
 
         processSignatureAnnotations(anonymousInitializer)
@@ -562,7 +584,7 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) = withProcessor {
+    override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) = withProcessor(anonymousFunction) {
         dumpContext(anonymousFunction, ContextKind.SELF)
 
         processSignatureAnnotations(anonymousFunction)
@@ -588,7 +610,7 @@ private class ContextCollectorVisitor(
 
     }
 
-    override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) = withProcessor {
+    override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) = withProcessor(anonymousObject) {
         dumpContext(anonymousObject, ContextKind.SELF)
 
         processSignatureAnnotations(anonymousObject)
@@ -605,7 +627,7 @@ private class ContextCollectorVisitor(
 
     }
 
-    override fun visitBlock(block: FirBlock) = withProcessor {
+    override fun visitBlock(block: FirBlock) = withProcessor(block) {
         dumpContext(block, ContextKind.SELF)
 
         onActiveBody {
@@ -626,8 +648,10 @@ private class ContextCollectorVisitor(
         }
     }
 
-    private inline fun withProcessor(block: Processor.() -> Unit) {
-        Processor(this).block()
+    private inline fun withProcessor(parent: FirElement, block: Processor.() -> Unit) {
+        withParent(parent) {
+            Processor(this).block()
+        }
     }
 
     private class Processor(private val delegate: FirVisitorVoid) {
@@ -675,6 +699,15 @@ private class ContextCollectorVisitor(
             target.accept(this)
         } else {
             block()
+        }
+    }
+
+    private inline fun withParent(parent: FirElement, block: () -> Unit) {
+        parents.add(parent)
+        try {
+            block()
+        } finally {
+            parents.removeLast()
         }
     }
 

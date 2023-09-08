@@ -270,6 +270,24 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
         }
 
         @Test
+        @TestMetadata("onLabel.kt")
+        public void testOnLabel() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onLabel.kt");
+        }
+
+        @Test
+        @TestMetadata("onReference.kt")
+        public void testOnReference() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onReference.kt");
+        }
+
+        @Test
+        @TestMetadata("onType.kt")
+        public void testOnType() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onType.kt");
+        }
+
+        @Test
         @TestMetadata("orRight.kt")
         public void testOrRight() throws Exception {
             runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/orRight.kt");
