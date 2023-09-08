@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
+@OptIn(UnresolvedExpressionTypeAccess::class)
 class FirSingleExpressionBlock(
     var statement: FirStatement
 ) : FirBlock() {
@@ -28,6 +30,8 @@ class FirSingleExpressionBlock(
         get() = statement.source?.fakeElement(KtFakeSourceElementKind.SingleExpressionBlock)
     override var annotations: MutableOrEmptyList<FirAnnotation> = MutableOrEmptyList.empty()
     override val statements: List<FirStatement> get() = listOf(statement)
+
+    @UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType? = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -44,6 +48,7 @@ class FirSingleExpressionBlock(
     override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
         coneTypeOrNull = newConeTypeOrNull
     }
+
     override fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirBlock {
         statement = statement.transformSingle(transformer, data)
         return this

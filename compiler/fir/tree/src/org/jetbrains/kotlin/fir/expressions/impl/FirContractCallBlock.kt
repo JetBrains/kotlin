@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -22,6 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
+@OptIn(UnresolvedExpressionTypeAccess::class)
 class FirContractCallBlock(var call: FirFunctionCall) : FirBlock() {
     override val source: KtSourceElement?
         get() = call.source?.fakeElement(KtFakeSourceElementKind.ContractBlock)
@@ -31,6 +29,8 @@ class FirContractCallBlock(var call: FirFunctionCall) : FirBlock() {
 
 
     override var annotations: MutableOrEmptyList<FirAnnotation> = MutableOrEmptyList.empty()
+
+    @UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType? = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
