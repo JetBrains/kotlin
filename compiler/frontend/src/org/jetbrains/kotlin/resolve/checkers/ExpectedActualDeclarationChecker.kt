@@ -244,18 +244,9 @@ class ExpectedActualDeclarationChecker(
         context: DeclarationCheckerContext,
     ) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
-        if (expectDescriptor !is ClassDescriptor ||
-            actualDeclaration !is KtTypeAlias ||
-            expectDescriptor.kind == ClassKind.ANNOTATION_CLASS
-        ) return
+        if (expectDescriptor !is ClassDescriptor || actualDeclaration !is KtTypeAlias) return
 
-        val members = expectDescriptor.constructors + expectDescriptor.unsubstitutedMemberScope
-            .getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
-            .filterIsInstance<FunctionDescriptor>()
-
-        val membersWithDefaultValueParameters = members
-            .filter { it.valueParameters.any { p -> p.declaresDefaultValue() }}
-
+        val membersWithDefaultValueParameters = getMembersWithDefaultValueParametersUnlessAnnotation(expectDescriptor)
         if (membersWithDefaultValueParameters.isEmpty()) return
 
         context.trace.report(
@@ -265,6 +256,32 @@ class ExpectedActualDeclarationChecker(
                 membersWithDefaultValueParameters
             )
         )
+    }
+
+    private fun getMembersWithDefaultValueParametersUnlessAnnotation(classDescriptor: ClassDescriptor): List<FunctionDescriptor> {
+        val result = mutableListOf<FunctionDescriptor>()
+
+        fun collectFunctions(classDescriptor: ClassDescriptor) {
+            if (classDescriptor.kind == ClassKind.ANNOTATION_CLASS) {
+                return
+            }
+            val functionsAndConstructors = classDescriptor.constructors + classDescriptor.unsubstitutedMemberScope
+                .getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
+                .filterIsInstance<FunctionDescriptor>()
+
+            functionsAndConstructors.filterTo(result) { it.valueParameters.any { p -> p.declaresDefaultValue() } }
+
+            val nestedClasses = classDescriptor.unsubstitutedMemberScope
+                .getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)
+                .filterIsInstance<ClassDescriptor>()
+
+            for (nestedClass in nestedClasses) {
+                collectFunctions(nestedClass)
+            }
+        }
+
+        collectFunctions(classDescriptor)
+        return result
     }
 
     private fun MemberDescriptor.hasNoActualWithDiagnostic(
