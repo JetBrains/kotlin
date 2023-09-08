@@ -21,6 +21,28 @@ class BytesHexFormatTest {
         assertContentEquals(bytes.asUByteArray(), expected.hexToUByteArray(format))
     }
 
+    private fun testFormatAndParse(bytes: ByteArray, startIndex: Int, endIndex: Int, expected: String, format: HexFormat) {
+        val subArray = bytes.copyOfRange(startIndex, endIndex)
+        assertEquals(expected, bytes.toHexString(startIndex, endIndex, format))
+        assertContentEquals(subArray, expected.hexToByteArray(format))
+
+        assertEquals(expected, bytes.asUByteArray().toHexString(startIndex, endIndex, format))
+        assertContentEquals(subArray.asUByteArray(), expected.hexToUByteArray(format))
+    }
+
+    @Test
+    fun emptyByteArray() {
+        testFormatAndParse(byteArrayOf(), "", HexFormat.Default)
+        testFormatAndParse(fourBytes, 2, 2, "", HexFormat.Default)
+    }
+
+    @Test
+    fun invalidRange() {
+        assertFailsWith<IndexOutOfBoundsException> { fourBytes.toHexString(startIndex = -1) }
+        assertFailsWith<IndexOutOfBoundsException> { fourBytes.toHexString(endIndex = 5) }
+        assertFailsWith<IllegalArgumentException> { fourBytes.toHexString(startIndex = 2, endIndex = 1) }
+    }
+
     @Test
     fun ignoreNumberFormat() {
         val format = HexFormat {
@@ -38,34 +60,55 @@ class BytesHexFormatTest {
     fun upperCase() {
         testFormatAndParse(fourBytes, "0A0B0C0D", HexFormat { upperCase = true })
         testFormatAndParse(fourBytes, "0A0B0C0D", HexFormat.UpperCase)
+        testFormatAndParse(fourBytes, 0, 3, "0A0B0C", HexFormat.UpperCase)
     }
 
     @Test
     fun lowerCase() {
         testFormatAndParse(fourBytes, "0a0b0c0d", HexFormat { upperCase = false })
+        testFormatAndParse(fourBytes, 1, 4, "0b0c0d", HexFormat { upperCase = false })
     }
 
     @Test
     fun defaultCase() {
         testFormatAndParse(fourBytes, "0a0b0c0d", HexFormat.Default)
+        testFormatAndParse(fourBytes, 1, 3, "0b0c", HexFormat.Default)
     }
 
     @Test
     fun byteSeparatorPrefixSuffix() {
         // byteSeparator
-        testFormatAndParse(fourBytes, "0a 0b 0c 0d", HexFormat { bytes.byteSeparator = " " })
+        HexFormat { bytes.byteSeparator = " " }.let { format ->
+            testFormatAndParse(fourBytes, "0a 0b 0c 0d", format)
+            testFormatAndParse(fourBytes, 0, 1, "0a", format)
+            assertFailsWith<NumberFormatException> { "0a-0b 0c 0d".hexToByteArray(format) }
+            assertFailsWith<NumberFormatException> { "0a0b 0c 0d".hexToByteArray(format) }
+        }
         // bytePrefix
-        testFormatAndParse(fourBytes, "0x0a0x0b0x0c0x0d", HexFormat { bytes.bytePrefix = "0x" })
-        // bytePrefix
-        testFormatAndParse(fourBytes, "0a;0b;0c;0d;", HexFormat { bytes.byteSuffix = ";" })
+        HexFormat { bytes.bytePrefix = "0x" }.let { format ->
+            testFormatAndParse(fourBytes, "0x0a0x0b0x0c0x0d", format)
+            testFormatAndParse(fourBytes, 2, 4, "0x0c0x0d", HexFormat { bytes.bytePrefix = "0x" })
+            assertFailsWith<NumberFormatException> { "0x0a0x0b0x0c0#0d".hexToByteArray(format) }
+            assertFailsWith<NumberFormatException> { "0x0a0x0b0x0c0d".hexToByteArray(format) }
+        }
+        // byteSuffix
+        HexFormat { bytes.byteSuffix = ";" }.let { format ->
+            testFormatAndParse(fourBytes, "0a;0b;0c;0d;", format)
+            testFormatAndParse(fourBytes, 0, 4, "0a;0b;0c;0d;", format)
+            assertFailsWith<NumberFormatException> { "0a;0b:0c;0d;".hexToByteArray(format) }
+            assertFailsWith<NumberFormatException> { "0a;0b0c;0d;".hexToByteArray(format) }
+        }
         // all together
-        testFormatAndParse(fourBytes, "0x0a; 0x0b; 0x0c; 0x0d;", HexFormat {
+        HexFormat {
             bytes {
                 byteSeparator = " "
                 bytePrefix = "0x"
                 byteSuffix = ";"
             }
-        })
+        }.let { format ->
+            testFormatAndParse(fourBytes, "0x0a; 0x0b; 0x0c; 0x0d;", format)
+            testFormatAndParse(fourBytes, 1, 3, "0x0b; 0x0c;", format)
+        }
     }
 
     @Test
@@ -75,6 +118,8 @@ class BytesHexFormatTest {
             val format = HexFormat { bytes.bytesPerLine = 8 }
             val expected = "0001020304050607\n08090a0b0c0d0e0f\n10111213"
             testFormatAndParse(twentyBytes, expected, format)
+            val missingNewLine = "0001020304050607\n08090a0b0c0d0e0f10111213"
+            assertFailsWith<NumberFormatException> { missingNewLine.hexToByteArray(format) }
         }
 
         // The last line is not ended by the line separator
@@ -116,7 +161,9 @@ class BytesHexFormatTest {
 
     @Test
     fun bytesPerLineAndBytesPerGroup() {
-        val format = HexFormat {
+        val byteArray = ByteArray(31) { it.toByte() }
+
+        HexFormat {
             upperCase = true
             bytes {
                 bytesPerLine = 10
@@ -126,18 +173,22 @@ class BytesHexFormatTest {
                 bytePrefix = "#"
                 byteSuffix = ";"
             }
+        }.let { format ->
+            val expected = """
+                #00; #01; #02; #03;---#04; #05; #06; #07;---#08; #09;
+                #0A; #0B; #0C; #0D;---#0E; #0F; #10; #11;---#12; #13;
+                #14; #15; #16; #17;---#18; #19; #1A; #1B;---#1C; #1D;
+                #1E;
+            """.trimIndent()
+            testFormatAndParse(byteArray, expected, format)
+
+            val expectedRange = """
+                #05; #06; #07; #08;---#09; #0A; #0B; #0C;---#0D; #0E;
+                #0F; #10; #11; #12;---#13; #14; #15;
+            """.trimIndent()
+
+            testFormatAndParse(byteArray, 5, 22, expectedRange, format)
         }
-
-        val byteArray = ByteArray(31) { it.toByte() }
-
-        val expected = """
-            #00; #01; #02; #03;---#04; #05; #06; #07;---#08; #09;
-            #0A; #0B; #0C; #0D;---#0E; #0F; #10; #11;---#12; #13;
-            #14; #15; #16; #17;---#18; #19; #1A; #1B;---#1C; #1D;
-            #1E;
-        """.trimIndent()
-
-        testFormatAndParse(byteArray, expected, format)
     }
 
     @Test
@@ -396,7 +447,7 @@ class BytesHexFormatTest {
         run {
 //            00010203\n04050607\n08090a0b\n0c0d0e0f\n10111213
             val length = formattedStringLength(
-                totalBytes = 20,
+                numberOfBytes = 20,
                 bytesPerLine = 4,
                 bytesPerGroup = Int.MAX_VALUE,
                 groupSeparatorLength = 2,
@@ -409,7 +460,7 @@ class BytesHexFormatTest {
         run {
 //            0001020304050607---08090a0b0c0d0e0f---10111213
             val length = formattedStringLength(
-                totalBytes = 20,
+                numberOfBytes = 20,
                 bytesPerLine = Int.MAX_VALUE,
                 bytesPerGroup = 8,
                 groupSeparatorLength = 3,
@@ -425,7 +476,7 @@ class BytesHexFormatTest {
 //            #14; #15; #16; #17;---#18; #19; #1A; #1B;---#1C; #1D;
 //            #1E;
             val length = formattedStringLength(
-                totalBytes = 31,
+                numberOfBytes = 31,
                 bytesPerLine = 10,
                 bytesPerGroup = 4,
                 groupSeparatorLength = 3,
@@ -437,7 +488,7 @@ class BytesHexFormatTest {
         }
         run {
             val length = formattedStringLength(
-                totalBytes = Int.MAX_VALUE / 2,
+                numberOfBytes = Int.MAX_VALUE / 2,
                 bytesPerLine = Int.MAX_VALUE,
                 bytesPerGroup = Int.MAX_VALUE,
                 groupSeparatorLength = 0,
@@ -449,7 +500,7 @@ class BytesHexFormatTest {
         }
         assertFailsWith<IllegalArgumentException> {
             formattedStringLength(
-                totalBytes = Int.MAX_VALUE,
+                numberOfBytes = Int.MAX_VALUE,
                 bytesPerLine = Int.MAX_VALUE,
                 bytesPerGroup = Int.MAX_VALUE,
                 groupSeparatorLength = Int.MAX_VALUE,
@@ -460,7 +511,7 @@ class BytesHexFormatTest {
         }
         assertFailsWith<IllegalArgumentException> {
             formattedStringLength(
-                totalBytes = Int.MAX_VALUE / 2 + 1,
+                numberOfBytes = Int.MAX_VALUE / 2 + 1,
                 bytesPerLine = Int.MAX_VALUE,
                 bytesPerGroup = Int.MAX_VALUE,
                 groupSeparatorLength = 0,

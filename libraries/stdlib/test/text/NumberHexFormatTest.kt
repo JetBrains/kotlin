@@ -16,35 +16,35 @@ class NumberHexFormatTest {
         private const val longHex3A: String = "000000000000003A" // 16 hex digits
     }
 
-    private fun testFormatAndParse(number: Long, string: String, format: HexFormat) {
-        testFormat(number, string, format)
-        testParse(string, number, format)
+    private fun testFormatAndParse(number: Long, digits: String, format: HexFormat) {
+        testFormat(number, digits, format)
+        testParse(digits, number, format)
     }
 
-    private fun testFormat(number: Long, string: String, format: HexFormat) {
-        require(format.number.prefix.isEmpty() && format.number.suffix.isEmpty())
+    private fun testFormat(number: Long, digits: String, format: HexFormat) {
+        fun String.withPrefixAndSuffix(): String = format.number.prefix + this + format.number.suffix
 
-        assertEquals(string.takeLast(2), number.toByte().toHexString(format))
-        assertEquals(string.takeLast(2), number.toUByte().toHexString(format))
-        assertEquals(string.takeLast(4), number.toShort().toHexString(format))
-        assertEquals(string.takeLast(4), number.toUShort().toHexString(format))
-        assertEquals(string.takeLast(8), number.toInt().toHexString(format))
-        assertEquals(string.takeLast(8), number.toUInt().toHexString(format))
-        assertEquals(string, number.toHexString(format))
-        assertEquals(string, number.toULong().toHexString(format))
+        assertEquals(digits.takeLast(2).withPrefixAndSuffix(), number.toByte().toHexString(format))
+        assertEquals(digits.takeLast(2).withPrefixAndSuffix(), number.toUByte().toHexString(format))
+        assertEquals(digits.takeLast(4).withPrefixAndSuffix(), number.toShort().toHexString(format))
+        assertEquals(digits.takeLast(4).withPrefixAndSuffix(), number.toUShort().toHexString(format))
+        assertEquals(digits.takeLast(8).withPrefixAndSuffix(), number.toInt().toHexString(format))
+        assertEquals(digits.takeLast(8).withPrefixAndSuffix(), number.toUInt().toHexString(format))
+        assertEquals(digits.withPrefixAndSuffix(), number.toHexString(format))
+        assertEquals(digits.withPrefixAndSuffix(), number.toULong().toHexString(format))
     }
 
-    private fun testParse(string: String, number: Long, format: HexFormat) {
-        require(format.number.prefix.isEmpty() && format.number.suffix.isEmpty())
+    private fun testParse(digits: String, number: Long, format: HexFormat) {
+        fun String.withPrefixAndSuffix(): String = format.number.prefix + this + format.number.suffix
 
-        assertEquals(number.toByte(), string.takeLast(2).hexToByte(format))
-        assertEquals(number.toUByte(), string.takeLast(2).hexToUByte(format))
-        assertEquals(number.toShort(), string.takeLast(4).hexToShort(format))
-        assertEquals(number.toUShort(), string.takeLast(4).hexToUShort(format))
-        assertEquals(number.toInt(), string.takeLast(8).hexToInt(format))
-        assertEquals(number.toUInt(), string.takeLast(8).hexToUInt(format))
-        assertEquals(number, string.hexToLong(format))
-        assertEquals(number.toULong(), string.hexToULong(format))
+        assertEquals(number.toByte(), digits.takeLast(2).withPrefixAndSuffix().hexToByte(format))
+        assertEquals(number.toUByte(), digits.takeLast(2).withPrefixAndSuffix().hexToUByte(format))
+        assertEquals(number.toShort(), digits.takeLast(4).withPrefixAndSuffix().hexToShort(format))
+        assertEquals(number.toUShort(), digits.takeLast(4).withPrefixAndSuffix().hexToUShort(format))
+        assertEquals(number.toInt(), digits.takeLast(8).withPrefixAndSuffix().hexToInt(format))
+        assertEquals(number.toUInt(), digits.takeLast(8).withPrefixAndSuffix().hexToUInt(format))
+        assertEquals(number, digits.withPrefixAndSuffix().hexToLong(format))
+        assertEquals(number.toULong(), digits.withPrefixAndSuffix().hexToULong(format))
     }
 
     @Test
@@ -92,10 +92,10 @@ class NumberHexFormatTest {
     }
 
     @Test
-    fun formatPrefixSuffix() {
-        assertEquals("0x0000003a", 58.toHexString(HexFormat { number.prefix = "0x" }))
-        assertEquals("0000003ah", 58.toHexString(HexFormat { number.suffix = "h" }))
-        assertEquals("0x0000003ah", 58.toHexString(HexFormat { number.prefix = "0x"; number.suffix = "h" }))
+    fun formatAndParsePrefixSuffix() {
+        testFormatAndParse(58, "000000000000003a", HexFormat { number.prefix = "0x" })
+        testFormatAndParse(58, "000000000000003a", HexFormat { number.suffix = "h" })
+        testFormatAndParse(58, "000000000000003a", HexFormat { number.prefix = "0x"; number.suffix = "h" })
     }
 
     @Test
@@ -128,6 +128,14 @@ class NumberHexFormatTest {
         assertFailsWith<NumberFormatException> {
             "0000003a".hexToInt(HexFormat { number.suffix = "h" })
         }
+    }
+
+    @Test
+    fun parseInvalidDigit() {
+        assertFailsWith<NumberFormatException> { "3g".hexToByte() }
+        assertFailsWith<NumberFormatException> { "3g".hexToShort() }
+        assertFailsWith<NumberFormatException> { "3g".hexToInt() }
+        assertFailsWith<NumberFormatException> { "3g".hexToLong() }
     }
 
     @Test
