@@ -249,7 +249,7 @@ class IrOverridingUtil(
 
         for (fromSupertype in descriptorsFromSuper) {
             // Note: We do allow overriding multiple FOs at once one of which is `isInline=true`.
-            when (isOverridableBy(fromSupertype, fromCurrent, checkIsInlineFlag = true, checkReturnType = false).result) {
+            when (isOverridableBy(fromSupertype, fromCurrent, checkIsInlineFlag = true).result) {
                 OverrideCompatibilityInfo.Result.OVERRIDABLE -> {
                     val isVisibleFake = fromSupertype.visibility != DescriptorVisibilities.INVISIBLE_FAKE
                     if (isVisibleFake && isVisibleForOverride(fromCurrent, fromSupertype.original))
@@ -608,14 +608,12 @@ class IrOverridingUtil(
             candidateDescriptor,
             overriderDescriptor,
             checkIsInlineFlag = false,
-            checkReturnType = false
         ).result
 
         val result2 = isOverridableBy(
             overriderDescriptor,
             candidateDescriptor,
             checkIsInlineFlag = false,
-            checkReturnType = false
         ).result
 
         return if (result1 == result2) result1 else OverrideCompatibilityInfo.Result.INCOMPATIBLE
@@ -625,9 +623,8 @@ class IrOverridingUtil(
         superMember: IrOverridableMember,
         subMember: IrOverridableMember,
         checkIsInlineFlag: Boolean,
-        checkReturnType: Boolean
     ): OverrideCompatibilityInfo {
-        return typeSystem.isOverridableByWithoutExternalConditions(superMember, subMember, checkIsInlineFlag, checkReturnType)
+        return typeSystem.isOverridableByWithoutExternalConditions(superMember, subMember, checkIsInlineFlag)
         // The frontend goes into external overridability condition details here, but don't deal with them in IR (yet?).
     }
 }
@@ -636,7 +633,6 @@ fun IrTypeSystemContext.isOverridableByWithoutExternalConditions(
     superMember: IrOverridableMember,
     subMember: IrOverridableMember,
     checkIsInlineFlag: Boolean,
-    checkReturnType: Boolean
 ): OverrideCompatibilityInfo {
     val superTypeParameters: List<IrTypeParameter>
     val subTypeParameters: List<IrTypeParameter>
@@ -709,15 +705,6 @@ fun IrTypeSystemContext.isOverridableByWithoutExternalConditions(
                 parameter.type
             )
         ) return incompatible("Value parameter type mismatch")
-    }
-
-    if (checkReturnType) {
-        if (!AbstractTypeChecker.isSubtypeOf(
-                typeCheckerState,
-                subMember.returnType,
-                superMember.returnType
-            )
-        ) return conflict("Return type mismatch")
     }
 
     return success()

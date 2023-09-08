@@ -97,7 +97,6 @@ internal class ActualFakeOverridesAdder(
                                 superMember = memberFromSupertype,
                                 subMember = it,
                                 checkIsInlineFlag = false,
-                                checkReturnType = false
                             ).result == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
                 } as? IrOverridableDeclaration<IrSymbol>
 
