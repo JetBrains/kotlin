@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionResultOverridesOtherToPreserveCompatibility
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.inference.FirStubTypeTransformer
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -191,6 +192,12 @@ class FirCallCompletionResultsWriterTransformer(
 
         for (declarationToUpdate in subCandidate.updateDeclarations) {
             declarationToUpdate()
+        }
+
+        // TODO: Be aware of exponent
+        val firStubTypeTransformer = FirStubTypeTransformer(finalSubstitutor)
+        for (lambda in subCandidate.pclaLambdas) {
+            lambda.transformSingle(firStubTypeTransformer, null)
         }
 
         session.lookupTracker?.recordTypeResolveAsLookup(type, qualifiedAccessExpression.source, context.file.source)
