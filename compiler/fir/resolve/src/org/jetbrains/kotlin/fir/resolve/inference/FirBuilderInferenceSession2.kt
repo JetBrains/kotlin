@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -146,6 +147,7 @@ class FirBuilderInferenceSession2(
     private fun FirExpression.isLambda(): Boolean {
         if (this is FirWrappedArgumentExpression) return expression.isLambda()
         if (this is FirAnonymousFunctionExpression) return true
+        if (this is FirCallableReferenceAccess) return true
         return false
     }
 

@@ -222,7 +222,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
      * This function checks if any of the postponed arguments are suitable for builder inference, and performs it for all eligible lambda arguments
      * @return true if we got new proper constraints after builder inference
      */
-    private fun tryToCompleteWithBuilderInference(
+    private fun ConstraintSystemCompletionContext.tryToCompleteWithBuilderInference(
         completionMode: ConstraintSystemCompletionMode,
         postponedArguments: List<PostponedResolvedAtom>,
         analyze: (PostponedResolvedAtom) -> Unit,
@@ -236,8 +236,15 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
         // We assume useBuilderInferenceWithoutAnnotation = true for FIR
 
+        // var anyAnalyzed = false
         for (argument in lambdaArguments) {
+//            val notFixedInputTypeVariables = argument.inputTypes
+//                .flatMap { it.extractTypeVariables() }.filter { it !in fixedTypeVariables }
+//
+//            if (notFixedInputTypeVariables.isEmpty()) continue
             analyze(argument)
+
+//            anyAnalyzed = true
         }
 
         return true
