@@ -50,10 +50,10 @@ val test6 = generate {
     invNullableAnyExtension()
 }
 
-val test7 = generate {
+val test7 = <!NEW_INFERENCE_ERROR!>generate {
     yield("baz")
-    genericExtension<Int>()
-}
+    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>genericExtension<!><Int>()
+}<!>
 
 val test8 = generate {
     safeExtension()
