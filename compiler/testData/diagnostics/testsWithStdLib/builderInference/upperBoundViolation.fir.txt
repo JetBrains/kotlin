@@ -3,9 +3,9 @@ FILE: upperBoundViolation.fir.kt
         ^printGenericNumber R|kotlin/io/println|(<strcat>(String(Number is ), R|<local>/t|))
     }
     public final fun main(): R|kotlin/Unit| {
-        R|kotlin/collections/buildList|<R|kotlin/String|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|kotlin/collections/buildList<CS errors: kotlin/collections/buildList>#|<R|kotlin/String|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String(Boom))
-            R|/printGenericNumber|<R|kotlin/String|>(this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|Stub (chain inference): TypeVariable(E)|>|(Int(0)))
+            R|/printGenericNumber<Inapplicable(INAPPLICABLE): /printGenericNumber>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|kotlin/String|>|(Int(0)))
         }
         )
     }
