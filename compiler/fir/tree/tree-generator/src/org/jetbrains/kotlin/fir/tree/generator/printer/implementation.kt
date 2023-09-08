@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
@@ -50,9 +51,18 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
     }
 
     with(implementation) {
-        if (requiresOptIn) {
-            println("@OptIn(FirImplementationDetail::class)")
+        buildSet {
+            if (requiresOptIn) {
+                add("FirImplementationDetail")
+            }
+
+            for (field in fieldsWithoutDefault) {
+                field.optInAnnotation?.let { add(it.type) }
+            }
+        }.ifNotEmpty {
+            println("@OptIn(${joinToString { "$it::class" }})")
         }
+
         if (!isPublic) {
             print("internal ")
         }
@@ -78,7 +88,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                     if (field.isParameter) {
                         println("${field.name}: ${field.typeWithArguments},")
                     } else if (!field.isFinal) {
-                        printField(field, isImplementation = true, override = true, end = ",", notNull = field.notNull)
+                        printField(field, isImplementation = true, override = true, inConstructor = true, notNull = field.notNull)
                     }
                 }
             }
@@ -96,7 +106,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 allFields.forEach {
 
                     abstract()
-                    printField(it, isImplementation = true, override = true, end = "", notNull = it.notNull)
+                    printField(it, isImplementation = true, override = true, notNull = it.notNull)
                 }
             } else {
                 fieldsWithDefault.forEach {
@@ -127,10 +137,6 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                     }
 
                     for (customCall in customCalls) {
-                        customCall.optInAnnotation?.let {
-                            println("@OptIn(${it.type}::class)")
-                        }
-
                         println("${customCall.name} = ${customCall.customInitializationCall}")
                     }
                 }

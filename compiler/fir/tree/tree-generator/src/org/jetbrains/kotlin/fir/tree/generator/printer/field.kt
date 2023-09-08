@@ -9,14 +9,16 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.utils.SmartPrinter
 
 
-fun SmartPrinter.printField(field: Field, isImplementation: Boolean, override: Boolean, end: String, notNull: Boolean = false) {
+fun SmartPrinter.printField(field: Field, isImplementation: Boolean, override: Boolean, inConstructor: Boolean = false, notNull: Boolean = false, modifiers: SmartPrinter.() -> Unit = {}) {
     if (!field.isVal && field.isVolatile) {
         println("@Volatile")
     }
 
     field.optInAnnotation?.let {
-        println("@${it.type}")
+        println(if (inConstructor) "@property:${it.type}" else "@${it.type}")
     }
+
+    modifiers()
 
     if (override) {
         print("override ")
@@ -30,12 +32,17 @@ fun SmartPrinter.printField(field: Field, isImplementation: Boolean, override: B
         print("val")
     }
     val type = if (isImplementation) field.getMutableType(notNull = notNull) else field.getTypeWithArguments(notNull = notNull)
-    println(" ${field.name}: $type$end")
+    print(" ${field.name}: $type")
+    if (inConstructor) print(",")
+    println()
 }
 
 fun SmartPrinter.printFieldWithDefaultInImplementation(field: Field) {
     if (!field.isVal && field.isVolatile) {
         println("@Volatile")
+    }
+    field.optInAnnotation?.let {
+        println("@OptIn(${it.type}::class)")
     }
     val defaultValue = field.defaultValueInImplementation
     print("override ")

@@ -20,3 +20,5 @@ val coneTypeOrNullImport = ArbitraryImportable("org.jetbrains.kotlin.fir.types",
 
 val fakeSourceElementKindImport = ArbitraryImportable("org.jetbrains.kotlin", "KtFakeSourceElementKind")
 val fakeElementImport = ArbitraryImportable("org.jetbrains.kotlin", "fakeElement")
+
+val unresolvedExpressionTypeAccessImport = ArbitraryImportable("org.jetbrains.kotlin.fir.expressions","UnresolvedExpressionTypeAccess")

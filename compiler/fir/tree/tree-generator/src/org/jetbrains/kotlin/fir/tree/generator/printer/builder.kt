@@ -280,9 +280,11 @@ private fun SmartPrinter.printDslBuildFunction(
 
 private fun SmartPrinter.printDslBuildCopyFunction(
     builder: LeafBuilder,
-    hasRequiredFields: Boolean
+    hasRequiredFields: Boolean,
 ) {
-    println("@OptIn(ExperimentalContracts::class)")
+    val optIns =
+        builder.allFields.filter { !it.invisibleField }.mapNotNullTo(mutableSetOf("ExperimentalContracts")) { it.optInAnnotation?.type }
+    println("@OptIn(${optIns.joinToString { "$it::class" }})")
     print("inline ")
     print("fun ")
     builder.implementation.element.typeArguments.takeIf { it.isNotEmpty() }?.let {

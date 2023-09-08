@@ -132,7 +132,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         expression.configure {
-            +field("coneTypeOrNull", coneKotlinTypeType, nullable = true, withReplace = true)
+            +field("coneTypeOrNull", coneKotlinTypeType, nullable = true, withReplace = true).apply {
+                optInAnnotation = unresolvedExpressionTypeAccessImport
+            }
             +annotations
         }
 
