@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.backend.common.actualizer
 import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.overrides.isOverridableByWithoutExternalConditions
+import org.jetbrains.kotlin.ir.overrides.IrOverrideChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -38,6 +37,7 @@ internal class ActualFakeOverridesAdder(
     private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext,
     private val typeSystemContext: IrTypeSystemContext
 ) : IrElementVisitorVoid {
+    private val overrideChecker = IrOverrideChecker(typeSystemContext)
     private val missingActualMembersMap = mutableMapOf<IrClass, FakeOverrideInfo>()
 
     override fun visitClass(declaration: IrClass) {
@@ -93,7 +93,7 @@ internal class ActualFakeOverridesAdder(
                 @Suppress("UNCHECKED_CAST")
                 val override = klass.declarations.firstOrNull {
                     it is IrOverridableMember &&
-                            typeSystemContext.isOverridableByWithoutExternalConditions(
+                            overrideChecker.isOverridableByWithoutExternalConditions(
                                 superMember = memberFromSupertype,
                                 subMember = it,
                                 checkIsInlineFlag = false,

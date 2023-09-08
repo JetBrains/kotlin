@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
-import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -36,6 +35,7 @@ class IrOverridingUtil(
     private val typeSystem: IrTypeSystemContext,
     private val fakeOverrideBuilder: FakeOverrideBuilderStrategy
 ) {
+    private val overrideChecker = IrOverrideChecker(typeSystem)
     private val originals = mutableMapOf<IrOverridableMember, IrOverridableMember>()
     private val IrOverridableMember.original get() = originals[this] ?: error("No original for ${this.render()}")
     private val originalSuperTypes = mutableMapOf<IrOverridableMember, IrType>()
@@ -166,7 +166,7 @@ class IrOverridingUtil(
 
         for (fromSupertype in descriptorsFromSuper) {
             // Note: We do allow overriding multiple FOs at once one of which is `isInline=true`.
-            when (isOverridableBy(fromSupertype, fromCurrent, checkIsInlineFlag = true).result) {
+            when (overrideChecker.isOverridableBy(fromSupertype, fromCurrent, checkIsInlineFlag = true).result) {
                 OverrideCompatibilityInfo.Result.OVERRIDABLE -> {
                     val isVisibleFake = fromSupertype.visibility != DescriptorVisibilities.INVISIBLE_FAKE
                     if (isVisibleFake && isVisibleForOverride(fromCurrent, fromSupertype.original))
@@ -502,11 +502,7 @@ class IrOverridingUtil(
                 iterator.remove()
                 continue
             }
-            val finalResult =
-                getBothWaysOverridability(
-                    overrider,
-                    candidate
-                )
+            val finalResult = overrideChecker.getBothWaysOverridability(overrider, candidate)
             if (finalResult == OverrideCompatibilityInfo.Result.OVERRIDABLE) {
                 overridable.add(candidate)
                 iterator.remove()
@@ -516,137 +512,7 @@ class IrOverridingUtil(
         }
         return overridable
     }
-
-    private fun getBothWaysOverridability(
-        overriderDescriptor: IrOverridableMember,
-        candidateDescriptor: IrOverridableMember
-    ): Result {
-        val result1 = isOverridableBy(
-            candidateDescriptor,
-            overriderDescriptor,
-            checkIsInlineFlag = false,
-        ).result
-
-        val result2 = isOverridableBy(
-            overriderDescriptor,
-            candidateDescriptor,
-            checkIsInlineFlag = false,
-        ).result
-
-        return if (result1 == result2) result1 else OverrideCompatibilityInfo.Result.INCOMPATIBLE
-    }
-
-    private fun isOverridableBy(
-        superMember: IrOverridableMember,
-        subMember: IrOverridableMember,
-        checkIsInlineFlag: Boolean,
-    ): OverrideCompatibilityInfo {
-        return typeSystem.isOverridableByWithoutExternalConditions(superMember, subMember, checkIsInlineFlag)
-        // The frontend goes into external overridability condition details here, but don't deal with them in IR (yet?).
-    }
 }
-
-fun IrTypeSystemContext.isOverridableByWithoutExternalConditions(
-    superMember: IrOverridableMember,
-    subMember: IrOverridableMember,
-    checkIsInlineFlag: Boolean,
-): OverrideCompatibilityInfo {
-    val superTypeParameters: List<IrTypeParameter>
-    val subTypeParameters: List<IrTypeParameter>
-
-    val superValueParameters: List<IrValueParameter>
-    val subValueParameters: List<IrValueParameter>
-
-    when (superMember) {
-        is IrSimpleFunction -> when {
-            subMember !is IrSimpleFunction -> return incompatible("Member kind mismatch")
-            superMember.hasExtensionReceiver != subMember.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
-            superMember.isSuspend != subMember.isSuspend -> return incompatible("Incompatible suspendability")
-            checkIsInlineFlag && superMember.isInline -> return incompatible("Inline function can't be overridden")
-
-            else -> {
-                superTypeParameters = superMember.typeParameters
-                subTypeParameters = subMember.typeParameters
-                superValueParameters = superMember.compiledValueParameters
-                subValueParameters = subMember.compiledValueParameters
-            }
-        }
-        is IrProperty -> when {
-            subMember !is IrProperty -> return incompatible("Member kind mismatch")
-            superMember.getter.hasExtensionReceiver != subMember.getter.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
-            checkIsInlineFlag && superMember.isInline -> return incompatible("Inline property can't be overridden")
-
-            else -> {
-                superTypeParameters = superMember.typeParameters
-                subTypeParameters = subMember.typeParameters
-                superValueParameters = superMember.compiledValueParameters
-                subValueParameters = subMember.compiledValueParameters
-            }
-        }
-        else -> error("Unexpected type of declaration: ${superMember::class.java}, $superMember")
-    }
-
-    when {
-        superMember.name != subMember.name -> {
-            // Check name after member kind checks. This way FO builder will first check types of overridable members and crash
-            // if member types are not supported (ex: IrConstructor).
-            return incompatible("Name mismatch")
-        }
-
-        superTypeParameters.size != subTypeParameters.size -> return incompatible("Type parameter number mismatch")
-        superValueParameters.size != subValueParameters.size -> return incompatible("Value parameter number mismatch")
-    }
-
-    // TODO: check the bounds. See OverridingUtil.areTypeParametersEquivalent()
-//        superTypeParameters.forEachIndexed { index, parameter ->
-//            if (!AbstractTypeChecker.areTypeParametersEquivalent(
-//                    typeCheckerContext as AbstractTypeCheckerContext,
-//                    subTypeParameters[index].type,
-//                    parameter.type
-//                )
-//            ) return OverrideCompatibilityInfo.incompatible("Type parameter bounds mismatch")
-//        }
-
-    val typeCheckerState = createIrTypeCheckerState(
-        IrTypeSystemContextWithAdditionalAxioms(
-            this,
-            superTypeParameters,
-            subTypeParameters
-        )
-    )
-
-    superValueParameters.forEachIndexed { index, parameter ->
-        if (!AbstractTypeChecker.equalTypes(
-                typeCheckerState,
-                subValueParameters[index].type,
-                parameter.type
-            )
-        ) return incompatible("Value parameter type mismatch")
-    }
-
-    return success()
-}
-
-private val IrSimpleFunction?.hasExtensionReceiver: Boolean
-    get() = this?.extensionReceiverParameter != null
-
-private val IrSimpleFunction?.hasDispatchReceiver: Boolean
-    get() = this?.dispatchReceiverParameter != null
-
-private val IrSimpleFunction.compiledValueParameters: List<IrValueParameter>
-    get() = ArrayList<IrValueParameter>(valueParameters.size + 1).apply {
-        extensionReceiverParameter?.let(::add)
-        addAll(valueParameters)
-    }
-
-private val IrProperty.compiledValueParameters: List<IrValueParameter>
-    get() = getter?.extensionReceiverParameter?.let(::listOf).orEmpty()
-
-private val IrProperty.typeParameters: List<IrTypeParameter>
-    get() = getter?.typeParameters.orEmpty()
-
-private val IrProperty.isInline: Boolean
-    get() = getter?.isInline == true || setter?.isInline == true
 
 private val IrOverridableMember.typeParameters: List<IrTypeParameter>
     get() = when (this) {
@@ -655,7 +521,7 @@ private val IrOverridableMember.typeParameters: List<IrTypeParameter>
         else -> error("Unexpected type of declaration: ${this::class.java}, $this")
     }
 
-private val IrOverridableMember.returnType
+private val IrOverridableMember.returnType: IrType
     get() = when (this) {
         is IrSimpleFunction -> returnType
         is IrProperty -> getter!!.returnType
