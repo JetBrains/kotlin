@@ -38,7 +38,7 @@ import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotation
-import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration
 
 class NativeBlackBoxTestSupport : BeforeEachCallback {
     /**
@@ -331,7 +331,7 @@ private object NativeTestSupport {
     private fun computeTimeouts(enforcedProperties: EnforcedProperties): Timeouts {
         val executionTimeout = ClassLevelProperty.EXECUTION_TIMEOUT.readValue(
             enforcedProperties,
-            { it.toLongOrNull()?.milliseconds },
+            { Duration.parseOrNull(it) },
             default = Timeouts.DEFAULT_EXECUTION_TIMEOUT
         )
         return Timeouts(executionTimeout)
