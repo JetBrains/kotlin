@@ -80,9 +80,9 @@ fun main() {
     takeInterdependentLambdas({}, {})
     takeInterdependentLambdas({ it }, { 10 })
     takeInterdependentLambdas({ 10 }, { it })
-    takeInterdependentLambdas({ 10 }, { x -> x })
-    takeInterdependentLambdas({ x -> 10 }, { it })
-    takeInterdependentLambdas({ it }, { x -> 10 })
+    takeInterdependentLambdas({ 10 }, { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> x })
+    takeInterdependentLambdas({ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> 10 }, { it })
+    takeInterdependentLambdas({ it }, { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> 10 })
 
     // Dependent lambdas by input-output types
     takeDependentLambdas({ <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> }, { it })
