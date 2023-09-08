@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.generator.model
 
+import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.util.Node
 import org.jetbrains.kotlin.generators.util.solveGraphForClassVsInterface
-import org.jetbrains.kotlin.ir.generator.util.TypeKind
 
 private class NodeImpl(val element: Element) : Node {
     override val parents: List<Node>

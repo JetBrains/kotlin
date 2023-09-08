@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.generator.model
 
+import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.ir.generator.config.*
 import org.jetbrains.kotlin.ir.generator.elementBaseType
 import org.jetbrains.kotlin.ir.generator.util.*

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.generator.model
 
 import com.squareup.kotlinpoet.CodeBlock
+import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig
 import org.jetbrains.kotlin.ir.generator.config.FieldConfig
 import org.jetbrains.kotlin.ir.generator.util.*

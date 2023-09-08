@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.generator.util
 
 import com.squareup.kotlinpoet.asClassName
+import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
 import kotlin.reflect.KClass
@@ -121,8 +122,3 @@ inline fun <reified T : Any> type(vararg args: TypeRef) = T::class.asRef<Positio
 
 fun type(packageName: String, name: String, kind: TypeKind = TypeKind.Interface) =
     ClassRef<PositionTypeParameterRef>(kind, packageName, name)
-
-enum class TypeKind {
-    Class,
-    Interface
-}

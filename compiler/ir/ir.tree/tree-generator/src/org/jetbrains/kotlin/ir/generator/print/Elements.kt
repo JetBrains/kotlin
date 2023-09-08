@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.ir.generator.print
 
 import com.squareup.kotlinpoet.*
+import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.elementTransformerType
 import org.jetbrains.kotlin.ir.generator.elementVisitorType
 import org.jetbrains.kotlin.ir.generator.model.*
-import org.jetbrains.kotlin.ir.generator.util.TypeKind
 import org.jetbrains.kotlin.ir.generator.util.TypeRefWithNullability
 import org.jetbrains.kotlin.ir.generator.util.tryParameterizedBy
 import java.io.File

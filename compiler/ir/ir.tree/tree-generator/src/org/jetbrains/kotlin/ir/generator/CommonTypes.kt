@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.ir.generator
 
+import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.ir.generator.Packages.declarations
 import org.jetbrains.kotlin.ir.generator.Packages.exprs
 import org.jetbrains.kotlin.ir.generator.Packages.symbols
 import org.jetbrains.kotlin.ir.generator.Packages.tree
 import org.jetbrains.kotlin.ir.generator.Packages.types
 import org.jetbrains.kotlin.ir.generator.Packages.visitors
-import org.jetbrains.kotlin.ir.generator.util.TypeKind
 import org.jetbrains.kotlin.ir.generator.util.type
 
 object Packages {
