@@ -220,8 +220,3 @@ fun Project.executeAndCheck(executable: Path, arguments: List<String> = emptyLis
  * @see Project.exec
  */
 fun localExecutor(project: Project) = { a: Action<in ExecSpec> -> project.exec(a) }
-
-fun localExecutorService(project: Project): ExecutorService = object : ExecutorService {
-    override val project: Project get() = project
-    override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec(action)
-}

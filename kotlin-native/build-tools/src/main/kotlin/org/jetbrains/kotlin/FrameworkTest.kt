@@ -137,8 +137,6 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         frameworks.forEach { framework ->
             val frameworkArtifact = framework.artifact
             val frameworkPath = "$frameworkParentDirPath/$frameworkArtifact.framework"
-            val frameworkBinaryPath = "$frameworkPath/$frameworkArtifact"
-            validateBitcodeEmbedding(frameworkBinaryPath)
             if (codesign) codesign(project, frameworkPath)
         }
 
@@ -247,28 +245,6 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
             "WARNING: probably a timeout\n"
         } else ""
         check(exitCode == expectedExitStatus ?: 0) { "${timeoutMessage}Execution of $testExecName failed with exit code: $exitCode " }
-    }
-
-    private fun validateBitcodeEmbedding(frameworkBinary: String) {
-        // Check only the full bitcode embedding for now.
-        if (!fullBitcode) {
-            return
-        }
-        val configurables = project.testTargetConfigurables as AppleConfigurables
-
-        val bitcodeBuildTool = "${configurables.absoluteAdditionalToolsDir}/bin/bitcode-build-tool"
-        val toolPath = "${configurables.absoluteTargetToolchain}/usr/bin/"
-        if (configurables.targetTriple.isSimulator) {
-            return // bitcode-build-tool doesn't support simulators.
-        }
-        val sdk = xcode.pathToPlatformSdk(configurables.platformName())
-
-        val python3 = listOf("/usr/bin/python3", "/usr/local/bin/python3")
-                .map { Paths.get(it) }.firstOrNull { Files.exists(it) }
-                ?: error("Can't find python3")
-
-        runTest(executorService = localExecutorService(project), testExecutable = python3,
-                args = listOf("-B", bitcodeBuildTool, "--sdk", sdk, "-v", "-t", toolPath, frameworkBinary))
     }
 
     private val xcode by lazy { Xcode.findCurrent() }
