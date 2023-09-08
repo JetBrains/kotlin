@@ -3,7 +3,7 @@
 // ISSUE: KT-56169
 
 fun box(): String {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>buildList<!> {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>buildList<!> {
         val foo = { first() }
         add(0, foo)
     }
