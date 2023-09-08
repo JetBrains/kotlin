@@ -151,12 +151,12 @@ public class KtTestUtil {
 
     @NotNull
     public static File getJdk11Home() {
-        return getJdkHome("JDK_11_0", "JDK_11");
+        return new File("/Library/Java/JavaVirtualMachines/jdk-11.0.16.jdk/Contents/Home");
     }
 
     @NotNull
     public static File getJdk17Home() {
-        return getJdkHome("JDK_17_0", "JDK_17");
+        return new File("/Users/Denis.Zharkov/Downloads/jdk-21.jdk/Contents/Home");
     }
 
     public static File getJdk21Home() {
