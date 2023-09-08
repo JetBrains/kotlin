@@ -257,5 +257,5 @@ class FieldList(
         )
     }
 
-    override val isFirType: Boolean = baseType is AbstractElement || (baseType is Type && baseType.firType)
+    override val isFirType: Boolean = baseType is AbstractElement
 }
