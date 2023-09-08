@@ -141,6 +141,21 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectClassesAndFunctions.kt");
         }
 
+        @TestMetadata("expectNestedAnnotationClassWithConstructorParameter.kt")
+        public void testExpectNestedAnnotationClassWithConstructorParameter() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectNestedAnnotationClassWithConstructorParameter.kt");
+        }
+
+        @TestMetadata("expectNestedClassMembers.kt")
+        public void testExpectNestedClassMembers() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectNestedClassMembers.kt");
+        }
+
+        @TestMetadata("expectNestedEnumClassGeneratedMembers.kt")
+        public void testExpectNestedEnumClassGeneratedMembers() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectNestedEnumClassGeneratedMembers.kt");
+        }
+
         @TestMetadata("external.kt")
         public void testExternal() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/external.kt");

@@ -24032,6 +24032,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("nestedAnnotationClassViaActualTypealias.kt")
+                public void testNestedAnnotationClassViaActualTypealias() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/nestedAnnotationClassViaActualTypealias.kt");
+                }
+
+                @Test
                 @TestMetadata("nestedClassMethodsViaActualTypealias.kt")
                 public void testNestedClassMethodsViaActualTypealias() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/nestedClassMethodsViaActualTypealias.kt");

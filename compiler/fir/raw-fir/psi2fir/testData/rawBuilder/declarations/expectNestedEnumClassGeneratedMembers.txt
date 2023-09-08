@@ -1,0 +1,19 @@
+FILE: expectNestedEnumClassGeneratedMembers.kt
+    public? final? expect class Outer : R|kotlin/Any| {
+        public? final? expect enum class NestedEnum : R|kotlin/Enum<Outer.NestedEnum>| {
+            private expect [ContainingClassKey=NestedEnum] constructor(): R|Outer.NestedEnum|
+
+            public final expect static [ContainingClassKey=NestedEnum] enum entry ONE: R|Outer.NestedEnum|
+            public final expect static [ContainingClassKey=NestedEnum] enum entry TWO: R|Outer.NestedEnum|
+            public final expect static [ContainingClassKey=NestedEnum] fun values(): R|kotlin/Array<Outer.NestedEnum>| {
+            }
+
+            public final expect static [ContainingClassKey=NestedEnum] fun valueOf(value: R|kotlin/String|): R|Outer.NestedEnum| {
+            }
+
+            public final expect static [ContainingClassKey=NestedEnum] val entries: R|kotlin/enums/EnumEntries<Outer.NestedEnum>|
+                public get(): R|kotlin/enums/EnumEntries<Outer.NestedEnum>|
+
+        }
+
+    }

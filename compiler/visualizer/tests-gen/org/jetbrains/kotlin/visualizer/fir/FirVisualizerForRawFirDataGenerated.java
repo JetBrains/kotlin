@@ -154,6 +154,24 @@ public class FirVisualizerForRawFirDataGenerated extends AbstractFirVisualizerTe
         }
 
         @Test
+        @TestMetadata("expectNestedAnnotationClassWithConstructorParameter.kt")
+        public void testExpectNestedAnnotationClassWithConstructorParameter() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectNestedAnnotationClassWithConstructorParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("expectNestedClassMembers.kt")
+        public void testExpectNestedClassMembers() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectNestedClassMembers.kt");
+        }
+
+        @Test
+        @TestMetadata("expectNestedEnumClassGeneratedMembers.kt")
+        public void testExpectNestedEnumClassGeneratedMembers() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectNestedEnumClassGeneratedMembers.kt");
+        }
+
+        @Test
         @TestMetadata("external.kt")
         public void testExternal() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/external.kt");

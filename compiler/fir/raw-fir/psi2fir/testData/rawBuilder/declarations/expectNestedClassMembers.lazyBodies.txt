@@ -1,0 +1,12 @@
+FILE: expectNestedClassMembers.kt
+    public? final? expect class Outer : R|kotlin/Any| {
+        public? final? expect class Nested : R|kotlin/Any| {
+            public? final? expect fun function(): R|kotlin/Unit|
+
+            public? final? expect var property: Any
+                public? get(): Any
+                public? set(value: Any): R|kotlin/Unit|
+
+        }
+
+    }

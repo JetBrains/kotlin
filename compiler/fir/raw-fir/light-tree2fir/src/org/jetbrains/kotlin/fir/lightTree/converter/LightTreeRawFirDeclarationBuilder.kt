@@ -572,7 +572,7 @@ class LightTreeRawFirDeclarationBuilder(
                                 it.toFirPropertyFromPrimaryConstructor(
                                     baseModuleData,
                                     callableIdForName(it.firValueParameter.name),
-                                    classWrapper.hasExpect(),
+                                    classIsExpect,
                                     currentDispatchReceiverType(),
                                     context
                                 )
@@ -611,19 +611,19 @@ class LightTreeRawFirDeclarationBuilder(
                             baseModuleData,
                             context.packageFqName,
                             context.className,
-                            modifiers.hasExpect()
+                            classIsExpect
                         )
                         generateValueOfFunction(
                             baseModuleData,
                             context.packageFqName,
                             context.className,
-                            modifiers.hasExpect()
+                            classIsExpect
                         )
                         generateEntriesGetter(
                             baseModuleData,
                             context.packageFqName,
                             context.className,
-                            modifiers.hasExpect()
+                            classIsExpect
                         )
                     }
                     initCompanionObjectSymbolAttr()
