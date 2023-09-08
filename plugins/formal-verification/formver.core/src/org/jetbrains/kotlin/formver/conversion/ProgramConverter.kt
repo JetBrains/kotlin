@@ -86,6 +86,9 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     private var nextAnonVarNumber = 0
     override fun newAnonName(): AnonymousName = AnonymousName(++nextAnonVarNumber)
 
+    private var nextWhileIndex = 0
+    override fun newWhileIndex() = ++nextWhileIndex
+
     private fun embedSignature(symbol: FirFunctionSymbol<*>): MethodSignatureEmbedding {
         val retType = symbol.resolvedReturnTypeRef.type
         val params = symbol.valueParameterSymbols.map {

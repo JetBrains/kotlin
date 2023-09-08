@@ -2,6 +2,7 @@
 method pkg$$global$while_loop(local$b: Bool) returns (ret: Bool)
 {
   var anonymous$1: Bool
+  label label$continue$1
   anonymous$1 := local$b
   while (anonymous$1) {
     var local$a: Int
@@ -10,6 +11,7 @@ method pkg$$global$while_loop(local$b: Bool) returns (ret: Bool)
     local$c := 2
     anonymous$1 := local$b
   }
+  label label$break$1
   ret := false
   goto label$ret
   label label$ret
@@ -23,6 +25,7 @@ method pkg$$global$while_function_condition() returns (ret: dom$Unit)
 {
   var anonymous$1: Bool
   var anonymous$2: Bool
+  label label$continue$1
   anonymous$2 := pkg$$global$while_loop(true)
   anonymous$1 := anonymous$2
   while (anonymous$1) {
@@ -30,5 +33,6 @@ method pkg$$global$while_function_condition() returns (ret: dom$Unit)
     anonymous$3 := pkg$$global$while_loop(true)
     anonymous$1 := anonymous$3
   }
+  label label$break$1
   label label$ret
 }

@@ -51,3 +51,13 @@ data class InlineReturnLabelName(val inlineFunctionName: MangledName) : MangledN
     override val mangled: String
         get() = "inline_label\$${inlineFunctionName.mangled}\$ret"
 }
+
+data class BreakLabelName(val n: Int) : MangledName {
+    override val mangled: String
+        get() = "label\$break\$$n"
+}
+
+data class ContinueLabelName(val n: Int) : MangledName {
+    override val mangled: String
+        get() = "label\$continue\$$n"
+}

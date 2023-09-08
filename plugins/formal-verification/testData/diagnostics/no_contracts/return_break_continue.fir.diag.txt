@@ -12,13 +12,82 @@ method pkg$$global$test_return() returns (ret: Int)
 method pkg$$global$return_from_loop() returns (ret: Int)
 {
   var anonymous$1: Bool
+  label label$continue$1
   anonymous$1 := true
   while (anonymous$1) {
     ret := 0
     goto label$ret
     anonymous$1 := true
   }
+  label label$break$1
   ret := 1
   goto label$ret
+  label label$ret
+}
+
+/return_break_continue.kt:(146,157): info: Generated Viper text for while_break:
+method pkg$$global$while_break(local$b: Bool) returns (ret: Int)
+{
+  var local$i: Int
+  var anonymous$1: Bool
+  local$i := 0
+  label label$continue$1
+  anonymous$1 := local$b
+  while (anonymous$1) {
+    local$i := 1
+    goto label$break$1
+    anonymous$1 := local$b
+  }
+  label label$break$1
+  ret := local$i
+  goto label$ret
+  label label$ret
+}
+
+/return_break_continue.kt:(261,275): info: Generated Viper text for while_continue:
+method pkg$$global$while_continue() returns (ret: dom$Unit)
+{
+  var local$b: Bool
+  var anonymous$1: Bool
+  local$b := true
+  label label$continue$1
+  anonymous$1 := local$b
+  while (anonymous$1) {
+    local$b := false
+    goto label$continue$1
+    anonymous$1 := local$b
+  }
+  label label$break$1
+  label label$ret
+}
+
+/return_break_continue.kt:(361,373): info: Generated Viper text for while_nested:
+method pkg$$global$while_nested(local$b: Bool) returns (ret: dom$Unit)
+{
+  var anonymous$1: Bool
+  label label$continue$1
+  anonymous$1 := local$b
+  while (anonymous$1) {
+    var anonymous$2: Bool
+    var anonymous$3: Bool
+    label label$continue$2
+    anonymous$2 := local$b
+    while (anonymous$2) {
+      goto label$break$2
+      anonymous$2 := local$b
+    }
+    label label$break$2
+    goto label$continue$1
+    label label$continue$3
+    anonymous$3 := local$b
+    while (anonymous$3) {
+      goto label$continue$3
+      anonymous$3 := local$b
+    }
+    label label$break$3
+    goto label$break$1
+    anonymous$1 := local$b
+  }
+  label label$break$1
   label label$ret
 }

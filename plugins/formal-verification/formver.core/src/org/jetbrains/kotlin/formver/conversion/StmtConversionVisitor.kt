@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.formver.embeddings.NullableTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.embedName
 import org.jetbrains.kotlin.formver.viper.MangledName
-import org.jetbrains.kotlin.formver.viper.ast.AccessPredicate
-import org.jetbrains.kotlin.formver.viper.ast.Exp
-import org.jetbrains.kotlin.formver.viper.ast.PermExp
-import org.jetbrains.kotlin.formver.viper.ast.Stmt
+import org.jetbrains.kotlin.formver.viper.ast.*
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -280,14 +277,27 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
     }
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: StmtConversionContext<ResultTrackingContext>): Exp {
-        val condCtx = data.withResult(BooleanTypeEmbedding)
-        condCtx.convertAndCapture(whileLoop.condition)
+        data.inNewWhileBlock { newWhileContext ->
+            val condCtx = newWhileContext.withResult(BooleanTypeEmbedding)
+            val bodyCtx = condCtx.newBlock()
+            condCtx.convertAndCapture(whileLoop.condition)
+            bodyCtx.convert(whileLoop.block)
+            bodyCtx.convertAndCapture(whileLoop.condition)
+            data.addStatement(Stmt.While(condCtx.resultExp, invariants = data.postconditions, bodyCtx.block))
+        }
+        return UnitDomain.element
+    }
 
-        val bodyCtx = condCtx.newBlock()
-        bodyCtx.convert(whileLoop.block)
-        bodyCtx.convertAndCapture(whileLoop.condition)
+    override fun visitBreakExpression(breakExpression: FirBreakExpression, data: StmtConversionContext<ResultTrackingContext>): Exp {
+        data.addStatement(data.breakLabel.toGoto())
+        return UnitDomain.element
+    }
 
-        data.addStatement(Stmt.While(condCtx.resultExp, invariants = data.postconditions, bodyCtx.block))
+    override fun visitContinueExpression(
+        continueExpression: FirContinueExpression,
+        data: StmtConversionContext<ResultTrackingContext>
+    ): Exp {
+        data.addStatement(data.continueLabel.toGoto())
         return UnitDomain.element
     }
 

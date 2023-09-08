@@ -86,6 +86,7 @@ method pkg$$global$loopWhile(local$lambda: Ref) returns (ret: dom$Unit)
   var anonymous$1: Bool
   var anonymous$2: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$lambda): dom$Type), dom$Type$Function())
+  label label$continue$1
   special$invoke_function_object(local$lambda)
   anonymous$1 := anonymous$2
   while (anonymous$1)
@@ -99,6 +100,7 @@ method pkg$$global$loopWhile(local$lambda: Ref) returns (ret: dom$Unit)
     special$invoke_function_object(local$lambda)
     anonymous$1 := anonymous$3
   }
+  label label$break$1
   label label$ret
 }
 
@@ -114,6 +116,7 @@ method pkg$$global$loopUntil(local$lambda: Ref) returns (ret: dom$Unit)
   var anonymous$1: Bool
   var anonymous$2: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$lambda): dom$Type), dom$Type$Function())
+  label label$continue$1
   special$invoke_function_object(local$lambda)
   anonymous$1 := !anonymous$2
   while (anonymous$1)
@@ -127,5 +130,6 @@ method pkg$$global$loopUntil(local$lambda: Ref) returns (ret: dom$Unit)
     special$invoke_function_object(local$lambda)
     anonymous$1 := !anonymous$3
   }
+  label label$break$1
   label label$ret
 }

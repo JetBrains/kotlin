@@ -21,6 +21,7 @@ interface ProgramConversionContext {
     fun embedType(type: ConeKotlinType): TypeEmbedding
     fun embedType(exp: FirExpression): TypeEmbedding = embedType(exp.resolvedType)
     fun newAnonName(): AnonymousName
+    fun newWhileIndex(): Int
 }
 
 fun ProgramConversionContext.newAnonVar(type: TypeEmbedding): VariableEmbedding = VariableEmbedding(newAnonName(), type)

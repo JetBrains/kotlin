@@ -10,3 +10,35 @@ FILE: return_break_continue.kt
 
         ^return_from_loop Int(1)
     }
+    public final fun while_break(b: R|kotlin/Boolean|): R|kotlin/Int| {
+        lvar i: R|kotlin/Int| = Int(0)
+        while(R|<local>/b|) {
+            R|<local>/i| = Int(1)
+            break@@@[R|<local>/b|]
+        }
+
+        ^while_break R|<local>/i|
+    }
+    public final fun while_continue(): R|kotlin/Unit| {
+        lvar b: R|kotlin/Boolean| = Boolean(true)
+        while(R|<local>/b|) {
+            R|<local>/b| = Boolean(false)
+            continue@@@[R|<local>/b|]
+        }
+
+    }
+    public final fun while_nested(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        while(R|<local>/b|) {
+            while(R|<local>/b|) {
+                break@@@[R|<local>/b|]
+            }
+
+            continue@@@[R|<local>/b|]
+            while(R|<local>/b|) {
+                continue@@@[R|<local>/b|]
+            }
+
+            break@@@[R|<local>/b|]
+        }
+
+    }
