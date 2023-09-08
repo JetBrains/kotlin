@@ -33,7 +33,7 @@ fun foo() {
     val dates3 = <!NEW_INFERENCE_ERROR!>myRun {
         when {
             else -> return@myRun <!RETURN_TYPE_MISMATCH!>buildList {
-                add(4)
+                add(<!ARGUMENT_TYPE_MISMATCH!>4<!>)
             }<!>
         }
     }<!>
