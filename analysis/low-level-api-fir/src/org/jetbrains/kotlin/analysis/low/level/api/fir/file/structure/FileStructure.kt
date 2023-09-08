@@ -89,7 +89,7 @@ internal class FileStructure private constructor(
         }
 
         val resultedContainer = when {
-            container is KtClassOrObject && container.isInsideSuperClassCall(element) -> {
+            container is KtClassOrObject && container.isPartOfSuperClassCall(element) -> {
                 container.primaryConstructor
             }
             else -> null
@@ -98,9 +98,16 @@ internal class FileStructure private constructor(
         return resultedContainer ?: container
     }
 
-    private fun KtClassOrObject.isInsideSuperClassCall(element: KtElement): Boolean {
+    private fun KtClassOrObject.isPartOfSuperClassCall(element: KtElement): Boolean {
         for (entry in superTypeListEntries) {
-            if (entry is KtSuperTypeCallEntry && entry.isAncestor(element, strict = false)) return true
+            if (entry !is KtSuperTypeCallEntry) continue
+
+            // the structure element for `KtTypeReference` inside super class call is class declaration and not primary constructor
+            val typeReferenceIsAncestor = entry.calleeExpression.typeReference?.isAncestor(element, strict = false) == true
+            if (typeReferenceIsAncestor) return false
+
+            // the structure element for `KtSuperTypeCallEntry` is primary constructor
+            if (entry.isAncestor(element, strict = false)) return true
         }
 
         return false

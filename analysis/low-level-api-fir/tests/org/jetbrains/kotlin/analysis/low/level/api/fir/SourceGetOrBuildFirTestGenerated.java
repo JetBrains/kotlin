@@ -1088,6 +1088,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("superType.kt")
+        public void testSuperType() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/types/superType.kt");
+        }
+
+        @Test
         @TestMetadata("typeArgument.kt")
         public void testTypeArgument() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/types/typeArgument.kt");

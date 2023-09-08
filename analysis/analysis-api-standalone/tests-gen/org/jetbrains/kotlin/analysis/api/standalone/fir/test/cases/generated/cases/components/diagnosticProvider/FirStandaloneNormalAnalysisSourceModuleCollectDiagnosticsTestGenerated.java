@@ -71,6 +71,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
     }
 
     @Test
+    @TestMetadata("unresolvedSuperConstructorCall.kt")
+    public void testUnresolvedSuperConstructorCall() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedSuperConstructorCall.kt");
+    }
+
+    @Test
     @TestMetadata("unusedDestructuring.kt")
     public void testUnusedDestructuring() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unusedDestructuring.kt");
