@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-61959
 
 package test

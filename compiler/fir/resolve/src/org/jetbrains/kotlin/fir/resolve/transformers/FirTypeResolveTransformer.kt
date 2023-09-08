@@ -125,6 +125,10 @@ open class FirTypeResolveTransformer(
 
     fun transformClassTypeParameters(regularClass: FirRegularClass, data: Any?) {
         withScopeCleanup {
+            // Remove type parameter scopes for classes that are neither inner nor local
+            if (removeOuterTypeParameterScope(regularClass)) {
+                this.scopes = staticScopes
+            }
             addTypeParametersScope(regularClass)
             regularClass.typeParameters.forEach {
                 it.accept(this, data)

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-61459
 
 interface Alarm {
