@@ -1,7 +1,5 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K2: JVM_IR
-// FIR status: KT-58741
 
 fun foo() =
     buildBox {
