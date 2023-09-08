@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.generator.print
 
 import com.squareup.kotlinpoet.*
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.elementTransformerType
@@ -28,11 +29,11 @@ fun printElements(generationPath: File, model: Model) = sequence {
         }.apply {
             addModifiers(
                 when (element.kind) {
-                    Element.Kind.SealedClass -> listOf(KModifier.SEALED)
-                    Element.Kind.SealedInterface -> listOf(KModifier.SEALED)
-                    Element.Kind.AbstractClass -> listOf(KModifier.ABSTRACT)
-                    Element.Kind.FinalClass -> listOf(KModifier.FINAL)
-                    Element.Kind.OpenClass -> listOf(KModifier.OPEN)
+                    ImplementationKind.SealedClass -> listOf(KModifier.SEALED)
+                    ImplementationKind.SealedInterface -> listOf(KModifier.SEALED)
+                    ImplementationKind.AbstractClass -> listOf(KModifier.ABSTRACT)
+                    ImplementationKind.FinalClass -> listOf(KModifier.FINAL)
+                    ImplementationKind.OpenClass -> listOf(KModifier.OPEN)
                     else -> emptyList()
                 }
             )

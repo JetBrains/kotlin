@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.generator.model
 
 import com.squareup.kotlinpoet.CodeBlock
-import org.jetbrains.kotlin.generators.tree.TypeKind
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig
 import org.jetbrains.kotlin.ir.generator.config.FieldConfig
 import org.jetbrains.kotlin.ir.generator.util.*
@@ -25,7 +25,7 @@ class Element(
     var visitorParent: ElementRef? = null
     var transformerReturnType: Element? = null
     val targetKind = config.typeKind
-    var kind: Kind? = null
+    var kind: ImplementationKind? = null
     val typeName
         get() = elementName2typeName(name)
     val allParents: List<ClassOrElementRef>
@@ -50,15 +50,6 @@ class Element(
     val additionalImports: List<Import> = config.additionalImports
 
     override fun toString() = name
-
-    enum class Kind(val typeKind: TypeKind) {
-        FinalClass(TypeKind.Class),
-        OpenClass(TypeKind.Class),
-        AbstractClass(TypeKind.Class),
-        SealedClass(TypeKind.Class),
-        Interface(TypeKind.Interface),
-        SealedInterface(TypeKind.Interface),
-    }
 
     companion object {
         fun elementName2typeName(name: String) = "Ir" + name.replaceFirstChar(Char::uppercaseChar)
