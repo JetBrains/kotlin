@@ -95,6 +95,9 @@ fun testInline4() {
 fun testCheckedAs1(x : lib.FwdStruct) = x as cnames.structs.FwdStruct
 fun testCheckedAs2(x : lib.FwdObjcClass) = x as objcnames.classes.FwdObjcClass
 fun testCheckedAs3(x : lib.FwdProtocol) = x as objcnames.protocols.FwdProtocol
+fun testCheckedSafeAs4(x : lib.FwdStruct) = x as? cnames.structs.FwdStruct
+fun testCheckedSafeAs5(x : lib.FwdObjcClass) = x as? objcnames.classes.FwdObjcClass
+fun testCheckedSafeAs6(x : lib.FwdProtocol) = x as? objcnames.protocols.FwdProtocol
 
 fun testUnCheckedAs1(x : lib2.FwdStruct) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x as cnames.structs.FwdStruct<!>
 fun testUnCheckedAs2(x : lib2.FwdObjcClass) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x as objcnames.classes.FwdObjcClass<!>
