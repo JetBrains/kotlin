@@ -16,8 +16,16 @@
 namespace kotlin::gc {
 
 class GC::ObjectData {
+    static constexpr intptr_t kNoQueueMark = 1;
 public:
-    bool tryMark() noexcept { return trySetNext(reinterpret_cast<ObjectData*>(1)); }
+    bool tryMark() noexcept { return trySetNext(reinterpret_cast<ObjectData*>(kNoQueueMark)); }
+
+    void markUncontended() noexcept {
+        RuntimeAssert(!marked(), "Must not be marked previously");
+        auto nextVal = reinterpret_cast<ObjectData*>(kNoQueueMark);
+        setNext(nextVal);
+        RuntimeAssert(next() == nextVal, "Non-atomic marking must not be contended");
+    }
 
     bool marked() const noexcept { return next() != nullptr; }
 

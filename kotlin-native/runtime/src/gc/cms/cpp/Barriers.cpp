@@ -68,8 +68,7 @@ ALWAYS_INLINE void gc::BarriersThreadData::onAllocation(ObjHeader* allocated) {
         RuntimeAssert(shouldMark == barriersEnabled, "New allocations marking must happen with and only with weak ref barriers");
         if (shouldMark) {
             auto& objectData = alloc::objectDataForObject(allocated);
-            bool wasUnmarked = objectData.tryMark();
-            RuntimeAssert(wasUnmarked, "No one else could mark this newly allocated object before");
+            objectData.markUncontended();
             markHandle_->addObject();
         }
     }
