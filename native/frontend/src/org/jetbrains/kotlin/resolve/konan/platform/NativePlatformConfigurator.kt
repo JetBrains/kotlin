@@ -30,7 +30,8 @@ object NativePlatformConfigurator : PlatformConfiguratorBase(
         NativeObjCNameChecker, NativeObjCNameOverridesChecker,
         NativeObjCRefinementChecker, NativeObjCRefinementAnnotationChecker,
         NativeObjCRefinementOverridesChecker, NativeHiddenFromObjCInheritanceChecker,
-    )
+    ),
+    platformSpecificCastChecker = NativePlatformSpecificCastChecker
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(NativeInliningRule)

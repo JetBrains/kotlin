@@ -678,7 +678,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 .takeIf { it.isNotEmpty() }
                 ?: possibleTypes
 
-            if (nonTrivialTypes.none { CastDiagnosticsUtil.isCastPossible(it, targetType, components.platformToKotlinClassMapper) }) {
+            if (nonTrivialTypes.none { CastDiagnosticsUtil.isCastPossible(it, targetType, components.platformToKotlinClassMapper, components.platformSpecificCastChecker) }) {
                 context.trace.report(USELESS_IS_CHECK.on(isCheck, negated))
             }
         }
