@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
-import java.io.File
 import kotlin.test.assertTrue
 
 class VariantAwareDependenciesMppIT : BaseGradleIT() {
@@ -256,40 +255,6 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
             assertTrue(items.toString()) { items.any { "atomicfu-jvm" in it } }
         }
     }
-
-    @Test
-    fun testResolveCompatibilityMetadataVariantWithNative() = with(Project("native-libraries")) {
-        setupWorkingDir()
-        val nestedProjectName = "nested"
-        embedProject(Project("native-libraries"), nestedProjectName)
-
-        projectDir.resolve("gradle.properties").appendText(
-            "\n" + """
-                kotlin.mpp.enableCompatibilityMetadataVariant=true
-                kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError
-            """
-        )
-
-        val resolveConfigurationTaskName = "resolveConfiguration"
-        val marker = "###=>"
-
-        gradleBuildScript().appendText(
-            "\n" + """
-                dependencies { "commonMainImplementation"(project(":$nestedProjectName")) }
-                tasks.create("$resolveConfigurationTaskName") {
-                    doFirst {
-                        println("$marker" + configurations.getByName("metadataCompileClasspath").toList())
-                    }
-                }
-            """
-        )
-        build(resolveConfigurationTaskName) {
-            assertSuccessful()
-            val output = output.lines().single { marker in it }.substringAfter(marker).removeSurrounding("[", "]").split(",")
-            assertTrue { output.any { "$nestedProjectName-1.0.jar" in it } }
-        }
-    }
-
 }
 
 internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project, renameTo: String? = null) {

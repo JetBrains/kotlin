@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.RunnerWithMuteInDatabase
@@ -33,7 +32,6 @@ import java.nio.file.Paths
 import java.util.*
 import java.util.regex.Pattern
 import javax.xml.parsers.DocumentBuilderFactory
-import kotlin.collections.HashSet
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.isDirectory
 import kotlin.test.*
@@ -269,7 +267,6 @@ abstract class BaseGradleIT {
         val dryRun: Boolean = false,
         val abiSnapshot: Boolean = false,
         val hierarchicalMPPStructureSupport: Boolean? = null,
-        val enableCompatibilityMetadataVariant: Boolean? = null,
         val withReports: List<BuildReportType> = emptyList(),
         val enableKpmModelMapping: Boolean? = null,
         val useDaemonFallbackStrategy: Boolean = false,
@@ -915,10 +912,6 @@ abstract class BaseGradleIT {
                 add("-Pkotlin.mpp.hierarchicalStructureSupport=${options.hierarchicalMPPStructureSupport}")
             }
 
-            if (options.enableCompatibilityMetadataVariant != null) {
-                add("-Pkotlin.mpp.enableCompatibilityMetadataVariant=${options.enableCompatibilityMetadataVariant}")
-            }
-
             if (options.withReports.isNotEmpty()) {
                 add("-Pkotlin.build.report.output=${options.withReports.joinToString { it.name }}")
             }
@@ -942,7 +935,7 @@ abstract class BaseGradleIT {
 
             // temporary suppression for the usage of deprecated pre-HMPP properties.
             // Should be removed together with the flags support in 2.0
-            if (options.hierarchicalMPPStructureSupport != null || options.enableCompatibilityMetadataVariant != null) {
+            if (options.hierarchicalMPPStructureSupport != null) {
                 add("-Pkotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError")
             }
 

@@ -5,22 +5,22 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCommandLineArguments
-import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.gradle.native.*
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCommandLineArguments
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
+import org.jetbrains.kotlin.gradle.native.configureJvmMemory
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProject
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProjectWithPluginDsl
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
-import org.jetbrains.kotlin.gradle.plugin.sources.UnsatisfiedSourceSetVisibilityException
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
+import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
+import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -43,7 +43,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
 
     private data class HmppFlags(
         val hmppSupport: Boolean,
-        val enableCompatibilityMetadataArtifact: Boolean,
         val name: String,
     ) {
         override fun toString() = name
@@ -51,26 +50,17 @@ open class NewMultiplatformIT : BaseGradleIT() {
 
     private val noHMPP = HmppFlags(
         name = "No HMPP",
-        hmppSupport = false,
-        enableCompatibilityMetadataArtifact = false
+        hmppSupport = false
     )
 
     private val hmppWoCompatibilityMetadataArtifact = HmppFlags(
         name = "HMPP without Compatibility Metadata Artifact",
-        hmppSupport = true,
-        enableCompatibilityMetadataArtifact = false
-    )
-
-    private val hmppWithCompatibilityMetadataArtifact = HmppFlags(
-        name = "HMPP with Compatibility Metadata Artifact",
-        hmppSupport = true,
-        enableCompatibilityMetadataArtifact = true
+        hmppSupport = true
     )
 
     private val HmppFlags.buildOptions
         get() = defaultBuildOptions().copy(
-            hierarchicalMPPStructureSupport = hmppSupport,
-            enableCompatibilityMetadataVariant = enableCompatibilityMetadataArtifact,
+            hierarchicalMPPStructureSupport = hmppSupport
         )
 
     @Test
@@ -88,13 +78,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
     )
 
     @Test
-    fun testLibAndAppWithCompatibilityArtifact() = doTestLibAndApp(
-        "sample-lib",
-        "sample-app",
-        hmppWithCompatibilityMetadataArtifact
-    )
-
-    @Test
     fun testLibAndAppWithGradleKotlinDsl() = doTestLibAndApp(
         "sample-lib-gradle-kotlin-dsl",
         "sample-app-gradle-kotlin-dsl",
@@ -108,7 +91,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
     ) {
         val libProject = transformNativeTestProjectWithPluginDsl(libProjectName, directoryPrefix = "new-mpp-lib-and-app")
         val appProject = transformNativeTestProjectWithPluginDsl(appProjectName, directoryPrefix = "new-mpp-lib-and-app")
-        val oldStyleAppProject = Project("sample-old-style-app", directoryPrefix = "new-mpp-lib-and-app")
 
         val buildOptions = hmppFlags.buildOptions
         val compileTasksNames =
@@ -121,10 +103,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
             ) {
                 assertSuccessful()
                 assertTasksExecuted(*compileTasksNames.toTypedArray(), ":jvm6Jar", ":nodeJsJar", ":compileCommonMainKotlinMetadata")
-
-                if (hmppFlags.enableCompatibilityMetadataArtifact) {
-                    assertTasksExecuted(":compileKotlinMetadata", ":metadataJar")
-                }
 
                 val groupDir = projectDir.resolve("repo/com/example")
                 val jvmJarName = "sample-lib-jvm6/1.0/sample-lib-jvm6-1.0.jar"
@@ -158,10 +136,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
 
                 Assert.assertTrue(groupDir.resolve(jsKlibName).exists())
 
-                val metadataJarEntries = ZipFile(groupDir.resolve(metadataJarName)).entries().asSequence().map { it.name }.toSet()
-                val metadataFileFound = "com/example/lib/CommonKt.kotlin_metadata" in metadataJarEntries
-                Assert.assertEquals(hmppFlags.enableCompatibilityMetadataArtifact, metadataFileFound)
-
                 Assert.assertTrue(groupDir.resolve(nativeKlibName).exists())
             }
         }
@@ -187,12 +161,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
                     Assert.assertTrue(resolve("com/example/app/AKt.class").exists())
                     Assert.assertTrue(resolve("com/example/app/UseBothIdsKt.class").exists())
                     Assert.assertTrue(resolve("com/example/app/Jdk8ApiUsageKt.class").exists())
-                }
-
-                if (hmppFlags.enableCompatibilityMetadataArtifact) {
-                    projectDir.resolve(targetClassesDir("metadata")).run {
-                        Assert.assertTrue(resolve("com/example/app/AKt.kotlin_metadata").exists())
-                    }
                 }
 
                 val nativeExeName = if (isWindows) "main.exe" else "main.kexe"
@@ -231,26 +199,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 options = buildOptions
             ) {
                 checkAppBuild()
-            }
-        }
-
-        if (hmppFlags.enableCompatibilityMetadataArtifact) {
-            with(oldStyleAppProject) {
-                setupWorkingDir()
-                gradleBuildScript().appendText("\nallprojects { repositories { maven { url '$libLocalRepoUri' } } }")
-
-                build("assemble", options = buildOptions) {
-                    assertSuccessful()
-                    assertTasksExecuted(":app-jvm:compileKotlin", ":app-common:compileKotlinCommon")
-
-                    assertFileExists(kotlinClassesDir("app-common") + "com/example/app/CommonAppKt.kotlin_metadata")
-
-                    val jvmClassFile = projectDir.resolve(kotlinClassesDir("app-jvm") + "com/example/app/JvmAppKt.class")
-                    checkBytecodeContains(jvmClassFile, "CommonKt.id", "MainKt.expectedFun")
-
-//                    val jsCompiledFilePath = kotlinClassesDir("app-js") + "app-js.js"
-//                    assertFileContains(jsCompiledFilePath, "lib.expectedFun", "lib.id")
-                }
             }
         }
     }
@@ -902,10 +850,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
         testResolveJsPartOfMppLibDependencyToMetadata(hmppWoCompatibilityMetadataArtifact)
 
     @Test
-    fun testResolveJsPartOfMppLibDependencyToMetadataWithHmppAndCompatibilityMetadataArtifact() =
-        testResolveJsPartOfMppLibDependencyToMetadata(hmppWithCompatibilityMetadataArtifact)
-
-    @Test
     fun testResolveJsPartOfMppLibDependencyToMetadataWithoutHmpp() =
         testResolveJsPartOfMppLibDependencyToMetadata(noHMPP)
 
@@ -1023,57 +967,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
             assertTrue(""""name": "linux64ApiElements-published"""" in gradleModuleMetadata)
             assertTrue(""""name": "mingw64ApiElements-published"""" in gradleModuleMetadata)
             assertTrue(""""name": "macos64ApiElements-published"""" in gradleModuleMetadata)
-        }
-    }
-
-    @Test
-    fun testNonMppConsumersOfLibraryPublishedWithNoMetadataOptIn() {
-        val repoDir = with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
-            build(
-                "publish",
-                options = hmppWithCompatibilityMetadataArtifact.buildOptions
-            ) { assertSuccessful() }
-            projectDir.resolve("repo")
-        }
-
-        with(Project("sample-old-style-app", gradleVersion, "new-mpp-lib-and-app")) {
-            setupWorkingDir()
-            gradleBuildScript().appendText("\nallprojects { repositories { maven { url '${repoDir.toURI()}' } } }")
-            gradleBuildScript("app-jvm").modify { it.replace("com.example:sample-lib:", "com.example:sample-lib-jvm6:") }
-
-            build("assemble", "run") {
-                assertSuccessful()
-                assertTasksExecuted(":app-common:compileKotlinCommon", ":app-jvm:compileKotlin", ":app-jvm:run")
-            }
-
-            // Then run again without even reading the metadata from the repo:
-            projectDir.resolve("settings.gradle").modify { it.replace("enableFeaturePreview('GRADLE_METADATA')", "") }
-
-            build("assemble", "run", "--rerun-tasks") {
-                assertSuccessful()
-                assertTasksExecuted(":app-common:compileKotlinCommon", ":app-jvm:compileKotlin", ":app-jvm:run")
-            }
-        }
-
-        with(Project("sample-app-without-kotlin", gradleVersion, "new-mpp-lib-and-app")) {
-            setupWorkingDir()
-            gradleBuildScript().modify {
-                it.replace("com.example:sample-lib:1.0", "com.example:sample-lib-jvm6:1.0") + "\n" + """
-                    repositories { maven { url '${repoDir.toURI()}' } }
-                """.trimIndent()
-            }
-
-            build("run") {
-                assertSuccessful()
-                assertTasksExecuted(":compileJava", ":run")
-            }
-
-            // Then run again without even reading the metadata from the repo:
-            projectDir.resolve("settings.gradle").modify { it.replace("enableFeaturePreview('GRADLE_METADATA')", "") }
-            build("run", "--rerun-tasks") {
-                assertSuccessful()
-                assertTasksExecuted(":compileJava", ":run")
-            }
         }
     }
 
@@ -1862,7 +1755,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
             setupWorkingDir()
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
-            build("publish", options = defaultBuildOptions().copy(enableCompatibilityMetadataVariant = false)) {
+            build("publish") {
                 assertSuccessful()
             }
         }
