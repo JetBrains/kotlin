@@ -8,11 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isDeclarationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -23,7 +19,7 @@ internal abstract class LLFirTargetResolver(
     protected val lockProvider: LLFirLockProvider,
     protected val resolverPhase: FirResolvePhase,
     private val isJumpingPhase: Boolean = false,
-) {
+) : LLFirResolveTargetVisitor {
     private val _nestedClassesStack = mutableListOf<FirRegularClass>()
 
     val nestedClassesStack: List<FirRegularClass> get() = _nestedClassesStack.toList()
@@ -39,11 +35,11 @@ internal abstract class LLFirTargetResolver(
         }
     }
 
-    protected open fun withFile(firFile: FirFile, action: () -> Unit) {
+    override fun withFile(firFile: FirFile, action: () -> Unit) {
         action()
     }
 
-    protected open fun withScript(firScript: FirScript, action: () -> Unit) {
+    override fun withScript(firScript: FirScript, action: () -> Unit) {
         action()
     }
 
@@ -53,7 +49,7 @@ internal abstract class LLFirTargetResolver(
     }
 
     @Suppress("DEPRECATION_ERROR")
-    protected fun withRegularClass(firClass: FirRegularClass, action: () -> Unit) {
+    final override fun withRegularClass(firClass: FirRegularClass, action: () -> Unit) {
         _nestedClassesStack += firClass
         withRegularClassImpl(firClass, action)
         check(_nestedClassesStack.removeLast() === firClass)
@@ -70,79 +66,11 @@ internal abstract class LLFirTargetResolver(
 
     fun resolveDesignation() {
         checkResolveConsistency()
-        if (resolveTarget is LLFirSingleResolveTarget && resolveTarget.target is FirFile) {
-            performResolve(resolveTarget.firFile)
-            return
-        }
-        if (resolveTarget is LLFirWholeFileResolveTarget) {
-            performResolve(resolveTarget.firFile)
-        }
-        withFile(resolveTarget.firFile) {
-            goToTargets(resolveTarget.path.iterator())
-        }
+        resolveTarget.visit(this)
     }
 
-    private fun goToTargets(path: Iterator<FirDeclaration>) {
-        if (path.hasNext()) {
-            when (val firDeclaration = path.next()) {
-                is FirRegularClass -> withRegularClass(firDeclaration) { goToTargets(path) }
-                is FirScript -> withScript(firDeclaration) { goToTargets(path) }
-                else -> errorWithFirSpecificEntries(
-                    "Unexpected declaration in path: ${firDeclaration::class.simpleName}",
-                    fir = firDeclaration,
-                )
-            }
-        } else {
-            when (resolveTarget) {
-                is LLFirClassWithSpecificMembersResolveTarget -> {
-                    performResolve(resolveTarget.target)
-                    withRegularClass(resolveTarget.target as FirRegularClass) {
-                        resolveTarget.forEachMember(::performResolve)
-                    }
-                }
-                is LLFirClassWithAllMembersResolveTarget -> {
-                    performResolve(resolveTarget.target)
-                    withRegularClass(resolveTarget.target as FirRegularClass) {
-                        resolveTarget.forEachMember(::performResolve)
-                    }
-                }
-                is LLFirClassWithAllCallablesResolveTarget -> {
-                    performResolve(resolveTarget.target)
-                    withRegularClass(resolveTarget.target as FirRegularClass) {
-                        resolveTarget.forEachCallable(::performResolve)
-                    }
-                }
-                is LLFirSingleResolveTarget -> {
-                    performResolve(resolveTarget.target)
-                }
-                is LLFirWholeFileResolveTarget -> {
-                    resolveTarget.forEachTopLevelDeclaration(::resolveTargetWithNestedDeclarations)
-                }
-                is LLFirWholeClassResolveTarget -> {
-                    performResolve(resolveTarget.target)
-                    withRegularClass(resolveTarget.target as FirRegularClass) {
-                        resolveTarget.forEachDeclaration(::resolveTargetWithNestedDeclarations)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun resolveTargetWithNestedDeclarations(target: FirElementWithResolveState) {
-        performResolve(target)
-        when {
-            target !is FirDeclaration || !target.isDeclarationContainer -> {}
-
-            target is FirRegularClass -> withRegularClass(target) {
-                target.forEachDeclaration(::resolveTargetWithNestedDeclarations)
-            }
-
-            target is FirScript -> withScript(target) {
-                target.forEachDeclaration(::resolveTargetWithNestedDeclarations)
-            }
-
-            else -> errorWithFirSpecificEntries("Unexpected declaration: ${target::class.simpleName}", fir = target)
-        }
+    final override fun performAction(element: FirElementWithResolveState) {
+        performResolve(element)
     }
 
     protected fun performResolve(target: FirElementWithResolveState) {

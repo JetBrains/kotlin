@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
@@ -15,15 +15,16 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
  */
 class LLFirClassWithAllMembersResolveTarget(
     firFile: FirFile,
-    classPath: List<FirRegularClass>,
+    containerClasses: List<FirRegularClass>,
     target: FirRegularClass,
-) : LLFirResolveTarget(firFile, classPath, target) {
-    override fun forEachTarget(action: (FirElementWithResolveState) -> Unit) {
-        action(target)
-        forEachMember(action)
-    }
-
-    inline fun forEachMember(action: (FirDeclaration) -> Unit) {
-        (target as FirRegularClass).declarations.forEach(action)
+) : LLFirResolveTarget(firFile, containerClasses, target) {
+    override fun visitTargetElement(
+        element: FirElementWithResolveState,
+        visitor: LLFirResolveTargetVisitor,
+    ) {
+        visitor.performAction(element)
+        visitor.withRegularClass(element as FirRegularClass) {
+            element.forEachDeclaration(visitor::performAction)
+        }
     }
 }

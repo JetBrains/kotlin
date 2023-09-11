@@ -9,22 +9,21 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeClassResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeFileResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeElementResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyResolverRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.withOnAirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 
 internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirModuleResolveComponents) {
     /**
@@ -44,7 +43,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         val fromPhase = target.resolvePhase
 
         /**
-         * Currently [lazyResolve] on file means [LLFirWholeFileResolveTarget], but also [FirFile] itself
+         * Currently [lazyResolve] on file means [LLFirWholeElementResolveTarget], but also [FirFile] itself
          * has [resolvePhase] which does not match with the entire file resolution state.
          * This additional [FirFile] condition can be dropped after KT-61296
          */
@@ -138,9 +137,9 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         resolveFileToImportsWithLock(designation.firFile)
 
         val target = when {
-            designation.target is FirFile -> LLFirWholeFileResolveTarget(designation.firFile)
+            designation.target is FirFile -> LLFirWholeElementResolveTarget(designation.firFile)
             resolvePhase == FirResolvePhase.BODY_RESOLVE && designation.target is FirRegularClass -> {
-                LLFirWholeClassResolveTarget(designation.firFile, designation.path, designation.target)
+                LLFirWholeElementResolveTarget(designation.firFile, designation.path, designation.target)
             }
 
             else -> LLFirSingleResolveTarget(designation.firFile, designation.path, designation.target)

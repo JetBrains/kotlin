@@ -12,17 +12,18 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
 class LLFirClassWithSpecificMembersResolveTarget(
     firFile: FirFile,
-    classPath: List<FirRegularClass>,
+    containerClasses: List<FirRegularClass>,
     target: FirRegularClass,
     val members: List<FirDeclaration>,
-) : LLFirResolveTarget(firFile, classPath, target) {
-    override fun forEachTarget(action: (FirElementWithResolveState) -> Unit) {
-        action(target)
-        forEachMember(action)
-    }
-
-    fun forEachMember(action: (FirDeclaration) -> Unit) {
-        members.forEach(action)
+) : LLFirResolveTarget(firFile, containerClasses, target) {
+    override fun visitTargetElement(
+        element: FirElementWithResolveState,
+        visitor: LLFirResolveTargetVisitor,
+    ) {
+        visitor.performAction(element)
+        visitor.withRegularClass(element as FirRegularClass) {
+            members.forEach(visitor::performAction)
+        }
     }
 
     override fun toStringAdditionalSuffix(): String = members.joinToString(prefix = "[", postfix = "]") { it.symbol.toString() }

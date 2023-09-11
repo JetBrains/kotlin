@@ -13,10 +13,15 @@ import org.jetbrains.kotlin.fir.declarations.*
  */
 class LLFirSingleResolveTarget(
     firFile: FirFile,
-    classPath: List<FirRegularClass>,
+    containerClasses: List<FirRegularClass>,
     target: FirElementWithResolveState,
-) : LLFirResolveTarget(firFile, classPath, target) {
-    override fun forEachTarget(action: (FirElementWithResolveState) -> Unit) {
-        action(target)
+) : LLFirResolveTarget(firFile, containerClasses, target) {
+    override fun visitTargetElement(
+        element: FirElementWithResolveState,
+        visitor: LLFirResolveTargetVisitor,
+    ) {
+        if (element !is FirFile) {
+            visitor.performAction(element)
+        }
     }
 }

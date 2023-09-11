@@ -32,7 +32,7 @@ sealed class LLFirResolveTarget(
     /**
      * The list of [FirRegularClass] which are the required to go from file to target declarations in the top-down order.
      */
-    classPath: List<FirRegularClass>,
+    containerClasses: List<FirRegularClass>,
 
     /**
      * A dedicated main element.
@@ -44,12 +44,59 @@ sealed class LLFirResolveTarget(
      *
      * If resolve target is [FirRegularClass] or [FirScript] itself, it's not included into the [path].
      */
-    val path: List<FirDeclaration> = pathWithScript(firFile, classPath, target)
+    val path: List<FirDeclaration> = pathWithScript(firFile, containerClasses, target)
+
+    /**
+     * Visit [path], [target] and optionally its subgraph.
+     * Each nested declaration will be wrapped with corresponding [withFile], [withClass] and [withScript] recursively.
+     */
+    fun visit(visitor: LLFirResolveTargetVisitor) {
+        if (target is FirFile) {
+            visitor.performAction(target)
+        }
+
+        visitor.withFile(firFile) {
+            val pathIterator = path.iterator()
+            goToTarget(pathIterator, visitor)
+        }
+    }
+
+    private fun goToTarget(
+        pathIterator: Iterator<FirDeclaration>,
+        visitor: LLFirResolveTargetVisitor,
+    ) {
+        if (pathIterator.hasNext()) {
+            when (val declaration = pathIterator.next()) {
+                is FirRegularClass -> visitor.withRegularClass(declaration) { goToTarget(pathIterator, visitor) }
+                is FirScript -> visitor.withScript(declaration) { goToTarget(pathIterator, visitor) }
+                else -> errorWithFirSpecificEntries(
+                    "Unexpected declaration in path: ${declaration::class.simpleName}",
+                    fir = declaration,
+                )
+            }
+        } else {
+            visitTargetElement(target, visitor)
+        }
+    }
+
+    /**
+     * [element] with [FirFile] will be processed before.
+     */
+    protected abstract fun visitTargetElement(
+        element: FirElementWithResolveState,
+        visitor: LLFirResolveTargetVisitor,
+    )
 
     /**
      * Executions the [action] for each target that this [LLFirResolveTarget] represents.
      */
-    abstract fun forEachTarget(action: (FirElementWithResolveState) -> Unit)
+    fun forEachTarget(action: (FirElementWithResolveState) -> Unit) {
+        visit(object : LLFirResolveTargetVisitor {
+            override fun performAction(element: FirElementWithResolveState) {
+                action(element)
+            }
+        })
+    }
 
     override fun toString(): String = buildString {
         append(this@LLFirResolveTarget::class.simpleName)

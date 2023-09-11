@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassWithAllCallablesResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeFileResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeElementResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAcces
 internal object LLFirResolveMultiDesignationCollector {
     fun getDesignationsToResolve(target: FirElementWithResolveState): List<LLFirResolveTarget> {
         return when (target) {
-            is FirFile -> listOf(LLFirWholeFileResolveTarget(target))
+            is FirFile -> listOf(LLFirWholeElementResolveTarget(target))
             else -> getMainDesignationToResolve(target)?.withAnnotationContainer()
         } ?: emptyList()
     }
