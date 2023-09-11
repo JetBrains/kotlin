@@ -16,4 +16,5 @@ object FirDummyCompilerLazyDeclarationResolver : FirLazyDeclarationResolver() {
 
     override fun lazyResolveToPhase(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase) {}
     override fun lazyResolveToPhaseWithCallableMembers(symbol: FirClassSymbol<*>, toPhase: FirResolvePhase) {}
+    override fun lazyResolveToPhaseRecursively(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase) {}
 }

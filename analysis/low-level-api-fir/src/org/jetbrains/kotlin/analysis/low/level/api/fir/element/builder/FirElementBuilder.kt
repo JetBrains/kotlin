@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -85,7 +86,7 @@ internal class FirElementBuilder(
 
     private fun getOrBuildFirForKtFile(ktFile: KtFile): FirFile {
         val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
-        firFile.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        firFile.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE)
         return firFile
     }
 

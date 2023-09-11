@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassWithAllCallablesResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeElementResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
@@ -19,16 +20,22 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 
 internal object LLFirResolveMultiDesignationCollector {
-    fun getDesignationsToResolve(target: FirElementWithResolveState): List<LLFirResolveTarget> {
-        return when (target) {
-            is FirFile -> listOf(LLFirWholeElementResolveTarget(target))
-            else -> getMainDesignationToResolve(target)?.withAnnotationContainer()
-        } ?: emptyList()
-    }
+    fun getDesignationsToResolve(target: FirElementWithResolveState): List<LLFirResolveTarget> = when (target) {
+        is FirFile -> listOf(LLFirSingleResolveTarget(target))
+        else -> getMainDesignationToResolve(target)?.withAnnotationContainer()
+    } ?: emptyList()
 
     fun getDesignationsToResolveWithCallableMembers(target: FirRegularClass): List<LLFirResolveTarget> {
         val designation = target.tryCollectDesignationWithFile() ?: return emptyList()
         val resolveTarget = LLFirClassWithAllCallablesResolveTarget(designation.firFile, designation.path, target)
+        return resolveTarget.withAnnotationContainer()
+    }
+
+    fun getDesignationsToResolveRecursively(target: FirElementWithResolveState): List<LLFirResolveTarget> {
+        if (target is FirFile) return listOf(LLFirWholeElementResolveTarget(target))
+
+        val designation = target.tryCollectDesignationWithFile() ?: return emptyList()
+        val resolveTarget = LLFirWholeElementResolveTarget(designation.firFile, designation.path, target)
         return resolveTarget.withAnnotationContainer()
     }
 

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -83,7 +83,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractLowLevelApiSi
         resolveWithClearCaches(ktFile) { llSession ->
             checkSession(llSession)
             val firFile = llSession.getOrBuildFirFile(ktFile)
-            firFile.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            firFile.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE)
             if (resultBuilder.isNotEmpty()) {
                 resultBuilder.appendLine()
             }

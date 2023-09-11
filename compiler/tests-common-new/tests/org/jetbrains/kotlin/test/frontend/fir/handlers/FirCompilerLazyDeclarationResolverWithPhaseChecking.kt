@@ -28,6 +28,10 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
         checkIfCanLazyResolveToPhase(toPhase)
     }
 
+    override fun lazyResolveToPhaseRecursively(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase) {
+        checkIfCanLazyResolveToPhase(toPhase)
+    }
+
     override fun startResolvingPhase(phase: FirResolvePhase) {
         check(currentTransformerPhase == null)
         currentTransformerPhase = phase

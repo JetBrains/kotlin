@@ -51,11 +51,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
                     val session = firResolveSession.useSiteFirSession as LLFirResolvableModuleSession
                     val file = session.moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
                     file to fun(phase: FirResolvePhase) {
-                        session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolveTarget(
-                            LLFirSingleResolveTarget(file, emptyList(), file),
-                            phase,
-                            towerDataContextCollector = null,
-                        )
+                        file.lazyResolveToPhase(phase)
                     }
                 }
                 else -> {

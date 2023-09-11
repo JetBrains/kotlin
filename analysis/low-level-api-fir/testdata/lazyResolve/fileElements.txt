@@ -1,5 +1,5 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] fileElements.kt
+FILE: [ResolvedTo(RAW_FIR)] fileElements.kt
     @FILE:Deprecated[Unresolved](LAZY_EXPRESSION)
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(RAW_FIR)] annotations container

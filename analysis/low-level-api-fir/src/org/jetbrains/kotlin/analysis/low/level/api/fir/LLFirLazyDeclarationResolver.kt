@@ -41,4 +41,16 @@ internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
             toPhase = toPhase,
         )
     }
+
+    override fun lazyResolveToPhaseRecursively(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase) {
+        val fir = symbol.fir
+        val session = fir.moduleData.session
+        if (session !is LLFirResolvableModuleSession) return
+        val moduleComponents = session.moduleComponents
+        moduleComponents.firModuleLazyDeclarationResolver.lazyResolveRecursively(
+            target = fir,
+            scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
+            toPhase = toPhase,
+        )
+    }
 }

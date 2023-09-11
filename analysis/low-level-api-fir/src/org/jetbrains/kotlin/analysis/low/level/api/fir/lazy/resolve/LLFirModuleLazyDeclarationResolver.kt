@@ -31,7 +31,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      *
      * Might resolve additional required declarations.
      *
-     * Resolution is performed under the lock specific to each declaration which is going to be resolved.
+     * Resolution is performed under the lock specific to each declaration that is going to be resolved.
      *
      * Suitable for body resolve or/and on-air resolve.
      */
@@ -40,28 +40,8 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
     ) {
-        val fromPhase = target.resolvePhase
-
-        /**
-         * Currently [lazyResolve] on file means [LLFirWholeElementResolveTarget], but also [FirFile] itself
-         * has [resolvePhase] which does not match with the entire file resolution state.
-         * This additional [FirFile] condition can be dropped after KT-61296
-         */
-        if (target !is FirFile && fromPhase >= toPhase) return
-
-        try {
-            resolveContainingFileToImports(target)
-            if (toPhase == FirResolvePhase.IMPORTS) return
-
-            lazyResolveTargets(
-                targets = LLFirResolveMultiDesignationCollector.getDesignationsToResolve(target),
-                scopeSession = scopeSession,
-                toPhase = toPhase,
-                towerDataContextCollector = null,
-            )
-        } catch (e: Exception) {
-            handleExceptionFromResolve(e, target, fromPhase, toPhase)
-        }
+        if (target.resolvePhase >= toPhase) return
+        lazyResolve(target, scopeSession, toPhase, LLFirResolveMultiDesignationCollector::getDesignationsToResolve)
     }
 
     /**
@@ -69,7 +49,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      *
      * Might resolve additional required declarations.
      *
-     * Resolution is performed under the lock specific to each declaration which is going to be resolved.
+     * Resolution is performed under the lock specific to each declaration that is going to be resolved.
      *
      * Suitable for body resolve or/and on-air resolve.
      */
@@ -78,13 +58,39 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
     ) {
+        lazyResolve(target, scopeSession, toPhase, LLFirResolveMultiDesignationCollector::getDesignationsToResolveWithCallableMembers)
+    }
+
+    /**
+     * Lazily resolves the [target] with nested declarations to a given [toPhase] recursively.
+     *
+     * Might resolve additional required declarations.
+     *
+     * Resolution is performed under the lock specific to each declaration that is going to be resolved.
+     *
+     * Suitable for body resolve or/and on-air resolve.
+     */
+    fun lazyResolveRecursively(
+        target: FirElementWithResolveState,
+        scopeSession: ScopeSession,
+        toPhase: FirResolvePhase,
+    ) {
+        lazyResolve(target, scopeSession, toPhase, LLFirResolveMultiDesignationCollector::getDesignationsToResolveRecursively)
+    }
+
+    private inline fun <T : FirElementWithResolveState> lazyResolve(
+        target: T,
+        scopeSession: ScopeSession,
+        toPhase: FirResolvePhase,
+        resolveTargets: (T) -> List<LLFirResolveTarget>,
+    ) {
         val fromPhase = target.resolvePhase
         try {
             resolveContainingFileToImports(target)
             if (toPhase == FirResolvePhase.IMPORTS) return
 
             lazyResolveTargets(
-                targets = LLFirResolveMultiDesignationCollector.getDesignationsToResolveWithCallableMembers(target),
+                targets = resolveTargets(target),
                 scopeSession = scopeSession,
                 toPhase = toPhase,
                 towerDataContextCollector = null,

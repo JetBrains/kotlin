@@ -16,6 +16,8 @@ class LLFirSingleResolveTarget(
     containerClasses: List<FirRegularClass>,
     target: FirElementWithResolveState,
 ) : LLFirResolveTarget(firFile, containerClasses, target) {
+    constructor(firFile: FirFile) : this(firFile, emptyList(), firFile)
+
     override fun visitTargetElement(
         element: FirElementWithResolveState,
         visitor: LLFirResolveTargetVisitor,

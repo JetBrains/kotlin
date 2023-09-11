@@ -1,5 +1,4 @@
 // IGNORE_REVERSED_RESOLVE
-// IGNORE_CONTRACT_VIOLATIONS
 // FIR_IDENTICAL
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable

@@ -40,8 +40,20 @@ abstract class FirLazyDeclarationResolver : FirSessionComponent {
         }
     }
 
+    /**
+     * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+     */
     abstract fun lazyResolveToPhase(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase)
+
+    /**
+     * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
+     */
     abstract fun lazyResolveToPhaseWithCallableMembers(symbol: FirClassSymbol<*>, toPhase: FirResolvePhase)
+
+    /**
+     * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
+     */
+    abstract fun lazyResolveToPhaseRecursively(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase)
 }
 
 class FirLazyResolveContractViolationException(
@@ -104,7 +116,6 @@ fun FirDeclaration.lazyResolveToPhase(toPhase: FirResolvePhase) {
  *
  * @see lazyResolveToPhase
  */
-
 fun FirClassSymbol<*>.lazyResolveToPhaseWithCallableMembers(toPhase: FirResolvePhase) {
     fir.lazyDeclarationResolver.lazyResolveToPhaseWithCallableMembers(this, toPhase)
 }
@@ -116,4 +127,32 @@ fun FirClassSymbol<*>.lazyResolveToPhaseWithCallableMembers(toPhase: FirResolveP
  */
 fun FirClass.lazyResolveToPhaseWithCallableMembers(toPhase: FirResolvePhase) {
     symbol.lazyResolveToPhaseWithCallableMembers(toPhase)
+}
+
+/**
+ * Lazy resolve [FirBasedSymbol] and all nested declarations to [FirResolvePhase].
+ *
+ * In the case of lazy resolution (inside Analysis API), it checks that the declaration phase `>= toPhase`.
+ * If not, it resolves the declaration for the requested phase.
+ *
+ * If the [lazyResolveToPhase] is called inside a fir transformer,
+ * it should always request the phase which is strictly lower than the current transformer phase,
+ * otherwise a deadlock/StackOverflow is possible.
+ *
+ * For the compiler mode, it does nothing, as the compiler is non-lazy.
+ *
+ * @receiver [FirBasedSymbol] which should be resolved
+ * @param toPhase the minimum phase, the declaration and all nested declarations should be resolved to after an execution of the [lazyResolveToPhase]
+ */
+fun FirBasedSymbol<*>.lazyResolveToPhaseRecursively(toPhase: FirResolvePhase) {
+    fir.lazyDeclarationResolver.lazyResolveToPhaseRecursively(this, toPhase)
+}
+
+/**
+ * Lazy resolve [FirDeclaration] and all nested declarations to [FirResolvePhase].
+ *
+ * @see lazyResolveToPhaseRecursively
+ */
+fun FirDeclaration.lazyResolveToPhaseRecursively(toPhase: FirResolvePhase) {
+    symbol.lazyResolveToPhaseRecursively(toPhase)
 }

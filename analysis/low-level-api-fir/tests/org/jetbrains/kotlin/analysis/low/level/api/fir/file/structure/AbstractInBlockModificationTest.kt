@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerPro
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -70,7 +70,7 @@ internal fun testInBlockModification(
     val declaration = elementToModify.getNonLocalContainingOrThisDeclaration() ?: file
     val firDeclarationBefore = declaration.getOrBuildFirOfType<FirDeclaration>(firSession)
     val declarationToRender = if (dumpFirFile) {
-        file.getOrBuildFirFile(firSession).also { it.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE) }
+        file.getOrBuildFirFile(firSession).also { it.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE) }
     } else {
         firDeclarationBefore
     }
@@ -100,7 +100,7 @@ internal fun testInBlockModification(
     val textAfter = if (dumpFirFile) {
         // we should resolve the entire file instead of the declaration to be sure that this declaration will be
         // resolved by file resolution as well
-        declarationToRender.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        declarationToRender.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE)
         declarationToRender.render()
     } else {
         declaration.getOrBuildFirOfType<FirDeclaration>(firSession)

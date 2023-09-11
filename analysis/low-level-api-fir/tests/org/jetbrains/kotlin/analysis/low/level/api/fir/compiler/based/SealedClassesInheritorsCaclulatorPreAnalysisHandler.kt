@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSealedClassInheritorsProcessor
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
@@ -64,7 +64,7 @@ class SealedClassesInheritorsCaclulatorPreAnalysisHandler(
         firFiles: List<FirFile>,
         tmpFirResolveSession: LLFirResolveSession
     ): Map<ClassId, List<ClassId>> {
-        firFiles.forEach { it.lazyResolveToPhase(FirResolvePhase.TYPES) }
+        firFiles.forEach { it.lazyResolveToPhaseRecursively(FirResolvePhase.TYPES) }
         val inheritorsCollector = FirSealedClassInheritorsProcessor.InheritorsCollector(tmpFirResolveSession.useSiteFirSession)
         val sealedClassInheritorsMap = mutableMapOf<FirRegularClass, MutableList<ClassId>>()
         firFiles.forEach { it.accept(inheritorsCollector, sealedClassInheritorsMap) }
