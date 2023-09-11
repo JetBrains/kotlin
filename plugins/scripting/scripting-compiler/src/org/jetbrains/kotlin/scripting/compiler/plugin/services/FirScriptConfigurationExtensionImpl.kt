@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.SCRIPT_SPECIAL_NAME_STRING
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -144,6 +145,7 @@ class FirScriptConfiguratorExtensionImpl(
             if (lastExpression != null && lastExpression is FirExpression) {
                 statements.removeAt(statements.size - 1)
                 statements.add(
+                    @OptIn(UnresolvedExpressionTypeAccess::class)
                     buildProperty {
                         this.name = Name.identifier(resultFieldName)
                         this.symbol = FirPropertySymbol(this.name)
