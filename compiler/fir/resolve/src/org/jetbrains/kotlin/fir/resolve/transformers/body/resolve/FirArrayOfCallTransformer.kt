@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isArrayType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 
 /**
@@ -45,7 +46,7 @@ class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
                     }
                 }
             }
-            coneTypeOrNull = functionCall.coneTypeOrNull
+            coneTypeOrNull = functionCall.resolvedType
         }
 
         val calleeReference = functionCall.calleeReference

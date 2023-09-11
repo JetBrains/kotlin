@@ -12,16 +12,16 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -57,7 +57,7 @@ fun computePublishedApiEffectiveVisibility(
     session: FirSession,
 ): EffectiveVisibility? {
     val hasPublishedApiAnnotation = annotations.any {
-        it.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == StandardClassIds.Annotations.PublishedApi
+        (it.resolvedType as? ConeClassLikeType)?.lookupTag?.classId == StandardClassIds.Annotations.PublishedApi
     }
 
     return computePublishedApiEffectiveVisibility(

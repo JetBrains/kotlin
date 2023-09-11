@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedCallableReferenceTarget
@@ -409,6 +406,7 @@ class FirFakeArgumentForCallableReference(
     override val source: KtSourceElement?
         get() = null
 
+    @UnresolvedExpressionTypeAccess
     override val coneTypeOrNull: ConeKotlinType
         get() = shouldNotBeCalled()
 

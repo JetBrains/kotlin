@@ -223,7 +223,7 @@ private object WhenOnNullableExhaustivenessChecker : WhenExhaustivenessChecker()
     private object ConditionChecker : AbstractConditionChecker<Flags>() {
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Flags) {
             val argument = equalityOperatorCall.arguments[1]
-            if (argument.coneTypeOrNull?.isNullableNothing == true) {
+            if (argument.resolvedType.isNullableNothing) {
                 data.containsNull = true
             }
         }

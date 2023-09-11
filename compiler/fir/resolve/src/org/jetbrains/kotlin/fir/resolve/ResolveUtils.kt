@@ -64,7 +64,7 @@ fun FirAnonymousFunction.addReturnToLastStatementIfNeeded(session: FirSession) {
     val lastStatement = body.statements.lastOrNull() as? FirExpression ?: return
     if (lastStatement is FirReturnExpression) return
 
-    val returnType = body.coneTypeOrNull ?: return
+    val returnType = body.resolvedType
     if (returnType.isNothing) return
 
     val returnTarget = FirFunctionTarget(null, isLambda = isLambda).also { it.bind(this) }
@@ -211,7 +211,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         this.annotations.addAll(annotations)
     }.build().apply {
         if (classId.isLocal) {
-            resultType = typeForQualifierByDeclaration(regularClass.fir, resultType, session)
+            resultType = typeForQualifierByDeclaration(regularClass.fir, session)
                 ?.also { replaceCanBeValue(true) }
                 ?: session.builtinTypes.unitType.type
         } else {
@@ -222,12 +222,11 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
 
 fun FirResolvedQualifier.setTypeOfQualifier(session: FirSession) {
     val classSymbol = symbol
-    val resultType = resultType
     if (classSymbol != null) {
         classSymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
         val declaration = classSymbol.fir
         if (declaration !is FirTypeAlias || typeArguments.isEmpty()) {
-            val typeByDeclaration = typeForQualifierByDeclaration(declaration, resultType, session)
+            val typeByDeclaration = typeForQualifierByDeclaration(declaration, session)
             if (typeByDeclaration != null) {
                 this.resultType = typeByDeclaration
                 replaceCanBeValue(true)
@@ -243,10 +242,10 @@ internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirReso
     return typeParameterSymbol.constructType(emptyArray(), false)
 }
 
-internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, resultType: ConeKotlinType?, session: FirSession): ConeKotlinType? {
+internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, session: FirSession): ConeKotlinType? {
     if (declaration is FirTypeAlias) {
         val expandedDeclaration = declaration.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
-        return typeForQualifierByDeclaration(expandedDeclaration, resultType, session)
+        return typeForQualifierByDeclaration(expandedDeclaration, session)
     }
     if (declaration is FirRegularClass) {
         if (declaration.classKind == ClassKind.OBJECT) {
@@ -398,7 +397,7 @@ private fun FirSmartCastExpressionBuilder.applyResultTypeRef() {
         if (smartcastStability == SmartcastStability.STABLE_VALUE)
             smartcastType.coneTypeOrNull
         else
-            originalExpression.coneTypeOrNull
+            originalExpression.resolvedType
 }
 
 private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSmartcastInfo(
@@ -473,8 +472,7 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
         ?.takeIf { it.isStable }
         ?.smartcastTypeWithoutNullableNothing
         ?.coneTypeSafe<ConeKotlinType>()
-        ?: nullableReceiverExpression.coneTypeOrNull
-        ?: return
+        ?: nullableReceiverExpression.resolvedType
 
     val expandedReceiverType = receiverType.fullyExpandedType(session)
     val updatedReceiverType = expandedReceiverType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext).independentInstance()
@@ -490,7 +488,7 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
 
     val resultingType = when {
         selector is FirExpression && !selector.isStatementLikeExpression -> {
-            val type = selector.coneTypeSafe<ConeKotlinType>() ?: return
+            val type = selector.resolvedType
             type.withNullability(ConeNullability.NULLABLE, session.typeContext)
         }
         // Branch for things that shouldn't be used as expressions.

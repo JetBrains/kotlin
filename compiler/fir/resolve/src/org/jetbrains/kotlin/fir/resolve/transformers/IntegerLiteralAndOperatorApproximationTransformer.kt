@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -59,8 +60,9 @@ class IntegerLiteralAndOperatorApproximationTransformer(
 
     override fun <T> transformConstExpression(
         constExpression: FirConstExpression<T>,
-        data: ConeKotlinType?
+        data: ConeKotlinType?,
     ): FirStatement {
+        @OptIn(UnresolvedExpressionTypeAccess::class)
         val type = constExpression.coneTypeSafe<ConeIntegerLiteralType>() ?: return constExpression
         val approximatedType = type.getApproximatedType(data?.fullyExpandedType(session))
         constExpression.resultType = approximatedType
@@ -72,10 +74,12 @@ class IntegerLiteralAndOperatorApproximationTransformer(
 
     override fun transformIntegerLiteralOperatorCall(
         integerLiteralOperatorCall: FirIntegerLiteralOperatorCall,
-        data: ConeKotlinType?
+        data: ConeKotlinType?,
     ): FirStatement {
         @Suppress("UnnecessaryVariable")
         val call = integerLiteralOperatorCall
+
+        @OptIn(UnresolvedExpressionTypeAccess::class)
         val operatorType = call.coneTypeSafe<ConeIntegerLiteralType>() ?: return call
         val approximatedType = operatorType.getApproximatedType(data?.fullyExpandedType(session))
         call.transformDispatchReceiver(this, null)

@@ -263,6 +263,8 @@ class FirStubTypeTransformer(private val substitutor: ConeSubstitutor) : FirDefa
         // FirAnonymousFunctionExpression doesn't support replacing the type
         // since it delegates the getter to the underlying FirAnonymousFunction.
         if (element is FirExpression && element !is FirAnonymousFunctionExpression) {
+            // TODO Check why some expressions have unresolved type in builder inference session KT-61835
+            @OptIn(UnresolvedExpressionTypeAccess::class)
             element.coneTypeOrNull
                 ?.let(substitutor::substituteOrNull)
                 ?.let { element.replaceConeTypeOrNull(it) }
@@ -273,7 +275,7 @@ class FirStubTypeTransformer(private val substitutor: ConeSubstitutor) : FirDefa
     }
 
     override fun transformTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): FirStatement {
-        if (typeOperatorCall.argument.coneTypeOrNull is ConeStubType) {
+        if (typeOperatorCall.argument.resolvedType is ConeStubType) {
             typeOperatorCall.replaceArgFromStubType(true)
         }
         return super.transformTypeOperatorCall(typeOperatorCall, data)

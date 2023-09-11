@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.types.*
@@ -22,8 +23,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 
-internal inline var FirExpression.resultType: ConeKotlinType?
-    get() = coneTypeOrNull
+
+internal inline var FirExpression.resultType: ConeKotlinType
+    get() = resolvedType
     set(type) {
         replaceConeTypeOrNull(type)
     }
@@ -87,11 +89,10 @@ fun FirBlock.writeResultType(session: FirSession) {
         is FirExpression -> statement
         else -> null
     }
-    resultType = if (resultExpression == null) {
-        session.builtinTypes.unitType.type
-    } else {
-        resultExpression.resultType ?: ConeErrorType(ConeSimpleDiagnostic("No type for block", DiagnosticKind.InferenceError))
-    }
+
+    // If a lambda contains another lambda as result expression, it won't be resolved at this point
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    resultType = resultExpression?.coneTypeOrNull ?: session.builtinTypes.unitType.type
 }
 
 fun ConstantValueKind<*>.expectedConeType(session: FirSession): ConeKotlinType {

@@ -62,7 +62,7 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
         when (receiverKind) {
             NO_EXPLICIT_RECEIVER -> {
                 if (explicitReceiver != null && explicitReceiver !is FirResolvedQualifier && !explicitReceiver.isSuperReferenceExpression()) {
-                    return sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = explicitReceiver.coneTypeSafe()))
+                    return sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = explicitReceiver.resolvedType))
                 }
             }
             EXTENSION_RECEIVER, DISPATCH_RECEIVER -> {
@@ -742,7 +742,7 @@ internal object LowerPriorityIfDynamic : ResolutionStage() {
         when {
             candidate.symbol.origin is FirDeclarationOrigin.DynamicScope ->
                 candidate.addDiagnostic(LowerPriorityForDynamic)
-            candidate.callInfo.isImplicitInvoke && candidate.callInfo.explicitReceiver?.coneTypeSafe<ConeDynamicType>() != null ->
+            candidate.callInfo.isImplicitInvoke && candidate.callInfo.explicitReceiver?.resolvedType is ConeDynamicType ->
                 candidate.addDiagnostic(LowerPriorityForDynamic)
         }
     }

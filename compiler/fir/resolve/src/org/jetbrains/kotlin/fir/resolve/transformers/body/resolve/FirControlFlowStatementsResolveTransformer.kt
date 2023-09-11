@@ -56,7 +56,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     // ------------------------------- When expressions -------------------------------
 
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: ResolutionMode): FirStatement {
-        if (whenExpression.calleeReference is FirResolvedNamedReference && whenExpression.resultType != null) {
+        if (whenExpression.calleeReference is FirResolvedNamedReference && whenExpression.isResolved) {
             return whenExpression
         }
         whenExpression.annotations.forEach { it.accept(this, data) }
@@ -71,7 +71,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                     whenExpression.branches.isEmpty() -> {}
                     whenExpression.isOneBranch() && data.forceFullCompletion && data !is ResolutionMode.WithExpectedType -> {
                         whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextIndependent)
-                        whenExpression.resultType = whenExpression.branches.first().result.resultType
+                        whenExpression.resultType = whenExpression.branches.first().result.resolvedType
                         // when with one branch cannot be completed if it's not already complete in the first place
                     }
                     else -> {
@@ -143,7 +143,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         data: ResolutionMode
     ): FirStatement {
         val parentWhen = whenSubjectExpression.whenRef.value
-        val subjectType = parentWhen.subject?.resultType ?: parentWhen.subjectVariable?.returnTypeRef?.coneTypeOrNull
+        val subjectType = parentWhen.subject?.resolvedType ?: parentWhen.subjectVariable?.returnTypeRef?.coneTypeOrNull
         if (subjectType != null) {
             whenSubjectExpression.resultType = subjectType
         }
@@ -154,7 +154,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     // ------------------------------- Try/catch expressions -------------------------------
 
     override fun transformTryExpression(tryExpression: FirTryExpression, data: ResolutionMode): FirStatement {
-        if (tryExpression.calleeReference is FirResolvedNamedReference && tryExpression.resultType != null) {
+        if (tryExpression.calleeReference is FirResolvedNamedReference && tryExpression.isResolved) {
             return tryExpression
         }
 
@@ -262,22 +262,21 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         )
 
         var isLhsNotNull = false
-        if (result.rhs.coneTypeSafe<ConeKotlinType>()?.isNothing == true) {
-            val lhsType = result.lhs.coneTypeSafe<ConeKotlinType>()
-            if (lhsType != null) {
-                // Converting to non-raw type is necessary to preserver the K1 semantics (see KT-54526)
-                val newReturnType =
-                    lhsType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
-                        .convertToNonRawVersion()
-                result.replaceConeTypeOrNull(newReturnType)
-                isLhsNotNull = true
-            }
+
+        // TODO Check if the type of the RHS being null can lead to a bug, see KT-61837
+        @OptIn(UnresolvedExpressionTypeAccess::class)
+        if (result.rhs.coneTypeOrNull?.isNothing == true) {
+            val lhsType = result.lhs.resolvedType
+            // Converting to non-raw type is necessary to preserver the K1 semantics (see KT-54526)
+            val newReturnType =
+                lhsType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
+                    .convertToNonRawVersion()
+            result.replaceConeTypeOrNull(newReturnType)
+            isLhsNotNull = true
         }
 
         session.typeContext.run {
-            if (result.coneTypeSafe<ConeKotlinType>()?.isNullableType() == true
-                && result.rhs.coneTypeSafe<ConeKotlinType>()?.isNullableType() == false
-            ) {
+            if (result.resolvedType.isNullableType() && !result.rhs.resolvedType.isNullableType()) {
                 // Sometimes return type for special call for elvis operator might be nullable,
                 // but result is not nullable if the right type is not nullable
                 result.replaceConeTypeOrNull(

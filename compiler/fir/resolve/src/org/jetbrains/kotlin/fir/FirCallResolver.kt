@@ -826,7 +826,7 @@ class FirCallResolver(
          */
         if (components.context.inferenceSession !is FirBuilderInferenceSession &&
             createResolvedReferenceWithoutCandidateForLocalVariables &&
-            explicitReceiver?.coneTypeSafe<ConeIntegerLiteralType>() == null &&
+            explicitReceiver?.resolvedType !is ConeIntegerLiteralType &&
             coneSymbol is FirVariableSymbol &&
             (coneSymbol !is FirPropertySymbol || (coneSymbol.fir as FirMemberDeclaration).typeParameters.isEmpty()) &&
             !candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()

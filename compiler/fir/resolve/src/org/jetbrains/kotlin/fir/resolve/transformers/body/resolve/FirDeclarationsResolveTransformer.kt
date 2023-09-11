@@ -233,8 +233,8 @@ open class FirDeclarationsResolveTransformer(
         //     get() = delegate.getValue(thisRef, kProperty: KProperty0/1/2<..., SomeType>)
         //     set() = delegate.getValue(thisRef, kProperty: KProperty0/1/2<..., SomeType>, value)
         val propertyReferenceAccess = resolvedArgumentMapping?.keys?.toList()?.getOrNull(1) as? FirCallableReferenceAccess ?: return
-        val type = propertyReferenceAccess.coneTypeOrNull
-        if (type != null && property.returnTypeRef is FirResolvedTypeRef) {
+        val type = propertyReferenceAccess.resolvedType
+        if (property.returnTypeRef is FirResolvedTypeRef) {
             val typeArguments = (type.type as ConeClassLikeType).typeArguments
             val extensionType = property.receiverParameter?.typeRef?.coneType
             val dispatchType = context.containingClass?.let { containingClass ->
@@ -763,7 +763,7 @@ open class FirDeclarationsResolveTransformer(
         if (result.returnTypeRef is FirImplicitTypeRef) {
             val simpleFunction = function as? FirSimpleFunction
             val returnExpression = (body?.statements?.singleOrNull() as? FirReturnExpression)?.result
-            val expressionType = returnExpression?.coneTypeOrNull
+            val expressionType = returnExpression?.resolvedType
             val returnTypeRef = expressionType
                 ?.toFirResolvedTypeRef(result.returnTypeRef.source)
                 ?.approximateDeclarationType(
@@ -1104,7 +1104,7 @@ open class FirDeclarationsResolveTransformer(
         val inferredType = if (backingField is FirDefaultPropertyBackingField) {
             propertyType
         } else {
-            backingField.initializer?.unwrapSmartcastExpression()?.coneTypeOrNull?.toFirResolvedTypeRef()
+            backingField.initializer?.unwrapSmartcastExpression()?.resolvedType?.toFirResolvedTypeRef()
         }
         val resultType = inferredType
             ?: return backingField.transformReturnTypeRef(
@@ -1133,7 +1133,7 @@ open class FirDeclarationsResolveTransformer(
             val resultType = when {
                 initializer != null -> {
                     val unwrappedInitializer = initializer.unwrapSmartcastExpression()
-                    unwrappedInitializer.resultType?.toFirResolvedTypeRef()
+                    unwrappedInitializer.resolvedType.toFirResolvedTypeRef()
                 }
                 variable.getter != null && variable.getter !is FirDefaultPropertyAccessor -> variable.getter?.returnTypeRef
                 else -> null
@@ -1216,10 +1216,10 @@ open class FirDeclarationsResolveTransformer(
     private val FirVariable.initializerResolved: Boolean
         get() {
             val initializer = initializer ?: return false
-            return initializer.coneTypeOrNull != null && initializer !is FirErrorExpression
+            return initializer.isResolved && initializer !is FirErrorExpression
         }
 
     protected val FirFunction.bodyResolved: Boolean
-        get() = body !is FirLazyBlock && body?.coneTypeOrNull != null
+        get() = body !is FirLazyBlock && body?.isResolved == true
 
 }

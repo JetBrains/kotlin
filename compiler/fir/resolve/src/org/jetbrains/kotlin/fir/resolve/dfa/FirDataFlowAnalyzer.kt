@@ -923,7 +923,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitConstExpression(constExpression: FirConstExpression<*>) {
-        if (constExpression.coneTypeOrNull != null) return
+        if (constExpression.isResolved) return
         graphBuilder.exitConstExpression(constExpression).mergeIncomingFlow()
     }
 
@@ -1135,7 +1135,6 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    @OptIn(UnexpandedTypeCheck::class)
     fun exitElvis(elvisExpression: FirElvisExpression, isLhsNotNull: Boolean, callCompleted: Boolean) {
         val node = graphBuilder.exitElvis(isLhsNotNull, callCompleted)
         node.mergeIncomingFlow { path, flow ->
@@ -1146,7 +1145,8 @@ abstract class FirDataFlowAnalyzer(
             val elvisVariable by lazy { variableStorage.createSynthetic(elvisExpression) }
 
             // If (x ?: null) != null then x != null
-            if (elvisExpression.rhs.resultType?.isNullableNothing == true) {
+            @OptIn(UnresolvedExpressionTypeAccess::class) // Lambdas can have unresolved type here, see KT-61837
+            if (elvisExpression.rhs.coneTypeOrNull?.isNullableNothing == true) {
                 val lhsVariable = variableStorage.getOrCreateIfReal(flow, elvisExpression.lhs)
                 if (lhsVariable != null) {
                     flow.addImplication((elvisVariable notEq null) implies (lhsVariable notEq null))
@@ -1154,7 +1154,8 @@ abstract class FirDataFlowAnalyzer(
             }
 
             // If (null ?: x) != null then x != null
-            if (elvisExpression.lhs.resultType?.isNullableNothing == true) {
+            @OptIn(UnresolvedExpressionTypeAccess::class) // Lambdas can have unresolved type here, see KT-61837
+            if (elvisExpression.lhs.coneTypeOrNull?.isNullableNothing == true) {
                 val rhsVariable = variableStorage.getOrCreateIfReal(flow, elvisExpression.rhs)
                 if (rhsVariable != null) {
                     flow.addImplication((elvisVariable notEq null) implies (rhsVariable notEq null))

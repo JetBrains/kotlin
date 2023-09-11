@@ -265,7 +265,7 @@ class FirCallCompletionResultsWriterTransformer(
         val result = prepareQualifiedTransform(qualifiedAccessExpression, calleeReference)
         val subCandidate = calleeReference.candidate
 
-        val resultType = result.coneTypeOrNull?.substituteType(subCandidate)
+        val resultType = result.resolvedType.substituteType(subCandidate)
         resultType.ensureResolvedTypeDeclaration(session)
         result.replaceConeTypeOrNull(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, qualifiedAccessExpression.source, context.file.source)
@@ -726,18 +726,16 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     override fun transformBlock(block: FirBlock, data: ExpectedArgumentType?): FirStatement {
-        val initialType = block.coneTypeSafe<ConeKotlinType>()
-        if (initialType != null) {
-            var resultType = finallySubstituteOrNull(initialType) ?: block.resultType
-            (resultType as? ConeIntegerLiteralType)?.let {
-                resultType =
-                    it.getApproximatedType(data?.getExpectedType(block)?.fullyExpandedType(session))
-            }
-            block.replaceConeTypeOrNull(resultType)
-            session.lookupTracker?.recordTypeResolveAsLookup(resultType, block.source, context.file.source)
+        val initialType = block.resolvedType
+        var resultType = finallySubstituteOrNull(initialType) ?: block.resolvedType
+        (resultType as? ConeIntegerLiteralType)?.let {
+            resultType =
+                it.getApproximatedType(data?.getExpectedType(block)?.fullyExpandedType(session))
         }
+        block.replaceConeTypeOrNull(resultType)
+        session.lookupTracker?.recordTypeResolveAsLookup(resultType, block.source, context.file.source)
         transformElement(block, data)
-        if (block.resultType is ConeErrorType) {
+        if (block.resolvedType is ConeErrorType) {
             block.writeResultType(session)
         }
         return block
@@ -838,7 +836,7 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ExpectedArgumentType?): FirStatement {
-        if (arrayLiteral.coneTypeOrNull != null) return arrayLiteral
+        if (arrayLiteral.isResolved) return arrayLiteral
         val expectedArrayType = data?.getExpectedType(arrayLiteral)
         val expectedArrayElementType = expectedArrayType?.arrayElementType()
         arrayLiteral.transformChildren(this, expectedArrayElementType?.toExpectedType())

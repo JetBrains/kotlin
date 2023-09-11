@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildUnitExpression
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -1115,7 +1114,7 @@ class ControlFlowGraphBuilder {
     //  KT-59726
     // @returns `true` if node actually returned Nothing
     private fun completeFunctionCall(node: FunctionCallNode): Boolean {
-        if (node.fir.resultType?.isNothing != true) return false
+        if (!node.fir.hasNothingType) return false
         val stub = StubNode(node.owner, node.level)
         val edges = node.followingNodes.map { it to node.edgeTo(it) }
         CFGNode.removeAllOutgoingEdges(node)
@@ -1132,7 +1131,7 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Resolvable call -----------------------------------
 
     fun exitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression): QualifiedAccessNode {
-        val returnsNothing = qualifiedAccessExpression.resultType?.isNothing == true
+        val returnsNothing = qualifiedAccessExpression.hasNothingType
         val node = createQualifiedAccessNode(qualifiedAccessExpression)
         if (returnsNothing) {
             addNonSuccessfullyTerminatingNode(node)
@@ -1143,7 +1142,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitSmartCastExpression(smartCastExpression: FirSmartCastExpression): SmartCastExpressionExitNode {
-        val returnsNothing = smartCastExpression.resultType?.isNothing == true
+        val returnsNothing = smartCastExpression.hasNothingType
         val node = createSmartCastExitNode(smartCastExpression)
         if (returnsNothing) {
             addNonSuccessfullyTerminatingNode(node)
@@ -1176,7 +1175,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean): FunctionCallNode {
-        val returnsNothing = functionCall.resultType?.isNothing == true
+        val returnsNothing = functionCall.hasNothingType
         val node = createFunctionCallNode(functionCall)
         unifyDataFlowFromPostponedLambdas(node, callCompleted)
         if (returnsNothing) {
@@ -1241,7 +1240,7 @@ class ControlFlowGraphBuilder {
     fun exitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, callCompleted: Boolean): CheckNotNullCallNode {
         val node = createCheckNotNullCallNode(checkNotNullCall)
         unifyDataFlowFromPostponedLambdas(node, callCompleted)
-        if (checkNotNullCall.resultType?.isNothing == true) {
+        if (checkNotNullCall.hasNothingType) {
             addNonSuccessfullyTerminatingNode(node)
         } else {
             addNewSimpleNode(node)
@@ -1348,7 +1347,9 @@ class ControlFlowGraphBuilder {
         }
 
         val lhsIsNotNullNode = createElvisLhsIsNotNullNode(elvisExpression).also {
-            val lhsIsNull = elvisExpression.lhs.coneTypeSafe<ConeKotlinType>()?.isNullableNothing == true
+            // TODO Refactor annotation arguments phase to not build CFG so that we can use resolvedType instead, see KT-61834
+            @OptIn(UnresolvedExpressionTypeAccess::class)
+            val lhsIsNull = elvisExpression.lhs.coneTypeOrNull?.isNullableNothing == true
             addEdge(lhsExitNode, it, isDead = lhsIsNull)
             addEdge(it, exitNode, propagateDeadness = false)
         }
@@ -1465,3 +1466,8 @@ val FirControlFlowGraphOwner.isUsedInControlFlowGraphBuilderForFile: Boolean
         is FirProperty -> memberShouldHaveGraph
         else -> false
     }
+
+// TODO Refactor annotation arguments phase to not build CFG so that we can use resolvedType instead, see KT-61834
+@OptIn(UnresolvedExpressionTypeAccess::class)
+private val FirExpression.hasNothingType: Boolean
+    get() = coneTypeOrNull?.isNothing == true

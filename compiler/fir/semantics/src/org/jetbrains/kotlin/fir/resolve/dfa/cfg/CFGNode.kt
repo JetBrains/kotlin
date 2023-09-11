@@ -860,6 +860,7 @@ class WhenSubjectExpressionExitNode(owner: ControlFlowGraph, override val fir: F
 
 object FirStub : FirExpression() {
     override val source: KtSourceElement? get() = null
+    @UnresolvedExpressionTypeAccess
     override val coneTypeOrNull: ConeKotlinType = StandardClassIds.Nothing.constructClassLikeType()
     override val annotations: List<FirAnnotation> get() = listOf()
 

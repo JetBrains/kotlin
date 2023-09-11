@@ -28,11 +28,8 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SmartcastStability
 
@@ -51,9 +48,7 @@ abstract class ReceiverValue {
 
 class ExpressionReceiverValue(override val receiverExpression: FirExpression) : ReceiverValue() {
     override val type: ConeKotlinType
-        // NB: safe cast is necessary here
-        get() = receiverExpression.coneTypeSafe()
-            ?: ConeErrorType(ConeIntermediateDiagnostic("No type calculated for: ${receiverExpression.renderWithType()}")) // TODO: assert here
+        get() = receiverExpression.resolvedType
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? {
         var receiverExpr: FirExpression? = receiverExpression

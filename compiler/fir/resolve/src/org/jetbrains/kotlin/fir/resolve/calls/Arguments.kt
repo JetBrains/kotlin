@@ -222,7 +222,7 @@ fun Candidate.resolvePlainExpressionArgument(
 ) {
 
     if (expectedType == null) return
-    val argumentType = argument.coneTypeSafe<ConeKotlinType>() ?: return
+    val argumentType = argument.resolvedType
     resolvePlainArgumentType(
         csBuilder,
         argument,
@@ -434,7 +434,9 @@ internal fun Candidate.resolveArgument(
     sink: CheckerSink,
     context: ResolutionContext
 ) {
-    argument.resultType.ensureResolvedTypeDeclaration(context.session)
+    // Lambdas and callable references can be unresolved at this point
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    argument.coneTypeOrNull.ensureResolvedTypeDeclaration(context.session)
     val expectedType =
         prepareExpectedType(context.session, context.bodyResolveComponents.scopeSession, callInfo, argument, parameter, context)
     resolveArgumentExpression(
@@ -533,7 +535,7 @@ fun FirExpression.isFunctional(
         is FirAnonymousFunctionExpression, is FirCallableReferenceAccess -> return true
         else -> {
             // Either a functional type or a subtype of a class that has a contributed `invoke`.
-            val coneType = coneTypeSafe<ConeKotlinType>() ?: return false
+            val coneType = resolvedType
             if (coneType.isSomeFunctionType(session)) {
                 return true
             }
