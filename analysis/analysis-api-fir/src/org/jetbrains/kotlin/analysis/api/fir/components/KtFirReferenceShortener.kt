@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -43,6 +45,8 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -94,11 +98,7 @@ internal class KtFirReferenceShortener(
             kDocQualifiersToShorten = emptyList(),
         )
 
-        val towerContext = if (declarationToVisit is KtFile) {
-            LowLevelFirApiFacadeForResolveOnAir.getOnAirTowerDataContextProviderForTheWholeFile(firResolveSession, declarationToVisit)
-        } else {
-            LowLevelFirApiFacadeForResolveOnAir.getOnAirGetTowerContextProvider(firResolveSession, declarationToVisit)
-        }
+        val towerContext = createTowerDataContextProvider(declarationToVisit)
 
         //TODO: collect all usages of available symbols in the file and prevent importing symbols that could introduce name clashes, which
         // may alter the meaning of existing code.
@@ -140,6 +140,12 @@ internal class KtFirReferenceShortener(
         )
     }
 
+    private fun createTowerDataContextProvider(declaration: KtElement): FirTowerContextProvider {
+        val firFile = declaration.containingKtFile.getOrBuildFirFile(firResolveSession)
+
+        return FirTowerContextProviderByContextCollector(firFile, firResolveSession)
+    }
+
     private fun KtElement.getCorrespondingFirElement(): FirElement? {
         require(this is KtFile || this is KtDeclaration)
 
@@ -154,6 +160,25 @@ internal class KtFirReferenceShortener(
     }
 
     private fun buildSymbol(firSymbol: FirBasedSymbol<*>): KtSymbol = analysisSession.firSymbolBuilder.buildSymbol(firSymbol)
+}
+
+private class FirTowerContextProviderByContextCollector(
+    private val firFile: FirFile,
+    firResolveSession: LLFirResolveSession,
+) : FirTowerContextProvider {
+
+    private val sessionHolder: SessionHolder = run {
+        val firSession = firResolveSession.useSiteFirSession
+        val scopeSession = firResolveSession.getScopeSessionFor(firSession)
+
+        SessionHolderImpl(firSession, scopeSession)
+    }
+
+    override fun getClosestAvailableParentContext(ktElement: KtElement): FirTowerDataContext? {
+        val context = ContextCollector.process(firFile, sessionHolder, ktElement)
+
+        return context?.towerDataContext
+    }
 }
 
 private fun FqName.dropFakeRootPrefixIfPresent(): FqName =

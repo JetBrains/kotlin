@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
-internal object ContextCollector {
+object ContextCollector {
     enum class ContextKind {
         /** Represents the context of the declaration itself. */
         SELF,
