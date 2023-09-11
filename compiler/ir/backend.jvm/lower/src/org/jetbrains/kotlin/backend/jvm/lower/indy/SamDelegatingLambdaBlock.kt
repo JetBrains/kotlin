@@ -233,10 +233,6 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
             throw AssertionError("Simple type expected: ${irType.render()}")
         val irClassSymbol = irType.classOrNull
             ?: throw AssertionError("Class type expected: ${irType.render()}")
-        return IrTypeSubstitutor(
-            irClassSymbol.owner.typeParameters.map { it.symbol },
-            irType.arguments,
-            jvmContext.irBuiltIns
-        )
+        return IrTypeSubstitutor(irClassSymbol.owner.typeParameters.map { it.symbol }, irType.arguments)
     }
 }

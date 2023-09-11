@@ -247,7 +247,7 @@ internal abstract class IrExpectActualMatchingContext(
         val expectParameters = expectTypeParameters.castAll<IrTypeParameterSymbol>()
         val actualParameters = actualTypeParameters.castAll<IrTypeParameterSymbol>()
         val actualTypes = actualParameters.map { it.owner.defaultType }
-        val substitutor = IrTypeSubstitutor(expectParameters, actualTypes, typeContext.irBuiltIns, allowEmptySubstitution = true)
+        val substitutor = IrTypeSubstitutor(expectParameters, actualTypes, allowEmptySubstitution = true)
         return when (parentSubstitutor) {
             null -> substitutor
             is AbstractIrTypeSubstitutor -> IrChainedSubstitutor(parentSubstitutor, substitutor)
