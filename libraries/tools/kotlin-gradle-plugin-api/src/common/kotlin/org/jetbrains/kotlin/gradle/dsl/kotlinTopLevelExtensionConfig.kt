@@ -6,17 +6,37 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 /**
- * DSL extension that is used to configure Kotlin options for the entire project.
+ * A plugin DSL extension for configuring common options for the entire project.
+ *
+ * Use the extension in your build script in the `kotlin` block:
+ * ```kotlin
+ * kotlin {
+ *    // Your extension configuration
+ * }
+ * ```
  */
 interface KotlinTopLevelExtensionConfig {
+
     /**
-     * Version of the core Kotlin libraries that are added to Kotlin compile classpath, unless there is already a dependency added to this
-     * project. By default, this version is the same as the version of the used Kotlin Gradle plugin.
+     * Specifies the version of the core Kotlin libraries that are added to the Kotlin compile classpath,
+     * unless there is already a dependency added to this project.
+     *
+     * The core Kotlin libraries are:
+     * - 'kotlin-stdlib'
+     * - 'kotlin-test'
+     * - 'kotlin-dom-api-compat'
+     *
+     * Default: The same version as the version used in the Kotlin Gradle plugin
      */
     var coreLibrariesVersion: String
 
     /**
-     * Option that tells the compiler if and how to report issues on all public API declarations without explicit visibility or return type.
+     * Configures default explicit API mode for all non-test compilations in the project.
+     *
+     * This mode tells the compiler if and how to report issues on all public API declarations
+     * that don't have an explicit visibility or return type.
+     *
+     * Default: `null`
      */
     var explicitApi: ExplicitApiMode?
 
@@ -41,13 +61,19 @@ enum class ExplicitApiMode(
     @Deprecated("Should not be exposed in api", level = DeprecationLevel.ERROR)
     val cliOption: String
 ) {
-    /** Report issues as errors. */
+    /**
+     * Reports API issues as errors.
+     */
     Strict("strict"),
 
-    /** Report issues as warnings. */
+    /**
+     * Reports API issues as warnings.
+     */
     Warning("warning"),
 
-    /** Disable issues reporting. */
+    /**
+     * Disables issues reporting.
+     */
     Disabled("disable");
 
     /**
