@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.swift
 
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
+import org.jetbrains.kotlin.backend.konan.BinaryType
+import org.jetbrains.kotlin.backend.konan.computeBinaryType
 import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface
 import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -56,6 +58,8 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
                     returnType = "UnsafeMutableRawPointer".type,
             )
         }
+
+        private val kotlinAnySwiftType = SwiftCode.build { "kotlin.Object".type }
     }
 
     private interface BridgeCodeGenDelegate {
@@ -292,8 +296,10 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
 
     private fun mapTypeToSwift(declaration: IrType): SwiftCode.Type? = SwiftCode.build {
         when {
-            declaration.isUnit() -> if (declaration.isNullable()) null else "Void".type
-            declaration.isPrimitiveType() -> if (declaration.isNullable()) null else when (declaration.getPrimitiveType()!!) {
+            declaration.isNullable() -> null
+            declaration.isAny() -> kotlinAnySwiftType
+            declaration.isUnit() -> "Void".type
+            declaration.isPrimitiveType() -> when (declaration.getPrimitiveType()!!) {
                 PrimitiveType.BYTE -> "Int8"
                 PrimitiveType.BOOLEAN -> "Bool"
                 PrimitiveType.CHAR -> null // TODO: implement alongside with strings
@@ -303,7 +309,7 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
                 PrimitiveType.FLOAT -> "Float"
                 PrimitiveType.DOUBLE -> "Double"
             }?.type
-            declaration.isUnsignedType() -> if (declaration.isNullable()) null else when (declaration.getUnsignedType()!!) {
+            declaration.isUnsignedType() -> when (declaration.getUnsignedType()!!) {
                 UnsignedType.UBYTE -> "UInt8"
                 UnsignedType.USHORT -> "UInt16"
                 UnsignedType.UINT -> "UInt32"
@@ -315,12 +321,11 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
 
     private fun bridgeFor(declaration: IrType): Bridge? = SwiftCode.build {
         val cType = mapTypeToC(declaration) ?: return null
-        val swiftType = mapTypeToSwift(declaration)?.let { return Bridge.AsIs(it, cType) }
-                ?: "NSObject".type // FIXME: generate concrete types
+        val swiftType = mapTypeToSwift(declaration) ?: return null
 
-        return when {
-            declaration.isRegularClass -> if (declaration.isNullable()) null else Bridge.Object(swiftType, cType)
-            else -> null
+        return when (declaration.computeBinaryType()) {
+            is BinaryType.Primitive -> Bridge.AsIs(swiftType, cType)
+            is BinaryType.Reference -> Bridge.Object(swiftType, cType)
         }
     }
 
