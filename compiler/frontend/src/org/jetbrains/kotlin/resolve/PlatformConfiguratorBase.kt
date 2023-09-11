@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.builtins.PlatformSpecificCastChecker
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.resolve.calls.checkers.*
@@ -128,6 +129,7 @@ abstract class PlatformConfiguratorBase(
     private val identifierChecker: IdentifierChecker? = null,
     private val overloadFilter: OverloadFilter? = null,
     private val platformToKotlinClassMapper: PlatformToKotlinClassMapper? = null,
+    private val platformSpecificCastChecker: PlatformSpecificCastChecker? = null,
     private val delegationFilter: DelegationFilter? = null,
     private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper? = null,
     private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer? = null
@@ -154,6 +156,7 @@ abstract class PlatformConfiguratorBase(
             useInstanceIfNotNull(identifierChecker)
             useInstanceIfNotNull(overloadFilter)
             useInstanceIfNotNull(platformToKotlinClassMapper)
+            useInstanceIfNotNull(platformSpecificCastChecker)
             useInstanceIfNotNull(delegationFilter)
             useInstanceIfNotNull(overridesBackwardCompatibilityHelper)
             useInstanceIfNotNull(declarationReturnTypeSanitizer)

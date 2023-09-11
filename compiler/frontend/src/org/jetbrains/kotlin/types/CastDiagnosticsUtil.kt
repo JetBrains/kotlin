@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.types
 import com.google.common.collect.Maps
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PlatformSpecificCastChecker
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -41,11 +42,12 @@ object CastDiagnosticsUtil {
     fun isCastPossible(
         lhsType: KotlinType,
         rhsType: KotlinType,
-        platformToKotlinClassMapper: PlatformToKotlinClassMapper
+        platformToKotlinClassMapper: PlatformToKotlinClassMapper,
+        platformSpecificCastChecker: PlatformSpecificCastChecker
     ): Boolean {
         val typeConstructor = lhsType.constructor
         if (typeConstructor is IntersectionTypeConstructor) {
-            return typeConstructor.supertypes.any { isCastPossible(it, rhsType, platformToKotlinClassMapper) }
+            return typeConstructor.supertypes.any { isCastPossible(it, rhsType, platformToKotlinClassMapper, platformSpecificCastChecker) }
         }
         val rhsNullable = TypeUtils.isNullableType(rhsType)
         val lhsNullable = TypeUtils.isNullableType(lhsType)
@@ -59,6 +61,7 @@ object CastDiagnosticsUtil {
         // This is an oversimplification (which does not render the method incomplete):
         // we consider any type parameter capable of taking any value, which may be made more precise if we considered bounds
         if (TypeUtils.isTypeParameter(lhsType) || TypeUtils.isTypeParameter(rhsType)) return true
+        if (platformSpecificCastChecker.isCastPossible(lhsType, rhsType)) return true
 
         if (isFinal(lhsType) || isFinal(rhsType)) return false
         if (isTrait(lhsType) || isTrait(rhsType)) return true
