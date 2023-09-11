@@ -238,7 +238,7 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
             condCtx.convertAndCapture(whileLoop.condition)
             bodyCtx.convert(whileLoop.block)
             bodyCtx.convertAndCapture(whileLoop.condition)
-            data.addStatement(Stmt.While(condCtx.resultExp, invariants = data.postconditions, bodyCtx.block))
+            data.addStatement(Stmt.While(condCtx.resultExp, invariants = data.method.postconditions, bodyCtx.block))
         }
         return UnitDomain.element
     }
@@ -308,7 +308,7 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
         thisReceiverExpression: FirThisReceiverExpression,
         data: StmtConversionContext<ResultTrackingContext>,
     ): Exp =
-        data.signature.receiver?.toLocalVar()
+        data.method.receiver?.toLocalVar()
             ?: throw IllegalArgumentException("Can't resolve the 'this' receiver since the function does not have one.")
 
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: StmtConversionContext<ResultTrackingContext>): Exp {

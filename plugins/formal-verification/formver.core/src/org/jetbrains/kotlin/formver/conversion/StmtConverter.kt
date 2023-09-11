@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.formver.embeddings.MethodSignatureEmbedding
+import org.jetbrains.kotlin.formver.embeddings.MethodEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.viper.MangledName
@@ -49,12 +49,12 @@ class StmtConverter<out RTC : ResultTrackingContext>(
     }
 
     override fun withInlineContext(
-        inlineFunctionSignature: MethodSignatureEmbedding,
+        inlineMethod: MethodEmbedding,
         returnVar: VariableEmbedding,
         substitutionParams: Map<MangledName, MangledName>,
     ): StmtConversionContext<RTC> {
         return StmtConverter(
-            InlineMethodConverter(this, inlineFunctionSignature, returnVar, substitutionParams),
+            InlineMethodConverter(this, inlineMethod, returnVar, substitutionParams),
             seqnCtx,
             resultCtxFactory,
             whileIndex

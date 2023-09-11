@@ -47,7 +47,6 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
         try {
             val programConversionContext = ProgramConverter(session, config)
             programConversionContext.registerForVerification(declaration)
-            programConversionContext.processRegisteredMethods()
             program = programConversionContext.program
 
             getProgramForLogging(program)?.let {

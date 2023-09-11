@@ -15,16 +15,20 @@ import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.*
 
 interface MethodEmbedding : MethodSignatureEmbedding {
+    val preconditions: List<Exp>
+    val postconditions: List<Exp>
+
     val shouldIncludeInProgram: Boolean
     val viperMethod: Method
+
     fun convertBody(ctx: ProgramConverter)
     fun insertCall(argsFir: List<FirExpression>, ctx: StmtConversionContext<ResultTrackingContext>): Exp.LocalVar
 }
 
 class UserMethodEmbedding(
     val signature: MethodSignatureEmbedding,
-    val preconditions: List<Exp>,
-    val postconditions: List<Exp>,
+    override val preconditions: List<Exp>,
+    override val postconditions: List<Exp>,
     val symbol: FirFunctionSymbol<*>,
 ) : MethodEmbedding, MethodSignatureEmbedding by signature {
     var body: Stmt.Seqn? = null
@@ -44,15 +48,12 @@ class UserMethodEmbedding(
     @OptIn(SymbolInternals::class)
     override fun convertBody(ctx: ProgramConverter) {
         val methodCtx = object : MethodConversionContext, ProgramConversionContext by ctx {
-            override val signature: MethodSignatureEmbedding = this@UserMethodEmbedding
+            override val method: MethodEmbedding = this@UserMethodEmbedding
 
             // It seems like Viper will propagate the weakest precondition through the label correctly even in the absence of
             // explicit invariants; we only need to add those if we want to make a stronger claim.
             override val returnLabel: Label = Label(ReturnLabelName, listOf())
-            override val returnVar: VariableEmbedding = VariableEmbedding(ReturnVariableName, signature.returnType)
-
-            override val preconditions: List<Exp> = this@UserMethodEmbedding.preconditions
-            override val postconditions: List<Exp> = this@UserMethodEmbedding.postconditions
+            override val returnVar: VariableEmbedding = VariableEmbedding(ReturnVariableName, method.returnType)
 
             override fun resolveName(name: MangledName): MangledName = name
         }
@@ -91,7 +92,7 @@ class UserMethodEmbedding(
                 val substitutionParams = inlineArgs.zip(callArgs).toMap()
 
                 val inlineCtx = inlineBodyCtx.withInlineContext(
-                    this@UserMethodEmbedding.signature,
+                    this@UserMethodEmbedding,
                     inlineBodyCtx.resultCtx.resultVar,
                     substitutionParams
                 )
