@@ -1563,11 +1563,7 @@ class Fir2IrVisitor(
     private fun convertToArrayLiteral(arrayLiteral: FirArrayLiteral): IrVararg {
         return arrayLiteral.convertWithOffsets { startOffset, endOffset ->
             val arrayType = arrayLiteral.resolvedType.toIrType()
-            val elementType = if (arrayLiteral.coneTypeOrNull != null) {
-                arrayType.getArrayElementType(irBuiltIns)
-            } else {
-                createErrorType()
-            }
+            val elementType = arrayType.getArrayElementType(irBuiltIns)
             IrVarargImpl(
                 startOffset, endOffset,
                 type = arrayType,
