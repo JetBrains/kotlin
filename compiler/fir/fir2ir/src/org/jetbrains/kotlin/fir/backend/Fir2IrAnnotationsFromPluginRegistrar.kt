@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.backend.common.extensions.IrAnnotationsFromPluginRegistrar
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -63,8 +64,6 @@ class Fir2IrAnnotationsFromPluginRegistrar(private val components: Fir2IrCompone
     }
 
     private inner class Provider : FirAdditionalMetadataAnnotationsProvider() {
-        private val session = components.session
-
         override fun findGeneratedAnnotationsFor(declaration: FirDeclaration): List<FirAnnotation> {
             val irAnnotations = extractGeneratedIrDeclarations(declaration).takeUnless { it.isEmpty() } ?: return emptyList()
             return irAnnotations.map { it.toFirAnnotation() }
@@ -84,15 +83,19 @@ class Fir2IrAnnotationsFromPluginRegistrar(private val components: Fir2IrCompone
 
         private fun FirDeclaration.containingFile(): FirFile? {
             if (this is FirFile) return this
-            val topmostParent = topmostParent()
-            return components.session.firProvider.getContainingFile(topmostParent.symbol)
+            // In MPP scenario containing session of declaration may differ from the main session of the module
+            //  (if this declaration came from some common module), so in order to get the proper containing file,
+            //  we need to use the original session of the declaration
+            val containingSession = moduleData.session
+            val topmostParent = topmostParent(containingSession)
+            return containingSession.firProvider.getContainingFile(topmostParent.symbol)
         }
 
-        private fun FirDeclaration.topmostParent(): FirDeclaration {
+        private fun FirDeclaration.topmostParent(session: FirSession): FirDeclaration {
             return when (this) {
                 is FirClassLikeDeclaration -> runIf(!classId.isLocal) { classId.topmostParentClassId.toSymbol(session)?.fir }
-                is FirTypeParameter -> containingDeclarationSymbol.fir.topmostParent()
-                is FirValueParameter -> containingFunctionSymbol.fir.topmostParent()
+                is FirTypeParameter -> containingDeclarationSymbol.fir.topmostParent(session)
+                is FirValueParameter -> containingFunctionSymbol.fir.topmostParent(session)
                 is FirCallableDeclaration -> symbol.callableId.classId
                     ?.takeIf { !it.isLocal }
                     ?.topmostParentClassId

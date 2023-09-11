@@ -30,6 +30,7 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrElementV
         private val markerAnnotationFqName = FqName("org.jetbrains.kotlin.fir.plugin.AddAnnotations")
         private val annotationToAddId = ClassId(FqName("org.jetbrains.kotlin.fir.plugin"), Name.identifier("AnnotationToAdd"))
         private val annotationToAddFqName = annotationToAddId.asSingleFqName()
+        private const val prefixNameForClass = "VerySpecificName"
     }
 
     private val annotationsAdder = AnnotationsAdder()
@@ -43,7 +44,7 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrElementV
     }
 
     override fun visitClass(declaration: IrClass) {
-        if (declaration.hasAnnotation(markerAnnotationFqName)) {
+        if (declaration.hasAnnotation(markerAnnotationFqName) || declaration.name.asString().startsWith(prefixNameForClass)) {
             declaration.acceptVoid(annotationsAdder)
         }
     }
