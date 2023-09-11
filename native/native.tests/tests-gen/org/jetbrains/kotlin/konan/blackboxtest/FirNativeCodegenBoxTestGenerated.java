@@ -26778,6 +26778,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                     }
 
                     @Test
+                    @TestMetadata("deprecatedAnnotationOnlyOnActual_useInCommon.kt")
+                    public void testDeprecatedAnnotationOnlyOnActual_useInCommon() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/deprecatedAnnotationOnlyOnActual_useInCommon.kt");
+                    }
+
+                    @Test
                     @TestMetadata("expectAnnotationCallInLibrary.kt")
                     public void testExpectAnnotationCallInLibrary() throws Exception {
                         runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/expectAnnotationCallInLibrary.kt");

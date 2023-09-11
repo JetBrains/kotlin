@@ -29015,6 +29015,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/annotationsViaActualTypeAliasFromBinary.kt");
                 }
 
+                @TestMetadata("deprecatedAnnotationOnlyOnActual_useInCommon.kt")
+                public void ignoreDeprecatedAnnotationOnlyOnActual_useInCommon() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/deprecatedAnnotationOnlyOnActual_useInCommon.kt");
+                }
+
                 @TestMetadata("expectClassInJvmMultifileFacade.kt")
                 public void ignoreExpectClassInJvmMultifileFacade() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/expectClassInJvmMultifileFacade.kt");

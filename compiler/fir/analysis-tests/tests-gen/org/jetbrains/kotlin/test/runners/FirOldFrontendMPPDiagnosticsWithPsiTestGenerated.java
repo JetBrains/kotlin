@@ -819,6 +819,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("deprecatedAnnotationOnlyOnActual_useInPlatform.kt")
+        public void testDeprecatedAnnotationOnlyOnActual_useInPlatform() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/deprecatedAnnotationOnlyOnActual_useInPlatform.kt");
+        }
+
+        @Test
         @TestMetadata("differentOrder.kt")
         public void testDifferentOrder() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/differentOrder.kt");
