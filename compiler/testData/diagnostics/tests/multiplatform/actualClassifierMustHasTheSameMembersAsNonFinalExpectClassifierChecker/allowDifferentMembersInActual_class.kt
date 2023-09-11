@@ -17,5 +17,5 @@ actual open class Foo {
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
 
-    fun injectedMethod() {} // accidential override can happen with this injected fun. That's why it's prohibited
+    fun injectedMethod() {}
 }
