@@ -210,7 +210,7 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
     ) {
         val isAllowedInCli
             get() = when (expectedErrorKind) {
-                "NO_ACTUAL_FOR_EXPECT", "ACTUAL_WITHOUT_EXPECT", null /*TODO are some nulls better than others?*/ -> true
+                "NO_ACTUAL_FOR_EXPECT", null /*TODO are some nulls better than others?*/ -> true
                 else -> false
             }
     }

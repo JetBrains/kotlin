@@ -104,31 +104,6 @@ class KotlinProjectIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Valid model in multiplatform project")
-    @GradleTest
-    fun testMultiplatformProject(gradleVersion: GradleVersion) {
-        project("multiplatformProject", gradleVersion) {
-            getModels<KotlinProject> {
-                val libKotlinProject = getModel(":lib")!!
-                val libJvmKotlinProject = getModel(":libJvm")!!
-
-                libKotlinProject.assertBasics(
-                    "lib",
-                    defaultBuildOptions.kotlinVersion,
-                    KotlinProject.ProjectType.PLATFORM_COMMON,
-                )
-                libJvmKotlinProject.assertBasics(
-                    "libJvm",
-                    defaultBuildOptions.kotlinVersion,
-                    KotlinProject.ProjectType.PLATFORM_JVM,
-                )
-
-                assertEquals(1, libJvmKotlinProject.expectedByDependencies.size)
-                assertTrue(libJvmKotlinProject.expectedByDependencies.contains(":lib"))
-            }
-        }
-    }
-
     private fun SourceSet.verifySourceSet(
         testProject: TestProject,
         name: String,
