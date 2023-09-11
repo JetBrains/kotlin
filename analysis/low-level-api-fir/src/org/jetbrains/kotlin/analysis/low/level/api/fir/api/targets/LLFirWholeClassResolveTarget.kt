@@ -37,5 +37,5 @@ class LLFirWholeClassResolveTarget(
         }
     }
 
-    override fun toStringForTarget(): String = "*"
+    override fun toStringAdditionalSuffix(): String = "*"
 }

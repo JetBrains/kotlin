@@ -25,6 +25,5 @@ class LLFirClassWithSpecificMembersResolveTarget(
         members.forEach(action)
     }
 
-    override fun toStringForTarget(): String =
-        members.joinToString(prefix = "[", postfix = "]") { it.symbol.toString() }
+    override fun toStringAdditionalSuffix(): String = members.joinToString(prefix = "[", postfix = "]") { it.symbol.toString() }
 }

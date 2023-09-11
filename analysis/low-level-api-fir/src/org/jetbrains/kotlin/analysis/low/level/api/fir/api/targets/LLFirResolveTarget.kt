@@ -65,11 +65,14 @@ sealed class LLFirResolveTarget(
             }
 
             add(toStringForTarget())
+            toStringAdditionalSuffix()?.let(this::add)
         }.joinTo(this, separator = " -> ")
         append(")")
     }
 
-    protected open fun toStringForTarget(): String = when (target) {
+    protected open fun toStringAdditionalSuffix(): String? = null
+
+    private fun toStringForTarget(): String = when (target) {
         is FirConstructor -> "constructor"
         is FirClassLikeDeclaration -> target.symbol.name.asString()
         is FirCallableDeclaration -> target.symbol.name.asString()

@@ -35,5 +35,5 @@ class LLFirWholeFileResolveTarget(firFile: FirFile) : LLFirResolveTarget(firFile
         }
     }
 
-    override fun toStringForTarget(): String = "*"
+    override fun toStringAdditionalSuffix(): String = "*"
 }
