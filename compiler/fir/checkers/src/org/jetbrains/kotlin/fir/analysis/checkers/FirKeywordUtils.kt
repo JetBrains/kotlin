@@ -12,6 +12,8 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.diagnostics.valOrVarKeyword
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -100,6 +102,9 @@ operator fun FirModifierList?.contains(token: KtModifierKeywordToken): Boolean =
 fun FirElement.getModifier(token: KtModifierKeywordToken): FirModifier<*>? = source.getModifierList()?.get(token)
 
 fun FirElement.hasModifier(token: KtModifierKeywordToken): Boolean = token in source.getModifierList()
+
+@OptIn(SymbolInternals::class)
+fun FirBasedSymbol<*>.hasModifier(token: KtModifierKeywordToken): Boolean = fir.hasModifier(token)
 
 internal val KtSourceElement?.valOrVarKeyword: KtKeywordToken?
     get() = when (this) {
