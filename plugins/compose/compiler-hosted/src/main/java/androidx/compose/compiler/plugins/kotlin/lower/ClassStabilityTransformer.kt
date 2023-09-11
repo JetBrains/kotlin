@@ -60,6 +60,7 @@ enum class StabilityBits(val bits: Int) {
  * annotation on it, as well as putting a static final int of the stability to be used at runtime.
  */
 class ClassStabilityTransformer(
+    private val useK2: Boolean,
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
@@ -163,20 +164,24 @@ class ClassStabilityTransformer(
             marked = false,
             stability = stability
         )
+        val annotation = IrConstructorCallImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            StabilityInferredClass.defaultType,
+            StabilityInferredClass.constructors.first(),
+            0,
+            0,
+            1,
+            null
+        ).also {
+            it.putValueArgument(0, irConst(parameterMask))
+        }
 
-        cls.annotations +=
-            IrConstructorCallImpl(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                type = StabilityInferredClass.defaultType,
-                symbol = StabilityInferredClass.constructors.first(),
-                typeArgumentsCount = 0,
-                constructorTypeArgumentsCount = 0,
-                valueArgumentsCount = 1,
-                origin = null
-            ).also {
-                it.putValueArgument(0, irConst(parameterMask))
-            }
+        if (useK2) {
+            context.annotationsRegistrar.addMetadataVisibleAnnotationsToElement(cls, annotation)
+        } else {
+            cls.annotations += annotation
+        }
 
         cls.addStabilityMarkerField(stableExpr)
         return result
