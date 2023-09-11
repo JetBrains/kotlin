@@ -376,7 +376,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return;
         }
 
-        if (!TypeUtilsKt.isStubType(actualType) && !CastDiagnosticsUtil.isCastPossible(actualType, targetType, components.platformToKotlinClassMapper)) {
+        if (!TypeUtilsKt.isStubType(actualType) && !CastDiagnosticsUtil.isCastPossible(actualType, targetType, components.platformToKotlinClassMapper, components.platformSpecificCastChecker)) {
             context.trace.report(CAST_NEVER_SUCCEEDS.on(expression.getOperationReference()));
             return;
         }
