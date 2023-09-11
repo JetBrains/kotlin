@@ -6197,6 +6197,10 @@ fileCheckTest("filecheck_objc_direct") {
     enabled = target.family.appleFamily
 }
 
+fileCheckTest("filecheck_atomics") {
+    annotatedSource = project.file('filecheck/atomics.kt')
+}
+
 
 dependencies {
     nopPluginApi kotlinCompilerModule
