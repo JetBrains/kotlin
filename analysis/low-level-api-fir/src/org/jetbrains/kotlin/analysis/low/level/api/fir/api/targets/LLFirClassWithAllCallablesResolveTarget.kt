@@ -30,6 +30,4 @@ class LLFirClassWithAllCallablesResolveTarget(
             }
         }
     }
-
-    override fun toStringForTarget(): String = target.name.asString()
 }

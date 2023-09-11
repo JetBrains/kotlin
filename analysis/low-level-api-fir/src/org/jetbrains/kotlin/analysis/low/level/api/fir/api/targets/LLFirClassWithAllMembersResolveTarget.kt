@@ -26,6 +26,4 @@ class LLFirClassWithAllMembersResolveTarget(
     inline fun forEachMember(action: (FirDeclaration) -> Unit) {
         target.declarations.forEach(action)
     }
-
-    override fun toStringForTarget(): String = target.name.asString()
 }

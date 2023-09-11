@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets
 
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
 
 /**
@@ -19,15 +18,5 @@ class LLFirSingleResolveTarget(
 ) : LLFirResolveTargetWithDedicatedElement<FirElementWithResolveState>(firFile, classPath, target) {
     override fun forEachTarget(action: (FirElementWithResolveState) -> Unit) {
         action(target)
-    }
-
-    override fun toStringForTarget(): String = when (target) {
-        is FirConstructor -> "constructor"
-        is FirClassLikeDeclaration -> target.symbol.name.asString()
-        is FirCallableDeclaration -> target.symbol.name.asString()
-        is FirAnonymousInitializer -> ("<init-block>")
-        is FirFileAnnotationsContainer -> "<file annotations>"
-        is FirScript -> target.name.asString()
-        else -> "???"
     }
 }

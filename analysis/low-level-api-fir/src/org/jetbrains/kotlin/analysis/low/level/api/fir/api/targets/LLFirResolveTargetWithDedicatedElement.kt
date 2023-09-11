@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets
 
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -23,7 +27,17 @@ sealed class LLFirResolveTargetWithDedicatedElement<T : FirElementWithResolveSta
 ) : LLFirResolveTarget(
     firFile = firFile,
     path = pathWithScript(firFile, classPath, target),
-)
+) {
+    override fun toStringForTarget(): String = when (target) {
+        is FirConstructor -> "constructor"
+        is FirClassLikeDeclaration -> target.symbol.name.asString()
+        is FirCallableDeclaration -> target.symbol.name.asString()
+        is FirAnonymousInitializer -> ("<init-block>")
+        is FirFileAnnotationsContainer -> "<file annotations>"
+        is FirScript -> target.name.asString()
+        else -> "???"
+    }
+}
 
 private fun pathWithScript(firFile: FirFile, path: List<FirRegularClass>, target: FirElementWithResolveState): List<FirDeclaration> {
     if (target is FirFile || target is FirFileAnnotationsContainer || target is FirScript) return path
