@@ -17,14 +17,14 @@ class LLFirClassWithAllCallablesResolveTarget(
     firFile: FirFile,
     classPath: List<FirRegularClass>,
     target: FirRegularClass,
-) : LLFirResolveTargetWithDedicatedElement<FirRegularClass>(firFile, classPath, target) {
+) : LLFirResolveTarget(firFile, classPath, target) {
     override fun forEachTarget(action: (FirElementWithResolveState) -> Unit) {
         action(target)
         forEachCallable(action)
     }
 
     inline fun forEachCallable(action: (FirCallableDeclaration) -> Unit) {
-        for (member in target.declarations) {
+        for (member in (target as FirRegularClass).declarations) {
             if (member is FirCallableDeclaration) {
                 action(member)
             }

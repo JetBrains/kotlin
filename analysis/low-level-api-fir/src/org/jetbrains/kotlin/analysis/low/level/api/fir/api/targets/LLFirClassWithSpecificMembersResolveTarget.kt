@@ -15,7 +15,7 @@ class LLFirClassWithSpecificMembersResolveTarget(
     classPath: List<FirRegularClass>,
     target: FirRegularClass,
     val members: List<FirDeclaration>,
-) : LLFirResolveTargetWithDedicatedElement<FirRegularClass>(firFile, classPath, target) {
+) : LLFirResolveTarget(firFile, classPath, target) {
     override fun forEachTarget(action: (FirElementWithResolveState) -> Unit) {
         action(target)
         forEachMember(action)

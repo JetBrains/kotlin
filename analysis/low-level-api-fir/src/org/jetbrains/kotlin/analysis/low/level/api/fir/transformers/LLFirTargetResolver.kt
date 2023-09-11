@@ -96,19 +96,19 @@ internal abstract class LLFirTargetResolver(
             when (resolveTarget) {
                 is LLFirClassWithSpecificMembersResolveTarget -> {
                     performResolve(resolveTarget.target)
-                    withRegularClass(resolveTarget.target) {
+                    withRegularClass(resolveTarget.target as FirRegularClass) {
                         resolveTarget.forEachMember(::performResolve)
                     }
                 }
                 is LLFirClassWithAllMembersResolveTarget -> {
                     performResolve(resolveTarget.target)
-                    withRegularClass(resolveTarget.target) {
+                    withRegularClass(resolveTarget.target as FirRegularClass) {
                         resolveTarget.forEachMember(::performResolve)
                     }
                 }
                 is LLFirClassWithAllCallablesResolveTarget -> {
                     performResolve(resolveTarget.target)
-                    withRegularClass(resolveTarget.target) {
+                    withRegularClass(resolveTarget.target as FirRegularClass) {
                         resolveTarget.forEachCallable(::performResolve)
                     }
                 }
@@ -120,7 +120,7 @@ internal abstract class LLFirTargetResolver(
                 }
                 is LLFirWholeClassResolveTarget -> {
                     performResolve(resolveTarget.target)
-                    withRegularClass(resolveTarget.target) {
+                    withRegularClass(resolveTarget.target as FirRegularClass) {
                         resolveTarget.forEachDeclaration(::resolveTargetWithNestedDeclarations)
                     }
                 }

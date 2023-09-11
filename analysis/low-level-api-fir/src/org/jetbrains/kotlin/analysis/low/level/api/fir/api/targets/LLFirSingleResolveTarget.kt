@@ -15,7 +15,7 @@ class LLFirSingleResolveTarget(
     firFile: FirFile,
     classPath: List<FirRegularClass>,
     target: FirElementWithResolveState,
-) : LLFirResolveTargetWithDedicatedElement<FirElementWithResolveState>(firFile, classPath, target) {
+) : LLFirResolveTarget(firFile, classPath, target) {
     override fun forEachTarget(action: (FirElementWithResolveState) -> Unit) {
         action(target)
     }

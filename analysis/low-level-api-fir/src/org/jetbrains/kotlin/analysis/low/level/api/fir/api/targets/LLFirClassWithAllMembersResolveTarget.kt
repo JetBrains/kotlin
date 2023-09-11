@@ -17,13 +17,13 @@ class LLFirClassWithAllMembersResolveTarget(
     firFile: FirFile,
     classPath: List<FirRegularClass>,
     target: FirRegularClass,
-) : LLFirResolveTargetWithDedicatedElement<FirRegularClass>(firFile, classPath, target) {
+) : LLFirResolveTarget(firFile, classPath, target) {
     override fun forEachTarget(action: (FirElementWithResolveState) -> Unit) {
         action(target)
         forEachMember(action)
     }
 
     inline fun forEachMember(action: (FirDeclaration) -> Unit) {
-        target.declarations.forEach(action)
+        (target as FirRegularClass).declarations.forEach(action)
     }
 }

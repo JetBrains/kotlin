@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 /**
  * [LLFirResolveTarget] representing all declarations in file. All of them are going to be resolved.
  */
-class LLFirWholeFileResolveTarget(firFile: FirFile) : LLFirResolveTarget(firFile, emptyList()) {
+class LLFirWholeFileResolveTarget(firFile: FirFile) : LLFirResolveTarget(firFile, emptyList(), firFile) {
     override fun forEachTarget(action: (FirElementWithResolveState) -> Unit) {
         fun goInside(target: FirElementWithResolveState) {
             action(target)
