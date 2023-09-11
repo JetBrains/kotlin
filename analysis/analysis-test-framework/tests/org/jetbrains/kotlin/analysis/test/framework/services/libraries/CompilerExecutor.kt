@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.div
@@ -56,6 +58,16 @@ object CompilerExecutor {
 
         module.directives[JvmEnvironmentConfigurationDirectives.JVM_TARGET].firstOrNull()?.let { jvmTarget ->
             addAll(listOf("-jvm-target", jvmTarget.description))
+
+            val jdkHome = when {
+                jvmTarget <= JvmTarget.JVM_1_8 -> KtTestUtil.getJdk8Home()
+                jvmTarget <= JvmTarget.JVM_11 -> KtTestUtil.getJdk11Home()
+                jvmTarget <= JvmTarget.JVM_17 -> KtTestUtil.getJdk17Home()
+                jvmTarget <= JvmTarget.JVM_21 -> KtTestUtil.getJdk21Home()
+                else -> error("JDK for $jvmTarget is not found")
+            }
+
+            addAll(listOf("-jdk-home", jdkHome.toString()))
         }
 
         addAll(module.directives[Directives.COMPILER_ARGUMENTS])

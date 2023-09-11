@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/singleJavaFileRoots/test.kt:7:9: error: cannot access class 'C!'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/cli/jvm/singleJavaFileRoots/test.kt:7:9: error: cannot access class 'C'. Check your module classpath for missing or conflicting dependencies.
     B().c()
         ^
 compiler/testData/cli/jvm/singleJavaFileRoots/test.kt:8:5: error: unresolved reference 'C'.

@@ -154,18 +154,15 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestBrokenLibrary("library", "a/E.class")
     }
 
-    // KT-60778 K2: implement MISSING_DEPENDENCY_CLASS(_SUPERCLASS) errors
-    fun testIncompleteHierarchyInJava() = muteForK2 {
+    fun testIncompleteHierarchyInJava() {
         doTestBrokenLibrary("library", "test/Super.class")
     }
 
-    // KT-60778 K2: implement MISSING_DEPENDENCY_CLASS(_SUPERCLASS) errors
-    fun testIncompleteHierarchyInKotlin() = muteForK2 {
+    fun testIncompleteHierarchyInKotlin() {
         doTestBrokenLibrary("library", "test/Super.class")
     }
 
-    // KT-60778 K2: implement MISSING_DEPENDENCY_CLASS(_SUPERCLASS) errors
-    fun testIncompleteHierarchyMissingInterface() = muteForK2 {
+    fun testIncompleteHierarchyMissingInterface() {
         doTestBrokenLibrary("library", "test/A.class")
     }
 
@@ -173,8 +170,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestBrokenLibrary("library", "test/Super.class")
     }
 
-    // KT-60778 K2: implement MISSING_DEPENDENCY_CLASS(_SUPERCLASS) errors
-    fun testMissingStaticClass() = muteForK2 {
+    fun testMissingStaticClass() {
         doTestBrokenLibrary("library", "test/C\$D.class")
     }
 
@@ -183,7 +179,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     // KT-60778 K2: implement MISSING_DEPENDENCY_CLASS(_SUPERCLASS) errors
-    fun testIncompleteHierarchyWithExtendedCompilerChecks() = muteForK2 {
+    fun testIncompleteHierarchyWithExtendedCompilerChecks() {
         doTestBrokenLibrary(
             "library",
             "test/Super.class",
@@ -191,18 +187,15 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         )
     }
 
-    // KT-60778 K2: implement MISSING_DEPENDENCY_CLASS(_SUPERCLASS) errors
-    fun testIncompleteHierarchyErrorPositions() = muteForK2 {
+    fun testIncompleteHierarchyErrorPositions() {
         doTestBrokenLibrary("library", "test/Super.class")
     }
 
-    // KT-60778 K2: implement MISSING_DEPENDENCY_CLASS(_SUPERCLASS) errors
-    fun testIncompleteHierarchyOfEnclosingClass() = muteForK2 {
+    fun testIncompleteHierarchyOfEnclosingClass() {
         doTestBrokenLibrary("library", "test/Super.class")
     }
 
-    // KT-60778 K2: implement MISSING_DEPENDENCY_CLASS(_SUPERCLASS) errors
-    fun testMissingDependencySimple() = muteForK2 {
+    fun testMissingDependencySimple() {
         doTestBrokenLibrary("library", "a/A.class")
     }
 
@@ -210,13 +203,11 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestBrokenLibrary("library", "my/Some.class", additionalOptions = listOf("-Xuse-javac", "-Xcompile-java"))
     }
 
-    // KT-60778 K2: implement MISSING_DEPENDENCY_CLASS(_SUPERCLASS) errors
-    fun testComputeSupertypeWithMissingDependency() = muteForK2 {
+    fun testComputeSupertypeWithMissingDependency() {
         doTestBrokenLibrary("library", "a/A.class")
     }
 
-    // KT-60778 K2: implement MISSING_DEPENDENCY_CLASS(_SUPERCLASS) errors
-    fun testMissingDependencyDifferentCases() = muteForK2 {
+    fun testMissingDependencyDifferentCases() {
         doTestBrokenLibrary("library", "a/A.class")
     }
 
@@ -224,8 +215,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestBrokenLibrary("library", "a/A\$Anno.class")
     }
 
-    // KT-60778 K2: implement MISSING_DEPENDENCY_CLASS(_SUPERCLASS) errors
-    fun testMissingDependencyConflictingLibraries() = muteForK2 {
+    fun testMissingDependencyConflictingLibraries() {
         val library1 = copyJarFileWithoutEntry(
             compileLibrary("library1"),
             "a/A.class", "a/A\$Inner.class", "a/AA.class", "a/AA\$Inner.class",
@@ -239,13 +229,11 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(library1, library2))
     }
 
-    // KT-60778 K2: implement MISSING_DEPENDENCY_CLASS(_SUPERCLASS) errors
-    fun testMissingDependencyJava() = muteForK2 {
+    fun testMissingDependencyJava() {
         doTestBrokenLibrary("library", "test/Bar.class")
     }
 
-    // KT-60778 K2: implement MISSING_DEPENDENCY_CLASS(_SUPERCLASS) errors
-    fun testMissingDependencyJavaConflictingLibraries() = muteForK2 {
+    fun testMissingDependencyJavaConflictingLibraries() {
         val library1 = copyJarFileWithoutEntry(compileLibrary("library1"), "test/A.class", "test/A\$Inner.class")
         val library2 = copyJarFileWithoutEntry(compileLibrary("library2"), "test/A.class", "test/A\$Inner.class")
         compileKotlin("source.kt", tmpdir, listOf(library1, library2))
