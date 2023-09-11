@@ -93,7 +93,7 @@ class LanguageVersionSettingsBuilder {
             }
         }
         when {
-            useK2 && this.languageVersion < LanguageVersion.KOTLIN_2_0 -> this.languageVersion = LanguageVersion.KOTLIN_2_0
+            useK2 && this.languageVersion < LanguageVersion.KOTLIN_2_0 -> this.languageVersion = LanguageVersion.LATEST_STABLE
             !useK2 && this.languageVersion > LanguageVersion.KOTLIN_1_9 -> this.languageVersion = LanguageVersion.KOTLIN_1_9
         }
 
