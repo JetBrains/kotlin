@@ -50,6 +50,7 @@ compileKotlinCommon {
                 "-opt-in=kotlin.ExperimentalMultiplatform",
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xallow-kotlin-package",
+                "-Xexpect-actual-classes",
         ]
     }
 }

@@ -79,7 +79,8 @@ kotlin {
                     kotlinOptions {
                         freeCompilerArgs = listOf(
                             "-Xallow-kotlin-package",
-                            "-module-name", "kotlin-stdlib-common"
+                            "-module-name", "kotlin-stdlib-common",
+                            "-Xexpect-actual-classes",
                         )
                     }
                     // workaround for compiling legacy MPP metadata, remove when this compilation is not needed anymore
@@ -201,6 +202,7 @@ kotlin {
                     freeCompilerArgs += listOf(
                         "-Xallow-kotlin-package",
                         "-Xforce-deprecated-legacy-compiler-usage",
+                        "-Xexpect-actual-classes",
                     )
                 }
                 compileTaskProvider.configure {

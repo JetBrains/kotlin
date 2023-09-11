@@ -23,7 +23,8 @@ compileKotlin2Js {
             "-Xallow-kotlin-package",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
             "-opt-in=kotlin.RequiresOptIn",
-            "-Xforce-deprecated-legacy-compiler-usage"
+            "-Xforce-deprecated-legacy-compiler-usage",
+            "-Xexpect-actual-classes"
     ]
     kotlinOptions {
         moduleKind = "umd"
