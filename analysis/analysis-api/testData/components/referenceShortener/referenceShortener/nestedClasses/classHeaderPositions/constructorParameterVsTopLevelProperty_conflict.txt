@@ -1,0 +1,18 @@
+Before shortening: class Foo(
+    bigProperty: String,
+    otherParam: String = test.bigProperty
+) : Base(test.bigProperty),
+    CharSequence by test.bigProperty
+{
+    val regularProperty = test.bigProperty
+    val delegatedProperty by test.bigProperty
+    val lambdaCapture = { test.bigProperty }
+
+    init {
+        test.bigProperty()
+    }
+}
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+with SHORTEN_AND_STAR_IMPORT:

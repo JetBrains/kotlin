@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -43,6 +45,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -94,11 +97,7 @@ internal class KtFirReferenceShortener(
             kDocQualifiersToShorten = emptyList(),
         )
 
-        val towerContext = if (declarationToVisit is KtFile) {
-            LowLevelFirApiFacadeForResolveOnAir.getOnAirTowerDataContextProviderForTheWholeFile(firResolveSession, declarationToVisit)
-        } else {
-            LowLevelFirApiFacadeForResolveOnAir.getOnAirGetTowerContextProvider(firResolveSession, declarationToVisit)
-        }
+        val towerContext = createTowerDataContextProvider(declarationToVisit)
 
         //TODO: collect all usages of available symbols in the file and prevent importing symbols that could introduce name clashes, which
         // may alter the meaning of existing code.
@@ -140,6 +139,10 @@ internal class KtFirReferenceShortener(
         )
     }
 
+    private fun createTowerDataContextProvider(declaration: KtElement): FirTowerContextProvider {
+        return FirTowerContextProviderByContextCollector(declaration, firResolveSession)
+    }
+
     private fun KtElement.getCorrespondingFirElement(): FirElement? {
         require(this is KtFile || this is KtDeclaration)
 
@@ -154,6 +157,45 @@ internal class KtFirReferenceShortener(
     }
 
     private fun buildSymbol(firSymbol: FirBasedSymbol<*>): KtSymbol = analysisSession.firSymbolBuilder.buildSymbol(firSymbol)
+}
+
+private class FirTowerContextProviderByContextCollector(
+    targetElement: KtElement,
+    firResolveSession: LLFirResolveSession,
+) : FirTowerContextProvider {
+
+    private val contextProvider: ContextCollector.ContextProvider = run {
+        val firFile = targetElement.containingKtFile.getOrBuildFirFile(firResolveSession)
+
+        val sessionHolder = run {
+            val firSession = firResolveSession.useSiteFirSession
+            val scopeSession = firResolveSession.getScopeSessionFor(firSession)
+
+            SessionHolderImpl(firSession, scopeSession)
+        }
+
+        val designation = ContextCollector.computeDesignation(firFile, targetElement)
+
+        ContextCollector.process(
+            firFile,
+            sessionHolder,
+            designation,
+            shouldCollectBodyContext = false, // we only query SELF context
+            filter = { ContextCollector.FilterResponse.CONTINUE }
+        )
+    }
+
+    override fun getClosestAvailableParentContext(ktElement: KtElement): FirTowerDataContext? {
+        for (parent in ktElement.parentsWithSelf) {
+            val context = contextProvider[parent, ContextCollector.ContextKind.SELF]
+
+            if (context != null) {
+                return context.towerDataContext
+            }
+        }
+
+        return null
+    }
 }
 
 private fun FqName.dropFakeRootPrefixIfPresent(): FqName =

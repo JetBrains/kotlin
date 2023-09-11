@@ -1,0 +1,28 @@
+Before shortening: class Foo(bigProperty: String) {
+    val propertyWithAccessors
+        get() = test.bigProperty
+        set(value) {
+            test.bigProperty
+        }
+
+    fun functionWithInitializer() = test.bigProperty
+    fun functionWithBody() {
+        return test.bigProperty
+    }
+}
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] test.bigProperty
+[qualifier] test.bigProperty
+[qualifier] test.bigProperty
+[qualifier] test.bigProperty
+with SHORTEN_AND_IMPORT:
+[qualifier] test.bigProperty
+[qualifier] test.bigProperty
+[qualifier] test.bigProperty
+[qualifier] test.bigProperty
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] test.bigProperty
+[qualifier] test.bigProperty
+[qualifier] test.bigProperty
+[qualifier] test.bigProperty

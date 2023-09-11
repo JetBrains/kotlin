@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
-internal object ContextCollector {
+object ContextCollector {
     enum class ContextKind {
         /** Represents the context of the declaration itself. */
         SELF,
@@ -79,7 +79,7 @@ internal object ContextCollector {
         val isBodyContextCollected = bodyElement != null
         val acceptedElements = targetElement.parentsWithSelf.toSet()
 
-        val contextProvider = process(file, computeDesignation(file, targetElement), holder, isBodyContextCollected) { candidate ->
+        val contextProvider = process(file, holder, computeDesignation(file, targetElement), isBodyContextCollected) { candidate ->
             when (candidate) {
                 targetElement -> FilterResponse.STOP
                 in acceptedElements -> FilterResponse.CONTINUE
@@ -104,7 +104,7 @@ internal object ContextCollector {
         return null
     }
 
-    private fun computeDesignation(file: FirFile, targetElement: PsiElement): FirDesignation? {
+    fun computeDesignation(file: FirFile, targetElement: PsiElement): FirDesignation? {
         val contextKtDeclaration = targetElement.getNonLocalContainingOrThisDeclaration()
         if (contextKtDeclaration != null) {
             val designationPath = FirElementFinder.collectDesignationPath(file, contextKtDeclaration)
@@ -126,15 +126,15 @@ internal object ContextCollector {
      * Processes the [FirFile], collecting contexts for elements matching the [filter].
      *
      * @param file The file to process.
-     * @param designation The declaration to process. If `null`, all declarations in the [file] are processed.
      * @param holder The [SessionHolder] for the session that owns a [file].
+     * @param designation The declaration to process. If `null`, all declarations in the [file] are processed.
      * @param shouldCollectBodyContext If `true`, [ContextKind.BODY] is collected where available.
      * @param filter The filter predicate. Context is collected only for [PsiElement]s for which the [filter] returns `true`.
      */
     fun process(
         file: FirFile,
-        designation: FirDesignation?,
         holder: SessionHolder,
+        designation: FirDesignation?,
         shouldCollectBodyContext: Boolean,
         filter: (PsiElement) -> FilterResponse
     ): ContextProvider {

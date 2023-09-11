@@ -641,6 +641,18 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
             }
 
             @Test
+            @TestMetadata("constructorParameterVsTopLevelProperty_conflict.kt")
+            public void testConstructorParameterVsTopLevelProperty_conflict() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/constructorParameterVsTopLevelProperty_conflict.kt");
+            }
+
+            @Test
+            @TestMetadata("constructorParameterVsTopLevelProperty_noConflict.kt")
+            public void testConstructorParameterVsTopLevelProperty_noConflict() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/constructorParameterVsTopLevelProperty_noConflict.kt");
+            }
+
+            @Test
             @TestMetadata("contextReceiver.kt")
             public void testContextReceiver() throws Exception {
                 runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/contextReceiver.kt");
