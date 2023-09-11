@@ -10,13 +10,18 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
+/**
+ * A DSL to apply hierarchy templates in a Kotlin project.
+ */
 interface KotlinHierarchyDsl {
 
     /**
-     * Will apply the given [template] to the project.
+     * Applies a given [template] to the project.
      *
-     * #### Example: Manually apply the default hierarchy
-     * (see KotlinMultiplatformExtension.applyDefaultHierarchyTemplate)
+     * *Examples:*
+     *
+     * - Manually apply the default hierarchy
+     * (See `KotlinMultiplatformExtension.applyDefaultHierarchyTemplate`):
      * ```kotlin
      * kotlin {
      *     applyHierarchyTemplate(KotlinHierarchyTemplate.default)
@@ -31,10 +36,11 @@ interface KotlinHierarchyDsl {
     fun applyHierarchyTemplate(template: KotlinHierarchyTemplate)
 
     /**
-     * Similar to [applyHierarchyTemplate], but allows to extend the provided template
+     * Similar to [applyHierarchyTemplate], but allows extension of the provided template.
      *
-     * #### Example: Adding custom groups (Experimental)
-     * Let's imagine we would additionally like to share code between linux and apple (unixLike)
+     * *Examples:*
+     *
+     * - Add custom groups (Experimental) to additionally share code between Linux and Apple (unixLike):
      *
      * ```kotlin
      * kotlin {
@@ -53,12 +59,14 @@ interface KotlinHierarchyDsl {
     fun applyHierarchyTemplate(template: KotlinHierarchyTemplate, extension: KotlinHierarchyBuilder.Root.() -> Unit)
 
     /**
-     * Allows to create a fully custom hierarchy (no defaults applied)
-     * Note: Using the custom hierarchy will also require to set the edges to 'commonMain' and 'commonTest' SourceSets by
+     * Allows creating a fully custom hierarchy (no defaults applied).
+     *
+     * **Note: ** Using the custom hierarchy requires setting the edges to 'commonMain' and 'commonTest' SourceSets by
      * using the `common` group.
      *
-     * ####  Example 1:
-     * Sharing code between iOS and a jvmTarget:
+     * *Examples:*
+     *
+     * - Share code between iOS and JVM targets:
      * ```kotlin
      * applyHierarchyTemplate {
      *     common {
@@ -70,7 +78,8 @@ interface KotlinHierarchyDsl {
      * }
      * ```
      *
-     * Will create two [KotlinSourceSetTree] using the 'common' and 'ios' groups, applied on the "test" and "main" compilations:
+     * This configuration creates two [KotlinSourceSetTree] using the 'common' and 'ios' groups,
+     * applied on the "test" and "main" compilations.
      * When the following targets are specified:
      * - jvm()
      * - iosX64()
@@ -89,7 +98,7 @@ interface KotlinHierarchyDsl {
      * iosX64Main   iosArm64Main            iosX64Test   iosArm64Test
      * ```
      *
-     * #### Example 2: Creating a 'diamond structure'
+     * - Create a 'diamond structure'
      * ```kotlin
      * applyHierarchyTemplate {
      *     common {
@@ -111,13 +120,14 @@ interface KotlinHierarchyDsl {
      * ```
      *
      * In this case, the _group_ "ios" can be created with 'group("ios")' and later referenced with the same construction to build
-     * the tree. Applying the descriptor from the example to the following targets:
+     * the tree.
+     * Apply the descriptor from the example to the following targets:
      * - iosX64()
      * - iosArm64()
      * - macosX64()
      * - jvm()
      *
-     * will create the following 'main' KotlinSourceSetTree:
+     * To create the following 'main' KotlinSourceSetTree:
      *
      * ```
      *                      commonMain
