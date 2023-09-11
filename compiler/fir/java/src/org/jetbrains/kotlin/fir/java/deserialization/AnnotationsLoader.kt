@@ -50,7 +50,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             visitExpression(name, buildGetClassCall {
                 val argument = value.toFirClassReferenceExpression()
                 argumentList = buildUnaryArgumentList(argument)
-                coneTypeOrNull = argument.coneTypeOrNull
+                coneTypeOrNull = argument.resolvedType
             })
         }
 
@@ -76,7 +76,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                     elements.add(buildGetClassCall {
                         val argument = value.toFirClassReferenceExpression()
                         argumentList = buildUnaryArgumentList(argument)
-                        coneTypeOrNull = argument.coneTypeOrNull
+                        coneTypeOrNull = argument.resolvedType
                     })
                 }
 
