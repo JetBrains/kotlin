@@ -32,6 +32,12 @@ public class FirLoadK2CompiledWithPluginJvmKotlinTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("annotationsGeneratedInBackend_MPP.kt")
+    public void testAnnotationsGeneratedInBackend_MPP() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/firLoadK2Compiled/annotationsGeneratedInBackend_MPP.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         runTest("plugins/fir-plugin-prototype/testData/firLoadK2Compiled/simple.kt");
