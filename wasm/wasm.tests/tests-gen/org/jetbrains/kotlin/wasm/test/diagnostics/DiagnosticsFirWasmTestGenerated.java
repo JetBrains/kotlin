@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/wasmTests")
 @TestDataPath("$PROJECT_ROOT")
-public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
+public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmTest {
     @Test
     public void testAllFilesPresentInWasmTests() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
