@@ -16,7 +16,9 @@ dependencies {
     embedded(project(":kotlin-formver-compiler-plugin.plugin")) { isTransitive = false }
     embedded(project(":kotlin-formver-compiler-plugin.viper")) { isTransitive = true }
 
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:test-infrastructure"))
 

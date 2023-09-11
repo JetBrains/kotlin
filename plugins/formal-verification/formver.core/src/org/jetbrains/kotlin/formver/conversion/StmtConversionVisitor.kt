@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
@@ -122,7 +121,7 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
                 if (symbol.isLocal) {
                     return varEmbedding.toLocalVar()
                 } else {
-                    val receiver = data.convert(propertyAccessExpression.dispatchReceiver)
+                    val receiver = data.convert(propertyAccessExpression.dispatchReceiver!!)
                     val fieldAccess = Exp.FieldAccess(receiver, varEmbedding.toField())
                     val accPred = AccessPredicate.FieldAccessPredicate(fieldAccess, PermExp.FullPerm())
                     return data.withResult(varEmbedding.type) {
@@ -251,14 +250,8 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
         }
     }
 
-    private fun getFunctionCallArguments(functionCall: FirFunctionCall): List<FirExpression> {
-        val receiver = if (functionCall.dispatchReceiver !is FirNoReceiverExpression) {
-            listOf(functionCall.dispatchReceiver)
-        } else {
-            emptyList()
-        }
-        return receiver + functionCall.argumentList.arguments
-    }
+    private fun getFunctionCallArguments(functionCall: FirFunctionCall): List<FirExpression> =
+        listOfNotNull(functionCall.dispatchReceiver) + functionCall.argumentList.arguments
 
     override fun visitProperty(property: FirProperty, data: StmtConversionContext<ResultTrackingContext>): Exp {
         val symbol = property.symbol
@@ -295,7 +288,7 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
 
     override fun visitContinueExpression(
         continueExpression: FirContinueExpression,
-        data: StmtConversionContext<ResultTrackingContext>
+        data: StmtConversionContext<ResultTrackingContext>,
     ): Exp {
         data.addStatement(data.continueLabel.toGoto())
         return UnitDomain.element
