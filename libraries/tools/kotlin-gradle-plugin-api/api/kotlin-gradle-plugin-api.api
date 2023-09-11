@@ -119,6 +119,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptExtensionCon
 	public abstract fun annotationProcessor (Ljava/lang/String;)V
 	public abstract fun annotationProcessors ([Ljava/lang/String;)V
 	public abstract fun arguments (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun arguments (Lorg/gradle/api/Action;)V
 	public abstract fun getCorrectErrorTypes ()Z
 	public abstract fun getDetectMemoryLeaks ()Ljava/lang/String;
 	public abstract fun getDumpDefaultParameterValues ()Z
@@ -132,6 +133,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptExtensionCon
 	public abstract fun getUseBuildCache ()Z
 	public abstract fun getUseLightAnalysis ()Z
 	public abstract fun javacOptions (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun javacOptions (Lorg/gradle/api/Action;)V
 	public abstract fun setCorrectErrorTypes (Z)V
 	public abstract fun setDetectMemoryLeaks (Ljava/lang/String;)V
 	public abstract fun setDumpDefaultParameterValues (Z)V
@@ -143,6 +145,11 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptExtensionCon
 	public abstract fun setStripMetadata (Z)V
 	public abstract fun setUseBuildCache (Z)V
 	public abstract fun setUseLightAnalysis (Z)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/KaptExtensionConfig$DefaultImpls {
+	public static fun arguments (Lorg/jetbrains/kotlin/gradle/dsl/KaptExtensionConfig;Lorg/gradle/api/Action;)V
+	public static fun javacOptions (Lorg/jetbrains/kotlin/gradle/dsl/KaptExtensionConfig;Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptJavacOption {

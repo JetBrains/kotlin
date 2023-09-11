@@ -5,65 +5,102 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import org.gradle.api.Action
+
 /**
- * DSL extension used to configure KAPT stub generation and KAPT annotation processing.
+ * A plugin DSL extension for configuring kapt annotation processing.
+ *
+ * Use the extension in your build script in the `kapt` block:
+ * ```kotlin
+ * kapt {
+ *    // Your extension configuration
+ * }
+ * ```
+ *
+ * See also [Kapt compiler plugin documentation](https://kotlinlang.org/docs/kapt.html).
  */
 interface KaptExtensionConfig {
 
     /**
-     * If `true`, compile classpath should be used to search for annotation processors.
+     * Also loads annotation processors from compile classpath.
+     *
+     * Default: `null`
      */
     var includeCompileClasspath: Boolean?
 
     /**
-     * If `true`, skip body analysis if possible.
+     * Skips analyzing code bodies, if possible.
+     *
+     * Default: `true`
      */
     var useLightAnalysis: Boolean
 
     /**
-     * If `true`, replace generated or error types with ones from the generated sources.
+     * Replaces any generated error types with error types from the generated sources.
+     *
+     * Default: `false`
      */
     var correctErrorTypes: Boolean
 
     /**
-     * If `true`, put initializers on fields when corresponding primary constructor parameters have a default value specified.
+     * Adds initializers to fields whose corresponding primary constructor parameters have a default value specified.
+     *
+     * Default: `false`
      */
     var dumpDefaultParameterValues: Boolean
 
     /**
-     * If `true`, map diagnostic reported on kapt stubs to original locations in Kotlin sources.
+     * Maps diagnostics reported on kapt stubs to their original locations in Kotlin sources.
+     *
+     * Default: `false`
      */
     var mapDiagnosticLocations: Boolean
 
     /**
-     * If `true`, show errors on incompatibilities during stub generation.
+     * Reports any incompatibility errors found during stub generation.
+     *
+     * Default: `false`
      */
     var strictMode: Boolean
 
     /**
-     * If `true`, strip @Metadata annotations from stubs.
+     * Strips `@Metadata` annotations from stubs.
+     *
+     * Default: `false`
      */
     var stripMetadata: Boolean
 
     /**
-     * If `true`, show annotation processor stats.
+     * Shows annotation processor statistics in the verbose kapt log output.
+     *
+     * Default: `false`
      */
     var showProcessorStats: Boolean
 
     /**
-     * If `true`, detect memory leaks in annotation processors.
+     * Detects memory leaks in annotation processors.
+     *
+     * Possible values: "default", "paranoid", "none".
+     *
+     * Default: `default`
      */
     var detectMemoryLeaks: String
 
     /**
-     * Opt-out switch for Kapt caching. Should be used when annotation processors used by this project are suspected of
-     * using anything aside from the task inputs in their logic and are not guaranteed to produce the same
-     * output on subsequent runs without input changes.
+     * Uses the [Gradle build cache](https://docs.gradle.org/current/userguide/build_cache.html) feature for kapt tasks.
+     *
+     * Set to `false` only when annotation processors used by this project are:
+     *   * suspected of using other sources asides from the task inputs in their processing logic
+     *   * not guaranteed to produce the same output on subsequent runs without input changes.
+     *
+     * Default: `true`
      */
     var useBuildCache: Boolean
 
     /**
-     * If true keeps annotation processors added via `annotationProcessor(..)` configuration for javac java-files compilation
+     * Keeps annotation processors that are added via the `annotationProcessor(..)` configuration for javac java-files compilation
+     *
+     * Default: `false`
      */
     var keepJavacAnnotationProcessors: Boolean
 
@@ -83,39 +120,59 @@ interface KaptExtensionConfig {
     fun arguments(action: KaptArguments.() -> Unit)
 
     /**
-     * Configure [KaptJavacOption] used for annotation processing.
+     * Configures the [KaptArguments] used for annotation processing.
+     */
+    fun arguments(action: Action<KaptArguments>) {
+        arguments { action.execute(this) }
+    }
+
+    /**
+     * Configures the [KaptJavacOption] used for annotation processing.
      */
     fun javacOptions(action: KaptJavacOption.() -> Unit)
 
     /**
-     * Gets all javac options used for KAPT.
+     * Configures the [KaptJavacOption] used for annotation processing.
+     */
+    fun javacOptions(action: Action<KaptJavacOption>) {
+        javacOptions { action.execute(this) }
+    }
+
+    /**
+     * Gets all the javac options used to run kapt annotation processing.
      */
     fun getJavacOptions(): Map<String, String>
 }
 
 /**
- * Interface used to specify arguments that are used during KAPT processing.
+ * A DSL to specify arguments that are used during kapt processing.
  */
 interface KaptArguments {
 
     /**
      * Adds argument with the specified name and values.
+     *
+     * Expected [name] and [values] type is [String].
      */
     fun arg(name: Any, vararg values: Any)
 }
 
 /**
- * Interface used to specify javac options that are used during KAPT processing.
+ * A DSL to specify javac options that are used during kapt processing.
  */
 interface KaptJavacOption {
 
     /**
      * Adds an option with name and value.
+     *
+     * Expected [name] and [value] type is [String].
      */
     fun option(name: Any, value: Any)
 
     /**
-     * Adds an option with name only (no value associated).
+     * Adds an option with name only.
+     *
+     * Expected [name] type is [String].
      */
     fun option(name: Any)
 }
