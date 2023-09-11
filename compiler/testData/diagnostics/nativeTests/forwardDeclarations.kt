@@ -92,15 +92,15 @@ fun testInline4() {
     val c : (objcnames.protocols.FwdProtocol) -> Unit = ::<!FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT!>inlineF<!>
 }
 
-fun testCheckedAs1(x : lib.FwdStruct) = x <!CAST_NEVER_SUCCEEDS!>as<!> cnames.structs.FwdStruct
-fun testCheckedAs2(x : lib.FwdObjcClass) = x <!CAST_NEVER_SUCCEEDS!>as<!> objcnames.classes.FwdObjcClass
+fun testCheckedAs1(x : lib.FwdStruct) = x as cnames.structs.FwdStruct
+fun testCheckedAs2(x : lib.FwdObjcClass) = x as objcnames.classes.FwdObjcClass
 fun testCheckedAs3(x : lib.FwdProtocol) = x as objcnames.protocols.FwdProtocol
-fun testCheckedSafeAs4(x : lib.FwdStruct) = x <!CAST_NEVER_SUCCEEDS!>as?<!> cnames.structs.FwdStruct
-fun testCheckedSafeAs5(x : lib.FwdObjcClass) = x <!CAST_NEVER_SUCCEEDS!>as?<!> objcnames.classes.FwdObjcClass
+fun testCheckedSafeAs4(x : lib.FwdStruct) = x as? cnames.structs.FwdStruct
+fun testCheckedSafeAs5(x : lib.FwdObjcClass) = x as? objcnames.classes.FwdObjcClass
 fun testCheckedSafeAs6(x : lib.FwdProtocol) = x as? objcnames.protocols.FwdProtocol
 
-fun testUnCheckedAs1(x : lib2.FwdStruct) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x <!CAST_NEVER_SUCCEEDS!>as<!> cnames.structs.FwdStruct<!>
-fun testUnCheckedAs2(x : lib2.FwdObjcClass) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x <!CAST_NEVER_SUCCEEDS!>as<!> objcnames.classes.FwdObjcClass<!>
+fun testUnCheckedAs1(x : lib2.FwdStruct) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x as cnames.structs.FwdStruct<!>
+fun testUnCheckedAs2(x : lib2.FwdObjcClass) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x as objcnames.classes.FwdObjcClass<!>
 fun testUnCheckedAs3(x : lib2.FwdProtocol) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x as objcnames.protocols.FwdProtocol<!>
 
-fun testUnCheckedAs4(x : lib.FwdStruct) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x <!CAST_NEVER_SUCCEEDS!>as<!> objcnames.classes.FwdObjcClass<!>
+fun testUnCheckedAs4(x : lib.FwdStruct) = <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x as objcnames.classes.FwdObjcClass<!>
