@@ -179,8 +179,6 @@ object K1AbstractExpectActualAnnotationMatchChecker {
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
     ): Incompatibility? {
-        // TODO(Roman.Efremov, KT-60671): check annotations set on types
-
         val skipSourceAnnotations = actualSymbol.hasSourceAnnotationsErased
         val actualAnnotationsByName = actualSymbol.annotations.groupBy { it.classId }
 

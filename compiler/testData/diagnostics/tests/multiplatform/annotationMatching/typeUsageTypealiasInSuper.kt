@@ -3,8 +3,12 @@
 @Target(AnnotationTarget.TYPE)
 annotation class Ann
 
-expect fun foo(): @Ann Int
+interface I
+
+expect class Foo: @Ann I
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual fun foo() = 1
+typealias ITypealias = I
+
+actual class Foo : ITypealias

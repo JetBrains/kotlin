@@ -108,3 +108,5 @@ val firPropertySymbolType = type("fir.symbols.impl", "FirPropertySymbol")
 val errorTypeRefImplType = type("fir.types.impl", "FirErrorTypeRefImpl")
 
 val annotationResolvePhaseType = generatedType("expressions", "FirAnnotationResolvePhase")
+
+val typeRefMarkerType = type("mpp", "TypeRefMarker")

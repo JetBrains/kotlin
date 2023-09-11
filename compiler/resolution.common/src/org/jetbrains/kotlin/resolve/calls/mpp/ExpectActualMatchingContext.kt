@@ -85,6 +85,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val CallableSymbolMarker.visibility: Visibility
 
     val RegularClassSymbolMarker.superTypes: List<KotlinTypeMarker>
+    val RegularClassSymbolMarker.superTypesRefs: List<TypeRefMarker>
     val RegularClassSymbolMarker.defaultType: KotlinTypeMarker
 
     val CallableSymbolMarker.isExpect: Boolean
@@ -115,7 +116,9 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
 
     val CallableSymbolMarker.dispatchReceiverType: KotlinTypeMarker?
     val CallableSymbolMarker.extensionReceiverType: KotlinTypeMarker?
+    val CallableSymbolMarker.extensionReceiverTypeRef: TypeRefMarker?
     val CallableSymbolMarker.returnType: KotlinTypeMarker
+    val CallableSymbolMarker.returnTypeRef: TypeRefMarker
     val CallableSymbolMarker.typeParameters: List<TypeParameterSymbolMarker>
     val FunctionSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
 
@@ -135,6 +138,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     fun CallableSymbolMarker.isAnnotationConstructor(): Boolean
 
     val TypeParameterSymbolMarker.bounds: List<KotlinTypeMarker>
+    val TypeParameterSymbolMarker.boundsTypeRefs: List<TypeRefMarker>
     val TypeParameterSymbolMarker.variance: Variance
     val TypeParameterSymbolMarker.isReified: Boolean
 
@@ -215,4 +219,35 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     ): Map<out DeclarationSymbolMarker, ExpectActualCompatibility<*>>
 
     fun DeclarationSymbolMarker.getSourceElement(): SourceElementMarker
+
+    fun TypeRefMarker.getClassId(): ClassId?
+
+    /**
+     * Callback interface to be implemented by caller of [checkAnnotationsOnTypeRefAndArguments].
+     */
+    fun interface AnnotationsCheckerCallback {
+        /**
+         * Implementation must check `expect` and `actual` annotations and report diagnostic in case of incompatibility.
+         * [actualTypeRefSource] is needed in order to know where on the `actual` declaration to insert the missing annotation
+         * from the `expect` declaration (see [AbstractExpectActualAnnotationMatchChecker.Incompatibility.actualAnnotationTargetElement]).
+         */
+        fun check(
+            expectAnnotations: List<AnnotationCallInfo>, actualAnnotations: List<AnnotationCallInfo>,
+            actualTypeRefSource: SourceElementMarker,
+        )
+    }
+
+    /**
+     * Finds pairs of matching expect and actual types, on which annotations must be checked by [AbstractExpectActualAnnotationMatchChecker].
+     *
+     * This is done by recursively traversing [expectTypeRef] and [actualTypeRef] and their arguments, which is needed in case of
+     * complex types like `T1<T2<@Ann T3>>`. Founded expect and actual annotations are passed to [checker] callback.
+     * For functional types (e.g. `ReceiverType.(Arg1Type) -> ReturnType`) receiver, argument and return types and their arguments
+     * are checked.
+     *
+     * **Example**: for type `@Ann1 List<@Ann2 Map<@Ann3 Int, @Ann4 String>>`, there are 4 types to check in [checker].
+     */
+    fun checkAnnotationsOnTypeRefAndArguments(
+        expectTypeRef: TypeRefMarker, actualTypeRef: TypeRefMarker, checker: AnnotationsCheckerCallback,
+    )
 }

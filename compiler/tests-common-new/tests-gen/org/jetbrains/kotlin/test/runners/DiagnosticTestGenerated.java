@@ -24108,6 +24108,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("typeUsageTypealiasInSuper.kt")
+                public void testTypeUsageTypealiasInSuper() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typeUsageTypealiasInSuper.kt");
+                }
+
+                @Test
                 @TestMetadata("typeUsageWithImplicitType.kt")
                 public void testTypeUsageWithImplicitType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typeUsageWithImplicitType.kt");

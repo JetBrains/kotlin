@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
-import org.jetbrains.kotlin.mpp.SourceElementMarker
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -177,8 +176,11 @@ internal abstract class IrExpectActualMatchingContext(
             else -> shouldNotBeCalled()
         }
 
-    override val RegularClassSymbolMarker.superTypes: List<KotlinTypeMarker>
+    override val RegularClassSymbolMarker.superTypes: List<IrType>
         get() = asIr().superTypes
+
+    override val RegularClassSymbolMarker.superTypesRefs: List<TypeRefMarker>
+        get() = superTypes
 
     override val RegularClassSymbolMarker.defaultType: KotlinTypeMarker
         get() = asIr().defaultType
@@ -275,10 +277,13 @@ internal abstract class IrExpectActualMatchingContext(
     override val CallableSymbolMarker.dispatchReceiverType: KotlinTypeMarker?
         get() = (asIr().parent as? IrClass)?.defaultType
 
-    override val CallableSymbolMarker.extensionReceiverType: KotlinTypeMarker?
+    override val CallableSymbolMarker.extensionReceiverType: IrType?
         get() = safeAsIr<IrFunction>()?.extensionReceiverParameter?.type
 
-    override val CallableSymbolMarker.returnType: KotlinTypeMarker
+    override val CallableSymbolMarker.extensionReceiverTypeRef: TypeRefMarker?
+        get() = extensionReceiverType
+
+    override val CallableSymbolMarker.returnType: IrType
         get() = processIr(
             onFunction = { it.returnType },
             onProperty = { it.getter?.returnType ?: it.backingField?.type ?: error("No type for property: $it") },
@@ -286,6 +291,10 @@ internal abstract class IrExpectActualMatchingContext(
             onValueParameter = { it.type },
             onEnumEntry = { it.parentAsClass.defaultType }
         )
+
+    override val CallableSymbolMarker.returnTypeRef: TypeRefMarker
+        get() = returnType
+
 
     override val CallableSymbolMarker.typeParameters: List<TypeParameterSymbolMarker>
         get() = processIr(
@@ -316,8 +325,10 @@ internal abstract class IrExpectActualMatchingContext(
         return irConstructor.constructedClass.isAnnotationClass
     }
 
-    override val TypeParameterSymbolMarker.bounds: List<KotlinTypeMarker>
+    override val TypeParameterSymbolMarker.bounds: List<IrType>
         get() = asIr().superTypes
+    override val TypeParameterSymbolMarker.boundsTypeRefs: List<TypeRefMarker>
+        get() = bounds
     override val TypeParameterSymbolMarker.variance: Variance
         get() = asIr().variance
     override val TypeParameterSymbolMarker.isReified: Boolean
@@ -529,4 +540,27 @@ internal abstract class IrExpectActualMatchingContext(
     private object IrSourceElementStub : SourceElementMarker
 
     override fun DeclarationSymbolMarker.getSourceElement(): SourceElementMarker = IrSourceElementStub
+
+    override fun TypeRefMarker.getClassId(): ClassId? = (this as IrType).getClass()?.classId
+
+    override fun checkAnnotationsOnTypeRefAndArguments(
+        expectTypeRef: TypeRefMarker,
+        actualTypeRef: TypeRefMarker,
+        checker: ExpectActualMatchingContext.AnnotationsCheckerCallback
+    ) {
+        check(expectTypeRef is IrType && actualTypeRef is IrType)
+
+        fun IrType.getAnnotations() = annotations.map(::AnnotationCallInfoImpl)
+
+        checker.check(expectTypeRef.getAnnotations(), actualTypeRef.getAnnotations(), IrSourceElementStub)
+
+        if (expectTypeRef !is IrSimpleType || actualTypeRef !is IrSimpleType) return
+        if (expectTypeRef.arguments.size != actualTypeRef.arguments.size) return
+
+        for ((expectArg, actualArg) in expectTypeRef.arguments.zip(actualTypeRef.arguments)) {
+            val expectArgType = expectArg.typeOrNull ?: continue
+            val actualArgType = actualArg.typeOrNull ?: continue
+            checkAnnotationsOnTypeRefAndArguments(expectArgType, actualArgType, checker)
+        }
+    }
 }
