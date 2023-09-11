@@ -23,13 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.declarations.resolved
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassIdSafe
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.fir.expressions.calleeReference
-import org.jetbrains.kotlin.fir.expressions.unwrapAndFlattenArgument
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -51,6 +45,7 @@ internal fun mapAnnotationParameters(annotation: FirAnnotation): Map<Name, FirEx
     checkWithAttachment(annotation.resolved, { "By now the annotations argument mapping should have been resolved" }) {
         withFirEntry("annotation", annotation)
         withClassEntry("annotationTypeRef", annotation.annotationTypeRef)
+        @OptIn(UnresolvedExpressionTypeAccess::class)
         withClassEntry("coneTypeOrNull", annotation.coneTypeOrNull)
         annotation.calleeReference?.let { withClassEntry("calleeReference", it) }
     }

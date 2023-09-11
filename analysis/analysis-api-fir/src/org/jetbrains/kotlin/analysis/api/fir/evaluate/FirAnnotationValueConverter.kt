@@ -45,6 +45,8 @@ internal object FirAnnotationValueConverter {
 
     private fun <T> FirConstExpression<T>.convertConstantExpression(): KtConstantAnnotationValue? {
         val expression = psi as? KtElement
+
+        @OptIn(UnresolvedExpressionTypeAccess::class)
         val type = coneTypeOrNull
         val constantValue = when {
             value == null -> KtConstantValue.KtNullConstantValue(expression)

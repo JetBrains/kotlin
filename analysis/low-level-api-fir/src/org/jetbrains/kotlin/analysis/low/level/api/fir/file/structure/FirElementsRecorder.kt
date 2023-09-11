@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -218,7 +215,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
             convertedValue as T,
             setType = false
         ).also {
-            it.replaceConeTypeOrNull(original.coneTypeOrNull)
+            it.replaceConeTypeOrNull(original.resolvedType)
         }
     }
 

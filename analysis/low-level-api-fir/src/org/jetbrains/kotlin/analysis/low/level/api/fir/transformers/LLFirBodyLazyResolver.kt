@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForClass
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForFile
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.isResolved
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -440,7 +441,7 @@ private val FirFunction.isCertainlyResolved: Boolean
         }
 
         val body = this.body ?: return false // Not completely sure
-        return body !is FirLazyBlock && body.coneTypeOrNull != null
+        return body !is FirLazyBlock && body.isResolved
     }
 
 private val FirVariable.initializerIfUnresolved: FirExpression?

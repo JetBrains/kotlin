@@ -72,7 +72,7 @@ internal class KtFirExpressionTypeProvider(
             // For unresolved `super`, we manually create an intersection type so that IDE features like completion can work correctly.
             val containingClass = (fir.dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol as? FirClassSymbol<*>
 
-            if (fir.calleeReference is FirSuperReference && fir.coneTypeOrNull is ConeErrorType && containingClass != null) {
+            if (fir.calleeReference is FirSuperReference && fir.resolvedType is ConeErrorType && containingClass != null) {
                 val superTypes = containingClass.resolvedSuperTypes
                 when (superTypes.size) {
                     0 -> analysisSession.builtinTypes.ANY

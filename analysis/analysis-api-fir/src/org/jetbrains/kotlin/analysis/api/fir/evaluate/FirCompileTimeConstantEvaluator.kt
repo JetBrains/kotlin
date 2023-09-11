@@ -178,19 +178,19 @@ internal object FirCompileTimeConstantEvaluator {
 
         val opr1 = evaluate(functionCall.explicitReceiver, mode) ?: return null
         opr1.evaluate(function)?.let {
-            return it.adjustType(functionCall.coneTypeOrNull)
+            return it.adjustType(functionCall.resolvedType)
         }
 
         val argument = functionCall.arguments.firstOrNull() ?: return null
         val opr2 = evaluate(argument, mode) ?: return null
         opr1.evaluate(function, opr2)?.let {
-            return it.adjustType(functionCall.coneTypeOrNull)
+            return it.adjustType(functionCall.resolvedType)
         }
         return null
     }
 
-    private fun FirConstExpression<*>.adjustType(expectedType: ConeKotlinType?): FirConstExpression<*> {
-        val expectedKind = expectedType?.toConstantValueKind()
+    private fun FirConstExpression<*>.adjustType(expectedType: ConeKotlinType): FirConstExpression<*> {
+        val expectedKind = expectedType.toConstantValueKind()
         // Note that the resolved type for the const expression is not always matched with the const kind. For example,
         //   fun foo(x: Int) {
         //     when (x) {

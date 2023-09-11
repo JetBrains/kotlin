@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isStableSmartcast
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
@@ -105,7 +106,7 @@ internal class KtFirSmartcastProvider(
         if (receiver == null || receiver == firExpression.explicitReceiver) return null
         if (!receiver.isStableSmartcast()) return null
 
-        val type = receiver.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return null
+        val type = receiver.resolvedType.asKtType()
         return KtImplicitReceiverSmartCast(type, kind, token)
     }
 }

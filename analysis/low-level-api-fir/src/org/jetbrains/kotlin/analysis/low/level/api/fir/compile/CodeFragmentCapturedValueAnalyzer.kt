@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -111,7 +112,7 @@ private class CodeFragmentCapturedValueVisitor(
 
     private fun processElement(element: FirElement) {
         if (element is FirExpression) {
-            val symbol = element.coneTypeOrNull?.toSymbol(session)
+            val symbol = element.resolvedType.toSymbol(session)
             if (symbol != null) {
                 registerFile(symbol)
             }
