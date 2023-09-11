@@ -47,6 +47,9 @@ inline fun <reified T : ConeKotlinType> FirExpression.coneTypeSafe(): T? = (cone
 @OptIn(UnresolvedExpressionTypeAccess::class)
 inline fun <reified T : ConeKotlinType> FirExpression.coneTypeUnsafe(): T = coneTypeOrNull as T
 
+@OptIn(UnresolvedExpressionTypeAccess::class)
+val FirExpression.isResolved: Boolean get() = coneTypeOrNull != null
+
 @RequiresOptIn(
     "This type check never expands type aliases. Use with care (probably Ok for expression & constructor types). " +
             "Generally this.coneType.fullyExpandedType(session).isSomeType is better"
