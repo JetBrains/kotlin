@@ -83,9 +83,6 @@ method pkg$$global$when_with_subject_var(local$x: Int) returns (ret: Int)
 }
 
 /when.kt:(716,738): info: Generated Viper text for when_with_subject_call:
-method pkg$$global$when_with_subject_var(local$x: Int) returns (ret: Int)
-
-
 method pkg$$global$when_with_subject_call(local$x: Int) returns (ret: Int)
 {
   var anonymous$1: Int
@@ -105,6 +102,9 @@ method pkg$$global$when_with_subject_call(local$x: Int) returns (ret: Int)
   goto label$ret
   label label$ret
 }
+
+method pkg$$global$when_with_subject_var(local$x: Int) returns (ret: Int)
+
 
 /when.kt:(861,871): info: Generated Viper text for empty_when:
 method pkg$$global$empty_when() returns (ret: Int)

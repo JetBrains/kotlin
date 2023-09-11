@@ -16,9 +16,6 @@ method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
 /member_functions.kt:(84,99): info: Generated Viper text for call_member_fun:
 field pkg$$class_Foo$member_x: Int
 
-method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
-
-
 method pkg$$class_Foo$member_call_member_fun(this: Ref)
   returns (ret: dom$Unit)
 {
@@ -28,11 +25,11 @@ method pkg$$class_Foo$member_call_member_fun(this: Ref)
   label label$ret
 }
 
-/member_functions.kt:(140,152): info: Generated Viper text for sibling_call:
-field pkg$$class_Foo$member_x: Int
-
 method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
 
+
+/member_functions.kt:(140,152): info: Generated Viper text for sibling_call:
+field pkg$$class_Foo$member_x: Int
 
 method pkg$$class_Foo$member_sibling_call(this: Ref, local$other: Ref)
   returns (ret: dom$Unit)
@@ -44,15 +41,11 @@ method pkg$$class_Foo$member_sibling_call(this: Ref, local$other: Ref)
   label label$ret
 }
 
-/member_functions.kt:(207,228): info: Generated Viper text for outer_member_fun_call:
-field pkg$$class_Foo$member_x: Int
-
-method pkg$$class_Foo$member_Foo(local$x: Int) returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
-
-
 method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
 
+
+/member_functions.kt:(207,228): info: Generated Viper text for outer_member_fun_call:
+field pkg$$class_Foo$member_x: Int
 
 method pkg$$global$outer_member_fun_call() returns (ret: dom$Unit)
 {
@@ -64,3 +57,10 @@ method pkg$$global$outer_member_fun_call() returns (ret: dom$Unit)
   anonymous$2 := pkg$$class_Foo$member_member_fun(local$f)
   label label$ret
 }
+
+method pkg$$class_Foo$member_Foo(local$x: Int) returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+
+
+method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
+

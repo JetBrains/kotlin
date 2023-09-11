@@ -49,15 +49,6 @@ method pkg$$global$exactly_once(local$f: Ref) returns (ret: Int)
 }
 
 /calls_in_place.kt:(623,636): info: Generated Viper text for at_least_once:
-method pkg$$global$exactly_once(local$f: Ref) returns (ret: Int)
-  requires acc(local$f.special$function_object_call_counter, write)
-  ensures acc(local$f.special$function_object_call_counter, write)
-  ensures old(local$f.special$function_object_call_counter) <=
-    local$f.special$function_object_call_counter
-  ensures local$f.special$function_object_call_counter ==
-    old(local$f.special$function_object_call_counter) + 1
-
-
 method pkg$$global$at_least_once(local$f: Ref) returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -73,6 +64,15 @@ method pkg$$global$at_least_once(local$f: Ref) returns (ret: Int)
   goto label$ret
   label label$ret
 }
+
+method pkg$$global$exactly_once(local$f: Ref) returns (ret: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter ==
+    old(local$f.special$function_object_call_counter) + 1
+
 
 /calls_in_place.kt:(800,809): info: Generated Viper text for loopWhile:
 method pkg$$global$loopWhile(local$lambda: Ref) returns (ret: dom$Unit)

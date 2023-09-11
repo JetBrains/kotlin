@@ -37,10 +37,6 @@ method pkg$$global$subtypeTransitive(local$x: dom$Unit)
 /is_type_contract.kt:(686,707): info: Generated Viper text for constructorReturnType:
 field pkg$$class_Foo$member_bar: Ref
 
-method pkg$$class_Foo$member_Foo() returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
-
-
 method pkg$$global$constructorReturnType() returns (ret: Bool)
   ensures ret == true
 {
@@ -50,6 +46,10 @@ method pkg$$global$constructorReturnType() returns (ret: Bool)
   goto label$ret
   label label$ret
 }
+
+method pkg$$class_Foo$member_Foo() returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+
 
 /is_type_contract.kt:(832,848): info: Generated Viper text for subtypeSuperType:
 field pkg$$class_Foo$member_bar: Ref

@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.contracts.description.KtCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -42,11 +40,27 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         )
 
     fun registerForVerification(declaration: FirSimpleFunction) {
-        processFunction(declaration.symbol, declaration.body)
+        val embedding = embedFunction(declaration.symbol)
+        embedding.convertBody(this)
     }
 
     override fun embedFunction(symbol: FirFunctionSymbol<*>): MethodEmbedding {
-        return processFunction(symbol, null)
+        val signature = embedSignature(symbol)
+        return methods.getOrPut(signature.name) {
+            val contractVisitor = ContractDescriptionConversionVisitor(this@ProgramConverter, signature)
+
+            val preconditions = signature.formalArgs.flatMap { it.invariants() } +
+                    signature.formalArgs.flatMap { it.accessInvariants() } +
+                    contractVisitor.getPreconditions(symbol)
+
+            val postconditions = signature.formalArgs.flatMap { it.accessInvariants() } +
+                    signature.params.flatMap { it.dynamicInvariants() } +
+                    signature.returnVar.invariants() +
+                    signature.returnVar.provenInvariants() +
+                    contractVisitor.getPostconditions(symbol)
+
+            UserMethodEmbedding(signature, preconditions, postconditions, symbol)
+        }
     }
 
     private fun embedClass(symbol: FirRegularClassSymbol): ClassTypeEmbedding {
@@ -104,66 +118,6 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
     private val FirFunctionSymbol<*>.receiverType: ConeKotlinType?
         get() = dispatchReceiverType ?: resolvedReceiverTypeRef?.type
-
-    private fun processFunction(symbol: FirFunctionSymbol<*>, body: FirBlock?): MethodEmbedding {
-        val signature = embedSignature(symbol)
-        // NOTE: we have a problem here if we initially specify a method without a body,
-        // and then later decide to add a body anyway.  It's not a problem for now, but
-        // worth being aware of.
-        return methods.getOrPut(signature.name) {
-            val contractVisitor = ContractDescriptionConversionVisitor(this@ProgramConverter, signature)
-            val parameterIndices = (signature.params.indices.toSet() + setOfNotNull(signature.receiver?.let { -1 })).toMutableSet()
-            val nonDuplicableIndices = symbol.resolvedContractDescription?.effects?.mapNotNull { decl ->
-                (decl.effect as? KtCallsEffectDeclaration<*, *>)?.valueParameterReference?.parameterIndex
-            }?.toSet() ?: emptySet()
-
-            val duplicableParameters =
-                (parameterIndices - nonDuplicableIndices).map { contractVisitor.embeddedVarByIndex(it) }.filter { it.type is FunctionTypeEmbedding }
-                    .map { DuplicableFunction.toFuncApp(listOf(it.toLocalVar())) }
-            val contractPostconditions =
-                symbol.resolvedContractDescription?.effects?.map {
-                    it.effect.accept(contractVisitor, Unit)
-                } ?: emptyList()
-
-            val methodCtx = object : MethodConversionContext, ProgramConversionContext by this {
-                override val signature: MethodSignatureEmbedding = signature
-
-                // It seems like Viper will propagate the weakest precondition through the label correctly even in the absence of
-                // explicit invariants; we only need to add those if we want to make a stronger claim.
-                override val returnLabel: Label = Label(ReturnLabelName, listOf())
-                override val returnVar: VariableEmbedding = VariableEmbedding(ReturnVariableName, signature.returnType)
-
-                override val preconditions =
-                    signature.formalArgs.flatMap { it.invariants() } + signature.formalArgs.flatMap { it.accessInvariants() } + duplicableParameters
-
-                override val postconditions = signature.formalArgs.flatMap { it.accessInvariants() } +
-                        signature.params.flatMap { it.dynamicInvariants() } +
-                        signature.returnVar.invariants() +
-                        signature.returnVar.provenInvariants() +
-                        contractPostconditions
-
-                override fun resolveName(name: MangledName): MangledName = name
-            }
-
-            val bodySeqn = body?.let {
-                val ctx = StmtConverter(methodCtx, SeqnBuilder(), NoopResultTrackerFactory)
-                signature.formalArgs.forEach { arg ->
-                    arg.provenInvariants().forEach {
-                        // Ideally we would want to assume these rather than inhale them to prevent inconsistencies with permissions.
-                        // Unfortunately Silicon for some reason does not allow Assumes. However, it doesn't matter as long as the
-                        // provenInvariants don't contain permissions.
-                        ctx.addStatement(Stmt.Inhale(it))
-                    }
-                }
-                ctx.addDeclaration(methodCtx.returnLabel.toDecl())
-                ctx.convert(body)
-                ctx.addStatement(methodCtx.returnLabel.toStmt())
-                ctx.block
-            }
-
-            MethodEmbedding(signature, methodCtx.preconditions, methodCtx.postconditions, bodySeqn, symbol.isInline)
-        }
-    }
 
     private fun processClass(symbol: FirRegularClassSymbol) {
         val concreteFields = symbol.declarationSymbols

@@ -5,24 +5,102 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
-import org.jetbrains.kotlin.formver.viper.ast.Exp
-import org.jetbrains.kotlin.formver.viper.ast.Stmt
-import org.jetbrains.kotlin.formver.viper.ast.UserMethod
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.formver.conversion.*
+import org.jetbrains.kotlin.formver.domains.convertType
+import org.jetbrains.kotlin.formver.viper.MangledName
+import org.jetbrains.kotlin.formver.viper.ast.*
 
-class MethodEmbedding(
+interface MethodEmbedding : MethodSignatureEmbedding {
+    val shouldIncludeInProgram: Boolean
+    val viperMethod: Method
+    fun convertBody(ctx: ProgramConverter)
+    fun insertCall(argsFir: List<FirExpression>, ctx: StmtConversionContext<ResultTrackingContext>): Exp.LocalVar
+}
+
+class UserMethodEmbedding(
     val signature: MethodSignatureEmbedding,
     val preconditions: List<Exp>,
     val postconditions: List<Exp>,
-    val body: Stmt.Seqn?,
-    val isInline: Boolean,
-) : MethodSignatureEmbedding by signature {
-    val shouldIncludeInProgram = !isInline || body != null
-    val viperMethod = UserMethod(
-        name,
-        formalArgs.map { it.toLocalVarDecl() },
-        returnVar.toLocalVarDecl(),
-        preconditions,
-        postconditions,
-        body
-    )
+    val symbol: FirFunctionSymbol<*>,
+) : MethodEmbedding, MethodSignatureEmbedding by signature {
+    var body: Stmt.Seqn? = null
+    override val shouldIncludeInProgram
+        get() = !symbol.isInline || body != null
+
+    override val viperMethod
+        get() = UserMethod(
+            name,
+            formalArgs.map { it.toLocalVarDecl() },
+            returnVar.toLocalVarDecl(),
+            preconditions,
+            postconditions,
+            body
+        )
+
+    @OptIn(SymbolInternals::class)
+    override fun convertBody(ctx: ProgramConverter) {
+        val methodCtx = object : MethodConversionContext, ProgramConversionContext by ctx {
+            override val signature: MethodSignatureEmbedding = this@UserMethodEmbedding
+
+            // It seems like Viper will propagate the weakest precondition through the label correctly even in the absence of
+            // explicit invariants; we only need to add those if we want to make a stronger claim.
+            override val returnLabel: Label = Label(ReturnLabelName, listOf())
+            override val returnVar: VariableEmbedding = VariableEmbedding(ReturnVariableName, signature.returnType)
+
+            override val preconditions: List<Exp> = this@UserMethodEmbedding.preconditions
+            override val postconditions: List<Exp> = this@UserMethodEmbedding.postconditions
+
+            override fun resolveName(name: MangledName): MangledName = name
+        }
+
+        body = symbol.fir.body?.let {
+            val stmtCtx = StmtConverter(methodCtx, SeqnBuilder(), NoopResultTrackerFactory)
+            signature.formalArgs.forEach { arg ->
+                // Ideally we would want to assume these rather than inhale them to prevent inconsistencies with permissions.
+                // Unfortunately Silicon for some reason does not allow Assumes. However, it doesn't matter as long as the
+                // provenInvariants don't contain permissions.
+                arg.provenInvariants().forEach { invariant ->
+                    stmtCtx.addStatement(Stmt.Inhale(invariant))
+                }
+            }
+            stmtCtx.addDeclaration(methodCtx.returnLabel.toDecl())
+            stmtCtx.convert(it)
+            stmtCtx.addStatement(methodCtx.returnLabel.toStmt())
+            stmtCtx.block
+        }
+    }
+
+    @OptIn(SymbolInternals::class)
+    override fun insertCall(argsFir: List<FirExpression>, ctx: StmtConversionContext<ResultTrackingContext>): Exp.LocalVar =
+        ctx.withResult(returnType) {
+            if (!symbol.isInline) {
+                val args = argsFir
+                    .zip(formalArgs)
+                    .map { (arg, formalArg) -> convert(arg).convertType(embedType(arg), formalArg.type) }
+
+                addStatement(toMethodCall(args, this.resultCtx.resultVar))
+            } else {
+                val inlineBody = symbol.fir.body ?: throw Exception("Function symbol $symbol has a null body")
+                val inlineBodyCtx = newBlock()
+                val inlineArgs: List<MangledName> = symbol.valueParameterSymbols.map { it.embedName() }
+                val callArgs = argsFir.map { inlineBodyCtx.convertAndStore(it).name }
+                val substitutionParams = inlineArgs.zip(callArgs).toMap()
+
+                val inlineCtx = inlineBodyCtx.withInlineContext(
+                    this@UserMethodEmbedding.signature,
+                    inlineBodyCtx.resultCtx.resultVar,
+                    substitutionParams
+                )
+                inlineCtx.convert(inlineBody)
+                // TODO: add these labels automatically.
+                inlineCtx.addDeclaration(inlineCtx.returnLabel.toDecl())
+                inlineCtx.addStatement(inlineCtx.returnLabel.toStmt())
+                // Note: Putting the block inside the then branch of an if-true statement is a little a hack to make Viper respect the scoping
+                addStatement(Stmt.If(Exp.BoolLit(true), inlineCtx.block, Stmt.Seqn(listOf(), listOf())))
+            }
+        }
 }

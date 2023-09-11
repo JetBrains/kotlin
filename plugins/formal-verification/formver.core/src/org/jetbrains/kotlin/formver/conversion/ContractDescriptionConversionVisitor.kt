@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractConstantValues
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.formver.domains.TypeDomain
 import org.jetbrains.kotlin.formver.domains.TypeOfDomain
+import org.jetbrains.kotlin.formver.effects
+import org.jetbrains.kotlin.formver.embeddings.FunctionTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.MethodSignatureEmbedding
 import org.jetbrains.kotlin.formver.embeddings.NullableTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
@@ -21,6 +24,24 @@ class ContractDescriptionConversionVisitor(
     private val ctx: ProgramConversionContext,
     private val signature: MethodSignatureEmbedding,
 ) : KtContractDescriptionVisitor<Exp, Unit, ConeKotlinType, ConeDiagnostic>() {
+    private val parameterIndices = signature.params.indices.toSet() + setOfNotNull(signature.receiver?.let { -1 })
+
+    fun getPreconditions(symbol: FirFunctionSymbol<*>): List<Exp> {
+        val callsInPlaceIndices = symbol.effects
+            .mapNotNull { (it.effect as? KtCallsEffectDeclaration<*, *>)?.valueParameterReference?.parameterIndex }
+            .toSet()
+
+        // All parameters of function type that are not callsInPlace should be marked duplicable.
+        return (parameterIndices - callsInPlaceIndices)
+            .map { embeddedVarByIndex(it) }
+            .filter { it.type is FunctionTypeEmbedding }
+            .map { DuplicableFunction.toFuncApp(listOf(it.toLocalVar())) }
+    }
+
+    fun getPostconditions(symbol: FirFunctionSymbol<*>): List<Exp> =
+        symbol.effects.map { it.effect.accept(this, Unit) }
+
+
     override fun visitBooleanConstantDescriptor(
         booleanConstantDescriptor: KtBooleanConstantReference<ConeKotlinType, ConeDiagnostic>,
         data: Unit,
@@ -137,7 +158,7 @@ class ContractDescriptionConversionVisitor(
     private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.embeddedVar(): VariableEmbedding =
         embeddedVarByIndex(parameterIndex)
 
-    fun embeddedVarByIndex(ix: Int): VariableEmbedding =
+    private fun embeddedVarByIndex(ix: Int): VariableEmbedding =
         if (ix == -1) signature.receiver!! else signature.params[ix]
 
     private fun VariableEmbedding.nullCmp(isNegated: Boolean): Exp =
@@ -151,3 +172,5 @@ class ContractDescriptionConversionVisitor(
             BoolLit(isNegated)
         }
 }
+
+

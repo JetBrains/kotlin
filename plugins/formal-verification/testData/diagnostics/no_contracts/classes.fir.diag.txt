@@ -3,11 +3,6 @@ field pkg$$class_Foo$member_a: Int
 
 field pkg$$class_Foo$member_b: Int
 
-method pkg$$class_Foo$member_Foo(local$a: Int, local$b: Int)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
-
-
 method pkg$$global$createFoo() returns (ret: dom$Unit)
 {
   var local$f: Ref
@@ -29,13 +24,13 @@ method pkg$$global$createFoo() returns (ret: dom$Unit)
   label label$ret
 }
 
+method pkg$$class_Foo$member_Foo(local$a: Int, local$b: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+
+
 /classes.kt:(147,156): info: Generated Viper text for createBar:
 field pkg$$class_Bar$member_a: dom$Nullable[Ref]
-
-method pkg$$class_Bar$member_Bar(local$a: dom$Nullable[Ref])
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
-
 
 method pkg$$global$createBar() returns (ret: dom$Unit)
 {
@@ -46,3 +41,8 @@ method pkg$$global$createBar() returns (ret: dom$Unit)
   local$b := anonymous$1
   label label$ret
 }
+
+method pkg$$class_Bar$member_Bar(local$a: dom$Nullable[Ref])
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
+

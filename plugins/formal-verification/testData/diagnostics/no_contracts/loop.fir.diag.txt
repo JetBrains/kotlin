@@ -18,9 +18,6 @@ method pkg$$global$while_loop(local$b: Bool) returns (ret: Bool)
 }
 
 /loop.kt:(120,144): info: Generated Viper text for while_function_condition:
-method pkg$$global$while_loop(local$b: Bool) returns (ret: Bool)
-
-
 method pkg$$global$while_function_condition() returns (ret: dom$Unit)
 {
   var anonymous$1: Bool
@@ -36,3 +33,6 @@ method pkg$$global$while_function_condition() returns (ret: dom$Unit)
   label label$break$1
   label label$ret
 }
+
+method pkg$$global$while_loop(local$b: Bool) returns (ret: Bool)
+

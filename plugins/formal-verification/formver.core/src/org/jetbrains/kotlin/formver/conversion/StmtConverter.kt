@@ -25,22 +25,18 @@ class StmtConverter<out RTC : ResultTrackingContext>(
     private val methodCtx: MethodConversionContext,
     private val seqnCtx: SeqnBuildContext,
     private val resultCtxFactory: ResultTrackerFactory<RTC>,
-    private val whileIndex: Int = 0
+    private val whileIndex: Int = 0,
 ) : StmtConversionContext<RTC>, SeqnBuildContext by seqnCtx, MethodConversionContext by methodCtx, ResultTrackingContext,
     WhileStackContext<RTC> {
     override val resultCtx: RTC
         get() = resultCtxFactory.build(this)
 
     override fun convert(stmt: FirStatement): Exp = stmt.accept(StmtConversionVisitorExceptionWrapper, this)
-    override fun convertAndStore(exp: FirExpression): Exp.LocalVar {
-        val convertedExp = convert(exp)
-        return convertedExp as? Exp.LocalVar ?: withResult(embedType(exp)) {
-            capture(
-                convertedExp,
-                methodCtx.embedType(exp)
-            )
-        } as Exp.LocalVar
-    }
+    override fun convertAndStore(exp: FirExpression): Exp.LocalVar =
+        when (val convertedExp = convert(exp)) {
+            is Exp.LocalVar -> convertedExp
+            else -> withResult(embedType(exp)) { capture(convertedExp, embedType(exp)) }
+        }
 
     override fun newBlock(): StmtConverter<RTC> = StmtConverter(this, SeqnBuilder(), resultCtxFactory, whileIndex)
     override fun withoutResult(): StmtConversionContext<NoopResultTracker> =

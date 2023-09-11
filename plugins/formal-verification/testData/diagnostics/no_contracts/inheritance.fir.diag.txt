@@ -51,9 +51,6 @@ field pkg$$class_Foo$member_b: Bool
 
 field pkg$$class_Bar$member_z: Int
 
-method pkg$$class_Foo$member_getY(this: Ref) returns (ret: Int)
-
-
 method pkg$$global$callSuperMethod(local$bar: Ref) returns (ret: Int)
 {
   var anonymous$1: Int
@@ -63,6 +60,9 @@ method pkg$$global$callSuperMethod(local$bar: Ref) returns (ret: Int)
   goto label$ret
   label label$ret
 }
+
+method pkg$$class_Foo$member_getY(this: Ref) returns (ret: Int)
+
 
 /inheritance.kt:(279,295): info: Generated Viper text for accessSuperField:
 field pkg$$class_Foo$member_x: Int
@@ -115,9 +115,6 @@ field pkg$$class_Foo$member_b: Bool
 
 field pkg$$class_Bar$member_z: Int
 
-method pkg$$class_Bar$member_sum(this: Ref) returns (ret: Int)
-
-
 method pkg$$global$callNewMethod(local$bar: Ref) returns (ret: Int)
 {
   var anonymous$1: Int
@@ -127,6 +124,9 @@ method pkg$$global$callNewMethod(local$bar: Ref) returns (ret: Int)
   goto label$ret
   label label$ret
 }
+
+method pkg$$class_Bar$member_sum(this: Ref) returns (ret: Int)
+
 
 /inheritance.kt:(456,469): info: Generated Viper text for setSuperField:
 field pkg$$class_Foo$member_x: Int

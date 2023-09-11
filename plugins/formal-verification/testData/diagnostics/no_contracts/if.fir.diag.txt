@@ -25,12 +25,6 @@ method pkg$$global$if_on_parameter(local$b: Bool) returns (ret: Int)
 }
 
 /if.kt:(205,221): info: Generated Viper text for if_as_expression:
-method pkg$$global$simple_if() returns (ret: Int)
-
-
-method pkg$$global$if_on_parameter(local$b: Bool) returns (ret: Int)
-
-
 method pkg$$global$if_as_expression() returns (ret: Bool)
 {
   var local$b: Bool
@@ -49,3 +43,9 @@ method pkg$$global$if_as_expression() returns (ret: Bool)
   goto label$ret
   label label$ret
 }
+
+method pkg$$global$simple_if() returns (ret: Int)
+
+
+method pkg$$global$if_on_parameter(local$b: Bool) returns (ret: Int)
+

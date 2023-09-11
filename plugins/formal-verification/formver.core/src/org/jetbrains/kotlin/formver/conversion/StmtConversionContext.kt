@@ -35,9 +35,9 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
         substitutionParams: Map<MangledName, MangledName>,
     ): StmtConversionContext<RTC>
 
-    fun withResult(type: TypeEmbedding, action: StmtConversionContext<VarResultTrackingContext>.() -> Unit): Exp {
+    fun withResult(type: TypeEmbedding, action: StmtConversionContext<VarResultTrackingContext>.() -> Unit): Exp.LocalVar {
         val ctx = withResult(type)
         ctx.action()
-        return ctx.resultExp
+        return ctx.resultCtx.resultVar.toLocalVar()
     }
 }

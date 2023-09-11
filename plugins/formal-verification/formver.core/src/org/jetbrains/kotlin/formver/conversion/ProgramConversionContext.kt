@@ -10,14 +10,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.formver.PluginConfiguration
-import org.jetbrains.kotlin.formver.embeddings.MethodSignatureEmbedding
+import org.jetbrains.kotlin.formver.embeddings.MethodEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 
 interface ProgramConversionContext {
     val config: PluginConfiguration
 
-    fun embedFunction(symbol: FirFunctionSymbol<*>): MethodSignatureEmbedding
+    fun embedFunction(symbol: FirFunctionSymbol<*>): MethodEmbedding
     fun embedType(type: ConeKotlinType): TypeEmbedding
     fun embedType(exp: FirExpression): TypeEmbedding = embedType(exp.resolvedType)
     fun newAnonName(): AnonymousName

@@ -222,6 +222,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("recursion.kt")
+        public void testRecursion() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/recursion.kt");
+        }
+
+        @Test
         @TestMetadata("return_break_continue.kt")
         public void testReturn_break_continue() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/return_break_continue.kt");

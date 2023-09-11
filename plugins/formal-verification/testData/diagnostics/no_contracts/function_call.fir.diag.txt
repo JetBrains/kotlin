@@ -7,9 +7,6 @@ method pkg$$global$f(local$x: Int) returns (ret: Int)
 }
 
 /function_call.kt:(27,40): info: Generated Viper text for function_call:
-method pkg$$global$f(local$x: Int) returns (ret: Int)
-
-
 method pkg$$global$function_call() returns (ret: dom$Unit)
 {
   var anonymous$1: Int
@@ -19,10 +16,10 @@ method pkg$$global$function_call() returns (ret: dom$Unit)
   label label$ret
 }
 
-/function_call.kt:(69,89): info: Generated Viper text for function_call_nested:
 method pkg$$global$f(local$x: Int) returns (ret: Int)
 
 
+/function_call.kt:(69,89): info: Generated Viper text for function_call_nested:
 method pkg$$global$function_call_nested() returns (ret: dom$Unit)
 {
   var anonymous$1: Int
@@ -33,3 +30,6 @@ method pkg$$global$function_call_nested() returns (ret: dom$Unit)
   anonymous$1 := pkg$$global$f(anonymous$2)
   label label$ret
 }
+
+method pkg$$global$f(local$x: Int) returns (ret: Int)
+

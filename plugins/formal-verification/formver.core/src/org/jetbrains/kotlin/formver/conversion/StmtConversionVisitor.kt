@@ -10,16 +10,15 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
+import org.jetbrains.kotlin.formver.calleeCallableSymbol
+import org.jetbrains.kotlin.formver.calleeSymbol
 import org.jetbrains.kotlin.formver.domains.TypeDomain
 import org.jetbrains.kotlin.formver.domains.TypeOfDomain
 import org.jetbrains.kotlin.formver.domains.UnitDomain
@@ -28,8 +27,11 @@ import org.jetbrains.kotlin.formver.embeddings.BooleanTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.NullableTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.embedName
-import org.jetbrains.kotlin.formver.viper.MangledName
-import org.jetbrains.kotlin.formver.viper.ast.*
+import org.jetbrains.kotlin.formver.functionCallArguments
+import org.jetbrains.kotlin.formver.viper.ast.AccessPredicate
+import org.jetbrains.kotlin.formver.viper.ast.Exp
+import org.jetbrains.kotlin.formver.viper.ast.PermExp
+import org.jetbrains.kotlin.formver.viper.ast.Stmt
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -190,58 +192,21 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
         val symbol = functionCall.calleeCallableSymbol
         val id = symbol.callableId
         val specialFunc = SpecialKotlinFunctions.byCallableId[id]
-        val argsFir = getFunctionCallArguments(functionCall)
+        val argsFir = functionCall.functionCallArguments
         if (specialFunc != null) {
             if (specialFunc !is SpecialKotlinFunctionImplementation) return UnitDomain.element
             return specialFunc.convertCall(argsFir.map(data::convert), data)
         }
 
-        val isInline = functionCall.calleeCallableSymbol.resolvedStatus.isInline
-        if (isInline) {
-            return data.withResult(data.embedType(functionCall)) {
-                processInlineFunctionCall(functionCall, this)
-            }
-        }
-
-        val calleeSig = when (symbol) {
-            is FirNamedFunctionSymbol -> data.embedFunction(symbol)
-            is FirConstructorSymbol -> data.embedFunction(symbol)
-            else -> TODO("Identify and handle other cases")
-        }
-
-        return data.withResult(calleeSig.returnType) {
-            val args = argsFir
-                .zip(calleeSig.formalArgs)
-                .map { (arg, formalArg) -> data.convert(arg).convertType(data.embedType(arg), formalArg.type) }
-
-            data.addStatement(calleeSig.toMethodCall(args, this.resultCtx.resultVar))
-        }
-    }
-
-    @OptIn(SymbolInternals::class)
-    private fun processInlineFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext<VarResultTrackingContext>) {
-        val symbol = functionCall.calleeNamedFunctionSymbol
-        val signature = data.embedFunction(symbol)
-        val inlineBody = symbol.fir.body ?: throw Exception("Function symbol $symbol has a null body")
-        val ctx = data.newBlock()
-        val inlineArgs: List<MangledName> = symbol.valueParameterSymbols.map { it.embedName() }
-        val callArgs = getFunctionCallArguments(functionCall).map { ctx.convertAndStore(it).name }
-        val substitutionParams = inlineArgs.zip(callArgs).toMap()
-
-        val inlineCtx = ctx.withInlineContext(signature, ctx.resultCtx.resultVar, substitutionParams)
-        inlineCtx.convert(inlineBody)
-        // TODO: add these labels automatically.
-        inlineCtx.addDeclaration(inlineCtx.returnLabel.toDecl())
-        inlineCtx.addStatement(inlineCtx.returnLabel.toStmt())
-        // Note: Putting the block inside the then branch of an if-true statement is a little a hack to make Viper respect the scoping
-        data.addStatement(Stmt.If(Exp.BoolLit(true), inlineCtx.block, Stmt.Seqn(listOf(), listOf())))
+        val callee = data.embedFunction(symbol as FirFunctionSymbol<*>)
+        return callee.insertCall(argsFir, data)
     }
 
     override fun visitImplicitInvokeCall(
         implicitInvokeCall: FirImplicitInvokeCall,
         data: StmtConversionContext<ResultTrackingContext>,
     ): Exp {
-        val args = getFunctionCallArguments(implicitInvokeCall).map(data::convert)
+        val args = implicitInvokeCall.functionCallArguments.map(data::convert)
         val retType = implicitInvokeCall.calleeCallableSymbol.resolvedReturnType
         return data.withResult(data.embedType(retType)) {
             // NOTE: Since it is only relevant to update the number of times that a function object is called,
@@ -249,9 +214,6 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
             data.addStatement(InvokeFunctionObjectMethod.toMethodCall(args.take(1), listOf()))
         }
     }
-
-    private fun getFunctionCallArguments(functionCall: FirFunctionCall): List<FirExpression> =
-        listOfNotNull(functionCall.dispatchReceiver) + functionCall.argumentList.arguments
 
     override fun visitProperty(property: FirProperty, data: StmtConversionContext<ResultTrackingContext>): Exp {
         val symbol = property.symbol
@@ -358,13 +320,6 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
             else -> handleUnimplementedElement("Can't embed type operator ${typeOperatorCall.operation}.", data)
         }
     }
-
-    private val FirResolvable.calleeSymbol: FirBasedSymbol<*>
-        get() = calleeReference.toResolvedBaseSymbol()!!
-    private val FirResolvable.calleeCallableSymbol: FirCallableSymbol<*>
-        get() = calleeReference.toResolvedCallableSymbol()!!
-    private val FirResolvable.calleeNamedFunctionSymbol: FirNamedFunctionSymbol
-        get() = calleeReference.toResolvedNamedFunctionSymbol()!!
 
     private fun handleUnimplementedElement(msg: String, data: StmtConversionContext<ResultTrackingContext>): Exp =
         when (data.config.behaviour) {

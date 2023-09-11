@@ -17,8 +17,6 @@ interface MethodConversionContext : ProgramConversionContext {
     val returnLabel: Label
     val returnVar: VariableEmbedding
 
-    val preconditions: List<Exp>
-    val postconditions: List<Exp>
     fun resolveName(name: MangledName): MangledName
 
     fun getVariableEmbedding(name: MangledName, type: TypeEmbedding): VariableEmbedding =

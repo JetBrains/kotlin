@@ -15,14 +15,6 @@ method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
 }
 
 /calls_in_place.kt:(380,402): info: Generated Viper text for incorrect_at_most_once:
-method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
-  requires acc(local$f.special$function_object_call_counter, write)
-  ensures acc(local$f.special$function_object_call_counter, write)
-  ensures old(local$f.special$function_object_call_counter) <=
-    local$f.special$function_object_call_counter
-  ensures true
-
-
 method pkg$$global$incorrect_at_most_once(local$f: Ref) returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -40,6 +32,14 @@ method pkg$$global$incorrect_at_most_once(local$f: Ref) returns (ret: Int)
   goto label$ret
   label label$ret
 }
+
+method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures true
+
 
 /calls_in_place.kt:(380,402): warning: Viper verification error: Postcondition of pkg$$global$incorrect_at_most_once might not hold. Assertion local$f.special$function_object_call_counter <= old(local$f.special$function_object_call_counter) + 1 might not hold. (<no position>)
 
@@ -71,14 +71,6 @@ method pkg$$global$incorrect_exactly_once(local$f: Ref) returns (ret: Int)
 /calls_in_place.kt:(591,613): warning: Function incorrect_exactly_once may not satisfy its contract.
 
 /calls_in_place.kt:(796,819): info: Generated Viper text for incorrect_at_least_once:
-method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
-  requires acc(local$f.special$function_object_call_counter, write)
-  ensures acc(local$f.special$function_object_call_counter, write)
-  ensures old(local$f.special$function_object_call_counter) <=
-    local$f.special$function_object_call_counter
-  ensures true
-
-
 method pkg$$global$incorrect_at_least_once(local$f: Ref) returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -94,6 +86,14 @@ method pkg$$global$incorrect_at_least_once(local$f: Ref) returns (ret: Int)
   goto label$ret
   label label$ret
 }
+
+method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures true
+
 
 /calls_in_place.kt:(796,819): warning: Viper verification error: Postcondition of pkg$$global$incorrect_at_least_once might not hold. Assertion local$f.special$function_object_call_counter > old(local$f.special$function_object_call_counter) might not hold. (<no position>)
 
