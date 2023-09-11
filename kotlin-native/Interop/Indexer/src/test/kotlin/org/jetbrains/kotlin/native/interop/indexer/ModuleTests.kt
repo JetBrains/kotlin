@@ -99,6 +99,39 @@ class ModuleTests : IndexerTests() {
     }
 
     @Test
+    fun testModuleImport() {
+        val files = TempFiles("testModuleImport")
+        val fooH = files.file("Foo.h", "@import Bar;")
+        files.file("Bar.h", "")
+        files.file("module.modulemap", """
+            module Foo {
+              header "Foo.h"
+            }
+            module Bar {
+              header "Bar.h"
+            }
+        """.trimIndent())
+
+        //without '-fmodules'
+        val error = assertFails {
+            getModulesInfo(compilation("-I${files.directory}"), listOf("Foo"))
+        }
+        assertContains(
+                error.message.orEmpty(),
+                """
+                    use of '@import' when modules are disabled
+                    header: '${fooH.absolutePath}'
+                    module name: 'Bar'
+                """.trimIndent()
+        )
+
+        //with '-fmodules'
+        val modulesInfo = getModulesInfo(compilation("-I${files.directory}", "-fmodules"), listOf("Foo"))
+        assertEquals(setOf(fooH.absolutePath), modulesInfo.ownHeaders)
+        assertEquals(listOf(fooH.absolutePath), modulesInfo.topLevelHeaders.canonicalize())
+    }
+
+    @Test
     fun testMissingModule() {
         val files = TempFiles("testMissingModule")
 
