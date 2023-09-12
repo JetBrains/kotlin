@@ -283,7 +283,7 @@ class CallAndReferenceGenerator(
         val coneSuperType = superTypeRef.coneTypeSafe<ConeClassLikeType>() ?: return null
         val firClassSymbol = coneSuperType.fullyExpandedType(session).lookupTag.toSymbol(session) as? FirClassSymbol<*>
         if (firClassSymbol != null) {
-            return classifierStorage.getIrClassSymbol(firClassSymbol)
+            return classifierStorage.getOrCreateIrClass(firClassSymbol).symbol
         }
         return null
     }

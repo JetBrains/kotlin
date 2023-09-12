@@ -723,7 +723,7 @@ class Fir2IrVisitor(
              *     val x: Int = foo() // this: Base.Companion
              * ) : Base()
              */
-            classifierStorage.getIrClassSymbol(firClassSymbol)
+            classifierStorage.getOrCreateIrClass(firClassSymbol).symbol
         }
 
         if (firClass.classKind.isObject && shouldGenerateReceiverAsSingletonReference(irClassSymbol)) {
@@ -1533,7 +1533,7 @@ class Fir2IrVisitor(
             is FirResolvedQualifier -> {
                 when (val symbol = argument.symbol) {
                     is FirClassSymbol -> {
-                        classifierStorage.getIrClassSymbol(symbol)
+                        classifierStorage.getOrCreateIrClass(symbol).symbol
                     }
                     is FirTypeAliasSymbol -> {
                         symbol.fir.fullyExpandedConeType(session).toIrClassSymbol()
@@ -1567,7 +1567,7 @@ class Fir2IrVisitor(
 
     private fun ConeClassLikeType?.toIrClassSymbol(): IrClassSymbol? =
         (this?.lookupTag?.toSymbol(session) as? FirClassSymbol<*>)?.let {
-            classifierStorage.getIrClassSymbol(it)
+            classifierStorage.getOrCreateIrClass(it).symbol
         }
 
     private fun convertToArrayLiteral(arrayLiteral: FirArrayLiteral): IrVararg {

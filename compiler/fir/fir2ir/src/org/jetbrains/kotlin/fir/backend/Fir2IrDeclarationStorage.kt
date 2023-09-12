@@ -1068,11 +1068,10 @@ class Fir2IrDeclarationStorage(
         return null
     }
 
-    @OptIn(IrSymbolInternals::class)
     private fun generateLazyFakeOverrides(name: Name, fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?) {
         val firClassSymbol = fakeOverrideOwnerLookupTag?.toSymbol(session) as? FirClassSymbol
         if (firClassSymbol != null) {
-            val irClass = classifierStorage.getIrClassSymbol(firClassSymbol).owner
+            val irClass = classifierStorage.getOrCreateIrClass(firClassSymbol)
             if (irClass is Fir2IrLazyClass) {
                 irClass.getFakeOverridesByName(name)
             }
@@ -1305,12 +1304,11 @@ class Fir2IrDeclarationStorage(
                 }
     }
 
-    @OptIn(IrSymbolInternals::class)
     private inline fun <reified S : IrSymbol, reified D : IrOverridableDeclaration<S>> ConeClassLookupTagWithFixedSymbol.findIrFakeOverride(
         name: Name, originalDeclaration: IrOverridableDeclaration<S>
     ): IrSymbol? {
         val dispatchReceiverIrClass =
-            classifierStorage.getIrClassSymbol(toSymbol(session) as FirClassSymbol).owner
+            classifierStorage.getOrCreateIrClass(toSymbol(session) as FirClassSymbol)
         return dispatchReceiverIrClass.declarations.find {
             it is D && it.isFakeOverride && it.name == name && it.overrides(originalDeclaration)
         }?.symbol

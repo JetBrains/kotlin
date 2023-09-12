@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
@@ -427,7 +426,7 @@ class FakeOverrideGenerator(
             overridden.containingClassLookupTag()?.toSymbol(session)?.fir as? FirClass ?: return emptyList()
 
         val overriddenContainingIrClass =
-            declarationStorage.classifierStorage.getIrClassSymbol(overriddenContainingClass.symbol).owner as? IrClass
+            declarationStorage.classifierStorage.getOrCreateIrClass(overriddenContainingClass.symbol).symbol.owner as? IrClass
                 ?: return emptyList()
 
         return superClasses.mapNotNull { superClass ->
@@ -513,7 +512,7 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(containingClass: FirC
     val scope = containingClass.unsubstitutedScope()
     scope.processPropertiesByName(name) {}
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
-    val superClasses = containingClass.getSuperTypesAsIrClasses() ?: return emptyList()
+    val superClasses = containingClass.getSuperTypesAsIrClasses()
 
     scope.processOverriddenPropertiesFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
         if (!session.visibilityChecker.isVisibleForOverriding(
@@ -539,7 +538,7 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(containingClass: FirC
 
 context(Fir2IrComponents)
 internal fun FirProperty.generateOverriddenPropertySymbols(containingClass: FirClass): List<IrPropertySymbol> {
-    val superClasses = containingClass.getSuperTypesAsIrClasses() ?: return emptyList()
+    val superClasses = containingClass.getSuperTypesAsIrClasses()
     val overriddenSet = mutableSetOf<IrPropertySymbol>()
 
     processOverriddenPropertySymbols(containingClass) {
@@ -554,7 +553,7 @@ internal fun FirProperty.generateOverriddenPropertySymbols(containingClass: FirC
 
 context(Fir2IrComponents)
 internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(containingClass: FirClass): List<IrSimpleFunctionSymbol> {
-    val superClasses = containingClass.getSuperTypesAsIrClasses() ?: return emptyList()
+    val superClasses = containingClass.getSuperTypesAsIrClasses()
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
 
     processOverriddenFunctionSymbols(containingClass) {
@@ -569,9 +568,8 @@ internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(containingClass
 
 context(Fir2IrComponents)
 @OptIn(IrSymbolInternals::class)
-private fun FirClass.getSuperTypesAsIrClasses(): Set<IrClass>? {
-    val irClass =
-        declarationStorage.classifierStorage.getIrClassSymbol(symbol).owner as? IrClass ?: return null
+private fun FirClass.getSuperTypesAsIrClasses(): Set<IrClass> {
+    val irClass = declarationStorage.classifierStorage.getOrCreateIrClass(symbol)
 
     return irClass.superTypes.mapNotNull { it.classifierOrNull?.owner as? IrClass }.toSet()
 }

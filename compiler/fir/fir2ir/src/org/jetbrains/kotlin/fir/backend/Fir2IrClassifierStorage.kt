@@ -228,11 +228,7 @@ class Fir2IrClassifierStorage(
         return localStorage[lookupTag.toSymbol(session)!!.fir as FirClass]
     }
 
-    fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>): IrClassSymbol {
-        return getOrCreateIrClass(firClassSymbol).symbol
-    }
-
-    private fun getOrCreateIrClass(firClassSymbol: FirClassSymbol<*>): IrClass {
+    fun getOrCreateIrClass(firClassSymbol: FirClassSymbol<*>): IrClass {
         val firClass = firClassSymbol.fir
         classifierStorage.getCachedIrClass(firClass)?.let { return it }
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.Local) {

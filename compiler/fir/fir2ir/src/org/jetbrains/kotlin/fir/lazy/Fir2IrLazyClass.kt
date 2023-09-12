@@ -165,7 +165,7 @@ class Fir2IrLazyClass(
             scope.processClassifiersByName(name) {
                 val declaration = it.fir as? FirRegularClass ?: return@processClassifiersByName
                 if (declaration.classId.outerClassId == fir.classId && shouldBuildStub(declaration)) {
-                    val nestedSymbol = classifierStorage.getIrClassSymbol(declaration.symbol)
+                    val nestedSymbol = classifierStorage.getOrCreateIrClass(declaration.symbol).symbol
                     result += nestedSymbol.owner
                 }
             }
