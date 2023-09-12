@@ -107,7 +107,6 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
             val deserializedSymbolProviderFactory = project.getService(LLFirLibrarySymbolProviderFactory::class.java)
             addAll(
                 deserializedSymbolProviderFactory.createJvmFirDeserializedSymbolProviders(
-                    project,
                     session,
                     moduleData,
                     kotlinScopeProvider,

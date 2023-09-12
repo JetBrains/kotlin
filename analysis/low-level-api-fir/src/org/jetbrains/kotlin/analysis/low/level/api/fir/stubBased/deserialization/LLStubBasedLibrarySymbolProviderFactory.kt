@@ -19,9 +19,8 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 
 @LLFirInternals
-class LLStubBasedLibrarySymbolProviderFactory : LLFirLibrarySymbolProviderFactory() {
+class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LLFirLibrarySymbolProviderFactory() {
     override fun createJvmFirDeserializedSymbolProviders(
-        project: Project,
         session: FirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,

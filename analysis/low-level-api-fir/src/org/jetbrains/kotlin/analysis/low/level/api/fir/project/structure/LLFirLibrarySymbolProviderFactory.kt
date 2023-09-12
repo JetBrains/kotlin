@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 
 abstract class LLFirLibrarySymbolProviderFactory {
     abstract fun createJvmFirDeserializedSymbolProviders(
-        project: Project,
         session: FirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
