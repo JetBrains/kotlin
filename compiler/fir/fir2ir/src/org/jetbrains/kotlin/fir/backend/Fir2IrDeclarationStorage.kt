@@ -641,27 +641,27 @@ class Fir2IrDeclarationStorage(
 
     // ------------------------------------ fields ------------------------------------
 
-    fun getIrFieldSymbol(
+    fun getOrCreateIrField(
         firFieldSymbol: FirFieldSymbol,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
-    ): IrFieldSymbol {
+    ): IrField {
         val fir = firFieldSymbol.fir
         val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(fir, fakeOverrideOwnerLookupTag)
         if (staticFakeOverrideKey == null) {
-            fieldCache[fir]?.let { return it.symbol }
+            fieldCache[fir]?.let { return it }
         } else {
             generateLazyFakeOverrides(fir.name, fakeOverrideOwnerLookupTag)
             // Lazy static fake override should always exist
-            return fieldStaticOverrideCache[staticFakeOverrideKey]!!.symbol
+            return fieldStaticOverrideCache[staticFakeOverrideKey]!!
         }
         // In case of type parameters from the parent as the field's return type, find the parent ahead to cache type parameters.
         val irParent = findIrParent(fir, fakeOverrideOwnerLookupTag)
 
         val unwrapped = fir.unwrapFakeOverrides()
         if (unwrapped !== fir) {
-            return getIrFieldSymbol(unwrapped.symbol)
+            return getOrCreateIrField(unwrapped.symbol)
         }
-        return createAndCacheIrField(fir, irParent).symbol
+        return createAndCacheIrField(fir, irParent)
     }
 
     // TODO: there is a mess with methods for fields

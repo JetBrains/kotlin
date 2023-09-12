@@ -183,9 +183,7 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
             }
             SymbolKind.FIELD_SYMBOL -> {
                 val firField = firDeclaration as FirField
-                // TODO: effectively call getIrClassSymbol should be replaced with getOrCreateField (KT-61348)
-                @OptIn(IrSymbolInternals::class)
-                declarationStorage.getIrFieldSymbol(firField.symbol).owner
+                declarationStorage.getOrCreateIrField(firField.symbol)
             }
             else -> error("Don't know how to deal with this symbol kind: $kind")
         }
