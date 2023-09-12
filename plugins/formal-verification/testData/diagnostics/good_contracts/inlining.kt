@@ -1,13 +1,16 @@
+import org.jetbrains.kotlin.formver.plugin.NeverConvert
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind.*
 import kotlin.contracts.contract
 
-inline fun <!VIPER_TEXT!>invoke<!>(f: (Int) -> Int): Int {
+@NeverConvert
+inline fun invoke(f: (Int) -> Int): Int {
     val x = f(0)
     return f(0)
 }
 
-inline fun <!VIPER_TEXT!>invoke_with_int<!>(f: (Int) -> Int, n: Int): Int {
+@NeverConvert
+inline fun invoke_with_int(f: (Int) -> Int, n: Int): Int {
     val x = n + n
     return f(x)
 }

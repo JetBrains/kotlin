@@ -449,6 +449,22 @@ fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>
     }
 }
 
+fun Project.configureFormVerPluginAnnotationsDependency(testTask: TaskProvider<Test>) {
+    val formverPluginJvmAnnotations: Configuration by configurations.creating
+
+    dependencies {
+        formverPluginJvmAnnotations(project(":kotlin-formver-compiler-plugin.annotations")) { isTransitive = false }
+    }
+
+    testTask.configure {
+        dependsOn(formverPluginJvmAnnotations)
+        val localFormverPluginJvmAnnotations: FileCollection = formverPluginJvmAnnotations
+        doFirst {
+            systemProperty("formverPluginAnnotations.jvm.path", localFormverPluginJvmAnnotations.singleFile.canonicalPath)
+        }
+    }
+}
+
 private fun Project.optInTo(annotationFqName: String) {
     tasks.withType<KotlinCompilationTask<*>>().configureEach {
         compilerOptions.optIn.add(annotationFqName)

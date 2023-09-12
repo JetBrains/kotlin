@@ -1,7 +1,9 @@
+import org.jetbrains.kotlin.formver.plugin.NeverConvert
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-fun <!VIPER_TEXT!>escape<!>(f : () -> Unit) {
+@NeverConvert
+fun escape(f : () -> Unit) {
     // No contract means that we assume this function may leak the function object passed to it.
     f()
 }

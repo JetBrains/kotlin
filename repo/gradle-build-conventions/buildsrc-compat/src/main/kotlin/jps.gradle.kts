@@ -78,6 +78,7 @@ fun updateCompilerXml() {
         "plugins/atomicfu/atomicfu-compiler/test/org/jetbrains/kotlin/konan/test/blackbox",
         "plugins/atomicfu/atomicfu-runtime",
         "plugins/fir-plugin-prototype/plugin-annotations",
+        "plugins/formal-verification/plugin-annotations",
         "repo/gradle-settings-conventions",
         "repo/gradle-build-conventions",
     )

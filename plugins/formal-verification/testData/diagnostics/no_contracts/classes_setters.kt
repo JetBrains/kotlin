@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.formver.plugin.NeverConvert
 class Bar(var a: Int)
 
 class Foo(var b: Bar)
@@ -43,8 +44,9 @@ fun <!VIPER_TEXT!>testSetterNoBackingField<!>() {
     baz.a = 42
 }
 
+@NeverConvert
 @Suppress("NOTHING_TO_INLINE")
-inline fun <!VIPER_TEXT!>mockInline<!>(b: Bar) {
+inline fun mockInline(b: Bar) {
     b.a = 42
 }
 

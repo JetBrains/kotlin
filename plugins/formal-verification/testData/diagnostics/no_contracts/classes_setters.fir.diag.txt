@@ -1,4 +1,4 @@
-/classes_setters.kt:(352,368): info: Generated Viper text for testCustomSetter:
+/classes_setters.kt:(408,424): info: Generated Viper text for testCustomSetter:
 field pkg$$class_AlwaysPlusOne$member_b: Int
 
 field pkg$$class_AlwaysPlusOne$member_num: Int
@@ -28,7 +28,7 @@ method pkg$$class_AlwaysPlusOne$setter_num(this: Ref, local$value: Int)
   returns (ret: dom$Unit)
 
 
-/classes_setters.kt:(434,444): info: Generated Viper text for testSetter:
+/classes_setters.kt:(490,500): info: Generated Viper text for testSetter:
 field pkg$$class_Person$member_age: Int
 
 method pkg$$global$testSetter$() returns (ret: dom$Unit)
@@ -52,7 +52,7 @@ method pkg$$class_Person$constructor$Tkotlin_Int(local$age: Int)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Person())
 
 
-/classes_setters.kt:(516,533): info: Generated Viper text for testSetterCascade:
+/classes_setters.kt:(572,589): info: Generated Viper text for testSetterCascade:
 field pkg$$class_Bar$member_a: Int
 
 field pkg$$class_Foo$member_b: Ref
@@ -85,7 +85,7 @@ method pkg$$class_Bar$constructor$Tkotlin_Int(local$a: Int)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
 
 
-/classes_setters.kt:(585,609): info: Generated Viper text for testSetterNoBackingField:
+/classes_setters.kt:(641,665): info: Generated Viper text for testSetterNoBackingField:
 field pkg$$class_Baz$member__a: Int
 
 method pkg$$global$testSetterNoBackingField$() returns (ret: dom$Unit)
@@ -110,19 +110,7 @@ method pkg$$class_Baz$setter_a(this: Ref, local$value: Int)
   returns (ret: dom$Unit)
 
 
-/classes_setters.kt:(694,704): info: Generated Viper text for mockInline:
-field pkg$$class_Bar$member_a: Int
-
-method pkg$$global$mockInline$TBar(local$b: Ref) returns (ret: dom$Unit)
-{
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$b): dom$Type), dom$Type$pkg$$class_Bar())
-  inhale acc(local$b.pkg$$class_Bar$member_a, write)
-  local$b.pkg$$class_Bar$member_a := 42
-  exhale acc(local$b.pkg$$class_Bar$member_a, write)
-  label label$ret
-}
-
-/classes_setters.kt:(735,751): info: Generated Viper text for testSetterLambda:
+/classes_setters.kt:(805,821): info: Generated Viper text for testSetterLambda:
 field pkg$$class_Bar$member_a: Int
 
 method pkg$$global$testSetterLambda$() returns (ret: dom$Unit)

@@ -1,12 +1,4 @@
-/loop_invariants.kt:(4,19): info: Generated Viper text for returns_boolean:
-method pkg$$global$returns_boolean$() returns (ret: Bool)
-{
-  ret := false
-  goto label$ret
-  label label$ret
-}
-
-/loop_invariants.kt:(57,81): info: Generated Viper text for dynamic_lambda_invariant:
+/loop_invariants.kt:(128,152): info: Generated Viper text for dynamic_lambda_invariant:
 method pkg$$global$dynamic_lambda_invariant$Tkotlin_Function0__kotlin_Int__(local$f: Ref)
   returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
@@ -39,7 +31,7 @@ method pkg$$global$dynamic_lambda_invariant$Tkotlin_Function0__kotlin_Int__(loca
 method pkg$$global$returns_boolean$() returns (ret: Bool)
 
 
-/loop_invariants.kt:(155,174): info: Generated Viper text for function_assignment:
+/loop_invariants.kt:(226,245): info: Generated Viper text for function_assignment:
 method pkg$$global$function_assignment$Tkotlin_Function0__kotlin_Int__(local$f: Ref)
   returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
@@ -74,7 +66,7 @@ method pkg$$global$function_assignment$Tkotlin_Function0__kotlin_Int__(local$f: 
 method pkg$$global$returns_boolean$() returns (ret: Bool)
 
 
-/loop_invariants.kt:(262,293): info: Generated Viper text for conditional_function_assignment:
+/loop_invariants.kt:(333,364): info: Generated Viper text for conditional_function_assignment:
 method pkg$$global$conditional_function_assignment$Tkotlin_Boolean$Tkotlin_Function0__kotlin_Int__$Tkotlin_Function0__kotlin_Int__(local$b: Bool,
   local$f: Ref, local$h: Ref)
   returns (ret: dom$Unit)

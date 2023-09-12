@@ -1,10 +1,12 @@
+import org.jetbrains.kotlin.formver.plugin.NeverConvert
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind.*
 import kotlin.contracts.contract
 
 // Included for use in other tests.
+@NeverConvert
 @OptIn(ExperimentalContracts::class)
-fun <!VIPER_TEXT!>unknown<!>(f : (Int) -> Int) : Int{
+fun unknown(f : (Int) -> Int) : Int{
     contract {
         callsInPlace(f, UNKNOWN)
     }

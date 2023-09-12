@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.formver.plugin.runners
 
 import org.jetbrains.kotlin.formver.plugin.services.ExtensionRegistrarConfigurator
+import org.jetbrains.kotlin.formver.plugin.services.PluginAnnotationsProvider
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.STOP_ON_FAILURE
@@ -30,6 +31,7 @@ fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
     }
 
     useConfigurators(
+        ::PluginAnnotationsProvider,
         ::ExtensionRegistrarConfigurator
     )
 }

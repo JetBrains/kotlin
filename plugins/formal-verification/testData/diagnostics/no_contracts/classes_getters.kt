@@ -10,13 +10,6 @@ class IntWrapper(val n: Int) {
 
 class IntWrapperContainer(val i: IntWrapper)
 
-fun <!VIPER_TEXT!>createFoo<!>() {
-    val f: Foo = Foo(10, 20)
-    val fa = f.a
-    val fb = f.b
-}
-
-
 fun <!VIPER_TEXT!>testGetter<!>() {
     val wrapper = IntWrapper(42)
     val succ = wrapper.succ

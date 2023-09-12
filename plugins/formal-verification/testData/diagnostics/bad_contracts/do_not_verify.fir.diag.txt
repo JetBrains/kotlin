@@ -1,0 +1,8 @@
+/do_not_verify.kt:(245,256): info: Generated Viper text for bad_returns:
+method pkg$$global$bad_returns$() returns (ret: Bool)
+  ensures ret == true
+{
+  ret := false
+  goto label$ret
+  label label$ret
+}

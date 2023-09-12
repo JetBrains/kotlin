@@ -13,31 +13,31 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 inline fun <reified P : PsiElement> info0(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory0DelegateProvider {
     return DiagnosticFactory0DelegateProvider(Severity.INFO, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A> info1(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory1DelegateProvider<A> {
     return DiagnosticFactory1DelegateProvider(Severity.INFO, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B> info2(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory2DelegateProvider<A, B> {
     return DiagnosticFactory2DelegateProvider(Severity.INFO, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B, C> info3(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory3DelegateProvider<A, B, C> {
     return DiagnosticFactory3DelegateProvider(Severity.INFO, positioningStrategy, P::class)
 }
 
 inline fun <reified P : PsiElement, A, B, C, D> info4(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory4DelegateProvider<A, B, C, D> {
     return DiagnosticFactory4DelegateProvider(Severity.INFO, positioningStrategy, P::class)
 }

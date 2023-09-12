@@ -46,6 +46,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("do_not_verify.kt")
+        public void testDo_not_verify() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/do_not_verify.kt");
+        }
+
+        @Test
         @TestMetadata("is_type_contract.kt")
         public void testIs_type_contract() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/is_type_contract.kt");

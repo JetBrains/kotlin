@@ -1,5 +1,8 @@
+import org.jetbrains.kotlin.formver.plugin.NeverConvert
+
+@NeverConvert
 @Suppress("NOTHING_TO_INLINE")
-inline fun <!VIPER_TEXT!>double<!>(x: Int): Int {
+inline fun double(x: Int): Int {
     val y = x + x
     return y
 }
@@ -7,8 +10,9 @@ inline fun <!VIPER_TEXT!>double<!>(x: Int): Int {
 @Suppress("NOTHING_TO_INLINE")
 inline fun <!VIPER_TEXT!>quadruple<!>(x: Int) = double(x) + double(x)
 
+@NeverConvert
 @Suppress("NOTHING_TO_INLINE")
-inline fun <!VIPER_TEXT!>branching<!>(b: Boolean): Int {
+inline fun branching(b: Boolean): Int {
     if (b) {
         return 1
     } else {

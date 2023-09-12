@@ -1,4 +1,7 @@
-fun <!VIPER_TEXT!>returns_boolean<!>(): Boolean {
+import org.jetbrains.kotlin.formver.plugin.NeverConvert
+
+@NeverConvert
+fun returns_boolean(): Boolean {
     return false
 }
 

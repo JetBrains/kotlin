@@ -61,7 +61,7 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
         languageVersion.set(JavaLanguageVersion.of(11))
         jvmArgs = listOf("-Xss30M")
     })
-}.also { confugureFirPluginAnnotationsDependency(it) }
+}.also { configureFormVerPluginAnnotationsDependency(it) }
 
 runtimeJar()
 sourcesJar()

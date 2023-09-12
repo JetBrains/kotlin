@@ -1,35 +1,4 @@
-/classes_getters.kt:(195,204): info: Generated Viper text for createFoo:
-field pkg$$class_Foo$member_a: Int
-
-field pkg$$class_Foo$member_b: Int
-
-method pkg$$global$createFoo$() returns (ret: dom$Unit)
-{
-  var local$1$f: Ref
-  var anonymous$1: Ref
-  var local$1$fa: Int
-  var anonymous$2: Int
-  var local$1$fb: Int
-  var anonymous$3: Int
-  anonymous$1 := pkg$$class_Foo$constructor$Tkotlin_Int$Tkotlin_Int(10, 20)
-  local$1$f := anonymous$1
-  inhale acc(local$1$f.pkg$$class_Foo$member_a, write)
-  anonymous$2 := local$1$f.pkg$$class_Foo$member_a
-  exhale acc(local$1$f.pkg$$class_Foo$member_a, write)
-  local$1$fa := anonymous$2
-  inhale acc(local$1$f.pkg$$class_Foo$member_b, write)
-  anonymous$3 := local$1$f.pkg$$class_Foo$member_b
-  exhale acc(local$1$f.pkg$$class_Foo$member_b, write)
-  local$1$fb := anonymous$3
-  label label$ret
-}
-
-method pkg$$class_Foo$constructor$Tkotlin_Int$Tkotlin_Int(local$a: Int, local$b: Int)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
-
-
-/classes_getters.kt:(280,290): info: Generated Viper text for testGetter:
+/classes_getters.kt:(195,205): info: Generated Viper text for testGetter:
 field pkg$$class_IntWrapper$member_n: Int
 
 method pkg$$global$testGetter$() returns (ret: dom$Unit)
@@ -53,7 +22,7 @@ method pkg$$class_IntWrapper$constructor$Tkotlin_Int(local$n: Int)
 method pkg$$class_IntWrapper$getter_succ(this: Ref) returns (ret: Int)
 
 
-/classes_getters.kt:(363,380): info: Generated Viper text for testCascadeGetter:
+/classes_getters.kt:(278,295): info: Generated Viper text for testCascadeGetter:
 field pkg$$class_Foo$member_a: Int
 
 field pkg$$class_Foo$member_b: Int
@@ -104,7 +73,7 @@ method pkg$$class_Bar$constructor$TFoo(local$f: Ref) returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
 
 
-/classes_getters.kt:(486,510): info: Generated Viper text for testCascadeCustomGetters:
+/classes_getters.kt:(401,425): info: Generated Viper text for testCascadeCustomGetters:
 field pkg$$class_IntWrapper$member_n: Int
 
 field pkg$$class_IntWrapperContainer$member_i: Ref

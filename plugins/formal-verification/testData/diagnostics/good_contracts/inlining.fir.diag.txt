@@ -1,45 +1,4 @@
-/inlining.kt:(132,138): info: Generated Viper text for invoke:
-method pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
-  returns (ret: Int)
-  requires acc(local$f.special$function_object_call_counter, write)
-  requires special$duplicable(local$f)
-  ensures acc(local$f.special$function_object_call_counter, write)
-  ensures old(local$f.special$function_object_call_counter) <=
-    local$f.special$function_object_call_counter
-{
-  var local$1$x: Int
-  var anonymous$1: Int
-  var anonymous$2: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  special$invoke_function_object(local$f)
-  local$1$x := anonymous$1
-  special$invoke_function_object(local$f)
-  ret := anonymous$2
-  goto label$ret
-  label label$ret
-}
-
-/inlining.kt:(210,225): info: Generated Viper text for invoke_with_int:
-method pkg$$global$invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Int(local$f: Ref,
-  local$n: Int)
-  returns (ret: Int)
-  requires acc(local$f.special$function_object_call_counter, write)
-  requires special$duplicable(local$f)
-  ensures acc(local$f.special$function_object_call_counter, write)
-  ensures old(local$f.special$function_object_call_counter) <=
-    local$f.special$function_object_call_counter
-{
-  var local$1$x: Int
-  var anonymous$1: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  local$1$x := local$n + local$n
-  special$invoke_function_object(local$f)
-  ret := anonymous$1
-  goto label$ret
-  label label$ret
-}
-
-/inlining.kt:(397,408): info: Generated Viper text for call_invoke:
+/inlining.kt:(481,492): info: Generated Viper text for call_invoke:
 method pkg$$global$call_invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$g: Ref)
   returns (ret: Int)
   requires acc(local$g.special$function_object_call_counter, write)
@@ -81,7 +40,7 @@ method pkg$$global$call_invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$
   label label$ret
 }
 
-/inlining.kt:(641,661): info: Generated Viper text for call_invoke_with_int:
+/inlining.kt:(725,745): info: Generated Viper text for call_invoke_with_int:
 method pkg$$global$call_invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$g: Ref)
   returns (ret: Int)
   requires acc(local$g.special$function_object_call_counter, write)
@@ -125,7 +84,7 @@ method pkg$$global$call_invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int
   label label$ret
 }
 
-/inlining.kt:(921,933): info: Generated Viper text for name_clashes:
+/inlining.kt:(1005,1017): info: Generated Viper text for name_clashes:
 method pkg$$global$name_clashes$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
   returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
@@ -166,7 +125,7 @@ method pkg$$global$name_clashes$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local
   label label$ret
 }
 
-/inlining.kt:(1178,1199): info: Generated Viper text for different_return_type:
+/inlining.kt:(1262,1283): info: Generated Viper text for different_return_type:
 method pkg$$global$different_return_type$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
   returns (ret: Bool)
   requires acc(local$f.special$function_object_call_counter, write)

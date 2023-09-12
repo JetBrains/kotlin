@@ -60,8 +60,8 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
             block.statements.fold<_, ExpEmbedding>(UnitLit) { _, it -> newScopeCtx.convert(it) }
         }
 
-    override fun <T> visitConstExpression(
-        constExpression: FirConstExpression<T>,
+    override fun <T> visitLiteralExpression(
+        constExpression: FirLiteralExpression<T>,
         data: StmtConversionContext<ResultTrackingContext>,
     ): ExpEmbedding =
         when (constExpression.kind) {
