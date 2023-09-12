@@ -87,6 +87,16 @@ data class ElementRef(
     override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) = ElementRef(element, args, nullable)
     override fun copy(nullable: Boolean) = ElementRef(element, args, nullable)
     override fun toString() = "${element.name}<${args}>"
+
+    override val type: String
+        get() = element.typeName
+
+    override val packageName: String
+        get() = element.packageName
+
+    override fun getTypeWithArguments(notNull: Boolean): String {
+        TODO("Not yet implemented")
+    }
 }
 
 sealed class Field(

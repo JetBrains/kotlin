@@ -12,7 +12,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
 import org.jetbrains.kotlin.utils.addToStdlib.castAll
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 
-private object InferredOverriddenType : TypeRef
+private object InferredOverriddenType : TypeRef {
+    override val type: String
+        get() = error("not supported")
+    override val packageName: String?
+        get() = null
+
+    override fun getTypeWithArguments(notNull: Boolean): String {
+        error("not supported")
+    }
+}
 
 data class Model(val elements: List<Element>, val rootElement: Element)
 
