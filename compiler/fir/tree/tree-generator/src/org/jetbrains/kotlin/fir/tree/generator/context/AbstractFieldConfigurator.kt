@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.context
 
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val builder: T) {
     inner class ConfigureContext(val element: Element) {
@@ -27,20 +28,10 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
             }
         }
 
-        fun withArg(name: String) {
-            withArg(name, emptyList())
-        }
+        fun withArg(name: String, vararg upperBounds: TypeRef): TypeVariable = withArg(name, upperBounds.toList())
 
-        fun withArg(name: String, upperBound: TypeRef, vararg upperBounds: TypeRef) {
-            val allUpperBounds = mutableListOf(upperBound).apply { this += upperBounds }
-            withArg(name, allUpperBounds)
-        }
-
-        private fun withArg(name: String, upperBounds: List<TypeRef>) {
-            element.typeArguments += when (upperBounds.size) {
-                in 0..1 -> SimpleTypeArgument(name, upperBounds.firstOrNull())
-                else -> TypeArgumentWithMultipleUpperBounds(name, upperBounds.toList())
-            }
+        fun withArg(name: String, upperBounds: List<TypeRef>, variance: Variance = Variance.INVARIANT): TypeVariable {
+            return TypeVariable(name, upperBounds, variance).also(element.params::add)
         }
 
         fun parentArg(parent: Element, argument: String, type: TypeRef) {

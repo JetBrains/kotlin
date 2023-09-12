@@ -17,6 +17,8 @@ interface AbstractElement<Element : AbstractElement<Element, Field>, Field : Abs
 
     val parents: List<Element>
 
+    val params: List<TypeVariable> // TODO: Rename to `typeParameters` (rn this name would clash with the extension function)
+
     val typeArguments: List<TypeArgument>
 
     val parentsArguments: Map<Element, Map<TypeRef, TypeRef>>
@@ -35,10 +37,11 @@ interface AbstractElement<Element : AbstractElement<Element, Field>, Field : Abs
 }
 
 val AbstractElement<*, *>.generics: String
-    get() = typeArguments.takeIf { it.isNotEmpty() }
+    get() = params.takeIf { it.isNotEmpty() }
         ?.let { it.joinToString(", ", "<", ">") { it.name } }
         ?: ""
-val AbstractElement<*, *>.typeParameters: String
-    get() = typeArguments.takeIf { it.isNotEmpty() }
-        ?.joinToString(", ", "<", "> ")
-        ?: ""
+
+fun AbstractElement<*, *>.typeParameters(end: String = ""): String = params.takeIf { it.isNotEmpty() }
+    ?.joinToString(", ", "<", ">$end") { param ->
+        param.name + (param.bounds.singleOrNull()?.let { " : ${it.typeWithArguments}" } ?: "")
+    } ?: ""

@@ -39,7 +39,12 @@ class Element(override val name: String, kind: Kind) : AbstractElement {
     override val parents = mutableListOf<Element>()
     override var defaultImplementation: Implementation? = null
     override val customImplementations = mutableListOf<Implementation>()
-    override val typeArguments = mutableListOf<TypeArgument>()
+
+    override val params = mutableListOf<TypeVariable>()
+
+    override val typeArguments: List<TypeArgument>
+        get() = emptyList()
+
     override val parentsArguments = mutableMapOf<AbstractElement, MutableMap<TypeRef, TypeRef>>()
     override var kind: ImplementationKind? = null
         set(value) {

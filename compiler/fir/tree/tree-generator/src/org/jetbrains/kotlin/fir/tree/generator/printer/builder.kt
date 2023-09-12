@@ -248,8 +248,8 @@ private fun SmartPrinter.printDslBuildFunction(
         println("@OptIn(FirImplementationDetail::class)")
     }
     print("fun ")
-    builder.implementation.element.typeArguments.takeIf { it.isNotEmpty() }?.let {
-        print(it.joinToString(separator = ", ", prefix = "<", postfix = "> ") { it.name })
+    builder.implementation.element.params.takeIf { it.isNotEmpty() }?.let {
+        print(it.joinToString(separator = ", ", prefix = "<", postfix = "> "))
     }
     val builderType = builder.typeWithArguments
     val name = builder.implementation.name?.replaceFirst("Fir", "") ?: builder.implementation.element.name
@@ -288,8 +288,8 @@ private fun SmartPrinter.printDslBuildCopyFunction(
     println("@OptIn(${optIns.joinToString { "$it::class" }})")
     print("inline ")
     print("fun ")
-    builder.implementation.element.typeArguments.takeIf { it.isNotEmpty() }?.let {
-        print(it.joinToString(separator = ", ", prefix = "<", postfix = "> ") { it.name })
+    builder.implementation.element.params.takeIf { it.isNotEmpty() }?.let {
+        print(it.joinToString(separator = ", ", prefix = "<", postfix = "> "))
     }
     val builderType = builder.typeWithArguments
     val name = builder.implementation.name?.replaceFirst("Fir", "") ?: builder.implementation.element.name

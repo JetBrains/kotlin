@@ -19,8 +19,6 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
 
     protected open fun pureAbstractElementType(element: Element): String? = null
 
-    protected abstract fun multipleUpperBoundsList(element: Element): String
-
     protected abstract fun SmartPrinter.printAdditionalMethods(element: Element)
 
     fun printElement(element: Element) {
@@ -33,9 +31,7 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
             }
 
             print("${kind.title} ${element.type}")
-            element.typeArguments.ifNotEmpty {
-                print(joinToString(", ", "<", ">") { it.toString() })
-            }
+            print(element.typeParameters())
 
             val pureAbstractElementType = pureAbstractElementType(element)
             if (element.parents.isNotEmpty() || pureAbstractElementType != null) {
@@ -56,7 +52,7 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
                     },
                 )
             }
-            print(multipleUpperBoundsList(element))
+            print(element.multipleUpperBoundsList())
             println(" {")
             withIndent {
                 for (field in element.allFields) {
@@ -74,5 +70,16 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
             }
             println("}")
         }
+    }
+}
+
+fun AbstractElement<*, *>.multipleUpperBoundsList(): String {
+    val paramsWithMultipleUpperBounds = params.filter { it.bounds.size > 1 }.takeIf { it.isNotEmpty() } ?: return ""
+    return buildString {
+        append(" where ")
+        paramsWithMultipleUpperBounds.joinTo(this, separator = ", ") { param ->
+            param.bounds.joinToString(", ") { bound -> "$param : ${bound.typeWithArguments}" }
+        }
+        append("")
     }
 }

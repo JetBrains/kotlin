@@ -28,8 +28,6 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
         return if (needPureAbstractElement) pureAbstractElementType.type else null
     }
 
-    override fun multipleUpperBoundsList(element: Element): String = element.multipleUpperBoundsList()
-
     override fun SmartPrinter.printAdditionalMethods(element: Element) {
         with(element) {
             fun abstract() {
