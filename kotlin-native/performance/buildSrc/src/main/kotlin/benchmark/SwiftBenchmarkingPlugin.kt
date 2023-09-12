@@ -100,16 +100,20 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
     fun Array<String>.runCommand(
             workingDir: File = File("."),
             timeoutAmount: Long = 60,
-            timeoutUnit: TimeUnit = TimeUnit.SECONDS
+            timeoutUnit: TimeUnit = TimeUnit.SECONDS,
+            env: Map<String, String>,
     ): String {
         return try {
-            ProcessBuilder(*this)
+            val processBuilder = ProcessBuilder(*this)
                     .directory(workingDir)
                     .redirectOutput(ProcessBuilder.Redirect.PIPE)
                     .redirectError(ProcessBuilder.Redirect.PIPE)
-                    .start().apply {
-                        waitFor(timeoutAmount, timeoutUnit)
-                    }.inputStream.bufferedReader().readText()
+            env.forEach { key, value ->
+                processBuilder.environment().set(key, value)
+            }
+            processBuilder.start().apply {
+                waitFor(timeoutAmount, timeoutUnit)
+            }.inputStream.bufferedReader().readText()
         } catch (e: Exception) {
             println("Couldn't run command ${this.joinToString(" ")}")
             println(e.stackTrace.joinToString("\n"))
@@ -134,7 +138,10 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
         val out = mutableListOf<String>().apply {
             add(compiler)
             addAll(args)
-        }.toTypedArray().runCommand(timeoutAmount = 240)
+        }.toTypedArray().runCommand(
+            timeoutAmount = 240,
+            env = mapOf("DYLD_FALLBACK_FRAMEWORK_PATH" to configs.absoluteTargetToolchain + "/ExtraFrameworks"),
+        )
 
         println(
                 """
