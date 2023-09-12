@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsStableName
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -67,10 +68,14 @@ object FirJsNameClashClassMembersChecker : FirClassChecker() {
             if (stableName.isPresentInGeneratedCode) {
                 add(stableName.copy(symbol = targetSymbol))
             } else {
+                val isPresentInGeneratedCode = when (targetSymbol.origin) {
+                    is FirDeclarationOrigin.SubstitutionOverride -> overriddenSymbol.isPresentInGeneratedCode(context.session)
+                    else -> targetSymbol.isPresentInGeneratedCode(context.session)
+                }
                 val inheritedExternalName = stableName.copy(
                     symbol = targetSymbol,
                     canBeMangled = false,
-                    isPresentInGeneratedCode = targetSymbol.isPresentInGeneratedCode(context.session)
+                    isPresentInGeneratedCode = isPresentInGeneratedCode
                 )
                 add(inheritedExternalName)
             }
