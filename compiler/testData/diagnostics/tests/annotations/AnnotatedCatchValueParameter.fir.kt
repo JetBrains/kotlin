@@ -16,7 +16,7 @@ annotation class FixCatchClass
 fun main() {
     try {
 
-    } catch (@FixCatchLocalVariable <!WRONG_ANNOTATION_TARGET!>@FixCatchValueParameter<!> <!WRONG_ANNOTATION_TARGET!>@FixCatchClass<!> e: Throwable) {
+    } catch (@FixCatchLocalVariable @FixCatchValueParameter <!WRONG_ANNOTATION_TARGET!>@FixCatchClass<!> e: Throwable) {
 
     }
 }

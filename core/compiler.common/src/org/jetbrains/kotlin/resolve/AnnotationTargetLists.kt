@@ -19,6 +19,8 @@ object AnnotationTargetLists {
         onlyWithUseSiteTarget(PROPERTY_SETTER, VALUE_PARAMETER)
     }
 
+    val T_CATCH_PARAMETER = targetList(LOCAL_VARIABLE, VALUE_PARAMETER)
+
     val T_DESTRUCTURING_DECLARATION = targetList(DESTRUCTURING_DECLARATION)
 
     private fun TargetListBuilder.propertyTargets(backingField: Boolean, delegate: Boolean) {

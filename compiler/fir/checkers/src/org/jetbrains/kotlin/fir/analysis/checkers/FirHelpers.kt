@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredComponentFunctionCall
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -617,10 +617,10 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
         is FirProperty -> {
             when {
                 annotated.isLocal ->
-                    if (annotated.source?.kind == KtFakeSourceElementKind.DesugaredComponentFunctionCall) {
-                        TargetLists.T_DESTRUCTURING_DECLARATION
-                    } else {
-                        TargetLists.T_LOCAL_VARIABLE
+                    when {
+                        annotated.source?.kind == DesugaredComponentFunctionCall -> TargetLists.T_DESTRUCTURING_DECLARATION
+                        annotated.isCatchParameter == true -> TargetLists.T_CATCH_PARAMETER
+                        else -> TargetLists.T_LOCAL_VARIABLE
                     }
                 annotated.isMember ->
                     if (annotated.source?.kind == KtFakeSourceElementKind.PropertyFromParameter) {
