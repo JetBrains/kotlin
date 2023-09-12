@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.model
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.codegen.ClassFileFactory
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.js.facade.TranslationResult
@@ -58,7 +59,7 @@ object BinaryArtifacts {
             get() = ArtifactKinds.Wasm
     }
 
-    class KLib(val outputFile: File) : ResultingArtifact.Binary<KLib>() {
+    class KLib(val outputFile: File, val reporter: BaseDiagnosticsCollector) : ResultingArtifact.Binary<KLib>() {
         override val kind: BinaryKind<KLib>
             get() = ArtifactKinds.KLib
     }

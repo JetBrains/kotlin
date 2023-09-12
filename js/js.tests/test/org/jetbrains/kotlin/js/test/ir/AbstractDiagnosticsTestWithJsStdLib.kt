@@ -3,37 +3,34 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.test.fir
+package org.jetbrains.kotlin.js.test.ir
 
-import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
-import org.jetbrains.kotlin.js.test.converters.FirJsKlibBackendFacade
+import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
+import org.jetbrains.kotlin.js.test.converters.JsKlibBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.JsBackendDiagnosticsHandler
 import org.jetbrains.kotlin.platform.js.JsPlatforms
-import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJsResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
-import org.jetbrains.kotlin.test.frontend.fir.handlers.*
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
+import org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandler
+import org.jetbrains.kotlin.test.frontend.classic.handlers.DynamicCallsDumpHandler
+import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
-abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
+abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractKotlinCompilerTest() {
     protected open fun configureTestBuilder(builder: TestConfigurationBuilder) = builder.apply {
         globalDefaults {
-            frontend = FrontendKinds.FIR
+            frontend = FrontendKinds.ClassicFrontend
             targetPlatform = JsPlatforms.defaultJsPlatform
             targetBackend = TargetBackend.JS_IR
             dependencyKind = DependencyKind.Source
@@ -43,36 +40,30 @@ abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : Abstract
 
         defaultDirectives {
             +ConfigurationDirectives.WITH_STDLIB
-            DiagnosticsDirectives.DIAGNOSTICS with listOf("-warnings", "-infos")
+            +JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
         }
 
-        configureFirParser(parser)
+        useAdditionalService(::LibraryProvider)
 
         enableMetaInfoHandler()
-        configurationForClassicAndFirTestsAlongside()
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::JsEnvironmentConfigurator,
         )
 
+        useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
         useAdditionalSourceProviders(
-            ::JsAdditionalSourceProvider,
+            ::AdditionalDiagnosticsSourceFilesProvider,
             ::CoroutineHelpersSourceFilesProvider,
         )
 
-        useAdditionalService(::LibraryProvider)
-
-        facadeStep(::FirFrontendFacade)
-
-        firHandlersStep {
+        classicFrontendStep()
+        classicFrontendHandlersStep {
             useHandlers(
-                ::FirDiagnosticsHandler,
-                ::FirDumpHandler,
-                ::FirCfgDumpHandler,
-                ::FirCfgConsistencyHandler,
-                ::FirResolvedTypesVerifier,
-                ::FirScopeDumpHandler,
+                ::DeclarationsDumpHandler,
+                ::ClassicDiagnosticsHandler,
+                ::DynamicCallsDumpHandler,
             )
         }
     }
@@ -82,12 +73,12 @@ abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : Abstract
     }
 }
 
-abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : AbstractFirJsDiagnosticTestBase(parser) {
+abstract class AbstractDiagnosticsTestWithJsStdLibWithBackend : AbstractDiagnosticsTestWithJsStdLib() {
     override fun configureTestBuilder(builder: TestConfigurationBuilder) = builder.apply {
         super.configureTestBuilder(builder)
 
-        facadeStep(::Fir2IrJsResultsConverter)
-        facadeStep { FirJsKlibBackendFacade(it, true) }
+        psi2IrStep()
+        facadeStep { JsKlibBackendFacade(it, true) }
 
         // TODO: Currently do not run lowerings, because they don't report anything;
         //      see KT-61881, KT-61882
@@ -98,7 +89,3 @@ abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : A
         }
     }
 }
-
-abstract class AbstractFirPsiJsDiagnosticTest : AbstractFirJsDiagnosticTestBase(FirParser.Psi)
-
-abstract class AbstractFirPsiJsDiagnosticWithBackendTest : AbstractFirJsDiagnosticWithBackendTestBase(FirParser.Psi)

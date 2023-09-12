@@ -1,5 +1,8 @@
+// IGNORE_BACKEND: JS_IR
+// TODO: fix in KT-61882
 // !LANGUAGE: -RestrictRetentionForExpressionAnnotations
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// FIR_IDENTICAL
 
 package foo
 

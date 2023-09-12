@@ -88,6 +88,6 @@ class JsKlibBackendFacade(
         }
         testServices.libraryProvider.setDescriptorAndLibraryByName(outputFile, moduleDescriptor, lib)
 
-        return BinaryArtifacts.KLib(File(outputFile))
+        return BinaryArtifacts.KLib(File(outputFile), inputArtifact.diagnosticReporter)
     }
 }

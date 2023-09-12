@@ -35,10 +35,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("diagnostics/tests/javac", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            testClass<AbstractDiagnosticsTestWithJsStdLib> {
-                model("diagnostics/testsWithJsStdLib", excludedPattern = excludedCustomTestdataPattern)
-            }
-
             testClass<AbstractDiagnosticsTestWithJvmIrBackend> {
                 model(
                     "diagnostics/testsWithJvmBackend",

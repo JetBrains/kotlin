@@ -15,16 +15,11 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.KtDefaultJvmErrorMessages
-import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticReporter
 import org.jetbrains.kotlin.test.frontend.classic.handlers.withNewInferenceModeEnabled
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCodeMetaInfo
-import org.jetbrains.kotlin.test.frontend.fir.handlers.toMetaInfos
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -57,29 +52,7 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
 
     private fun reportKtDiagnostics(module: TestModule, info: BinaryArtifacts.Jvm) {
         val ktDiagnosticReporter = info.classFileFactory.generationState.diagnosticReporter as BaseDiagnosticsCollector
-        val globalMetadataInfoHandler = testServices.globalMetadataInfoHandler
-        val firParser = module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER)
-        val lightTreeComparingModeEnabled = firParser != null && FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in module.directives
-        val lightTreeEnabled = firParser == FirParser.LightTree
-
-        val processedModules = mutableSetOf<TestModule>()
-
-        fun processModule(module: TestModule) {
-            if (!processedModules.add(module)) return
-            for (testFile in module.files) {
-                val ktDiagnostics = ktDiagnosticReporter.diagnosticsByFilePath["/${testFile.name}"] ?: continue
-                ktDiagnostics.forEach {
-                    val metaInfos = it.toMetaInfos(module, testFile, globalMetadataInfoHandler, lightTreeEnabled, lightTreeComparingModeEnabled)
-                    globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfos)
-                }
-            }
-            for ((moduleName, _, _) in module.dependsOnDependencies) {
-                val dependantModule = testServices.dependencyProvider.getTestModule(moduleName)
-                processModule(dependantModule)
-            }
-        }
-
-        processModule(module)
+        reportKtDiagnostics(module, ktDiagnosticReporter)
     }
 
     private fun checkFullDiagnosticRender(module: TestModule) {
