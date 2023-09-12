@@ -78,7 +78,7 @@ class Fir2IrAnnotationsFromPluginRegistrar(private val components: Fir2IrCompone
             val fileFqName = firFile.packageFqName.child(Name.identifier(firFile.name)).asString()
             val source = declaration.source ?: return emptyList()
             val fileStorage = generatedIrDeclarationsByFileByOffset[fileFqName] ?: return emptyList()
-            return fileStorage[source.startOffset to source.endOffset] ?: emptyList()
+            return fileStorage[(source.startOffsetSkippingComments() ?: source.startOffset) to source.endOffset] ?: emptyList()
         }
 
         private fun FirDeclaration.containingFile(): FirFile? {
