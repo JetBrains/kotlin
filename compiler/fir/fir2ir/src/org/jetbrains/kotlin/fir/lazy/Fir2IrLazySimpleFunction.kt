@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -102,9 +101,11 @@ class Fir2IrLazySimpleFunction(
         fir.generateOverriddenFunctionSymbols(firParent)
     }
 
-    @OptIn(IrSymbolInternals::class)
     override val initialSignatureFunction: IrFunction? by lazy {
-        (fir.initialSignatureAttr as? FirFunction)?.symbol?.let { declarationStorage.getIrFunctionSymbol(it).owner }?.takeIf { it !== this }
+        val originalFunction = fir.initialSignatureAttr as? FirFunction ?: return@lazy null
+        declarationStorage.getOrCreateIrFunction(originalFunction, parent).also {
+            check(it !== this) { "Initial function can not be the same as remapped function" }
+        }
     }
 
     override val containerSource: DeserializedContainerSource?
