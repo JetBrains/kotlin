@@ -22,7 +22,13 @@ scopes:
     callables: 0
     constructors: 0
 
-  TypeScope, index = 3
+  LocalScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 4
     packages: 0
     classifiers: 0
     callables: 3
@@ -32,19 +38,19 @@ scopes:
     constructors: 1
       constructor()
 
-  LocalScope, index = 4
+  LocalScope, index = 5
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 5
+  ExplicitSimpleImportingScope, index = 6
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 6
+  PackageMemberScope, index = 7
     packages: 6
       META-INF
       java
@@ -58,16 +64,17 @@ scopes:
       fun kotlin.Any.test(): () -> kotlin.Int
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 7
-
   DefaultSimpleImportingScope, index = 8
 
-  ExplicitStarImportingScope, index = 9
+  DefaultSimpleImportingScope, index = 9
+
+  ExplicitStarImportingScope, index = 10
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 10
+  DefaultSimpleImportingScope, index = 11
 
-  DefaultStarImportingScope, index = 11
+  DefaultStarImportingScope, index = 12
+

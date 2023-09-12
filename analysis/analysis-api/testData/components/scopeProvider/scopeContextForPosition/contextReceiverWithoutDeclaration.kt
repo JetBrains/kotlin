@@ -1,4 +1,4 @@
-// IGNORE_FIR
+
 // FILE: main.kt
 import pkg.A
 
