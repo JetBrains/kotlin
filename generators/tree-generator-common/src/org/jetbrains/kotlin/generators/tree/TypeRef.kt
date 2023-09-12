@@ -9,8 +9,18 @@ import org.jetbrains.kotlin.types.Variance
 import java.util.*
 import kotlin.reflect.KClass
 
-interface TypeRef {
-    object Star : TypeRef
+interface TypeRef : Importable {
+    object Star : TypeRef {
+        override val type: String
+            get() = "*"
+
+        override val packageName: String?
+            get() = null
+
+        override fun getTypeWithArguments(notNull: Boolean): String = type
+
+        override fun toString(): String = type
+    }
 }
 
 interface ClassOrElementRef : TypeRefWithNullability
@@ -43,10 +53,18 @@ class ClassRef<P : TypeParameterRef> private constructor(
         names.joinToString(".")
 
     /** Package name, like `"kotlin.collections"` for `Map.Entry`. */
-    val packageName: String get() = names[0]
+    override val packageName: String get() = names[0]
 
     /** Simple name of this class, like `"Entry"` for `Map.Entry`. */
     val simpleName: String get() = names[names.size - 1]
+
+    override val type: String
+        get() = simpleName
+
+    override val fullQualifiedName: String
+        get() = canonicalName
+
+    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
 
     /**
      * The enclosing classes, outermost first, followed by the simple name. This is `["Map", "Entry"]`
@@ -63,13 +81,21 @@ class ClassRef<P : TypeParameterRef> private constructor(
 sealed interface TypeParameterRef : TypeRef
 
 data class PositionTypeParameterRef(
-    val index: Int
+    val index: Int,
 ) : TypeParameterRef {
     override fun toString() = index.toString()
+
+    override val type: String
+        get() = error("Getting type from ${this::class.simpleName} is not supported")
+
+    override val packageName: String?
+        get() = null
+
+    override fun getTypeWithArguments(notNull: Boolean): String = type
 }
 
 open class NamedTypeParameterRef(
-    val name: String
+    val name: String,
 ) : TypeParameterRef {
     override fun equals(other: Any?): Boolean {
         return other is NamedTypeParameterRef && other.name == name
@@ -80,6 +106,14 @@ open class NamedTypeParameterRef(
     }
 
     override fun toString() = name
+
+    override val type: String
+        get() = name
+
+    override val packageName: String?
+        get() = null
+
+    override fun getTypeWithArguments(notNull: Boolean) = name
 }
 
 interface TypeRefWithNullability : TypeRef {
@@ -94,6 +128,9 @@ interface ParametrizedTypeRef<Self, P : TypeParameterRef> : TypeRef {
     fun copy(args: Map<P, TypeRef>): Self
 }
 
+val ParametrizedTypeRef<*, *>.generics: String
+    get() = if (args.isEmpty()) "" else args.values.joinToString(prefix = "<", postfix = ">") { it.typeWithArguments }
+
 fun <T> ParametrizedTypeRef<T, NamedTypeParameterRef>.withArgs(vararg args: Pair<String, TypeRef>) =
     copy(args.associate { (k, v) -> NamedTypeParameterRef(k) to v })
 
@@ -104,7 +141,7 @@ fun <T> ParametrizedTypeRef<T, PositionTypeParameterRef>.withArgs(vararg args: T
 class TypeVariable(
     name: String,
     val bounds: List<TypeRef>,
-    val variance: Variance
+    val variance: Variance,
 ) : NamedTypeParameterRef(name)
 
 fun <P : TypeParameterRef> KClass<*>.asRef(): ClassRef<P> {
