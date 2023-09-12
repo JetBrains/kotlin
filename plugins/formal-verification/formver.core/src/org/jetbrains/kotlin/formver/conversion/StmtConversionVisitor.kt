@@ -83,7 +83,6 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
         data.convert(whenSubjectExpression.whenRef.value.subject!!)
 
     private fun convertWhenBranches(whenBranches: Iterator<FirWhenBranch>, data: StmtConversionContext<ResultTrackingContext>) {
-        // NOTE: I think that this will also work with "in" or "is" conditions when implemented, but I'm not 100% sure
         if (!whenBranches.hasNext()) return
 
         val branch = whenBranches.next()

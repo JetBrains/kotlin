@@ -54,3 +54,11 @@ fun <!VIPER_TEXT!>empty_when<!>(): Int {
     when { }
     return 1
 }
+
+open class Foo()
+class Bar() : Foo()
+
+fun <!VIPER_TEXT!>when_is<!>(x: Foo): Boolean = when(x) {
+    is Bar -> true
+    else -> false
+}

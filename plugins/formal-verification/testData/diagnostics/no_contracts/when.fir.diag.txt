@@ -113,3 +113,17 @@ method pkg$$global$empty_when() returns (ret: Int)
   goto label$ret
   label label$ret
 }
+
+/when.kt:(952,959): info: Generated Viper text for when_is:
+method pkg$$global$when_is(local$x: Ref) returns (ret: Bool)
+{
+  var anonymous$1: Bool
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg$$class_Foo())
+  if (dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg$$class_Bar())) {
+    anonymous$1 := true
+  } else {
+    anonymous$1 := false}
+  ret := anonymous$1
+  goto label$ret
+  label label$ret
+}
