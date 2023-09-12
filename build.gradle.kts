@@ -542,10 +542,6 @@ allprojects {
         jcenter {
             content {
                 includeVersionByRegex("net\\.rubygrapefruit", ".+", "0\\.14")
-                includeVersionByRegex("io\\.ktor", ".+", "1\\.1\\.5")
-                includeVersion("khttp", "khttp", "1.0.0")
-                includeVersion("org.jetbrains.kotlinx", "kotlinx-serialization-runtime", "0.4.2")
-                includeVersion("org.jetbrains.kotlinx", "kotlinx-serialization-runtime", "0.14.0")
             }
         }
     }
