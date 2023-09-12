@@ -387,8 +387,10 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                     return 123
                   }
               }
-              val g = object {
-                fun H() { }
+              val g = <block>{
+                object {
+                  fun H() { }
+                }
               }
             }
             fun I(block: Function0<Unit>) {
