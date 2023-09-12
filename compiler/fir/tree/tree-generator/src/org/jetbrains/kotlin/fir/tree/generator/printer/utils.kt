@@ -178,6 +178,3 @@ val Element.typeParameters: String
     get() = typeArguments.takeIf { it.isNotEmpty() }
         ?.joinToString(", ", "<", "> ")
         ?: ""
-
-val Type.generics: String
-    get() = arguments.takeIf { it.isNotEmpty() }?.joinToString(",", "<", ">") ?: ""
