@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.utils.DummyDelegate
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -218,12 +219,5 @@ class DeprecationDiagnosticFactory4DelegateProvider<A, B, C, D>(
         val errorFactory = KtDiagnosticFactory4<A, B, C, D>("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
         val warningFactory = KtDiagnosticFactory4<A, B, C, D>("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
         return DummyDelegate(KtDiagnosticFactoryForDeprecation4(featureForError, warningFactory, errorFactory))
-    }
-}
-
-
-private class DummyDelegate<T>(val value: T) : ReadOnlyProperty<Any?, T> {
-    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return value
     }
 }

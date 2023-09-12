@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.IntermediateBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Type
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
-import org.jetbrains.kotlin.fir.tree.generator.util.DummyDelegate
+import org.jetbrains.kotlin.utils.DummyDelegate
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
