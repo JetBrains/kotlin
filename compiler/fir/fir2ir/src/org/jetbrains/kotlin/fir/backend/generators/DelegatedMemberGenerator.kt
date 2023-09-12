@@ -17,15 +17,15 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
-import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -56,27 +56,37 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
     private val bodiesInfo = mutableListOf<DeclarationBodyInfo>()
 
     fun generateBodies() {
-        for ((declaration, irField, delegateToSymbol, delegateToLookupTag) in bodiesInfo) {
-            val callTypeCanBeNullable = Fir2IrImplicitCastInserter.typeCanBeEnhancedOrFlexibleNullable(delegateToSymbol.fir.returnTypeRef.coneType.fullyExpandedType(session))
+        for ((declaration, irField, delegateToFirSymbol, delegateToLookupTag) in bodiesInfo) {
+            val delegatedDeclarationType = delegateToFirSymbol.fir.returnTypeRef.coneType.fullyExpandedType(session)
+            val callTypeCanBeNullable = Fir2IrImplicitCastInserter.typeCanBeEnhancedOrFlexibleNullable(delegatedDeclarationType)
             when (declaration) {
                 is IrSimpleFunction -> {
-                    @OptIn(IrSymbolInternals::class)
-                    val member = declarationStorage.getIrFunctionSymbol(
-                        delegateToSymbol as FirNamedFunctionSymbol, delegateToLookupTag
-                    ).owner as? IrSimpleFunction ?: continue
-                    val body = createDelegateBody(irField, declaration, member, callTypeCanBeNullable)
+                    val delegateToIrFunctionSymbol = declarationStorage.getIrFunctionSymbol(
+                        delegateToFirSymbol as FirNamedFunctionSymbol, delegateToLookupTag
+                    ) as? IrSimpleFunctionSymbol ?: continue
+                    val body = createDelegateBody(
+                        irField, declaration, delegateToFirSymbol.fir, delegateToIrFunctionSymbol,
+                        callTypeCanBeNullable, isSetter = false
+                    )
                     declaration.body = body
                 }
                 is IrProperty -> {
-                    @OptIn(IrSymbolInternals::class)
-                    val member = declarationStorage.getIrPropertySymbol(
-                        delegateToSymbol as FirPropertySymbol, delegateToLookupTag
-                    ).owner as? IrProperty ?: continue
+                    val delegateToIrPropertySymbol = declarationStorage.getIrPropertySymbol(
+                        delegateToFirSymbol as FirPropertySymbol, delegateToLookupTag
+                    ) as? IrPropertySymbol ?: continue
+                    val delegateToGetterSymbol = declarationStorage.findGetterOfProperty(delegateToIrPropertySymbol)!!
                     val getter = declaration.getter!!
-                    getter.body = createDelegateBody(irField, getter, member.getter!!, callTypeCanBeNullable)
+                    getter.body = createDelegateBody(
+                        irField, getter, delegateToFirSymbol.fir, delegateToGetterSymbol,
+                        callTypeCanBeNullable, isSetter = false
+                    )
                     if (declaration.isVar) {
+                        val delegateToSetterSymbol = declarationStorage.findSetterOfProperty(delegateToIrPropertySymbol)!!
                         val setter = declaration.setter!!
-                        setter.body = createDelegateBody(irField, setter, member.setter!!, false)
+                        setter.body = createDelegateBody(
+                            irField, setter, delegateToFirSymbol.fir, delegateToSetterSymbol,
+                            callTypeCanBeNullable = false, isSetter = true
+                        )
                     }
                 }
             }
@@ -222,22 +232,51 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         return delegateFunction
     }
 
+    /**
+     * interface Base {
+     *     fun foo(): String
+     * }
+     *
+     * class Impl : Base {
+     *     override fun foo(): String {   <-------------- [originalFirFunction], [originalFunctionSymbol]
+     *         return "OK"
+     *     }
+     * }
+     *
+     * class Delegated(impl: Impl) : Base by impl {
+     *     private field delegate_xxx: Impl = impl   <-------------- [irField]
+     *     generated override fun foo(): String   <-------------- [delegateFunction]
+     * }
+     *
+     */
     private fun createDelegateBody(
         irField: IrField,
         delegateFunction: IrSimpleFunction,
-        superFunction: IrSimpleFunction,
-        callTypeCanBeNullable: Boolean
+        originalFirDeclaration: FirCallableDeclaration,
+        originalFunctionSymbol: IrSimpleFunctionSymbol,
+        callTypeCanBeNullable: Boolean,
+        isSetter: Boolean
     ): IrBlockBody {
         val startOffset = SYNTHETIC_OFFSET
         val endOffset = SYNTHETIC_OFFSET
         val body = irFactory.createBlockBody(startOffset, endOffset)
+        val typeOrigin = when {
+            originalFirDeclaration is FirPropertyAccessor && originalFirDeclaration.isSetter -> ConversionTypeOrigin.SETTER
+            else -> ConversionTypeOrigin.DEFAULT
+        }
+
+        val callReturnType = when (isSetter) {
+            false -> originalFirDeclaration.returnTypeRef.toIrType(typeOrigin)
+            true -> irBuiltIns.unitType
+        }
+
         val irCall = IrCallImpl(
             startOffset,
             endOffset,
-            superFunction.returnType,
-            superFunction.symbol,
-            superFunction.typeParameters.size,
-            superFunction.valueParameters.size
+            callReturnType,
+            originalFunctionSymbol,
+            originalFirDeclaration.typeParameters.size,
+            originalFirDeclaration.numberOfIrValueParameters(isSetter)
         ).apply {
             val getField = IrGetFieldImpl(
                 startOffset, endOffset,
@@ -252,11 +291,13 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
 
             // When the delegation expression has an intersection type, it is not guaranteed that the field will have the same type as the
             // dispatch receiver of the target method. Therefore, we need to check if a cast must be inserted.
-            val superFunctionParent = superFunction.parent as? IrClass
-            dispatchReceiver = if (superFunctionParent == null || irField.type.isSubtypeOfClass(superFunctionParent.symbol)) {
+            val superFunctionDispatchReceiverType = originalFirDeclaration.dispatchReceiverType
+            val superFunctionDispatchReceiverLookupTag = (superFunctionDispatchReceiverType as? ConeClassLikeType)?.lookupTag
+            val superFunctionParentSymbol = superFunctionDispatchReceiverLookupTag?.let { classifierStorage.findIrClass(it)?.symbol }
+            dispatchReceiver = if (superFunctionParentSymbol == null || irField.type.isSubtypeOfClass(superFunctionParentSymbol)) {
                 getField
             } else {
-                Fir2IrImplicitCastInserter.implicitCastOrExpression(getField, superFunction.dispatchReceiverParameter!!.type)
+                Fir2IrImplicitCastInserter.implicitCastOrExpression(getField, superFunctionDispatchReceiverType.toIrType())
             }
 
             extensionReceiver =
@@ -266,10 +307,10 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             delegateFunction.valueParameters.forEach {
                 putValueArgument(it.index, IrGetValueImpl(startOffset, endOffset, it.type, it.symbol))
             }
-            superFunction.typeParameters.forEach {
+            for (index in originalFirDeclaration.typeParameters.indices) {
                 putTypeArgument(
-                    it.index, IrSimpleTypeImpl(
-                        delegateFunction.typeParameters[it.index].symbol,
+                    index, IrSimpleTypeImpl(
+                        delegateFunction.typeParameters[index].symbol,
                         hasQuestionMark = false,
                         arguments = emptyList(),
                         annotations = emptyList()
@@ -282,13 +323,23 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         val irCastOrCall =
             if (callTypeCanBeNullable && !resultType.isNullable()) Fir2IrImplicitCastInserter.implicitNotNullCast(irCall)
             else irCall
-        if (superFunction.returnType.isUnit() || superFunction.returnType.isNothing()) {
+        val originalDeclarationReturnType = originalFirDeclaration.returnTypeRef.coneType
+        if (isSetter || originalDeclarationReturnType.isUnit || originalDeclarationReturnType.isNothing) {
             body.statements.add(irCastOrCall)
         } else {
             val irReturn = IrReturnImpl(startOffset, endOffset, irBuiltIns.nothingType, delegateFunction.symbol, irCastOrCall)
             body.statements.add(irReturn)
         }
         return body
+    }
+
+    private fun FirCallableDeclaration.numberOfIrValueParameters(isSetter: Boolean): Int {
+        var result = contextReceivers.size
+        when {
+            this is FirFunction -> result += valueParameters.size
+            this is FirProperty && isSetter -> result += 1
+        }
+        return result
     }
 
     private fun generateDelegatedProperty(
