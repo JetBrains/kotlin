@@ -26,7 +26,6 @@ fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
 
     defaultDirectives {
         +ENABLE_PLUGIN_PHASES
-        +FIR_DUMP
         +RENDER_DIAGNOSTICS_FULL_TEXT
         +STOP_ON_FAILURE
     }

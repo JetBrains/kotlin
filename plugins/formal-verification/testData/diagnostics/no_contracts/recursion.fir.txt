@@ -1,4 +1,0 @@
-FILE: recursion.kt
-    public final fun recursive(): R|kotlin/Unit| {
-        ^recursive R|/recursive|()
-    }
