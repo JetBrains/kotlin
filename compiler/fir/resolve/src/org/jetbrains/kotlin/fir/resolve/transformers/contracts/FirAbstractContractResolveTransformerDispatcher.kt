@@ -265,7 +265,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             }
         }
 
-        override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
+        override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass {
             return withRegularClass(regularClass) {
                 transformDeclarationContent(regularClass, data)
                 regularClass
@@ -281,7 +281,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         override fun transformAnonymousObject(
             anonymousObject: FirAnonymousObject,
             data: ResolutionMode
-        ): FirStatement {
+        ): FirAnonymousObject {
             context.withAnonymousObject(anonymousObject, components) {
                 transformDeclarationContent(anonymousObject, data)
             }
@@ -306,8 +306,10 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             }
         }
 
-        override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: ResolutionMode) =
-            transformConstructor(errorPrimaryConstructor, data)
+        override fun transformErrorPrimaryConstructor(
+            errorPrimaryConstructor: FirErrorPrimaryConstructor,
+            data: ResolutionMode,
+        ): FirErrorPrimaryConstructor = transformConstructor(errorPrimaryConstructor, data) as FirErrorPrimaryConstructor
 
         override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirEnumEntry {
             return enumEntry

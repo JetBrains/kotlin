@@ -325,7 +325,7 @@ open class FirDeclarationsResolveTransformer(
         dataFlowAnalyzer.exitDelegateExpression(delegate)
     }
 
-    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: ResolutionMode): FirStatement {
+    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: ResolutionMode): FirPropertyAccessor {
         return propertyAccessor.also {
             transformProperty(it.propertySymbol.fir, data)
         }
@@ -604,7 +604,7 @@ open class FirDeclarationsResolveTransformer(
     override fun transformRegularClass(
         regularClass: FirRegularClass,
         data: ResolutionMode
-    ): FirStatement =
+    ): FirRegularClass =
         whileAnalysing(session, regularClass) {
             return context.withContainingClass(regularClass) {
                 if (regularClass.isLocal && regularClass !in context.targetedLocalClasses) {
@@ -705,7 +705,7 @@ open class FirDeclarationsResolveTransformer(
     override fun transformAnonymousObject(
         anonymousObject: FirAnonymousObject,
         data: ResolutionMode
-    ): FirStatement = whileAnalysing(session, anonymousObject) {
+    ): FirAnonymousObject = whileAnalysing(session, anonymousObject) {
         if (anonymousObject !in context.targetedLocalClasses) {
             return anonymousObject.runAllPhasesForLocalClass(transformer, components, data, transformer.firResolveContextCollector)
         }
@@ -785,14 +785,14 @@ open class FirDeclarationsResolveTransformer(
     override fun transformFunction(
         function: FirFunction,
         data: ResolutionMode
-    ): FirStatement = whileAnalysing(session, function) {
+    ): FirFunction = whileAnalysing(session, function) {
         if (function.bodyResolved) return function
         dataFlowAnalyzer.enterFunction(function)
         return transformDeclarationContent(function, data).also {
             val result = it as FirFunction
             val controlFlowGraphReference = dataFlowAnalyzer.exitFunction(result)
             result.replaceControlFlowGraphReference(controlFlowGraphReference)
-        } as FirStatement
+        } as FirFunction
     }
 
     override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor =
@@ -809,8 +809,10 @@ open class FirDeclarationsResolveTransformer(
             return doTransformConstructor(constructor, data)
         }
 
-    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: ResolutionMode) =
-        transformConstructor(errorPrimaryConstructor, data)
+    override fun transformErrorPrimaryConstructor(
+        errorPrimaryConstructor: FirErrorPrimaryConstructor,
+        data: ResolutionMode,
+    ): FirErrorPrimaryConstructor = transformConstructor(errorPrimaryConstructor, data) as FirErrorPrimaryConstructor
 
     private fun doTransformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
         val owningClass = context.containerIfAny as? FirRegularClass
@@ -863,7 +865,7 @@ open class FirDeclarationsResolveTransformer(
     override fun transformValueParameter(
         valueParameter: FirValueParameter,
         data: ResolutionMode
-    ): FirStatement = whileAnalysing(session, valueParameter) {
+    ): FirValueParameter = whileAnalysing(session, valueParameter) {
         dataFlowAnalyzer.enterValueParameter(valueParameter)
         val result = context.withValueParameter(valueParameter, session) {
             transformDeclarationContent(
@@ -882,7 +884,7 @@ open class FirDeclarationsResolveTransformer(
     override fun transformAnonymousFunction(
         anonymousFunction: FirAnonymousFunction,
         data: ResolutionMode
-    ): FirStatement = whileAnalysing(session, anonymousFunction) {
+    ): FirAnonymousFunction = whileAnalysing(session, anonymousFunction) {
         // Either ContextDependent, ContextIndependent or WithExpectedType could be here
         anonymousFunction.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         if (data !is ResolutionMode.LambdaResolution) {
@@ -1079,7 +1081,7 @@ open class FirDeclarationsResolveTransformer(
     override fun transformBackingField(
         backingField: FirBackingField,
         data: ResolutionMode,
-    ): FirStatement = whileAnalysing(session, backingField) {
+    ): FirBackingField = whileAnalysing(session, backingField) {
         val propertyType = data.expectedType
         val initializerData = when {
             backingField.returnTypeRef is FirResolvedTypeRef -> withExpectedType(backingField.returnTypeRef)

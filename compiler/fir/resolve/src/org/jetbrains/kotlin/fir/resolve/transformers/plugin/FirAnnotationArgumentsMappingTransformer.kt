@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirErrorAnnotationCall
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.util.PrivateForInline
 
 open class FirAnnotationArgumentsMappingTransformer(
     session: FirSession,
@@ -91,7 +91,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
         }
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
+    override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass {
         regularClass.transformAnnotations(this, data)
         doTransformTypeParameters(regularClass)
         regularClass.transformSuperTypeRefs(this, data)
@@ -154,10 +154,12 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
         return constructor
     }
 
-    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: ResolutionMode) =
-        transformConstructor(errorPrimaryConstructor, data)
+    override fun transformErrorPrimaryConstructor(
+        errorPrimaryConstructor: FirErrorPrimaryConstructor,
+        data: ResolutionMode,
+    ): FirErrorPrimaryConstructor = transformConstructor(errorPrimaryConstructor, data) as FirErrorPrimaryConstructor
 
-    override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): FirStatement {
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): FirValueParameter {
         context.withValueParameter(valueParameter, session) {
             valueParameter
                 .transformAnnotations(transformer, data)
@@ -220,7 +222,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
         return field
     }
 
-    override fun transformBackingField(backingField: FirBackingField, data: ResolutionMode): FirStatement {
+    override fun transformBackingField(backingField: FirBackingField, data: ResolutionMode): FirBackingField {
         backingField.transformAnnotations(transformer, data)
         return backingField
     }

@@ -61,7 +61,7 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
         }
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
+    override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass {
         regularClass.transformAnnotations(this, data)
         withRegularClass(regularClass) {
             regularClass
@@ -109,10 +109,12 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
         return constructor
     }
 
-    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: ResolutionMode) =
-        transformConstructor(errorPrimaryConstructor, data)
+    override fun transformErrorPrimaryConstructor(
+        errorPrimaryConstructor: FirErrorPrimaryConstructor,
+        data: ResolutionMode,
+    ): FirErrorPrimaryConstructor = transformConstructor(errorPrimaryConstructor, data) as FirErrorPrimaryConstructor
 
-    override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): FirStatement {
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): FirValueParameter {
         valueParameter
             .transformAnnotations(transformer, data)
             .transformReturnTypeRef(transformer, data)
