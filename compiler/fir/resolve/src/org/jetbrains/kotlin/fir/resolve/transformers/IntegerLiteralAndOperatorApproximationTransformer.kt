@@ -62,8 +62,7 @@ class IntegerLiteralAndOperatorApproximationTransformer(
         constExpression: FirConstExpression<T>,
         data: ConeKotlinType?,
     ): FirStatement {
-        @OptIn(UnresolvedExpressionTypeAccess::class)
-        val type = constExpression.coneTypeSafe<ConeIntegerLiteralType>() ?: return constExpression
+        val type = constExpression.resolvedType as? ConeIntegerLiteralType ?: return constExpression
         val approximatedType = type.getApproximatedType(data?.fullyExpandedType(session))
         constExpression.resultType = approximatedType
         @Suppress("UNCHECKED_CAST")
@@ -79,8 +78,7 @@ class IntegerLiteralAndOperatorApproximationTransformer(
         @Suppress("UnnecessaryVariable")
         val call = integerLiteralOperatorCall
 
-        @OptIn(UnresolvedExpressionTypeAccess::class)
-        val operatorType = call.coneTypeSafe<ConeIntegerLiteralType>() ?: return call
+        val operatorType = call.resolvedType as? ConeIntegerLiteralType ?: return call
         val approximatedType = operatorType.getApproximatedType(data?.fullyExpandedType(session))
         call.transformDispatchReceiver(this, null)
         call.transformExtensionReceiver(this, null)

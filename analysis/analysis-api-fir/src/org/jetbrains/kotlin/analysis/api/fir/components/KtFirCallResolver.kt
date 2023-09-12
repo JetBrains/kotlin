@@ -1158,8 +1158,7 @@ internal class KtFirCallResolver(
     private fun FirArrayLiteral.toKtCallInfo(): KtCallInfo? {
         val arrayOfSymbol = with(analysisSession) {
 
-            @OptIn(UnresolvedExpressionTypeAccess::class)
-            val type = coneTypeSafe<ConeClassLikeType>()
+            val type = resolvedType as? ConeClassLikeType
                 ?: return run {
                     val defaultArrayOfSymbol = arrayOfSymbol(arrayOf) ?: return null
                     val substitutor = createSubstitutorFromTypeArguments(defaultArrayOfSymbol)
@@ -1205,8 +1204,7 @@ internal class KtFirCallResolver(
         // No type parameter means this is an arrayOf call of primitives, in which case there is no type arguments
         val typeParameter = firSymbol.fir.typeParameters.singleOrNull() ?: return KtSubstitutor.Empty(token)
 
-        @OptIn(UnresolvedExpressionTypeAccess::class)
-        val elementType = coneTypeSafe<ConeClassLikeType>()?.arrayElementType() ?: return KtSubstitutor.Empty(token)
+        val elementType = resolvedType.arrayElementType() ?: return KtSubstitutor.Empty(token)
         val coneSubstitutor = substitutorByMap(mapOf(typeParameter.symbol to elementType), rootModuleSession)
         return firSymbolBuilder.typeBuilder.buildSubstitutor(coneSubstitutor)
     }
