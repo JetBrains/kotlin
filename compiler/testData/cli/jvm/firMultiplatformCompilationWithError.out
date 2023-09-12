@@ -8,7 +8,7 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-compiler/testData/cli/jvm/firMultiplatformCompilationWithError/jvm.kt:1:18: error: actual class 'actual interface A : Any' has no corresponding members for expected class members:
+compiler/testData/cli/jvm/firMultiplatformCompilationWithError/jvm.kt:1:18: error: 'actual interface A : Any' has no corresponding members for expected class members:
 
     expect fun foo(): Unit
 

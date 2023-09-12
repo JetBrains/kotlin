@@ -1979,7 +1979,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(AMBIGUOUS_EXPECTS, "''{0}'' has several compatible expect declarations in modules {1}.", SYMBOL, COLLECTION(MODULE_DATA))
         map.put(
             NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS,
-            "Actual class ''{0}'' has no corresponding members for expected class members:{1}",
+            "''{0}'' has no corresponding members for expected class members:{1}",
             SYMBOL,
             FirIncompatibleExpectedActualClassScopesRenderer.TEXT
         )

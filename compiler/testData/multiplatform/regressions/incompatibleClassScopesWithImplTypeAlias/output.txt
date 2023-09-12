@@ -5,7 +5,7 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias/jvm.kt:3:18: error: actual class 'actual typealias Writer = Writer' has no corresponding members for expected class members:
+compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias/jvm.kt:3:18: error: 'actual typealias Writer = Writer' has no corresponding members for expected class members:
 
     expect constructor(): Writer
 
