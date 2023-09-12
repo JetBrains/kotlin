@@ -23808,6 +23808,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
                 runTest("compiler/testData/codegen/box/multiplatform/k2/dataClassInCommonAndPlatform.kt");
             }
 
+            @Test
+            @TestMetadata("expectValInInlineClass.kt")
+            public void testExpectValInInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/expectValInInlineClass.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
             @TestDataPath("$PROJECT_ROOT")

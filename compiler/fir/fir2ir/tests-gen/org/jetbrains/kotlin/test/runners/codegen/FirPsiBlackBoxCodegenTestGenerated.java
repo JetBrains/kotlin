@@ -34045,6 +34045,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             }
 
             @Test
+            @TestMetadata("expectValInInlineClass.kt")
+            public void testExpectValInInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/expectValInInlineClass.kt");
+            }
+
+            @Test
+            @TestMetadata("expectValInInlineClassJVM.kt")
+            public void testExpectValInInlineClassJVM() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/expectValInInlineClassJVM.kt");
+            }
+
+            @Test
             @TestMetadata("javaMethodWithTypeParameter.kt")
             public void testJavaMethodWithTypeParameter() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/k2/javaMethodWithTypeParameter.kt");
