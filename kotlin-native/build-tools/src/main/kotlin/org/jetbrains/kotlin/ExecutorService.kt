@@ -126,7 +126,7 @@ data class ProcessOutput(var stdOut: String, var stdErr: String, var exitCode: I
  * @param args arguments for a process
  */
 fun runProcess(executor: (Action<in ExecSpec>) -> ExecResult?,
-               executable: String, args: List<String>): ProcessOutput {
+               executable: String, args: List<String>, env: Map<String, String> = emptyMap()): ProcessOutput {
     val outStream = ByteArrayOutputStream()
     val errStream = ByteArrayOutputStream()
 
@@ -136,6 +136,7 @@ fun runProcess(executor: (Action<in ExecSpec>) -> ExecResult?,
         this.standardOutput = outStream
         this.errorOutput = errStream
         this.isIgnoreExitValue = true
+        this.environment(env)
     })
 
     checkNotNull(execResult)
