@@ -108,7 +108,7 @@ private fun FirTypeRef.renderType(builder: StringBuilder = StringBuilder()): Str
     packageDirectiveRenderer = null,
     propertyAccessorRenderer = null,
     resolvePhaseRenderer = null,
-    typeRenderer = ConeTypeRenderer().apply { attributeRenderer = EmptyConeTypeAttributeRenderer },
+    typeRenderer = ConeTypeRenderer(attributeRenderer = EmptyConeTypeAttributeRenderer),
     valueParameterRenderer = null,
     errorExpressionRenderer = null,
 ).renderElementAsString(this)

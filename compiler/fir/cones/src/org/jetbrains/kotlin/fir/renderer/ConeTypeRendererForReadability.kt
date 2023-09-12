@@ -11,17 +11,12 @@ import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.renderer.replacePrefixesInTypeRepresentations
 import org.jetbrains.kotlin.renderer.typeStringsDifferOnlyInNullability
 
-class ConeTypeRendererForReadability : ConeTypeRenderer {
+class ConeTypeRendererForReadability(
+    private val idRendererCreator: () -> ConeIdRenderer,
+) : ConeTypeRenderer() {
 
-    private val idRendererCreator: () -> ConeIdRenderer
-
-    constructor(idRendererCreator: () -> ConeIdRenderer) : super() {
-        this.idRendererCreator = idRendererCreator
-    }
-
-    constructor(builder: StringBuilder, idRendererCreator: () -> ConeIdRenderer) : super() {
+    constructor(builder: StringBuilder, idRendererCreator: () -> ConeIdRenderer) : this(idRendererCreator) {
         this.builder = builder
-        this.idRendererCreator = idRendererCreator
         this.idRenderer = idRendererCreator()
         idRenderer.builder = builder
     }

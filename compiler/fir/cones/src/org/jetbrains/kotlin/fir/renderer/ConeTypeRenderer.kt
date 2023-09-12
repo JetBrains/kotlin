@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir.renderer
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.types.*
 
-open class ConeTypeRenderer {
-
+open class ConeTypeRenderer(
+    private val attributeRenderer: ConeAttributeRenderer = ConeAttributeRenderer.ToString
+) {
     lateinit var builder: StringBuilder
     lateinit var idRenderer: ConeIdRenderer
-    var attributeRenderer: ConeAttributeRenderer = ConeAttributeRenderer.ToString
 
     open fun renderAsPossibleFunctionType(
         type: ConeKotlinType,
