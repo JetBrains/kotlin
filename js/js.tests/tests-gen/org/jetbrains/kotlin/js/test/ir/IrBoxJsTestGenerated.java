@@ -8353,6 +8353,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("promiseThen.kt")
+        public void testPromiseThen() throws Exception {
+            runTest("js/js.translator/testData/box/nameClashes/promiseThen.kt");
+        }
+
+        @Test
         @TestMetadata("propertyAndNativeMethod.kt")
         public void testPropertyAndNativeMethod() throws Exception {
             runTest("js/js.translator/testData/box/nameClashes/propertyAndNativeMethod.kt");

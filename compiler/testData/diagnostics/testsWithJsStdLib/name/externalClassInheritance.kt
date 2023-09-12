@@ -221,3 +221,34 @@ interface MyInterface {
 }
 
 class MyClass : ExternalClass(), MyInterface
+
+// FILE: InheritGenericOutExternalClass.kt
+package InheritGenericOutExternalClass
+open external class ExternalClass<out T> {
+    open fun test(x: Int?): T
+    open fun test(x: Int?, y: String?): T
+}
+
+class MyClass : ExternalClass<Unit>()
+
+// FILE: InheritGenericInExternalClass.kt
+package InheritGenericInExternalClass
+open external class ExternalClass<in T> {
+    open fun test(x: T?): Int
+    open fun test(x: T?, y: String?): Int
+}
+
+class MyClass : ExternalClass<Int>() {
+    fun test(x: Int?, y: Int?) = x ?: y ?: 1
+}
+
+// FILE: InheritGenericInExternalClassClash.kt
+package InheritGenericInExternalClassClash
+open external class ExternalClass<in T> {
+    open fun test(x: T?): Int
+    <!JS_NAME_CLASH!>open fun test(x: T?, y: String?): Int<!>
+}
+
+class MyClass : ExternalClass<Int>() {
+    <!JS_NAME_CLASH!>override fun test(x: Int?)<!> = x ?: 1
+}
