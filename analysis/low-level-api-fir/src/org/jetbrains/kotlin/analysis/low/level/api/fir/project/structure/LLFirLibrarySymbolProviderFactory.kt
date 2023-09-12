@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 
 abstract class LLFirLibrarySymbolProviderFactory {
-    abstract fun createJvmFirDeserializedSymbolProviders(
+    abstract fun createJvmLibrarySymbolProvider(
         session: FirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,

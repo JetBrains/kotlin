@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
 class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) : LLFirLibrarySymbolProviderFactory() {
-    override fun createJvmFirDeserializedSymbolProviders(
+    override fun createJvmLibrarySymbolProvider(
         session: FirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
