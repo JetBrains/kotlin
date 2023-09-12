@@ -318,21 +318,23 @@ class ConeOverloadConflictResolver(
     private fun List<CandidateSignature>.exactMaxWith(): CandidateSignature? {
         var result: CandidateSignature? = null
         for (candidate in this) {
-            if (result == null || isOfNotLessSpecificShape(candidate, result)) {
+            if (result == null || checkExpectAndNotLessSpecificShape(candidate, result)) {
                 result = candidate
             }
         }
         if (result == null) return null
-        if (any { it != result && isOfNotLessSpecificShape(it, result) }) {
+        if (any { it != result && checkExpectAndNotLessSpecificShape(it, result) }) {
             return null
         }
         return result
     }
 
-    private fun isOfNotLessSpecificShape(
+    private fun checkExpectAndNotLessSpecificShape(
         call1: FlatSignature<Candidate>,
         call2: FlatSignature<Candidate>
     ): Boolean {
+        if (!call1.isExpect && call2.isExpect) return true
+        if (call1.isExpect && !call2.isExpect) return false
         val hasVarargs1 = call1.hasVarargs
         val hasVarargs2 = call2.hasVarargs
         if (hasVarargs1 && !hasVarargs2) return false

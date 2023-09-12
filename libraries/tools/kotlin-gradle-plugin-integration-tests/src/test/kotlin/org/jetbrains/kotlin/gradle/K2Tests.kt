@@ -201,4 +201,17 @@ class CustomK2Tests : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    @DisplayName("No overload resolution ambiguity between expect and non-expect in native")
+    fun kt61778NoOverloadResolutionAmbiguityBetweenExpectAndNonExpectInNative(gradleVersion: GradleVersion) {
+        project(
+            "k2-no-overload-resolution-ambiguity-between-expect-and-non-expect-in-native", gradleVersion,
+            buildOptions = defaultBuildOptions.copyEnsuringK2()
+        ) {
+            build("compileCommonMainKotlinMetadata") {
+                assertTasksExecuted(":compileCommonMainKotlinMetadata")
+            }
+        }
+    }
 }
