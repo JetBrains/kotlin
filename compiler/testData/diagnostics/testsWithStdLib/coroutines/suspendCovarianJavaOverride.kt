@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: I.kt
 
 interface I {
