@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -120,7 +120,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         getClassCall: FirGetClassCall,
         data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
-        return create(getClassCall.argument.coneTypeUnsafe())
+        return create(getClassCall.argument.resolvedType)
     }
 
     override fun visitQualifiedAccessExpression(
@@ -263,7 +263,7 @@ internal object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSessio
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirSession): Boolean = true
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: FirSession): Boolean {
-        return create(getClassCall.argument.coneTypeUnsafe()) != null
+        return create(getClassCall.argument.resolvedType) != null
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: FirSession): Boolean {

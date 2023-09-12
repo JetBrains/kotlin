@@ -45,9 +45,6 @@ val FirExpression.resolvedType: ConeKotlinType
 inline fun <reified T : ConeKotlinType> FirExpression.coneTypeSafe(): T? = (coneTypeOrNull as? T)
 
 @OptIn(UnresolvedExpressionTypeAccess::class)
-inline fun <reified T : ConeKotlinType> FirExpression.coneTypeUnsafe(): T = coneTypeOrNull as T
-
-@OptIn(UnresolvedExpressionTypeAccess::class)
 val FirExpression.isResolved: Boolean get() = coneTypeOrNull != null
 
 @RequiresOptIn(

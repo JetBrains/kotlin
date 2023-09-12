@@ -284,7 +284,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
 
 fun FirConstExpression<*>.getIrConstKind(): IrConstKind<*> = when (kind) {
     ConstantValueKind.IntegerLiteral, ConstantValueKind.UnsignedIntegerLiteral -> {
-        val type = coneTypeUnsafe<ConeIntegerLiteralType>()
+        val type = resolvedType as ConeIntegerLiteralType
         type.getApproximatedType().toConstKind()!!.toIrConstKind()
     }
 
