@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.PrivateForInline
 import kotlin.properties.PropertyDelegateProvider
@@ -1708,6 +1709,17 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val DEPRECATED_DECLARATION_OF_ENUM_ENTRY by warning<KtEnumEntry>()
     }
+
+    val COMPATIBILITY_ISSUES by object : DiagnosticGroup("Compatibility issues") {
+        val INCOMPATIBLE_CLASS by error<PsiElement> {
+            parameter<String>("presentableString")
+            parameter<IncompatibleVersionErrorData<*>>("incompatibility")
+        }
+        val PRE_RELEASE_CLASS by error<PsiElement> {
+            parameter<String>("presentableString")
+        }
+    }
+
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {

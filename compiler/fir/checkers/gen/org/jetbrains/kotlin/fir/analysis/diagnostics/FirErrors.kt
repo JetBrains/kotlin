@@ -111,6 +111,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.types.Variance
 
 /*
@@ -852,6 +853,10 @@ object FirErrors {
     val DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM by warning0<PsiElement>()
     val DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE by warning0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DEPRECATED_DECLARATION_OF_ENUM_ENTRY by warning0<KtEnumEntry>()
+
+    // Compatibility issues
+    val INCOMPATIBLE_CLASS by error2<PsiElement, String, IncompatibleVersionErrorData<*>>()
+    val PRE_RELEASE_CLASS by error1<PsiElement, String>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirErrorsDefaultMessages)

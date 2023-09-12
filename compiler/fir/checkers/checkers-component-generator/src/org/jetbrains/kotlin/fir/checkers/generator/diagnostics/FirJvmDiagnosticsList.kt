@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 
 @Suppress("ClassName", "unused")
 @OptIn(PrivateForInline::class)
@@ -177,12 +176,5 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         )
         val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error<PsiElement>()
         val NO_REFLECTION_IN_CLASS_PATH by warning<PsiElement>()
-        val INCOMPATIBLE_CLASS by error<PsiElement> {
-            parameter<String>("presentableString")
-            parameter<IncompatibleVersionErrorData<*>>("incompatibility")
-        }
-        val PRE_RELEASE_CLASS by error<PsiElement> {
-            parameter<String>("presentableString")
-        }
     }
 }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import java.io.Closeable
 import java.io.File
 import java.io.InputStreamReader
@@ -27,8 +27,8 @@ object FirDiagnosticsCompilerResultsReporter {
             reportDiagnosticToMessageCollector(diagnostic, location, messageCollector, renderDiagnosticName)
         }.also {
             AnalyzerWithCompilerReport.reportSpecialErrors(
-                diagnosticsCollector.diagnostics.any { it.factory == FirJvmErrors.INCOMPATIBLE_CLASS },
-                diagnosticsCollector.diagnostics.any { it.factory == FirJvmErrors.PRE_RELEASE_CLASS },
+                diagnosticsCollector.diagnostics.any { it.factory == FirErrors.INCOMPATIBLE_CLASS },
+                diagnosticsCollector.diagnostics.any { it.factory == FirErrors.PRE_RELEASE_CLASS },
                 hasUnstableClasses = false,     // TODO (KT-61598): report FIR_COMPILED_CLASS and IR_WITH_UNSTABLE_ABI_COMPILED_CLASS
                 hasFirUnstableClasses = false,  // TODO (KT-61598): report FIR_COMPILED_CLASS and IR_WITH_UNSTABLE_ABI_COMPILED_CLASS
                 messageCollector,

@@ -250,7 +250,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir)
     }
 
-    // KT-61596 K2 JS: support reporting PRE_RELEASE_CLASS
+    // TODO: unmute this test after switching LanguageVersion.LATEST_STABLE to 2.0.
     fun testReleaseCompilerAgainstPreReleaseLibraryJs() = muteForK2 {
         doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
     }

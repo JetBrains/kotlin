@@ -4837,6 +4837,21 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INCOMPATIBLE_CLASS) { firDiagnostic ->
+        IncompatibleClassImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PRE_RELEASE_CLASS) { firDiagnostic ->
+        PreReleaseClassImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.CONFLICTING_JVM_DECLARATIONS) { firDiagnostic ->
         ConflictingJvmDeclarationsImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -5315,21 +5330,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirJvmErrors.NO_REFLECTION_IN_CLASS_PATH) { firDiagnostic ->
         NoReflectionInClassPathImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.INCOMPATIBLE_CLASS) { firDiagnostic ->
-        IncompatibleClassImpl(
-            firDiagnostic.a,
-            firDiagnostic.b,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.PRE_RELEASE_CLASS) { firDiagnostic ->
-        PreReleaseClassImpl(
-            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
