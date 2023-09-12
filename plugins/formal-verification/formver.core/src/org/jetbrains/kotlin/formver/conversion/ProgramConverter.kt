@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
-import org.jetbrains.kotlin.contracts.description.KtCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.viper.MangledName
-import org.jetbrains.kotlin.formver.viper.ast.*
+import org.jetbrains.kotlin.formver.viper.ast.Field
+import org.jetbrains.kotlin.formver.viper.ast.Program
 
 /**
  * Tracks the top-level information about the program.
@@ -107,9 +108,10 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         val params = symbol.valueParameterSymbols.map {
             VariableEmbedding(it.embedName(), embedType(it.resolvedReturnType))
         }
-        val receiver = symbol.receiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it)) }
+        val receiverType = symbol.receiverType
+        val receiver = receiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it)) }
         return object : MethodSignatureEmbedding {
-            override val name = symbol.callableId.embedName()
+            override val name = symbol.embedName()
             override val receiver = receiver
             override val params = params
             override val returnType = embedType(retType)
@@ -117,7 +119,10 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     }
 
     private val FirFunctionSymbol<*>.receiverType: ConeKotlinType?
-        get() = dispatchReceiverType ?: resolvedReceiverTypeRef?.type
+        get() = when (this) {
+            is FirPropertyAccessorSymbol -> propertySymbol.dispatchReceiverType
+            else -> dispatchReceiverType ?: resolvedReceiverTypeRef?.type
+        }
 
     private fun processClass(symbol: FirRegularClassSymbol) {
         val concreteFields = symbol.declarationSymbols

@@ -150,6 +150,18 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("classes_getters.kt")
+        public void testClasses_getters() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes_getters.kt");
+        }
+
+        @Test
+        @TestMetadata("classes_setters.kt")
+        public void testClasses_setters() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes_setters.kt");
+        }
+
+        @Test
         @TestMetadata("extension_function.kt")
         public void testExtension_function() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/extension_function.kt");

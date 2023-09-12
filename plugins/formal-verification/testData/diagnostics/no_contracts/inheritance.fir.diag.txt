@@ -139,12 +139,10 @@ field pkg$$class_Bar$member_z: Int
 
 method pkg$$global$setSuperField(local$bar: Ref) returns (ret: dom$Unit)
 {
-  var anonymous$1: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
   inhale acc(local$bar.pkg$$class_Foo$member_b, write)
-  anonymous$1 := local$bar.pkg$$class_Foo$member_b
+  local$bar.pkg$$class_Foo$member_b := true
   exhale acc(local$bar.pkg$$class_Foo$member_b, write)
-  anonymous$1 := true
   label label$ret
 }
 

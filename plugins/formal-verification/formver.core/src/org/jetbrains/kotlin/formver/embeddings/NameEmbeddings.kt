@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.name.CallableId
@@ -44,13 +46,41 @@ data class ClassMemberName(val className: ClassName, val name: Name) : MangledNa
         get() = "${className.mangled}\$member_${name.asString()}"
 }
 
-/** Global name not associated with a class.
+data class ClassMemberGetter(val className: ClassName, val name: Name) : MangledName {
+    override val mangled: String
+        get() = "${className.mangled}\$getter_${name.asString()}"
+}
+
+data class ClassMemberSetter(val className: ClassName, val name: Name) : MangledName {
+    override val mangled: String
+        get() = "${className.mangled}\$setter_${name.asString()}"
+}
+
+/**
+ * Global name not associated with a class.
  */
 data class GlobalName(override val packageName: FqName, val name: Name) : FqMangledName {
     override val postfix: String = "global$${name.asStringStripSpecialMarkers()}"
 }
 
-fun FirValueParameterSymbol.embedName() = LocalName(name)
+fun FirValueParameterSymbol.embedName(): LocalName = LocalName(name)
+
+fun FirPropertyAccessorSymbol.embedName(): MangledName {
+    val callableId = propertySymbol.callableId
+    val name = ClassName(callableId.packageName, callableId.className!!.shortName())
+    val propertyName = propertySymbol.callableId.callableName
+    return when {
+        isGetter -> ClassMemberGetter(name, propertyName)
+        isSetter -> ClassMemberSetter(name, propertyName)
+        else -> throw IllegalStateException("A property accessor must be a setter or a getter!")
+    }
+}
+
+fun FirFunctionSymbol<*>.embedName(): MangledName = when (this) {
+    is FirPropertyAccessorSymbol -> embedName()
+    else -> callableId.embedName()
+}
+
 fun CallableId.embedName(): MangledName = when {
     isLocal -> {
         LocalName(callableName)

@@ -1,0 +1,136 @@
+/classes_setters.kt:(352,368): info: Generated Viper text for testCustomSetter:
+field pkg$$class_AlwaysPlusOne$member_b: Int
+
+field pkg$$class_AlwaysPlusOne$member_num: Int
+
+method pkg$$global$testCustomSetter() returns (ret: dom$Unit)
+{
+  var local$f: Ref
+  var anonymous$1: Ref
+  var anonymous$2: dom$Unit
+  anonymous$1 := pkg$$class_AlwaysPlusOne$member_AlwaysPlusOne()
+  local$f := anonymous$1
+  inhale acc(local$f.pkg$$class_AlwaysPlusOne$member_b, write)
+  local$f.pkg$$class_AlwaysPlusOne$member_b := 1
+  exhale acc(local$f.pkg$$class_AlwaysPlusOne$member_b, write)
+  anonymous$2 := pkg$$class_AlwaysPlusOne$setter_num(local$f, 1)
+  label label$ret
+}
+
+method pkg$$class_AlwaysPlusOne$member_AlwaysPlusOne() returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_AlwaysPlusOne())
+
+
+method pkg$$class_AlwaysPlusOne$setter_num(this: Ref, local$value: Int)
+  returns (ret: dom$Unit)
+
+
+/classes_setters.kt:(434,444): info: Generated Viper text for testSetter:
+field pkg$$class_Person$member_age: Int
+
+method pkg$$global$testSetter() returns (ret: dom$Unit)
+{
+  var local$person: Ref
+  var anonymous$1: Ref
+  var anonymous$2: Int
+  anonymous$1 := pkg$$class_Person$member_Person(19)
+  local$person := anonymous$1
+  inhale acc(local$person.pkg$$class_Person$member_age, write)
+  anonymous$2 := local$person.pkg$$class_Person$member_age
+  exhale acc(local$person.pkg$$class_Person$member_age, write)
+  inhale acc(local$person.pkg$$class_Person$member_age, write)
+  local$person.pkg$$class_Person$member_age := anonymous$2 + 1
+  exhale acc(local$person.pkg$$class_Person$member_age, write)
+  label label$ret
+}
+
+method pkg$$class_Person$member_Person(local$age: Int) returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Person())
+
+
+/classes_setters.kt:(516,533): info: Generated Viper text for testSetterCascade:
+field pkg$$class_Bar$member_a: Int
+
+field pkg$$class_Foo$member_b: Ref
+
+method pkg$$global$testSetterCascade() returns (ret: dom$Unit)
+{
+  var local$f: Ref
+  var anonymous$1: Ref
+  var anonymous$2: Ref
+  var anonymous$3: Ref
+  anonymous$2 := pkg$$class_Bar$member_Bar(10)
+  anonymous$1 := pkg$$class_Foo$member_Foo(anonymous$2)
+  local$f := anonymous$1
+  inhale acc(local$f.pkg$$class_Foo$member_b, write)
+  anonymous$3 := local$f.pkg$$class_Foo$member_b
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$3): dom$Type), dom$Type$pkg$$class_Bar())
+  exhale acc(local$f.pkg$$class_Foo$member_b, write)
+  inhale acc(anonymous$3.pkg$$class_Bar$member_a, write)
+  anonymous$3.pkg$$class_Bar$member_a := 42
+  exhale acc(anonymous$3.pkg$$class_Bar$member_a, write)
+  label label$ret
+}
+
+method pkg$$class_Foo$member_Foo(local$b: Ref) returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+
+
+method pkg$$class_Bar$member_Bar(local$a: Int) returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
+
+
+/classes_setters.kt:(585,609): info: Generated Viper text for testSetterNoBackingField:
+field pkg$$class_Baz$member__a: Int
+
+method pkg$$global$testSetterNoBackingField() returns (ret: dom$Unit)
+{
+  var local$baz: Ref
+  var anonymous$1: Ref
+  var anonymous$2: dom$Unit
+  anonymous$1 := pkg$$class_Baz$member_Baz()
+  local$baz := anonymous$1
+  anonymous$2 := pkg$$class_Baz$setter_a(local$baz, 42)
+  label label$ret
+}
+
+method pkg$$class_Baz$member_Baz() returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Baz())
+
+
+method pkg$$class_Baz$setter_a(this: Ref, local$value: Int)
+  returns (ret: dom$Unit)
+
+
+/classes_setters.kt:(694,704): info: Generated Viper text for mockInline:
+field pkg$$class_Bar$member_a: Int
+
+method pkg$$global$mockInline(local$b: Ref) returns (ret: dom$Unit)
+{
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$b): dom$Type), dom$Type$pkg$$class_Bar())
+  inhale acc(local$b.pkg$$class_Bar$member_a, write)
+  local$b.pkg$$class_Bar$member_a := 42
+  exhale acc(local$b.pkg$$class_Bar$member_a, write)
+  label label$ret
+}
+
+/classes_setters.kt:(735,751): info: Generated Viper text for testSetterLambda:
+field pkg$$class_Bar$member_a: Int
+
+method pkg$$global$testSetterLambda() returns (ret: dom$Unit)
+{
+  var anonymous$1: dom$Unit
+  if (true) {
+    var anonymous$2: Ref
+    anonymous$2 := pkg$$class_Bar$member_Bar(0)
+    inhale acc(anonymous$2.pkg$$class_Bar$member_a, write)
+    anonymous$2.pkg$$class_Bar$member_a := 42
+    exhale acc(anonymous$2.pkg$$class_Bar$member_a, write)
+    label inline_label$pkg$$global$mockInline$ret
+  }
+  label label$ret
+}
+
+method pkg$$class_Bar$member_Bar(local$a: Int) returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
+

@@ -1,0 +1,64 @@
+FILE: classes_getters.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(a: R|kotlin/Int|, b: R|kotlin/Int|): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+
+        public final val b: R|kotlin/Int| = R|<local>/b|
+            public get(): R|kotlin/Int|
+
+    }
+    public final class Bar : R|kotlin/Any| {
+        public constructor(f: R|Foo|): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val f: R|Foo| = R|<local>/f|
+            public get(): R|Foo|
+
+    }
+    public final class IntWrapper : R|kotlin/Any| {
+        public constructor(n: R|kotlin/Int|): R|IntWrapper| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val n: R|kotlin/Int| = R|<local>/n|
+            public get(): R|kotlin/Int|
+
+        public final val succ: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ this@R|/IntWrapper|.R|/IntWrapper.n|.R|kotlin/Int.plus|(Int(1))
+            }
+
+    }
+    public final class IntWrapperContainer : R|kotlin/Any| {
+        public constructor(i: R|IntWrapper|): R|IntWrapperContainer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|IntWrapper| = R|<local>/i|
+            public get(): R|IntWrapper|
+
+    }
+    public final fun createFoo(): R|kotlin/Unit| {
+        lval f: R|Foo| = R|/Foo.Foo|(Int(10), Int(20))
+        lval fa: R|kotlin/Int| = R|<local>/f|.R|/Foo.a|
+        lval fb: R|kotlin/Int| = R|<local>/f|.R|/Foo.b|
+    }
+    public final fun testGetter(): R|kotlin/Unit| {
+        lval wrapper: R|IntWrapper| = R|/IntWrapper.IntWrapper|(Int(42))
+        lval succ: R|kotlin/Int| = R|<local>/wrapper|.R|/IntWrapper.succ|
+    }
+    public final fun testCascadeGetter(): R|kotlin/Unit| {
+        lval foo: R|Foo| = R|/Foo.Foo|(Int(10), Int(20))
+        lval bar: R|Bar| = R|/Bar.Bar|(R|<local>/foo|)
+        lval bfa: R|kotlin/Int| = R|<local>/bar|.R|/Bar.f|.R|/Foo.a|
+        lval bfb: R|kotlin/Int| = R|<local>/bar|.R|/Bar.f|.R|/Foo.b|
+    }
+    public final fun testCascadeCustomGetters(): R|kotlin/Unit| {
+        lval wrapper: R|IntWrapperContainer| = R|/IntWrapperContainer.IntWrapperContainer|(R|/IntWrapper.IntWrapper|(Int(42)))
+        lval succ: R|kotlin/Int| = R|<local>/wrapper|.R|/IntWrapperContainer.i|.R|/IntWrapper.succ|
+    }

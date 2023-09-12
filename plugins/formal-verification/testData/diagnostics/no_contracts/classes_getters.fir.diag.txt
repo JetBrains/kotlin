@@ -1,0 +1,143 @@
+/classes_getters.kt:(195,204): info: Generated Viper text for createFoo:
+field pkg$$class_Foo$member_a: Int
+
+field pkg$$class_Foo$member_b: Int
+
+method pkg$$global$createFoo() returns (ret: dom$Unit)
+{
+  var local$f: Ref
+  var anonymous$1: Ref
+  var local$fa: Int
+  var anonymous$2: Int
+  var local$fb: Int
+  var anonymous$3: Int
+  anonymous$1 := pkg$$class_Foo$member_Foo(10, 20)
+  local$f := anonymous$1
+  inhale acc(local$f.pkg$$class_Foo$member_a, write)
+  anonymous$2 := local$f.pkg$$class_Foo$member_a
+  exhale acc(local$f.pkg$$class_Foo$member_a, write)
+  local$fa := anonymous$2
+  inhale acc(local$f.pkg$$class_Foo$member_b, write)
+  anonymous$3 := local$f.pkg$$class_Foo$member_b
+  exhale acc(local$f.pkg$$class_Foo$member_b, write)
+  local$fb := anonymous$3
+  label label$ret
+}
+
+method pkg$$class_Foo$member_Foo(local$a: Int, local$b: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+
+
+/classes_getters.kt:(280,290): info: Generated Viper text for testGetter:
+field pkg$$class_IntWrapper$member_n: Int
+
+method pkg$$global$testGetter() returns (ret: dom$Unit)
+{
+  var local$wrapper: Ref
+  var anonymous$1: Ref
+  var local$succ: Int
+  var anonymous$2: Int
+  anonymous$1 := pkg$$class_IntWrapper$member_IntWrapper(42)
+  local$wrapper := anonymous$1
+  anonymous$2 := pkg$$class_IntWrapper$getter_succ(local$wrapper)
+  local$succ := anonymous$2
+  label label$ret
+}
+
+method pkg$$class_IntWrapper$member_IntWrapper(local$n: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_IntWrapper())
+
+
+method pkg$$class_IntWrapper$getter_succ(this: Ref) returns (ret: Int)
+
+
+/classes_getters.kt:(363,380): info: Generated Viper text for testCascadeGetter:
+field pkg$$class_Foo$member_a: Int
+
+field pkg$$class_Foo$member_b: Int
+
+field pkg$$class_Bar$member_f: Ref
+
+method pkg$$global$testCascadeGetter() returns (ret: dom$Unit)
+{
+  var local$foo: Ref
+  var anonymous$1: Ref
+  var local$bar: Ref
+  var anonymous$2: Ref
+  var local$bfa: Int
+  var anonymous$3: Ref
+  var anonymous$4: Int
+  var local$bfb: Int
+  var anonymous$5: Ref
+  var anonymous$6: Int
+  anonymous$1 := pkg$$class_Foo$member_Foo(10, 20)
+  local$foo := anonymous$1
+  anonymous$2 := pkg$$class_Bar$member_Bar(local$foo)
+  local$bar := anonymous$2
+  inhale acc(local$bar.pkg$$class_Bar$member_f, write)
+  anonymous$3 := local$bar.pkg$$class_Bar$member_f
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$3): dom$Type), dom$Type$pkg$$class_Foo())
+  exhale acc(local$bar.pkg$$class_Bar$member_f, write)
+  inhale acc(anonymous$3.pkg$$class_Foo$member_a, write)
+  anonymous$4 := anonymous$3.pkg$$class_Foo$member_a
+  exhale acc(anonymous$3.pkg$$class_Foo$member_a, write)
+  local$bfa := anonymous$4
+  inhale acc(local$bar.pkg$$class_Bar$member_f, write)
+  anonymous$5 := local$bar.pkg$$class_Bar$member_f
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$5): dom$Type), dom$Type$pkg$$class_Foo())
+  exhale acc(local$bar.pkg$$class_Bar$member_f, write)
+  inhale acc(anonymous$5.pkg$$class_Foo$member_b, write)
+  anonymous$6 := anonymous$5.pkg$$class_Foo$member_b
+  exhale acc(anonymous$5.pkg$$class_Foo$member_b, write)
+  local$bfb := anonymous$6
+  label label$ret
+}
+
+method pkg$$class_Foo$member_Foo(local$a: Int, local$b: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+
+
+method pkg$$class_Bar$member_Bar(local$f: Ref) returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
+
+
+/classes_getters.kt:(486,510): info: Generated Viper text for testCascadeCustomGetters:
+field pkg$$class_IntWrapper$member_n: Int
+
+field pkg$$class_IntWrapperContainer$member_i: Ref
+
+method pkg$$global$testCascadeCustomGetters() returns (ret: dom$Unit)
+{
+  var local$wrapper: Ref
+  var anonymous$1: Ref
+  var anonymous$2: Ref
+  var local$succ: Int
+  var anonymous$3: Ref
+  var anonymous$4: Int
+  anonymous$2 := pkg$$class_IntWrapper$member_IntWrapper(42)
+  anonymous$1 := pkg$$class_IntWrapperContainer$member_IntWrapperContainer(anonymous$2)
+  local$wrapper := anonymous$1
+  inhale acc(local$wrapper.pkg$$class_IntWrapperContainer$member_i, write)
+  anonymous$3 := local$wrapper.pkg$$class_IntWrapperContainer$member_i
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$3): dom$Type), dom$Type$pkg$$class_IntWrapper())
+  exhale acc(local$wrapper.pkg$$class_IntWrapperContainer$member_i, write)
+  anonymous$4 := pkg$$class_IntWrapper$getter_succ(anonymous$3)
+  local$succ := anonymous$4
+  label label$ret
+}
+
+method pkg$$class_IntWrapperContainer$member_IntWrapperContainer(local$i: Ref)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_IntWrapperContainer())
+
+
+method pkg$$class_IntWrapper$member_IntWrapper(local$n: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_IntWrapper())
+
+
+method pkg$$class_IntWrapper$getter_succ(this: Ref) returns (ret: Int)
+

@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -32,6 +36,7 @@ import org.jetbrains.kotlin.formver.viper.ast.AccessPredicate
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
+import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -122,18 +127,31 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
                 val varEmbedding = data.getVariableEmbedding(symbol.callableId.embedName(), type)
                 if (symbol.isLocal) {
                     return varEmbedding.toLocalVar()
-                } else {
-                    val receiver = data.convert(propertyAccessExpression.dispatchReceiver!!)
-                    val fieldAccess = Exp.FieldAccess(receiver, varEmbedding.toField())
-                    val accPred = AccessPredicate.FieldAccessPredicate(fieldAccess, PermExp.FullPerm())
-                    return data.withResult(varEmbedding.type) {
-                        // We do not track permissions over time and thus have to inhale and exhale the permission when reading a field.
-                        data.addStatement(Stmt.Inhale(accPred))
-                        data.addStatement(Stmt.assign(resultExp, fieldAccess))
-                        resultCtx.resultVar.provenInvariants().forEach {
-                            data.addStatement(Stmt.Inhale(it))
+                }
+
+                val receiver = data.convert(propertyAccessExpression.dispatchReceiver!!)
+
+                return when (val getter = symbol.getter) {
+                    is FirDefaultPropertyGetter -> {
+                        val fieldAccess = Exp.FieldAccess(receiver, varEmbedding.toField())
+                        val accPred = AccessPredicate.FieldAccessPredicate(fieldAccess, PermExp.FullPerm())
+
+                        data.withResult(varEmbedding.type) {
+                            // We do not track permissions over time and thus have to inhale and exhale the permission when reading a field.
+                            data.addStatement(Stmt.Inhale(accPred))
+                            data.addStatement(Stmt.assign(resultExp, fieldAccess))
+                            resultCtx.resultVar.provenInvariants().forEach {
+                                data.addStatement(Stmt.Inhale(it))
+                            }
+                            data.addStatement(Stmt.Exhale(accPred))
                         }
-                        data.addStatement(Stmt.Exhale(accPred))
+                    }
+                    else -> {
+                        val method = data.embedFunction(getter.symbol)
+                        data.withResult(varEmbedding.type) {
+                            val methodCall = method.toMethodCall(listOf(receiver), resultCtx.resultVar)
+                            data.addStatement(methodCall)
+                        }
                     }
                 }
             }
@@ -260,14 +278,38 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
         variableAssignment: FirVariableAssignment,
         data: StmtConversionContext<ResultTrackingContext>,
     ): Exp {
-        // It is not entirely clear whether we can get away with ignoring the distinction between
-        // lvalues and rvalues, but let's try to at first, and we'll fix it later if it turns out
-        // not to work.
-        val convertedLValue = data.convert(variableAssignment.lValue)
         val lValueType = data.embedType(variableAssignment.lValue)
         val convertedRValue = data.convert(variableAssignment.rValue)
         val rValueType = data.embedType(variableAssignment.rValue)
-        data.addStatement(Stmt.assign(convertedLValue, convertedRValue.convertType(rValueType, lValueType)))
+
+        if (variableAssignment.lValue.isClassPropertyAccess) {
+            val lValue = variableAssignment.lValue as FirPropertyAccessExpression
+            val lValueSymbol = lValue.calleeSymbol as FirPropertySymbol
+            val receiver = data.convert(lValue.dispatchReceiver!!)
+
+            when (val setter = lValueSymbol.setter) {
+                is FirDefaultPropertySetter -> {
+                    // No custom setters have been defined, we can assign the fields normally.
+                    val varEmbedding = VariableEmbedding(lValueSymbol.callableId.embedName(), lValueType)
+                    val fieldAccess = Exp.FieldAccess(receiver, varEmbedding.toField())
+                    val accPred = AccessPredicate.FieldAccessPredicate(fieldAccess, PermExp.FullPerm())
+                    data.addStatement(Stmt.Inhale(accPred))
+                    data.addStatement(Stmt.assign(fieldAccess, convertedRValue.convertType(rValueType, lValueType)))
+                    data.addStatement(Stmt.Exhale(accPred))
+                }
+                else -> {
+                    // Since a custom setter has been defined, we should generate a statement to invoke a method call
+                    val method = data.embedFunction(setter.symbol)
+                    data.withResult(UnitTypeEmbedding) {
+                        data.addStatement(method.toMethodCall(listOf(receiver, convertedRValue), this.resultCtx.resultVar))
+                    }
+                }
+            }
+        } else {
+            val convertedLValue = data.convert(variableAssignment.lValue)
+            data.addStatement(Stmt.assign(convertedLValue, convertedRValue.convertType(rValueType, lValueType)))
+        }
+
         return UnitDomain.element
     }
 
@@ -320,6 +362,19 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
             else -> handleUnimplementedElement("Can't embed type operator ${typeOperatorCall.operation}.", data)
         }
     }
+
+    @OptIn(SymbolInternals::class)
+    private val FirPropertySymbol.getter: FirPropertyAccessor
+        get() = fir.getter!!
+    @OptIn(SymbolInternals::class)
+    private val FirPropertySymbol.setter: FirPropertyAccessor
+        get() = fir.setter!!
+
+    private val FirExpression.isClassPropertyAccess: Boolean
+        get() = when (this) {
+            is FirPropertyAccessExpression -> dispatchReceiver != null
+            else -> false
+        }
 
     private fun handleUnimplementedElement(msg: String, data: StmtConversionContext<ResultTrackingContext>): Exp =
         when (data.config.behaviour) {

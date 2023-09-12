@@ -18,12 +18,11 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
     val resultCtx: RTC
 
     fun convert(stmt: FirStatement): Exp
+    fun convertAndStore(exp: FirExpression): Exp.LocalVar
 
     fun convertAndCapture(exp: FirExpression) {
         resultCtx.capture(convert(exp), embedType(exp))
     }
-
-    fun convertAndStore(exp: FirExpression): Exp.LocalVar
 
     fun newBlock(): StmtConversionContext<RTC>
     fun withoutResult(): StmtConversionContext<NoopResultTracker>
