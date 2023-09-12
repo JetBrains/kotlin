@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
+object FINALLY_EXPRESSION : IrStatementOriginImpl("FINALLY_EXPRESSION")
+
 class FinallyBlocksLowering(val context: CommonBackendContext, private val throwableType: IrType): FileLoweringPass, IrElementTransformerVoidWithContext() {
 
     private interface HighLevelJump {
@@ -271,13 +273,17 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
                 +irReturnableBlock(symbol, type) {
                     +value
                 }
-                +copy(finallyExpression)
+                +irComposite(resultType = context.irBuiltIns.unitType, origin = FINALLY_EXPRESSION) {
+                    +copy(finallyExpression)
+                }
             }
             else -> irBlock(value, null, type) {
                 val tmp = createTmpVariable(irReturnableBlock(symbol, type) {
                     +irReturn(symbol, value)
                 })
-                +copy(finallyExpression)
+                +irComposite(resultType = context.irBuiltIns.unitType, origin = FINALLY_EXPRESSION) {
+                    +copy(finallyExpression)
+                }
                 +irGet(tmp)
             }
         }

@@ -961,6 +961,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         public void testSuspendMethodWithSuperCall() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/suspendMethodWithSuperCall.kt");
         }
+
+        @Test
+        @TestMetadata("tryFinally.kt")
+        public void testTryFinally() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/tryFinally.kt");
+        }
     }
 
     @Nested
