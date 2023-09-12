@@ -1,0 +1,18 @@
+/suspensionPointInMonitorNewInf.kt:19:13: error: the 'suspensionPoint' suspension point is inside a critical section
+            suspensionPoint()
+            ^
+/suspensionPointInMonitorNewInf.kt:23:13: error: the 'suspensionPoint' suspension point is inside a critical section
+            suspensionPoint()
+            ^
+/suspensionPointInMonitorNewInf.kt:26:30: error: the 'suspensionPoint' suspension point is inside a critical section
+        synchronized(lock, { suspensionPoint() })
+                             ^
+/suspensionPointInMonitorNewInf.kt:38:13: error: the 'suspensionPoint' suspension point is inside a critical section
+            suspensionPoint()
+            ^
+/suspensionPointInMonitorNewInf.kt:45:9: error: the 'suspensionPoint' suspension point is inside a critical section
+        suspensionPoint()
+        ^
+/suspensionPointInMonitorNewInf.kt:54:45: error: the 'returnsInt' suspension point is inside a critical section
+                    return@synchronized 1 + returnsInt()
+                                            ^
