@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder.Co
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.generators.tree.SimpleTypeArgument
+import org.jetbrains.kotlin.generators.tree.StandardTypes
+import org.jetbrains.kotlin.generators.tree.TypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuilder) {
@@ -107,7 +109,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("deprecationsProvider", deprecationsProviderType).withReplace().apply { isMutable = true }
             +symbol("FirCallableSymbol", "out FirCallableDeclaration")
 
-            +field("containerSource", type(DeserializedContainerSource::class), nullable = true)
+            +field("containerSource", type<DeserializedContainerSource>(), nullable = true)
             +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
 
             +fieldList(contextReceiver, useMutableOrEmpty = true, withReplace = true)
@@ -169,7 +171,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         returnExpression.configure {
-            parentArg(jump, "E", function.withArgs("E" to "*"))
+            parentArg(jump, "E", function.withArgs("E" to TypeRef.Star))
             +field("result", expression).withTransform()
             needTransformOtherChildren()
         }
@@ -337,7 +339,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         typeParameter.configure {
             +name
             +symbol("FirTypeParameterSymbol")
-            +field("containingDeclarationSymbol", firBasedSymbolType, "*").apply {
+            +field("containingDeclarationSymbol", firBasedSymbolType to listOf(TypeRef.Star)).apply {
                 withBindThis = false
             }
             +field(varianceType)
@@ -547,7 +549,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         annotationArgumentMapping.configure {
-            +field("mapping", type("Map") to listOf(nameType, expression))
+            +field("mapping", StandardTypes.map to listOf(nameType, expression))
         }
 
         augmentedArraySetCall.configure {
@@ -746,7 +748,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         whenExpression.configure {
             +field("subject", expression, nullable = true).withTransform()
-            +field("subjectVariable", variable.withArgs("E" to "*"), nullable = true)
+            +field("subjectVariable", variable.withArgs("E" to TypeRef.Star), nullable = true)
             +fieldList("branches", whenBranch).withTransform()
             +field("exhaustivenessStatus", exhaustivenessStatusType, nullable = true, withReplace = true)
             +booleanField("usedAsExpression")
@@ -781,10 +783,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
     }
 }
 
-fun Element.withArgs(vararg replacements: Pair<String, String>): AbstractElement {
+// TODO: Replace with org.jetbrains.kotlin.generators.tree.withArgs
+fun Element.withArgs(vararg replacements: Pair<String, TypeRef>): AbstractElement {
     val replaceMap = replacements.toMap()
     val newArguments = typeArguments.map { typeArgument ->
-        replaceMap[typeArgument.name]?.let { SimpleTypeArgument(it, null) } ?: typeArgument
+        replaceMap[typeArgument.name]?.let { SimpleTypeArgument(it.type, null) } ?: typeArgument
     }
     return ElementWithArguments(this, newArguments)
 }

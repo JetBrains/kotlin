@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.fir.tree.generator.context
 
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.IntermediateBuilder
-import org.jetbrains.kotlin.fir.tree.generator.model.Type
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
 import org.jetbrains.kotlin.utils.DummyDelegate
+import org.jetbrains.kotlin.generators.tree.ClassRef
+import org.jetbrains.kotlin.generators.tree.PositionTypeParameterRef
+import org.jetbrains.kotlin.generators.tree.TypeRef
+import org.jetbrains.kotlin.generators.tree.TypeKind
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -93,22 +96,21 @@ abstract class AbstractFirTreeBuilder {
     }
 }
 
-fun generatedType(type: String): Type = generatedType("", type)
+fun generatedType(type: String, kind: TypeKind = TypeKind.Class): ClassRef<PositionTypeParameterRef> = generatedType("", type, kind)
 
-fun generatedType(packageName: String, type: String): Type {
+fun generatedType(packageName: String, type: String, kind: TypeKind = TypeKind.Class): ClassRef<PositionTypeParameterRef> {
     val realPackage = BASE_PACKAGE + if (packageName.isNotBlank()) ".$packageName" else ""
-    return type(realPackage, type, exactPackage = true)
+    return type(realPackage, type, exactPackage = true, kind = kind)
 }
 
-fun type(packageName: String?, type: String, exactPackage: Boolean = false): Type {
-    val realPackage = if (exactPackage) packageName else packageName?.let { "org.jetbrains.kotlin.$it" }
-    return Type(realPackage, type)
+fun type(
+    packageName: String,
+    type: String,
+    exactPackage: Boolean = false,
+    kind: TypeKind = TypeKind.Interface,
+): ClassRef<PositionTypeParameterRef> {
+    val realPackage = if (exactPackage) packageName else packageName.let { "org.jetbrains.kotlin.$it" }
+    return org.jetbrains.kotlin.generators.tree.type(realPackage, type, kind)
 }
 
-fun type(type: String): Type = type(null, type)
-
-fun type(klass: KClass<*>): Type {
-    val fqn = klass.qualifiedName!!
-    val name = klass.simpleName!!
-    return type(fqn.dropLast(name.length + 1), name, exactPackage = true)
-}
+inline fun <reified T : Any> type() = org.jetbrains.kotlin.generators.tree.type<T>()

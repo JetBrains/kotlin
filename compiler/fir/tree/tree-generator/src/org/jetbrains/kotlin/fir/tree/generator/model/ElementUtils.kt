@@ -9,25 +9,27 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.generators.tree.typeWithArguments
 import org.jetbrains.kotlin.generators.tree.Importable
+import org.jetbrains.kotlin.generators.tree.NamedTypeParameterRef
+import org.jetbrains.kotlin.generators.tree.TypeRef
 
 // ----------- Simple field -----------
 
-fun field(name: String, type: String, packageName: String?, customType: Importable? = null, nullable: Boolean = false, withReplace: Boolean = false): Field {
+fun field(name: String, type: String, packageName: String?, customType: TypeRef? = null, nullable: Boolean = false, withReplace: Boolean = false): Field {
     return SimpleField(name, type, packageName, customType, nullable, withReplace)
 }
 
-fun field(name: String, type: Type, nullable: Boolean = false, withReplace: Boolean = false): Field {
+fun field(name: String, type: TypeRef, nullable: Boolean = false, withReplace: Boolean = false): Field {
     return SimpleField(name, type.typeWithArguments, type.packageName, null, nullable, withReplace)
 }
 
-fun field(name: String, typeWithArgs: Pair<Type, List<Importable>>, nullable: Boolean = false, withReplace: Boolean = false): Field {
+fun field(name: String, typeWithArgs: Pair<TypeRef, List<TypeRef>>, nullable: Boolean = false, withReplace: Boolean = false): Field {
     val (type, args) = typeWithArgs
     return SimpleField(name, type.typeWithArguments, type.packageName, null, nullable, withReplace).apply {
         arguments += args
     }
 }
 
-fun field(type: Type, nullable: Boolean = false, withReplace: Boolean = false): Field {
+fun field(type: TypeRef, nullable: Boolean = false, withReplace: Boolean = false): Field {
     return SimpleField(type.type.replaceFirstChar(Char::lowercaseChar), type.typeWithArguments, type.packageName, null, nullable, withReplace)
 }
 
@@ -45,11 +47,11 @@ fun intField(name: String, withReplace: Boolean = false): Field {
 
 // ----------- Fir field -----------
 
-fun field(name: String, type: Type, argument: String? = null, nullable: Boolean = false, withReplace: Boolean = false): Field {
+fun field(name: String, type: TypeRef, argument: String? = null, nullable: Boolean = false, withReplace: Boolean = false): Field {
     return if (argument == null) {
         field(name, type, nullable, withReplace)
     } else {
-        field(name, type to listOf(type(argument)), nullable, withReplace)
+        field(name, type to listOf(NamedTypeParameterRef(argument)), nullable, withReplace)
     }
 }
 
@@ -63,7 +65,7 @@ fun field(element: Element, nullable: Boolean = false, withReplace: Boolean = fa
 
 // ----------- Field list -----------
 
-fun fieldList(name: String, type: Importable, withReplace: Boolean = false, useMutableOrEmpty: Boolean = false): Field {
+fun fieldList(name: String, type: TypeRef, withReplace: Boolean = false, useMutableOrEmpty: Boolean = false): Field {
     return FieldList(name, type, withReplace, useMutableOrEmpty)
 }
 

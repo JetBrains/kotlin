@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.generators.tree
 
 sealed class TypeArgument(val name: String) {
-    abstract val upperBounds: List<Importable>
+    abstract val upperBounds: List<TypeRef>
 }
 
-class SimpleTypeArgument(name: String, val upperBound: Importable?) : TypeArgument(name) {
-    override val upperBounds: List<Importable> = listOfNotNull(upperBound)
+class SimpleTypeArgument(name: String, val upperBound: TypeRef?) : TypeArgument(name) {
+    override val upperBounds: List<TypeRef> = listOfNotNull(upperBound)
 
     override fun toString(): String {
         var result = name
@@ -21,7 +21,7 @@ class SimpleTypeArgument(name: String, val upperBound: Importable?) : TypeArgume
     }
 }
 
-class TypeArgumentWithMultipleUpperBounds(name: String, override val upperBounds: List<Importable>) : TypeArgument(name) {
+class TypeArgumentWithMultipleUpperBounds(name: String, override val upperBounds: List<TypeRef>) : TypeArgument(name) {
     override fun toString(): String {
         return name
     }

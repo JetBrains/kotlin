@@ -55,7 +55,7 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                 println("transformer.transform$name(this, data) as E")
             }
 
-            fun Field.replaceDeclaration(override: Boolean, overridenType: Importable? = null, forceNullable: Boolean = false) {
+            fun Field.replaceDeclaration(override: Boolean, overridenType: TypeRef? = null, forceNullable: Boolean = false) {
                 println()
                 if (name == "source") {
                     println("@FirImplementationDetail")

@@ -53,8 +53,8 @@ fun Implementation.collectImports(base: List<String> = emptyList(), kind: Import
                 + arbitraryImportables.mapNotNull { it.fullQualifiedName }
                 + parents.mapNotNull { it.fullQualifiedName }
                 + listOfNotNull(
-            pureAbstractElementType.fullQualifiedName?.takeIf { needPureAbstractElement },
-            firImplementationDetailType.fullQualifiedName?.takeIf { isPublic || requiresOptIn },
+            pureAbstractElementType.fullQualifiedName.takeIf { needPureAbstractElement },
+            firImplementationDetailType.fullQualifiedName.takeIf { isPublic || requiresOptIn },
         ),
         kind,
     )
@@ -65,7 +65,7 @@ fun Element.collectImports(): List<String> {
     baseTypes += AbstractFirTreeBuilder.baseFirElement.fullQualifiedName
     baseTypes += parentsArguments.values.flatMap { it.values }.mapNotNull { it.fullQualifiedName }
     if (needPureAbstractElement) {
-        baseTypes += pureAbstractElementType.fullQualifiedName!!
+        baseTypes += pureAbstractElementType.fullQualifiedName
     }
     return collectImportsInternal(
         baseTypes,
@@ -107,7 +107,7 @@ private fun List<String>.filterRedundantImports(
 ): List<String> {
     val realPackageName = "$packageName.${kind.postfix}"
     return filter { fqn ->
-        fqn.dropLastWhile { it != '.' } != realPackageName
+        !fqn.startsWith("kotlin.") && fqn.dropLastWhile { it != '.' } != realPackageName
     }.distinct().sorted() + "$VISITOR_PACKAGE.*"
 }
 
@@ -128,7 +128,7 @@ fun transformFunctionDeclaration(transformName: String, returnType: String): Str
     return "fun <D> transform$transformName(transformer: FirTransformer<D>, data: D): $returnType"
 }
 
-fun Field.replaceFunctionDeclaration(overridenType: Importable? = null, forceNullable: Boolean = false): String {
+fun Field.replaceFunctionDeclaration(overridenType: TypeRef? = null, forceNullable: Boolean = false): String {
     val capName = name.replaceFirstChar(Char::uppercaseChar)
     val type = overridenType?.typeWithArguments ?: typeWithArguments
 

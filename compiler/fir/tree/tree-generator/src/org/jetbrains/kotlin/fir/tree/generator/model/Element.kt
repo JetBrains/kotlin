@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.util.set
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
-import org.jetbrains.kotlin.generators.tree.Importable
-import org.jetbrains.kotlin.generators.tree.TypeArgument
-import org.jetbrains.kotlin.generators.tree.typeWithArguments
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.AbstractElement as CommonAbstractElement
 
 interface AbstractElement : CommonAbstractElement<AbstractElement, Field> {
@@ -43,7 +40,7 @@ class Element(override val name: String, kind: Kind) : AbstractElement {
     override var defaultImplementation: Implementation? = null
     override val customImplementations = mutableListOf<Implementation>()
     override val typeArguments = mutableListOf<TypeArgument>()
-    override val parentsArguments = mutableMapOf<AbstractElement, MutableMap<Importable, Importable>>()
+    override val parentsArguments = mutableMapOf<AbstractElement, MutableMap<TypeRef, TypeRef>>()
     override var kind: ImplementationKind? = null
         set(value) {
             if (value !in allowedKinds) {
@@ -61,7 +58,7 @@ class Element(override val name: String, kind: Kind) : AbstractElement {
     override var doesNotNeedImplementation: Boolean = false
 
     override val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || parents.any { it.needTransformOtherChildren }
-    override val overridenFields: MutableMap<Field, MutableMap<Importable, Boolean>> = mutableMapOf()
+    override val overridenFields: MutableMap<Field, MutableMap<Field, Boolean>> = mutableMapOf()
     override val useNullableForReplace: MutableSet<Field> = mutableSetOf()
     override val allImplementations: List<Implementation> by lazy {
         if (doesNotNeedImplementation) {
@@ -87,7 +84,7 @@ class Element(override val name: String, kind: Kind) : AbstractElement {
                 existingField.withReplace = parentField.withReplace || existingField.withReplace
                 existingField.parentHasSeparateTransform = parentField.needsSeparateTransform
                 if (parentField.type != existingField.type && parentField.withReplace) {
-                    existingField.overridenTypes += parentField
+                    existingField.overridenTypes += parentField.typeRef
                     overridenFields[existingField, parentField] = false
                 } else {
                     overridenFields[existingField, parentField] = true
@@ -107,8 +104,8 @@ class Element(override val name: String, kind: Kind) : AbstractElement {
         parents.forEach { parent ->
             val fields = parent.allFields.map { field ->
                 val copy = (field as? SimpleField)?.let { simpleField ->
-                    parentsArguments[parent]?.get(Type(null, simpleField.type))?.let {
-                        simpleField.replaceType(Type(it.packageName, it.type))
+                    parentsArguments[parent]?.get(NamedTypeParameterRef(simpleField.type))?.let {
+                        simpleField.replaceType(it)
                     }
                 } ?: field.copy()
                 copy.apply {

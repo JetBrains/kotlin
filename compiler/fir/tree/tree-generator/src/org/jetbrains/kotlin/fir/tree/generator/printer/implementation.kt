@@ -329,7 +329,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
 
             fun generateReplace(
                 field: Field,
-                overridenType: Importable? = null,
+                overridenType: TypeRef? = null,
                 forceNullable: Boolean = false,
                 body: () -> Unit,
             ) {

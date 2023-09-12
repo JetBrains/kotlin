@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.fir.tree.generator.printer.generics
-import org.jetbrains.kotlin.generators.tree.typeWithArguments
-import org.jetbrains.kotlin.generators.tree.ArbitraryImportable
-import org.jetbrains.kotlin.generators.tree.Importable
-import org.jetbrains.kotlin.generators.tree.AbstractField
+import org.jetbrains.kotlin.generators.tree.*
 
 sealed class Field : AbstractField() {
     open var withReplace: Boolean = false
@@ -25,7 +22,7 @@ sealed class Field : AbstractField() {
     open var isMutableInInterface: Boolean = false
     open val fromDelegate: Boolean get() = false
 
-    open val overridenTypes: MutableSet<Importable> = mutableSetOf()
+    open val overridenTypes: MutableSet<TypeRef> = mutableSetOf()
     open var useNullableForReplace: Boolean = false
     open var notNull: Boolean = false
 
@@ -78,7 +75,7 @@ class FieldWithDefault(val origin: Field) : Field() {
         get() = origin.needTransformInOtherChildren
         set(_) {}
 
-    override val arguments: MutableList<Importable>
+    override val arguments: MutableList<TypeRef>
         get() = origin.arguments
 
     override val fullQualifiedName: String?
@@ -113,7 +110,7 @@ class FieldWithDefault(val origin: Field) : Field() {
     override var customSetter: String? = null
     override var fromDelegate: Boolean = false
     var needAcceptAndTransform: Boolean = true
-    override val overridenTypes: MutableSet<Importable>
+    override val overridenTypes: MutableSet<TypeRef>
         get() = origin.overridenTypes
 
     override val arbitraryImportables: MutableList<Importable>
@@ -138,7 +135,7 @@ class SimpleField(
     override val name: String,
     override val type: String,
     override val packageName: String?,
-    val customType: Importable? = null,
+    val customType: TypeRef? = null,
     override val nullable: Boolean,
     override var withReplace: Boolean,
     override var isVolatile: Boolean = false,
@@ -170,7 +167,7 @@ class SimpleField(
         }
     }
 
-    fun replaceType(newType: Type) = SimpleField(
+    fun replaceType(newType: TypeRef) = SimpleField(
         name = name,
         type = newType.type,
         packageName = newType.packageName,
@@ -195,7 +192,7 @@ class FirField(
 ) : Field() {
     init {
         if (element is ElementWithArguments) {
-            arguments += element.typeArguments.map { Type(null, it.name) }
+            arguments += element.typeArguments.map { NamedTypeParameterRef(it.name) }
         }
     }
 
@@ -229,7 +226,7 @@ class FirField(
 
 class FieldList(
     override val name: String,
-    val baseType: Importable,
+    val baseType: TypeRef,
     override var withReplace: Boolean,
     useMutableOrEmpty: Boolean = false
 ) : Field() {
