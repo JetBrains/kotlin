@@ -47,9 +47,33 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     }
 
     @Test
+    @TestMetadata("annotationWithoutDeclaration.kt")
+    public void testAnnotationWithoutDeclaration() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/annotationWithoutDeclaration.kt");
+    }
+
+    @Test
     @TestMetadata("contextReceiver.kt")
     public void testContextReceiver() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiverWithoutDeclaration.kt")
+    public void testContextReceiverWithoutDeclaration() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextReceiverWithoutDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("emptyContextForPositionInImportDirective.kt")
+    public void testEmptyContextForPositionInImportDirective() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/emptyContextForPositionInImportDirective.kt");
+    }
+
+    @Test
+    @TestMetadata("emptyContextForPositionInPackageDirective.kt")
+    public void testEmptyContextForPositionInPackageDirective() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/emptyContextForPositionInPackageDirective.kt");
     }
 
     @Test
@@ -62,6 +86,12 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     @TestMetadata("errorType.kt")
     public void testErrorType() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/errorType.kt");
+    }
+
+    @Test
+    @TestMetadata("kDocWithoutDeclaration.kt")
+    public void testKDocWithoutDeclaration() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/kDocWithoutDeclaration.kt");
     }
 
     @Test

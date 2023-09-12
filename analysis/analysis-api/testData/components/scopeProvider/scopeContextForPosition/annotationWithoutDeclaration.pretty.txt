@@ -1,0 +1,37 @@
+element: e
+implicit receivers:
+scopes:
+  ExplicitSimpleImportingScope, index = 0
+    packages: 0
+    classifiers: 1
+      annotation class A
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 1
+    packages: 7
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      pkg
+      sun
+    classifiers: 1
+      class B
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 2
+
+  DefaultSimpleImportingScope, index = 3
+
+  ExplicitStarImportingScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 5
+
+  DefaultStarImportingScope, index = 6

@@ -1,0 +1,100 @@
+element: e
+implicit receivers:
+scopes:
+  ExplicitSimpleImportingScope, index = 0
+    packages: 0
+    classifiers: 1
+      KtNamedClassOrObjectSymbol:
+        annotationsList: []
+        classIdIfNonLocal: pkg/A
+        classKind: CLASS
+        companionObject: null
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        modality: FINAL
+        name: A
+        origin: SOURCE
+        superTypes: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Any
+        ]
+        symbolKind: TOP_LEVEL
+        typeParameters: []
+        visibility: Public
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 1
+    packages: 7
+      KtPackageSymbol:
+        fqName: META-INF
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: java
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: javax
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: kotlin
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: org
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: pkg
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: sun
+        origin: SOURCE
+    classifiers: 1
+      KtNamedClassOrObjectSymbol:
+        annotationsList: []
+        classIdIfNonLocal: B
+        classKind: CLASS
+        companionObject: null
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        modality: FINAL
+        name: B
+        origin: SOURCE
+        superTypes: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Any
+        ]
+        symbolKind: TOP_LEVEL
+        typeParameters: []
+        visibility: Public
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 2
+
+  DefaultSimpleImportingScope, index = 3
+
+  ExplicitStarImportingScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 5
+
+  DefaultStarImportingScope, index = 6
+
