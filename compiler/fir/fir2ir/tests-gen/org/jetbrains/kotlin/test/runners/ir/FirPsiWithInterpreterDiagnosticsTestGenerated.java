@@ -30,4 +30,10 @@ public class FirPsiWithInterpreterDiagnosticsTestGenerated extends AbstractFirPs
     public void testExceptionFromInterpreter() throws Exception {
         runTest("compiler/testData/diagnostics/irInterpreter/exceptionFromInterpreter.kt");
     }
+
+    @Test
+    @TestMetadata("recursionAccess.kt")
+    public void testRecursionAccess() throws Exception {
+        runTest("compiler/testData/diagnostics/irInterpreter/recursionAccess.kt");
+    }
 }
