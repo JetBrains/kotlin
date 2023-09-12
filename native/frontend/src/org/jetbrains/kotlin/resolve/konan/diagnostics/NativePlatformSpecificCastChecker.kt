@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
 import org.jetbrains.kotlin.builtins.PlatformSpecificCastChecker
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.konan.getForwardDeclarationKindOrNull
 import org.jetbrains.kotlin.types.KotlinType

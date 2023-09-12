@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.konan.platform
 
-import org.jetbrains.kotlin.container.StorageComponentContainer
-import org.jetbrains.kotlin.container.useImpl
-import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.builtins.PlatformSpecificCastChecker
+import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -30,6 +29,9 @@ object NativePlatformConfigurator : PlatformConfiguratorBase(
         NativeObjCNameChecker, NativeObjCNameOverridesChecker,
         NativeObjCRefinementChecker, NativeObjCRefinementAnnotationChecker,
         NativeObjCRefinementOverridesChecker, NativeHiddenFromObjCInheritanceChecker,
+    ),
+    additionalClashResolvers = listOf(
+        PlatformExtensionsClashResolver.FallbackToDefault(NativePlatformSpecificCastChecker, PlatformSpecificCastChecker::class.java)
     ),
     platformSpecificCastChecker = NativePlatformSpecificCastChecker
 ) {

@@ -5,10 +5,11 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.container.DefaultImplementation
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.types.KotlinType
 
 @DefaultImplementation(impl = PlatformSpecificCastChecker.Default::class)
-interface PlatformSpecificCastChecker {
+interface PlatformSpecificCastChecker : PlatformSpecificExtension<PlatformSpecificCastChecker> {
     fun isCastPossible(fromType: KotlinType, toType: KotlinType): Boolean
 
     class Default : PlatformSpecificCastChecker {
