@@ -149,10 +149,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
                 if (messageCollector.hasErrors()) return COMPILATION_ERROR
 
-                // TODO: uncomment (KT-61761)
-//                if (!FirKotlinToJvmBytecodeCompiler.checkNotSupportedPlugins(configuration, messageCollector)) {
-//                    return COMPILATION_ERROR
-//                }
+                if (!FirKotlinToJvmBytecodeCompiler.checkNotSupportedPlugins(configuration, messageCollector)) {
+                    return COMPILATION_ERROR
+                }
 
                 compileModulesUsingFrontendIrAndLightTree(
                     projectEnvironment, configuration, messageCollector, buildFile, chunk.single(), targetDescription,

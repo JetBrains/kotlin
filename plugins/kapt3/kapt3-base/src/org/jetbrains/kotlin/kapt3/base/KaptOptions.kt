@@ -130,7 +130,6 @@ enum class KaptFlag(val description: String, val defaultValue: Boolean = false) 
     STRIP_METADATA("Strip @Metadata annotations from stubs"),
     KEEP_KDOC_COMMENTS_IN_STUBS("Keep KDoc comments in stubs", defaultValue = true),
     USE_JVM_IR("Use JVM IR backend", defaultValue = true),
-    USE_K2("Use K2"),
     ;
 }
 

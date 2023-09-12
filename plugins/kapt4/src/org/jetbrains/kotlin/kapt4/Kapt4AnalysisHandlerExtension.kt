@@ -32,8 +32,7 @@ import java.io.File
 
 private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
     override fun isApplicable(configuration: CompilerConfiguration): Boolean {
-        val options = configuration[KAPT_OPTIONS]
-        return options != null && (configuration.getBoolean(USE_FIR) || KaptFlag.USE_K2 in options.flags)
+        return configuration[KAPT_OPTIONS] != null && configuration.getBoolean(USE_FIR)
     }
 
     @OptIn(KtAnalysisApiInternals::class)
@@ -181,16 +180,11 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
 class Kapt4CompilerPluginRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        Companion.registerExtensions(this)
+        if (!configuration.getBoolean(USE_FIR)) return
+
+        FirAnalysisHandlerExtension.registerExtension(Kapt4AnalysisHandlerExtension())
     }
 
     override val supportsK2: Boolean
         get() = true
-
-
-    companion object {
-        fun registerExtensions(extensionStorage: ExtensionStorage) = with(extensionStorage) {
-            FirAnalysisHandlerExtension.registerExtension(Kapt4AnalysisHandlerExtension())
-        }
-    }
 }

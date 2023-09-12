@@ -125,7 +125,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             STRIP_METADATA_OPTION -> setFlag(KaptFlag.STRIP_METADATA, value)
             KEEP_KDOC_COMMENTS_IN_STUBS -> setFlag(KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS, value)
             USE_JVM_IR -> setFlag(KaptFlag.USE_JVM_IR, value)
-            USE_K2 -> setFlag(KaptFlag.USE_K2, value)
+            USE_K2 -> {}
 
             SHOW_PROCESSOR_STATS -> setFlag(KaptFlag.SHOW_PROCESSOR_STATS, value)
             DUMP_PROCESSOR_STATS -> processorsStatsReportFile = File(value)
@@ -169,11 +169,11 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 @Suppress("DEPRECATION")
 class Kapt3ComponentRegistrar : ComponentRegistrar {
     override val supportsK2: Boolean
-        get() = false
+        get() = true
 
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val optionsBuilder = (configuration[KAPT_OPTIONS] ?: KaptOptions.Builder())
-        if (configuration.getBoolean(USE_FIR) || KaptFlag.USE_K2 in optionsBuilder.flags) return
+        if (configuration.getBoolean(USE_FIR)) return
 
         doOpenInternalPackagesIfRequired()
         val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
