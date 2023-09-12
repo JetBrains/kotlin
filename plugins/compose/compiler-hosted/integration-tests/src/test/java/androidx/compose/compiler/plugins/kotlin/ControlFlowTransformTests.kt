@@ -1710,28 +1710,30 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               if (isTraceInProgress()) {
                 traceEventStart(<>, %changed, -1, <>)
               }
-              val y = val tmp0_subject = x
-              when {
-                tmp0_subject == 0 -> {
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "<R(a)>")
-                  val tmp0_group = R(a, %composer, 0)
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                tmp0_subject == 0b0001 -> {
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "<R(b)>")
-                  val tmp1_group = R(b, %composer, 0)
-                  %composer.endReplaceableGroup()
-                  tmp1_group
-                }
-                else -> {
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "<R(c)>")
-                  val tmp2_group = R(c, %composer, 0)
-                  %composer.endReplaceableGroup()
-                  tmp2_group
+              val y = <block>{
+                val tmp0_subject = x
+                when {
+                  tmp0_subject == 0 -> {
+                    %composer.startReplaceableGroup(<>)
+                    sourceInformation(%composer, "<R(a)>")
+                    val tmp0_group = R(a, %composer, 0)
+                    %composer.endReplaceableGroup()
+                    tmp0_group
+                  }
+                  tmp0_subject == 0b0001 -> {
+                    %composer.startReplaceableGroup(<>)
+                    sourceInformation(%composer, "<R(b)>")
+                    val tmp1_group = R(b, %composer, 0)
+                    %composer.endReplaceableGroup()
+                    tmp1_group
+                  }
+                  else -> {
+                    %composer.startReplaceableGroup(<>)
+                    sourceInformation(%composer, "<R(c)>")
+                    val tmp2_group = R(c, %composer, 0)
+                    %composer.endReplaceableGroup()
+                    tmp2_group
+                  }
                 }
               }
               if (isTraceInProgress()) {
@@ -2002,16 +2004,18 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               if (isTraceInProgress()) {
                 traceEventStart(<>, %changed, -1, <>)
               }
-              val y = val <elvis> = x
-              val tmp0_group = when {
-                <elvis> == null -> {
-                  R(%composer, 0)
+              val y = <block>{
+                val <elvis> = x
+                val tmp0_group = when {
+                  <elvis> == null -> {
+                    R(%composer, 0)
+                  }
+                  else -> {
+                    <elvis>
+                  }
                 }
-                else -> {
-                  <elvis>
-                }
+                tmp0_group
               }
-              tmp0_group
               if (isTraceInProgress()) {
                 traceEventEnd()
               }
@@ -3794,12 +3798,13 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               if (isTraceInProgress()) {
                 traceEventStart(<>, %changed, -1, <>)
               }
-              val y =
-              %composer.startMovableGroup(<>, x)
-              sourceInformation(%composer, "<R()>")
-              val tmp0 = R(%composer, 0)
-              %composer.endMovableGroup()
-              tmp0
+              val y = <block>{
+                %composer.startMovableGroup(<>, x)
+                sourceInformation(%composer, "<R()>")
+                val tmp0 = R(%composer, 0)
+                %composer.endMovableGroup()
+                tmp0
+              }
               P(y, %composer, 0)
               if (isTraceInProgress()) {
                 traceEventEnd()
@@ -3830,22 +3835,23 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               if (isTraceInProgress()) {
                 traceEventStart(<>, %changed, -1, <>)
               }
-              val tmp0 =
-              val tmp4_group = if (x > 0) {
-                val tmp3_group = if (%composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "<B()>")
-                val tmp1_group = B(%composer, 0)
-                %composer.endReplaceableGroup()
-                tmp1_group) 1 else if (%composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "<B()>")
-                val tmp2_group = B(%composer, 0)
-                %composer.endReplaceableGroup()
-                tmp2_group) 2 else 3
-                tmp3_group
-              } else {
-                4
+              val tmp0 = <block>{
+                val tmp4_group = if (x > 0) {
+                  val tmp3_group = if (%composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "<B()>")
+                  val tmp1_group = B(%composer, 0)
+                  %composer.endReplaceableGroup()
+                  tmp1_group) 1 else if (%composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "<B()>")
+                  val tmp2_group = B(%composer, 0)
+                  %composer.endReplaceableGroup()
+                  tmp2_group) 2 else 3
+                  tmp3_group
+                } else {
+                  4
+                }
+                tmp4_group
               }
-              tmp4_group
               if (isTraceInProgress()) {
                 traceEventEnd()
               }
@@ -4151,13 +4157,14 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               if (isTraceInProgress()) {
                 traceEventStart(<>, %changed, -1, <>)
               }
-              val tmp0 =
-              val tmp1_group = x.let { it: Int ->
-                A(%composer, 0)
-                val tmp0_return = 123
-                tmp0_return
+              val tmp0 = <block>{
+                val tmp1_group = x.let { it: Int ->
+                  A(%composer, 0)
+                  val tmp0_return = 123
+                  tmp0_return
+                }
+                tmp1_group
               }
-              tmp1_group
               if (isTraceInProgress()) {
                 traceEventEnd()
               }
@@ -6195,17 +6202,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
-                Test(%composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "<rememb...>")
-                val tmp0_group = if (param == null) {
-                  remember({
-                    ""
-                  }, %composer, 0)
-                } else {
-                  null
-                }
-                %composer.endReplaceableGroup()
-                tmp0_group, %composer, 0)
+                Test(<block>{
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "<rememb...>")
+                  val tmp0_group = if (param == null) {
+                    remember({
+                      ""
+                    }, %composer, 0)
+                  } else {
+                    null
+                  }
+                  %composer.endReplaceableGroup()
+                  tmp0_group
+                }, %composer, 0)
                 if (isTraceInProgress()) {
                   traceEventEnd()
                 }
@@ -6249,25 +6258,29 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               if (isTraceInProgress()) {
                 traceEventStart(<>, %changed, -1, <>)
               }
-              val tmp0 = Test(%composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "<Test(>")
-              val tmp2_group = if (param == null) {
-                Test(%composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "<rememb...>")
-                val tmp1_group = if (param == null) {
-                  remember({
-                    ""
+              val tmp0 = Test(<block>{
+                %composer.startReplaceableGroup(<>)
+                sourceInformation(%composer, "<Test(>")
+                val tmp2_group = if (param == null) {
+                  Test(<block>{
+                    %composer.startReplaceableGroup(<>)
+                    sourceInformation(%composer, "<rememb...>")
+                    val tmp1_group = if (param == null) {
+                      remember({
+                        ""
+                      }, %composer, 0)
+                    } else {
+                      null
+                    }
+                    %composer.endReplaceableGroup()
+                    tmp1_group
                   }, %composer, 0)
                 } else {
                   null
                 }
                 %composer.endReplaceableGroup()
-                tmp1_group, %composer, 0)
-              } else {
-                null
-              }
-              %composer.endReplaceableGroup()
-              tmp2_group, %composer, 0)
+                tmp2_group
+              }, %composer, 0)
               if (isTraceInProgress()) {
                 traceEventEnd()
               }

@@ -571,7 +571,7 @@ class IrSourcePrinterVisitor(
                             }
                         }
                         else -> {
-                            arg.print()
+                            arg.printWithExplicitBlock()
                         }
                     }
                     if (i < arguments.size - 1) print(", ")
@@ -582,6 +582,18 @@ class IrSourcePrinterVisitor(
         trailingLambda?.let {
             print(" ")
             it.print()
+        }
+    }
+
+    fun IrElement.printWithExplicitBlock() {
+        when (this) {
+            is IrBlock -> {
+                println("<block>{")
+                indented { print() }
+                println()
+                print("}")
+            }
+            else -> print()
         }
     }
 
@@ -925,7 +937,7 @@ class IrSourcePrinterVisitor(
         print(declaration.normalizedName)
         declaration.initializer?.let {
             print(" = ")
-            it.print()
+            it.printWithExplicitBlock()
         }
     }
 
@@ -968,7 +980,7 @@ class IrSourcePrinterVisitor(
         print(type.renderSrc())
         declaration.initializer?.let {
             print(" = ")
-            it.print()
+            it.printWithExplicitBlock()
         }
     }
 
@@ -989,7 +1001,7 @@ class IrSourcePrinterVisitor(
         print(".")
         print(expression.symbol.owner.name)
         print(" = ")
-        expression.value.print()
+        expression.value.printWithExplicitBlock()
     }
 
     override fun visitGetEnumValue(expression: IrGetEnumValue) {
@@ -1002,7 +1014,7 @@ class IrSourcePrinterVisitor(
     override fun visitSetValue(expression: IrSetValue) {
         print(expression.symbol.owner.normalizedName)
         print(" = ")
-        expression.value.print()
+        expression.value.printWithExplicitBlock()
     }
 
     override fun visitExpressionBody(body: IrExpressionBody) {

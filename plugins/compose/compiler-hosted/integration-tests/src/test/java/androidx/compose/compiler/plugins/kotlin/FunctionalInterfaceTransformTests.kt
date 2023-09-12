@@ -81,33 +81,35 @@ class FunctionalInterfaceTransformTests(
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
-                Test(class <no name provided> : TestContent {
-                  @Composable
-                  override fun Content(%this%Test: String, %composer: Composer?, %changed: Int) {
-                    %composer = %composer.startRestartGroup(<>)
-                    sourceInformation(%composer, "C(Content):Test.kt")
-                    val %dirty = %changed
-                    if (%changed and 0b1110 === 0) {
-                      %dirty = %dirty or if (%composer.changed(%this%Test)) 0b0100 else 0b0010
-                    }
-                    if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
-                      if (isTraceInProgress()) {
-                        traceEventStart(<>, %dirty, -1, <>)
+                Test(<block>{
+                  class <no name provided> : TestContent {
+                    @Composable
+                    override fun Content(%this%Test: String, %composer: Composer?, %changed: Int) {
+                      %composer = %composer.startRestartGroup(<>)
+                      sourceInformation(%composer, "C(Content):Test.kt")
+                      val %dirty = %changed
+                      if (%changed and 0b1110 === 0) {
+                        %dirty = %dirty or if (%composer.changed(%this%Test)) 0b0100 else 0b0010
                       }
-                      %this%Test.length
-                      if (isTraceInProgress()) {
-                        traceEventEnd()
+                      if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                        if (isTraceInProgress()) {
+                          traceEventStart(<>, %dirty, -1, <>)
+                        }
+                        %this%Test.length
+                        if (isTraceInProgress()) {
+                          traceEventEnd()
+                        }
+                      } else {
+                        %composer.skipToGroupEnd()
                       }
-                    } else {
-                      %composer.skipToGroupEnd()
-                    }
-                    val tmp0_rcvr = <this>
-                    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                      tmp0_rcvr.Content(%this%Test, %composer, updateChangedFlags(%changed or 0b0001))
+                      val tmp0_rcvr = <this>
+                      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                        tmp0_rcvr.Content(%this%Test, %composer, updateChangedFlags(%changed or 0b0001))
+                      }
                     }
                   }
-                }
-                <no name provided>(), %composer, 0)
+                  <no name provided>()
+                }, %composer, 0)
                 if (isTraceInProgress()) {
                   traceEventEnd()
                 }
@@ -186,33 +188,35 @@ class FunctionalInterfaceTransformTests(
               abstract fun compute(value: Int, %composer: Composer?, %changed: Int)
             }
             fun Example(a: A) {
-              Example(class <no name provided> : A {
-                @Composable
-                override fun compute(it: Int, %composer: Composer?, %changed: Int) {
-                  %composer = %composer.startRestartGroup(<>)
-                  sourceInformation(%composer, "C(compute)<comput...>:Test.kt")
-                  val %dirty = %changed
-                  if (%changed and 0b1110 === 0) {
-                    %dirty = %dirty or if (%composer.changed(it)) 0b0100 else 0b0010
-                  }
-                  if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
-                    if (isTraceInProgress()) {
-                      traceEventStart(<>, %dirty, -1, <>)
+              Example(<block>{
+                class <no name provided> : A {
+                  @Composable
+                  override fun compute(it: Int, %composer: Composer?, %changed: Int) {
+                    %composer = %composer.startRestartGroup(<>)
+                    sourceInformation(%composer, "C(compute)<comput...>:Test.kt")
+                    val %dirty = %changed
+                    if (%changed and 0b1110 === 0) {
+                      %dirty = %dirty or if (%composer.changed(it)) 0b0100 else 0b0010
                     }
-                    a.compute(it, %composer, 0b1110 and %dirty)
-                    if (isTraceInProgress()) {
-                      traceEventEnd()
+                    if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                      if (isTraceInProgress()) {
+                        traceEventStart(<>, %dirty, -1, <>)
+                      }
+                      a.compute(it, %composer, 0b1110 and %dirty)
+                      if (isTraceInProgress()) {
+                        traceEventEnd()
+                      }
+                    } else {
+                      %composer.skipToGroupEnd()
                     }
-                  } else {
-                    %composer.skipToGroupEnd()
-                  }
-                  val tmp0_rcvr = <this>
-                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                    tmp0_rcvr.compute(it, %composer, updateChangedFlags(%changed or 0b0001))
+                    val tmp0_rcvr = <this>
+                    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                      tmp0_rcvr.compute(it, %composer, updateChangedFlags(%changed or 0b0001))
+                    }
                   }
                 }
-              }
-              <no name provided>())
+                <no name provided>()
+              })
             }
         """
     )
@@ -247,33 +251,35 @@ class FunctionalInterfaceTransformTests(
               static val %stable: Int = 0
             }
             fun test() {
-              Repro().test(class <no name provided> : Consumer<Any?> {
-                @Composable
-                override fun consume(string: String, %composer: Composer?, %changed: Int) {
-                  %composer = %composer.startRestartGroup(<>)
-                  sourceInformation(%composer, "C(consume):Test.kt")
-                  val %dirty = %changed
-                  if (%changed and 0b1110 === 0) {
-                    %dirty = %dirty or if (%composer.changed(string)) 0b0100 else 0b0010
-                  }
-                  if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
-                    if (isTraceInProgress()) {
-                      traceEventStart(<>, %dirty, -1, <>)
+              Repro().test(<block>{
+                class <no name provided> : Consumer<Any?> {
+                  @Composable
+                  override fun consume(string: String, %composer: Composer?, %changed: Int) {
+                    %composer = %composer.startRestartGroup(<>)
+                    sourceInformation(%composer, "C(consume):Test.kt")
+                    val %dirty = %changed
+                    if (%changed and 0b1110 === 0) {
+                      %dirty = %dirty or if (%composer.changed(string)) 0b0100 else 0b0010
                     }
-                    println(string)
-                    if (isTraceInProgress()) {
-                      traceEventEnd()
+                    if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                      if (isTraceInProgress()) {
+                        traceEventStart(<>, %dirty, -1, <>)
+                      }
+                      println(string)
+                      if (isTraceInProgress()) {
+                        traceEventEnd()
+                      }
+                    } else {
+                      %composer.skipToGroupEnd()
                     }
-                  } else {
-                    %composer.skipToGroupEnd()
-                  }
-                  val tmp0_rcvr = <this>
-                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                    tmp0_rcvr.consume(string, %composer, updateChangedFlags(%changed or 0b0001))
+                    val tmp0_rcvr = <this>
+                    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                      tmp0_rcvr.consume(string, %composer, updateChangedFlags(%changed or 0b0001))
+                    }
                   }
                 }
-              }
-              <no name provided>())
+                <no name provided>()
+              })
             }
         """
     )
@@ -418,29 +424,31 @@ class FunctionalInterfaceTransformTests(
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
-                Example(class <no name provided> : Consumer {
-                  @Composable
-                  override fun invoke(<unused var>: Int, %composer: Composer?, %changed: Int) {
-                    %composer = %composer.startRestartGroup(<>)
-                    sourceInformation(%composer, "C(invoke):Test.kt")
-                    if (%changed and 0b0001 !== 0 || !%composer.skipping) {
-                      if (isTraceInProgress()) {
-                        traceEventStart(<>, %changed, -1, <>)
+                Example(<block>{
+                  class <no name provided> : Consumer {
+                    @Composable
+                    override fun invoke(<unused var>: Int, %composer: Composer?, %changed: Int) {
+                      %composer = %composer.startRestartGroup(<>)
+                      sourceInformation(%composer, "C(invoke):Test.kt")
+                      if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+                        if (isTraceInProgress()) {
+                          traceEventStart(<>, %changed, -1, <>)
+                        }
+                        Unit
+                        if (isTraceInProgress()) {
+                          traceEventEnd()
+                        }
+                      } else {
+                        %composer.skipToGroupEnd()
                       }
-                      Unit
-                      if (isTraceInProgress()) {
-                        traceEventEnd()
+                      val tmp0_rcvr = <this>
+                      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                        tmp0_rcvr.invoke(<unused var>, %composer, updateChangedFlags(%changed or 0b0001))
                       }
-                    } else {
-                      %composer.skipToGroupEnd()
-                    }
-                    val tmp0_rcvr = <this>
-                    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                      tmp0_rcvr.invoke(<unused var>, %composer, updateChangedFlags(%changed or 0b0001))
                     }
                   }
-                }
-                <no name provided>(), %composer, 0)
+                  <no name provided>()
+                }, %composer, 0)
                 if (isTraceInProgress()) {
                   traceEventEnd()
                 }
