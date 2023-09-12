@@ -420,13 +420,13 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 "META-INF/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME",
 
                 "commonMain/default/manifest",
-                "commonMain/default/linkdata/package_com.example/",
+                "commonMain/default/linkdata/package_com.example.foo/",
 
                 "jvmAndJsMain/default/manifest",
-                "jvmAndJsMain/default/linkdata/package_com.example/",
+                "jvmAndJsMain/default/linkdata/package_com.example.foo/",
 
                 "linuxAndJsMain/default/manifest",
-                "linuxAndJsMain/default/linkdata/package_com.example/"
+                "linuxAndJsMain/default/linkdata/package_com.example.foo/"
             )
 
             val parsedProjectStructureMetadata: KotlinProjectStructureMetadata = publishedMetadataJar.getProjectStructureMetadata()
@@ -526,7 +526,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             shouldNotInclude = listOf(
                 "my-lib-foo" to "jvmAndJsMain",
                 "my-lib-foo" to "linuxAndJsMain",
-                "third-party-lib-metadata-1.0" to ""
+                "third-party-lib-1.0" to "commonMain"
             )
         )
 
@@ -535,7 +535,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             shouldInclude = listOf(
                 "my-lib-foo" to "main",
                 "my-lib-foo" to "jvmAndJsMain",
-                "third-party-lib-metadata-1.0" to ""
+                "third-party-lib-1.0" to "commonMain"
             ),
             shouldNotInclude = listOf(
                 "my-lib-foo" to "linuxAndJsMain"
@@ -550,7 +550,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             ),
             shouldNotInclude = listOf(
                 "my-lib-foo" to "jvmAndJsMain",
-                "third-party-lib-metadata-1.0" to ""
+                "third-party-lib-1.0" to "commonMain"
             )
         )
     }
@@ -570,7 +570,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 "my-lib-bar" to "linuxAndJsMain",
                 "my-lib-foo" to "jvmAndJsMain",
                 "my-lib-foo" to "linuxAndJsMain",
-                "third-party-lib-metadata-1.0" to ""
+                "third-party-lib-1.0" to "commonMain"
             )
         )
 
@@ -581,7 +581,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 "my-lib-bar" to "jvmAndJsMain",
                 "my-lib-foo" to "main",
                 "my-lib-foo" to "jvmAndJsMain",
-                "third-party-lib-metadata-1.0" to ""
+                "third-party-lib-1.0" to "commonMain"
             ),
             shouldNotInclude = listOf(
                 "my-lib-bar" to "linuxAndJsMain",
@@ -600,7 +600,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             shouldNotInclude = listOf(
                 "my-lib-bar" to "jvmAndJsMain",
                 "my-lib-foo" to "jvmAndJsMain",
-                "third-party-lib-metadata-1.0" to ""
+                "third-party-lib-1.0" to "commonMain"
             )
         )
 
