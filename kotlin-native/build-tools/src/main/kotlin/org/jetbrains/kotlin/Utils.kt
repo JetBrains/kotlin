@@ -300,7 +300,10 @@ fun compileSwift(
             options + "-o" + output.toString() + sources +
             if (fullBitcode) listOf("-embed-bitcode", "-Xlinker", "-bitcode_verify") else listOf("-embed-bitcode-marker")
 
-    val (stdOut, stdErr, exitCode) = runProcess(executor = localExecutor(project), executable = compiler, args = args)
+    val (stdOut, stdErr, exitCode) = runProcess(
+            executor = localExecutor(project), executable = compiler, args = args,
+            env = mapOf("DYLD_FALLBACK_FRAMEWORK_PATH" to configs.absoluteTargetToolchain + "/ExtraFrameworks")
+    )
 
     println(
         """
