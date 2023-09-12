@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
+import org.jetbrains.kotlin.generators.tree.printer.multipleUpperBoundsList
+import org.jetbrains.kotlin.generators.tree.printer.typeParameters
 import org.jetbrains.kotlin.generators.tree.typeWithArguments
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -61,7 +63,7 @@ fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeBy
                 } else {
                     print("open")
                 }
-                print(" fun ${typeParameters}visit$name($varName: $typeWithArguments, data: D): R${multipleUpperBoundsList()} = visit")
+                print(" fun ${typeParameters(end = " ")}visit$name($varName: $typeWithArguments, data: D): R${multipleUpperBoundsList()} = visit")
                 if (visitSuperTypeByDefault) {
                     print(element.getNameOfSupertypeForDefaultVisiting())
                 } else {
@@ -99,7 +101,7 @@ fun printVisitorVoid(elements: List<Element>, generationPath: File): GeneratedFi
                 if (element == AbstractFirTreeBuilder.baseFirElement) continue
                 with(element) {
                     val varName = safeDecapitalizedName
-                    println("open fun ${typeParameters}visit$name($varName: $typeWithArguments)${multipleUpperBoundsList()} {")
+                    println("open fun ${typeParameters(end = " ")}visit$name($varName: $typeWithArguments)${multipleUpperBoundsList()} {")
                     withIndent {
                         println("visitElement($varName)")
                     }
@@ -111,7 +113,7 @@ fun printVisitorVoid(elements: List<Element>, generationPath: File): GeneratedFi
             for (element in elements) {
                 with(element) {
                     val varName = safeDecapitalizedName
-                    println("final override fun ${typeParameters}visit$name($varName: $typeWithArguments, data: Nothing?)${multipleUpperBoundsList()} {")
+                    println("final override fun ${typeParameters(end = " ")}visit$name($varName: $typeWithArguments, data: Nothing?)${multipleUpperBoundsList()} {")
                     withIndent {
                         println("visit$name($varName)")
                     }
@@ -145,7 +147,7 @@ fun printDefaultVisitorVoid(elements: List<Element>, generationPath: File): Gene
             if (!element.isAcceptableForDefaultVisiting()) continue
             with(element) {
                 val varName = safeDecapitalizedName
-                println("override fun ${typeParameters}visit$name($varName: $typeWithArguments)${multipleUpperBoundsList()} = visit${element.getNameOfSupertypeForDefaultVisiting()}($varName)")
+                println("override fun ${typeParameters(end = " ")}visit$name($varName: $typeWithArguments)${multipleUpperBoundsList()} = visit${element.getNameOfSupertypeForDefaultVisiting()}($varName)")
                 println()
             }
         }

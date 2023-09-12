@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.generators.tree
 
+import org.jetbrains.kotlin.generators.tree.printer.generics
+
 /**
  * A common interface representing a FIR or IR tree element.
  */
@@ -17,6 +19,10 @@ interface AbstractElement<Element : AbstractElement<Element, Field>, Field : Abs
 
     val parents: List<Element>
 
+    val params: List<TypeVariable>
+
+    // TODO: Remove this property as soon as we replace org.jetbrains.kotlin.fir.tree.generator.model.ElementWithArguments with
+    // a generic ElementRef class
     val typeArguments: List<TypeArgument>
 
     val parentsArguments: Map<Element, Map<TypeRef, TypeRef>>
@@ -31,8 +37,3 @@ interface AbstractElement<Element : AbstractElement<Element, Field>, Field : Abs
 
     override fun getTypeWithArguments(notNull: Boolean): String = type + generics
 }
-
-val AbstractElement<*, *>.generics: String
-    get() = typeArguments.takeIf { it.isNotEmpty() }
-        ?.let { it.joinToString(", ", "<", ">") { it.name } }
-        ?: ""

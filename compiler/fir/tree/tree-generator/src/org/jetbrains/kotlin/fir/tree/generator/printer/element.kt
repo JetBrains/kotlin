@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
-import org.jetbrains.kotlin.generators.tree.Importable
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.util.get
-import org.jetbrains.kotlin.generators.tree.TypeRef
-import org.jetbrains.kotlin.generators.tree.typeWithArguments
+import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.printer.braces
+import org.jetbrains.kotlin.generators.tree.printer.multipleUpperBoundsList
+import org.jetbrains.kotlin.generators.tree.printer.typeParameters
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
@@ -53,9 +53,7 @@ fun SmartPrinter.printElement(element: Element) {
         }
 
         print("${kind!!.title} $type")
-        if (typeArguments.isNotEmpty()) {
-            print(typeArguments.joinToString(", ", "<", ">") { it.toString() })
-        }
+        print(typeParameters())
         val needPureAbstractElement = !isInterface && !allParents.any { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }
 
         if (parents.isNotEmpty() || needPureAbstractElement) {

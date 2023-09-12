@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.model.*
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
-import org.jetbrains.kotlin.generators.tree.Importable
-import org.jetbrains.kotlin.generators.tree.TypeRef
-import org.jetbrains.kotlin.generators.tree.typeWithArguments
+import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.printer.braces
+import org.jetbrains.kotlin.generators.tree.printer.typeParameters
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.withIndent
@@ -70,7 +69,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             print("internal ")
         }
         print("${kind!!.title} $type")
-        print(element.typeParameters)
+        print(element.typeParameters(end = " "))
 
         val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
         val isAbstract = kind == ImplementationKind.AbstractClass || kind == ImplementationKind.SealedClass

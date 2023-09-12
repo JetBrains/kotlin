@@ -77,7 +77,7 @@ private fun Element.collectImportsInternal(base: List<String>, kind: ImportKind)
     val fqns = base + allFields.mapNotNull { it.fullQualifiedName } +
             allFields.flatMap { it.overridenTypes.mapNotNull { it.fullQualifiedName } + it.arbitraryImportables.mapNotNull { it.fullQualifiedName } } +
             allFields.flatMap { it.arguments.mapNotNull { it.fullQualifiedName } } +
-            typeArguments.flatMap { it.upperBounds.mapNotNull { it.fullQualifiedName } }
+            params.flatMap { it.bounds.mapNotNull { it.fullQualifiedName } }
     val result = fqns.filterRedundantImports(packageName, kind).toMutableList()
 
     if (allFields.any { it is FieldList && it.isMutableOrEmpty }) {
@@ -149,21 +149,6 @@ fun Field.getMutableType(forBuilder: Boolean = false, notNull: Boolean = false):
 
 fun Field.call(): String = if (nullable) "?." else "."
 
-fun Element.multipleUpperBoundsList(): String {
-    return typeArguments.filterIsInstance<TypeArgumentWithMultipleUpperBounds>().takeIf { it.isNotEmpty() }?.let { arguments ->
-        val upperBoundsList = arguments.joinToString(", ") { argument ->
-            argument.upperBounds.joinToString(", ") { upperBound -> "${argument.name} : ${upperBound.typeWithArguments}" }
-        }
-        " where $upperBoundsList"
-    } ?: ""
-}
-
-fun ImplementationKind?.braces(): String = when (this) {
-    ImplementationKind.Interface, ImplementationKind.SealedInterface -> ""
-    ImplementationKind.OpenClass, ImplementationKind.AbstractClass, ImplementationKind.SealedClass -> "()"
-    else -> throw IllegalStateException(this.toString())
-}
-
 val Element.safeDecapitalizedName: String get() = if (name == "Class") "klass" else name.replaceFirstChar(Char::lowercaseChar)
 
 val ImplementationWithArg.generics: String
@@ -172,9 +157,4 @@ val ImplementationWithArg.generics: String
 val Field.generics: String
     get() = arguments.takeIf { it.isNotEmpty() }
         ?.let { it.joinToString(", ", "<", ">") { it.typeWithArguments } }
-        ?: ""
-
-val Element.typeParameters: String
-    get() = typeArguments.takeIf { it.isNotEmpty() }
-        ?.joinToString(", ", "<", "> ")
         ?: ""
