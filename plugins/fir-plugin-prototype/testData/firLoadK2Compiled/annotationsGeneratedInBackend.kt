@@ -8,5 +8,6 @@ import org.jetbrains.kotlin.fir.plugin.AddAnnotations
 class Some(val x: Int) {
     fun foo() {}
 
+    // some comment
     class Derived
 }
