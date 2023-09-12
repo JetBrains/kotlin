@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.renderer.replacePrefixesInTypeRepresentations
 import org.jetbrains.kotlin.renderer.typeStringsDifferOnlyInNullability
 
-class ConeTypeRendererWithJavaFlexibleTypes : ConeTypeRenderer {
+class ConeTypeRendererForReadability : ConeTypeRenderer {
 
     private val idRendererCreator: () -> ConeIdRenderer
 
@@ -27,9 +27,9 @@ class ConeTypeRendererWithJavaFlexibleTypes : ConeTypeRenderer {
     }
 
     override fun render(flexibleType: ConeFlexibleType) {
-        val lowerRenderer = ConeTypeRendererWithJavaFlexibleTypes(StringBuilder(), idRendererCreator)
+        val lowerRenderer = ConeTypeRendererForReadability(StringBuilder(), idRendererCreator)
         lowerRenderer.render(flexibleType.lowerBound)
-        val upperRenderer = ConeTypeRendererWithJavaFlexibleTypes(StringBuilder(), idRendererCreator)
+        val upperRenderer = ConeTypeRendererForReadability(StringBuilder(), idRendererCreator)
         upperRenderer.render(flexibleType.upperBound)
         builder.append(renderFlexibleType(lowerRenderer.builder.toString(), upperRenderer.builder.toString()))
     }

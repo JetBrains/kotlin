@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.renderer.ConeIdRendererForDebugging
 import org.jetbrains.kotlin.fir.renderer.ConeIdShortRenderer
 import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
-import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererWithJavaFlexibleTypes
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForReadability
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
@@ -121,13 +121,13 @@ fun ConeKotlinType.renderForDebugging(): String {
 
 fun ConeKotlinType.renderReadable(): String {
     val builder = StringBuilder()
-    ConeTypeRendererWithJavaFlexibleTypes(builder) { ConeIdShortRenderer() }.render(this)
+    ConeTypeRendererForReadability(builder) { ConeIdShortRenderer() }.render(this)
     return builder.toString()
 }
 
 fun ConeKotlinType.renderReadableWithFqNames(): String {
     val builder = StringBuilder()
-    ConeTypeRendererWithJavaFlexibleTypes(builder) { ConeIdRendererForDebugging() }.render(this)
+    ConeTypeRendererForReadability(builder) { ConeIdRendererForDebugging() }.render(this)
     return builder.toString()
 }
 

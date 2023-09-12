@@ -138,7 +138,7 @@ object FirDiagnosticRenderers {
             annotationRenderer = null,
             bodyRenderer = null,
             idRenderer = idRendererCreator(),
-            typeRenderer = ConeTypeRendererWithJavaFlexibleTypes(idRendererCreator)
+            typeRenderer = ConeTypeRendererForReadability(idRendererCreator)
         ).renderElementAsString(symbol.fir, trim = true)
     }
 
