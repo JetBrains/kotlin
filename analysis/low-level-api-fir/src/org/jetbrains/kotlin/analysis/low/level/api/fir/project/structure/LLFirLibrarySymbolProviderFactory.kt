@@ -10,14 +10,12 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
-import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
-open class LLFirLibrarySymbolProviderFactory {
-    open fun createJvmFirDeserializedSymbolProviders(
+abstract class LLFirLibrarySymbolProviderFactory {
+    abstract fun createJvmFirDeserializedSymbolProviders(
         project: Project,
         session: FirSession,
         moduleData: LLFirModuleData,
@@ -26,16 +24,5 @@ open class LLFirLibrarySymbolProviderFactory {
         firJavaFacade: FirJavaFacade,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope
-    ): List<FirSymbolProvider> {
-        return listOf(
-            JvmClassFileBasedSymbolProvider(
-                session,
-                moduleDataProvider,
-                kotlinScopeProvider,
-                packagePartProvider,
-                VirtualFileFinderFactory.getInstance(project).create(scope),
-                firJavaFacade
-            )
-        )
-    }
+    ): List<FirSymbolProvider>
 }
