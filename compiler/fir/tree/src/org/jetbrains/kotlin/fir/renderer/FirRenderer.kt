@@ -66,6 +66,18 @@ class FirRenderer(
 
         fun withDeclarationAttributes(): FirRenderer =
             FirRenderer(declarationRenderer = FirDeclarationRendererWithAttributes())
+
+        fun forReadability(): FirRenderer = FirRenderer(
+            typeRenderer = ConeTypeRenderer(),
+            idRenderer = ConeIdShortRenderer(),
+            classMemberRenderer = FirNoClassMemberRenderer(),
+            bodyRenderer = null,
+            propertyAccessorRenderer = null,
+            callArgumentsRenderer = FirCallNoArgumentsRenderer(),
+            modifierRenderer = FirPartialModifierRenderer(),
+            valueParameterRenderer = FirValueParameterRendererNoDefaultValue(),
+            declarationRenderer = FirDeclarationRenderer("local ")
+        )
     }
 
     init {

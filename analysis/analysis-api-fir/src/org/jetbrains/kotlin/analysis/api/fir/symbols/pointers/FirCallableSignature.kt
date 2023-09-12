@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.ConeAttributes
+import org.jetbrains.kotlin.fir.types.ConeAttribute
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 /**
@@ -114,5 +114,5 @@ private fun FirTypeRef.renderType(builder: StringBuilder = StringBuilder()): Str
 ).renderElementAsString(this)
 
 private object EmptyConeTypeAttributeRenderer : ConeAttributeRenderer() {
-    override fun render(attributes: ConeAttributes): String = ""
+    override fun render(attributes: Iterable<ConeAttribute<*>>): String = ""
 }

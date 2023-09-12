@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.fir.renderer
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.renderer.replacePrefixesInTypeRepresentations
 import org.jetbrains.kotlin.renderer.typeStringsDifferOnlyInNullability
 
 class ConeTypeRendererForReadability(
     private val idRendererCreator: () -> ConeIdRenderer,
-) : ConeTypeRenderer() {
-
+) : ConeTypeRenderer(ConeAttributeRenderer.ForReadability) {
     constructor(builder: StringBuilder, idRendererCreator: () -> ConeIdRenderer) : this(idRendererCreator) {
         this.builder = builder
         this.idRenderer = idRendererCreator()
@@ -75,5 +75,9 @@ class ConeTypeRendererForReadability(
 
     override fun render(type: ConeIntegerLiteralType) {
         render(type.getApproximatedType())
+    }
+
+    override fun ConeKotlinType.renderAttributes() {
+        renderNonCompilerAttributes()
     }
 }

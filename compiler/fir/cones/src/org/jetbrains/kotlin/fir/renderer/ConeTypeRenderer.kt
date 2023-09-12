@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 open class ConeTypeRenderer(
     private val attributeRenderer: ConeAttributeRenderer = ConeAttributeRenderer.ToString
@@ -180,16 +181,16 @@ open class ConeTypeRenderer(
         builder.append(">")
     }
 
-    private fun ConeKotlinType.renderAttributes() {
+    protected open fun ConeKotlinType.renderAttributes() {
         if (!attributes.any()) return
         builder.append(attributeRenderer.render(attributes))
     }
 
-    private fun ConeKotlinType.renderNonCompilerAttributes() {
+    protected fun ConeKotlinType.renderNonCompilerAttributes() {
         val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttributeKey
-        if (attributes.any { it.key !in compilerAttributes }) {
-            builder.append(attributeRenderer.render(attributes))
-        }
+        attributes
+            .filter { it.key !in compilerAttributes }
+            .ifNotEmpty { builder.append(attributeRenderer.render(this)) }
     }
 
     private fun ConeTypeProjection.render() {

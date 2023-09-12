@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import kotlin.reflect.KClass
 
@@ -54,6 +55,9 @@ class CustomAnnotationTypeAttribute(
     override fun isSubtypeOf(other: CustomAnnotationTypeAttribute?): Boolean = true
 
     override fun toString(): String = annotations.joinToString(separator = " ") { it.render() }
+
+    override fun renderForReadability(): String =
+        annotations.joinToString(separator = " ") { FirRenderer.forReadability().renderElementAsString(it, trim = true) }
 
     override val key: KClass<out CustomAnnotationTypeAttribute>
         get() = CustomAnnotationTypeAttribute::class
