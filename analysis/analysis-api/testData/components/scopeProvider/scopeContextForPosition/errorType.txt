@@ -6,13 +6,13 @@ implicit receivers:
   owner symbol: KtFirAnonymousFunctionSymbol
 
 scopes:
-  TypeScope, index = 0
+  LocalScope, index = 0
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  LocalScope, index = 1
+  TypeScope, index = 1
     packages: 0
     classifiers: 0
     callables: 0
@@ -30,13 +30,19 @@ scopes:
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 4
+  LocalScope, index = 4
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 5
+  ExplicitSimpleImportingScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 6
     packages: 6
       KtPackageSymbol:
         fqName: META-INF
@@ -89,17 +95,17 @@ scopes:
         visibility: Public
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 6
-
   DefaultSimpleImportingScope, index = 7
 
-  ExplicitStarImportingScope, index = 8
+  DefaultSimpleImportingScope, index = 8
+
+  ExplicitStarImportingScope, index = 9
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 9
+  DefaultSimpleImportingScope, index = 10
 
-  DefaultStarImportingScope, index = 10
+  DefaultStarImportingScope, index = 11
 
