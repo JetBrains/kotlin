@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
-open class JvmFirDeserializedSymbolProviderFactory {
+open class LLFirLibrarySymbolProviderFactory {
     open fun createJvmFirDeserializedSymbolProviders(
         project: Project,
         session: FirSession,
