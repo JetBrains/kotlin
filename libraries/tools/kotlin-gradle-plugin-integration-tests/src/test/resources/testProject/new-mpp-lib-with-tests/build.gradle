@@ -52,7 +52,9 @@ kotlin {
         		implementation 'org.jetbrains.kotlin:kotlin-test-js'
         	}
         }
-		nativeMain
+		nativeMain {
+			dependsOn commonMain
+		}
 		configure([macos64Main, macosArm64Main, linux64Main, mingw64Main]) {
 			dependsOn nativeMain
 		}

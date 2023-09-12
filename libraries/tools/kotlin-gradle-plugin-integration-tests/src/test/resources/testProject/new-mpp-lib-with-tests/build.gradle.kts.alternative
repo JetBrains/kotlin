@@ -18,6 +18,7 @@ kotlin {
     val mingw64 = mingwX64("mingw64")
 
     sourceSets {
+        val commonMain by getting
         val commonTest by getting {
         	dependencies {
         		implementation(kotlin("test-common"))
@@ -44,7 +45,9 @@ kotlin {
         	}
         }
 
-		val nativeMain by creating
+		val nativeMain by creating {
+		    dependsOn(commonMain)
+		}
 		configure(listOf(macos64, macosArm64, linux64, mingw64)) {
             compilations["main"].defaultSourceSet.dependsOn(nativeMain)
 		}
