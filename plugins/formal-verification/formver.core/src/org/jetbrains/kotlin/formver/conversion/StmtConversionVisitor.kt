@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -27,16 +25,14 @@ import org.jetbrains.kotlin.formver.domains.TypeDomain
 import org.jetbrains.kotlin.formver.domains.TypeOfDomain
 import org.jetbrains.kotlin.formver.domains.UnitDomain
 import org.jetbrains.kotlin.formver.domains.convertType
-import org.jetbrains.kotlin.formver.embeddings.BooleanTypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.NullableTypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.embedName
+import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.functionCallArguments
 import org.jetbrains.kotlin.formver.viper.ast.AccessPredicate
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
 import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -226,6 +222,23 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
     ): Exp {
         val args = implicitInvokeCall.functionCallArguments.map(data::convert)
         val retType = implicitInvokeCall.calleeCallableSymbol.resolvedReturnType
+        val calleeName = LocalName(implicitInvokeCall.calleeReference.name)
+        val lambda = data.getLambdaOrNull(calleeName)
+        if (lambda != null) {
+            return data.withResult(data.embedType(retType)) {
+                // NOTE: it is not needed to make distinction between implicit or explicit parameters
+                val lambdaArgs = lambda.lambdaArgs()
+                val callArgs = data.method.getFunctionCallSubstitutionItems(implicitInvokeCall.argumentList.arguments, data)
+                val subs: Map<MangledName, SubstitutionItem> = lambdaArgs.zip(callArgs).toMap()
+                val lambdaCtx = this.newBlock().withInlineContext(this.method, this.resultCtx.resultVar, subs)
+                lambdaCtx.convert(lambda.lambdaBody())
+                // NOTE: It is necessary to drop the last stmt because is a wrong goto
+                val sqn = lambdaCtx.block.copy(stmts = lambdaCtx.block.stmts.dropLast(1))
+                sqn.scopedStmtsDeclaration.forEach(data::addDeclaration)
+                sqn.stmts.forEach(data::addStatement)
+            }
+        }
+
         return data.withResult(data.embedType(retType)) {
             // NOTE: Since it is only relevant to update the number of times that a function object is called,
             // the function call invocation is intentionally not assigned to the return variable

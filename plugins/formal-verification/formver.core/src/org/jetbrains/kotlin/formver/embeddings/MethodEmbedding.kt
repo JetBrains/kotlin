@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.formver.conversion.*
@@ -23,6 +25,11 @@ interface MethodEmbedding : MethodSignatureEmbedding {
 
     fun convertBody(ctx: ProgramConverter)
     fun insertCall(argsFir: List<FirExpression>, ctx: StmtConversionContext<ResultTrackingContext>): Exp.LocalVar
+
+    fun getFunctionCallSubstitutionItems(
+        args: List<FirExpression>,
+        data: StmtConversionContext<ResultTrackingContext>
+    ): List<SubstitutionItem>
 }
 
 class UserMethodEmbedding(
@@ -88,7 +95,7 @@ class UserMethodEmbedding(
                 val inlineBody = symbol.fir.body ?: throw Exception("Function symbol $symbol has a null body")
                 val inlineBodyCtx = newBlock()
                 val inlineArgs: List<MangledName> = symbol.valueParameterSymbols.map { it.embedName() }
-                val callArgs = argsFir.map { inlineBodyCtx.convertAndStore(it).name }
+                val callArgs = getFunctionCallSubstitutionItems(argsFir, inlineBodyCtx)
                 val substitutionParams = inlineArgs.zip(callArgs).toMap()
 
                 val inlineCtx = inlineBodyCtx.withInlineContext(
@@ -104,4 +111,23 @@ class UserMethodEmbedding(
                 addStatement(Stmt.If(Exp.BoolLit(true), inlineCtx.block, Stmt.Seqn(listOf(), listOf())))
             }
         }
+
+    override fun getFunctionCallSubstitutionItems(
+        args: List<FirExpression>,
+        data: StmtConversionContext<ResultTrackingContext>
+    ): List<SubstitutionItem> = args.map { exp ->
+        when (exp) {
+            is FirLambdaArgumentExpression -> {
+                val anonExpr = exp.expression
+                if (anonExpr is FirAnonymousFunctionExpression) {
+                    val lambdaBody = anonExpr.anonymousFunction.body!!
+                    val lambdaArs = anonExpr.anonymousFunction.valueParameters.map { LocalName(it.name) }
+                    SubstitutionLambda(lambdaBody, lambdaArs)
+                } else {
+                    TODO("are there any other cases?")
+                }
+            }
+            else -> SubstitutionName(data.convertAndStore(exp).name)
+        }
+    }
 }

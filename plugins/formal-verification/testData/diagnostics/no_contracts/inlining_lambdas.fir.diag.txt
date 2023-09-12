@@ -1,0 +1,161 @@
+/inlining_lambdas.kt:(11,17): info: Generated Viper text for invoke:
+method pkg$$global$invoke(local$f: Ref) returns (ret: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  requires special$duplicable(local$f)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+{
+  var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
+  special$invoke_function_object(local$f)
+  ret := anonymous$1
+  goto label$ret
+  label label$ret
+}
+
+/inlining_lambdas.kt:(65,77): info: Generated Viper text for explicit_arg:
+method pkg$$global$explicit_arg() returns (ret: Int)
+{
+  var anonymous$1: Int
+  if (true) {
+    var anonymous$2: Int
+    var anonymous$3: Int
+    anonymous$3 := 0
+    anonymous$2 := anonymous$3 + anonymous$3
+    anonymous$1 := anonymous$2
+    goto inline_label$pkg$$global$invoke$ret
+    label inline_label$pkg$$global$invoke$ret
+  }
+  ret := anonymous$1
+  goto label$ret
+  label label$ret
+}
+
+/inlining_lambdas.kt:(127,139): info: Generated Viper text for implicit_arg:
+method pkg$$global$implicit_arg() returns (ret: Int)
+{
+  var anonymous$1: Int
+  if (true) {
+    var anonymous$2: Int
+    var anonymous$3: Int
+    anonymous$3 := 0
+    anonymous$2 := anonymous$3 * 2
+    anonymous$1 := anonymous$2
+    goto inline_label$pkg$$global$invoke$ret
+    label inline_label$pkg$$global$invoke$ret
+  }
+  ret := anonymous$1
+  goto label$ret
+  label label$ret
+}
+
+/inlining_lambdas.kt:(185,194): info: Generated Viper text for lambda_if:
+method pkg$$global$lambda_if() returns (ret: Int)
+{
+  var anonymous$1: Int
+  if (true) {
+    var anonymous$2: Int
+    var anonymous$3: Int
+    anonymous$3 := 0
+    if (anonymous$3 == 0) {
+      anonymous$2 := anonymous$3 + 1
+    } else {
+      anonymous$2 := anonymous$3 + 2}
+    anonymous$2 := anonymous$2
+    anonymous$1 := anonymous$2
+    goto inline_label$pkg$$global$invoke$ret
+    label inline_label$pkg$$global$invoke$ret
+  }
+  ret := anonymous$1
+  goto label$ret
+  label label$ret
+}
+
+/inlining_lambdas.kt:(325,346): info: Generated Viper text for return_value_not_used:
+method pkg$$global$return_value_not_used() returns (ret: dom$Unit)
+{
+  var anonymous$1: Int
+  if (true) {
+    var anonymous$2: Int
+    var anonymous$3: Int
+    anonymous$3 := 0
+    anonymous$2 := anonymous$3
+    anonymous$1 := anonymous$2
+    goto inline_label$pkg$$global$invoke$ret
+    label inline_label$pkg$$global$invoke$ret
+  }
+  label label$ret
+}
+
+/inlining_lambdas.kt:(382,391): info: Generated Viper text for shadowing:
+method pkg$$global$shadowing() returns (ret: Int)
+{
+  var local$x: Int
+  var local$y: Int
+  var anonymous$1: Int
+  local$x := 1
+  local$y := 1
+  if (true) {
+    var anonymous$2: Int
+    var anonymous$3: Int
+    var inline$pkg$$global$invoke$local$y: Int
+    anonymous$3 := 0
+    inline$pkg$$global$invoke$local$y := 0
+    anonymous$2 := anonymous$3 + inline$pkg$$global$invoke$local$y
+    anonymous$1 := anonymous$2
+    goto inline_label$pkg$$global$invoke$ret
+    label inline_label$pkg$$global$invoke$ret
+  }
+  ret := anonymous$1
+  goto label$ret
+  label label$ret
+}
+
+/inlining_lambdas.kt:(537,540): info: Generated Viper text for foo:
+method pkg$$global$foo() returns (ret: Int)
+{
+  var local$x: Int
+  var anonymous$1: Int
+  local$x := 2
+  if (true) {
+    var anonymous$2: Int
+    var anonymous$3: Int
+    anonymous$3 := 0
+    anonymous$2 := anonymous$3 + 1
+    anonymous$1 := anonymous$2
+    goto inline_label$pkg$$global$invoke$ret
+    label inline_label$pkg$$global$invoke$ret
+  }
+  ret := anonymous$1
+  goto label$ret
+  label label$ret
+}
+
+/inlining_lambdas.kt:(604,610): info: Generated Viper text for nested:
+method pkg$$global$nested() returns (ret: Int)
+{
+  var local$x: Int
+  var anonymous$1: Int
+  local$x := 2
+  if (true) {
+    var inline$pkg$$global$foo$local$x: Int
+    var anonymous$2: Int
+    inline$pkg$$global$foo$local$x := 2
+    if (true) {
+      var anonymous$3: Int
+      var anonymous$4: Int
+      anonymous$4 := 0
+      anonymous$3 := anonymous$4 + 1
+      anonymous$2 := anonymous$3
+      goto inline_label$pkg$$global$invoke$ret
+      label inline_label$pkg$$global$invoke$ret
+    }
+    anonymous$1 := anonymous$2
+    goto inline_label$pkg$$global$foo$ret
+    label inline_label$pkg$$global$foo$ret
+  }
+  ret := anonymous$1
+  goto label$ret
+  label label$ret
+}

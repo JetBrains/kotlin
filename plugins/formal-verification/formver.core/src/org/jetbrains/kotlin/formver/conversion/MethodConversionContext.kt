@@ -20,4 +20,6 @@ interface MethodConversionContext : ProgramConversionContext {
 
     fun getVariableEmbedding(name: MangledName, type: TypeEmbedding): VariableEmbedding =
         VariableEmbedding(resolveName(name), type)
+
+    fun getLambdaOrNull(name: MangledName): SubstitutionLambda? = null
 }

@@ -51,13 +51,13 @@ class StmtConverter<out RTC : ResultTrackingContext>(
     override fun withInlineContext(
         inlineMethod: MethodEmbedding,
         returnVar: VariableEmbedding,
-        substitutionParams: Map<MangledName, MangledName>,
+        substitutionParams: Map<MangledName, SubstitutionItem>,
     ): StmtConversionContext<RTC> {
         return StmtConverter(
             InlineMethodConverter(this, inlineMethod, returnVar, substitutionParams),
             seqnCtx,
             resultCtxFactory,
-            whileIndex
+            whileIndex,
         )
     }
 

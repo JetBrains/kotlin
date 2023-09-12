@@ -204,6 +204,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("inlining_lambdas.kt")
+        public void testInlining_lambdas() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inlining_lambdas.kt");
+        }
+
+        @Test
         @TestMetadata("is_operator.kt")
         public void testIs_operator() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/is_operator.kt");

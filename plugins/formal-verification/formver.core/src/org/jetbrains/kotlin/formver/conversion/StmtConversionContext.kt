@@ -31,7 +31,7 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
     fun withInlineContext(
         inlineMethod: MethodEmbedding,
         returnVar: VariableEmbedding,
-        substitutionParams: Map<MangledName, MangledName>,
+        substitutionParams: Map<MangledName, SubstitutionItem>,
     ): StmtConversionContext<RTC>
 
     fun withResult(type: TypeEmbedding, action: StmtConversionContext<VarResultTrackingContext>.() -> Unit): Exp.LocalVar {
