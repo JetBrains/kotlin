@@ -180,7 +180,7 @@ private fun generateSourceMap(
 
         location.apply {
             // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.
-            val relativePath = pathResolver.getPathRelativeToSourceRoots(File(file)).substring(3)
+            val relativePath = pathResolver.getPathRelativeToSourceRoots(File(file)).substringAfter("../")
             sourceMapBuilder.addMapping(relativePath, null, { null }, line, column, null, mapping.offset)
         }
     }

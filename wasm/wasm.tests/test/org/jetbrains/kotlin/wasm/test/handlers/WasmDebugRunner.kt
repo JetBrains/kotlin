@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.wasm.test.handlers
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
+import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
@@ -26,6 +27,8 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
     }
 
     private fun saveAndRunWasmCode() {
+        val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
+
         val artifacts = modulesToArtifact.values.single()
         val outputDirBase = testServices.getWasmTestOutputDirectory()
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
@@ -89,6 +92,41 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
 
             writeCompilationResult(res, dir, "index")
             File(dir, "test.mjs").writeText(testFileContent)
+
+            if (debugMode >= DebugMode.DEBUG) {
+                File(dir, "test.raw.mjs").writeText("""
+                    const jsModule = await import('./index.mjs');
+                    const box = jsModule.default.box;
+                    
+                    box();
+                """.trimIndent())
+                File(dir, "index.html").writeText(
+                    """
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <body>
+                            <span id="test">UNKNOWN</span>
+                            <script type="module">
+                                let test = document.getElementById("test")
+                                try {
+                                    await import("./test.raw.mjs");
+                                    test.style.backgroundColor = "#0f0";
+                                    test.textContent = "OK"
+                                } catch(e) {
+                                    test.style.backgroundColor = "#f00";
+                                    test.textContent = "NOT OK"
+                                    throw e;
+                                }
+                            </script>
+                        </body>
+                        </html>
+                    """.trimIndent()
+                )
+
+                testServices.moduleStructure.modules.last().files.forEach {
+                    File(dir, it.name).writeText(it.originalContent)
+                }
+            }
 
             val (jsFilePaths) = collectedJsArtifacts.saveJsArtifacts(dir)
 
