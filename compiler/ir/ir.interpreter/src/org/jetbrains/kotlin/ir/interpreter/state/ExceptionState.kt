@@ -92,16 +92,16 @@ internal class ExceptionState private constructor(
     }
 
     fun getShortDescription(): String {
-        return message.let { if (it?.isNotEmpty() == true) it else "???" }
+        val message = message.let { if (it?.isNotEmpty() == true) ": $it" else "" }
+        return "Exception $exceptionFqName$message"
     }
 
     fun getFullDescription(): String {
         // TODO remainder of the stack trace with "..."
-        val message = message.let { if (it?.isNotEmpty() == true) ": $it" else "" }
         val prefix = if (stackTrace.isNotEmpty()) "\n\t" else ""
         val postfix = if (stackTrace.size > 10) "\n\t..." else ""
         val causeMessage = cause?.getFullDescription()?.replaceFirst("Exception ", "\nCaused by: ") ?: ""
-        return "Exception $exceptionFqName$message" +
+        return getShortDescription() +
                 stackTrace.subList(0, min(stackTrace.size, 10)).joinToString(separator = "\n\t", prefix = prefix, postfix = postfix) +
                 causeMessage
     }
