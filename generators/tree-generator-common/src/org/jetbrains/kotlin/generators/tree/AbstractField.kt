@@ -9,7 +9,10 @@ abstract class AbstractField : Importable {
 
     abstract val name: String
 
-    open val arguments = mutableListOf<Importable>()
+    val typeRef: TypeRef
+        get() = type(packageName!!, type).withArgs(*arguments.toTypedArray()).copy(nullable = nullable)
+
+    open val arguments = mutableListOf<TypeRef>()
 
     abstract val nullable: Boolean
 

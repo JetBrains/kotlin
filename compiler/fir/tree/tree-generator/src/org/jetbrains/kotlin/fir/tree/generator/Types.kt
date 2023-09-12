@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
+import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -26,30 +27,30 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.Variance
 
-val sourceElementType = type(KtSourceElement::class)
-val sourceFileType = type(KtSourceFile::class)
-val sourceFileLinesMappingType = type(KtSourceFileLinesMapping::class)
+val sourceElementType = type<KtSourceElement>()
+val sourceFileType = type<KtSourceFile>()
+val sourceFileLinesMappingType = type<KtSourceFileLinesMapping>()
 val jumpTargetType = type("fir", "FirTarget")
 val constKindType = type("types", "ConstantValueKind")
 val operationType = type("fir.expressions", "FirOperation")
-val classKindType = type(ClassKind::class)
-val eventOccurrencesRangeType = type(EventOccurrencesRange::class)
+val classKindType = type<ClassKind>()
+val eventOccurrencesRangeType = type<EventOccurrencesRange>()
 val inlineStatusType = type("fir.declarations", "InlineStatus")
-val varianceType = type(Variance::class)
-val nameType = type(Name::class)
-val visibilityType = type(Visibility::class)
+val varianceType = type<Variance>()
+val nameType = type<Name>()
+val visibilityType = type<Visibility>()
 val effectiveVisibilityType = type("descriptors", "EffectiveVisibility")
-val modalityType = type(Modality::class)
-val smartcastStabilityType = type(SmartcastStability::class)
-val fqNameType = type(FqName::class)
-val classIdType = type(ClassId::class)
-val annotationUseSiteTargetType = type(AnnotationUseSiteTarget::class)
+val modalityType = type<Modality>()
+val smartcastStabilityType = type<SmartcastStability>()
+val fqNameType = type<FqName>()
+val classIdType = type<ClassId>()
+val annotationUseSiteTargetType = type<AnnotationUseSiteTarget>()
 val operationKindType = type("contracts.description", "LogicOperationKind")
-val coneKotlinTypeType = type(ConeKotlinType::class)
-val coneErrorTypeType = type(ConeErrorType::class)
-val coneSimpleKotlinTypeType = type(ConeSimpleKotlinType::class)
-val coneClassLikeTypeType = type(ConeClassLikeType::class)
-val standardClassIdsType = type(StandardClassIds::class)
+val coneKotlinTypeType = type<ConeKotlinType>()
+val coneErrorTypeType = type<ConeErrorType>()
+val coneSimpleKotlinTypeType = type<ConeSimpleKotlinType>()
+val coneClassLikeTypeType = type<ConeClassLikeType>()
+val standardClassIdsType = type<StandardClassIds>()
 
 val whenRefType = generatedType("", "FirExpressionRef<FirWhenExpression>")
 val referenceToSimpleExpressionType = generatedType("", "FirExpressionRef<FirExpression>")
@@ -84,7 +85,7 @@ val pureAbstractElementType = generatedType("FirPureAbstractElement")
 val coneContractElementType = type("fir.contracts.description", "ConeContractDescriptionElement")
 val coneEffectDeclarationType = type("fir.contracts.description", "ConeEffectDeclaration")
 val emptyContractDescriptionType = generatedType("contracts.impl", "FirEmptyContractDescription")
-val coneDiagnosticType = generatedType("diagnostics", "ConeDiagnostic")
+val coneDiagnosticType = generatedType("diagnostics", "ConeDiagnostic", kind = TypeKind.Interface)
 val coneStubDiagnosticType = generatedType("diagnostics", "ConeStubDiagnostic")
 
 val firImplementationDetailType = generatedType("FirImplementationDetail")

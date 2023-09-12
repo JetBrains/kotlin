@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.context
 
 import org.jetbrains.kotlin.fir.tree.generator.model.*
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
-import org.jetbrains.kotlin.generators.tree.Importable
-import org.jetbrains.kotlin.generators.tree.SimpleTypeArgument
-import org.jetbrains.kotlin.generators.tree.TypeArgumentWithMultipleUpperBounds
+import org.jetbrains.kotlin.generators.tree.*
 
 abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val builder: T) {
     inner class ConfigureContext(val element: Element) {
@@ -30,27 +27,27 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
             }
         }
 
-        fun withArg(name: String, vararg upperBounds: String) {
-            withArg(name, upperBounds.map { Type(null, it) })
+        fun withArg(name: String) {
+            withArg(name, emptyList())
         }
 
-        fun withArg(name: String, upperBound: Importable, vararg upperBounds: Importable) {
+        fun withArg(name: String, upperBound: TypeRef, vararg upperBounds: TypeRef) {
             val allUpperBounds = mutableListOf(upperBound).apply { this += upperBounds }
             withArg(name, allUpperBounds)
         }
 
-        private fun withArg(name: String, upperBounds: List<Importable>) {
+        private fun withArg(name: String, upperBounds: List<TypeRef>) {
             element.typeArguments += when (upperBounds.size) {
                 in 0..1 -> SimpleTypeArgument(name, upperBounds.firstOrNull())
                 else -> TypeArgumentWithMultipleUpperBounds(name, upperBounds.toList())
             }
         }
 
-        fun parentArg(parent: Element, argument: String, type: Importable) {
-            parentArg(parent, Type(null, argument), type)
+        fun parentArg(parent: Element, argument: String, type: TypeRef) {
+            parentArg(parent, NamedTypeParameterRef(argument), type)
         }
 
-        fun parentArg(parent: Element, argument: Importable, type: Importable) {
+        fun parentArg(parent: Element, argument: NamedTypeParameterRef, type: TypeRef) {
             require(parent in element.parents) {
                 "$parent is not parent of $element"
             }
@@ -61,8 +58,8 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
             argMap[argument] = type
         }
 
-        fun Type.withArgs(vararg args: String): Pair<Type, List<Importable>> {
-            return this to args.map { Type(null, it) }
+        fun TypeRef.withArgs(vararg args: String): Pair<TypeRef, List<TypeRef>> {
+            return this to args.map { NamedTypeParameterRef(it) }
         }
 
         fun needTransformOtherChildren() {

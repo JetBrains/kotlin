@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.generators.tree
 /**
  * A common interface representing a FIR or IR tree element.
  */
-interface AbstractElement<Element : AbstractElement<Element, Field>, Field : AbstractField> : FieldContainer, ImplementationKindOwner {
+interface AbstractElement<Element : AbstractElement<Element, Field>, Field : AbstractField> : FieldContainer, ImplementationKindOwner,
+    TypeRef /* TODO: Replace with ElementOrRef */ {
 
     val name: String
 
@@ -18,9 +19,9 @@ interface AbstractElement<Element : AbstractElement<Element, Field>, Field : Abs
 
     val typeArguments: List<TypeArgument>
 
-    val parentsArguments: Map<Element, Map<Importable, Importable>>
+    val parentsArguments: Map<Element, Map<TypeRef, TypeRef>>
 
-    val overridenFields: Map<Field, Map<Importable, Boolean>>
+    val overridenFields: Map<Field, Map<Field, Boolean>>
 
     val isSealed: Boolean
         get() = false
