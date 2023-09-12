@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -68,9 +71,19 @@ class Fir2IrClassifierStorage(
 
     @OptIn(IrSymbolInternals::class)
     fun preCacheBuiltinClasses() {
-        for ((classId, irBuiltinSymbol) in typeConverter.classIdToSymbolMap) {
+        fun getResolvedClass(classId: ClassId): FirRegularClass? {
             // toSymbol() can return null when using an old stdlib that's missing some types
-            val firClass = classId.toSymbol(session)?.fir as FirRegularClass? ?: continue
+            val firClass = classId.toSymbol(session)?.fir as FirRegularClass? ?: return null
+
+            // Built-in classes may come from sources in the Kotlin project, and so have unresolved types in signatures.
+            // Still, we need return types for all members to make a list of 'IrDeclarations'. Also see 'Fir2IrLazyClass.declarations'.
+            firClass.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+
+            return firClass
+        }
+
+        for ((classId, irBuiltinSymbol) in typeConverter.classIdToSymbolMap) {
+            val firClass = getResolvedClass(classId) ?: continue
             val irClass = irBuiltinSymbol.owner
             classCache[firClass] = irClass
             classifiersGenerator.processClassHeader(firClass, irClass)
@@ -78,7 +91,7 @@ class Fir2IrClassifierStorage(
         }
         for ((primitiveClassId, primitiveArrayId) in StandardClassIds.primitiveArrayTypeByElementType) {
             // toSymbol() can return null when using an old stdlib that's missing some types
-            val firClass = primitiveArrayId.toLookupTag().toSymbol(session)?.fir as FirRegularClass? ?: continue
+            val firClass = getResolvedClass(primitiveArrayId) ?: continue
             val irType = typeConverter.classIdToTypeMap[primitiveClassId]
             val irClass = irBuiltIns.primitiveArrayForType[irType]!!.owner
             classCache[firClass] = irClass

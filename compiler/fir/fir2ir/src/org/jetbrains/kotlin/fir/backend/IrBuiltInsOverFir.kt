@@ -12,13 +12,16 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -655,15 +658,21 @@ class IrBuiltInsOverFir(
     }
 
     private fun findFunction(functionSymbol: FirNamedFunctionSymbol): IrSimpleFunctionSymbol {
+        functionSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+
         val irParent = findIrParent(functionSymbol)
         return components.declarationStorage.getOrCreateIrFunction(functionSymbol.fir, irParent).symbol
     }
 
     private fun findProperties(packageName: FqName, name: Name): List<IrPropertySymbol> {
-        return symbolProvider.getTopLevelPropertySymbols(packageName, name).map { firOpSymbol ->
-            val irParent = findIrParent(firOpSymbol)
-            components.declarationStorage.getOrCreateIrProperty(firOpSymbol.fir, irParent).symbol
-        }
+        return symbolProvider.getTopLevelPropertySymbols(packageName, name).map { findProperty(it) }
+    }
+
+    private fun findProperty(propertySymbol: FirPropertySymbol): IrPropertySymbol {
+        propertySymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+
+        val irParent = findIrParent(propertySymbol)
+        return components.declarationStorage.getOrCreateIrProperty(propertySymbol.fir, irParent).symbol
     }
 
     private fun findIrParent(firSymbol: FirCallableSymbol<*>): IrDeclarationParent? {
