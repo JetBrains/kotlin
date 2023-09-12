@@ -290,24 +290,27 @@ class FirStatusResolver(
             containingClass?.symbol?.toLookupTag(), forClass = declaration is FirClass
         )
         val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
-        val annotations = (containingProperty ?: declaration).annotations
-        val parentPublishedEffectiveVisibility = when {
-            containingProperty != null -> containingProperty.publishedApiEffectiveVisibility
-            containingClass is FirRegularClass -> containingClass.publishedApiEffectiveVisibility
-            else -> null
-        }
 
-        computePublishedApiEffectiveVisibility(
-            annotations,
-            visibility,
-            selfEffectiveVisibility,
-            containingClass?.symbol,
-            parentEffectiveVisibility,
-            parentPublishedEffectiveVisibility,
-            declaration is FirClass,
-            session
-        )?.let {
-            declaration.nonLazyPublishedApiEffectiveVisibility = it
+        if (!isLocal) {
+            val annotations = (containingProperty ?: declaration).annotations
+            val parentPublishedEffectiveVisibility = when {
+                containingProperty != null -> containingProperty.publishedApiEffectiveVisibility
+                containingClass is FirRegularClass -> containingClass.publishedApiEffectiveVisibility
+                else -> null
+            }
+
+            computePublishedApiEffectiveVisibility(
+                annotations,
+                visibility,
+                selfEffectiveVisibility,
+                containingClass?.symbol,
+                parentEffectiveVisibility,
+                parentPublishedEffectiveVisibility,
+                declaration is FirClass,
+                session
+            )?.let {
+                declaration.nonLazyPublishedApiEffectiveVisibility = it
+            }
         }
 
         if (containingClass is FirRegularClass && containingClass.isExpect) {
