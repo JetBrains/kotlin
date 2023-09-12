@@ -36,7 +36,7 @@ echo "KOTLIN_NATIVE_VERSION=$KOTLIN_NATIVE_VERSION"
   -Pteamcity=true \
   --no-daemon \
   --info \
-  publish publishToMavenLocal
+  publish
 
 # Build maven part and publish it to the same build/repo
 ./libraries/mvnw \

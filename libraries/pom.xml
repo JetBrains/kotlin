@@ -77,6 +77,13 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>kotlin-gradle-repository</id>
+            <url>file://${maven.multiModuleProjectDirectory}/../build/repo</url>
+        </repository>
+    </repositories>
+
     <modules>
         <module>tools/kotlin-maven-plugin</module>
 
