@@ -268,7 +268,6 @@ class Fir2IrDeclarationStorage(
         return getCachedIrFunction(function, fakeOverrideOwnerLookupTag = null) { signatureComposer.composeSignature(function) }
     }
 
-    @OptIn(IrSymbolInternals::class)
     fun getCachedIrFunction(
         function: FirSimpleFunction,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
@@ -283,6 +282,7 @@ class Fir2IrDeclarationStorage(
             functionCache,
             signatureCalculator
         ) { signature ->
+            @OptIn(IrSymbolInternals::class)
             symbolTable.referenceSimpleFunctionIfAny(signature)?.owner
         }
         return cachedIrCallable
@@ -360,13 +360,13 @@ class Fir2IrDeclarationStorage(
 
     // ------------------------------------ constructors ------------------------------------
 
-    @OptIn(IrSymbolInternals::class)
     fun getCachedIrConstructor(
         constructor: FirConstructor,
         signatureCalculator: () -> IdSignature? = { null }
     ): IrConstructor? {
         return constructorCache[constructor] ?: signatureCalculator()?.let { signature ->
             symbolTable.referenceConstructorIfAny(signature)?.let { irConstructorSymbol ->
+                @OptIn(IrSymbolInternals::class)
                 val irConstructor = irConstructorSymbol.owner
                 constructorCache[constructor] = irConstructor
                 irConstructor
@@ -537,7 +537,6 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    @OptIn(IrSymbolInternals::class)
     fun getIrPropertySymbol(
         firPropertySymbol: FirPropertySymbol,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
@@ -571,11 +570,14 @@ class Fir2IrDeclarationStorage(
         )
 
         val originalSymbol = fakeOverrideOwnerLookupTag.getIrCallableSymbol()
+
+        @OptIn(IrSymbolInternals::class)
         val originalProperty = originalSymbol.owner as IrProperty
 
         fun IrProperty.isIllegalFakeOverride(): Boolean {
             if (!isFakeOverride) return false
             val overriddenSymbols = overriddenSymbols
+            @OptIn(IrSymbolInternals::class)
             return overriddenSymbols.isEmpty() || overriddenSymbols.any { it.owner.isIllegalFakeOverride() }
         }
 
@@ -600,7 +602,6 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    @OptIn(IrSymbolInternals::class)
     fun getCachedIrProperty(
         property: FirProperty,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
@@ -614,6 +615,7 @@ class Fir2IrDeclarationStorage(
             propertyCache,
             signatureCalculator
         ) { signature ->
+            @OptIn(IrSymbolInternals::class)
             symbolTable.referencePropertyIfAny(signature)?.owner
         }
     }
@@ -899,7 +901,6 @@ class Fir2IrDeclarationStorage(
         return map?.get(callableDeclaration.asFakeOverrideKey())
     }
 
-    @OptIn(IrSymbolInternals::class)
     fun getIrFunctionSymbol(
         firFunctionSymbol: FirFunctionSymbol<*>,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
@@ -935,6 +936,7 @@ class Fir2IrDeclarationStorage(
                     },
                 ) as IrFunctionSymbol
                 if (unmatchedOwner && fakeOverrideOwnerLookupTag is ConeClassLookupTagWithFixedSymbol) {
+                    @OptIn(IrSymbolInternals::class)
                     val originalFunction = originalSymbol.owner as IrSimpleFunction
                     fakeOverrideOwnerLookupTag.findIrFakeOverride(fir.name, originalFunction) as IrFunctionSymbol? ?: originalSymbol
                 } else {
@@ -1276,7 +1278,6 @@ class Fir2IrDeclarationStorage(
         )
     }
 
-    @OptIn(IrSymbolInternals::class)
     private fun areCompatible(firFunction: FirFunction, irFunction: IrFunction): Boolean {
         if (firFunction is FirSimpleFunction && irFunction is IrSimpleFunction) {
             if (irFunction.name != firFunction.name) return false
@@ -1291,6 +1292,7 @@ class Fir2IrDeclarationStorage(
                                 firType is ConeTypeParameterType
                             }
                             is IrClassSymbol -> {
+                                @OptIn(IrSymbolInternals::class)
                                 val irClass = irClassifierSymbol.owner
                                 firType is ConeClassLikeType && irClass.name == firType.lookupTag.name
                             }

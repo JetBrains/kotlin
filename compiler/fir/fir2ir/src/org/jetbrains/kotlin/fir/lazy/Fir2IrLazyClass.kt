@@ -149,7 +149,6 @@ class Fir2IrLazyClass(
             .also(converter::bindFakeOverridesOrPostpone)
     }
 
-    @OptIn(IrSymbolInternals::class)
     override val declarations: MutableList<IrDeclaration> by lazyVar(lock) {
         val result = mutableListOf<IrDeclaration>()
         // NB: it's necessary to take all callables from scope,
@@ -157,6 +156,7 @@ class Fir2IrLazyClass(
         val scope = fir.unsubstitutedScope()
         scope.processDeclaredConstructors {
             if (shouldBuildStub(it.fir)) {
+                @OptIn(IrSymbolInternals::class)
                 result += declarationStorage.getIrConstructorSymbol(it).owner
             }
         }
@@ -166,6 +166,7 @@ class Fir2IrLazyClass(
                 val declaration = it.fir as? FirRegularClass ?: return@processClassifiersByName
                 if (declaration.classId.outerClassId == fir.classId && shouldBuildStub(declaration)) {
                     val nestedSymbol = classifierStorage.getOrCreateIrClass(declaration.symbol).symbol
+                    @OptIn(IrSymbolInternals::class)
                     result += nestedSymbol.owner
                 }
             }
@@ -174,6 +175,7 @@ class Fir2IrLazyClass(
         if (fir.classKind == ClassKind.ENUM_CLASS) {
             for (declaration in fir.declarations) {
                 if (declaration is FirEnumEntry && shouldBuildStub(declaration)) {
+                    @OptIn(IrSymbolInternals::class)
                     result += declarationStorage.getIrValueSymbol(declaration.symbol).owner as IrDeclaration
                 }
             }
@@ -191,6 +193,7 @@ class Fir2IrLazyClass(
                         if (it.isAbstractMethodOfAny()) {
                             return@processFunctionsByName
                         }
+                        @OptIn(IrSymbolInternals::class)
                         result += declarationStorage.getIrFunctionSymbol(it).owner
                     }
                 }
@@ -199,6 +202,7 @@ class Fir2IrLazyClass(
                     if (!shouldBuildStub(it.fir)) return@processPropertiesByName
                     if (it is FirPropertySymbol && (it.isStatic || it.dispatchReceiverClassLookupTagOrNull() == ownerLookupTag)) {
                         result.addIfNotNull(
+                            @OptIn(IrSymbolInternals::class)
                             declarationStorage.getIrPropertySymbol(it).owner as? IrDeclaration
                         )
                     }

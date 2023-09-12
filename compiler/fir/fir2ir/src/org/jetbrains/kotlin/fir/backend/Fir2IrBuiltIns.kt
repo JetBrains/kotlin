@@ -79,9 +79,9 @@ class Fir2IrBuiltIns(
         return session.symbolProvider.getClassLikeSymbolByClassId(id) as? FirRegularClassSymbol
     }
 
-    @OptIn(IrSymbolInternals::class)
     private fun IrClassSymbol.toConstructorCall(firSymbol: FirRegularClassSymbol? = null): IrConstructorCallImpl? {
         val constructorSymbol = if (firSymbol == null) {
+            @OptIn(IrSymbolInternals::class)
             owner.declarations.firstIsInstance<IrConstructor>().symbol
         } else {
             val firConstructorSymbol = firSymbol.unsubstitutedScope().getDeclaredConstructors().singleOrNull() ?: return null

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -69,7 +68,6 @@ class Fir2IrClassifierStorage(
 
     // ------------------------------------ preprocessing ------------------------------------
 
-    @OptIn(IrSymbolInternals::class)
     fun preCacheBuiltinClasses() {
         fun getResolvedClass(classId: ClassId): FirRegularClass? {
             // toSymbol() can return null when using an old stdlib that's missing some types
@@ -84,6 +82,8 @@ class Fir2IrClassifierStorage(
 
         for ((classId, irBuiltinSymbol) in typeConverter.classIdToSymbolMap) {
             val firClass = getResolvedClass(classId) ?: continue
+
+            @OptIn(IrSymbolInternals::class)
             val irClass = irBuiltinSymbol.owner
             classCache[firClass] = irClass
             classifiersGenerator.processClassHeader(firClass, irClass)
@@ -93,6 +93,8 @@ class Fir2IrClassifierStorage(
             // toSymbol() can return null when using an old stdlib that's missing some types
             val firClass = getResolvedClass(primitiveArrayId) ?: continue
             val irType = typeConverter.classIdToTypeMap[primitiveClassId]
+
+            @OptIn(IrSymbolInternals::class)
             val irClass = irBuiltIns.primitiveArrayForType[irType]!!.owner
             classCache[firClass] = irClass
             classifiersGenerator.processClassHeader(firClass, irClass)
