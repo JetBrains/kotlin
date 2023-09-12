@@ -207,7 +207,6 @@
 /compiler/util-klib/ "Kotlin Native"
 /compiler/util-klib-abi/ "Kotlin Native"
 /compiler/util-klib-metadata/ "Kotlin Native"
-/compiler/visualizer/ "Kotlin Compiler Core"
 
 /core/builtins/ "Kotlin Compiler Core"
 /core/compiler.common/ "Kotlin Compiler Core"

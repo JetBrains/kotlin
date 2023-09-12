@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.test.runners.ir.*
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterFirPsi2IrTest
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterPsi2IrTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
-import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizerTest
-import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizerTest
 
 fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
@@ -383,26 +381,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractFirPsiBytecodeTextTest> {
                 model("codegen/bytecodeText")
-            }
-        }
-
-        testGroup("compiler/visualizer/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
-            testClass<AbstractPsiVisualizerTest>("PsiVisualizerForRawFirDataGenerated") {
-                model("rawBuilder")
-            }
-
-            testClass<AbstractFirVisualizerTest>("FirVisualizerForRawFirDataGenerated") {
-                model("rawBuilder")
-            }
-        }
-
-        testGroup("compiler/visualizer/tests-gen", "compiler/visualizer/testData") {
-            testClass<AbstractPsiVisualizerTest>("PsiVisualizerForUncommonCasesGenerated") {
-                model("uncommonCases/testFiles")
-            }
-
-            testClass<AbstractFirVisualizerTest>("FirVisualizerForUncommonCasesGenerated") {
-                model("uncommonCases/testFiles")
             }
         }
     }

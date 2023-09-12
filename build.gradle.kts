@@ -702,10 +702,6 @@ tasks {
         dependsOn(":compiler:fir:fir2ir:nightlyTests")
     }
 
-    register("compilerFrontendVisualizerTest") {
-        dependsOn("compiler:visualizer:test")
-    }
-
     register("scriptingJvmTest") {
         dependsOn("dist")
         dependsOn(":kotlin-scripting-compiler:test")
