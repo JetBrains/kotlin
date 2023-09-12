@@ -1,6 +1,3 @@
-import kotlin.reflect.KClass;
-
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class Anno : kotlin/Annotation {
  *
@@ -15,6 +12,7 @@ import kotlin.reflect.KClass;
  * }
  */
 @kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno {
 
     public abstract java.lang.Class<?> klass();
@@ -23,9 +21,6 @@ public abstract @interface Anno {
 ////////////////////
 
 
-import kotlin.reflect.KClass;
-
-@ABC()
 /**
  * public final class ErrorMissingAnnotation : kotlin/Any {
  *
@@ -36,6 +31,7 @@ import kotlin.reflect.KClass;
  * }
  */
 @kotlin.Metadata()
+@ABC()
 public final class ErrorMissingAnnotation {
 
     public ErrorMissingAnnotation() {
@@ -46,10 +42,6 @@ public final class ErrorMissingAnnotation {
 ////////////////////
 
 
-import kotlin.reflect.KClass;
-
-@ABC()
-@CDE()
 /**
  * public final class ErrorMultipleMissingAnnotations : kotlin/Any {
  *
@@ -60,6 +52,8 @@ import kotlin.reflect.KClass;
  * }
  */
 @kotlin.Metadata()
+@ABC()
+@CDE()
 public final class ErrorMultipleMissingAnnotations {
 
     public ErrorMultipleMissingAnnotations() {
@@ -70,11 +64,6 @@ public final class ErrorMultipleMissingAnnotations {
 ////////////////////
 
 
-import kotlin.reflect.KClass;
-
-@CDE()
-@Anno(klass = ABC.class)
-@ABC()
 /**
  * public final class ErrorSomeMissingAnnotations : kotlin/Any {
  *
@@ -85,6 +74,9 @@ import kotlin.reflect.KClass;
  * }
  */
 @kotlin.Metadata()
+@CDE()
+@Anno(klass = ABC.class)
+@ABC()
 public final class ErrorSomeMissingAnnotations {
 
     public ErrorSomeMissingAnnotations() {
@@ -95,9 +87,6 @@ public final class ErrorSomeMissingAnnotations {
 ////////////////////
 
 
-import kotlin.reflect.KClass;
-
-@com.example.XYZ()
 /**
  * public final class FullyQualifiedMissingAnnotation : kotlin/Any {
  *
@@ -108,6 +97,7 @@ import kotlin.reflect.KClass;
  * }
  */
 @kotlin.Metadata()
+@com.example.XYZ()
 public final class FullyQualifiedMissingAnnotation {
 
     public FullyQualifiedMissingAnnotation() {

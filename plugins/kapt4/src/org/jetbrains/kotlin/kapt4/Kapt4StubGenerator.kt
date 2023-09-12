@@ -9,7 +9,9 @@ package org.jetbrains.kotlin.kapt4
 
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
+import com.intellij.lang.ASTNode
 import com.intellij.psi.*
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.code.TypeTag
 import com.sun.tools.javac.parser.Tokens
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt3.base.util.TopLevelJava9Aware
 import org.jetbrains.kotlin.kapt3.stubs.MemberData
 import org.jetbrains.kotlin.kapt3.stubs.MembersPositionComparator
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -41,6 +44,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.elements.KtAnnotationEntryElementType
 import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -296,7 +300,35 @@ internal class Kapt4StubGenerator {
         annotation: PsiAnnotation,
         packageFqName: String
     ): JCAnnotation? {
-        val rawQualifiedName = annotation.qualifiedName ?: return null
+        fun collectNameParts(node: ASTNode, builder: StringBuilder, takeNext: Boolean) {
+            when (node) {
+                is LeafPsiElement -> {
+                    when (node.elementType) {
+                        KtTokens.IDENTIFIER, KtTokens.DOT -> builder.append((node as ASTNode).text)
+                    }
+                    if (takeNext) node.treeNext?.let { collectNameParts(it, builder, true) }
+                }
+                else ->
+                    if (node.elementType is KtAnnotationEntryElementType) {
+                        collectNameParts(node.firstChildNode.treeNext, builder, false)
+                    } else {
+                        collectNameParts(node.firstChildNode, builder, true)
+                        if (takeNext) node.treeNext?.let { collectNameParts(it, builder, true) }
+                    }
+            }
+        }
+
+        fun qualifiedName(node: ASTNode): String = buildString {
+            collectNameParts(node, this, false)
+        }
+
+
+        val rawQualifiedName = when (annotation.qualifiedName) {
+            // A temporary fix for KT-60482
+            "<error>" -> (annotation as? KtLightElement<*, *>)?.kotlinOrigin?.node?.let { qualifiedName(it) }
+            else -> annotation.qualifiedName
+        } ?: return null
+
         val fqName = treeMaker.getQualifiedName(rawQualifiedName)
 
         if (BLACKLISTED_ANNOTATIONS.any { fqName.startsWith(it) }) return null
