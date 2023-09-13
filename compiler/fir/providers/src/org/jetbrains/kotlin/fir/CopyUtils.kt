@@ -73,6 +73,7 @@ fun List<FirAnnotation>.computeTypeAttributes(
     session: FirSession,
     predefined: List<ConeAttribute<*>> = emptyList(),
     containerDeclaration: FirDeclaration? = null,
+    allowExtensionFunctionType: Boolean = true,
     shouldExpandTypeAliases: Boolean
 ): ConeAttributes {
     if (this.isEmpty()) {
@@ -90,7 +91,9 @@ fun List<FirAnnotation>.computeTypeAttributes(
         when (classId) {
             CompilerConeAttributes.Exact.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.Exact
             CompilerConeAttributes.NoInfer.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.NoInfer
-            CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.ExtensionFunctionType
+            CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID -> when {
+                allowExtensionFunctionType -> attributes += CompilerConeAttributes.ExtensionFunctionType
+            }
             CompilerConeAttributes.ContextFunctionTypeParams.ANNOTATION_CLASS_ID ->
                 attributes +=
                     CompilerConeAttributes.ContextFunctionTypeParams(
