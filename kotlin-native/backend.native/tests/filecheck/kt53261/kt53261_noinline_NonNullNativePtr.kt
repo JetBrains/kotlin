@@ -11,6 +11,7 @@ import kotlinx.cinterop.*
 fun main() = memScoped {
     val var1: IntVar = alloc()
     val var2: IntVar = alloc()
-    @Suppress("INVISIBLE_MEMBER")
+    // The first one is K1, the second one is K2.
+    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
     println(var1.ptr.value as Any == var2.ptr.value as Any)
 }
