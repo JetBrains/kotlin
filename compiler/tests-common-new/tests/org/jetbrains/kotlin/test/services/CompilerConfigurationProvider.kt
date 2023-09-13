@@ -137,6 +137,10 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
         configuration.put(JSConfigurationKeys.GENERATE_DTS, true)
     }
 
+    if (JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives) {
+        configuration.put(JSConfigurationKeys.USE_ES6_CLASSES, true)
+    }
+
     if (module.frontendKind == FrontendKinds.FIR) {
         configuration[CommonConfigurationKeys.USE_FIR] = true
     }

@@ -132,6 +132,7 @@ abstract class AbstractInvalidationTest(
         copy.put(JSConfigurationKeys.MODULE_KIND, moduleKind)
         copy.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
         copy.put(JSConfigurationKeys.SOURCE_MAP, true)
+        copy.put(JSConfigurationKeys.USE_ES6_CLASSES, targetBackend == TargetBackend.JS_IR_ES6)
 
         copy.languageVersionSettings = with(LanguageVersionSettingsBuilder()) {
             language.forEach {
@@ -370,7 +371,6 @@ abstract class AbstractInvalidationTest(
                             granularity,
                             getPhaseConfig(projStep.id),
                             setOf(FqName(BOX_FUNCTION_NAME)),
-                            targetBackend == TargetBackend.JS_IR_ES6
                         )
                     }
                 )

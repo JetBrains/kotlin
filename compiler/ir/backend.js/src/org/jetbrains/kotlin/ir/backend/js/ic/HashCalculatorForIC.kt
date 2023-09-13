@@ -152,6 +152,7 @@ internal class ICHasher {
             JSConfigurationKeys.SOURCE_MAP,
             JSConfigurationKeys.META_INFO,
             JSConfigurationKeys.DEVELOPER_MODE,
+            JSConfigurationKeys.USE_ES6_CLASSES,
             JSConfigurationKeys.GENERATE_POLYFILLS,
             JSConfigurationKeys.GENERATE_DTS,
             JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION,

@@ -62,7 +62,6 @@ class JsIrBackendContext(
     val additionalExportedDeclarationNames: Set<FqName>,
     keep: Set<String>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
-    override val es6mode: Boolean = false,
     val dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     val safeExternalBoolean: Boolean = false,
     val safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
@@ -104,6 +103,7 @@ class JsIrBackendContext(
 
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
     val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
+    override val es6mode = configuration[JSConfigurationKeys.USE_ES6_CLASSES] ?: false
 
     val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
 
