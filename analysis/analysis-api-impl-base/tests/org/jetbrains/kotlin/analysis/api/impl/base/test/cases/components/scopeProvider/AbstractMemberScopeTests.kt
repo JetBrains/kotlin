@@ -9,17 +9,35 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolsData
+import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractMemberScopeByFqNameTest : AbstractSymbolByFqNameTest() {
+abstract class AbstractMemberScopeTestBase : AbstractSymbolByFqNameTest() {
+    context(KtAnalysisSession)
+    protected abstract fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol>
 
     override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
         val symbols = with(symbolData) { toSymbols(ktFile) }
         val symbolWithMembers = symbols.singleOrNull() as? KtSymbolWithMembers
             ?: error("Should be a single `${KtSymbolWithMembers::class.simpleName}`, but $symbols found.")
-        return SymbolsData(symbolWithMembers.getMemberScope().getAllSymbols().toList())
+        return SymbolsData(symbolWithMembers.getSymbolsFromScope().toList())
     }
+}
+
+abstract class AbstractMemberScopeByFqNameTest : AbstractMemberScopeTestBase() {
+    context(KtAnalysisSession)
+    override fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol> = getMemberScope().getAllSymbols()
+}
+
+abstract class AbstractDeclaredMemberScopeTest : AbstractMemberScopeTestBase() {
+    context(KtAnalysisSession)
+    override fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol> = getDeclaredMemberScope().getAllSymbols()
+}
+
+abstract class AbstractDelegateMemberScopeTest : AbstractMemberScopeTestBase() {
+    context(KtAnalysisSession)
+    override fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol> = getDelegatedMemberScope().getCallableSymbols()
 }
