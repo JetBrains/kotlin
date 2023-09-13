@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.backend.common.actualizer.checker.IrExpectActualCheckers
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -42,9 +43,8 @@ object IrActualizer {
             ktDiagnosticReporter,
             expectActualTracker
         ).collect()
-        if (languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
-            IrExpectActualAnnotationMatchingChecker(expectActualMap, actualDeclarations, typeSystemContext, ktDiagnosticReporter).check()
-        }
+
+        IrExpectActualCheckers(expectActualMap, actualDeclarations, typeSystemContext, ktDiagnosticReporter).check()
 
         //   2. Remove top-only expect declarations since they are not needed anymore and should not be presented in the final IrFragment
         //      Expect fake-overrides from non-expect classes remain untouched since they will be actualized in the next phase.

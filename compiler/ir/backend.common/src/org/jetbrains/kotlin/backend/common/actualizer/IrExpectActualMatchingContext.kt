@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.backend.common.actualizer.checker.areIrExpressionConstValuesEqual
 import org.jetbrains.kotlin.backend.common.sourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
