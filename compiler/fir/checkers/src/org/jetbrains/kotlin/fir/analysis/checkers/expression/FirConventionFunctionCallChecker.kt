@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -43,6 +44,8 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
+        if (callExpression.dispatchReceiver?.coneTypeOrNull is ConeDynamicType) return
+        // KT-61905: TODO: Return also in case of error type.
         val sourceKind = callExpression.source?.kind
         if (sourceKind !is KtRealSourceElementKind &&
             sourceKind !is KtFakeSourceElementKind.GeneratedComparisonExpression &&
