@@ -103,8 +103,22 @@ fun buildFakeOverrideMember(
     return CopyIrTreeWithSymbolsForFakeOverrides(member, substitutionMap, clazz, unimplementedOverridesStrategy)
         .copy()
         .apply {
+            makeExternal(clazz.isExternal)
+
             val isInvisible = isPrivateToThisModule(clazz, classifier.owner, friendModules)
             if (isInvisible && !member.annotations.hasAnnotation(StandardNames.FqNames.publishedApi))
                 visibility = DescriptorVisibilities.INVISIBLE_FAKE
         }
+}
+
+// TODO: this is JS-specific functionality which should be moved out of the common ir.tree.
+private fun IrOverridableMember.makeExternal(value: Boolean) {
+    when (this) {
+        is IrSimpleFunction -> isExternal = value
+        is IrProperty -> {
+            isExternal = value
+            getter?.isExternal = value
+            setter?.isExternal = value
+        }
+    }
 }

@@ -28,16 +28,20 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
     private val parent: IrClass,
     unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) {
+    private val symbolRemapper = FakeOverrideSymbolRemapperImpl(typeArguments, NullDescriptorsRemapper)
+
+    private val copier = FakeOverrideCopier(
+        symbolRemapper,
+        FakeOverrideTypeRemapper(symbolRemapper, typeArguments),
+        SymbolRenamer.DEFAULT,
+        parent,
+        unimplementedOverridesStrategy
+    )
+
     fun copy(): IrOverridableMember {
-        // Create new symbols.
         overridableMember.acceptVoid(symbolRemapper)
 
-        // Make symbol remapper aware of the callsite's type arguments.
-        // Copy IR.
-        val result = overridableMember.transform(
-            if (parent.isEffectivelyExternal()) copierMakingExternal else copier,
-            data = null
-        ) as IrOverridableMember
+        val result = overridableMember.transform(copier, null) as IrOverridableMember
 
         result.patchDeclarationParents(parent)
 
@@ -93,9 +97,7 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
     private class FakeOverrideSymbolRemapperImpl(
         private val typeArguments: Map<IrTypeParameterSymbol, IrType>,
         descriptorsRemapper: DescriptorsRemapper
-    ) :
-        DeepCopySymbolRemapper(descriptorsRemapper) {
-
+    ) : DeepCopySymbolRemapper(descriptorsRemapper) {
         override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol {
             val result = super.getReferencedClassifier(symbol)
             if (result !is IrTypeParameterSymbol)
@@ -103,30 +105,6 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
             return typeArguments[result]?.classifierOrNull ?: result
         }
     }
-
-    private val symbolRemapper =
-        FakeOverrideSymbolRemapperImpl(
-            typeArguments,
-            NullDescriptorsRemapper
-        )
-
-    private val copier = FakeOverrideCopier(
-        symbolRemapper,
-        FakeOverrideTypeRemapper(symbolRemapper, typeArguments),
-        SymbolRenamer.DEFAULT,
-        makeExternal = false,
-        parent,
-        unimplementedOverridesStrategy
-    )
-
-    private val copierMakingExternal = FakeOverrideCopier(
-        symbolRemapper,
-        FakeOverrideTypeRemapper(symbolRemapper, typeArguments),
-        SymbolRenamer.DEFAULT,
-        makeExternal = true,
-        parent,
-        unimplementedOverridesStrategy
-    )
 
     private companion object {
         // TODO: RawTypeAnnotation, FlexibleMutability, EnhancedNullability?

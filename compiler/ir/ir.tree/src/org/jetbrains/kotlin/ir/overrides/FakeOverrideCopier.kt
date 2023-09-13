@@ -13,7 +13,6 @@ class FakeOverrideCopier(
     private val symbolRemapper: SymbolRemapper,
     private val typeRemapper: TypeRemapper,
     private val symbolRenamer: SymbolRenamer,
-    private val makeExternal: Boolean,
     private val parent: IrClass,
     private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper, symbolRenamer) {
@@ -35,7 +34,7 @@ class FakeOverrideCopier(
             isSuspend = declaration.isSuspend,
             isOperator = declaration.isOperator,
             isInfix = declaration.isInfix,
-            isExternal = makeExternal,
+            isExternal = declaration.isExternal,
         ).apply {
             transformAnnotations(declaration)
             copyTypeParametersFrom(declaration)
@@ -82,7 +81,7 @@ class FakeOverrideCopier(
             isLateinit = declaration.isLateinit,
             isDelegated = declaration.isDelegated,
             isExpect = declaration.isExpect,
-            isExternal = makeExternal
+            isExternal = declaration.isExternal,
         ).apply {
             transformAnnotations(declaration)
             this.getter = declaration.getter?.transform()
