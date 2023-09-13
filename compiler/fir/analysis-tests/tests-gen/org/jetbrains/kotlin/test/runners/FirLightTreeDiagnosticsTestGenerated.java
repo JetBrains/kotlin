@@ -3848,6 +3848,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
             }
 
             @Test
+            @TestMetadata("incorrectGenericLambdaProperty.kt")
+            public void testIncorrectGenericLambdaProperty() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/incorrectGenericLambdaProperty.kt");
+            }
+
+            @Test
             @TestMetadata("innerClassHierarchy.kt")
             public void testInnerClassHierarchy() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/problems/innerClassHierarchy.kt");

@@ -304,8 +304,9 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
     symbol: FirCallableSymbol<*>
 ): FirExpression {
     return FirPropertyAccessExpressionBuilder().apply {
+        val fakeSource = info.fakeSourceForImplicitInvokeCallReceiver
         calleeReference = FirNamedReferenceWithCandidate(
-            null,
+            fakeSource,
             symbol.callableId.callableName,
             candidate
         )
@@ -321,7 +322,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
         if (candidate.currentApplicability == CandidateApplicability.K2_PROPERTY_AS_OPERATOR) {
             nonFatalDiagnostics.add(ConePropertyAsOperator(candidate.symbol as FirPropertySymbol))
         }
-        source = info.fakeSourceForImplicitInvokeCallReceiver
+        source = fakeSource
     }.build().let {
         callCompleter.completeCall(it, ResolutionMode.ReceiverResolution)
     }.let {
