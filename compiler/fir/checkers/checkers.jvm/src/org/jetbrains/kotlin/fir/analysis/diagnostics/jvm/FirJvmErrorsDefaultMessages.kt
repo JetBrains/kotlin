@@ -73,7 +73,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATED_A
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.STRICTFP_ON_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SUPER_CALL_WITH_DEFAULT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_ON_ABSTRACT
@@ -112,11 +111,6 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES,
             "'@JvmPackageName' annotation is not supported for files with class declarations."
-        )
-        map.put(
-            SUPER_CALL_WITH_DEFAULT_PARAMETERS,
-            "Super-calls with default arguments are prohibited. Please specify all arguments of ''super.{0}'' explicitly.",
-            TO_STRING
         )
 
         map.put(LOCAL_JVM_RECORD, "Local '@JvmRecord' classes are prohibited.")

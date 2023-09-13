@@ -555,7 +555,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.SUPER_CALL_WITH_DEFAULT_PARAMETERS) { firDiagnostic ->
+    add(FirErrors.SUPER_CALL_WITH_DEFAULT_PARAMETERS) { firDiagnostic ->
         SuperCallWithDefaultParametersImpl(
             firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,

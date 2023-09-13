@@ -71,7 +71,6 @@ object FirJvmErrors {
     val REDUNDANT_REPEATABLE_ANNOTATION by warning2<KtAnnotationEntry, FqName, FqName>()
 
     // Super
-    val SUPER_CALL_WITH_DEFAULT_PARAMETERS by error1<PsiElement, String>()
     val INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
 
     // JVM Records

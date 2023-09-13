@@ -583,6 +583,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_IS_EXTE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_NOT_INITIALIZED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_CALL_FROM_PUBLIC_INLINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_CALL_WITH_DEFAULT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_NOT_AVAILABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TAILREC_ON_VIRTUAL_MEMBER_ERROR
@@ -854,6 +855,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(ILLEGAL_SELECTOR, "The expression cannot be a selector (cannot occur after a dot).")
         map.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property.")
+        map.put(
+            SUPER_CALL_WITH_DEFAULT_PARAMETERS,
+            "Super-calls with default arguments are prohibited. Please specify all arguments of ''super.{0}'' explicitly.",
+            TO_STRING
+        )
 
         // Supertypes
         map.put(NOT_A_SUPERTYPE, "Not an immediate supertype.")

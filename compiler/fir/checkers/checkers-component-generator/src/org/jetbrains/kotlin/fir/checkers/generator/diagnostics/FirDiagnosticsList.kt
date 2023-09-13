@@ -235,6 +235,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INSTANCE_ACCESS_BEFORE_SUPER_CALL by error<PsiElement> {
             parameter<String>("target")
         }
+        val SUPER_CALL_WITH_DEFAULT_PARAMETERS by error<PsiElement> {
+            parameter<String>("name")
+        }
     }
 
     val SUPERTYPES by object : DiagnosticGroup("Supertypes") {

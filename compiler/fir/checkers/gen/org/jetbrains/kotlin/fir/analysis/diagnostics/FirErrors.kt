@@ -201,6 +201,7 @@ object FirErrors {
     val ABSTRACT_SUPER_CALL by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val ABSTRACT_SUPER_CALL_WARNING by warning0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val INSTANCE_ACCESS_BEFORE_SUPER_CALL by error1<PsiElement, String>()
+    val SUPER_CALL_WITH_DEFAULT_PARAMETERS by error1<PsiElement, String>()
 
     // Supertypes
     val NOT_A_SUPERTYPE by error0<PsiElement>()

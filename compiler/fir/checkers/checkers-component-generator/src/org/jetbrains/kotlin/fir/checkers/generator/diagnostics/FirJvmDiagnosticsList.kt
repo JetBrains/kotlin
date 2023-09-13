@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.*
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -21,6 +18,7 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.util.PrivateForInline
 
 @Suppress("ClassName", "unused")
 @OptIn(PrivateForInline::class)
@@ -86,9 +84,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     }
 
     val SUPER by object : DiagnosticGroup("Super") {
-        val SUPER_CALL_WITH_DEFAULT_PARAMETERS by error<PsiElement> {
-            parameter<String>("name")
-        }
         val INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED)
     }
 
