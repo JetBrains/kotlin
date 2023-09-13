@@ -1,0 +1,6 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:main.kt
+    FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+      BLOCK_BODY
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          CALL 'public final fun lib (a: kotlin.Int): kotlin.String declared in lib.LibKt' type=kotlin.String origin=null
