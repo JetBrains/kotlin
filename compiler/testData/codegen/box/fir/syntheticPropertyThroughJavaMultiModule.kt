@@ -1,7 +1,5 @@
 // TARGET_BACKEND: JVM_IR
 // ISSUE: KT-59550 (related)
-// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-61805
-
 // MODULE: m1
 // FILE: Base.kt
 abstract class Base(internal val foo: String) {

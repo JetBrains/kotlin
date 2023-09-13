@@ -134,7 +134,7 @@ class FakeOverrideRebuilder(
         for (c in irClass.superTypes) {
             c.getClass()?.let { rebuildClassFakeOverrides(it) }
         }
-        fakeOverrideBuilder.provideFakeOverrides(irClass, CompatibilityMode.CURRENT)
+        fakeOverrideBuilder.buildFakeOverridesForSingleClass(irClass, CompatibilityMode.CURRENT)
 
         val overriddenMap = mutableMapOf<IrSymbol, IrSymbol>()
 
