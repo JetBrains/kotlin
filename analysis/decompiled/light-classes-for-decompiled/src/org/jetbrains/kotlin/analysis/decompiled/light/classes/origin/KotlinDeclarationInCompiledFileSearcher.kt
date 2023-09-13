@@ -6,7 +6,13 @@
 package org.jetbrains.kotlin.analysis.decompiled.light.classes.origin
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.psi.*
+import com.intellij.psi.PsiArrayType
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiMember
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiParameterList
+import com.intellij.psi.PsiPrimitiveType
+import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.getAllModifierLists
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.getQualifiedName
@@ -19,7 +25,16 @@ import org.jetbrains.kotlin.load.java.propertyNamesBySetMethodName
 import org.jetbrains.kotlin.load.kotlin.MemberSignature
 import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtDeclarationContainer
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.allConstructors
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
 import org.jetbrains.kotlin.type.MapPsiToAsmDesc
@@ -155,18 +170,21 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
         val ktTypes = mutableListOf<KtTypeReference>()
         ktNamedFunction.contextReceivers.forEach { ktTypes.add(it.typeReference()!!) }
         ktNamedFunction.receiverTypeReference?.let { ktTypes.add(it) }
-        val parametersCount = member.parameterList.parametersCount
+        val valueParameters = ktNamedFunction.valueParameters
+        val memberParameterList = member.parameterList
+        val memberParametersCount = memberParameterList.parametersCount
+        val parametersCount = memberParametersCount - (if (ktNamedFunction.isSuspendFunction(memberParameterList)) 1 else 0)
         val isJvmOverloads = ktNamedFunction.annotationEntries.any {
             it.calleeExpression?.constructorReferenceExpression?.getReferencedName() ==
                     JvmNames.JVM_OVERLOADS_FQ_NAME.shortName().asString()
         }
         val firstDefaultParametersToPass = if (isJvmOverloads) {
-            val totalNumberOfParametersWithDefaultValues = ktNamedFunction.valueParameters.filter { it.hasDefaultValue() }.size
-            val numberOfSkippedParameters = ktNamedFunction.valueParameters.size + ktTypes.size - parametersCount
+            val totalNumberOfParametersWithDefaultValues = valueParameters.filter { it.hasDefaultValue() }.size
+            val numberOfSkippedParameters = valueParameters.size + ktTypes.size - parametersCount
             totalNumberOfParametersWithDefaultValues - numberOfSkippedParameters
         } else 0
         var defaultParamIdx = 0
-        for (valueParameter in ktNamedFunction.valueParameters) {
+        for (valueParameter in valueParameters) {
             if (isJvmOverloads && valueParameter.hasDefaultValue()) {
                 if (defaultParamIdx >= firstDefaultParametersToPass) {
                     continue
@@ -177,12 +195,22 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
             ktTypes.add(valueParameter.typeReference!!)
         }
         if (parametersCount != ktTypes.size) return false
-        member.parameterList.parameters.map { it.type }
+        memberParameterList.parameters.map { it.type }
             .zip(ktTypes)
             .forEach { (psiType, ktTypeRef) ->
                 if (!areTypesTheSame(ktTypeRef, psiType, (ktTypeRef.parent as? KtParameter)?.isVarArg == true)) return false
             }
         return true
+    }
+
+    private fun KtFunction.isSuspendFunction(memberParameterList: PsiParameterList): Boolean {
+        if (modifierList?.hasSuspendModifier() != true || memberParameterList.isEmpty) return false
+
+        val memberParametersCount = memberParameterList.parametersCount
+        val continuationPsiType = psiType(StandardNames.CONTINUATION_INTERFACE_FQ_NAME.asString(), this)
+        val memberType = memberParameterList.getParameter(memberParametersCount - 1)?.type ?: return false
+        // check fqName ignoring generic parameter
+        return memberType.isTheSame(continuationPsiType)
     }
 
     private fun doTypeParameters(member: PsiMethod, ktNamedFunction: KtFunction): Boolean {
@@ -212,13 +240,17 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
     private fun areTypesTheSame(ktTypeRef: KtTypeReference, psiType: PsiType, varArgs: Boolean): Boolean {
         val qualifiedName =
             getQualifiedName(ktTypeRef.typeElement, ktTypeRef.getAllModifierLists().any { it.hasSuspendModifier() }) ?: return false
-        if (psiType is PsiArrayType && psiType.componentType !is PsiPrimitiveType) {
-            return qualifiedName == StandardNames.FqNames.array.asString() ||
+        return if (psiType is PsiArrayType && psiType.componentType !is PsiPrimitiveType) {
+            qualifiedName == StandardNames.FqNames.array.asString() ||
                     varArgs && areTypesTheSame(ktTypeRef, psiType.componentType, false)
+        } else {
+            psiType.isTheSame(psiType(qualifiedName, ktTypeRef))
         }
-        //currently functional types are unresolved and thus type comparison doesn't work
-        return psiType.canonicalText.takeWhile { it != '<' } == psiType(qualifiedName, ktTypeRef).canonicalText
     }
+
+    private fun PsiType.isTheSame(psiType: PsiType): Boolean =
+        //currently functional types are unresolved and thus type comparison doesn't work
+        canonicalText.takeWhile { it != '<' } == psiType.canonicalText
 
     companion object {
         fun getInstance(): KotlinDeclarationInCompiledFileSearcher =
