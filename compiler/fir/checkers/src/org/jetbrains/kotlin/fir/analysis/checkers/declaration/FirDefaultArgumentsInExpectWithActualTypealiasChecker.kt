@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.getSingleCompatibleExpectForActualOrNull
 import org.jetbrains.kotlin.fir.declarations.getSingleExpectForActualOrNull
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
@@ -33,9 +32,7 @@ internal object FirDefaultArgumentsInExpectWithActualTypealiasChecker : FirTypeA
         }
         val actualTypealiasSymbol = declaration.symbol
         // We want to report errors even if a candidate is incompatible, but it's single
-        val expectedSingleCandidate = actualTypealiasSymbol.getSingleCompatibleExpectForActualOrNull()
-            ?: actualTypealiasSymbol.getSingleExpectForActualOrNull()
-            ?: return
+        val expectedSingleCandidate = actualTypealiasSymbol.getSingleExpectForActualOrNull() ?: return
         val expectClassSymbol = expectedSingleCandidate as FirRegularClassSymbol
 
         val membersWithDefaultValueParameters = getMembersWithDefaultValueParametersUnlessAnnotation(expectClassSymbol)

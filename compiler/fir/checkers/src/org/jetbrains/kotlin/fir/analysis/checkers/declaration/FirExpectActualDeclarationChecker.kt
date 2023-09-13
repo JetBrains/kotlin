@@ -185,8 +185,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
             else -> {}
         }
         // We want to report errors even if a candidate is incompatible, but it's single
-        val expectedSingleCandidate = symbol.getSingleCompatibleExpectForActualOrNull()
-            ?: symbol.getSingleExpectForActualOrNull()
+        val expectedSingleCandidate = symbol.getSingleExpectForActualOrNull()
         if (expectedSingleCandidate != null) {
             checkOptInAnnotation(declaration, expectedSingleCandidate, context, reporter)
             checkAnnotationsMatch(expectedSingleCandidate, symbol, context, reporter)

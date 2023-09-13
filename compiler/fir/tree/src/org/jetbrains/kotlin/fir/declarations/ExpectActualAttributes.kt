@@ -24,14 +24,6 @@ fun FirFunctionSymbol<*>.getSingleExpectForActualOrNull(): FirFunctionSymbol<*>?
     (this as FirBasedSymbol<*>).getSingleExpectForActualOrNull() as? FirFunctionSymbol<*>
 
 fun FirBasedSymbol<*>.getSingleExpectForActualOrNull(): FirBasedSymbol<*>? {
-    return expectForActual?.values?.singleOrNull()?.singleOrNull()
-}
-
-fun FirBasedSymbol<*>.getSingleCompatibleExpectForActualOrNull(): FirBasedSymbol<*>? {
-    return expectForActual?.get(ExpectActualCompatibility.Compatible)?.singleOrNull()
-}
-
-fun FirBasedSymbol<*>.getSingleCompatibleOrWeaklyIncompatibleExpectForActualOrNull(): FirBasedSymbol<*>? {
     val expectForActual = expectForActual ?: return null
     val compatibleOrWeakCompatible: List<FirBasedSymbol<*>> =
         expectForActual.entries.singleOrNull { it.key.isCompatibleOrWeaklyIncompatible }?.value ?: return null

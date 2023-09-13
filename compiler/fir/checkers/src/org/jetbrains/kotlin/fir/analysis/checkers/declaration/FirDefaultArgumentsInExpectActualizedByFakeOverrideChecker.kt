@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.FirExpectActualMatchingContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.getSingleCompatibleExpectForActualOrNull
 import org.jetbrains.kotlin.fir.declarations.getSingleExpectForActualOrNull
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
@@ -36,9 +35,7 @@ internal object FirDefaultArgumentsInExpectActualizedByFakeOverrideChecker : Fir
         }
         val actualClassSymbol = declaration.symbol
         // We want to report errors even if a candidate is incompatible, but it's single
-        val expectedSingleCandidate = actualClassSymbol.getSingleCompatibleExpectForActualOrNull()
-            ?: actualClassSymbol.getSingleExpectForActualOrNull()
-            ?: return
+        val expectedSingleCandidate = actualClassSymbol.getSingleExpectForActualOrNull() ?: return
         val expectClassSymbol = expectedSingleCandidate as FirRegularClassSymbol
 
         val matchingContext = context.session.expectActualMatchingContextFactory.create(context.session, context.scopeSession)
