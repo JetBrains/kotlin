@@ -73,7 +73,7 @@ To run blackbox compiler tests use:
 
 * **--tests** allows one to choose test suite(s) or test case(s) to run.
 
-      ./gradlew :native:native.tests:codegenBoxTest --tests "org.jetbrains.kotlin.konan.blackboxtest.NativeCodegenBoxTestGenerated\$Box\$*"
+      ./gradlew :native:native.tests:codegenBoxTest --tests "org.jetbrains.kotlin.konan.test.blackbox.NativeCodegenBoxTestGenerated\$Box\$*"
 
 * There are also Gradle project properties that can be used to control various aspects of blackbox tests. Example:
 
