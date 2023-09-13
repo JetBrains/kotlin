@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -1238,6 +1239,14 @@ open class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @Disabled("Disabled until kotlin-native fix from MR https://jetbrains.team/p/kt/reviews/12079/timeline is deployed and can be tested")
+    @GradleTest
+    @DisplayName("K2: Check native stdlib is not shadowed by commonMain metadata")
+    fun testK2NativeStdlibConflict(gradleVersion: GradleVersion) {
+        nativeProject("kt61430", gradleVersion, buildOptions = defaultBuildOptions.copyEnsuringK2()) {
+            build("assemble")
+        }
+    }
 
     private fun TestProject.testDependencyTransformations(
         subproject: String? = null,

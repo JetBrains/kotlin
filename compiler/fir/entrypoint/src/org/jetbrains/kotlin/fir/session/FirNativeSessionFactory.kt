@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
+import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
@@ -52,7 +52,11 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
                 ).apply {
                     bindSession(session)
                 }
-                val kotlinLibraries = resolvedLibraries.map { it.library }
+                val resolvedKotlinLibraries = resolvedLibraries.map { it.library }
+                // KT-61645: stdlib-native must appear before stdlib-common metadata in the dependency list
+                // TODO: Consider not reordering libraries after KT-61430 is fixed, and Gradle plugin determines full order of dependencies.
+                val (stdlib, otherDeps) = resolvedKotlinLibraries.partition { it.isNativeStdlib }
+                val kotlinLibraries = stdlib + otherDeps
                 listOfNotNull(
                     KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, kotlinLibraries),
                     NativeForwardDeclarationsSymbolProvider(session, forwardDeclarationsModuleData, kotlinScopeProvider, kotlinLibraries),
