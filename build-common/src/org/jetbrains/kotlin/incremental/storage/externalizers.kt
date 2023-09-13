@@ -302,6 +302,12 @@ open class CollectionExternalizer<T, C : Collection<T>>(
     private val newCollection: (size: Int) -> MutableCollection<T>
 ) : DataExternalizer<C> {
 
+    @Suppress("unused") // Currently used by intellij-community
+    constructor(
+        elementExternalizer: DataExternalizer<T>,
+        newCollection: () -> MutableCollection<T>,
+    ) : this(elementExternalizer, { _ -> newCollection() })
+
     override fun save(output: DataOutput, collection: C) {
         output.writeInt(collection.size)
         collection.forEach {
