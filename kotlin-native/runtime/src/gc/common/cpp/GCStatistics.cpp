@@ -379,6 +379,21 @@ MarkStats GCHandle::getMarked() {
     return MarkStats{};
 }
 
+size_t GCHandle::getKeptSizeBytes() noexcept {
+    std::lock_guard guard(lock);
+    if (auto* stat = statByEpoch(epoch_)) {
+        size_t result = 0;
+        if (stat->sweepStats.heap) {
+            result += stat->sweepStats.heap->keptSizeBytes;
+        }
+        if (stat->sweepStats.extra) {
+            result += stat->sweepStats.extra->keptSizeBytes;
+        }
+        return result;
+    }
+    return 0;
+}
+
 void GCHandle::swept(gc::SweepStats stats, uint64_t markedCount) noexcept {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
@@ -388,6 +403,7 @@ void GCHandle::swept(gc::SweepStats stats, uint64_t markedCount) noexcept {
         }
         heap->keptCount += stats.keptCount;
         heap->sweptCount += stats.sweptCount;
+        heap->keptSizeBytes += stats.keptSizeBytes;
         RuntimeAssert(static_cast<bool>(stat->markStats), "Mark must have already happened");
         stat->markStats->markedCount += markedCount;
     }
@@ -402,6 +418,7 @@ void GCHandle::sweptExtraObjects(gc::SweepStats stats) noexcept {
         }
         extra->keptCount += stats.keptCount;
         extra->sweptCount += stats.sweptCount;
+        extra->keptSizeBytes += stats.keptSizeBytes;
     }
 }
 

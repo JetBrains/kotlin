@@ -206,6 +206,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.objcDisposeOnMain) ?: true
     }
 
+    val gcMemoryBigChunks: Boolean by lazy {
+        configuration.get(BinaryOptions.gcMemoryBigChunks) ?: false
+    }
+
     init {
         if (!platformManager.isEnabled(target)) {
             error("Target ${target.visibleName} is not available on the ${HostManager.hostName} host")
