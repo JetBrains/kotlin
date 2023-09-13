@@ -120,7 +120,7 @@ class ScriptTemplateTest : TestCase() {
         assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
-    // Fails on K2, see KT-60452
+    // Should fail on K2, see KT-60452
     fun testScriptWithoutParams() {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("without_params.kts", ScriptWithoutParams::class, null, messageCollector = messageCollector)
