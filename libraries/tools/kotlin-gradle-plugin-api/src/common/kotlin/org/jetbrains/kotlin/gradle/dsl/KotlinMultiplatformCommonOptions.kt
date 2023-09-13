@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+/**
+ * Compiler options for the Kotlin common platform.
+ */
 interface KotlinMultiplatformCommonOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions {
+    /**
+     * @suppress
+     */
     override val options: org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonCompilerOptions
 }

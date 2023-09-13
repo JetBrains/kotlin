@@ -47,6 +47,14 @@ private const val OPTIONS_PACKAGE_PREFIX = "org.jetbrains.kotlin.gradle.dsl"
 private const val IMPLEMENTATION_SUFFIX = "Default"
 private const val IMPLEMENTATION_HELPERS_SUFFIX = "Helper"
 
+private const val TOOL_OPTIONS_KDOC = "Common options for all Kotlin platforms' compilations and tools."
+private const val COMMON_COMPILER_OPTIONS_KDOC = "Common compiler options for all Kotlin platforms."
+private const val JVM_COMPILER_OPTIONS_KDOC = "Compiler options for Kotlin/JVM."
+private const val JS_COMPILER_OPTIONS_KDOC = "Compiler options for Kotlin/JS."
+private const val NATIVE_COMPILER_OPTIONS_KDOC = "Compiler options for Kotlin Native."
+private const val MULTIPLATFORM_COMPILER_OPTION_KDOC = "Compiler options for the Kotlin common platform."
+private const val JS_DCE_TOOL_OPTIONS_KDOC = "Options for the Kotlin JavaScript dead code elimination tool."
+
 fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
     val apiSrcDir = File(GRADLE_API_SRC_DIR)
     val srcDir = File(GRADLE_PLUGIN_SRC_DIR)
@@ -158,7 +166,8 @@ private fun generateKotlinCommonToolOptions(
     withPrinterToFile(fileFromFqName(apiSrcDir, commonInterfaceFqName)) {
         generateInterface(
             commonInterfaceFqName,
-            commonOptions + additionalOptions
+            commonOptions + additionalOptions,
+            interfaceKDoc = TOOL_OPTIONS_KDOC,
         )
     }
 
@@ -169,6 +178,7 @@ private fun generateKotlinCommonToolOptions(
             commonInterfaceFqName,
             commonOptions + additionalOptions,
             parentType = null,
+            interfaceKDoc = TOOL_OPTIONS_KDOC,
         )
     }
 
@@ -223,6 +233,7 @@ private fun generateKotlinCommonOptions(
             commonCompilerInterfaceFqName,
             commonCompilerOptions,
             parentType = commonToolGeneratedOptions.optionsName,
+            interfaceKDoc = COMMON_COMPILER_OPTIONS_KDOC,
         )
     }
 
@@ -232,7 +243,8 @@ private fun generateKotlinCommonOptions(
             deprecatedCommonCompilerInterfaceFqName,
             commonCompilerInterfaceFqName,
             commonCompilerOptions,
-            parentType = commonToolGeneratedOptions.deprecatedOptionsName
+            parentType = commonToolGeneratedOptions.deprecatedOptionsName,
+            interfaceKDoc = COMMON_COMPILER_OPTIONS_KDOC,
         )
     }
 
@@ -289,6 +301,7 @@ private fun generateKotlinJvmOptions(
             jvmInterfaceFqName,
             jvmOptions,
             parentType = commonCompilerGeneratedOptions.optionsName,
+            interfaceKDoc = JVM_COMPILER_OPTIONS_KDOC,
         )
     }
 
@@ -298,7 +311,8 @@ private fun generateKotlinJvmOptions(
             deprecatedJvmInterfaceFqName,
             jvmInterfaceFqName,
             jvmOptions,
-            parentType = commonCompilerGeneratedOptions.deprecatedOptionsName
+            parentType = commonCompilerGeneratedOptions.deprecatedOptionsName,
+            interfaceKDoc = JVM_COMPILER_OPTIONS_KDOC,
         )
     }
 
@@ -353,6 +367,7 @@ private fun generateKotlinJsOptions(
             jsInterfaceFqName,
             jsOptions,
             parentType = commonCompilerOptions.optionsName,
+            interfaceKDoc = JS_COMPILER_OPTIONS_KDOC,
         )
     }
 
@@ -363,6 +378,7 @@ private fun generateKotlinJsOptions(
             jsInterfaceFqName,
             jsOptions,
             parentType = commonCompilerOptions.deprecatedOptionsName,
+            interfaceKDoc = JS_COMPILER_OPTIONS_KDOC,
         )
     }
 
@@ -417,6 +433,7 @@ private fun generateKotlinNativeOptions(
             nativeInterfaceFqName,
             nativeOptions,
             parentType = commonCompilerOptions.optionsName,
+            interfaceKDoc = NATIVE_COMPILER_OPTIONS_KDOC
         )
     }
 
@@ -472,6 +489,7 @@ private fun generateJsDceOptions(
             jsDceInterfaceFqName,
             jsDceOptions,
             parentType = commonToolOptions.optionsName,
+            interfaceKDoc = JS_DCE_TOOL_OPTIONS_KDOC,
         )
     }
 
@@ -482,6 +500,7 @@ private fun generateJsDceOptions(
             jsDceInterfaceFqName,
             jsDceOptions,
             parentType = commonToolOptions.deprecatedOptionsName,
+            interfaceKDoc = JS_DCE_TOOL_OPTIONS_KDOC,
         )
     }
 
@@ -536,6 +555,7 @@ private fun generateMultiplatformCommonOptions(
             multiplatformCommonInterfaceFqName,
             multiplatformCommonOptions,
             parentType = commonCompilerOptions.optionsName,
+            interfaceKDoc = MULTIPLATFORM_COMPILER_OPTION_KDOC,
         )
     }
 
@@ -545,7 +565,8 @@ private fun generateMultiplatformCommonOptions(
             deprecatedMultiplatformCommonInterfaceFqName,
             multiplatformCommonInterfaceFqName,
             parentType = commonCompilerOptions.deprecatedOptionsName,
-            properties = multiplatformCommonOptions
+            properties = multiplatformCommonOptions,
+            interfaceKDoc = MULTIPLATFORM_COMPILER_OPTION_KDOC,
         )
     }
 
@@ -613,9 +634,10 @@ private fun Printer.generateInterface(
     type: FqName,
     properties: List<KProperty1<*, *>>,
     parentType: FqName? = null,
+    interfaceKDoc: String? = null,
 ) {
     val afterType = parentType?.let { " : $it" }
-    generateDeclaration("interface", type, afterType = afterType) {
+    generateDeclaration("interface", type, afterType = afterType, declarationKDoc = interfaceKDoc) {
         for (property in properties) {
             println()
             generateDoc(property)
@@ -629,6 +651,7 @@ private fun Printer.generateDeprecatedInterface(
     type: FqName,
     compilerOptionType: FqName,
     properties: List<KProperty1<*, *>>,
+    interfaceKDoc: String? = null,
     parentType: FqName? = null,
 ) {
     val afterType = parentType?.let { " : $it" }
@@ -639,8 +662,11 @@ private fun Printer.generateDeprecatedInterface(
     val deprecatedProperties = properties.filter { it.generateDeprecatedKotlinOption }
     // KotlinMultiplatformCommonOptions doesn't have any options, but it is being kept for backward compatibility
     if (deprecatedProperties.isNotEmpty() || type.asString().endsWith("KotlinMultiplatformCommonOptions")) {
-        generateDeclaration(modifier, type, afterType = afterType) {
+        generateDeclaration(modifier, type, afterType = afterType, declarationKDoc = interfaceKDoc) {
 
+            println("/**")
+            println(" * @suppress")
+            println(" */")
             println("${if (parentType != null) "override " else ""}val options: $compilerOptionType")
             deprecatedProperties
                 .forEach {
@@ -761,6 +787,7 @@ internal fun Printer.generateDeclaration(
     modifiers: String,
     type: FqName,
     constructorDeclaration: String? = null,
+    declarationKDoc: String? = null,
     afterType: String? = null,
     generateBody: Printer.() -> Unit
 ) {
@@ -777,6 +804,14 @@ internal fun Printer.generateDeclaration(
     if (!type.parent().isRoot) {
         println("package ${type.parent()}")
         println()
+    }
+
+    if (declarationKDoc != null) {
+        println("/**")
+        declarationKDoc.split('\n').forEach {
+            println(" * $it")
+        }
+        println(" */")
     }
     print("$modifiers ${type.shortName()}")
     constructorDeclaration?.let { print(" $it ") }

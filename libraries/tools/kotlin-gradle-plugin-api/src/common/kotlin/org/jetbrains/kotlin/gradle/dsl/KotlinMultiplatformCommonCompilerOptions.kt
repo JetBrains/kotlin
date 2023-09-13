@@ -5,5 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+/**
+ * Compiler options for the Kotlin common platform.
+ */
 interface KotlinMultiplatformCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions {
 }

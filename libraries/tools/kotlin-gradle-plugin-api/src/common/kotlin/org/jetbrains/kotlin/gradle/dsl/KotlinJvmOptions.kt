@@ -5,7 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+/**
+ * Compiler options for Kotlin/JVM.
+ */
 interface KotlinJvmOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions {
+    /**
+     * @suppress
+     */
     override val options: org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 
     /**

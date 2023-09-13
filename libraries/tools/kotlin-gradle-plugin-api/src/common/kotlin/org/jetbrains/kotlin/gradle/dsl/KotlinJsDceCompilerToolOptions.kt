@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+/**
+ * Options for the Kotlin JavaScript dead code elimination tool.
+ */
 interface KotlinJsDceCompilerToolOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions {
 
     /**

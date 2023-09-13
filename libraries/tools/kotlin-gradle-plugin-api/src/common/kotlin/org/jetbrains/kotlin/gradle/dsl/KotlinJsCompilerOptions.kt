@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+/**
+ * Compiler options for Kotlin/JS.
+ */
 interface KotlinJsCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions {
 
     /**
