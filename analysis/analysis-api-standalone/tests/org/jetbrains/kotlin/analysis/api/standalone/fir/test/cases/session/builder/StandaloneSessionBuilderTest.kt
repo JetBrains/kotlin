@@ -26,12 +26,16 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.nio.file.Path
 import java.nio.file.Paths
 
 @OptIn(KtAnalysisApiInternals::class)
@@ -74,33 +78,18 @@ class StandaloneSessionBuilderTest {
     }
 
     @Test
-    fun testKotlinSdkSessionBuilder() {
-        lateinit var sourceModule: KtSourceModule
-        val session = buildStandaloneAnalysisAPISession {
-            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
+    fun testKotlinStdlibJvm() {
+        doTestKotlinStdLibResolve(JvmPlatforms.defaultJvmPlatform, ForTestCompileRuntime.runtimeJarForTests().toPath())
+    }
 
-            buildKtModuleProvider {
-                platform = JvmPlatforms.defaultJvmPlatform
-                val stdlib = addModule(
-                    buildKtLibraryModule {
-                        addBinaryRoot(ForTestCompileRuntime.runtimeJarForTests().toPath())
-                        platform = JvmPlatforms.defaultJvmPlatform
-                        libraryName = "stdlib"
-                    }
-                )
-                sourceModule = addModule(
-                    buildKtSourceModule {
-                        addSourceRoot(testDataPath("stdlibFunctionUsage"))
-                        addRegularDependency(stdlib)
-                        platform = JvmPlatforms.defaultJvmPlatform
-                        moduleName = "source"
-                    }
-                )
-            }
-        }
-        val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
-        val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
-        ktCallExpression.assertIsCallOf(CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier("listOf")))
+    @Test
+    fun testKotlinStdLibCommon() {
+        doTestKotlinStdLibResolve(CommonPlatforms.defaultCommonPlatform, Paths.get("dist/common/kotlin-stdlib-common.jar"))
+    }
+
+    @Test
+    fun testKotlinStdLibJs() {
+        doTestKotlinStdLibResolve(JsPlatforms.defaultJsPlatform, Paths.get("dist/kotlinc/lib/kotlin-stdlib-js.jar"))
     }
 
     @Test
@@ -131,6 +120,35 @@ class StandaloneSessionBuilderTest {
         val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
         val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
         ktCallExpression.assertIsCallOf(CallableId(FqName.ROOT, Name.identifier("foo")))
+    }
+
+    private fun doTestKotlinStdLibResolve(targetPlatform: TargetPlatform, platformStdlibPath: Path) {
+        lateinit var sourceModule: KtSourceModule
+        val session = buildStandaloneAnalysisAPISession {
+            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
+
+            buildKtModuleProvider {
+                platform = targetPlatform
+                val stdlib = addModule(
+                    buildKtLibraryModule {
+                        addBinaryRoot(platformStdlibPath)
+                        platform = targetPlatform
+                        libraryName = "stdlib"
+                    }
+                )
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath("stdlibFunctionUsage"))
+                        addRegularDependency(stdlib)
+                        platform = targetPlatform
+                        moduleName = "source"
+                    }
+                )
+            }
+        }
+        val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
+        val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
+        ktCallExpression.assertIsCallOf(CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier("listOf")))
     }
 
 

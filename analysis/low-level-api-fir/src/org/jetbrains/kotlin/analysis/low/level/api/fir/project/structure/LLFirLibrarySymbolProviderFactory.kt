@@ -25,6 +25,32 @@ abstract class LLFirLibrarySymbolProviderFactory {
         scope: GlobalSearchScope,
     ): List<FirSymbolProvider>
 
+    abstract fun createCommonLibrarySymbolProvider(
+        session: FirSession,
+        moduleData: LLFirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        moduleDataProvider: SingleModuleDataProvider,
+        packagePartProvider: PackagePartProvider,
+        scope: GlobalSearchScope,
+    ): List<FirSymbolProvider>
+
+    abstract fun createNativeLibrarySymbolProvider(
+        session: FirSession,
+        moduleData: LLFirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        moduleDataProvider: SingleModuleDataProvider,
+        scope: GlobalSearchScope,
+    ): List<FirSymbolProvider>
+
+
+    abstract fun createJsLibrarySymbolProvider(
+        session: FirSession,
+        moduleData: LLFirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        moduleDataProvider: SingleModuleDataProvider,
+        scope: GlobalSearchScope,
+    ): List<FirSymbolProvider>
+
     companion object {
         fun getService(project: Project): LLFirLibrarySymbolProviderFactory =
             project.getService(LLFirLibrarySymbolProviderFactory::class.java)

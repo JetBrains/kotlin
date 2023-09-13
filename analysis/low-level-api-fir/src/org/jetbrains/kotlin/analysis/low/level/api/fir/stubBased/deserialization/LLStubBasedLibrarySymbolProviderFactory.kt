@@ -27,7 +27,7 @@ class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LL
         moduleDataProvider: SingleModuleDataProvider,
         firJavaFacade: FirJavaFacade,
         packagePartProvider: PackagePartProvider,
-        scope: GlobalSearchScope
+        scope: GlobalSearchScope,
     ): List<FirSymbolProvider> {
         return buildList {
             //stub based provider here works over kotlin-only indices and thus provides only kotlin declarations
@@ -37,5 +37,48 @@ class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LL
             add(createStubBasedFirSymbolProviderForClassFiles(project, scope, session, moduleDataProvider, kotlinScopeProvider))
             add(LLFirJavaSymbolProvider(session, moduleData, project, scope))
         }
+    }
+
+    override fun createCommonLibrarySymbolProvider(
+        session: FirSession,
+        moduleData: LLFirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        moduleDataProvider: SingleModuleDataProvider,
+        packagePartProvider: PackagePartProvider,
+        scope: GlobalSearchScope,
+    ): List<FirSymbolProvider> {
+        return buildList {
+            add(createStubBasedFirSymbolProviderForCommonMetadataFiles(project, scope, session, moduleDataProvider, kotlinScopeProvider))
+            add(
+                // klib metadata symbol provider
+                createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(
+                    project, scope, session, moduleDataProvider, kotlinScopeProvider
+                )
+            )
+        }
+    }
+
+    override fun createNativeLibrarySymbolProvider(
+        session: FirSession,
+        moduleData: LLFirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        moduleDataProvider: SingleModuleDataProvider,
+        scope: GlobalSearchScope,
+    ): List<FirSymbolProvider> {
+        return listOf(
+            createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(
+                project, scope, session, moduleDataProvider, kotlinScopeProvider
+            )
+        )
+    }
+
+    override fun createJsLibrarySymbolProvider(
+        session: FirSession,
+        moduleData: LLFirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        moduleDataProvider: SingleModuleDataProvider,
+        scope: GlobalSearchScope,
+    ): List<FirSymbolProvider> {
+        return emptyList() // TODO(kirpichenkov)
     }
 }

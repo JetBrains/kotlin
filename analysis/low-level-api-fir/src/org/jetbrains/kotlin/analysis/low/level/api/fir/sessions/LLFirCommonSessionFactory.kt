@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.createStubBasedFirSymbolProviderForCommonMetadataFiles
@@ -90,8 +91,11 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val packagePartProvider = project.createPackagePartProvider(scope)
         return buildList {
-            add(createStubBasedFirSymbolProviderForCommonMetadataFiles(project, scope, session, moduleDataProvider, kotlinScopeProvider))
-            add(createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(project, scope, session, moduleDataProvider, kotlinScopeProvider))
+            addAll(
+                LLFirLibrarySymbolProviderFactory.getService(project).createCommonLibrarySymbolProvider(
+                    session, moduleData, kotlinScopeProvider, moduleDataProvider, packagePartProvider, scope,
+                )
+            )
 
             addIfNotNull(
                 OptionalAnnotationClassesProvider.createIfNeeded(
