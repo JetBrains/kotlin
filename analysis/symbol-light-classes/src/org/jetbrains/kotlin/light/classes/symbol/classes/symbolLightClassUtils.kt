@@ -541,7 +541,7 @@ internal fun KtSymbolWithMembers.createInnerClasses(
     // inner classes with null names can't be searched for and can't be used from java anyway
     // we can't prohibit creating light classes with null names either since they can contain members
 
-    getDeclaredMemberScope().getClassifierSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
+    getStaticDeclaredMemberScope().getClassifierSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
         val classOrObjectDeclaration = it.psiSafe<KtClassOrObject>()
         if (classOrObjectDeclaration != null) {
             createLightClassNoCache(classOrObjectDeclaration, containingClass.ktModule)
@@ -622,7 +622,7 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
     symbolWithMembers: KtSymbolWithMembers,
     forceIsStaticTo: Boolean? = null,
 ) {
-    val propertySymbols = symbolWithMembers.getDeclaredMemberScope().getCallableSymbols()
+    val propertySymbols = symbolWithMembers.getCombinedDeclaredMemberScope().getCallableSymbols()
         .filterIsInstance<KtPropertySymbol>()
         .applyIf(symbolWithMembers is KtClassOrObjectSymbol && symbolWithMembers.classKind == KtClassKind.COMPANION_OBJECT) {
             // All fields for companion object of classes are generated to the containing class

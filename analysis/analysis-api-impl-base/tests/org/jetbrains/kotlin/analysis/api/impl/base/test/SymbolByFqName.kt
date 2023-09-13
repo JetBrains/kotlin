@@ -9,8 +9,8 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -75,7 +75,7 @@ sealed class SymbolData {
                 val classSymbol =
                     getClassOrObjectSymbolByClassId(classId)
                         ?: error("Class $classId is not found")
-                classSymbol.getDeclaredMemberScope().getCallableSymbols(callableId.callableName)
+                classSymbol.getCombinedDeclaredMemberScope().getCallableSymbols(callableId.callableName)
                     .toList()
             }
             if (symbols.isEmpty()) {

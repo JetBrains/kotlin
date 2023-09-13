@@ -109,7 +109,8 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         withClassOrObjectSymbol { classOrObjectSymbol ->
             val result = mutableListOf<KtLightMethod>()
 
-            val declaredMemberScope = classOrObjectSymbol.getDeclaredMemberScope()
+            // We should use the combined declared member scope here because an enum class may contain static callables.
+            val declaredMemberScope = classOrObjectSymbol.getCombinedDeclaredMemberScope()
 
             val visibleDeclarations = declaredMemberScope.getCallableSymbols()
                 .applyIf(classKind().isObject) {
@@ -263,7 +264,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     private fun addFieldsForEnumEntries(result: MutableList<KtLightField>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {
         if (!isEnum) return
 
-        classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
+        classOrObjectSymbol.getStaticDeclaredMemberScope().getCallableSymbols()
             .filterIsInstance<KtEnumEntrySymbol>()
             .mapNotNullTo(result) {
                 val enumEntry = it.psiSafe<KtEnumEntry>()

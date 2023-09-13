@@ -35,7 +35,7 @@ internal class KtFirInheritorsProvider(
     override fun getEnumEntries(classSymbol: KtNamedClassOrObjectSymbol): List<KtEnumEntrySymbol> {
         require(classSymbol.classKind == KtClassKind.ENUM_CLASS)
         return with(analysisSession) {
-            classSymbol.getDeclaredMemberScope().getCallableSymbols().filterIsInstance<KtEnumEntrySymbol>().toList()
+            classSymbol.getStaticDeclaredMemberScope().getCallableSymbols().filterIsInstance<KtEnumEntrySymbol>().toList()
         }
     }
 
