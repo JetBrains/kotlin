@@ -3,6 +3,11 @@ FILE: RedundantSingleExpressionStringTemplateChecker.kt
         public get(): R|kotlin/String|
     public final val y: R|kotlin/String| = <strcat>(R|/x|)
         public get(): R|kotlin/String|
+    public final typealias S = R|kotlin/String|
+    public final val x2: R|S| = String(Hello)
+        public get(): R|S|
+    public final val y2: R|kotlin/String| = <strcat>(R|/x2|)
+        public get(): R|kotlin/String|
     public final val z: R|kotlin/String| = <strcat>(R|/y|.R|kotlin/Any.hashCode|())
         public get(): R|kotlin/String|
     public final fun toString(x: R|kotlin/String|): R|kotlin/String| {

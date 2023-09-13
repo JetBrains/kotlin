@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SINGLE_
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.util.getChildren
 object RedundantSingleExpressionStringTemplateChecker : FirStringConcatenationCallChecker() {
     override fun check(expression: FirStringConcatenationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         for (argumentExpression in expression.arguments) {
-            if (argumentExpression.resolvedType.classId == StandardClassIds.String &&
+            if (argumentExpression.resolvedType.fullyExpandedClassId(context.session) == StandardClassIds.String &&
                 argumentExpression.stringParentChildrenCount() == 1 // there is no more children in original string template
             ) {
                 reporter.reportOn(argumentExpression.source, REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE, context)
