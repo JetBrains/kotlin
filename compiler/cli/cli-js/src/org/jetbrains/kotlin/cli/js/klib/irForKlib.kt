@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.backend.common.serialization.ICData
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -110,9 +109,7 @@ fun generateIrForKlibSerialization(
         irLinker.modules.forEach { fakeOverrideChecker.check(it) }
     }
 
-    if (configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) != true) {
-        moduleFragment.accept(ExpectDeclarationRemover(psi2IrContext.symbolTable, false), null)
-    }
+    moduleFragment.accept(ExpectDeclarationRemover(psi2IrContext.symbolTable, false), null)
 
     return moduleFragment to pluginContext
 }
