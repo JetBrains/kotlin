@@ -252,9 +252,7 @@ object FirOverrideChecker : FirClassChecker() {
         context: CheckerContext
     ) {
         val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(member)
-
-        @OptIn(SymbolInternals::class)
-        val hasOverrideKeyword = member.fir.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+        val hasOverrideKeyword = member.hasModifier(KtTokens.OVERRIDE_KEYWORD)
 
         if (!member.isOverride || !hasOverrideKeyword) {
             if (overriddenMemberSymbols.isEmpty() ||
