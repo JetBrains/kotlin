@@ -103,7 +103,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             // See org.jetbrains.kotlin.backend.jvm.lower.InheritedDefaultMethodsOnClassesLoweringKt.isDefinitelyNotDefaultImplsMethod
             (irParent as? IrClass)?.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
                     function.isJavaOrEnhancement -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
-            else -> function.computeIrOrigin(predefinedOrigin)
+            else -> function.computeIrOrigin(predefinedOrigin, parentOrigin = (irParent as? IrDeclaration)?.origin)
         }
         // We don't generate signatures for local classes
         // We attempt to avoid signature generation for non-local classes, with the following exceptions:

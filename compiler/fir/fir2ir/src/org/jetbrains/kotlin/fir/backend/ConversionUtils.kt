@@ -681,17 +681,36 @@ fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
     }
 }
 
-fun FirDeclaration?.computeIrOrigin(predefinedOrigin: IrDeclarationOrigin? = null): IrDeclarationOrigin {
-    return predefinedOrigin
-        ?: (this?.origin as? FirDeclarationOrigin.Plugin)?.let { GeneratedByPlugin(it.key) }
-        ?: (this as? FirValueParameter)?.name?.let {
-            when (it) {
-                SpecialNames.UNDERSCORE_FOR_UNUSED_VAR -> IrDeclarationOrigin.UNDERSCORE_PARAMETER
-                SpecialNames.DESTRUCT -> IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER
-                else -> null
-            }
+fun FirDeclaration?.computeIrOrigin(
+    predefinedOrigin: IrDeclarationOrigin? = null,
+    parentOrigin: IrDeclarationOrigin? = null
+): IrDeclarationOrigin {
+    if (this == null) {
+        return predefinedOrigin ?: parentOrigin ?: IrDeclarationOrigin.DEFINED
+    }
+
+    val firOrigin = origin
+    val computed = when {
+        firOrigin is FirDeclarationOrigin.Plugin -> GeneratedByPlugin(firOrigin.key)
+
+        this is FirValueParameter -> when (name) {
+            SpecialNames.UNDERSCORE_FOR_UNUSED_VAR -> IrDeclarationOrigin.UNDERSCORE_PARAMETER
+            SpecialNames.DESTRUCT -> IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER
+            else -> null
         }
-        ?: IrDeclarationOrigin.DEFINED
+
+        this is FirCallableDeclaration -> when {
+            symbol.fir.isIntersectionOverride || symbol.fir.isSubstitutionOverride -> IrDeclarationOrigin.FAKE_OVERRIDE
+            parentOrigin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB && symbol.isJavaOrEnhancement -> {
+                IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+            }
+            symbol.origin is FirDeclarationOrigin.Plugin -> GeneratedByPlugin((symbol.origin as FirDeclarationOrigin.Plugin).key)
+            else -> null
+        }
+        else -> null
+    }
+
+    return computed ?: predefinedOrigin ?: parentOrigin ?: IrDeclarationOrigin.DEFINED
 }
 
 private typealias NameWithElementType = Pair<Name, IElementType>
