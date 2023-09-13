@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 
@@ -28,6 +29,8 @@ val ANNOTATIONS_TO_TREAT_AS_EXPORTED = listOf(
     NativeRuntimeNames.Annotations.cNameClassId,
     NativeRuntimeNames.Annotations.exportForCompilerClassId,
 )
+
+private val ANNOTATIONS_TO_TREAT_AS_EXPORTED_FQNS = ANNOTATIONS_TO_TREAT_AS_EXPORTED.map(ClassId::asSingleFqName)
 
 abstract class AbstractKonanIrMangler(
         private val withReturnType: Boolean,
@@ -89,7 +92,7 @@ abstract class AbstractKonanDescriptorMangler : DescriptorBasedKotlinManglerImpl
             if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) return false
         }
 
-        return ANNOTATIONS_TO_TREAT_AS_EXPORTED.any { annotations.hasAnnotation(it.asSingleFqName()) }
+        return ANNOTATIONS_TO_TREAT_AS_EXPORTED_FQNS.any(annotations::hasAnnotation)
     }
 
 
