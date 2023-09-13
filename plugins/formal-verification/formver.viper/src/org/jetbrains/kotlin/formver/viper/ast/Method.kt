@@ -12,7 +12,7 @@ abstract class Method(
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
-) : IntoViper<viper.silver.ast.Method> {
+) : IntoSilver<viper.silver.ast.Method> {
     open val includeInShortDump: Boolean = true
     abstract val formalArgs: List<Declaration.LocalVarDecl>
     abstract val formalReturns: List<Declaration.LocalVarDecl>
@@ -20,17 +20,17 @@ abstract class Method(
     open val posts: List<Exp> = listOf()
     open val body: Stmt.Seqn? = null
 
-    override fun toViper(): viper.silver.ast.Method =
+    override fun toSilver(): viper.silver.ast.Method =
         viper.silver.ast.Method(
             name.mangled,
-            formalArgs.map { it.toViper() }.toScalaSeq(),
-            formalReturns.map { it.toViper() }.toScalaSeq(),
-            pres.toViper().toScalaSeq(),
-            posts.toViper().toScalaSeq(),
-            body.toScalaOption().map { it.toViper() },
-            pos.toViper(),
-            info.toViper(),
-            trafos.toViper()
+            formalArgs.map { it.toSilver() }.toScalaSeq(),
+            formalReturns.map { it.toSilver() }.toScalaSeq(),
+            pres.toSilver().toScalaSeq(),
+            posts.toSilver().toScalaSeq(),
+            body.toScalaOption().map { it.toSilver() },
+            pos.toSilver(),
+            info.toSilver(),
+            trafos.toSilver()
         )
 
     fun toMethodCall(

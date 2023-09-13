@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.formver.viper.ast
 
-import org.jetbrains.kotlin.formver.viper.IntoViper
+import org.jetbrains.kotlin.formver.viper.IntoSilver
 import org.jetbrains.kotlin.formver.viper.MangledName
 
 open class Field(
@@ -14,10 +14,10 @@ open class Field(
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
-) : IntoViper<viper.silver.ast.Field> {
+) : IntoSilver<viper.silver.ast.Field> {
     open val includeInShortDump: Boolean = true
-    override fun toViper(): viper.silver.ast.Field =
-        viper.silver.ast.Field(name.mangled, type.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
+    override fun toSilver(): viper.silver.ast.Field =
+        viper.silver.ast.Field(name.mangled, type.toSilver(), pos.toSilver(), info.toSilver(), trafos.toSilver())
 }
 
 class BuiltinField(

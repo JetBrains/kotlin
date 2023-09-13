@@ -46,18 +46,18 @@ class DomainFunc(
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
-) : IntoViper<viper.silver.ast.DomainFunc> {
-    override fun toViper(): viper.silver.ast.DomainFunc =
+) : IntoSilver<viper.silver.ast.DomainFunc> {
+    override fun toSilver(): viper.silver.ast.DomainFunc =
         viper.silver.ast.DomainFunc(
             name.mangled,
-            formalArgs.map { it.toViper() }.toScalaSeq(),
-            returnType.toViper(),
+            formalArgs.map { it.toSilver() }.toScalaSeq(),
+            returnType.toSilver(),
             unique,
             null.toScalaOption(),
-            pos.toViper(),
-            info.toViper(),
+            pos.toSilver(),
+            info.toSilver(),
             name.domainName.mangled,
-            trafos.toViper()
+            trafos.toSilver()
         )
 
     operator fun invoke(vararg args: Exp): Exp.DomainFuncApp =
@@ -70,23 +70,23 @@ class DomainAxiom(
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
-) : IntoViper<viper.silver.ast.DomainAxiom> {
-    override fun toViper(): viper.silver.ast.DomainAxiom =
+) : IntoSilver<viper.silver.ast.DomainAxiom> {
+    override fun toSilver(): viper.silver.ast.DomainAxiom =
         when (name) {
             is NamedDomainAxiomLabel -> NamedDomainAxiom(
                 name.mangled,
-                exp.toViper(),
-                pos.toViper(),
-                info.toViper(),
+                exp.toSilver(),
+                pos.toSilver(),
+                info.toSilver(),
                 name.domainName.mangled,
-                trafos.toViper()
+                trafos.toSilver()
             )
             is AnonymousDomainAxiomLabel -> AnonymousDomainAxiom(
-                exp.toViper(),
-                pos.toViper(),
-                info.toViper(),
+                exp.toSilver(),
+                pos.toSilver(),
+                info.toSilver(),
                 name.domainName.mangled,
-                trafos.toViper()
+                trafos.toSilver()
             )
         }
 }
@@ -96,7 +96,7 @@ abstract class Domain(
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
-) : IntoViper<viper.silver.ast.Domain> {
+) : IntoSilver<viper.silver.ast.Domain> {
     val name = DomainName(baseName)
 
     open val includeInShortDump: Boolean = true
@@ -104,17 +104,17 @@ abstract class Domain(
     abstract val functions: List<DomainFunc>
     abstract val axioms: List<DomainAxiom>
 
-    override fun toViper(): viper.silver.ast.Domain =
+    override fun toSilver(): viper.silver.ast.Domain =
         viper.silver.ast.Domain(
             name.mangled,
-            functions.toViper().toScalaSeq(),
-            axioms.toViper().toScalaSeq(),
+            functions.toSilver().toScalaSeq(),
+            axioms.toSilver().toScalaSeq(),
             // Can't use List.toViper directly here as the type would end up being `List<Type>` instead of `List<TypeVar`.
-            typeVars.map { it.toViper() }.toScalaSeq(),
+            typeVars.map { it.toSilver() }.toScalaSeq(),
             null.toScalaOption(),
-            pos.toViper(),
-            info.toViper(),
-            trafos.toViper()
+            pos.toSilver(),
+            info.toSilver(),
+            trafos.toSilver()
         )
 
     // Don't use this directly, instead, use the custom types defined in `org.jetbrains.kotlin.formver.viper.ast.Type` for specific domains.

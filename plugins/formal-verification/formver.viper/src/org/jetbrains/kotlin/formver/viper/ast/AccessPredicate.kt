@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.formver.viper.ast
 
 sealed interface AccessPredicate : Exp {
-    override fun toViper(): viper.silver.ast.AccessPredicate
+    override fun toSilver(): viper.silver.ast.AccessPredicate
 
     data class FieldAccessPredicate(
         val access: Exp.FieldAccess,
@@ -16,7 +16,7 @@ sealed interface AccessPredicate : Exp {
         val trafos: Trafos = Trafos.NoTrafos,
     ) : AccessPredicate {
         override val type: Type.Bool = Type.Bool
-        override fun toViper(): viper.silver.ast.AccessPredicate =
-            viper.silver.ast.FieldAccessPredicate(access.toViper(), perm.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
+        override fun toSilver(): viper.silver.ast.AccessPredicate =
+            viper.silver.ast.FieldAccessPredicate(access.toSilver(), perm.toSilver(), pos.toSilver(), info.toSilver(), trafos.toSilver())
     }
 }

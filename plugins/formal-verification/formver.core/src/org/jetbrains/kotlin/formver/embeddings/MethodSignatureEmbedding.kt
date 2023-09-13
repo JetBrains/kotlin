@@ -31,5 +31,5 @@ interface MethodSignatureEmbedding {
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ) = Stmt.MethodCall(name, parameters, listOf(targetVar.toLocalVar()), pos, info, trafos)
+    ) = Stmt.MethodCall(name, parameters, listOf(targetVar.toViper()), pos, info, trafos)
 }

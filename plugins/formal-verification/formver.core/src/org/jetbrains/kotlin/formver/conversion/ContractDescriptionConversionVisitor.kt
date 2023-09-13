@@ -35,7 +35,7 @@ class ContractDescriptionConversionVisitor(
         return (parameterIndices - callsInPlaceIndices)
             .map { embeddedVarByIndex(it) }
             .filter { it.type is FunctionTypeEmbedding }
-            .map { DuplicableFunction.toFuncApp(listOf(it.toLocalVar())) }
+            .map { DuplicableFunction.toFuncApp(listOf(it.toViper())) }
     }
 
     fun getPostconditions(symbol: FirFunctionSymbol<*>): List<Exp> =
@@ -55,7 +55,7 @@ class ContractDescriptionConversionVisitor(
         returnsEffect: KtReturnsEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
         data: Unit,
     ): Exp {
-        val retVar = signature.returnVar.toLocalVar()
+        val retVar = signature.returnVar.toViper()
         return when (returnsEffect.value) {
             ConeContractConstantValues.WILDCARD -> BoolLit(true)
             /* NOTE: in a function that has a non-nullable return type, the compiler will not complain if there is an effect like
@@ -74,7 +74,7 @@ class ContractDescriptionConversionVisitor(
     override fun visitValueParameterReference(
         valueParameterReference: KtValueParameterReference<ConeKotlinType, ConeDiagnostic>,
         data: Unit,
-    ): Exp = valueParameterReference.embeddedVar().toLocalVar()
+    ): Exp = valueParameterReference.embeddedVar().toViper()
 
     override fun visitIsNullPredicate(
         isNullPredicate: KtIsNullPredicate<ConeKotlinType, ConeDiagnostic>,
@@ -152,7 +152,7 @@ class ContractDescriptionConversionVisitor(
         data: Unit,
     ): Exp {
         val argVar = isInstancePredicate.arg.embeddedVar()
-        return TypeDomain.isSubtype(TypeOfDomain.typeOf(argVar.toLocalVar()), ctx.embedType(isInstancePredicate.type).kotlinType)
+        return TypeDomain.isSubtype(TypeOfDomain.typeOf(argVar.toViper()), ctx.embedType(isInstancePredicate.type).kotlinType)
     }
 
     private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.embeddedVar(): VariableEmbedding =
@@ -164,9 +164,9 @@ class ContractDescriptionConversionVisitor(
     private fun VariableEmbedding.nullCmp(isNegated: Boolean): Exp =
         if (type is NullableTypeEmbedding) {
             if (isNegated) {
-                NeCmp(toLocalVar(), type.nullVal)
+                NeCmp(toViper(), type.nullVal.toViper())
             } else {
-                EqCmp(toLocalVar(), type.nullVal)
+                EqCmp(toViper(), type.nullVal.toViper())
             }
         } else {
             BoolLit(isNegated)

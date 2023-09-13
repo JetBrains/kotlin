@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.formver.viper.ast
 
-import org.jetbrains.kotlin.formver.viper.IntoViper
+import org.jetbrains.kotlin.formver.viper.IntoSilver
 import viper.silver.ast.ErrorTrafo
 import viper.silver.ast.`NoTrafos$`
 
-sealed class Trafos : IntoViper<ErrorTrafo> {
+sealed class Trafos : IntoSilver<ErrorTrafo> {
     data object NoTrafos : Trafos() {
-        override fun toViper(): ErrorTrafo = `NoTrafos$`.`MODULE$`
+        override fun toSilver(): ErrorTrafo = `NoTrafos$`.`MODULE$`
     }
 }

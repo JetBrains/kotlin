@@ -12,7 +12,7 @@ abstract class Function(
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
-) : IntoViper<viper.silver.ast.Function> {
+) : IntoSilver<viper.silver.ast.Function> {
     abstract val includeInShortDump: Boolean
     abstract val formalArgs: List<Declaration.LocalVarDecl>
     abstract val retType: Type
@@ -20,10 +20,10 @@ abstract class Function(
     open val posts: List<Exp> = listOf()
     open val body: Exp? = null
 
-    override fun toViper(): viper.silver.ast.Function = viper.silver.ast.Function(
-        name.mangled, formalArgs.map { it.toViper() }.toScalaSeq(),
-        retType.toViper(), pres.toViper().toScalaSeq(), posts.toViper().toScalaSeq(), body.toScalaOption().toViper(),
-        pos.toViper(), info.toViper(), trafos.toViper()
+    override fun toSilver(): viper.silver.ast.Function = viper.silver.ast.Function(
+        name.mangled, formalArgs.map { it.toSilver() }.toScalaSeq(),
+        retType.toSilver(), pres.toSilver().toScalaSeq(), posts.toSilver().toScalaSeq(), body.toScalaOption().toSilver(),
+        pos.toSilver(), info.toSilver(), trafos.toSilver()
     )
 
     fun toFuncApp(

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.MethodEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
@@ -17,11 +18,11 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
     WhileStackContext<RTC> {
     val resultCtx: RTC
 
-    fun convert(stmt: FirStatement): Exp
-    fun convertAndStore(exp: FirExpression): Exp.LocalVar
+    fun convert(stmt: FirStatement): ExpEmbedding
+    fun convertAndStore(exp: FirExpression): VariableEmbedding
 
     fun convertAndCapture(exp: FirExpression) {
-        resultCtx.capture(convert(exp), embedType(exp))
+        resultCtx.capture(convert(exp))
     }
 
     fun newBlock(): StmtConversionContext<RTC>
@@ -34,9 +35,9 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
         substitutionParams: Map<MangledName, SubstitutionItem>,
     ): StmtConversionContext<RTC>
 
-    fun withResult(type: TypeEmbedding, action: StmtConversionContext<VarResultTrackingContext>.() -> Unit): Exp.LocalVar {
+    fun withResult(type: TypeEmbedding, action: StmtConversionContext<VarResultTrackingContext>.() -> Unit): VariableEmbedding {
         val ctx = withResult(type)
         ctx.action()
-        return ctx.resultCtx.resultVar.toLocalVar()
+        return ctx.resultCtx.resultVar
     }
 }

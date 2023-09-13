@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.formver.viper.ast
 
-import org.jetbrains.kotlin.formver.viper.IntoViper
+import org.jetbrains.kotlin.formver.viper.IntoSilver
 import viper.silver.ast.`NoPosition$`
 
-sealed class Position : IntoViper<viper.silver.ast.Position> {
+sealed class Position : IntoSilver<viper.silver.ast.Position> {
     data object NoPosition : Position() {
-        override fun toViper(): viper.silver.ast.Position = `NoPosition$`.`MODULE$`
+        override fun toSilver(): viper.silver.ast.Position = `NoPosition$`.`MODULE$`
     }
 
     class LineColumnPosition(private val line: Int, private val column: Int) : Position() {
-        override fun toViper(): viper.silver.ast.Position = viper.silver.ast.LineColumnPosition(line, column)
+        override fun toSilver(): viper.silver.ast.Position = viper.silver.ast.LineColumnPosition(line, column)
     }
 }

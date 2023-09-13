@@ -48,29 +48,28 @@ import org.jetbrains.kotlin.types.ConstantValueKind
  * that refers to location, not just the same value, and so introducing
  * a temporary variable for the result is not acceptable in those cases.
  */
-object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrackingContext>>() {
+object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<ResultTrackingContext>>() {
     // Note that in some cases we don't expect to ever implement it: we are only
     // translating statements here, after all.  It isn't 100% clear how best to
     // communicate this.
-    override fun visitElement(element: FirElement, data: StmtConversionContext<ResultTrackingContext>): Exp =
+    override fun visitElement(element: FirElement, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
         handleUnimplementedElement("Not yet implemented for $element (${element.source.text})", data)
 
-    override fun visitReturnExpression(returnExpression: FirReturnExpression, data: StmtConversionContext<ResultTrackingContext>): Exp {
+    override fun visitReturnExpression(returnExpression: FirReturnExpression, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         val expr = data.convert(returnExpression.result)
-        val exprType = data.embedType(returnExpression.result)
-        data.addStatement(Stmt.LocalVarAssign(data.returnVar.toLocalVar(), expr.convertType(exprType, data.returnVar.type)))
+        data.addStatement(Stmt.LocalVarAssign(data.returnVar.toViper(), expr.withType(data.returnVar.type).toViper()))
         data.addStatement(data.returnLabel.toGoto())
-        return UnitDomain.element
+        return UnitLit
     }
 
-    override fun visitBlock(block: FirBlock, data: StmtConversionContext<ResultTrackingContext>): Exp =
+    override fun visitBlock(block: FirBlock, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
         // We ignore the accumulator: we just want to get the result of the last expression.
-        block.statements.fold<FirStatement, Exp>(UnitDomain.element) { _, it -> data.convert(it) }
+        block.statements.fold<_, ExpEmbedding>(UnitLit) { _, it -> data.convert(it) }
 
-    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: StmtConversionContext<ResultTrackingContext>): Exp =
+    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
         when (constExpression.kind) {
-            ConstantValueKind.Int -> Exp.IntLit((constExpression.value as Long).toInt())
-            ConstantValueKind.Boolean -> Exp.BoolLit(constExpression.value as Boolean)
+            ConstantValueKind.Int -> IntLit((constExpression.value as Long).toInt())
+            ConstantValueKind.Boolean -> BooleanLit(constExpression.value as Boolean)
             ConstantValueKind.Null -> (data.embedType(constExpression) as NullableTypeEmbedding).nullVal
             else -> handleUnimplementedElement("Constant Expression of type ${constExpression.kind} is not yet implemented.", data)
         }
@@ -78,7 +77,7 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
     override fun visitWhenSubjectExpression(
         whenSubjectExpression: FirWhenSubjectExpression,
         data: StmtConversionContext<ResultTrackingContext>,
-    ): Exp =
+    ): ExpEmbedding =
         // TODO: find a way to not evaluate subject multiple times if it is a function call
         data.convert(whenSubjectExpression.whenRef.value.subject!!)
 
@@ -96,11 +95,11 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
             thenCtx.convertAndCapture(branch.result)
             val elseCtx = data.newBlock()
             convertWhenBranches(whenBranches, elseCtx)
-            data.addStatement(Stmt.If(cond, thenCtx.block, elseCtx.block))
+            data.addStatement(Stmt.If(cond.toViper(), thenCtx.block, elseCtx.block))
         }
     }
 
-    override fun visitWhenExpression(whenExpression: FirWhenExpression, data: StmtConversionContext<ResultTrackingContext>): Exp {
+    override fun visitWhenExpression(whenExpression: FirWhenExpression, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         val ctx = if (whenExpression.usedAsExpression) {
             data.withResult(data.embedType(whenExpression))
         } else {
@@ -114,27 +113,27 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
     override fun visitPropertyAccessExpression(
         propertyAccessExpression: FirPropertyAccessExpression,
         data: StmtConversionContext<ResultTrackingContext>,
-    ): Exp {
+    ): ExpEmbedding {
         val type = data.embedType(propertyAccessExpression)
         return when (val symbol = propertyAccessExpression.calleeSymbol) {
-            is FirValueParameterSymbol -> data.getVariableEmbedding(symbol.callableId.embedName(), type).toLocalVar()
+            is FirValueParameterSymbol -> data.getVariableEmbedding(symbol.callableId.embedName(), type)
             is FirPropertySymbol -> {
                 val varEmbedding = data.getVariableEmbedding(symbol.callableId.embedName(), type)
                 if (symbol.isLocal) {
-                    return varEmbedding.toLocalVar()
+                    return varEmbedding
                 }
 
                 val receiver = data.convert(propertyAccessExpression.dispatchReceiver!!)
 
                 return when (val getter = symbol.getter) {
                     is FirDefaultPropertyGetter -> {
-                        val fieldAccess = Exp.FieldAccess(receiver, varEmbedding.toField())
+                        val fieldAccess = Exp.FieldAccess(receiver.toViper(), varEmbedding.toField())
                         val accPred = AccessPredicate.FieldAccessPredicate(fieldAccess, PermExp.FullPerm())
 
                         data.withResult(varEmbedding.type) {
                             // We do not track permissions over time and thus have to inhale and exhale the permission when reading a field.
                             data.addStatement(Stmt.Inhale(accPred))
-                            data.addStatement(Stmt.assign(resultExp, fieldAccess))
+                            data.addStatement(Stmt.assign(resultExp.toViper(), fieldAccess))
                             resultCtx.resultVar.provenInvariants().forEach {
                                 data.addStatement(Stmt.Inhale(it))
                             }
@@ -144,7 +143,7 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
                     else -> {
                         val method = data.embedFunction(getter.symbol)
                         data.withResult(varEmbedding.type) {
-                            val methodCall = method.toMethodCall(listOf(receiver), resultCtx.resultVar)
+                            val methodCall = method.toMethodCall(listOf(receiver.toViper()), resultCtx.resultVar)
                             data.addStatement(methodCall)
                         }
                     }
@@ -157,57 +156,57 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
     override fun visitEqualityOperatorCall(
         equalityOperatorCall: FirEqualityOperatorCall,
         data: StmtConversionContext<ResultTrackingContext>,
-    ): Exp {
+    ): ExpEmbedding {
         if (equalityOperatorCall.arguments.size != 2) {
             throw IllegalArgumentException("Invalid equality comparison $equalityOperatorCall, can only compare 2 elements.")
         }
         val left = data.convert(equalityOperatorCall.arguments[0])
         val right = data.convert(equalityOperatorCall.arguments[1])
 
-        val leftType = data.embedType(equalityOperatorCall.arguments[0])
-        val rightType = data.embedType(equalityOperatorCall.arguments[1])
-
         return when (equalityOperatorCall.operation) {
-            FirOperation.EQ -> convertEqCmp(left, leftType, right, rightType)
-            FirOperation.NOT_EQ -> Exp.Not(convertEqCmp(left, leftType, right, rightType))
+            FirOperation.EQ -> convertEqCmp(left, right)
+            FirOperation.NOT_EQ -> Not(convertEqCmp(left, right))
             else -> handleUnimplementedElement("Equality comparison operation ${equalityOperatorCall.operation} not yet implemented.", data)
         }
     }
 
-    private fun convertEqCmp(left: Exp, leftType: TypeEmbedding, right: Exp, rightType: TypeEmbedding): Exp =
-        if (leftType is NullableTypeEmbedding && rightType !is NullableTypeEmbedding) {
-            Exp.And(
-                Exp.NeCmp(left, leftType.nullVal),
+    private fun convertEqCmp(left: ExpEmbedding, right: ExpEmbedding): ExpEmbedding {
+        val leftType = left.type
+        val rightType = right.type
+        return if (leftType is NullableTypeEmbedding && rightType !is NullableTypeEmbedding) {
+            And(
+                NeCmp(left, leftType.nullVal),
                 // TODO: Replace the Eq comparison with a member call function to `left.equals`
-                Exp.EqCmp(left.convertType(leftType, leftType.elementType), right.convertType(rightType, leftType.elementType))
+                EqCmp(left.withType(leftType.elementType), right.withType(leftType.elementType))
             )
         } else if (leftType is NullableTypeEmbedding && rightType is NullableTypeEmbedding) {
-            Exp.Or(
-                Exp.And(
-                    Exp.EqCmp(left, leftType.nullVal),
-                    Exp.EqCmp(right, rightType.nullVal),
+            Or(
+                And(
+                    EqCmp(left, leftType.nullVal),
+                    EqCmp(right, rightType.nullVal),
                 ),
                 // TODO: Replace the Eq comparison with a member call function to `left.equals`
-                Exp.And(
-                    Exp.And(
-                        Exp.NeCmp(left, leftType.nullVal),
-                        Exp.NeCmp(right, rightType.nullVal),
+                And(
+                    And(
+                        NeCmp(left, leftType.nullVal),
+                        NeCmp(right, rightType.nullVal),
                     ),
-                    Exp.EqCmp(left.convertType(leftType, leftType.elementType), right.convertType(rightType, leftType.elementType))
+                    EqCmp(left.withType(leftType.elementType), right.withType(leftType.elementType))
                 )
             )
         } else {
             // TODO: Replace the Eq comparison with a member call function to `left.equals`
-            Exp.EqCmp(left, right.convertType(rightType, leftType))
+            EqCmp(left, right.withType(leftType))
         }
+    }
 
-    override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext<ResultTrackingContext>): Exp {
+    override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         val symbol = functionCall.calleeCallableSymbol
         val id = symbol.callableId
         val specialFunc = SpecialKotlinFunctions.byCallableId[id]
         val argsFir = functionCall.functionCallArguments
         if (specialFunc != null) {
-            if (specialFunc !is SpecialKotlinFunctionImplementation) return UnitDomain.element
+            if (specialFunc !is SpecialKotlinFunctionImplementation) return UnitLit
             return specialFunc.convertCall(argsFir.map(data::convert), data)
         }
 
@@ -218,7 +217,7 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
     override fun visitImplicitInvokeCall(
         implicitInvokeCall: FirImplicitInvokeCall,
         data: StmtConversionContext<ResultTrackingContext>,
-    ): Exp {
+    ): ExpEmbedding {
         val args = implicitInvokeCall.functionCallArguments.map(data::convert)
         val retType = implicitInvokeCall.calleeCallableSymbol.resolvedReturnType
         val calleeName = LocalName(implicitInvokeCall.calleeReference.name)
@@ -241,11 +240,11 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
         return data.withResult(data.embedType(retType)) {
             // NOTE: Since it is only relevant to update the number of times that a function object is called,
             // the function call invocation is intentionally not assigned to the return variable
-            data.addStatement(InvokeFunctionObjectMethod.toMethodCall(args.take(1), listOf()))
+            data.addStatement(InvokeFunctionObjectMethod.toMethodCall(args.take(1).toViper(), listOf()))
         }
     }
 
-    override fun visitProperty(property: FirProperty, data: StmtConversionContext<ResultTrackingContext>): Exp {
+    override fun visitProperty(property: FirProperty, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         val symbol = property.symbol
         val type = property.returnTypeRef.coneTypeOrNull!!
         if (!symbol.isLocal) {
@@ -255,44 +254,42 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
         data.addDeclaration(cvar.toLocalVarDecl())
         property.initializer?.let {
             val initializerExp = data.convert(it)
-            val initializerType = data.embedType(it)
-            data.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), initializerExp.convertType(initializerType, cvar.type)))
+            data.addStatement(Stmt.LocalVarAssign(cvar.toViper(), initializerExp.withType(cvar.type).toViper()))
         }
-        return UnitDomain.element
+        return UnitLit
     }
 
-    override fun visitWhileLoop(whileLoop: FirWhileLoop, data: StmtConversionContext<ResultTrackingContext>): Exp {
+    override fun visitWhileLoop(whileLoop: FirWhileLoop, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         data.inNewWhileBlock { newWhileContext ->
             val condCtx = newWhileContext.withResult(BooleanTypeEmbedding)
             val bodyCtx = condCtx.newBlock()
             condCtx.convertAndCapture(whileLoop.condition)
             bodyCtx.convert(whileLoop.block)
             bodyCtx.convertAndCapture(whileLoop.condition)
-            data.addStatement(Stmt.While(condCtx.resultExp, invariants = data.method.postconditions, bodyCtx.block))
+            data.addStatement(Stmt.While(condCtx.resultExp.toViper(), invariants = data.method.postconditions, bodyCtx.block))
         }
-        return UnitDomain.element
+        return UnitLit
     }
 
-    override fun visitBreakExpression(breakExpression: FirBreakExpression, data: StmtConversionContext<ResultTrackingContext>): Exp {
+    override fun visitBreakExpression(breakExpression: FirBreakExpression, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         data.addStatement(data.breakLabel.toGoto())
-        return UnitDomain.element
+        return UnitLit
     }
 
     override fun visitContinueExpression(
         continueExpression: FirContinueExpression,
         data: StmtConversionContext<ResultTrackingContext>,
-    ): Exp {
+    ): ExpEmbedding {
         data.addStatement(data.continueLabel.toGoto())
-        return UnitDomain.element
+        return UnitLit
     }
 
     override fun visitVariableAssignment(
         variableAssignment: FirVariableAssignment,
         data: StmtConversionContext<ResultTrackingContext>,
-    ): Exp {
+    ): ExpEmbedding {
         val lValueType = data.embedType(variableAssignment.lValue)
         val convertedRValue = data.convert(variableAssignment.rValue)
-        val rValueType = data.embedType(variableAssignment.rValue)
 
         if (variableAssignment.lValue.isClassPropertyAccess) {
             val lValue = variableAssignment.lValue as FirPropertyAccessExpression
@@ -303,42 +300,41 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
                 is FirDefaultPropertySetter -> {
                     // No custom setters have been defined, we can assign the fields normally.
                     val varEmbedding = VariableEmbedding(lValueSymbol.callableId.embedName(), lValueType)
-                    val fieldAccess = Exp.FieldAccess(receiver, varEmbedding.toField())
+                    val fieldAccess = Exp.FieldAccess(receiver.toViper(), varEmbedding.toField())
                     val accPred = AccessPredicate.FieldAccessPredicate(fieldAccess, PermExp.FullPerm())
                     data.addStatement(Stmt.Inhale(accPred))
-                    data.addStatement(Stmt.assign(fieldAccess, convertedRValue.convertType(rValueType, lValueType)))
+                    data.addStatement(Stmt.assign(fieldAccess, convertedRValue.withType(lValueType).toViper()))
                     data.addStatement(Stmt.Exhale(accPred))
                 }
                 else -> {
                     // Since a custom setter has been defined, we should generate a statement to invoke a method call
                     val method = data.embedFunction(setter.symbol)
                     data.withResult(UnitTypeEmbedding) {
-                        data.addStatement(method.toMethodCall(listOf(receiver, convertedRValue), this.resultCtx.resultVar))
+                        data.addStatement(method.toMethodCall(listOf(receiver, convertedRValue).toViper(), this.resultCtx.resultVar))
                     }
                 }
             }
         } else {
             val convertedLValue = data.convert(variableAssignment.lValue)
-            data.addStatement(Stmt.assign(convertedLValue, convertedRValue.convertType(rValueType, lValueType)))
+            data.addStatement(Stmt.assign(convertedLValue.toViper(), convertedRValue.withType(lValueType).toViper()))
         }
 
-        return UnitDomain.element
+        return UnitLit
     }
 
     override fun visitSmartCastExpression(
         smartCastExpression: FirSmartCastExpression,
         data: StmtConversionContext<ResultTrackingContext>,
-    ): Exp {
+    ): ExpEmbedding {
         val exp = data.convert(smartCastExpression.originalExpression)
-        val expType = data.embedType(smartCastExpression.originalExpression)
         val newType = data.embedType(smartCastExpression.smartcastType.coneType)
-        return exp.convertType(expType, newType)
+        return exp.withType(newType)
     }
 
     override fun visitBinaryLogicExpression(
         binaryLogicExpression: FirBinaryLogicExpression,
         data: StmtConversionContext<ResultTrackingContext>,
-    ): Exp {
+    ): ExpEmbedding {
         val left = data.convert(binaryLogicExpression.leftOperand)
         return data.withResult(BooleanTypeEmbedding) {
             val rightCtx = newBlock()
@@ -346,13 +342,13 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
             when (binaryLogicExpression.kind) {
                 LogicOperationKind.AND -> {
                     val constCtx = newBlock()
-                    constCtx.capture(Exp.BoolLit(false), BooleanTypeEmbedding)
-                    data.addStatement(Stmt.If(left, rightCtx.block, constCtx.block))
+                    constCtx.capture(BooleanLit(false))
+                    data.addStatement(Stmt.If(left.toViper(), rightCtx.block, constCtx.block))
                 }
                 LogicOperationKind.OR -> {
                     val constCtx = newBlock()
-                    constCtx.capture(Exp.BoolLit(true), BooleanTypeEmbedding)
-                    data.addStatement(Stmt.If(left, constCtx.block, rightCtx.block))
+                    constCtx.capture(BooleanLit(true))
+                    data.addStatement(Stmt.If(left.toViper(), constCtx.block, rightCtx.block))
                 }
             }
         }
@@ -361,16 +357,16 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
     override fun visitThisReceiverExpression(
         thisReceiverExpression: FirThisReceiverExpression,
         data: StmtConversionContext<ResultTrackingContext>,
-    ): Exp =
-        data.method.receiver?.toLocalVar()
+    ): ExpEmbedding =
+        data.method.receiver
             ?: throw IllegalArgumentException("Can't resolve the 'this' receiver since the function does not have one.")
 
-    override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: StmtConversionContext<ResultTrackingContext>): Exp {
+    override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         val argument = data.convert(typeOperatorCall.arguments[0])
         val conversionType = data.embedType(typeOperatorCall.conversionTypeRef.coneType)
         return when (typeOperatorCall.operation) {
-            FirOperation.IS -> TypeDomain.isSubtype(TypeOfDomain.typeOf(argument), conversionType.kotlinType)
-            FirOperation.NOT_IS -> Exp.Not(TypeDomain.isSubtype(TypeOfDomain.typeOf(argument), conversionType.kotlinType))
+            FirOperation.IS -> Is(argument, conversionType)
+            FirOperation.NOT_IS -> Not(Is(argument, conversionType))
             else -> handleUnimplementedElement("Can't embed type operator ${typeOperatorCall.operation}.", data)
         }
     }
@@ -388,20 +384,20 @@ object StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext<ResultTrack
             else -> false
         }
 
-    private fun handleUnimplementedElement(msg: String, data: StmtConversionContext<ResultTrackingContext>): Exp =
+    private fun handleUnimplementedElement(msg: String, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
         when (data.config.behaviour) {
             UnsupportedFeatureBehaviour.THROW_EXCEPTION ->
                 TODO(msg)
             UnsupportedFeatureBehaviour.ASSUME_UNREACHABLE -> {
                 data.config.addMinorError(msg)
                 data.addStatement(Stmt.Assume(Exp.BoolLit(false)))
-                UnitDomain.element
+                UnitLit
             }
         }
 }
 
-object StmtConversionVisitorExceptionWrapper : FirVisitor<Exp, StmtConversionContext<ResultTrackingContext>>() {
-    override fun visitElement(element: FirElement, data: StmtConversionContext<ResultTrackingContext>): Exp {
+object StmtConversionVisitorExceptionWrapper : FirVisitor<ExpEmbedding, StmtConversionContext<ResultTrackingContext>>() {
+    override fun visitElement(element: FirElement, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         try {
             return element.accept(StmtConversionVisitor, data)
         } catch (e: Throwable) {

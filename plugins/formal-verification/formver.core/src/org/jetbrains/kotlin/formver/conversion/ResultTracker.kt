@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.formver.domains.UnitDomain
 import org.jetbrains.kotlin.formver.domains.convertType
+import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.UnitLit
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
@@ -15,20 +17,19 @@ import org.jetbrains.kotlin.formver.viper.ast.Stmt
 interface ResultTrackingContext {
     /** Expression with the result of the computation.
      */
-    val resultExp: Exp
-    fun capture(exp: Exp, expType: TypeEmbedding)
+    val resultExp: ExpEmbedding
+    fun capture(exp: ExpEmbedding)
 }
 
 object NoopResultTracker : ResultTrackingContext {
-    override val resultExp = UnitDomain.element
-    override fun capture(exp: Exp, expType: TypeEmbedding) {
+    override val resultExp = UnitLit
+    override fun capture(exp: ExpEmbedding) {
         // do nothing
     }
 }
 
 abstract class VarResultTrackingContext(val resultVar: VariableEmbedding) : ResultTrackingContext {
-    override val resultExp: Exp.LocalVar
-        get() = resultVar.toLocalVar()
+    override val resultExp: VariableEmbedding = resultVar
 }
 
 interface ResultTrackerFactory<RTC : ResultTrackingContext> {
@@ -42,8 +43,8 @@ object NoopResultTrackerFactory : ResultTrackerFactory<NoopResultTracker> {
 class VarResultTrackerFactory(val resultVar: VariableEmbedding) : ResultTrackerFactory<VarResultTrackingContext> {
     override fun build(ctx: StmtConversionContext<VarResultTrackingContext>): VarResultTrackingContext =
         object : VarResultTrackingContext(resultVar) {
-            override fun capture(exp: Exp, expType: TypeEmbedding) {
-                ctx.addStatement(Stmt.assign(resultExp, exp.convertType(expType, resultVar.type)))
+            override fun capture(exp: ExpEmbedding) {
+                ctx.addStatement(Stmt.assign(resultExp.toViper(), exp.withType(resultVar.type).toViper()))
             }
         }
 }

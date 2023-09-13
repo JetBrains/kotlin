@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.formver.viper.ast
 
-import org.jetbrains.kotlin.formver.viper.IntoViper
+import org.jetbrains.kotlin.formver.viper.IntoSilver
 
-sealed class PermExp : IntoViper<viper.silver.ast.PermExp> {
+sealed class PermExp : IntoSilver<viper.silver.ast.PermExp> {
     data class WildcardPerm(
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
     ) : PermExp() {
-        override fun toViper(): viper.silver.ast.PermExp = viper.silver.ast.WildcardPerm(pos.toViper(), info.toViper(), trafos.toViper())
+        override fun toSilver(): viper.silver.ast.PermExp = viper.silver.ast.WildcardPerm(pos.toSilver(), info.toSilver(), trafos.toSilver())
     }
 
     data class FullPerm(
@@ -21,6 +21,6 @@ sealed class PermExp : IntoViper<viper.silver.ast.PermExp> {
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
     ) : PermExp() {
-        override fun toViper(): viper.silver.ast.PermExp = viper.silver.ast.FullPerm(pos.toViper(), info.toViper(), trafos.toViper())
+        override fun toSilver(): viper.silver.ast.PermExp = viper.silver.ast.FullPerm(pos.toSilver(), info.toSilver(), trafos.toSilver())
     }
 }

@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.formver.viper.ast
 
-import org.jetbrains.kotlin.formver.viper.IntoViper
+import org.jetbrains.kotlin.formver.viper.IntoSilver
 import viper.silver.ast.`NoInfo$`
 
-sealed class Info : IntoViper<viper.silver.ast.Info> {
+sealed class Info : IntoSilver<viper.silver.ast.Info> {
     data object NoInfo : Info() {
-        override fun toViper(): viper.silver.ast.Info = `NoInfo$`.`MODULE$`
+        override fun toSilver(): viper.silver.ast.Info = `NoInfo$`.`MODULE$`
     }
 }

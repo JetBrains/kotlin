@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.MethodEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
@@ -31,11 +32,11 @@ class StmtConverter<out RTC : ResultTrackingContext>(
     override val resultCtx: RTC
         get() = resultCtxFactory.build(this)
 
-    override fun convert(stmt: FirStatement): Exp = stmt.accept(StmtConversionVisitorExceptionWrapper, this)
-    override fun convertAndStore(exp: FirExpression): Exp.LocalVar =
+    override fun convert(stmt: FirStatement): ExpEmbedding = stmt.accept(StmtConversionVisitorExceptionWrapper, this)
+    override fun convertAndStore(exp: FirExpression): VariableEmbedding =
         when (val convertedExp = convert(exp)) {
-            is Exp.LocalVar -> convertedExp
-            else -> withResult(embedType(exp)) { capture(convertedExp, embedType(exp)) }
+            is VariableEmbedding -> convertedExp
+            else -> withResult(embedType(exp)) { capture(convertedExp) }
         }
 
     override fun newBlock(): StmtConverter<RTC> = StmtConverter(this, SeqnBuilder(), resultCtxFactory, whileIndex)
@@ -62,10 +63,10 @@ class StmtConverter<out RTC : ResultTrackingContext>(
     }
 
     // We can't implement these members using `by` due to Kotlin shenanigans.
-    override val resultExp: Exp
+    override val resultExp: ExpEmbedding
         get() = resultCtx.resultExp
 
-    override fun capture(exp: Exp, expType: TypeEmbedding) = resultCtx.capture(exp, expType)
+    override fun capture(exp: ExpEmbedding) = resultCtx.capture(exp)
 
     override val breakLabel: Label
         get() = Label(BreakLabelName(whileIndex), listOf())

@@ -24,7 +24,7 @@ interface MethodEmbedding : MethodSignatureEmbedding {
     val viperMethod: Method
 
     fun convertBody(ctx: ProgramConverter)
-    fun insertCall(argsFir: List<FirExpression>, ctx: StmtConversionContext<ResultTrackingContext>): Exp.LocalVar
+    fun insertCall(argsFir: List<FirExpression>, ctx: StmtConversionContext<ResultTrackingContext>): VariableEmbedding
 
     fun getFunctionCallSubstitutionItems(
         args: List<FirExpression>,
@@ -83,14 +83,14 @@ class UserMethodEmbedding(
     }
 
     @OptIn(SymbolInternals::class)
-    override fun insertCall(argsFir: List<FirExpression>, ctx: StmtConversionContext<ResultTrackingContext>): Exp.LocalVar =
+    override fun insertCall(argsFir: List<FirExpression>, ctx: StmtConversionContext<ResultTrackingContext>): VariableEmbedding =
         ctx.withResult(returnType) {
             if (!symbol.isInline) {
                 val args = argsFir
                     .zip(formalArgs)
-                    .map { (arg, formalArg) -> convert(arg).convertType(embedType(arg), formalArg.type) }
+                    .map { (arg, formalArg) -> convert(arg).withType(formalArg.type) }
 
-                addStatement(toMethodCall(args, this.resultCtx.resultVar))
+                addStatement(toMethodCall(args.toViper(), this.resultCtx.resultVar))
             } else {
                 val inlineBody = symbol.fir.body ?: throw Exception("Function symbol $symbol has a null body")
                 val inlineBodyCtx = newBlock()

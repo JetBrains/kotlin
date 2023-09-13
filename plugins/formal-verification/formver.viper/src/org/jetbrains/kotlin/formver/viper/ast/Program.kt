@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.formver.viper.ast
 
-import org.jetbrains.kotlin.formver.viper.IntoViper
+import org.jetbrains.kotlin.formver.viper.IntoSilver
 import org.jetbrains.kotlin.formver.viper.emptySeq
 import org.jetbrains.kotlin.formver.viper.toScalaSeq
-import org.jetbrains.kotlin.formver.viper.toViper
+import org.jetbrains.kotlin.formver.viper.toSilver
 
 data class Program(
     val domains: List<Domain>,
@@ -20,17 +20,17 @@ data class Program(
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
-) : IntoViper<viper.silver.ast.Program> {
-    override fun toViper(): viper.silver.ast.Program = viper.silver.ast.Program(
-        domains.toViper().toScalaSeq(),
-        fields.toViper().toScalaSeq(),
-        functions.toViper().toScalaSeq(),
+) : IntoSilver<viper.silver.ast.Program> {
+    override fun toSilver(): viper.silver.ast.Program = viper.silver.ast.Program(
+        domains.toSilver().toScalaSeq(),
+        fields.toSilver().toScalaSeq(),
+        functions.toSilver().toScalaSeq(),
         emptySeq(), /* predicates */
-        methods.toViper().toScalaSeq(),
+        methods.toSilver().toScalaSeq(),
         emptySeq(), /* extensions */
-        pos.toViper(),
-        info.toViper(),
-        trafos.toViper(),
+        pos.toSilver(),
+        info.toSilver(),
+        trafos.toSilver(),
     )
 
     fun toShort(): Program = Program(
@@ -43,5 +43,5 @@ data class Program(
         trafos,
     )
 
-    fun toDebugOutput(): String = toViper().toString()
+    fun toDebugOutput(): String = toSilver().toString()
 }

@@ -74,7 +74,8 @@ data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding
     override val kotlinType = TypeDomain.nullableType(elementType.kotlinType)
     override val viperType: Type = NullableDomain.nullableType(elementType.viperType)
 
-    val nullVal: Exp = NullableDomain.nullVal(elementType.viperType)
+    val nullVal: ExpEmbedding
+        get() = NullLit(elementType)
 
     override fun provenInvariants(v: Exp) = listOf(subTypeInvariant(v))
 }

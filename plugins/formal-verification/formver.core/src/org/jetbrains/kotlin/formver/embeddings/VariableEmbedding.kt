@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.formver.embeddings
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.*
 
-class VariableEmbedding(val name: MangledName, val type: TypeEmbedding) {
+class VariableEmbedding(val name: MangledName, override val type: TypeEmbedding) : ExpEmbedding {
 
     fun toLocalVarDecl(
         pos: Position = Position.NoPosition,
@@ -16,11 +16,8 @@ class VariableEmbedding(val name: MangledName, val type: TypeEmbedding) {
         trafos: Trafos = Trafos.NoTrafos,
     ): Declaration.LocalVarDecl = Declaration.LocalVarDecl(name, type.viperType, pos, info, trafos)
 
-    fun toLocalVar(
-        pos: Position = Position.NoPosition,
-        info: Info = Info.NoInfo,
-        trafos: Trafos = Trafos.NoTrafos,
-    ): Exp.LocalVar = Exp.LocalVar(name, type.viperType, pos, info, trafos)
+
+    override fun toViper(): Exp.LocalVar = Exp.LocalVar(name, type.viperType)
 
     fun toField(
         pos: Position = Position.NoPosition,
@@ -33,11 +30,11 @@ class VariableEmbedding(val name: MangledName, val type: TypeEmbedding) {
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): Exp.FieldAccess = Exp.FieldAccess(toLocalVar(), field, pos, info, trafos)
+    ): Exp.FieldAccess = Exp.FieldAccess(toViper(), field, pos, info, trafos)
 
-    fun invariants(): List<Exp> = type.invariants(toLocalVar())
+    fun invariants(): List<Exp> = type.invariants(toViper())
 
-    fun provenInvariants(): List<Exp> = type.provenInvariants(toLocalVar())
-    fun accessInvariants(): List<Exp> = type.accessInvariants(toLocalVar())
-    fun dynamicInvariants(): List<Exp> = type.dynamicInvariants(toLocalVar())
+    fun provenInvariants(): List<Exp> = type.provenInvariants(toViper())
+    fun accessInvariants(): List<Exp> = type.accessInvariants(toViper())
+    fun dynamicInvariants(): List<Exp> = type.dynamicInvariants(toViper())
 }
