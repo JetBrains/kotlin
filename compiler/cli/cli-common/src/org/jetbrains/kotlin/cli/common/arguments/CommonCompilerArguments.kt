@@ -807,7 +807,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 )
             }
             put(AnalysisFlags.optIn, useExperimentalFqNames + optIn?.toList().orEmpty())
-            put(AnalysisFlags.expectActualLinker, expectActualLinker)
+            put(AnalysisFlags.skipExpectedActualDeclarationChecker, expectActualLinker)
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
             put(AnalysisFlags.allowResultReturnType, allowResultReturnType)
             ExplicitApiMode.fromString(explicitApi)?.also { put(AnalysisFlags.explicitApiMode, it) } ?: collector.report(

@@ -55,7 +55,7 @@ class ExpectedActualDeclarationChecker(
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
         // TODO: we need a klib based MPP aware ModuleStructureOracle. Just disable the checks for now.
-        if (context.languageVersionSettings.getFlag(AnalysisFlags.expectActualLinker)) return
+        if (context.languageVersionSettings.getFlag(AnalysisFlags.skipExpectedActualDeclarationChecker)) return
 
         // Note that this check is necessary, because for default accessors KtProperty is passed for KtDeclaration, so this
         // case won't be covered by the next check (also, it accidentally fixes KT-28385)
