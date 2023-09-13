@@ -2893,6 +2893,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
         }
 
         @Test
+        @TestMetadata("substitutionOverrideWithDelegate.kt")
+        public void testSubstitutionOverrideWithDelegate() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/substitutionOverrideWithDelegate.kt");
+        }
+
+        @Test
         @TestMetadata("SyntheticSetterType.kt")
         public void testSyntheticSetterType() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/SyntheticSetterType.kt");
