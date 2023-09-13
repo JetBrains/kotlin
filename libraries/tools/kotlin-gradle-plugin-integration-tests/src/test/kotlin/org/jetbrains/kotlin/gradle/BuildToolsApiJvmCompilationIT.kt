@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.deleteExisting
+import kotlin.io.path.writeText
 
 @DisplayName("JVM compilation via the Build Tools API")
 @JvmGradlePluginTests
@@ -51,6 +53,35 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
             enableOtherVersionBuildToolsImpl()
             build("assemble") {
                 assertNoDiagnostic(KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency)
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Gradle side outputs backup works")
+    fun outputsBackupWorks(gradleVersion: GradleVersion) {
+        project(
+            "simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(
+                usePreciseOutputsBackup = false,
+                keepIncrementalCompilationCachesInMemory = false,
+            )
+        ) {
+            build("compileKotlin") {
+                assertTasksExecuted(":compileKotlin")
+            }
+            val newBrokenSrc = kotlinSourcesDir().resolve("broken.kt")
+            newBrokenSrc.writeText(
+                //language=kt
+                """
+                broken code
+                """.trimIndent()
+            )
+            buildAndFail("compileKotlin") {
+                assertTasksFailed(":compileKotlin")
+            }
+            newBrokenSrc.deleteExisting()
+            build("compileKotlin") {
+                assertTasksUpToDate(":compileKotlin")
             }
         }
     }

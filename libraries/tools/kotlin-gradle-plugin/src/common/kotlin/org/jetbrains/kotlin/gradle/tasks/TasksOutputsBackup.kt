@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import java.io.File
 import java.net.URI
 import java.nio.file.FileSystems
@@ -34,7 +34,7 @@ internal class TaskOutputsBackup(
      */
     val outputsToRestore: List<File>,
 
-    val logger: Logger
+    val logger: KotlinLogger,
 ) {
 
     fun createSnapshot() {

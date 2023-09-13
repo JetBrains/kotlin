@@ -269,7 +269,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                             projectLayout.buildDirectory,
                             projectLayout.buildDirectory.dir("snapshot/kotlin/$name"),
                             outputsToRestore = allOutputFiles() - taskOutputsBackupExcludes.get(),
-                            logger
+                            GradleKotlinLogger(logger),
                         ).also {
                             it.createSnapshot()
                         }

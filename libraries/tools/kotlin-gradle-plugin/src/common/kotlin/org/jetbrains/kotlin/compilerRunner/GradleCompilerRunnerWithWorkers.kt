@@ -15,6 +15,7 @@ import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.tasks.*
 import java.io.File
 import javax.inject.Inject
@@ -27,11 +28,11 @@ internal class GradleCompilerRunnerWithWorkers(
     jdkToolsJar: File?,
     compilerExecutionSettings: CompilerExecutionSettings,
     buildMetrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
-    private val workerExecutor: WorkerExecutor
+    private val workerExecutor: WorkerExecutor,
 ) : GradleCompilerRunner(taskProvider, jdkToolsJar, compilerExecutionSettings, buildMetrics) {
     override fun runCompilerAsync(
         workArgs: GradleKotlinCompilerWorkArguments,
-        taskOutputsBackup: TaskOutputsBackup?
+        taskOutputsBackup: TaskOutputsBackup?,
     ): WorkQueue {
 
         buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.CALL_WORKER)
@@ -49,10 +50,10 @@ internal class GradleCompilerRunnerWithWorkers(
     }
 
     internal abstract class GradleKotlinCompilerWorkAction @Inject constructor(
-        private val fileSystemOperations: FileSystemOperations
+        private val fileSystemOperations: FileSystemOperations,
     ) : WorkAction<GradleKotlinCompilerWorkParameters> {
 
-        private val logger = Logging.getLogger("kotlin-compile-worker")
+        private val logger = GradleKotlinLogger(Logging.getLogger("kotlin-compile-worker"))
 
         override fun execute() {
             val taskOutputsBackup = if (parameters.snapshotsDir.isPresent) {
@@ -61,7 +62,7 @@ internal class GradleCompilerRunnerWithWorkers(
                     parameters.buildDir,
                     parameters.snapshotsDir,
                     parameters.taskOutputsToRestore.get(),
-                    logger
+                    logger,
                 )
             } else {
                 null
