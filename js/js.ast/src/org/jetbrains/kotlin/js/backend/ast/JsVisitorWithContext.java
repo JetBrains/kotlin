@@ -274,6 +274,10 @@ public abstract class JsVisitorWithContext {
         return true;
     }
 
+    public boolean visit(@NotNull JsYield x, @NotNull JsContext ctx) {
+        return true;
+    }
+
     public boolean visit(@NotNull JsDebugger x, @NotNull JsContext ctx) {
         return true;
     }

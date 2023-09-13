@@ -139,6 +139,7 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
 
     if (JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives) {
         configuration.put(JSConfigurationKeys.USE_ES6_CLASSES, true)
+        configuration.put(JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR, true)
     }
 
     if (module.frontendKind == FrontendKinds.FIR) {

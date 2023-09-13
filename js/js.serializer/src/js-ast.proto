@@ -122,6 +122,7 @@ message Function {
         STATIC = 1;
         GET = 2;
         SET = 3;
+        GENERATOR = 4;
     }
 }
 

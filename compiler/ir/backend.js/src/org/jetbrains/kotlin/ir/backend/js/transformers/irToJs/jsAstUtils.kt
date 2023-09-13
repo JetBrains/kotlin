@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.LOWERED_GENERATOR_FUNCTION
 import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -119,7 +120,10 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
-        .apply { if (declaration.isEs6ConstructorReplacement) modifiers.add(JsFunction.Modifier.STATIC) }
+        .apply {
+            if (declaration.isEs6ConstructorReplacement) modifiers.add(JsFunction.Modifier.STATIC)
+            if (declaration.shouldBeCompiledAsGenerator(context)) modifiers.add(JsFunction.Modifier.GENERATOR)
+        }
         .withSource(declaration, context, useNameOf = declaration)
 
     function.name = name
@@ -134,6 +138,10 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 
     return function
 }
+
+private fun IrFunction.shouldBeCompiledAsGenerator(context: JsGenerationContext): Boolean =
+    this is IrSimpleFunction &&
+            context.staticContext.backendContext.mapping.functionWithContinuationsToSuspendFunctions[this]?.origin == LOWERED_GENERATOR_FUNCTION
 
 private fun isFunctionTypeInvoke(receiver: JsExpression?, call: IrCall): Boolean {
     if (receiver == null || receiver is JsThisRef) return false

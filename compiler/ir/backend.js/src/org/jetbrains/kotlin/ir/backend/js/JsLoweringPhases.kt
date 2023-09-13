@@ -21,9 +21,10 @@ import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendArityStoreLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionWithGeneratorsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
@@ -524,7 +525,13 @@ private val innerClassConstructorCallsLoweringPhase = makeBodyLoweringPhase(
 )
 
 private val suspendFunctionsLoweringPhase = makeBodyLoweringPhase(
-    ::JsSuspendFunctionsLowering,
+    { context ->
+        if (context.compileSuspendAsJsGenerator) {
+            JsSuspendFunctionWithGeneratorsLowering(context)
+        } else {
+            JsSuspendFunctionsLowering(context)
+        }
+    },
     name = "SuspendFunctionsLowering",
     description = "Transform suspend functions into CoroutineImpl instance and build state machine"
 )

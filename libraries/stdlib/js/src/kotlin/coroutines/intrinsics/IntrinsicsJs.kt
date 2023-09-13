@@ -7,9 +7,7 @@
 
 package kotlin.coroutines.intrinsics
 
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.ContinuationInterceptor
-import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.*
 import kotlin.coroutines.CoroutineImpl
 import kotlin.internal.InlineOnly
 
@@ -169,8 +167,7 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
  */
 @SinceKotlin("1.3")
 public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
-    (this as? CoroutineImpl)?.intercepted() ?: this
-
+    (this as? InterceptedCoroutine)?.intercepted() ?: this
 
 private inline fun <T> createCoroutineFromSuspendFunction(
     completion: Continuation<T>,
@@ -182,4 +179,11 @@ private inline fun <T> createCoroutineFromSuspendFunction(
             return block()
         }
     }
+}
+
+internal fun createCoroutineFromGeneratorFunction(
+    suspendFunction: (Continuation<Any?>) -> JsIterator<Any?>,
+    completion: Continuation<Any?>
+): Continuation<Any?> {
+    return GeneratorCoroutineImpl(suspendFunction, completion)
 }

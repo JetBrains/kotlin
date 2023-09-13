@@ -178,6 +178,7 @@ public class JsAstMapper {
                 return mapSetElem(node);
 
             case TokenStream.FUNCTION:
+            case TokenStream.GENERATOR:
                 return mapFunction(node);
 
             case TokenStream.BLOCK:
@@ -570,7 +571,7 @@ public class JsAstMapper {
 
     public JsFunction mapFunction(Node fnNode) throws JsParserException {
         int nodeType = fnNode.getType();
-        assert nodeType == TokenStream.FUNCTION: "Expected function node, got: " + TokenStream.tokenToName(nodeType);
+        assert nodeType == TokenStream.FUNCTION || nodeType == TokenStream.GENERATOR: "Expected function node, got: " + TokenStream.tokenToName(nodeType);
         Node fromFnNameNode = fnNode.getFirstChild();
         Node fromParamNode = fnNode.getFirstChild().getNext().getFirstChild();
         Node fromBodyNode = fnNode.getFirstChild().getNext().getNext();
@@ -585,6 +586,10 @@ public class JsAstMapper {
 
         JsFunction toFn = scopeContext.enterFunction();
         toFn.setName(functionName);
+
+        if (nodeType == TokenStream.GENERATOR) {
+            toFn.getModifiers().add(JsFunction.Modifier.GENERATOR);
+        }
 
         while (fromParamNode != null) {
             String fromParamName = fromParamNode.getString();

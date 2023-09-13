@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
+import org.jetbrains.kotlin.ir.util.resumeWith
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
@@ -87,6 +88,10 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             prefixOp(intrinsics.jsTypeOf, JsUnaryOperator.TYPEOF)
 
             add(intrinsics.jsIsEs6) { _, _ -> JsBooleanLiteral(backendContext.es6mode) }
+
+            add(intrinsics.jsYieldFunctionSymbol) { call, context ->
+                JsYield(translateCallArguments(call, context).single())
+            }
 
             add(intrinsics.jsObjectCreateSymbol) { call, context ->
                 val classToCreate = call.getTypeArgument(0)!!.classifierOrFail.owner as IrClass
@@ -268,6 +273,38 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(intrinsics.jsInvokeSuspendSuperType, suspendInvokeTransform)
             add(intrinsics.jsInvokeSuspendSuperTypeWithReceiver, suspendInvokeTransform)
             add(intrinsics.jsInvokeSuspendSuperTypeWithReceiverAndParam, suspendInvokeTransform)
+
+            if (backendContext.compileSuspendAsJsGenerator) {
+                val createGeneratorWrapper = { generator: JsExpression, arguments: List<JsExpression> ->
+                    val continuation = JsName("c", true)
+                    val body = JsBlock().apply { statements += JsReturn(JsInvocation(generator, arguments.plus(continuation.makeRef()))) }
+                    JsFunction(emptyScope, body, "arguments binding").apply {
+                        parameters.add(JsParameter(continuation))
+                    }
+                }
+
+                val createCoroutineUnintercepted = { call: IrCall, context: JsGenerationContext ->
+                    val arguments = translateCallArguments(call, context)
+                    val suspendFunction = call.extensionReceiver?.accept(IrElementToJsExpressionTransformer(), context)!!
+                    val createCoroutineFromGeneratorFunction = backendContext.intrinsics.createCoroutineFromGeneratorFunction.owner
+                    val completion = arguments.last()
+                    val wrapper = when {
+                        arguments.size == 1 -> suspendFunction
+                        else -> createGeneratorWrapper(suspendFunction, arguments.dropLast(1))
+                    }
+
+                    JsInvocation(context.getNameForStaticFunction(createCoroutineFromGeneratorFunction).makeRef(), wrapper, completion)
+                }
+
+                val startCoroutineUninterceptedOrReturn = { call: IrCall, context: JsGenerationContext ->
+                    val generatorCoroutineImpl = backendContext.intrinsics.generatorCoroutineImplClassSymbol.owner
+                    val resumeWithMethod = context.getNameForMemberFunction(generatorCoroutineImpl.resumeWith!!)
+                    JsInvocation(JsNameRef(resumeWithMethod, createCoroutineUnintercepted(call, context)))
+                }
+
+                backendContext.intrinsics.createCoroutineUnintercepted.forEach { add(it, createCoroutineUnintercepted) }
+                backendContext.intrinsics.startCoroutineUninterceptedOrReturn.forEach { add(it, startCoroutineUninterceptedOrReturn) }
+            }
 
             add(intrinsics.jsArguments) { _, _ -> Namer.ARGUMENTS }
 

@@ -34,6 +34,8 @@ class JsGenerationContext(
     private val nameCache: MutableMap<IrElement, JsName> = hashMapOf(),
     private val useBareParameterNames: Boolean = false,
 ) : IrNamer by staticContext {
+    val compileSuspendAsJsGenerator = staticContext.backendContext.compileSuspendAsJsGenerator
+
     private val startLocationCache = hashMapOf<Int, JsLocation>()
     private val endLocationCache = hashMapOf<Int, JsLocation>()
 

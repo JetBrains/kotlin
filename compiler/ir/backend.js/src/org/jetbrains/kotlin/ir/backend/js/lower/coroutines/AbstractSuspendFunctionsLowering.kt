@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -76,71 +75,10 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         }
     }
 
-    private fun getSuspendFunctionKind(function: IrSimpleFunction, body: IrBody): SuspendFunctionKind {
-
-        fun IrSimpleFunction.isSuspendLambda() =
-            name.asString() == "invoke" && parentClassOrNull?.let { it.origin === CallableReferenceLowering.Companion.LAMBDA_IMPL } == true
-
-        if (function.isSuspendLambda())
-            return SuspendFunctionKind.NEEDS_STATE_MACHINE            // Suspend lambdas always need coroutine implementation.
-
-        var numberOfSuspendCalls = 0
-        body.acceptVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitCall(expression: IrCall) {
-                expression.acceptChildrenVoid(this)
-                if (expression.isSuspend)
-                    ++numberOfSuspendCalls
-            }
-        })
-        // It is important to optimize the case where there is only one suspend call and it is the last statement
-        // because we don't need to build a fat coroutine class in that case.
-        // This happens a lot in practice because of suspend functions with default arguments.
-        // TODO: use TailRecursionCallsCollector.
-        val lastCall = when (val lastStatement = (body as IrBlockBody).statements.lastOrNull()) {
-            is IrCall ->
-                // Delegation to call without return can only be performed to Unit-returning function call from Unit-returning function
-                if (lastStatement.type == context.irBuiltIns.unitType && function.returnType == context.irBuiltIns.unitType)
-                    lastStatement
-                else
-                    null
-            is IrReturn -> {
-                var value: IrElement = lastStatement
-                /*
-                 * Check if matches this pattern:
-                 * block/return {
-                 *     block/return {
-                 *         .. suspendCall()
-                 *     }
-                 * }
-                 */
-                loop@ while (true) {
-                    value = when {
-                        value is IrBlock && value.statements.size == 1 -> value.statements.first()
-                        value is IrReturn -> value.value
-                        else -> break@loop
-                    }
-                }
-                value as? IrCall
-            }
-            else -> null
-        }
-        val suspendCallAtEnd = lastCall != null && lastCall.isSuspend    // Suspend call.
-        return when {
-            numberOfSuspendCalls == 0 -> SuspendFunctionKind.NO_SUSPEND_CALLS
-            numberOfSuspendCalls == 1
-                    && suspendCallAtEnd -> SuspendFunctionKind.DELEGATING(lastCall!!)
-            else -> SuspendFunctionKind.NEEDS_STATE_MACHINE
-        }
-    }
-
     private fun transformSuspendFunction(function: IrSimpleFunction, body: IrBody): IrClass? {
         assert(function.isSuspend)
 
-        return when (val functionKind = getSuspendFunctionKind(function, body)) {
+        return when (val functionKind = getSuspendFunctionKind(context, function, body)) {
             is SuspendFunctionKind.NO_SUSPEND_CALLS -> {
                 null                                                            // No suspend function calls - just an ordinary function.
             }
@@ -478,24 +416,13 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         }
     }
 
-    // Suppress since it is used in native
-    @Suppress("MemberVisibilityCanBePrivate")
-    protected fun IrCall.isReturnIfSuspendedCall() =
-        symbol.owner.run { fqNameWhenAvailable == context.internalPackageFqn.child(Name.identifier("returnIfSuspended")) }
-
-    private sealed class SuspendFunctionKind {
-        object NO_SUSPEND_CALLS : SuspendFunctionKind()
-        class DELEGATING(val delegatingCall: IrCall) : SuspendFunctionKind()
-        object NEEDS_STATE_MACHINE : SuspendFunctionKind()
-    }
-
     private val symbols = context.ir.symbols
     private val getContinuationSymbol = symbols.getContinuation
     private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
 
     private fun removeReturnIfSuspendedCallAndSimplifyDelegatingCall(irFunction: IrFunction, delegatingCall: IrCall) {
         val returnValue =
-            if (delegatingCall.isReturnIfSuspendedCall())
+            if (delegatingCall.isReturnIfSuspendedCall(context))
                 delegatingCall.getValueArgument(0)!!
             else delegatingCall
         val body = irFunction.body as IrBlockBody
@@ -573,3 +500,76 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         }
     }
 }
+
+sealed class SuspendFunctionKind {
+    object NO_SUSPEND_CALLS : SuspendFunctionKind()
+    class DELEGATING(val delegatingCall: IrCall) : SuspendFunctionKind()
+    object NEEDS_STATE_MACHINE : SuspendFunctionKind()
+}
+
+fun getSuspendFunctionKind(context: CommonBackendContext, function: IrSimpleFunction, body: IrBody): SuspendFunctionKind {
+
+    fun IrSimpleFunction.isSuspendLambda() =
+        name.asString() == "invoke" && parentClassOrNull?.let { it.origin === CallableReferenceLowering.Companion.LAMBDA_IMPL } == true
+
+    if (function.isSuspendLambda())
+        return SuspendFunctionKind.NEEDS_STATE_MACHINE            // Suspend lambdas always need coroutine implementation.
+
+    var numberOfSuspendCalls = 0
+    body.acceptVoid(object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitCall(expression: IrCall) {
+            expression.acceptChildrenVoid(this)
+            if (expression.isSuspend)
+                ++numberOfSuspendCalls
+        }
+    })
+    // It is important to optimize the case where there is only one suspend call and it is the last statement
+    // because we don't need to build a fat coroutine class in that case.
+    // This happens a lot in practice because of suspend functions with default arguments.
+    // TODO: use TailRecursionCallsCollector.
+    val lastCall = when (val lastStatement = (body as IrBlockBody).statements.lastOrNull()) {
+        is IrCall ->
+            // Delegation to call without return can only be performed to Unit-returning function call from Unit-returning function
+            if (lastStatement.type == context.irBuiltIns.unitType && function.returnType == context.irBuiltIns.unitType)
+                lastStatement
+            else
+                null
+        is IrReturn -> {
+            var value: IrElement = lastStatement
+            /*
+             * Check if matches this pattern:
+             * block/return {
+             *     block/return {
+             *         .. suspendCall()
+             *     }
+             * }
+             */
+            loop@ while (true) {
+                value = when {
+                    value is IrBlock && value.statements.size == 1 -> value.statements.first()
+                    value is IrReturn -> value.value
+                    else -> break@loop
+                }
+            }
+            value as? IrCall
+        }
+        else -> null
+    }
+    val suspendCallAtEnd = lastCall != null && lastCall.isSuspend    // Suspend call.
+    return when {
+        numberOfSuspendCalls == 0 -> SuspendFunctionKind.NO_SUSPEND_CALLS
+        numberOfSuspendCalls == 1
+                && suspendCallAtEnd -> SuspendFunctionKind.DELEGATING(lastCall!!)
+        else -> SuspendFunctionKind.NEEDS_STATE_MACHINE
+    }
+}
+
+// Suppress since it is used in native
+@Suppress("MemberVisibilityCanBePrivate")
+fun IrCall.isReturnIfSuspendedCall(context: CommonBackendContext) =
+    symbol.owner.run { fqNameWhenAvailable == context.internalPackageFqn.child(Name.identifier("returnIfSuspended")) }
+

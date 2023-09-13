@@ -276,6 +276,11 @@ val IrClass.invokeFun: IrSimpleFunction?
 
 // This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
 @UnsafeDuringIrConstructionAPI
+val IrClass.resumeWith: IrSimpleFunction?
+    get() = declarations.filterIsInstance<IrSimpleFunction>().singleOrNull { it.name.asString() == "resumeWith" }
+
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@UnsafeDuringIrConstructionAPI
 val IrDeclarationContainer.properties: Sequence<IrProperty>
     get() = declarations.asSequence().filterIsInstance<IrProperty>()
 
