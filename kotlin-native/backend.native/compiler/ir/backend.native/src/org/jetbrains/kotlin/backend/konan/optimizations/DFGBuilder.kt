@@ -769,7 +769,13 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                 }
 
                                 else -> {
-                                    val callee = value.symbol.owner
+                                    /*
+                                     * Resolve owner of the call with special handling of Any methods:
+                                     * if toString/eq/hc is invoked on an interface instance, we resolve
+                                     * owner as Any and dispatch it via vtable.
+                                     * Note: Keep on par with the codegen.
+                                     */
+                                    val callee = value.symbol.owner.let { it.findOverriddenMethodOfAny() ?: it }
                                     val arguments = value.getArgumentsWithIr()
                                             .map { expressionToEdge(it.second) }
 
