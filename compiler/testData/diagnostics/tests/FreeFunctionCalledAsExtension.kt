@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun foo(a: (String) -> Unit) {
     "".<!UNRESOLVED_REFERENCE!>a<!>()
 }
