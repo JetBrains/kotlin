@@ -841,7 +841,7 @@ class Fir2IrDeclarationStorage(
                 val firProviderForSymbol = firVariableSymbol.moduleData.session.firProvider
                 val containingFile = firProviderForSymbol.getFirCallableContainerFile(firVariableSymbol)
 
-                classifierStorage.getIrEnumEntry(
+                classifierStorage.getOrCreateIrEnumEntry(
                     firDeclaration,
                     irParent = irParentClass,
                     predefinedOrigin = if (containingFile != null) IrDeclarationOrigin.DEFINED else irParentClass.origin

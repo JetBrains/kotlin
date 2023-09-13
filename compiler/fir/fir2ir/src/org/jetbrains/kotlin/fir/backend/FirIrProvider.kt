@@ -166,7 +166,7 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
             SymbolKind.CLASS_SYMBOL -> {
                 classifierStorage.getOrCreateIrClass((firDeclaration as FirRegularClass).symbol)
             }
-            SymbolKind.ENUM_ENTRY_SYMBOL -> classifierStorage.getIrEnumEntry(
+            SymbolKind.ENUM_ENTRY_SYMBOL -> classifierStorage.getOrCreateIrEnumEntry(
                 firDeclaration as FirEnumEntry, parent as IrClass
             )
             SymbolKind.CONSTRUCTOR_SYMBOL -> {

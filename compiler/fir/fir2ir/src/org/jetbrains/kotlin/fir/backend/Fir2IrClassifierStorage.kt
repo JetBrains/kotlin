@@ -341,7 +341,7 @@ class Fir2IrClassifierStorage(
         return enumEntryCache[enumEntry]
     }
 
-    fun getIrEnumEntry(
+    fun getOrCreateIrEnumEntry(
         enumEntry: FirEnumEntry,
         irParent: IrClass,
         predefinedOrigin: IrDeclarationOrigin? = null,
