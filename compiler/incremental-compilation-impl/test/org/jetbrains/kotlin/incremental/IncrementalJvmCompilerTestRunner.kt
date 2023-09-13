@@ -19,7 +19,7 @@ class IncrementalJvmCompilerTestRunner(
     buildHistoryFile: File,
     outputDirs: Collection<File>?,
     modulesApiHistory: ModulesApiHistory,
-    override val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
+    override val kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     classpathChanges: ClasspathChanges,
     withAbiSnapshot: Boolean = false,
     val testLookupTracker: TestLookupTracker

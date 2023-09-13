@@ -539,16 +539,8 @@ abstract class CompileServiceImplBase(
         reporter: RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>
     ): ExitCode {
         reporter.startMeasureGc()
-        val allKotlinFiles = arrayListOf<File>()
-        val freeArgsWithoutKotlinFiles = arrayListOf<String>()
-        args.freeArgs.forEach {
-            if (it.endsWith(".kt") && File(it).exists()) {
-                allKotlinFiles.add(File(it))
-            } else {
-                freeArgsWithoutKotlinFiles.add(it)
-            }
-        }
-        args.freeArgs = freeArgsWithoutKotlinFiles
+        @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
+        val allKotlinFiles = extractKotlinSourcesFromFreeCompilerArguments(args, setOf("kt"))
 
         val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
             ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!, incrementalCompilationOptions.deletedFiles!!)
@@ -591,19 +583,10 @@ abstract class CompileServiceImplBase(
     ): ExitCode {
         reporter.startMeasureGc()
         val allKotlinExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
-                (incrementalCompilationOptions.kotlinScriptExtensions ?: emptyArray())).distinct()
-        val dotExtensions = allKotlinExtensions.map { ".$it" }
-        val freeArgs = arrayListOf<String>()
-        val allKotlinFiles = arrayListOf<File>()
-        for (arg in k2jvmArgs.freeArgs) {
-            val file = File(arg)
-            if (file.isFile && dotExtensions.any { ext -> file.path.endsWith(ext, ignoreCase = true) }) {
-                allKotlinFiles.add(file)
-            } else {
-                freeArgs.add(arg)
-            }
-        }
-        k2jvmArgs.freeArgs = freeArgs
+                (incrementalCompilationOptions.kotlinScriptExtensions ?: emptyArray())).toSet()
+
+        @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
+        val allKotlinFiles = extractKotlinSourcesFromFreeCompilerArguments(k2jvmArgs, allKotlinExtensions)
 
         val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
             ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!, incrementalCompilationOptions.deletedFiles!!)

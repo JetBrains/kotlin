@@ -66,7 +66,7 @@ open class IncrementalJvmCompilerRunner(
     buildHistoryFile: File?,
     outputDirs: Collection<File>?,
     private val modulesApiHistory: ModulesApiHistory,
-    override val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
+    override val kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     private val classpathChanges: ClasspathChanges,
     withAbiSnapshot: Boolean = false,
     preciseCompilationResultsBackup: Boolean = false,

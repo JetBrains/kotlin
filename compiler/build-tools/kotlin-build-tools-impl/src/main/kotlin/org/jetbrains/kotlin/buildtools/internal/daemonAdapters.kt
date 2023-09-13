@@ -25,27 +25,15 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
         return when (val options = aggregatedIcConfiguration?.options) {
             is ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration -> {
                 val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
-                val params = aggregatedIcConfiguration.parameters as ClasspathSnapshotBasedIncrementalCompilationApproachParameters
-                val snapshotFiles =
-                    ClasspathSnapshotFiles(params.newClasspathSnapshotFiles, params.shrunkClasspathSnapshot.parentFile)
+
+                @Suppress("UNCHECKED_CAST")
+                val classpathChanges =
+                    (aggregatedIcConfiguration as AggregatedIcConfiguration<ClasspathSnapshotBasedIncrementalCompilationApproachParameters>).classpathChanges
                 IncrementalCompilationOptions(
                     areFileChangesKnown = sourcesChanges is SourcesChanges.Known,
                     modifiedFiles = if (sourcesChanges is SourcesChanges.Known) sourcesChanges.modifiedFiles else null,
                     deletedFiles = if (sourcesChanges is SourcesChanges.Known) sourcesChanges.removedFiles else null,
-                    classpathChanges = when {
-                        !params.shrunkClasspathSnapshot.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
-                            snapshotFiles
-                        )
-                        options.forcedNonIncrementalMode -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun(
-                            snapshotFiles
-                        )
-                        options.assuredNoClasspathSnapshotsChanges -> ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges(
-                            snapshotFiles
-                        )
-                        else -> {
-                            ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler(snapshotFiles)
-                        }
-                    },
+                    classpathChanges = classpathChanges,
                     workingDir = aggregatedIcConfiguration.workingDir,
                     compilerMode = CompilerMode.INCREMENTAL_COMPILER,
                     targetPlatform = CompileService.TargetPlatform.JVM,

@@ -9,10 +9,9 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
-import org.junit.jupiter.api.Disabled
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("JVM compilation via the Build Tools API")
@@ -69,12 +68,11 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @Disabled
     @DisplayName("Simple project incremental in-process compilation")
     fun compileJvmInProcessIncremental(gradleVersion: GradleVersion) = testSimpleProject(
         gradleVersion, defaultBuildOptions.copy(
             compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS,
-            incremental = false,
+            incremental = true,
         )
     ) {
         assertOutputContains(KotlinCompilerExecutionStrategy.IN_PROCESS.asFinishLogMessage)

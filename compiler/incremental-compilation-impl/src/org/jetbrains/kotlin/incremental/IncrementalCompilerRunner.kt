@@ -81,7 +81,7 @@ abstract class IncrementalCompilerRunner<
     private val dirtySourcesSinceLastTimeFile = File(workingDir, DIRTY_SOURCES_FILE_NAME)
     protected val lastBuildInfoFile = File(workingDir, LAST_BUILD_INFO_FILE_NAME)
     private val abiSnapshotFile = File(workingDir, ABI_SNAPSHOT_FILE_NAME)
-    protected open val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+    protected open val kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 
     /**
      * Creates an instance of [IncrementalCompilationContext] that holds common incremental compilation context mostly required for [CacheManager]
@@ -662,4 +662,24 @@ abstract class IncrementalCompilerRunner<
             }
         }
     }
+}
+
+@Deprecated("Temporary function to reuse the logic. KT-62759")
+fun extractKotlinSourcesFromFreeCompilerArguments(
+    compilerArguments: CommonCompilerArguments,
+    kotlinFilenameExtensions: Set<String>,
+): List<File> {
+    val dotExtensions = kotlinFilenameExtensions.map { ".$it" }
+    val freeArgs = arrayListOf<String>()
+    val allKotlinFiles = arrayListOf<File>()
+    for (arg in compilerArguments.freeArgs) {
+        val file = File(arg)
+        if (file.isFile && dotExtensions.any { ext -> file.path.endsWith(ext, ignoreCase = true) }) {
+            allKotlinFiles.add(file)
+        } else {
+            freeArgs.add(arg)
+        }
+    }
+    compilerArguments.freeArgs = freeArgs
+    return allKotlinFiles
 }

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.*
@@ -21,7 +23,12 @@ import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacade
 import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.filterExtractProps
+import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
+import org.jetbrains.kotlin.incremental.extractKotlinSourcesFromFreeCompilerArguments
+import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
+import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import java.io.File
@@ -32,7 +39,7 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 private val ExitCode.asCompilationResult
     get() = when (this) {
         ExitCode.OK -> CompilationResult.COMPILATION_SUCCESS
-        ExitCode.COMPILATION_ERROR -> CompilationResult.COMPILER_INTERNAL_ERROR
+        ExitCode.COMPILATION_ERROR -> CompilationResult.COMPILATION_ERROR
         ExitCode.INTERNAL_ERROR -> CompilationResult.COMPILER_INTERNAL_ERROR
         ExitCode.OOM_ERROR -> CompilationResult.COMPILATION_OOM_ERROR
         else -> error("Unexpected exit code: $this")
@@ -55,7 +62,7 @@ internal object CompilationServiceImpl : CompilationService {
         strategyConfig: CompilerExecutionStrategyConfiguration,
         compilationConfig: JvmCompilationConfiguration,
         sources: List<File>,
-        arguments: List<String>
+        arguments: List<String>,
     ): CompilationResult {
         check(strategyConfig is CompilerExecutionStrategyConfigurationImpl) {
             "Initial strategy configuration object must be acquired from the `makeCompilerExecutionStrategyConfiguration` method."
@@ -65,7 +72,7 @@ internal object CompilationServiceImpl : CompilationService {
         }
         val loggerAdapter = KotlinLoggerMessageCollectorAdapter(compilationConfig.logger)
         return when (val selectedStrategy = strategyConfig.selectedStrategy) {
-            is CompilerExecutionStrategy.InProcess -> compileInProcess(loggerAdapter, sources, arguments)
+            is CompilerExecutionStrategy.InProcess -> compileInProcess(loggerAdapter, compilationConfig, sources, arguments)
             is CompilerExecutionStrategy.Daemon -> compileWithinDaemon(
                 projectId,
                 loggerAdapter,
@@ -94,8 +101,9 @@ internal object CompilationServiceImpl : CompilationService {
 
     private fun compileInProcess(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        compilationConfiguration: JvmCompilationConfigurationImpl,
         sources: List<File>,
-        arguments: List<String>
+        arguments: List<String>,
     ): CompilationResult {
         val compiler = K2JVMCompiler()
         val parsedArguments = compiler.createArguments()
@@ -103,9 +111,47 @@ internal object CompilationServiceImpl : CompilationService {
         validateArguments(parsedArguments.errors)?.let {
             throw CompilerArgumentsParseException(it)
         }
-        parsedArguments.freeArgs += sources.map { it.absolutePath } // TODO: they're not explicitly passed yet
         loggerAdapter.report(CompilerMessageSeverity.INFO, arguments.toString())
-        return compiler.exec(loggerAdapter, Services.EMPTY, parsedArguments).asCompilationResult
+        val aggregatedIcConfiguration = compilationConfiguration.aggregatedIcConfiguration
+        return when (val options = aggregatedIcConfiguration?.options) {
+            is ClasspathSnapshotBasedIncrementalJvmCompilationConfigurationImpl -> {
+                val kotlinFilenameExtensions =
+                    (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfiguration.kotlinScriptFilenameExtensions)
+
+                @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
+                val kotlinSources = extractKotlinSourcesFromFreeCompilerArguments(parsedArguments, kotlinFilenameExtensions) + sources
+
+                @Suppress("UNCHECKED_CAST")
+                val classpathChanges =
+                    (aggregatedIcConfiguration as AggregatedIcConfiguration<ClasspathSnapshotBasedIncrementalCompilationApproachParameters>).classpathChanges
+                val incrementalCompiler = IncrementalJvmCompilerRunner(
+                    aggregatedIcConfiguration.workingDir,
+                    DoNothingBuildReporter,
+                    buildHistoryFile = null,
+                    modulesApiHistory = EmptyModulesApiHistory,
+                    usePreciseJavaTracking = options.preciseJavaTrackingEnabled,
+                    outputDirs = options.outputDirs,
+                    kotlinSourceFilesExtensions = kotlinFilenameExtensions,
+                    classpathChanges = classpathChanges,
+                    withAbiSnapshot = false,
+                    preciseCompilationResultsBackup = options.preciseCompilationResultsBackupEnabled,
+                    keepIncrementalCompilationCachesInMemory = options.incrementalCompilationCachesKeptInMemory
+                )
+                val rootProjectDir = options.rootProjectDir
+                val buildDir = options.buildDir
+                parsedArguments.incrementalCompilation = true
+                incrementalCompiler.compile(
+                    kotlinSources, parsedArguments, loggerAdapter, aggregatedIcConfiguration.sourcesChanges.asChangedFiles,
+                    fileLocations = if (rootProjectDir != null && buildDir != null) {
+                        FileLocations(rootProjectDir, buildDir)
+                    } else null
+                ).asCompilationResult
+            }
+            else -> {
+                parsedArguments.freeArgs += sources.map { it.absolutePath }
+                compiler.exec(loggerAdapter, Services.EMPTY, parsedArguments).asCompilationResult
+            }
+        }
     }
 
     private fun compileWithinDaemon(
@@ -114,7 +160,7 @@ internal object CompilationServiceImpl : CompilationService {
         daemonConfiguration: CompilerExecutionStrategy.Daemon,
         compilationConfiguration: JvmCompilationConfigurationImpl,
         sources: List<File>,
-        arguments: List<String>
+        arguments: List<String>,
     ): CompilationResult {
         val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
         val sessionIsAliveFlagFile = buildIdToSessionFlagFile.computeIfAbsent(projectId) {
@@ -144,7 +190,7 @@ internal object CompilationServiceImpl : CompilationService {
         val daemonCompileOptions = compilationConfiguration.asDaemonCompilationOptions
         val exitCode = daemon.compile(
             sessionId,
-            arguments.toTypedArray() + sources.map { it.absolutePath }, // TODO: the sources not explicitly passed yet
+            arguments.toTypedArray() + sources.map { it.absolutePath }, // TODO: pass the sources explicitly KT-62759
             daemonCompileOptions,
             BasicCompilerServicesWithResultsFacadeServer(loggerAdapter),
             DaemonCompilationResults()

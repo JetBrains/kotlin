@@ -18,7 +18,7 @@ class IncrementalFirJvmCompilerTestRunner(
     buildHistoryFile: File,
     outputDirs: Collection<File>?,
     modulesApiHistory: ModulesApiHistory,
-    kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
+    kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     classpathChanges: ClasspathChanges,
     val testLookupTracker: TestLookupTracker
 ) : IncrementalFirJvmCompilerRunner(
