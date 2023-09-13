@@ -229,7 +229,7 @@ internal class KonanPartialModuleDeserializer(
         val compatibleMode = CompatibilityMode(libraryAbiVersion).oldSignatures
         return SerializedClassFields(
             SerializedFileReference(fileDeserializationState.file),
-            BinarySymbolData.decode(protoClass.base.symbol).signatureId,
+            signature,
             typeParameterSigs.toIntArray(),
             outerThisIndex,
             Array(fields.size) {
@@ -432,7 +432,7 @@ internal class KonanPartialModuleDeserializer(
     private val classesFields by lazy {
         val cache = cachedLibraries.getLibraryCache(klib)!! // ?: error("No cache for ${klib.libraryName}") // KT-54668
         cache.serializedClassFields.associateBy {
-            it.file.deserializationState.declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.classSignature)
+            it.classSignature
         }
     }
 
