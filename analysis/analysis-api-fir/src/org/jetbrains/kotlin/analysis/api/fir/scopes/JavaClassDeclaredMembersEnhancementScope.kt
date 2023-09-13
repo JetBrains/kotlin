@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
@@ -23,9 +22,9 @@ internal class JavaClassDeclaredMembersEnhancementScope(
     private val useSiteMemberEnhancementScope: FirContainingNamesAwareScope
 ) : FirContainingNamesAwareScope() {
     private fun FirCallableDeclaration.isDeclared(): Boolean {
-        return (this.dispatchReceiverType as? ConeLookupTagBasedType)?.lookupTag == owner.symbol.toLookupTag()
-                && this.origin !is FirDeclarationOrigin.SubstitutionOverride
-                && this.origin != FirDeclarationOrigin.IntersectionOverride
+        return symbol.callableId.classId == owner.classId
+                && origin !is FirDeclarationOrigin.SubstitutionOverride
+                && origin != FirDeclarationOrigin.IntersectionOverride
     }
 
     private val callableNames = run {
