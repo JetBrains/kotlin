@@ -2536,11 +2536,6 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val members: List<KtCallableSymbol>
     }
 
-    interface ActualAnnotationConflictingDefaultArgumentValue : KtFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = ActualAnnotationConflictingDefaultArgumentValue::class
-        val parameter: KtVariableLikeSymbol
-    }
-
     interface ExpectedFunctionSourceWithDefaultArgumentsNotFound : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ExpectedFunctionSourceWithDefaultArgumentsNotFound::class
     }

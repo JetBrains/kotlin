@@ -3057,12 +3057,6 @@ internal class DefaultArgumentsInExpectWithActualTypealiasImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtTypeAlias>(firDiagnostic, token), KtFirDiagnostic.DefaultArgumentsInExpectWithActualTypealias
 
-internal class ActualAnnotationConflictingDefaultArgumentValueImpl(
-    override val parameter: KtVariableLikeSymbol,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.ActualAnnotationConflictingDefaultArgumentValue
-
 internal class ExpectedFunctionSourceWithDefaultArgumentsNotFoundImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

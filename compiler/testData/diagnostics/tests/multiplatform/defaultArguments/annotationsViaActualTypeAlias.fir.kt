@@ -25,7 +25,7 @@ actual typealias A1 = J1
 actual typealias A2 = J2
 actual typealias A3 = J3
 actual typealias A4 = J4
-actual typealias A5 = J5
+<!ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE!>actual typealias A5 = J5<!>
 
 // FILE: J1.java
 

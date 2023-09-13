@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY
 import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.INCOMPATIBILITY
+import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.DECLARATION_NAME
 import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.*
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.MODULE_WITH_PLATFORM
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classFqName
@@ -31,6 +33,7 @@ object CommonBackendErrors {
     val INCOMPATIBLE_MATCHING by error3<PsiElement, String, String, ExpectActualCompatibility.Incompatible<*>>()
     val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>>()
     val EVALUATION_ERROR by error1<PsiElement, String>()
+    val ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE by error1<PsiElement, IrValueParameter>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultCommonBackendErrorMessages)
@@ -77,6 +80,11 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
             "Cannot evaluate constant expression: {0}",
             STRING,
         )
+        map.put(
+            CommonBackendErrors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE,
+            "Parameter ''{0}'' has conflicting values in expected and actual annotations.",
+            DECLARATION_NAME,
+        )
     }
 }
 
@@ -96,4 +104,5 @@ object BackendDiagnosticRenderers {
             }
             "Annotation `$expectAnnotationFqName` $reason"
         }
+    val DECLARATION_NAME = Renderer<IrDeclarationWithName> { it.name.asString() }
 }

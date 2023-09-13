@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_SUPER_CA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_SUPER_CALL_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION
@@ -1958,11 +1957,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                     "Possible fix is to remove default argument values in members:{1}",
             DECLARATION_NAME,
             SYMBOLS_ON_NEWLINE_WITH_INDENT,
-        )
-        map.put(
-            ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE,
-            "Parameter ''{0}'' has conflicting values in expected and actual annotations.",
-            SYMBOL
         )
         map.put(
             EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND,

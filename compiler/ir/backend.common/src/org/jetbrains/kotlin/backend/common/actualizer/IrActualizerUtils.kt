@@ -138,6 +138,17 @@ internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportActualAnnotati
     )
 }
 
+internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportActualAnnotationConflictingDefaultArgumentValue(
+    reportOn: IrElement,
+    file: IrFile,
+    actualParam: IrValueParameter,
+) {
+    at(reportOn, file).report(
+        CommonBackendErrors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE,
+        actualParam,
+    )
+}
+
 internal fun IrElement.containsOptionalExpectation(): Boolean {
     return this is IrClass &&
             this.kind == ClassKind.ANNOTATION_CLASS &&

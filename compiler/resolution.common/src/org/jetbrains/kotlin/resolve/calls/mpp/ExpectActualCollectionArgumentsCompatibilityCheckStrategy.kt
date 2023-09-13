@@ -13,7 +13,7 @@ sealed class ExpectActualCollectionArgumentsCompatibilityCheckStrategy {
         elementsEqual: (T, T) -> Boolean,
     ): Boolean
 
-    internal data object Default : ExpectActualCollectionArgumentsCompatibilityCheckStrategy() {
+    data object Default : ExpectActualCollectionArgumentsCompatibilityCheckStrategy() {
         override fun <T> areCompatible(
             expectArg: Collection<T>,
             actualArg: Collection<T>,
