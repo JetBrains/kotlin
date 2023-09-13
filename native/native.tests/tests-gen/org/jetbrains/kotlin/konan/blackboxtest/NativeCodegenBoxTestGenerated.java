@@ -14769,6 +14769,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("methodOfAnyFromInterface.kt")
+            public void testMethodOfAnyFromInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/fakeOverride/methodOfAnyFromInterface.kt");
+            }
+
+            @Test
             @TestMetadata("privateFakeOverrides0.kt")
             public void testPrivateFakeOverrides0() throws Exception {
                 runTest("compiler/testData/codegen/box/fakeOverride/privateFakeOverrides0.kt");
