@@ -46,7 +46,11 @@ fun <!VIPER_TEXT!>when_with_subject_call<!>(x: Int): Int {
     return when (when_with_subject_var(x)) {
         1 -> 2
         2 -> 3
-        else -> 42
+        else -> when (when_with_subject_var(0)){
+            3 -> 4
+            4 -> 5
+            else -> 42
+        }
     }
 }
 

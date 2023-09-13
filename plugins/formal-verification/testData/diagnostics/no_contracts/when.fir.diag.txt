@@ -87,18 +87,24 @@ method pkg$$global$when_with_subject_call(local$x: Int) returns (ret: Int)
 {
   var anonymous$1: Int
   var anonymous$2: Int
-  anonymous$2 := pkg$$global$when_with_subject_var(local$x)
-  if (anonymous$2 == 1) {
-    anonymous$1 := 2
+  anonymous$1 := pkg$$global$when_with_subject_var(local$x)
+  if (anonymous$1 == 1) {
+    anonymous$2 := 2
+  } elseif (anonymous$1 == 2) {
+    anonymous$2 := 3
   } else {
     var anonymous$3: Int
-    anonymous$3 := pkg$$global$when_with_subject_var(local$x)
-    if (anonymous$3 == 2) {
-      anonymous$1 := 3
+    var anonymous$4: Int
+    anonymous$3 := pkg$$global$when_with_subject_var(0)
+    if (anonymous$3 == 3) {
+      anonymous$4 := 4
+    } elseif (anonymous$3 == 4) {
+      anonymous$4 := 5
     } else {
-      anonymous$1 := 42}
+      anonymous$4 := 42}
+    anonymous$2 := anonymous$4
   }
-  ret := anonymous$1
+  ret := anonymous$2
   goto label$ret
   label label$ret
 }
@@ -106,7 +112,7 @@ method pkg$$global$when_with_subject_call(local$x: Int) returns (ret: Int)
 method pkg$$global$when_with_subject_var(local$x: Int) returns (ret: Int)
 
 
-/when.kt:(861,871): info: Generated Viper text for empty_when:
+/when.kt:(962,972): info: Generated Viper text for empty_when:
 method pkg$$global$empty_when() returns (ret: Int)
 {
   ret := 1
@@ -114,7 +120,7 @@ method pkg$$global$empty_when() returns (ret: Int)
   label label$ret
 }
 
-/when.kt:(952,959): info: Generated Viper text for when_is:
+/when.kt:(1053,1060): info: Generated Viper text for when_is:
 method pkg$$global$when_is(local$x: Ref) returns (ret: Bool)
 {
   var anonymous$1: Bool

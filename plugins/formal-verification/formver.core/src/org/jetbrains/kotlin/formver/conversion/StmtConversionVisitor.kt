@@ -21,17 +21,12 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.calleeCallableSymbol
 import org.jetbrains.kotlin.formver.calleeSymbol
-import org.jetbrains.kotlin.formver.domains.TypeDomain
-import org.jetbrains.kotlin.formver.domains.TypeOfDomain
-import org.jetbrains.kotlin.formver.domains.UnitDomain
-import org.jetbrains.kotlin.formver.domains.convertType
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.functionCallArguments
 import org.jetbrains.kotlin.formver.viper.ast.AccessPredicate
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
-import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -77,9 +72,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
     override fun visitWhenSubjectExpression(
         whenSubjectExpression: FirWhenSubjectExpression,
         data: StmtConversionContext<ResultTrackingContext>,
-    ): ExpEmbedding =
-        // TODO: find a way to not evaluate subject multiple times if it is a function call
-        data.convert(whenSubjectExpression.whenRef.value.subject!!)
+    ): ExpEmbedding = data.whenSubject!!
 
     private fun convertWhenBranches(whenBranches: Iterator<FirWhenBranch>, data: StmtConversionContext<ResultTrackingContext>) {
         if (!whenBranches.hasNext()) return
@@ -100,13 +93,15 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
+        val subj = whenExpression.subject?.let { data.convertAndStore(it) }
         val ctx = if (whenExpression.usedAsExpression) {
             data.withResult(data.embedType(whenExpression))
         } else {
             data
         }
-        convertWhenBranches(whenExpression.branches.iterator(), ctx)
-
+        ctx.withWhenSubject(subj) { ctxWithSubj ->
+            convertWhenBranches(whenExpression.branches.iterator(), ctxWithSubj)
+        }
         return ctx.resultExp
     }
 

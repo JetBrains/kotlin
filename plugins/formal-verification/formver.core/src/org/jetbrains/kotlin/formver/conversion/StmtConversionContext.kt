@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.formver.embeddings.MethodEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.viper.MangledName
-import org.jetbrains.kotlin.formver.viper.ast.Exp
 
 interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConversionContext, SeqnBuildContext, ResultTrackingContext,
     WhileStackContext<RTC> {
     val resultCtx: RTC
+    val whenSubject: VariableEmbedding?
 
     fun convert(stmt: FirStatement): ExpEmbedding
     fun convertAndStore(exp: FirExpression): VariableEmbedding
@@ -40,4 +40,6 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
         ctx.action()
         return ctx.resultCtx.resultVar
     }
+
+    fun withWhenSubject(subject: VariableEmbedding?, action: (StmtConversionContext<RTC>) -> Unit)
 }
