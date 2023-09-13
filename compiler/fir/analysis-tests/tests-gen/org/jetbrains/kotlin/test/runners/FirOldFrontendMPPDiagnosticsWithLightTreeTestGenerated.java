@@ -326,6 +326,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("superCallDefaultArguments.kt")
+    public void testSuperCallDefaultArguments() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/superCallDefaultArguments.kt");
+    }
+
+    @Test
     @TestMetadata("supertypeActualizationWithAny.kt")
     public void testSupertypeActualizationWithAny() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/supertypeActualizationWithAny.kt");
