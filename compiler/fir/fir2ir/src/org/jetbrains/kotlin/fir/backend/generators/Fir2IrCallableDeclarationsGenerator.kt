@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
@@ -92,7 +93,10 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         val updatedOrigin = when {
             isLambda -> IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
             function.symbol.callableId.isKFunctionInvoke() -> IrDeclarationOrigin.FAKE_OVERRIDE
-            simpleFunction?.isStatic == true && simpleFunction.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES -> IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
+            !predefinedOrigin.isExternal && // we should preserve origin for external enums
+                    simpleFunction?.isStatic == true &&
+                    simpleFunction.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES
+            -> IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
 
             // Kotlin built-in class and Java originated method (Collection.forEach, etc.)
             // It's necessary to understand that such methods do not belong to DefaultImpls but actually generated as default
@@ -175,6 +179,9 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         return created
     }
 
+    private val IrDeclarationOrigin?.isExternal: Boolean
+        get() = (this == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB || this == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB)
+
     // ------------------------------------ constructors ------------------------------------
 
     private fun declareIrConstructor(signature: IdSignature?, factory: (IrConstructorSymbol) -> IrConstructor): IrConstructor {
@@ -196,6 +203,16 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             runUnless(isLocal || !configuration.linkViaSignatures) {
                 signatureComposer.composeSignature(constructor)
             }
+
+        if (irParent is Fir2IrLazyClass && signature != null) {
+            val lazyConstructor = lazyDeclarationsGenerator.createIrLazyConstructor(constructor, signature, origin, irParent) as Fir2IrLazyConstructor
+            // Add to cache before generating parameters to prevent an infinite loop when an annotation value parameter is annotated
+            // with the annotation itself.
+            @OptIn(LeakedDeclarationCaches::class)
+            declarationStorage.cacheIrConstructor(constructor, lazyConstructor)
+            lazyConstructor.prepareTypeParameters()
+            return lazyConstructor
+        }
         val visibility = if (irParent.isAnonymousObject) Visibilities.Public else constructor.visibility
         return constructor.convertWithOffsets { startOffset, endOffset ->
             declareIrConstructor(signature) { symbol ->
@@ -247,8 +264,14 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
     ): IrProperty = convertCatching(property) {
         val origin =
-            if (property.isStatic && property.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES) IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
-            else property.computeIrOrigin(predefinedOrigin)
+            when {
+                !predefinedOrigin.isExternal &&
+                        property.isStatic &&
+                        property.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES
+                -> IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
+
+                else -> property.computeIrOrigin(predefinedOrigin)
+            }
         // See similar comments in createIrFunction above
         val signature =
             runUnless(
@@ -778,8 +801,9 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         // may produce incorrect results for values that may be encountered outside annotations.
         // Does not do anything if valueParameter.defaultValue is already FirExpressionStub.
         forcedDefaultValueConversion: Boolean = false,
+        predefinedOrigin: IrDeclarationOrigin? = null
     ): IrValueParameter = convertCatching(valueParameter) {
-        val origin = valueParameter.computeIrOrigin()
+        val origin = valueParameter.computeIrOrigin(predefinedOrigin)
         val type = valueParameter.returnTypeRef.toIrType(typeOrigin)
         val irParameter = valueParameter.convertWithOffsets { startOffset, endOffset ->
             irFactory.createValueParameter(

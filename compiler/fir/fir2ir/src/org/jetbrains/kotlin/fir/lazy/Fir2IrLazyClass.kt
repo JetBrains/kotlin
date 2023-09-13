@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -155,9 +154,9 @@ class Fir2IrLazyClass(
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
         val scope = fir.unsubstitutedScope()
         scope.processDeclaredConstructors {
-            if (shouldBuildStub(it.fir)) {
-                @OptIn(IrSymbolInternals::class)
-                result += declarationStorage.getIrConstructorSymbol(it).owner
+            val constructor = it.fir
+            if (shouldBuildStub(constructor)) {
+                result += declarationStorage.getOrCreateIrConstructor(constructor, this, origin)
             }
         }
 
@@ -165,9 +164,7 @@ class Fir2IrLazyClass(
             scope.processClassifiersByName(name) {
                 val declaration = it.fir as? FirRegularClass ?: return@processClassifiersByName
                 if (declaration.classId.outerClassId == fir.classId && shouldBuildStub(declaration)) {
-                    val nestedSymbol = classifierStorage.getOrCreateIrClass(declaration.symbol).symbol
-                    @OptIn(IrSymbolInternals::class)
-                    result += nestedSymbol.owner
+                    result += classifierStorage.getOrCreateIrClass(declaration.symbol)
                 }
             }
         }
@@ -175,8 +172,7 @@ class Fir2IrLazyClass(
         if (fir.classKind == ClassKind.ENUM_CLASS) {
             for (declaration in fir.declarations) {
                 if (declaration is FirEnumEntry && shouldBuildStub(declaration)) {
-                    @OptIn(IrSymbolInternals::class)
-                    result += declarationStorage.getIrValueSymbol(declaration.symbol).owner as IrDeclaration
+                    result += classifierStorage.getOrCreateIrEnumEntry(declaration, this, origin)
                 }
             }
         }
@@ -186,24 +182,22 @@ class Fir2IrLazyClass(
         fun addDeclarationsFromScope(scope: FirContainingNamesAwareScope?) {
             if (scope == null) return
             for (name in scope.getCallableNames()) {
-                scope.processFunctionsByName(name) {
-                    if (it.isSubstitutionOrIntersectionOverride) return@processFunctionsByName
-                    if (!shouldBuildStub(it.fir)) return@processFunctionsByName
-                    if (it.isStatic || it.dispatchReceiverClassLookupTagOrNull() == ownerLookupTag) {
-                        if (it.isAbstractMethodOfAny()) {
+                scope.processFunctionsByName(name) { symbol ->
+                    if (symbol.isSubstitutionOrIntersectionOverride) return@processFunctionsByName
+                    if (!shouldBuildStub(symbol.fir)) return@processFunctionsByName
+                    if (symbol.isStatic || symbol.dispatchReceiverClassLookupTagOrNull() == ownerLookupTag) {
+                        if (symbol.isAbstractMethodOfAny()) {
                             return@processFunctionsByName
                         }
-                        @OptIn(IrSymbolInternals::class)
-                        result += declarationStorage.getIrFunctionSymbol(it).owner
+                        result += declarationStorage.getOrCreateIrFunction(symbol.fir, this, origin)
                     }
                 }
-                scope.processPropertiesByName(name) {
-                    if (it.isSubstitutionOrIntersectionOverride) return@processPropertiesByName
-                    if (!shouldBuildStub(it.fir)) return@processPropertiesByName
-                    if (it is FirPropertySymbol && (it.isStatic || it.dispatchReceiverClassLookupTagOrNull() == ownerLookupTag)) {
+                scope.processPropertiesByName(name) { symbol ->
+                    if (symbol.isSubstitutionOrIntersectionOverride) return@processPropertiesByName
+                    if (!shouldBuildStub(symbol.fir)) return@processPropertiesByName
+                    if (symbol is FirPropertySymbol && (symbol.isStatic || symbol.dispatchReceiverClassLookupTagOrNull() == ownerLookupTag)) {
                         result.addIfNotNull(
-                            @OptIn(IrSymbolInternals::class)
-                            declarationStorage.getIrPropertySymbol(it).owner as? IrDeclaration
+                            declarationStorage.getOrCreateIrProperty(symbol.fir, this, origin)
                         )
                     }
                 }
