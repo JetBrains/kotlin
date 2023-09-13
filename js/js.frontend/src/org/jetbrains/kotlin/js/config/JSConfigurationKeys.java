@@ -132,4 +132,7 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> OPTIMIZE_GENERATED_JS =
             CompilerConfigurationKey.create("perform additional optimizations on the generated JS code");
+
+    public static final CompilerConfigurationKey<Boolean> USE_ES6_CLASSES =
+            CompilerConfigurationKey.create("perform ES6 class usage");
 }

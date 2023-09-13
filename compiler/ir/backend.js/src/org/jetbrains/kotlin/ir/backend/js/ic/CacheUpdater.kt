@@ -782,7 +782,6 @@ fun rebuildCacheForDirtyFiles(
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName>,
     mainArguments: List<String>?,
-    es6mode: Boolean
 ): Pair<IrModuleFragment, List<Pair<IrFile, List<JsIrProgramFragment>>>> {
     val internationService = IrInterningService()
     val emptyMetadata = object : KotlinSourceFileExports() {
@@ -809,7 +808,6 @@ fun rebuildCacheForDirtyFiles(
         JsGenerationGranularity.PER_MODULE,
         PhaseConfig(jsPhases),
         exportedDeclarations,
-        es6mode
     )
 
     // Load declarations referenced during `context` initialization

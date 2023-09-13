@@ -118,7 +118,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     messageCollector
                 ),
                 granularity = arguments.granularity,
-                es6mode = arguments.useEsClasses
             )
         }
 
@@ -173,6 +172,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         configuration.put(JSConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, arguments.wasmUseTrapsInsteadOfExceptions)
         configuration.putIfNotNull(JSConfigurationKeys.WASM_TARGET, arguments.wasmTarget?.let(WasmTarget::fromName))
 
+        configuration.put(JSConfigurationKeys.USE_ES6_CLASSES, arguments.useEsClasses)
         configuration.put(JSConfigurationKeys.OPTIMIZE_GENERATED_JS, arguments.optimizeGeneratedJs)
 
         val commonSourcesArray = arguments.commonSources
@@ -608,7 +608,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                         cfg,
                         arguments.granularity,
                         PhaseConfig(jsPhases),
-                        es6mode = arguments.useEsClasses
                     )
                 }
             )
