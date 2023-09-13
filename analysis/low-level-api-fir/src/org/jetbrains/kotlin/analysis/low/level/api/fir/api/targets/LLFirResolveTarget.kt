@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirScript
  * Specifies the path to resolve targets and resolve targets themselves.
  * Those targets are going to be resolved by [LLFirModuleLazyDeclarationResolver][org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirModuleLazyDeclarationResolver].
  */
-sealed class LLFirResolveTarget(
+internal sealed class LLFirResolveTarget(
     /**
      * [FirFile] where the targets are located
      */

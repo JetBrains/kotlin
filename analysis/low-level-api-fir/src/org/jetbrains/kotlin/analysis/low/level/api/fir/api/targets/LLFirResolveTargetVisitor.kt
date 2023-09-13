@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirScript
  *
  * @see LLFirResolveTarget
  */
-interface LLFirResolveTargetVisitor {
+internal interface LLFirResolveTargetVisitor {
     /**
      * Access to [FirFile] declaration will be performed inside [action].
      */

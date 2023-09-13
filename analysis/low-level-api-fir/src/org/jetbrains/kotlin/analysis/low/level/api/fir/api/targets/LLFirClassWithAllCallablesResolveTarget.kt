@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 /**
  * [LLFirResolveTarget] representing a class with all callable members (functions and properties).
  */
-class LLFirClassWithAllCallablesResolveTarget(
+internal class LLFirClassWithAllCallablesResolveTarget(
     firFile: FirFile,
     containerClasses: List<FirRegularClass>,
     target: FirRegularClass,

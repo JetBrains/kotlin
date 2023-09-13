@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirScript
  * [LLFirResolveTarget] representing all declarations in [target] recursively.
  * All of them are going to be resolved.
  */
-class LLFirWholeElementResolveTarget(
+internal class LLFirWholeElementResolveTarget(
     firFile: FirFile,
     containerClasses: List<FirRegularClass>,
     target: FirElementWithResolveState,

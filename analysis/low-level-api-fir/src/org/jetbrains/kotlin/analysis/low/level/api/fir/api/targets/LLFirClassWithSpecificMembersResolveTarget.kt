@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
-class LLFirClassWithSpecificMembersResolveTarget(
+internal class LLFirClassWithSpecificMembersResolveTarget(
     firFile: FirFile,
     containerClasses: List<FirRegularClass>,
     target: FirRegularClass,

@@ -12,18 +12,18 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-fun LLFirResolveTarget.forEachPathElementAndTarget(action: (FirElementWithResolveState) -> Unit) {
+internal fun LLFirResolveTarget.forEachPathElementAndTarget(action: (FirElementWithResolveState) -> Unit) {
     path.forEach(action)
     forEachTarget(action)
 }
 
-fun FirDesignationWithFile.asResolveTarget(): LLFirSingleResolveTarget = LLFirSingleResolveTarget(firFile, path, target)
+internal fun FirDesignationWithFile.asResolveTarget(): LLFirSingleResolveTarget = LLFirSingleResolveTarget(firFile, path, target)
 
 /**
  * Resolves the target to the specified [phase].
  * The owning session must be a resolvable one.
  */
-fun LLFirResolveTarget.resolve(phase: FirResolvePhase) {
+internal fun LLFirResolveTarget.resolve(phase: FirResolvePhase) {
     val session = firFile.llFirResolvableSession
         ?: errorWithAttachment("Resolvable session expected, got '${firFile.llFirSession::class.java}'") {
             withEntry("firSession", firFile.llFirSession) { it.toString() }

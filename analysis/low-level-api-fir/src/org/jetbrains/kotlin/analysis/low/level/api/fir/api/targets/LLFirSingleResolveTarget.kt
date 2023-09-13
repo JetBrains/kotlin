@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 /**
  * [LLFirResolveTarget] representing single target to resolve. The [target] can be any of [FirElementWithResolveState]
  */
-class LLFirSingleResolveTarget(
+internal class LLFirSingleResolveTarget(
     firFile: FirFile,
     containerClasses: List<FirRegularClass>,
     target: FirElementWithResolveState,
