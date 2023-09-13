@@ -160,6 +160,7 @@ internal enum class TestRunnerType {
 }
 
 internal enum class MutedOption {
+    DEFAULT,
     K1,
     K2
 }

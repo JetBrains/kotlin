@@ -22,6 +22,7 @@ internal enum class ProcessLevelProperty(shortName: String) {
 
 /*************** Class-level system properties ***************/
 
+@Repeatable
 @Target(AnnotationTarget.CLASS)
 internal annotation class EnforcedProperty(val property: ClassLevelProperty, val propertyValue: String)
 
@@ -33,11 +34,11 @@ internal annotation class AcceptablePropertyValues(val property: ClassLevelPrope
 
 internal class EnforcedProperties(testClass: Class<*>) {
     private val enforcedAnnotations: Map<ClassLevelProperty, String> = buildMap {
-        testClass.annotations.forEach { annotation ->
-            when (annotation) {
-                is EnforcedProperty -> this[annotation.property] = annotation.propertyValue
-                is EnforcedHostTarget -> this[ClassLevelProperty.TEST_TARGET] = HostManager.host.name
-            }
+        testClass.getAnnotationsByType(EnforcedProperty::class.java).forEach {
+            this[it.property] = it.propertyValue
+        }
+        if (testClass.isAnnotationPresent(EnforcedHostTarget::class.java)) {
+            this[ClassLevelProperty.TEST_TARGET] = HostManager.host.name
         }
     }
 
@@ -69,7 +70,7 @@ internal enum class ClassLevelProperty(shortName: String) {
     EXECUTION_TIMEOUT("executionTimeout"),
     SANITIZER("sanitizer"),
     COMPILER_OUTPUT_INTERCEPTOR("compilerOutputInterceptor"),
-
+    PIPELINE_TYPE("pipelineType"),
     ;
 
     internal val propertyName = fullPropertyName(shortName)

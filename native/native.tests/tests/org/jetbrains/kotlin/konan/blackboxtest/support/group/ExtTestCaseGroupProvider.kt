@@ -167,6 +167,13 @@ private class ExtTestDataFile(
                     IGNORE_BACKEND_DIRECTIVE_PREFIX,
                     IGNORE_BACKEND_K2_DIRECTIVE_PREFIX
                 )
+            PipelineType.DEFAULT ->
+                isIgnoredTarget(
+                    backend,
+                    testDataFile,
+                    /*includeAny = */true,
+                    IGNORE_BACKEND_DIRECTIVE_PREFIX,
+                )
         }
     }
 

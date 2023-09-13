@@ -139,7 +139,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     private val gcType: GCType,
     private val gcScheduler: GCScheduler,
     private val allocator: Allocator,
-    private val pipelineType: PipelineType?,
+    private val pipelineType: PipelineType,
     freeCompilerArgs: TestCompilerArgs,
     compilerPlugins: CompilerPlugins,
     override val sourceModules: Collection<TestModule>,
@@ -162,7 +162,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
         sanitizer.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcScheduler.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
-        pipelineType?.compilerFlags?.forEach { compilerFlag -> add(compilerFlag) }
+        pipelineType.compilerFlags.forEach { compilerFlag -> add(compilerFlag) }
         applyK2MPPArgs(this)
     }
 
@@ -191,8 +191,7 @@ internal class LibraryCompilation(
     freeCompilerArgs: TestCompilerArgs,
     sourceModules: Collection<TestModule>,
     dependencies: Iterable<TestCompilationDependency<*>>,
-    expectedArtifact: KLIB,
-    pipelineType: PipelineType? = settings.get(),
+    expectedArtifact: KLIB
 ) : SourceBasedCompilation<KLIB>(
     targets = settings.get(),
     home = settings.get(),
@@ -204,7 +203,7 @@ internal class LibraryCompilation(
     gcType = settings.get(),
     gcScheduler = settings.get(),
     allocator = settings.get(),
-    pipelineType = pipelineType,
+    pipelineType = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
     sourceModules = sourceModules,

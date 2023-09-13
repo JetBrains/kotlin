@@ -210,7 +210,7 @@ private object NativeTestSupport {
         output += computeForcedNoopTestRunner(enforcedProperties)
         output += computeTimeouts(enforcedProperties)
         // Parse annotations of current class, since there's no way to put annotations to upper-level enclosing class
-        output += computePipelineType(testClass.get())
+        output += computePipelineType(enforcedProperties, testClass.get())
         output += computeUsedPartialLinkageConfig(enclosingTestClass)
         output += computeCompilerOutputInterceptor(enforcedProperties)
 
@@ -468,10 +468,16 @@ private object NativeTestSupport {
         )
     }
 
-    private fun computePipelineType(testClass: Class<*>): PipelineType {
-        return if (testClass.annotations.any { it is FirPipeline })
+    private fun computePipelineType(enforcedProperties: EnforcedProperties, testClass: Class<*>): PipelineType {
+        val pipelineTypeFromFirPipelineAnnotation = if (testClass.annotations.any { it is FirPipeline })
             PipelineType.K2
         else PipelineType.K1
+
+        return ClassLevelProperty.PIPELINE_TYPE.readValue(
+            enforcedProperties,
+            PipelineType.entries.toTypedArray(),
+            default = pipelineTypeFromFirPipelineAnnotation
+        )
     }
 
     private fun computeUsedPartialLinkageConfig(enclosingTestClass: Class<*>): UsedPartialLinkageConfig {

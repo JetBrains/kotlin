@@ -274,6 +274,10 @@ internal sealed class CacheMode {
 }
 
 internal enum class PipelineType(val mutedOption: MutedOption, val compilerFlags: List<String>) {
+    DEFAULT(
+        MutedOption.DEFAULT,
+        emptyList()
+    ),
     K1(
         MutedOption.K1,
         listOf("-language-version", "1.9")
