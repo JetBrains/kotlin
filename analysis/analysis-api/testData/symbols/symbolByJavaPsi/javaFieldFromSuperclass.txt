@@ -1,0 +1,23 @@
+KtJavaFieldSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /SuperClass.count
+  contextReceivers: []
+  isExtension: false
+  isStatic: false
+  isVal: false
+  modality: OPEN
+  name: count
+  origin: JAVA
+  receiverParameter: null
+  returnType: KtFlexibleType:
+    annotationsList: []
+    type: kotlin/Int!
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: SuperClass
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

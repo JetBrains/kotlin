@@ -47,8 +47,26 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByJavaPsiTestGenerated
     }
 
     @Test
+    @TestMetadata("javaField.kt")
+    public void testJavaField() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaField.kt");
+    }
+
+    @Test
+    @TestMetadata("javaFieldFromSuperclass.kt")
+    public void testJavaFieldFromSuperclass() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaFieldFromSuperclass.kt");
+    }
+
+    @Test
     @TestMetadata("javaStaticField.kt")
     public void testJavaStaticField() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaStaticField.kt");
+    }
+
+    @Test
+    @TestMetadata("javaStaticFieldFromSuperclass.kt")
+    public void testJavaStaticFieldFromSuperclass() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaStaticFieldFromSuperclass.kt");
     }
 }
