@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10FileScope
 import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10PackageScope
 import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10ScopeLexical
 import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10ScopeMember
+import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10ScopeNonStaticMember
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10FileSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10PackageSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
@@ -63,7 +64,30 @@ internal class KtFe10ScopeProvider(
         return KtFe10ScopeMember(descriptor.unsubstitutedMemberScope, descriptor.constructors, analysisContext)
     }
 
+    override fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope {
+        val descriptor = getDescriptor<ClassDescriptor>(symbol) ?: return getEmptyScope()
+        return KtFe10ScopeMember(descriptor.staticScope, emptyList(), analysisContext)
+    }
+
     override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
+        val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
+            ?: return getEmptyScope()
+
+        return KtFe10ScopeNonStaticMember(DeclaredMemberScope(descriptor), descriptor.constructors, analysisContext)
+    }
+
+    override fun getStaticDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
+        val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
+            ?: return getEmptyScope()
+
+        return KtFe10ScopeMember(
+            DeclaredMemberScope(descriptor.staticScope, descriptor, forDelegatedMembersOnly = false),
+            emptyList(),
+            analysisContext,
+        )
+    }
+
+    override fun getCombinedDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
@@ -155,12 +179,6 @@ internal class KtFe10ScopeProvider(
             is CallableDescriptor -> dispatchReceiverParameter?.containingDeclaration == owner
             else -> containingDeclaration == owner
         }
-    }
-
-
-    override fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope {
-        val descriptor = getDescriptor<ClassDescriptor>(symbol) ?: return getEmptyScope()
-        return KtFe10ScopeMember(descriptor.staticScope, emptyList(), analysisContext)
     }
 
     override fun getEmptyScope(): KtScope {

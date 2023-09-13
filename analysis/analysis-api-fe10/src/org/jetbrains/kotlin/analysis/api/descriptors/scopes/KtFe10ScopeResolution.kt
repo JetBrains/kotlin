@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossiblyNamedSymbol
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -99,6 +101,22 @@ internal open class KtFe10ScopeMember(
 
     override fun getConstructors(): Sequence<KtConstructorSymbol> = sequence {
         constructors.forEach { yield(it.toKtConstructorSymbol(analysisContext)) }
+    }
+}
+
+internal open class KtFe10ScopeNonStaticMember(
+    scope: MemberScope,
+    constructors: Collection<ConstructorDescriptor>,
+    analysisContext: Fe10AnalysisContext
+) : KtFe10ScopeMember(scope, constructors, analysisContext) {
+    override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
+        super.getCallableSymbols(nameFilter).filter { symbol ->
+            when (symbol) {
+                is KtFunctionSymbol -> !symbol.isStatic
+                is KtPropertySymbol -> !symbol.isStatic
+                else -> true
+            }
+        }
     }
 }
 

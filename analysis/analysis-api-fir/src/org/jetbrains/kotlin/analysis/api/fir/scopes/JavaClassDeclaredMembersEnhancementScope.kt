@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 internal class JavaClassDeclaredMembersEnhancementScope(
     private val useSiteSession: FirSession,
     private val owner: FirJavaClass,
-    private val useSiteMemberEnhancementScope: FirTypeScope
+    private val useSiteMemberEnhancementScope: FirContainingNamesAwareScope
 ) : FirContainingNamesAwareScope() {
     private fun FirCallableDeclaration.isDeclared(): Boolean {
         return (this.dispatchReceiverType as? ConeLookupTagBasedType)?.lookupTag == owner.symbol.toLookupTag()
@@ -79,13 +79,5 @@ internal class JavaClassDeclaredMembersEnhancementScope(
 
     override fun toString(): String {
         return "Java enhancement declared member scope for ${owner.classId}"
-    }
-
-    private fun FirCallableDeclaration.overriddenMembers(): List<FirCallableDeclaration> {
-        return when (val symbol = this.symbol) {
-            is FirNamedFunctionSymbol -> useSiteMemberEnhancementScope.getDirectOverriddenMembers(symbol)
-            is FirPropertySymbol -> useSiteMemberEnhancementScope.getDirectOverriddenProperties(symbol)
-            else -> emptyList()
-        }.map { it.fir }
     }
 }

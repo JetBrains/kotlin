@@ -24,6 +24,10 @@ public abstract class KtScopeProvider : KtAnalysisSessionComponent() {
 
     public abstract fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope
 
+    public abstract fun getStaticDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope
+
+    public abstract fun getCombinedDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope
+
     public abstract fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope
 
     public abstract fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope
@@ -56,8 +60,33 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtSymbolWithMembers.getMemberScope(): KtScope =
         withValidityAssertion { analysisSession.scopeProvider.getMemberScope(this) }
 
+    /**
+     * Returns a [KtScope] containing the *non-static* callables and all classifiers explicitly declared in the given [KtSymbolWithMembers].
+     *
+     * @see getStaticDeclaredMemberScope
+     */
     public fun KtSymbolWithMembers.getDeclaredMemberScope(): KtScope =
         withValidityAssertion { analysisSession.scopeProvider.getDeclaredMemberScope(this) }
+
+    /**
+     * Returns a [KtScope] containing the *static* members explicitly declared in the given [KtSymbolWithMembers].
+     *
+     * It is worth noting that, while Java classes may contain declarations of static callables freely, in Kotlin only enum classes define
+     * static callables. Hence, for non-enum Kotlin classes, it is not expected that the static declared member scope will contain any
+     * callables.
+     *
+     * @see getDeclaredMemberScope
+     */
+    public fun KtSymbolWithMembers.getStaticDeclaredMemberScope(): KtScope =
+        withValidityAssertion { analysisSession.scopeProvider.getStaticDeclaredMemberScope(this) }
+
+    /**
+     * Returns a [KtScope] containing *all* members explicitly declared in the given [KtSymbolWithMembers].
+     *
+     * In contrast to [getDeclaredMemberScope] and [getStaticDeclaredMemberScope], this scope contains both static and non-static members.
+     */
+    public fun KtSymbolWithMembers.getCombinedDeclaredMemberScope(): KtScope =
+        withValidityAssertion { analysisSession.scopeProvider.getCombinedDeclaredMemberScope(this) }
 
     public fun KtSymbolWithMembers.getDelegatedMemberScope(): KtScope =
         withValidityAssertion { analysisSession.scopeProvider.getDelegatedMemberScope(this) }
