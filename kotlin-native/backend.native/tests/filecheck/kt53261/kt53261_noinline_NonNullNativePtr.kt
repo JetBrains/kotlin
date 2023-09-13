@@ -5,7 +5,7 @@
 
 import kotlinx.cinterop.*
 
-// CHECK-LABEL: define zeroext i1 @"kfun:kotlin.native.internal.NonNullNativePtr#equals(kotlin.Any?){}kotlin.Boolean"(i8* %0, %struct.ObjHeader* %1)
+// CHECK-LABEL: define {{zeroext i1|i1}} @"kfun:kotlin.native.internal.NonNullNativePtr#equals(kotlin.Any?){}kotlin.Boolean"(i8* %0, %struct.ObjHeader* %1)
 // CHECK: call i8* @"kfun:kotlin.native.internal#<NonNullNativePtr-unbox>(kotlin.Any?){}kotlin.native.internal.NonNullNativePtr?"
 
 fun main() = memScoped {

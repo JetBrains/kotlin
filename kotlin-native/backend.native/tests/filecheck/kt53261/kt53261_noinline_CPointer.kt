@@ -5,7 +5,7 @@
 
 import kotlinx.cinterop.*
 
-// CHECK-LABEL: define zeroext i1 @"kfun:kotlinx.cinterop.CPointer#equals(kotlin.Any?){}kotlin.Boolean"(i8* %0, %struct.ObjHeader* %1)
+// CHECK-LABEL: define {{zeroext i1|i1}} @"kfun:kotlinx.cinterop.CPointer#equals(kotlin.Any?){}kotlin.Boolean"(i8* %0, %struct.ObjHeader* %1)
 // CHECK: call i8* @"kfun:kotlinx.cinterop#<CPointer-unbox>(kotlin.Any?){}kotlinx.cinterop.CPointer<-1:0>?"
 
 fun main() = memScoped {
