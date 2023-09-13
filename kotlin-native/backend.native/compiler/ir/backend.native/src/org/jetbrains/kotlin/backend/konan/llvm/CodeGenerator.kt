@@ -202,16 +202,6 @@ private inline fun <T : FunctionGenerationContext> generateFunctionBody(
     functionGenerationContext.resetDebugLocation()
 }
 
-private fun IrSimpleFunction.findOverriddenMethodOfAny(): IrSimpleFunction? {
-    if (modality == Modality.ABSTRACT) return null
-    val resolved = resolveFakeOverride()!!
-    if ((resolved.parent as IrClass).isAny()) {
-        return resolved
-    }
-
-    return null
-}
-
 internal object VirtualTablesLookup {
     private fun FunctionGenerationContext.getInterfaceTableRecord(typeInfo: LLVMValueRef, interfaceId: Int): LLVMValueRef {
         val interfaceTableSize = load(structGep(typeInfo, 9 /* interfaceTableSize_ */))
@@ -307,6 +297,9 @@ internal object VirtualTablesLookup {
     }
 }
 
+internal fun IrSimpleFunction.findOverriddenMethodOfAny() =
+    resolveFakeOverride(allowAbstract = false).takeIf { it?.parentClassOrNull?.isAny() == true }
+
 /*
  * Special trampoline function to call actual virtual implementation. This helps with reducing
  * dependence between klibs/files (if vtable/itable of some class has changed, the call sites
@@ -317,8 +310,10 @@ internal fun CodeGenerator.getVirtualFunctionTrampoline(irFunction: IrSimpleFunc
      * Resolve owner of the call with special handling of Any methods:
      * if toString/eq/hc is invoked on an interface instance, we resolve
      * owner as Any and dispatch it via vtable.
+     * Note: Keep on par with DFG builder.
      */
     val anyMethod = irFunction.findOverriddenMethodOfAny()
+
     return getVirtualFunctionTrampolineImpl(anyMethod ?: irFunction)
 }
 
