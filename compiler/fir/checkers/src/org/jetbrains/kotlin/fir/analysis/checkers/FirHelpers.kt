@@ -825,3 +825,7 @@ fun ConeKotlinType.leastUpperBound(session: FirSession): ConeKotlinType {
     val upperBounds = collectUpperBounds().takeIf { it.isNotEmpty() } ?: return session.builtinTypes.nullableAnyType.type
     return ConeTypeIntersector.intersectTypes(session.typeContext, upperBounds)
 }
+
+fun ConeKotlinType.fullyExpandedClassId(session: FirSession): ClassId? {
+    return fullyExpandedType(session).classId
+}
