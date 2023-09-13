@@ -90,7 +90,7 @@ internal fun checkConstantArguments(
             if (coneType is ConeErrorType)
                 return ConstantArgumentKind.NOT_CONST
 
-            while (coneType?.classId == StandardClassIds.Array)
+            while (coneType?.fullyExpandedClassId(session) == StandardClassIds.Array)
                 coneType = (coneType.lowerBoundIfFlexible().typeArguments.first() as? ConeKotlinTypeProjection)?.type ?: break
 
             return when {
@@ -122,7 +122,7 @@ internal fun checkConstantArguments(
             if (calleeReference is FirErrorNamedReference) {
                 return null
             }
-            if (expression.resolvedType.classId == StandardClassIds.KClass) {
+            if (expression.resolvedType.fullyExpandedClassId(session) == StandardClassIds.KClass) {
                 return ConstantArgumentKind.NOT_KCLASS_LITERAL
             }
 
@@ -134,13 +134,13 @@ internal fun checkConstantArguments(
             if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
             val symbol = calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: return ConstantArgumentKind.NOT_CONST
 
-            if (!symbol.canBeEvaluated() && !expression.isCompileTimeBuiltinCall() || expression.isForbiddenComplexConstant(session)) {
+            if (!symbol.canBeEvaluated() && !expression.isCompileTimeBuiltinCall(session) || expression.isForbiddenComplexConstant(session)) {
                 return ConstantArgumentKind.NOT_CONST
             }
 
             for (exp in expression.arguments.plus(expression.dispatchReceiver).plus(expression.extensionReceiver)) {
                 if (exp == null) continue
-                val expClassId = exp.resolvedType.lowerBoundIfFlexible().classId
+                val expClassId = exp.resolvedType.fullyExpandedClassId(session)
                 // TODO, KT-59823: add annotation for allowed constant types
                 if (expClassId !in StandardClassIds.constantAllowedTypes) {
                     return ConstantArgumentKind.NOT_CONST
@@ -165,12 +165,12 @@ internal fun checkConstantArguments(
             @OptIn(SymbolInternals::class)
             val property = propertySymbol.fir
             when {
-                property.unwrapFakeOverrides().symbol.canBeEvaluated() || property.isCompileTimeBuiltinProperty() -> {
+                property.unwrapFakeOverrides().symbol.canBeEvaluated() || property.isCompileTimeBuiltinProperty(session) -> {
                     val receiver = listOf(expression.dispatchReceiver, expression.extensionReceiver).single { it != null }!!
                     return checkConstantArguments(receiver, session)
                 }
                 propertySymbol.isLocal || propertySymbol.callableId.className?.isRoot == false -> return ConstantArgumentKind.NOT_CONST
-                expressionType.classId == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
+                expressionType.fullyExpandedClassId(session) == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
 
                 //TODO, KT-59822: UNRESOLVED REFERENCE
                 expression.dispatchReceiver is FirThisReceiverExpression -> return null
@@ -229,7 +229,7 @@ private val compileTimeConversionFunctions = listOf(
     "toInt", "toLong", "toShort", "toByte", "toFloat", "toDouble", "toChar", "toBoolean"
 ).mapTo(hashSetOf()) { Name.identifier(it) }
 
-private fun FirFunctionCall.isCompileTimeBuiltinCall(): Boolean {
+private fun FirFunctionCall.isCompileTimeBuiltinCall(session: FirSession): Boolean {
     val calleeReference = this.calleeReference
     if (calleeReference !is FirResolvedNamedReference) return false
 
@@ -238,7 +238,7 @@ private fun FirFunctionCall.isCompileTimeBuiltinCall(): Boolean {
     if (!symbol.fromKotlin()) return false
 
     val coneType = this.dispatchReceiver?.resolvedType
-    val receiverClassId = coneType?.lowerBoundIfFlexible()?.classId
+    val receiverClassId = coneType?.fullyExpandedClassId(session)
 
     if (receiverClassId in StandardClassIds.unsignedTypes) return false
 
@@ -254,9 +254,9 @@ private fun FirFunctionCall.isCompileTimeBuiltinCall(): Boolean {
     return false
 }
 
-private fun FirProperty.isCompileTimeBuiltinProperty(): Boolean {
+private fun FirProperty.isCompileTimeBuiltinProperty(session: FirSession): Boolean {
     val receiverType = dispatchReceiverType ?: receiverParameter?.typeRef?.coneTypeSafe<ConeKotlinType>() ?: return false
-    val receiverClassId = receiverType.lowerBoundIfFlexible().classId ?: return false
+    val receiverClassId = receiverType.fullyExpandedClassId(session) ?: return false
     return when (name.asString()) {
         "length" -> receiverClassId == StandardClassIds.String
         "code" -> receiverClassId == StandardClassIds.Char

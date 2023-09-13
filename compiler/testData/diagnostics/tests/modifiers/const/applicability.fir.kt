@@ -100,6 +100,10 @@ const val constInitializer12 = (-1.0) % 0
 const val constInitializer13 = 1.0.rem(0)
 const val constInitializer15 = 1.0.div(0)
 
+typealias IntAlias = Int
+const val constInitializer16: IntAlias = 1
+const val constInitializer17 = constInitializer16 + 0
+
 // ------------------
 class Delegate {
     operator fun getValue(thisRef: Any?, prop: KProperty<*>): Int = 1
