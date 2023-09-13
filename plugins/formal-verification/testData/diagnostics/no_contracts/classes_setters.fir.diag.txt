@@ -21,6 +21,9 @@ method pkg$$class_AlwaysPlusOne$member_AlwaysPlusOne() returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_AlwaysPlusOne())
 
 
+method pkg$$class_AlwaysPlusOne$getter_num(this: Ref) returns (ret: Int)
+
+
 method pkg$$class_AlwaysPlusOne$setter_num(this: Ref, local$value: Int)
   returns (ret: dom$Unit)
 
@@ -98,6 +101,9 @@ method pkg$$class_Baz$member_Baz() returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Baz())
 
 
+method pkg$$class_Baz$getter_a(this: Ref) returns (ret: Int)
+
+
 method pkg$$class_Baz$setter_a(this: Ref, local$value: Int)
   returns (ret: dom$Unit)
 
@@ -126,7 +132,7 @@ method pkg$$global$testSetterLambda() returns (ret: dom$Unit)
     inhale acc(anonymous$2.pkg$$class_Bar$member_a, write)
     anonymous$2.pkg$$class_Bar$member_a := 42
     exhale acc(anonymous$2.pkg$$class_Bar$member_a, write)
-    label inline_label$pkg$$global$mockInline$ret
+    label inline$pkg$$global$mockInline$label$ret
   }
   label label$ret
 }

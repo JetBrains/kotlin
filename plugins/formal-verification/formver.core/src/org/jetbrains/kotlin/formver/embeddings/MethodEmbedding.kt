@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.formver.conversion.*
-import org.jetbrains.kotlin.formver.domains.convertType
-import org.jetbrains.kotlin.formver.viper.MangledName
-import org.jetbrains.kotlin.formver.viper.ast.*
+import org.jetbrains.kotlin.formver.viper.ast.Exp
+import org.jetbrains.kotlin.formver.viper.ast.Method
+import org.jetbrains.kotlin.formver.viper.ast.Stmt
+import org.jetbrains.kotlin.formver.viper.ast.UserMethod
+import org.jetbrains.kotlin.name.Name
 
 interface MethodEmbedding : MethodSignatureEmbedding {
     val preconditions: List<Exp>
@@ -28,7 +30,7 @@ interface MethodEmbedding : MethodSignatureEmbedding {
 
     fun getFunctionCallSubstitutionItems(
         args: List<FirExpression>,
-        data: StmtConversionContext<ResultTrackingContext>
+        data: StmtConversionContext<ResultTrackingContext>,
     ): List<SubstitutionItem>
 }
 
@@ -56,13 +58,8 @@ class UserMethodEmbedding(
     override fun convertBody(ctx: ProgramConverter) {
         val methodCtx = object : MethodConversionContext, ProgramConversionContext by ctx {
             override val method: MethodEmbedding = this@UserMethodEmbedding
-
-            // It seems like Viper will propagate the weakest precondition through the label correctly even in the absence of
-            // explicit invariants; we only need to add those if we want to make a stronger claim.
-            override val returnLabel: Label = Label(ReturnLabelName, listOf())
-            override val returnVar: VariableEmbedding = VariableEmbedding(ReturnVariableName, method.returnType)
-
-            override fun resolveName(name: MangledName): MangledName = name
+            override val nameMangler = NoopNameMangler
+            override fun getLambdaOrNull(name: Name): SubstitutionLambda? = null
         }
 
         body = symbol.fir.body?.let {
@@ -94,13 +91,13 @@ class UserMethodEmbedding(
             } else {
                 val inlineBody = symbol.fir.body ?: throw Exception("Function symbol $symbol has a null body")
                 val inlineBodyCtx = newBlock()
-                val inlineArgs: List<MangledName> = symbol.valueParameterSymbols.map { it.embedName() }
+                val inlineArgs = symbol.valueParameterSymbols.map { it.name }
                 val callArgs = getFunctionCallSubstitutionItems(argsFir, inlineBodyCtx)
                 val substitutionParams = inlineArgs.zip(callArgs).toMap()
 
                 val inlineCtx = inlineBodyCtx.withInlineContext(
                     this@UserMethodEmbedding,
-                    inlineBodyCtx.resultCtx.resultVar,
+                    inlineBodyCtx.resultCtx.resultVar.name,
                     substitutionParams
                 )
                 inlineCtx.convert(inlineBody)
@@ -114,14 +111,14 @@ class UserMethodEmbedding(
 
     override fun getFunctionCallSubstitutionItems(
         args: List<FirExpression>,
-        data: StmtConversionContext<ResultTrackingContext>
+        data: StmtConversionContext<ResultTrackingContext>,
     ): List<SubstitutionItem> = args.map { exp ->
         when (exp) {
             is FirLambdaArgumentExpression -> {
                 val anonExpr = exp.expression
                 if (anonExpr is FirAnonymousFunctionExpression) {
                     val lambdaBody = anonExpr.anonymousFunction.body!!
-                    val lambdaArs = anonExpr.anonymousFunction.valueParameters.map { LocalName(it.name) }
+                    val lambdaArs = anonExpr.anonymousFunction.valueParameters.map { it.name }
                     SubstitutionLambda(lambdaBody, lambdaArs)
                 } else {
                     TODO("are there any other cases?")

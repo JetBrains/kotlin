@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.formver.plugin.runners;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -159,6 +159,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         @TestMetadata("classes_setters.kt")
         public void testClasses_setters() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes_setters.kt");
+        }
+
+        @Test
+        @TestMetadata("exp_side_effects.kt")
+        public void testExp_side_effects() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/exp_side_effects.kt");
         }
 
         @Test

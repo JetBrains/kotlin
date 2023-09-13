@@ -5,13 +5,18 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
-import org.jetbrains.kotlin.formver.embeddings.MethodEmbedding
-import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.formver.calleeSymbol
+import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.viper.MangledName
+import org.jetbrains.kotlin.name.Name
 
 interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConversionContext, SeqnBuildContext, ResultTrackingContext,
     WhileStackContext<RTC> {
@@ -31,8 +36,8 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
 
     fun withInlineContext(
         inlineMethod: MethodEmbedding,
-        returnVar: VariableEmbedding,
-        substitutionParams: Map<MangledName, SubstitutionItem>,
+        returnVarName: MangledName,
+        substitutionParams: Map<Name, SubstitutionItem>,
     ): StmtConversionContext<RTC>
 
     fun withResult(type: TypeEmbedding, action: StmtConversionContext<VarResultTrackingContext>.() -> Unit): VariableEmbedding {
@@ -43,3 +48,40 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
 
     fun withWhenSubject(subject: VariableEmbedding?, action: (StmtConversionContext<RTC>) -> Unit)
 }
+
+fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedPropertyAccess(symbol: FirPropertyAccessExpression): PropertyAccessEmbedding =
+    when (val calleeSymbol = symbol.calleeSymbol) {
+        is FirValueParameterSymbol -> LocalPropertyAccess(embedValueParameter(calleeSymbol))
+        is FirPropertySymbol ->
+            when (val receiverFir = symbol.dispatchReceiver) {
+                null -> LocalPropertyAccess(embedLocalProperty(calleeSymbol))
+                else -> ClassPropertyAccess(convert(receiverFir), embedGetter(calleeSymbol), embedSetter(calleeSymbol))
+            }
+        else -> throw Exception("Property access symbol $calleeSymbol has unsupported type.")
+    }
+
+@OptIn(SymbolInternals::class)
+fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedGetter(symbol: FirPropertySymbol): GetterEmbedding? =
+    when (val getter = symbol.fir.getter) {
+        null -> null
+        is FirDefaultPropertyGetter -> BackingFieldGetter(
+            VariableEmbedding(
+                symbol.callableId.embedName(),
+                embedType(symbol.resolvedReturnType)
+            )
+        )
+        else -> CustomGetter(embedFunction(getter.symbol))
+    }
+
+@OptIn(SymbolInternals::class)
+fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedSetter(symbol: FirPropertySymbol): SetterEmbedding? =
+    when (val setter = symbol.fir.setter) {
+        null -> null
+        is FirDefaultPropertySetter -> BackingFieldSetter(
+            VariableEmbedding(
+                symbol.callableId.embedName(),
+                embedType(symbol.resolvedReturnType)
+            )
+        )
+        else -> CustomSetter(embedFunction(setter.symbol))
+    }

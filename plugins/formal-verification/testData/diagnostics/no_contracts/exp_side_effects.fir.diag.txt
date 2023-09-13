@@ -1,0 +1,56 @@
+/exp_side_effects.kt:(27,34): info: Generated Viper text for get_foo:
+field pkg$$class_Foo$member_x: Int
+
+method pkg$$global$get_foo() returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+{
+  var anonymous$1: Ref
+  anonymous$1 := pkg$$class_Foo$member_Foo(0)
+  ret := anonymous$1
+  goto label$ret
+  label label$ret
+}
+
+method pkg$$class_Foo$member_Foo(local$x: Int) returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+
+
+/exp_side_effects.kt:(55,66): info: Generated Viper text for side_effect:
+method pkg$$global$side_effect() returns (ret: Int)
+{
+  ret := 0
+  goto label$ret
+  label label$ret
+}
+
+/exp_side_effects.kt:(83,87): info: Generated Viper text for test:
+field pkg$$class_Foo$member_x: Int
+
+method pkg$$global$test() returns (ret: dom$Unit)
+{
+  var anonymous$1: Ref
+  var anonymous$2: Int
+  var local$y: Int
+  var anonymous$3: Ref
+  var anonymous$4: Int
+  var anonymous$5: Int
+  anonymous$1 := pkg$$global$get_foo()
+  anonymous$2 := pkg$$global$side_effect()
+  inhale acc(anonymous$1.pkg$$class_Foo$member_x, write)
+  anonymous$1.pkg$$class_Foo$member_x := anonymous$2
+  exhale acc(anonymous$1.pkg$$class_Foo$member_x, write)
+  anonymous$3 := pkg$$global$get_foo()
+  inhale acc(anonymous$3.pkg$$class_Foo$member_x, write)
+  anonymous$4 := anonymous$3.pkg$$class_Foo$member_x
+  exhale acc(anonymous$3.pkg$$class_Foo$member_x, write)
+  anonymous$5 := pkg$$global$side_effect()
+  local$y := anonymous$4 + anonymous$5
+  label label$ret
+}
+
+method pkg$$global$get_foo() returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+
+
+method pkg$$global$side_effect() returns (ret: Int)
+

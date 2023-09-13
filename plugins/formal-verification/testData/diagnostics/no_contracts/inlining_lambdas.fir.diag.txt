@@ -24,8 +24,8 @@ method pkg$$global$explicit_arg() returns (ret: Int)
     anonymous$3 := 0
     anonymous$2 := anonymous$3 + anonymous$3
     anonymous$1 := anonymous$2
-    goto inline_label$pkg$$global$invoke$ret
-    label inline_label$pkg$$global$invoke$ret
+    goto inline$pkg$$global$invoke$label$ret
+    label inline$pkg$$global$invoke$label$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -42,8 +42,8 @@ method pkg$$global$implicit_arg() returns (ret: Int)
     anonymous$3 := 0
     anonymous$2 := anonymous$3 * 2
     anonymous$1 := anonymous$2
-    goto inline_label$pkg$$global$invoke$ret
-    label inline_label$pkg$$global$invoke$ret
+    goto inline$pkg$$global$invoke$label$ret
+    label inline$pkg$$global$invoke$label$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -64,8 +64,8 @@ method pkg$$global$lambda_if() returns (ret: Int)
       anonymous$2 := anonymous$3 + 2}
     anonymous$2 := anonymous$2
     anonymous$1 := anonymous$2
-    goto inline_label$pkg$$global$invoke$ret
-    label inline_label$pkg$$global$invoke$ret
+    goto inline$pkg$$global$invoke$label$ret
+    label inline$pkg$$global$invoke$label$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -82,8 +82,8 @@ method pkg$$global$return_value_not_used() returns (ret: dom$Unit)
     anonymous$3 := 0
     anonymous$2 := anonymous$3
     anonymous$1 := anonymous$2
-    goto inline_label$pkg$$global$invoke$ret
-    label inline_label$pkg$$global$invoke$ret
+    goto inline$pkg$$global$invoke$label$ret
+    label inline$pkg$$global$invoke$label$ret
   }
   label label$ret
 }
@@ -104,8 +104,8 @@ method pkg$$global$shadowing() returns (ret: Int)
     inline$pkg$$global$invoke$local$y := 0
     anonymous$2 := anonymous$3 + inline$pkg$$global$invoke$local$y
     anonymous$1 := anonymous$2
-    goto inline_label$pkg$$global$invoke$ret
-    label inline_label$pkg$$global$invoke$ret
+    goto inline$pkg$$global$invoke$label$ret
+    label inline$pkg$$global$invoke$label$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -124,8 +124,8 @@ method pkg$$global$foo() returns (ret: Int)
     anonymous$3 := 0
     anonymous$2 := anonymous$3 + 1
     anonymous$1 := anonymous$2
-    goto inline_label$pkg$$global$invoke$ret
-    label inline_label$pkg$$global$invoke$ret
+    goto inline$pkg$$global$invoke$label$ret
+    label inline$pkg$$global$invoke$label$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -148,12 +148,12 @@ method pkg$$global$nested() returns (ret: Int)
       anonymous$4 := 0
       anonymous$3 := anonymous$4 + 1
       anonymous$2 := anonymous$3
-      goto inline_label$pkg$$global$invoke$ret
-      label inline_label$pkg$$global$invoke$ret
+      goto inline$pkg$$global$invoke$label$ret
+      label inline$pkg$$global$invoke$label$ret
     }
     anonymous$1 := anonymous$2
-    goto inline_label$pkg$$global$foo$ret
-    label inline_label$pkg$$global$foo$ret
+    goto inline$pkg$$global$foo$label$ret
+    label inline$pkg$$global$foo$label$ret
   }
   ret := anonymous$1
   goto label$ret

@@ -58,8 +58,8 @@ method pkg$$global$call_invoke(local$g: Ref) returns (ret: Int)
     inline$pkg$$global$invoke$local$x := anonymous$2
     special$invoke_function_object(local$g)
     anonymous$1 := anonymous$3
-    goto inline_label$pkg$$global$invoke$ret
-    label inline_label$pkg$$global$invoke$ret
+    goto inline$pkg$$global$invoke$label$ret
+    label inline$pkg$$global$invoke$label$ret
   }
   local$z := anonymous$1
   if (true) {
@@ -70,8 +70,8 @@ method pkg$$global$call_invoke(local$g: Ref) returns (ret: Int)
     inline$pkg$$global$invoke$local$x := anonymous$5
     special$invoke_function_object(local$g)
     anonymous$4 := anonymous$6
-    goto inline_label$pkg$$global$invoke$ret
-    label inline_label$pkg$$global$invoke$ret
+    goto inline$pkg$$global$invoke$label$ret
+    label inline$pkg$$global$invoke$label$ret
   }
   ret := anonymous$4
   goto label$ret
@@ -99,8 +99,8 @@ method pkg$$global$call_invoke_with_int(local$g: Ref) returns (ret: Int)
     inline$pkg$$global$invoke_with_int$local$x := anonymous$2 + anonymous$2
     special$invoke_function_object(local$g)
     anonymous$1 := anonymous$3
-    goto inline_label$pkg$$global$invoke_with_int$ret
-    label inline_label$pkg$$global$invoke_with_int$ret
+    goto inline$pkg$$global$invoke_with_int$label$ret
+    label inline$pkg$$global$invoke_with_int$label$ret
   }
   local$z := anonymous$1
   if (true) {
@@ -111,8 +111,8 @@ method pkg$$global$call_invoke_with_int(local$g: Ref) returns (ret: Int)
     inline$pkg$$global$invoke_with_int$local$x := anonymous$5 + anonymous$5
     special$invoke_function_object(local$g)
     anonymous$4 := anonymous$6
-    goto inline_label$pkg$$global$invoke_with_int$ret
-    label inline_label$pkg$$global$invoke_with_int$ret
+    goto inline$pkg$$global$invoke_with_int$label$ret
+    label inline$pkg$$global$invoke_with_int$label$ret
   }
   ret := anonymous$4
   goto label$ret
@@ -140,8 +140,8 @@ method pkg$$global$name_clashes(local$f: Ref) returns (ret: Int)
     inline$pkg$$global$invoke$local$x := anonymous$2
     special$invoke_function_object(local$f)
     anonymous$1 := anonymous$3
-    goto inline_label$pkg$$global$invoke$ret
-    label inline_label$pkg$$global$invoke$ret
+    goto inline$pkg$$global$invoke$label$ret
+    label inline$pkg$$global$invoke$label$ret
   }
   local$x := anonymous$1
   if (true) {
@@ -150,8 +150,8 @@ method pkg$$global$name_clashes(local$f: Ref) returns (ret: Int)
     inline$pkg$$global$invoke_with_int$local$x := local$x + local$x
     special$invoke_function_object(local$f)
     anonymous$4 := anonymous$5
-    goto inline_label$pkg$$global$invoke_with_int$ret
-    label inline_label$pkg$$global$invoke_with_int$ret
+    goto inline$pkg$$global$invoke_with_int$label$ret
+    label inline$pkg$$global$invoke_with_int$label$ret
   }
   ret := anonymous$4
   goto label$ret
@@ -179,8 +179,8 @@ method pkg$$global$different_return_type(local$f: Ref) returns (ret: Bool)
     inline$pkg$$global$invoke$local$x := anonymous$2
     special$invoke_function_object(local$f)
     anonymous$1 := anonymous$3
-    goto inline_label$pkg$$global$invoke$ret
-    label inline_label$pkg$$global$invoke$ret
+    goto inline$pkg$$global$invoke$label$ret
+    label inline$pkg$$global$invoke$label$ret
   }
   local$x := anonymous$1
   if (true) {
@@ -191,8 +191,8 @@ method pkg$$global$different_return_type(local$f: Ref) returns (ret: Bool)
     inline$pkg$$global$invoke$local$x := anonymous$5
     special$invoke_function_object(local$f)
     anonymous$4 := anonymous$6
-    goto inline_label$pkg$$global$invoke$ret
-    label inline_label$pkg$$global$invoke$ret
+    goto inline$pkg$$global$invoke$label$ret
+    label inline$pkg$$global$invoke$label$ret
   }
   ret := local$x == anonymous$4
   goto label$ret

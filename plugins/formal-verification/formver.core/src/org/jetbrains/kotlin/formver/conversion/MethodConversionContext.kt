@@ -5,21 +5,30 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.formver.embeddings.MethodEmbedding
-import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
-import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Label
+import org.jetbrains.kotlin.name.Name
 
 interface MethodConversionContext : ProgramConversionContext {
     val method: MethodEmbedding
-    val returnLabel: Label
-    val returnVar: VariableEmbedding
+    val nameMangler: NameMangler
 
-    fun resolveName(name: MangledName): MangledName
-
-    fun getVariableEmbedding(name: MangledName, type: TypeEmbedding): VariableEmbedding =
-        VariableEmbedding(resolveName(name), type)
-
-    fun getLambdaOrNull(name: MangledName): SubstitutionLambda? = null
+    fun getLambdaOrNull(name: Name): SubstitutionLambda?
 }
+
+fun MethodConversionContext.embedValueParameter(symbol: FirValueParameterSymbol): VariableEmbedding =
+    VariableEmbedding(nameMangler.mangleParameterName(symbol), embedType(symbol.resolvedReturnType))
+
+fun MethodConversionContext.embedLocalProperty(symbol: FirPropertySymbol): VariableEmbedding =
+    VariableEmbedding(nameMangler.mangleLocalPropertyName(symbol), embedType(symbol.resolvedReturnType))
+
+val MethodConversionContext.returnVar: VariableEmbedding
+    get() = VariableEmbedding(nameMangler.mangledReturnValueName, method.returnType)
+
+// It seems like Viper will propagate the weakest precondition through the label correctly even in the absence of
+// explicit invariants; we only need to add those if we want to make a stronger claim.
+val MethodConversionContext.returnLabel: Label
+    get() = Label(nameMangler.mangledReturnLabelName, listOf())

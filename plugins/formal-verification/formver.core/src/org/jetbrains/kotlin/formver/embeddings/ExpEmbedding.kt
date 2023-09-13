@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
-import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
-import org.jetbrains.kotlin.formver.conversion.VarResultTrackingContext
 import org.jetbrains.kotlin.formver.domains.*
+import org.jetbrains.kotlin.formver.viper.ast.AccessPredicate
 import org.jetbrains.kotlin.formver.viper.ast.Exp
+import org.jetbrains.kotlin.formver.viper.ast.PermExp
 
 sealed interface ExpEmbedding {
     val type: TypeEmbedding
@@ -187,4 +187,10 @@ data class Is(val exp: ExpEmbedding, val comparisonType: TypeEmbedding) : ExpEmb
 
 data class Cast(val exp: ExpEmbedding, override val type: TypeEmbedding) : ExpEmbedding {
     override fun toViper() = CastingDomain.cast(exp.toViper(), type)
+}
+
+data class FieldAccess(val receiver: ExpEmbedding, val field: VariableEmbedding) : ExpEmbedding {
+    override val type: TypeEmbedding = field.type
+    override fun toViper() = Exp.FieldAccess(receiver.toViper(), field.toField())
+    fun getAccessPredicate(perm: PermExp = PermExp.FullPerm()) = AccessPredicate.FieldAccessPredicate(toViper(), perm)
 }

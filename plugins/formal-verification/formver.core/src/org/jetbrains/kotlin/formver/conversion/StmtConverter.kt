@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Label
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Tracks the results of converting a block of statements.
@@ -51,11 +52,11 @@ class StmtConverter<out RTC : ResultTrackingContext>(
 
     override fun withInlineContext(
         inlineMethod: MethodEmbedding,
-        returnVar: VariableEmbedding,
-        substitutionParams: Map<MangledName, SubstitutionItem>,
+        returnVarName: MangledName,
+        substitutionParams: Map<Name, SubstitutionItem>,
     ): StmtConversionContext<RTC> {
         return StmtConverter(
-            InlineMethodConverter(this, inlineMethod, returnVar, substitutionParams),
+            InlineMethodConverter(this, inlineMethod, returnVarName, substitutionParams),
             seqnCtx,
             resultCtxFactory,
             whileIndex,

@@ -17,15 +17,15 @@ method pkg$$global$quadruple(local$x: Int) returns (ret: Int)
     var inline$pkg$$global$double$local$y: Int
     inline$pkg$$global$double$local$y := local$x + local$x
     anonymous$1 := inline$pkg$$global$double$local$y
-    goto inline_label$pkg$$global$double$ret
-    label inline_label$pkg$$global$double$ret
+    goto inline$pkg$$global$double$label$ret
+    label inline$pkg$$global$double$label$ret
   }
   if (true) {
     var inline$pkg$$global$double$local$y: Int
     inline$pkg$$global$double$local$y := local$x + local$x
     anonymous$2 := inline$pkg$$global$double$local$y
-    goto inline_label$pkg$$global$double$ret
-    label inline_label$pkg$$global$double$ret
+    goto inline$pkg$$global$double$label$ret
+    label inline$pkg$$global$double$label$ret
   }
   ret := anonymous$1 + anonymous$2
   goto label$ret
@@ -55,28 +55,28 @@ method pkg$$global$use_branching() returns (ret: Int)
     anonymous$2 := false
     if (anonymous$2) {
       anonymous$1 := 1
-      goto inline_label$pkg$$global$branching$ret
+      goto inline$pkg$$global$branching$label$ret
       anonymous$1 := (dom$Casting$cast(dom$Unit$element(), dom$Type$Int()): Int)
     } else {
       anonymous$1 := 0
-      goto inline_label$pkg$$global$branching$ret
+      goto inline$pkg$$global$branching$label$ret
       anonymous$1 := (dom$Casting$cast(dom$Unit$element(), dom$Type$Int()): Int)
     }
-    label inline_label$pkg$$global$branching$ret
+    label inline$pkg$$global$branching$label$ret
   }
   if (true) {
     var anonymous$4: Bool
     anonymous$4 := true
     if (anonymous$4) {
       anonymous$3 := 1
-      goto inline_label$pkg$$global$branching$ret
+      goto inline$pkg$$global$branching$label$ret
       anonymous$3 := (dom$Casting$cast(dom$Unit$element(), dom$Type$Int()): Int)
     } else {
       anonymous$3 := 0
-      goto inline_label$pkg$$global$branching$ret
+      goto inline$pkg$$global$branching$label$ret
       anonymous$3 := (dom$Casting$cast(dom$Unit$element(), dom$Type$Int()): Int)
     }
-    label inline_label$pkg$$global$branching$ret
+    label inline$pkg$$global$branching$label$ret
   }
   ret := anonymous$1 + anonymous$3
   goto label$ret
