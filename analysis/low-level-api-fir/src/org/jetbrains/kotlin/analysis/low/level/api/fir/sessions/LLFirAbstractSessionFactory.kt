@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.analysis.providers.impl.util.mergeInto
 import org.jetbrains.kotlin.analysis.utils.errors.withKtModuleEntry
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -128,14 +127,19 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirProvider::class, provider)
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
+            val dependencySessions = collectSourceModuleDependencies(module)
+
             val dependencyProvider = LLFirDependenciesSymbolProvider(this) {
                 buildList {
-                    addDependencySymbolProvidersTo(session, collectSourceModuleDependencies(module), this)
+                    addDependencySymbolProvidersTo(session, dependencySessions, this)
                     add(builtinsSession.symbolProvider)
                 }
             }
 
-            val javaSymbolProvider = LLFirJavaSymbolProvider(this, moduleData, project, provider.searchScope)
+            val scriptScope = provider.searchScope
+            val scriptDependenciesScope = GlobalSearchScope.union(dependencySessions.map { it.ktModule.contentScope })
+
+            val javaSymbolProvider = LLFirJavaSymbolProvider(this, moduleData, project, scriptScope.union(scriptDependenciesScope))
             register(JavaSymbolProvider::class, javaSymbolProvider)
 
             register(
