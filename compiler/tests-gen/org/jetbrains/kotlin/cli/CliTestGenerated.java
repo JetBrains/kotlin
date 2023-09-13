@@ -1564,11 +1564,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/anonymousObjectType.args");
         }
 
-        @TestMetadata("anonymousObjectTypeWithFir.args")
-        public void testAnonymousObjectTypeWithFir() throws Exception {
-            runTest("compiler/testData/cli/metadata/anonymousObjectTypeWithFir.args");
-        }
-
         @TestMetadata("hmppModules.args")
         public void testHmppModules() throws Exception {
             runTest("compiler/testData/cli/metadata/hmppModules.args");
@@ -1579,19 +1574,9 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/inheritorOfExpectSealedClass.args");
         }
 
-        @TestMetadata("inheritorOfExpectSealedClassWithFir.args")
-        public void testInheritorOfExpectSealedClassWithFir() throws Exception {
-            runTest("compiler/testData/cli/metadata/inheritorOfExpectSealedClassWithFir.args");
-        }
-
         @TestMetadata("kotlinPackage.args")
         public void testKotlinPackage() throws Exception {
             runTest("compiler/testData/cli/metadata/kotlinPackage.args");
-        }
-
-        @TestMetadata("kotlinPackageWithFir.args")
-        public void testKotlinPackageWithFir() throws Exception {
-            runTest("compiler/testData/cli/metadata/kotlinPackageWithFir.args");
         }
 
         @TestMetadata("kt58139.args")
@@ -1604,19 +1589,9 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/lambdaWithReceiver.args");
         }
 
-        @TestMetadata("lambdaWithReceiverWithFir.args")
-        public void testLambdaWithReceiverWithFir() throws Exception {
-            runTest("compiler/testData/cli/metadata/lambdaWithReceiverWithFir.args");
-        }
-
         @TestMetadata("moduleName.args")
         public void testModuleName() throws Exception {
             runTest("compiler/testData/cli/metadata/moduleName.args");
-        }
-
-        @TestMetadata("moduleNameWithFir.args")
-        public void testModuleNameWithFir() throws Exception {
-            runTest("compiler/testData/cli/metadata/moduleNameWithFir.args");
         }
 
         @TestMetadata("noVirtualFileHiddenForMemberWithPlatformDependentAnnotation.args")
@@ -1629,19 +1604,9 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/optionalAnnotationsFromMetadata.args");
         }
 
-        @TestMetadata("optionalAnnotationsFromMetadataWithFir.args")
-        public void testOptionalAnnotationsFromMetadataWithFir() throws Exception {
-            runTest("compiler/testData/cli/metadata/optionalAnnotationsFromMetadataWithFir.args");
-        }
-
         @TestMetadata("optionalExpectationUsage.args")
         public void testOptionalExpectationUsage() throws Exception {
             runTest("compiler/testData/cli/metadata/optionalExpectationUsage.args");
-        }
-
-        @TestMetadata("optionalExpectationUsageWithFir.args")
-        public void testOptionalExpectationUsageWithFir() throws Exception {
-            runTest("compiler/testData/cli/metadata/optionalExpectationUsageWithFir.args");
         }
     }
 }
