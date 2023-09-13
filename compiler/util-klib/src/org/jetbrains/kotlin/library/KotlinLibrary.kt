@@ -98,6 +98,9 @@ val BaseKotlinLibrary.uniqueName: String
 val BaseKotlinLibrary.shortName: String?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_SHORT_NAME)
 
+val BaseKotlinLibrary.isNativeStdlib: Boolean
+    get() = uniqueName == KOTLIN_STDLIB_NAME
+
 val BaseKotlinLibrary.unresolvedDependencies: List<RequiredUnresolvedLibrary>
     get() = unresolvedDependencies(lenient = false).map { it as RequiredUnresolvedLibrary }
 
