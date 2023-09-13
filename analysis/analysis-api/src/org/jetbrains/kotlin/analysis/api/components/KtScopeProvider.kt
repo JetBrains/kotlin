@@ -15,12 +15,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 public abstract class KtScopeProvider : KtAnalysisSessionComponent() {
     public abstract fun getMemberScope(classSymbol: KtSymbolWithMembers): KtScope
+
+    public abstract fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope
 
     public abstract fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope
 
@@ -29,8 +30,6 @@ public abstract class KtScopeProvider : KtAnalysisSessionComponent() {
     public abstract fun getCombinedDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope
 
     public abstract fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope
-
-    public abstract fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope
 
     public abstract fun getEmptyScope(): KtScope
 
@@ -54,11 +53,95 @@ public abstract class KtScopeProvider : KtAnalysisSessionComponent() {
 
 public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
     /**
-     * Creates [KtScope] containing members of [KtDeclaration].
-     * Returned [KtScope] doesn't include synthetic Java properties. To get such properties use [getSyntheticJavaPropertiesScope].
+     * Returns a [KtScope] containing *non-static* callable members (functions, properties, and constructors) and all classifier members
+     * (classes and objects) of the given [KtSymbolWithMembers]. The scope includes members inherited from the symbol's supertypes, in
+     * addition to members which are declared explicitly inside the symbol's body.
+     *
+     * The member scope doesn't include synthetic Java properties. To get such properties, use [getSyntheticJavaPropertiesScope].
+     *
+     * @see getStaticMemberScope
      */
     public fun KtSymbolWithMembers.getMemberScope(): KtScope =
         withValidityAssertion { analysisSession.scopeProvider.getMemberScope(this) }
+
+    /**
+     * Returns a [KtScope] containing the *static* members of the given [KtSymbolWithMembers].
+     *
+     * The behavior of the scope differs based on whether the given [KtSymbolWithMembers] is a Kotlin or Java class:
+     *
+     * - **Kotlin class:** The scope contains static callables (functions and properties) and classifiers (classes and objects) declared
+     *   directly in the [KtSymbolWithMembers]. Hence, the static member scope for Kotlin classes is equivalent to [getDeclaredMemberScope].
+     * - **Java class:** The scope contains static callables (functions and properties) declared in the [KtSymbolWithMembers] or any of its
+     *   superclasses (excluding static callables from super-interfaces), and classes declared directly in the [KtSymbolWithMembers]. This
+     *   follows Kotlin's rules about static inheritance in Java classes, where static callables are propagated from superclasses, but
+     *   nested classes are not.
+     *
+     * #### Kotlin Example
+     *
+     * ```kotlin
+     * abstract class A {
+     *     class C1
+     *     inner class D1
+     *     object O1
+     *
+     *     // There is no way to declare a static callable in an abstract class, as only enum classes define additional static callables.
+     * }
+     *
+     * class B : A() {
+     *     class C2
+     *     inner class D2
+     *     object O2
+     *     companion object {
+     *         val baz: String = ""
+     *     }
+     * }
+     * ```
+     *
+     * The static member scope of `B` contains the following symbols:
+     *
+     * ```
+     * class C2
+     * inner class D2
+     * object O2
+     * companion object
+     * ```
+     *
+     * #### Java Example
+     *
+     * ```java
+     * // SuperInterface.java
+     * public interface SuperInterface {
+     *     public static void fromSuperInterface() { }
+     * }
+     *
+     * // SuperClass.java
+     * public abstract class SuperClass implements SuperInterface {
+     *     static class NestedSuperClass { }
+     *     class InnerSuperClass { }
+     *     public static void fromSuperClass() { }
+     * }
+     *
+     * // FILE: JavaClass.java
+     * public class JavaClass extends SuperClass {
+     *     static class NestedClass { }
+     *     class InnerClass { }
+     *     public static void fromJavaClass() { }
+     * }
+     * ```
+     *
+     * The static member scope of `JavaClass` contains the following symbols:
+     *
+     * ```
+     * public static void fromSuperClass()
+     * public static void fromJavaClass()
+     * static class NestedClass
+     * class InnerClass
+     * ```
+     *
+     * @see getMemberScope
+     */
+    public fun KtSymbolWithMembers.getStaticMemberScope(): KtScope =
+        withValidityAssertion { analysisSession.scopeProvider.getStaticMemberScope(this) }
 
     /**
      * Returns a [KtScope] containing the *non-static* callables and all classifiers explicitly declared in the given [KtSymbolWithMembers].
@@ -90,9 +173,6 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
 
     public fun KtSymbolWithMembers.getDelegatedMemberScope(): KtScope =
         withValidityAssertion { analysisSession.scopeProvider.getDelegatedMemberScope(this) }
-
-    public fun KtSymbolWithMembers.getStaticMemberScope(): KtScope =
-        withValidityAssertion { analysisSession.scopeProvider.getStaticMemberScope(this) }
 
     public fun KtFileSymbol.getFileScope(): KtScope =
         withValidityAssertion { analysisSession.scopeProvider.getFileScope(this) }
