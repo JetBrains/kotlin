@@ -381,9 +381,8 @@ enum class WasmOp(
     REF_CAST("ref.cast", 0xFB_16, HEAP_TYPE),
     REF_CAST_NULL("ref.cast null", 0xFB_17, HEAP_TYPE),
 
-// TODO: KT-60828 Return br_on_cast_fail usages when it's possible
-//    BR_ON_CAST("br_on_cast", 0xFB_18, listOf(CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE)),
-//    BR_ON_CAST_FAIL("br_on_cast_fail", 0xFB_19, listOf(CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE)),
+    BR_ON_CAST("br_on_cast", 0xFB_18, listOf(CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE)),
+    BR_ON_CAST_FAIL("br_on_cast_fail", 0xFB_19, listOf(CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE)),
 
     EXTERN_INTERNALIZE("extern.internalize", 0xFB_1A), // externref -> anyref
     EXTERN_EXTERNALIZE("extern.externalize", 0xFB_1B), // anyref -> externref
