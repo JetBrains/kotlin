@@ -188,14 +188,14 @@ fun FirClassifierSymbol<*>.toSymbol(
 }
 
 context(Fir2IrComponents)
-fun FirBasedSymbol<*>.toSymbolForCall(
+private fun FirBasedSymbol<*>.toSymbolForCall(
     dispatchReceiver: FirExpression?,
     preferGetter: Boolean,
     explicitReceiver: FirExpression? = null,
     isDelegate: Boolean = false,
     isReference: Boolean = false
 ): IrSymbol? = when (this) {
-    is FirCallableSymbol<*> -> unwrapCallRepresentative().toSymbolForCall(
+    is FirCallableSymbol<*> -> toSymbolForCall(
         dispatchReceiver,
         preferGetter,
         explicitReceiver,
@@ -207,16 +207,19 @@ fun FirBasedSymbol<*>.toSymbolForCall(
     else -> error("Unknown symbol: $this")
 }
 
+context(Fir2IrComponents)
 fun FirReference.extractSymbolForCall(): FirBasedSymbol<*>? {
     if (this !is FirResolvedNamedReference) {
         return null
     }
     var symbol = resolvedSymbol
 
-    if (symbol is FirCallableSymbol<*> && symbol.origin == FirDeclarationOrigin.SubstitutionOverride.CallSite) {
-        symbol = symbol.fir.unwrapUseSiteSubstitutionOverrides<FirCallableDeclaration>().symbol
+    if (symbol is FirCallableSymbol<*>) {
+        if (symbol.origin == FirDeclarationOrigin.SubstitutionOverride.CallSite) {
+            symbol = symbol.fir.unwrapUseSiteSubstitutionOverrides<FirCallableDeclaration>().symbol
+        }
+        symbol = (symbol as FirCallableSymbol<*>).unwrapCallRepresentative()
     }
-
     return symbol
 }
 
@@ -302,7 +305,7 @@ fun FirCallableSymbol<*>.toSymbolForCall(
                 } ?: declarationStorage.getIrPropertySymbol(this)
             }
         }
-
+        is FirConstructorSymbol -> declarationStorage.getIrConstructorSymbol(fir.originalConstructorIfTypeAlias?.symbol ?: this)
         is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this, fakeOverrideOwnerLookupTag)
         is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this, fakeOverrideOwnerLookupTag)
         is FirFieldSymbol -> declarationStorage.getOrCreateIrField(this, fakeOverrideOwnerLookupTag).symbol

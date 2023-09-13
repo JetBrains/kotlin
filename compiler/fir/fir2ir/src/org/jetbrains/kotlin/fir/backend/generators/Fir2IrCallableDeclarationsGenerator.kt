@@ -197,12 +197,13 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
     ): IrConstructor = convertCatching(constructor) {
-        val origin = constructor.computeIrOrigin(predefinedOrigin)
+        val origin = constructor.computeIrOrigin(predefinedOrigin, irParent.origin)
         val isPrimary = constructor.isPrimary
-        val signature =
-            runUnless(isLocal || !configuration.linkViaSignatures) {
-                signatureComposer.composeSignature(constructor)
-            }
+        // we need to compose signature even if `linkViaSignatures` set to false, because otherwise we will never
+        // create lazy constructor (it requires not nullable signature)
+        val signature = runUnless(isLocal) {
+            signatureComposer.composeSignature(constructor)
+        }
 
         if (irParent is Fir2IrLazyClass && signature != null) {
             val lazyConstructor = lazyDeclarationsGenerator.createIrLazyConstructor(constructor, signature, origin, irParent) as Fir2IrLazyConstructor
@@ -215,7 +216,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         }
         val visibility = if (irParent.isAnonymousObject) Visibilities.Public else constructor.visibility
         return constructor.convertWithOffsets { startOffset, endOffset ->
-            declareIrConstructor(signature) { symbol ->
+            declareIrConstructor(signature.takeIf { components.configuration.linkViaSignatures }) { symbol ->
                 classifierStorage.preCacheTypeParameters(constructor, symbol)
                 irFactory.createConstructor(
                     startOffset = startOffset,

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
-import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -376,8 +375,18 @@ class Fir2IrDeclarationStorage(
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
     ): IrConstructor {
+        return getOrCreateIrConstructor(constructor, { irParent }, predefinedOrigin, isLocal)
+    }
+
+    fun getOrCreateIrConstructor(
+        constructor: FirConstructor,
+        irParent: () -> IrClass,
+        predefinedOrigin: IrDeclarationOrigin? = null,
+        isLocal: Boolean = false,
+    ): IrConstructor {
         getCachedIrConstructor(constructor)?.let { return it }
-        return callablesGenerator.createIrConstructor(constructor, irParent, predefinedOrigin, isLocal)
+        // caching of created constructor is not called here, because `callablesGenerator` calls `cacheIrConstructor` by itself
+        return callablesGenerator.createIrConstructor(constructor, irParent(), predefinedOrigin, isLocal)
     }
 
     @LeakedDeclarationCaches
@@ -387,21 +396,10 @@ class Fir2IrDeclarationStorage(
 
     fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol): IrConstructorSymbol {
         val fir = firConstructorSymbol.fir
-        return getIrCallableSymbol(
-            firConstructorSymbol,
-            fakeOverrideOwnerLookupTag = null,
-            getCachedIrDeclaration = { constructor: FirConstructor, _, calculator -> getCachedIrConstructor(constructor, calculator) },
-            createIrDeclaration = { parent, origin ->
-                callablesGenerator.createIrConstructor(fir, parent as IrClass, predefinedOrigin = origin)
-            },
-            createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
-                val irConstructor = lazyDeclarationsGenerator.createIrLazyConstructor(fir, signature, declarationOrigin, lazyParent)
-                constructorCache[fir] = irConstructor
-                // NB: this is needed to prevent recursions in case of self bounds
-                (irConstructor as Fir2IrLazyConstructor).prepareTypeParameters()
-                irConstructor
-            },
-        ) as IrConstructorSymbol
+        return getOrCreateIrConstructor(
+            fir,
+            { findIrParent(fir, fakeOverrideOwnerLookupTag = null) as IrClass }
+        ).symbol
     }
 
 
