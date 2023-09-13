@@ -10,17 +10,20 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.explicitReceiverIsNotSuperReference
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.getSingleCompatibleOrWeaklyIncompatibleExpectForActualOrNull
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 object FirSuperCallWithDefaultsChecker : FirFunctionCallChecker() {
-
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression.explicitReceiverIsNotSuperReference()) return
 
         val functionSymbol = expression.calleeReference.toResolvedNamedFunctionSymbol() ?: return
-        if (!functionSymbol.valueParameterSymbols.any { it.hasDefaultValue }) return
+        val relevantFunctionSymbol =
+            (functionSymbol.getSingleCompatibleOrWeaklyIncompatibleExpectForActualOrNull() as? FirNamedFunctionSymbol) ?: functionSymbol
+        if (!relevantFunctionSymbol.valueParameterSymbols.any { it.hasDefaultValue }) return
         val arguments = expression.argumentList as? FirResolvedArgumentList ?: return
         if (arguments.arguments.size < functionSymbol.valueParameterSymbols.size) {
             reporter.reportOn(
