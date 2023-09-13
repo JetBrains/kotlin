@@ -47,6 +47,30 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
     }
 
     @Test
+    @TestMetadata("class.kt")
+    public void testClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/class.kt");
+    }
+
+    @Test
+    @TestMetadata("enumClass.kt")
+    public void testEnumClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/enumClass.kt");
+    }
+
+    @Test
+    @TestMetadata("enumClassWithAbstractMembers.kt")
+    public void testEnumClassWithAbstractMembers() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/enumClassWithAbstractMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("enumClassWithFinalMembers.kt")
+    public void testEnumClassWithFinalMembers() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/enumClassWithFinalMembers.kt");
+    }
+
+    @Test
     @TestMetadata("enumEntryInitializer.kt")
     public void testEnumEntryInitializer() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/enumEntryInitializer.kt");
@@ -68,6 +92,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
     @TestMetadata("enumEntryInitializerWithOverriddenMember.kt")
     public void testEnumEntryInitializerWithOverriddenMember() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/enumEntryInitializerWithOverriddenMember.kt");
+    }
+
+    @Test
+    @TestMetadata("javaClass.kt")
+    public void testJavaClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/javaClass.kt");
     }
 
     @Test

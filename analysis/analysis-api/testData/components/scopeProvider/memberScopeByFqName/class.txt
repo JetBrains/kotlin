@@ -1,0 +1,540 @@
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: test/C.foo
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: test/C
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(test/C.bar)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/String
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
+  callableIdIfNonLocal: test/C.bar
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/String
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+    getDispatchReceiver(): KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: test/C
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: KtConstantInitializerValue("")
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: bar
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/String
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: test/C
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getBar
+  javaSetterName: null
+  setterDeprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: test/A.perform
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: perform
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: test/A
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(test/A.x)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
+  callableIdIfNonLocal: test/A.x
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+    getDispatchReceiver(): KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: test/A
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: KtConstantInitializerValue(0)
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: x
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: test/A
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getX
+  javaSetterName: null
+  setterDeprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/Any.equals
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: equals
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Boolean
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: other
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Any?
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
+  ]
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Any
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/Any.hashCode
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: hashCode
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Any
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/Any.toString
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: toString
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/String
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Any
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: test/C.C2
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: C2
+  origin: SOURCE
+  superTypes: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
+  ]
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: test/C.O2
+  classKind: OBJECT
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: O2
+  origin: SOURCE
+  superTypes: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
+  ]
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: test/C.Companion
+  classKind: COMPANION_OBJECT
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: Companion
+  origin: SOURCE
+  superTypes: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
+  ]
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: test/A.C1
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: C1
+  origin: SOURCE
+  superTypes: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
+  ]
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: test/A.O1
+  classKind: OBJECT
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: O1
+  origin: SOURCE
+  superTypes: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
+  ]
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KtConstructorSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  containingClassIdIfNonLocal: test/C
+  contextReceivers: []
+  hasStableParameterNames: true
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isPrimary: true
+  origin: SOURCE_MEMBER_GENERATED
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: test/C
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

@@ -1,0 +1,12 @@
+open fun hello()
+
+@java.lang.Override
+open fun getActualRandomNumber(): kotlin.Int
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String
+
+constructor()

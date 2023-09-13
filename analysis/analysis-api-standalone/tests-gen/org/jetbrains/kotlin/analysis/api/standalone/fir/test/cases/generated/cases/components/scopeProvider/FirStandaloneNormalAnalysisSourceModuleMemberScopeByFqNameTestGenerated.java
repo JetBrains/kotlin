@@ -47,6 +47,12 @@ public class FirStandaloneNormalAnalysisSourceModuleMemberScopeByFqNameTestGener
     }
 
     @Test
+    @TestMetadata("class.kt")
+    public void testClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/class.kt");
+    }
+
+    @Test
     @TestMetadata("dataClass.kt")
     public void testDataClass() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/dataClass.kt");
@@ -92,6 +98,12 @@ public class FirStandaloneNormalAnalysisSourceModuleMemberScopeByFqNameTestGener
     @TestMetadata("Int.kt")
     public void testInt() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/Int.kt");
+    }
+
+    @Test
+    @TestMetadata("javaClass.kt")
+    public void testJavaClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/memberScopeByFqName/javaClass.kt");
     }
 
     @Test
