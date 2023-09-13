@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
@@ -1025,7 +1026,6 @@ class Fir2IrDeclarationStorage(
                         fakeOverrideOwnerLookupTag ?: declaration.containingClassLookupTag()!!
                     )
                     irFakeOverridesForFirFakeOverrideMap[key] = cachedInSymbolTable
-                    return cachedInSymbolTable
                 }
                 configuration.useIrFakeOverrideBuilder -> {
                     /*
@@ -1036,12 +1036,27 @@ class Fir2IrDeclarationStorage(
                      * TODO: potentially this situation won't happen after migration from FIR2IR f/o generator to IR f/o generator (see KT-58861)
                      */
                     cache[declaration] = cachedInSymbolTable
-                    return cachedInSymbolTable
+                }
+                declaration.initialSignatureAttr != null -> {
+                    /*
+                     * FIR creates remapped functions for builtin JVM classes based on use-site session, not declaration site
+                     * It leads to the situations when we have two different mapped FIR functions for the same original function
+                     *   (and same IR function)
+                     */
+                    cache[declaration] = cachedInSymbolTable
+                }
+                declaration.symbol is FirJavaOverriddenSyntheticPropertySymbol -> {
+                    /*
+                     * Synthetic properties for java classes, if those properties are based on real Kotlin properties are also session
+                     *   dependant
+                     */
+                    cache[declaration] = cachedInSymbolTable
                 }
                 else -> {
-                    error("IR declaration with signature $signature found in SymbolTable and not found in declaration storage")
+                    error("IR declaration with signature \"$signature\" found in SymbolTable and not found in declaration storage")
                 }
             }
+            return cachedInSymbolTable
         }
 
         return null

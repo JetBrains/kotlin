@@ -29011,6 +29011,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/multiplatform/k2/javaMethodWithTypeParameter.kt");
             }
 
+            @TestMetadata("jvmDeclarationsUpdatedMembersInCommonModule.kt")
+            public void testJvmDeclarationsUpdatedMembersInCommonModule() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/jvmDeclarationsUpdatedMembersInCommonModule.kt");
+            }
+
             @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

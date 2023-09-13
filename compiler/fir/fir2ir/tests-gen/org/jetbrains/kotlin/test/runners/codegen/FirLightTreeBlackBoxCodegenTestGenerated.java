@@ -34044,6 +34044,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
                 runTest("compiler/testData/codegen/box/multiplatform/k2/javaMethodWithTypeParameter.kt");
             }
 
+            @Test
+            @TestMetadata("jvmDeclarationsUpdatedMembersInCommonModule.kt")
+            public void testJvmDeclarationsUpdatedMembersInCommonModule() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/jvmDeclarationsUpdatedMembersInCommonModule.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
             @TestDataPath("$PROJECT_ROOT")
