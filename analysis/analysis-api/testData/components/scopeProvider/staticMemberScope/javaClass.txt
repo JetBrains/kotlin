@@ -1,0 +1,132 @@
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /JavaClass.bar
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: false
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: true
+  isSuspend: false
+  modality: OPEN
+  name: bar
+  origin: JAVA
+  receiverParameter: null
+  returnType: KtFlexibleType:
+    annotationsList: []
+    type: kotlin/String!
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtJavaFieldSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /SuperClass.superFoo
+  contextReceivers: []
+  isExtension: false
+  isStatic: true
+  isVal: false
+  modality: OPEN
+  name: superFoo
+  origin: JAVA
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /SuperClass.superBar
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: false
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: true
+  isSuspend: false
+  modality: OPEN
+  name: superBar
+  origin: JAVA
+  receiverParameter: null
+  returnType: KtFlexibleType:
+    annotationsList: []
+    type: kotlin/String!
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtJavaFieldSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /JavaClass.foo
+  contextReceivers: []
+  isExtension: false
+  isStatic: true
+  isVal: false
+  modality: OPEN
+  name: foo
+  origin: JAVA
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: JavaClass.NestedClass
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: true
+  modality: OPEN
+  name: NestedClass
+  origin: JAVA
+  superTypes: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
+  ]
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: PackageVisibility
+  getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null

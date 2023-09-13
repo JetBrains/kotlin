@@ -487,6 +487,13 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
                 }
             }
 
+            test(
+                AbstractStaticMemberScopeTest::class,
+                filter = frontendIs(FrontendKind.Fir),
+            ) {
+                model(it, "staticMemberScope")
+            }
+
             test(AbstractFileScopeTest::class) {
                 model(it, "fileScopeTest")
             }
@@ -500,6 +507,13 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
                 filter = frontendIs(FrontendKind.Fir),
             ) {
                 model(it, "declaredMemberScope")
+            }
+
+            test(
+                AbstractStaticDeclaredMemberScopeTest::class,
+                filter = frontendIs(FrontendKind.Fir),
+            ) {
+                model(it, "staticDeclaredMemberScope")
             }
         }
     }

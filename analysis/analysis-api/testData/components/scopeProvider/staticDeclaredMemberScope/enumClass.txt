@@ -1,0 +1,200 @@
+KtEnumEntrySymbol:
+  annotationsList: []
+  callableIdIfNonLocal: test/E.A
+  containingEnumClassIdIfNonLocal: test/E
+  contextReceivers: []
+  enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
+  isExtension: false
+  name: A
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: test/E
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtEnumEntrySymbol:
+  annotationsList: []
+  callableIdIfNonLocal: test/E.B
+  containingEnumClassIdIfNonLocal: test/E
+  contextReceivers: []
+  enumEntryInitializer: null
+  isExtension: false
+  name: B
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: test/E
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: test/E.values
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: true
+  isSuspend: false
+  modality: FINAL
+  name: values
+  origin: SOURCE_MEMBER_GENERATED
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: test/E
+    ]
+    type: kotlin/Array<test/E>
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: test/E.valueOf
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: true
+  isSuspend: false
+  modality: FINAL
+  name: valueOf
+  origin: SOURCE_MEMBER_GENERATED
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: test/E
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: value
+      origin: SOURCE_MEMBER_GENERATED
+      receiverParameter: null
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/String
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotationsList: []
+  backingFieldSymbol: null
+  callableIdIfNonLocal: test/E.entries
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE_MEMBER_GENERATED
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: [
+        KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: test/E
+      ]
+      type: kotlin/enums/EnumEntries<test/E>
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: true
+  isVal: true
+  modality: FINAL
+  name: entries
+  origin: SOURCE_MEMBER_GENERATED
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: test/E
+    ]
+    type: kotlin/enums/EnumEntries<test/E>
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getEntries
+  javaSetterName: null
+  setterDeprecationStatus: null
