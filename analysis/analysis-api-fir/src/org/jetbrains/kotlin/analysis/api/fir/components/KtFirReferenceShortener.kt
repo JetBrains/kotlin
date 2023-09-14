@@ -52,11 +52,11 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeParameterScope
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -69,6 +69,16 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+
+
+interface MyType
+
+open class Base<T>()
+
+class MyClass<MyType> {
+    class Nested<Other : MyType> : Base<MyType>()
+}
+
 
 internal class KtFirReferenceShortener(
     override val analysisSession: KtFirAnalysisSession,
@@ -264,9 +274,9 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
     private val firSession: FirSession
         get() = firResolveSession.useSiteFirSession
 
-    class ClassifierCandidate(val scope: FirScope, val availableSymbol: AvailableSymbol<FirClassLikeSymbol<*>>)
+    class ClassifierCandidate(val scope: FirScope, val availableSymbol: AvailableSymbol<FirClassifierSymbol<*>>)
 
-    fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): AvailableSymbol<FirClassLikeSymbol<*>>? =
+    fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): AvailableSymbol<FirClassifierSymbol<*>>? =
         positionScopes.firstNotNullOfOrNull { scope -> findFirstClassifierSymbolByName(scope, targetClassName) }
 
     fun findClassifiersInScopesByName(scopes: List<FirScope>, targetClassName: Name): List<ClassifierCandidate> =
@@ -276,8 +286,8 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
             ClassifierCandidate(scope, classifierSymbol)
         }
 
-    private fun findFirstClassifierSymbolByName(scope: FirScope, targetClassName: Name): AvailableSymbol<FirClassLikeSymbol<*>>? {
-        val classifierSymbol = scope.findFirstClassifierByName(targetClassName) as? FirClassLikeSymbol<*> ?: return null
+    private fun findFirstClassifierSymbolByName(scope: FirScope, targetClassName: Name): AvailableSymbol<FirClassifierSymbol<*>>? {
+        val classifierSymbol = scope.findFirstClassifierByName(targetClassName) ?: return null
 
         return AvailableSymbol(classifierSymbol, ImportKind.fromScope(scope))
     }
@@ -562,6 +572,8 @@ private class ElementsToShortenCollector(
         )
     }
 
+    private val FirClassifierSymbol<*>.classIdIfExists: ClassId? get() = (this as? FirClassLikeSymbol<*>)?.classId
+
     /**
      * Returns true if the class symbol has a type parameter that is supposed to be provided for its parent class.
      *
@@ -669,7 +681,8 @@ private class ElementsToShortenCollector(
     private enum class PartialOrderOfScope(
         val scopeDistanceLevel: Int // Note: Don't use the built-in ordinal since there are some scopes that are at the same level.
     ) {
-        Local(1),
+        Local(0),
+        TypeParameter(1),
         ClassUseSite(2),
         NestedClassifier(2),
         ExplicitSimpleImporting(3),
@@ -683,6 +696,7 @@ private class ElementsToShortenCollector(
                     is FirLocalScope -> Local
                     is FirClassUseSiteMemberScope -> ClassUseSite
                     is FirNestedClassifierScope -> NestedClassifier
+                    is FirTypeParameterScope -> TypeParameter
                     is FirNestedClassifierScopeWithSubstitution -> originalScope.toPartialOrder()
                     is FirExplicitSimpleImportingScope -> ExplicitSimpleImporting
                     is FirPackageMemberScope -> PackageMember
@@ -748,7 +762,7 @@ private class ElementsToShortenCollector(
 
         val name = classId.shortClassName
         val availableClassifiers = shorteningContext.findClassifiersInScopesByName(scopes, name)
-        val matchingAvailableSymbol = availableClassifiers.firstOrNull { it.availableSymbol.symbol.classId == classId }
+        val matchingAvailableSymbol = availableClassifiers.firstOrNull { it.availableSymbol.symbol.classIdIfExists == classId }
         val scopeForClass = matchingAvailableSymbol?.scope ?: return false
 
         if (availableClassifiers.map { it.scope }.hasScopeCloserThan(scopeForClass, element)) return false
@@ -805,7 +819,7 @@ private class ElementsToShortenCollector(
                     )
                 }
                 // The class with name `classId.shortClassName` happens to be the same class referenced by this qualified access.
-                availableClassifier.symbol.classId == classId -> {
+                availableClassifier.symbol.classIdIfExists == classId -> {
                     // Respect caller's request to use star import, if it's not already star-imported.
                     return when {
                         availableClassifier.importKind == ImportKind.EXPLICIT && importAllInParent -> {
@@ -840,7 +854,7 @@ private class ElementsToShortenCollector(
     }
 
     private fun importedClassifierOverwritesAvailableClassifier(
-        availableClassifier: AvailableSymbol<FirClassLikeSymbol<*>>,
+        availableClassifier: AvailableSymbol<FirClassifierSymbol<*>>,
         importAllInParent: Boolean
     ): Boolean {
         val importKindFromOption = if (importAllInParent) ImportKind.STAR else ImportKind.EXPLICIT
@@ -870,7 +884,7 @@ private class ElementsToShortenCollector(
                 val positionScopes = shorteningContext.findScopesAtPosition(expression, getNamesToImport(), contextProvider) ?: return
                 val availableClassifier = shorteningContext.findFirstClassifierInScopesByName(positionScopes, shortClassName) ?: return
                 when {
-                    availableClassifier.symbol.classId == classToImport -> return
+                    availableClassifier.symbol.classIdIfExists == classToImport -> return
                     importedClassifierOverwritesAvailableClassifier(availableClassifier, importAllInParent) -> {
                         importAffectsUsages = true
                     }

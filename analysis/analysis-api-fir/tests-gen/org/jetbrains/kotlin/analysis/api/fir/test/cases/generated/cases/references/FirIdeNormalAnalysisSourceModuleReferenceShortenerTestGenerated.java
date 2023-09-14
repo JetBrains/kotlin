@@ -753,6 +753,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
             public void testTypeBound_whereClause() throws Exception {
                 runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/typeBound_whereClause.kt");
             }
+
+            @Test
+            @TestMetadata("typeParameterVsType.kt")
+            public void testTypeParameterVsType() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/typeParameterVsType.kt");
+            }
         }
     }
 }

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 object ContextCollector {
@@ -358,10 +359,13 @@ private class ContextCollectorVisitor(
      * Processing those parts before adding the implicit receiver of the class
      * to the [context] allows to not collect incorrect contexts for them later on.
      */
+    @OptIn(PrivateForInline::class)
     private fun Processor.processClassHeader(regularClass: FirRegularClass) {
-        processList(regularClass.contextReceivers)
-        processList(regularClass.typeParameters)
-        processList(regularClass.superTypeRefs)
+        context.withTypeParametersOf(regularClass) {
+            processList(regularClass.contextReceivers)
+            processList(regularClass.typeParameters)
+            processList(regularClass.superTypeRefs)
+        }
     }
 
     override fun visitConstructor(constructor: FirConstructor) = withProcessor {
