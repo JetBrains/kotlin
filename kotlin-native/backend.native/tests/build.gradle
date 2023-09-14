@@ -3089,11 +3089,14 @@ standaloneTest("stress_gc_allocations") {
         (project.testTarget != "watchos_x86") &&
         (project.testTarget != "watchos_x64") &&
         (project.testTarget != "watchos_simulator_arm64") &&
-        !isNoopGC &&
-        !isAggressiveGC && // TODO: Investigate why too slow
-        !runtimeAssertionsPanic // New allocator with assertions makes this test very slow
+        !isNoopGC && // Requires some GC.
+        !isAggressiveGC && // No need to check with aggressive GC at all
+        !runtimeAssertionsPanic // New allocator with assertions makes this test very slow.
     source = "runtime/memory/stress_gc_allocations.kt"
-    flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
+    flags = [
+        '-opt-in=kotlin.native.internal.InternalForKotlinNative', // MemoryUsageInfo is internal
+        '-Xdisable-phases=EscapeAnalysis', // The test checks GC, we need to allocate everything on the heap.
+    ]
 }
 
 standaloneTest("array_out_of_memory") {
