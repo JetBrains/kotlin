@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.ConvertibleIntegerOperators.binaryOperatorsWithSignedArgument
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
@@ -223,7 +223,7 @@ class FirCallCompletionResultsWriterTransformer(
             updatedDispatchReceiverType.scope(
                 session,
                 scopeSession,
-                FakeOverrideTypeCalculator.DoNothing,
+                CallableCopyTypeCalculator.DoNothing,
                 FirResolvePhase.STATUS
             ) as? FirClassSubstitutionScope ?: return null
 

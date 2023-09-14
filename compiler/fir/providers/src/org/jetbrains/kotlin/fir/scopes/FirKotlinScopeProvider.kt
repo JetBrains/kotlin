@@ -125,7 +125,7 @@ fun FirClass.unsubstitutedScope(
     memberRequiredPhase: FirResolvePhase?,
 ): FirTypeScope {
     val scope = scopeProvider.getUseSiteMemberScope(this, useSiteSession, scopeSession, memberRequiredPhase)
-    if (withForcedTypeCalculator) return FirScopeWithFakeOverrideTypeCalculator(scope, FakeOverrideTypeCalculator.Forced)
+    if (withForcedTypeCalculator) return FirScopeWithCallableCopyReturnTypeUpdater(scope, CallableCopyTypeCalculator.Forced)
     return scope
 }
 

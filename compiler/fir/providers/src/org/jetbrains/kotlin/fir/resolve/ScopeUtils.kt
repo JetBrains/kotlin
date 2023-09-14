@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeRawScopeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.scopes.impl.FirScopeWithFakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.impl.FirScopeWithCallableCopyReturnTypeUpdater
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.scopes.impl.dynamicMembersStorage
 import org.jetbrains.kotlin.fir.scopes.impl.getOrBuildScopeForIntegerConstantOperatorType
@@ -33,7 +33,7 @@ fun FirSmartCastExpression.smartcastScope(
     val smartcastScope = smartcastType.scope(
         useSiteSession = useSiteSession,
         scopeSession = scopeSession,
-        fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+        callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
         requiredMembersPhase = requiredMembersPhase,
     )
 
@@ -44,7 +44,7 @@ fun FirSmartCastExpression.smartcastScope(
     val originalScope = originalExpression.resolvedType.scope(
         useSiteSession = useSiteSession,
         scopeSession = scopeSession,
-        fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+        callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
         requiredMembersPhase = requiredMembersPhase,
     ) ?: return smartcastScope
 
@@ -65,12 +65,12 @@ fun ConeClassLikeType.delegatingConstructorScope(
 fun ConeKotlinType.scope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
-    fakeOverrideTypeCalculator: FakeOverrideTypeCalculator,
+    callableCopyTypeCalculator: CallableCopyTypeCalculator,
     requiredMembersPhase: FirResolvePhase?,
 ): FirTypeScope? {
     val scope = scope(useSiteSession, scopeSession, requiredMembersPhase) ?: return null
-    if (fakeOverrideTypeCalculator == FakeOverrideTypeCalculator.DoNothing) return scope
-    return FirScopeWithFakeOverrideTypeCalculator(scope, fakeOverrideTypeCalculator)
+    if (callableCopyTypeCalculator == CallableCopyTypeCalculator.DoNothing) return scope
+    return FirScopeWithCallableCopyReturnTypeUpdater(scope, callableCopyTypeCalculator)
 }
 
 private fun ConeKotlinType.scope(

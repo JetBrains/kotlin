@@ -261,7 +261,7 @@ internal class KtFirScopeProvider(
     private fun getFirTypeScope(type: KtFirType): FirTypeScope? = type.coneType.scope(
         firResolveSession.useSiteFirSession,
         getScopeSession(),
-        FakeOverrideTypeCalculator.Forced,
+        CallableCopyTypeCalculator.Forced,
         requiredMembersPhase = FirResolvePhase.STATUS,
     )
 

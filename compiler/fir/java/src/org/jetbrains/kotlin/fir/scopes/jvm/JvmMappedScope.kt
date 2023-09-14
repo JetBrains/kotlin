@@ -294,7 +294,7 @@ class JvmMappedScope(
             newTypeParameters = null,
             newContextReceiverTypes = emptyList(),
             isExpect = false,
-            fakeOverrideSubstitution = null
+            callableCopySubstitutionForTypeUpdater = null
         )
         return newSymbol
     }

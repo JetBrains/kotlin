@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -49,7 +49,7 @@ class IntegerLiteralAndOperatorApproximationTransformer(
         return receiverType.type.scope(
             useSiteSession = session,
             scopeSession = scopeSession,
-            fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+            callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         )!!.getFunctions(name).single()
     }

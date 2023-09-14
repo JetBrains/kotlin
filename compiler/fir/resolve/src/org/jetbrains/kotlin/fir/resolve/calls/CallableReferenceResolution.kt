@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedCallableReferenceTarget
 import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCallableReferenceExpectedType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
@@ -176,7 +176,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     val originScope = function.dispatchReceiverType?.scope(
         useSiteSession = session,
         scopeSession = scopeSession,
-        fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+        callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
         requiredMembersPhase = FirResolvePhase.STATUS,
     )
 

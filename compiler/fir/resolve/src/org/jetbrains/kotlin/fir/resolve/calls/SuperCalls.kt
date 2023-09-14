@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
@@ -132,7 +132,7 @@ private fun BodyResolveComponents.getFunctionMembers(type: ConeKotlinType, name:
         type.scope(
             useSiteSession = session,
             scopeSession = scopeSession,
-            fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+            callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         )?.processFunctionsByName(name) { add(it.fir) }
     }
@@ -142,7 +142,7 @@ private fun BodyResolveComponents.getPropertyMembers(type: ConeKotlinType, name:
         type.scope(
             useSiteSession = session,
             scopeSession = scopeSession,
-            fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+            callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         )?.processPropertiesByName(name) { addIfNotNull(it.fir as? FirVariable) }
     }

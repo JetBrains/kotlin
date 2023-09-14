@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
@@ -215,7 +215,7 @@ abstract class AbstractAnnotationDeserializer(
                 val classScope = firAnnotationClass.defaultType().scope(
                     useSiteSession = session,
                     scopeSession = ScopeSession(),
-                    fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+                    callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
                     requiredMembersPhase = null,
                 ) ?: error("Null scope for $classId")
 

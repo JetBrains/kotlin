@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -191,16 +191,16 @@ fun ConeKotlinType.findContributedInvokeSymbol(
 ): FirFunctionSymbol<*>? {
     val baseInvokeSymbol = expectedFunctionType.findBaseInvokeSymbol(session, scopeSession) ?: return null
 
-    val fakeOverrideTypeCalculator = if (shouldCalculateReturnTypesOfFakeOverrides) {
-        FakeOverrideTypeCalculator.Forced
+    val callableCopyTypeCalculator = if (shouldCalculateReturnTypesOfFakeOverrides) {
+        CallableCopyTypeCalculator.Forced
     } else {
-        FakeOverrideTypeCalculator.DoNothing
+        CallableCopyTypeCalculator.DoNothing
     }
 
     val scope = scope(
         useSiteSession = session,
         scopeSession = scopeSession,
-        fakeOverrideTypeCalculator = fakeOverrideTypeCalculator,
+        callableCopyTypeCalculator = callableCopyTypeCalculator,
         requiredMembersPhase = FirResolvePhase.STATUS,
     ) ?: return null
 

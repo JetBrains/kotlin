@@ -178,7 +178,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         val scope = symbol.defaultType().scope(
             useSiteSession = session,
             scopeSession,
-            FakeOverrideTypeCalculator.DoNothing,
+            CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         ) ?: return emptyList()
 
@@ -204,7 +204,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         val scope = symbol.defaultType().scope(
             useSiteSession = symbol.moduleData.session,
             scopeSession,
-            FakeOverrideTypeCalculator.DoNothing,
+            CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         ) ?: return emptyList()
 

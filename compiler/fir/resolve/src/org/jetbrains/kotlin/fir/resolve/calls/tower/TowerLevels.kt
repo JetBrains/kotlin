@@ -90,7 +90,7 @@ class MemberScopeTowerLevel(
             ?.scope(
                 session,
                 scopeSession,
-                bodyResolveComponents.returnTypeCalculator.fakeOverrideTypeCalculator,
+                bodyResolveComponents.returnTypeCalculator.callableCopyTypeCalculator,
                 requiredMembersPhase = FirResolvePhase.STATUS,
             )
 
@@ -135,7 +135,7 @@ class MemberScopeTowerLevel(
                 useSiteForSyntheticScope = typeForSyntheticScope.scope(
                     session,
                     scopeSession,
-                    FakeOverrideTypeCalculator.DoNothing,
+                    CallableCopyTypeCalculator.DoNothing,
                     requiredMembersPhase = FirResolvePhase.STATUS,
                 ) ?: errorWithAttachment("No scope for flexible type scope, while it's not null") {
                     withConeTypeEntry("dispatchReceiverType", dispatchReceiverType)

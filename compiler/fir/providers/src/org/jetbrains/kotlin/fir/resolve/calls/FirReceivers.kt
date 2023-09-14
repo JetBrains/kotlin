@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.smartcastScope
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -41,7 +41,7 @@ abstract class ReceiverValue {
     open fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = type.scope(
         useSiteSession = useSiteSession,
         scopeSession = scopeSession,
-        fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+        callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
         requiredMembersPhase = FirResolvePhase.STATUS,
     )
 }
@@ -69,7 +69,7 @@ class ExpressionReceiverValue(override val receiverExpression: FirExpression) : 
         return type.scope(
             useSiteSession,
             scopeSession,
-            FakeOverrideTypeCalculator.DoNothing,
+            CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         )
     }
@@ -95,7 +95,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
         type.scope(
             useSiteSession,
             scopeSession,
-            FakeOverrideTypeCalculator.DoNothing,
+            CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS
         )
         private set
@@ -153,7 +153,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
         implicitScope = type.scope(
             useSiteSession = useSiteSession,
             scopeSession = scopeSession,
-            fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+            callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         )
     }
@@ -171,7 +171,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
         implicitScope = type.scope(
             useSiteSession = useSiteSession,
             scopeSession = scopeSession,
-            fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+            callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         )
     }

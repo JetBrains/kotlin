@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
-import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
+import org.jetbrains.kotlin.fir.scopes.callableCopySubstitutionForTypeUpdater
 
 internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
     override fun resolve(
@@ -91,8 +91,8 @@ internal class LLFirImplicitBodyTargetResolver(
 
     override fun rawResolve(target: FirElementWithResolveState): Unit = when {
         target is FirScript -> resolveScript(target)
-        target is FirCallableDeclaration && target.attributes.fakeOverrideSubstitution != null -> {
-            transformer.returnTypeCalculator.fakeOverrideTypeCalculator.computeReturnType(target)
+        target is FirCallableDeclaration && target.attributes.callableCopySubstitutionForTypeUpdater != null -> {
+            transformer.returnTypeCalculator.callableCopyTypeCalculator.computeReturnType(target)
             Unit
         }
 

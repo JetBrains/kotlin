@@ -22,15 +22,14 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveP
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
-import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.callableCopySubstitutionForTypeUpdater
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -178,7 +177,7 @@ open class ReturnTypeCalculatorWithJump(
     val designationMapForLocalClasses: Map<FirCallableDeclaration, List<FirClassLikeDeclaration>> = mapOf(),
     private val nonLocalDeclarationResolver: ReturnTypeCalculatorWithJump? = null,
 ) : ReturnTypeCalculator() {
-    override val fakeOverrideTypeCalculator: FakeOverrideTypeCalculator = FakeOverrideTypeCalculatorWithJump()
+    override val callableCopyTypeCalculator: CallableCopyTypeCalculator = CallableCopyTypeCalculatorWithJump()
 
     @OptIn(PrivateForInline::class)
     var outerBodyResolveContext: BodyResolveContext? = null
@@ -230,16 +229,16 @@ open class ReturnTypeCalculatorWithJump(
         }
 
         if (declaration.isSubstitutionOrIntersectionOverride) {
-            val fakeOverrideSubstitution = declaration.attributes.fakeOverrideSubstitution
+            val callableCopySubstitutionForTypeUpdater = declaration.attributes.callableCopySubstitutionForTypeUpdater
                 ?: return declaration.returnTypeRef as FirResolvedTypeRef
 
             // TODO: drop synchronized in KT-60385
-            synchronized(fakeOverrideSubstitution) {
-                if (declaration.attributes.fakeOverrideSubstitution == null) {
+            synchronized(callableCopySubstitutionForTypeUpdater) {
+                if (declaration.attributes.callableCopySubstitutionForTypeUpdater == null) {
                     return declaration.returnTypeRef as FirResolvedTypeRef
                 }
 
-                val (substitutor, baseSymbol) = fakeOverrideSubstitution
+                val (substitutor, baseSymbol) = callableCopySubstitutionForTypeUpdater
                 val baseDeclaration = baseSymbol.fir as FirCallableDeclaration
                 val baseReturnTypeRef = tryCalculateReturnType(baseDeclaration)
                 val baseReturnType = baseReturnTypeRef.type
@@ -251,7 +250,7 @@ open class ReturnTypeCalculatorWithJump(
                     declaration.setter?.valueParameters?.firstOrNull()?.replaceReturnTypeRef(returnType)
                 }
 
-                declaration.attributes.fakeOverrideSubstitution = null
+                declaration.attributes.callableCopySubstitutionForTypeUpdater = null
                 return returnType
             }
         }
@@ -340,7 +339,7 @@ open class ReturnTypeCalculatorWithJump(
         return newReturnTypeRef
     }
 
-    private inner class FakeOverrideTypeCalculatorWithJump : FakeOverrideTypeCalculator.AbstractFakeOverrideTypeCalculator() {
+    private inner class CallableCopyTypeCalculatorWithJump : CallableCopyTypeCalculator.AbstractCallableCopyTypeCalculator() {
         override fun FirCallableDeclaration.getResolvedTypeRef(): FirResolvedTypeRef? {
             return this@ReturnTypeCalculatorWithJump.computeReturnTypeRef(this)
         }

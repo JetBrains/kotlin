@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.outerType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
@@ -336,7 +336,7 @@ private fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(context: Ch
             val expandedClass = expandedType?.toRegularClassSymbol(context.session)
             val expandedTypeScope = expandedType?.scope(
                 context.session, context.scopeSession,
-                FakeOverrideTypeCalculator.DoNothing,
+                CallableCopyTypeCalculator.DoNothing,
                 requiredMembersPhase = FirResolvePhase.STATUS,
             )
 

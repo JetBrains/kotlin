@@ -8,16 +8,22 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.isDelegated
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirDelegatingTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
-class FirScopeWithFakeOverrideTypeCalculator(
+/**
+ * This scope is a wrapper which is intended to use with scopes that can create callable copies.
+ *
+ * The main purpose of this scope is to update dispatched callables return types
+ * in case it is not yet calculated due to implicit body resolve logic.
+ */
+class FirScopeWithCallableCopyReturnTypeUpdater(
     private val delegate: FirTypeScope,
-    private val fakeOverrideTypeCalculator: FakeOverrideTypeCalculator
+    private val callableCopyTypeCalculator: CallableCopyTypeCalculator
 ) : FirDelegatingTypeScope(delegate) {
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         delegate.processFunctionsByName(name) {
@@ -55,7 +61,7 @@ class FirScopeWithFakeOverrideTypeCalculator(
 
     private fun updateReturnType(declaration: FirCallableDeclaration) {
         if (declaration.isSubstitutionOrIntersectionOverride || declaration.isDelegated) {
-            fakeOverrideTypeCalculator.computeReturnType(declaration)
+            callableCopyTypeCalculator.computeReturnType(declaration)
         }
     }
 

@@ -29,7 +29,7 @@ fun debugCollectOverrides(symbol: FirCallableSymbol<*>, session: FirSession, sco
     val scope = symbol.dispatchReceiverType?.scope(
         session,
         scopeSession,
-        FakeOverrideTypeCalculator.DoNothing,
+        CallableCopyTypeCalculator.DoNothing,
         requiredMembersPhase = FirResolvePhase.STATUS,
     ) ?: return emptyMap()
 

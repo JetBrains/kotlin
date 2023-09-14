@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
@@ -172,7 +172,7 @@ private fun processConstructors(
                 val basicScope = type.scope(
                     session,
                     bodyResolveComponents.scopeSession,
-                    FakeOverrideTypeCalculator.DoNothing,
+                    CallableCopyTypeCalculator.DoNothing,
                     requiredMembersPhase = FirResolvePhase.STATUS,
                 )
 

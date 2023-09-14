@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.name.CallableId
@@ -55,7 +55,7 @@ internal class KtFirPropertySetterSymbol(
             val containingClassScope = firSymbol.dispatchReceiverType?.scope(
                 session,
                 analysisSession.getScopeSessionFor(session),
-                FakeOverrideTypeCalculator.DoNothing,
+                CallableCopyTypeCalculator.DoNothing,
                 requiredMembersPhase = FirResolvePhase.STATUS,
             ) ?: return false
 

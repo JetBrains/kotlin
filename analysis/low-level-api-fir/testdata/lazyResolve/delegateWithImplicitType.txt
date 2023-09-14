@@ -1,5 +1,5 @@
 RAW_FIR:
-TARGET: public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+TARGET: public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -16,7 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 IMPORTS:
-TARGET: public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+TARGET: public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-TARGET: public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+TARGET: public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -50,7 +50,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 COMPANION_GENERATION:
-TARGET: public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+TARGET: public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 SUPER_TYPES:
-TARGET: public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+TARGET: public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 TYPES:
-TARGET: public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+TARGET: public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 STATUS:
-TARGET: public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+TARGET: public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -118,7 +118,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 EXPECT_ACTUAL_MATCHING:
-TARGET: public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+TARGET: public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 ARGUMENTS_OF_ANNOTATIONS:
-TARGET: public open [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+TARGET: public open [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 CONTRACTS:
-TARGET: public open [ResolvedTo(CONTRACTS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+TARGET: public open [ResolvedTo(CONTRACTS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
