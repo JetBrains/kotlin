@@ -130,7 +130,7 @@ internal class KtFirScopeProvider(
         }
 
         return scopeSession.getOrBuild(firJavaClass.symbol, cacheKey) {
-            JavaClassDeclaredMembersEnhancementScope(analysisSession.useSiteSession, firJavaClass, firScope)
+            FirDeclaredMembersOnlyScope(firScope, firJavaClass)
         }
     }
 
