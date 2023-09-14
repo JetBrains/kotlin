@@ -9,6 +9,9 @@ object StandardTypes {
     val boolean = type<Boolean>()
     val string = type<String>()
     val int = type<Int>()
+    val array = type<Array<*>>()
+    val list = type<List<*>>()
+    val mutableList = type("kotlin.collections", "MutableList")
     val collection = type<Collection<*>>()
     val map = type<Map<*, *>>()
 }
