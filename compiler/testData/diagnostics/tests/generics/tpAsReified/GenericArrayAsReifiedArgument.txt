@@ -1,5 +1,0 @@
-package
-
-public fun </*0*/ T> bar(): kotlin.Unit
-public inline fun </*0*/ reified T> foo(): kotlin.Unit
-public fun test(/*0*/ x: kotlin.Array<kotlin.String>, /*1*/ y: kotlin.Array<*>): kotlin.Unit

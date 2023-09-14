@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.chooseFactory
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -58,11 +60,15 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
         isExplicit: Boolean,
         isArray: Boolean,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
-        if (typeArgument.classId == StandardClassIds.Array) {
-            val nestedTypeArgument = typeArgument.typeArguments[0].type ?: return
-            checkArgumentAndReport(nestedTypeArgument, source, isExplicit, isArray = true, context, reporter)
+        val fullyExpandedType = typeArgument.fullyExpandedType(context.session)
+        if (fullyExpandedType.classId == StandardClassIds.Array) {
+            // Type aliases can transform type arguments arbitrarily (drop, nest, etc...).
+            // Therefore, we check the arguments of the expanded type, not the ones that went into the type alias.
+            fullyExpandedType.typeArguments.forEach {
+                if (it is ConeKotlinType) checkArgumentAndReport(it, source, isExplicit, isArray = true, context, reporter)
+            }
             return
         }
 
