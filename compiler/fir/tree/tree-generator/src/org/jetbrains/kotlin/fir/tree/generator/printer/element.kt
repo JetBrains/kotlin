@@ -84,14 +84,16 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
             if (needTransformOtherChildren) {
                 println()
                 abstract()
-                if (element.parents.any { it.needTransformOtherChildren }) {
+                if (element.parentRefs.any { it.element.needTransformOtherChildren }) {
                     print("override ")
                 }
                 println(transformFunctionDeclaration("OtherChildren", typeWithArguments))
             }
 
             if (element == AbstractFirTreeBuilder.baseFirElement) {
-                require(isInterface)
+                require(isInterface) {
+                    "$element must be an interface"
+                }
                 println()
                 println("fun accept(visitor: FirVisitorVoid) = accept(visitor, null)")
                 println()

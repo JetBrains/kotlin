@@ -34,21 +34,22 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
             print(element.typeParameters())
 
             val pureAbstractElementType = pureAbstractElementType(element)
-            if (element.parents.isNotEmpty() || pureAbstractElementType != null) {
+            if (element.parentRefs.isNotEmpty() || pureAbstractElementType != null) {
                 print(" : ")
                 if (pureAbstractElementType != null) {
                     print("$pureAbstractElementType()")
-                    if (element.parents.isNotEmpty()) {
+                    if (element.parentRefs.isNotEmpty()) {
                         print(", ")
                     }
                 }
                 print(
-                    element.parents.joinToString(", ") {
-                        var result = it.type
-                        element.parentsArguments[it]?.let { arguments ->
-                            result += arguments.values.joinToString(", ", "<", ">") { it.typeWithArguments }
+                    element.parentRefs.joinToString(", ") {
+                        // TODO: Factor out
+                        var result = it.element.type
+                        if (it.args.isNotEmpty()) {
+                            result += it.args.values.joinToString(", ", "<", ">") { it.typeWithArguments }
                         }
-                        result + it.kind.braces()
+                        result + it.element.kind.braces()
                     },
                 )
             }

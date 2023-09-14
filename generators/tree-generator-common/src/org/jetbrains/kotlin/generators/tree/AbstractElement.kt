@@ -18,9 +18,7 @@ interface AbstractElement<Element, Field> : ElementOrRef<Element, Field>, FieldC
 
     val params: List<TypeVariable> // TODO: Rename to `typeParameters` (rn this name would clash with the extension function)
 
-    val parents: List<Element>
-
-    val parentsArguments: Map<Element, Map<TypeRef, TypeRef>>
+    val parentRefs: List<ElementOrRef<Element, Field>>
 
     val overridenFields: Map<Field, Map<Field, Boolean>>
 
@@ -28,7 +26,7 @@ interface AbstractElement<Element, Field> : ElementOrRef<Element, Field>, FieldC
         get() = false
 
     override val allParents: List<ImplementationKindOwner>
-        get() = parents
+        get() = parentRefs.map { it.element }
 
     override fun getTypeWithArguments(notNull: Boolean): String = type + generics
 

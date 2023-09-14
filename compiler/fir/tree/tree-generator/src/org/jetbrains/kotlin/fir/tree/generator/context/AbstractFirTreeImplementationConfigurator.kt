@@ -57,7 +57,7 @@ abstract class AbstractFirTreeImplementationConfigurator {
     private fun collectLeafsWithoutImplementation(builder: AbstractFirTreeBuilder): Set<Element> {
         val elements = builder.elements.toMutableSet()
         builder.elements.forEach {
-            elements.removeAll(it.parents)
+            elements.removeAll(it.parentRefs.map { it.element }.toSet())
         }
         elements.removeAll(elementsWithImpl)
         return elements
