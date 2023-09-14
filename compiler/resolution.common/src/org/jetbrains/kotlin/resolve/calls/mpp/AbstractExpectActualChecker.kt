@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.mpp
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -360,6 +361,7 @@ object AbstractExpectActualChecker {
         if (!areCompatibleCallableVisibilities(
                 expectDeclaration.visibility,
                 expectModality,
+                expectContainingClass?.modality,
                 actualDeclaration.visibility,
                 languageVersionSettings
             )
@@ -404,7 +406,7 @@ object AbstractExpectActualChecker {
                 getFunctionsIncompatibility(expectDeclaration, actualDeclaration)?.let { return it }
 
             expectDeclaration is PropertySymbolMarker && actualDeclaration is PropertySymbolMarker ->
-                getPropertiesIncompatibility(expectDeclaration, actualDeclaration, languageVersionSettings)?.let { return it }
+                getPropertiesIncompatibility(expectDeclaration, actualDeclaration, expectContainingClass, languageVersionSettings)?.let { return it }
 
             expectDeclaration is EnumEntrySymbolMarker && actualDeclaration is EnumEntrySymbolMarker -> {
                 // do nothing, entries are matched only by name
@@ -465,11 +467,17 @@ object AbstractExpectActualChecker {
     private fun areCompatibleCallableVisibilities(
         expectVisibility: Visibility,
         expectModality: Modality?,
+        expectContainingClassModality: Modality?,
         actualVisibility: Visibility,
         languageVersionSettings: LanguageVersionSettings,
     ): Boolean {
         val compare = Visibilities.compare(expectVisibility, actualVisibility)
-        return if (expectModality != Modality.FINAL) {
+        val effectiveModality =
+            when (languageVersionSettings.supportsFeature(LanguageFeature.SupportEffectivelyFinalInExpectActualVisibilityCheck)) {
+                true -> effectiveModality(expectModality, expectContainingClassModality)
+                false -> expectModality
+            }
+        return if (effectiveModality != Modality.FINAL) {
             // For overridable declarations visibility should match precisely, see KT-19664
             compare == 0
         } else {
@@ -536,13 +544,14 @@ object AbstractExpectActualChecker {
     private fun getPropertiesIncompatibility(
         expected: PropertySymbolMarker,
         actual: PropertySymbolMarker,
+        expectContainingClass: RegularClassSymbolMarker?,
         languageVersionSettings: LanguageVersionSettings,
     ): ExpectActualCheckingCompatibility.Incompatible<*>? {
         return when {
             !equalBy(expected, actual) { p -> p.isVar } -> ExpectActualCheckingCompatibility.PropertyKind
             !equalBy(expected, actual) { p -> p.isLateinit } -> ExpectActualCheckingCompatibility.PropertyLateinitModifier
             expected.isConst && !actual.isConst -> ExpectActualCheckingCompatibility.PropertyConstModifier
-            !arePropertySettersWithCompatibleVisibilities(expected, actual, languageVersionSettings) ->
+            !arePropertySettersWithCompatibleVisibilities(expected, actual, expectContainingClass, languageVersionSettings) ->
                 ExpectActualCheckingCompatibility.PropertySetterVisibility
             else -> null
         }
@@ -552,6 +561,7 @@ object AbstractExpectActualChecker {
     private fun arePropertySettersWithCompatibleVisibilities(
         expected: PropertySymbolMarker,
         actual: PropertySymbolMarker,
+        expectContainingClass: RegularClassSymbolMarker?,
         languageVersionSettings: LanguageVersionSettings,
     ): Boolean {
         val expectedSetter = expected.setter ?: return true
@@ -559,6 +569,7 @@ object AbstractExpectActualChecker {
         return areCompatibleCallableVisibilities(
             expectedSetter.visibility,
             expectedSetter.modality,
+            expectContainingClass?.modality,
             actualSetter.visibility,
             languageVersionSettings
         )
