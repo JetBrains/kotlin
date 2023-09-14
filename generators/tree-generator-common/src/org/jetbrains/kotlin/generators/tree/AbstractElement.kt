@@ -8,27 +8,39 @@ package org.jetbrains.kotlin.generators.tree
 import org.jetbrains.kotlin.generators.tree.printer.generics
 
 /**
- * A common interface representing a FIR or IR tree element.
+ * A class representing a FIR or IR tree element.
  */
-interface AbstractElement<Element, Field> : ElementOrRef<Element, Field>, FieldContainer, ImplementationKindOwner
+abstract class AbstractElement<Element, Field> : ElementOrRef<Element, Field>, FieldContainer, ImplementationKindOwner
         where Element : AbstractElement<Element, Field>,
               Field : AbstractField {
 
-    val name: String
+    abstract val name: String
 
-    val fields: Set<Field>
+    abstract val fields: Set<Field>
 
-    val params: List<TypeVariable>
+    abstract val params: List<TypeVariable>
 
-    val parentRefs: List<ElementOrRef<Element, Field>>
+    abstract val parentRefs: List<ElementOrRef<Element, Field>>
 
-    val overridenFields: Map<Field, Map<Field, Boolean>>
-
-    val isSealed: Boolean
+    open val isSealed: Boolean
         get() = false
 
-    override val allParents: List<ImplementationKindOwner>
+    override val allParents: List<Element>
         get() = parentRefs.map { it.element }
 
-    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
+    final override fun getTypeWithArguments(notNull: Boolean): String = type + generics
+
+    abstract override val allFields: List<Field>
+
+    final override fun get(fieldName: String): Field? {
+        return allFields.firstOrNull { it.name == fieldName }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    final override fun copy(nullable: Boolean) =
+        ElementRef(this as Element, args, nullable)
+
+    @Suppress("UNCHECKED_CAST")
+    final override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) =
+        ElementRef(this as Element, args, nullable)
 }

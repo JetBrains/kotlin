@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.generators.tree.ElementOrRef
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
-class Element(override val name: String, kind: Kind) : AbstractElement<Element, Field> {
+class Element(override val name: String, kind: Kind) : AbstractElement<Element, Field>() {
     companion object {
         private val allowedKinds = setOf(
             ImplementationKind.Interface,
@@ -30,10 +30,6 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
 
     override val nullable: Boolean
         get() = false
-
-    override fun copy(nullable: Boolean) = ElementRef(this, args, nullable)
-
-    override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) = ElementRef(this, args, nullable)
 
     override val fields = mutableSetOf<Field>()
     override val type: String = "Fir$name"
@@ -63,7 +59,7 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
     var doesNotNeedImplementation: Boolean = false
 
     val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || parentRefs.any { it.element.needTransformOtherChildren }
-    override val overridenFields: MutableMap<Field, MutableMap<Field, Boolean>> = mutableMapOf()
+    val overridenFields: MutableMap<Field, MutableMap<Field, Boolean>> = mutableMapOf()
     val useNullableForReplace: MutableSet<Field> = mutableSetOf()
     val allImplementations: List<Implementation> by lazy {
         if (doesNotNeedImplementation) {
@@ -147,10 +143,6 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
 
     override fun toString(): String {
         return typeWithArguments
-    }
-
-    override fun get(fieldName: String): Field? {
-        return allFields.firstOrNull { it.name == fieldName }
     }
 
     enum class Kind(val packageName: String) {
