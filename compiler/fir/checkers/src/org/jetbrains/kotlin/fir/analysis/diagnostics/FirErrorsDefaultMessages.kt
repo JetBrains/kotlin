@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.VISIBILITY
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.CLASS_KIND
+import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.NAME
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.RENDER_POSITION_VARIANCE
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.commaSeparated
 import org.jetbrains.kotlin.diagnostics.rendering.LanguageFeatureMessageRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBIGUOUS_CALLS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLABLES_FQ_NAMES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLEE_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FOR_OPTIONAL_OPERATOR
@@ -1514,28 +1516,36 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FQ_NAMES_IN_TYPES
         )
 
-        val multipleDefaultsMessage = "More than one overridden function declares a default value for ''{0}''."
+        val multipleDefaultsMessage = "More than one function overridden by ''{0}'' declares a default value for ''{1}'': {2}."
         val multipleDefaultsNotAllowed = " As the compiler can not make sure these values agree, this is not allowed."
         map.put(
             MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES,
             multipleDefaultsMessage + multipleDefaultsNotAllowed,
-            SYMBOL
+            NAME,
+            SYMBOL,
+            CALLABLES_FQ_NAMES,
         )
         map.put(
             MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE,
             multipleDefaultsMessage + multipleDefaultsNotAllowed,
-            SYMBOL
+            NAME,
+            SYMBOL,
+            CALLABLES_FQ_NAMES,
         )
-        val multipleDefaultsDiscouraged = " As the compiler can not make sure these values agree, this will be prohibited in the Future."
+        val multipleDefaultsDiscouraged = " As the compiler can not make sure these values agree, this will be prohibited in the future."
         map.put(
             MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_DEPRECATION,
             multipleDefaultsMessage + multipleDefaultsDiscouraged,
-            SYMBOL
+            NAME,
+            SYMBOL,
+            CALLABLES_FQ_NAMES,
         )
         map.put(
             MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE_DEPRECATION,
             multipleDefaultsMessage + multipleDefaultsDiscouraged,
-            SYMBOL
+            NAME,
+            SYMBOL,
+            CALLABLES_FQ_NAMES,
         )
 
         map.put(TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS, "Type alias expanded to malformed type ''{0}''", RENDER_TYPE)

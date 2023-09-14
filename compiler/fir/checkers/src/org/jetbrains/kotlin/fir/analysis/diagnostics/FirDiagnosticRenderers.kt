@@ -66,6 +66,11 @@ object FirDiagnosticRenderers {
         }
     }
 
+    private val CALLABLE_FQ_NAME = Renderer { symbol: FirCallableSymbol<*> ->
+        symbol.callableId.asSingleFqName().asString()
+    }
+    val CALLABLES_FQ_NAMES = KtDiagnosticRenderers.COLLECTION(CALLABLE_FQ_NAME)
+
     val RENDER_COLLECTION_OF_TYPES = Renderer { types: Collection<ConeKotlinType> ->
         types.joinToString(separator = ", ") { type ->
             RENDER_TYPE.render(type)

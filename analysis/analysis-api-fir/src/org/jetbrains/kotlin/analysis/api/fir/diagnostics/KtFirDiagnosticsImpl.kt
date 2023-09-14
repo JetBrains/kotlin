@@ -2233,37 +2233,49 @@ internal class CannotChangeAccessPrivilegeImpl(
 ) : KtAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KtFirDiagnostic.CannotChangeAccessPrivilege
 
 internal class MultipleDefaultsInheritedFromSupertypesImpl(
+    override val name: Name,
     override val valueParameter: KtSymbol,
+    override val baseFunctions: List<KtCallableSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.MultipleDefaultsInheritedFromSupertypes
 
 internal class MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideImpl(
+    override val name: Name,
     override val valueParameter: KtSymbol,
+    override val baseFunctions: List<KtCallableSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverride
 
 internal class MultipleDefaultsInheritedFromSupertypesDeprecationErrorImpl(
+    override val name: Name,
     override val valueParameter: KtSymbol,
+    override val baseFunctions: List<KtCallableSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.MultipleDefaultsInheritedFromSupertypesDeprecationError
 
 internal class MultipleDefaultsInheritedFromSupertypesDeprecationWarningImpl(
+    override val name: Name,
     override val valueParameter: KtSymbol,
+    override val baseFunctions: List<KtCallableSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.MultipleDefaultsInheritedFromSupertypesDeprecationWarning
 
 internal class MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideDeprecationErrorImpl(
+    override val name: Name,
     override val valueParameter: KtSymbol,
+    override val baseFunctions: List<KtCallableSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideDeprecationError
 
 internal class MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideDeprecationWarningImpl(
+    override val name: Name,
     override val valueParameter: KtSymbol,
+    override val baseFunctions: List<KtCallableSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideDeprecationWarning

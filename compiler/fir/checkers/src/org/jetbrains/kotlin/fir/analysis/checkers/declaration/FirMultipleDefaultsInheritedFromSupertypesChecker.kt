@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.name.Name
 
 object FirMultipleDefaultsInheritedFromSupertypesChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -48,9 +49,9 @@ object FirMultipleDefaultsInheritedFromSupertypesChecker : FirRegularClassChecke
         val overriddenFunctionsK1WouldConsider = overriddenFunctions.filter { it.containingClassLookupTag() in immediateSupertypes }
 
         for ((index, parameter) in function.valueParameterSymbols.withIndex()) {
-            val basesWithDefaultValues = overriddenFunctions.count { it.valueParameterSymbols[index].hasDefaultValue }
+            val basesWithDefaultValues = overriddenFunctions.filter { it.valueParameterSymbols[index].hasDefaultValue }
 
-            if (basesWithDefaultValues <= 1) {
+            if (basesWithDefaultValues.size <= 1) {
                 continue
             }
 
@@ -58,11 +59,15 @@ object FirMultipleDefaultsInheritedFromSupertypesChecker : FirRegularClassChecke
 
             when {
                 !isExplicitOverride -> {
-                    reportDiagnosticForImplicitOverride(k1WouldMiss, declaration.source, parameter, context, reporter)
+                    reportDiagnosticForImplicitOverride(
+                        k1WouldMiss, declaration.source, function.name, parameter, basesWithDefaultValues, context, reporter
+                    )
                     // Avoid duplicates
                     break
                 }
-                else -> reportDiagnosticForExplicitOverride(k1WouldMiss, parameter, context, reporter)
+                else -> reportDiagnosticForExplicitOverride(
+                    k1WouldMiss, function.name, parameter, basesWithDefaultValues, context, reporter
+                )
             }
         }
     }
@@ -70,33 +75,37 @@ object FirMultipleDefaultsInheritedFromSupertypesChecker : FirRegularClassChecke
     private fun reportDiagnosticForImplicitOverride(
         k1WouldMiss: Boolean,
         source: KtSourceElement?,
+        name: Name,
         parameter: FirValueParameterSymbol,
+        basesWithDefaultValues: List<FirNamedFunctionSymbol>,
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ): Unit = when {
         k1WouldMiss -> reporter.reportOn(
             source, FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE_DEPRECATION,
-            parameter, context,
+            name, parameter, basesWithDefaultValues, context,
         )
         else -> reporter.reportOn(
             source, FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE,
-            parameter, context,
+            name, parameter, basesWithDefaultValues, context,
         )
     }
 
     private fun reportDiagnosticForExplicitOverride(
         k1WouldMiss: Boolean,
+        name: Name,
         parameter: FirValueParameterSymbol,
+        basesWithDefaultValues: List<FirNamedFunctionSymbol>,
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ): Unit = when {
         k1WouldMiss -> reporter.reportOn(
             parameter.source, FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_DEPRECATION,
-            parameter, context,
+            name, parameter, basesWithDefaultValues, context,
         )
         else -> reporter.reportOn(
             parameter.source, FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES,
-            parameter, context,
+            name, parameter, basesWithDefaultValues, context,
         )
     }
 }
