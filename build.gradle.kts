@@ -87,7 +87,6 @@ extra["distLibDir"] = project.file(distLibDir)
 extra["commonLocalDataDir"] = project.file(commonLocalDataDir)
 extra["ideaSandboxDir"] = project.file(ideaSandboxDir)
 extra["ideaPluginDir"] = project.file(ideaPluginDir)
-extra["isSonatypeRelease"] = false
 
 rootProject.apply {
     from(rootProject.file("gradle/versions.gradle.kts"))

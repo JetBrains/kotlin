@@ -19,7 +19,6 @@ fun Project.preparePublication() {
         val repo: String? = properties["kotlin.build.deploy-repo"]?.toString() ?: properties["deploy-repo"]?.toString()
         val repoProvider = repositoryProviders.getOrDefault(repo, repo)
         val isSonatypePublish: Boolean by extra(repoProvider == "sonatype")
-        val isSonatypeRelease: Boolean by extra(isSonatypePublish && isRelease)
 
         val deployRepoUrl = (properties["kotlin.build.deploy-url"] ?: properties["deploy-url"])?.toString()?.takeIf { it.isNotBlank() }
 

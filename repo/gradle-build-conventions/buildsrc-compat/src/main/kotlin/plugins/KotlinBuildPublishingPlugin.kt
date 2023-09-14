@@ -133,7 +133,6 @@ fun MavenPublication.configureKotlinPomAttributes(project: Project, explicitDesc
 val Project.signLibraryPublication: Boolean
     get() = project.providers.gradleProperty("signingRequired").orNull?.toBoolean()
         ?: project.providers.gradleProperty("kotlin.build.signing-required").orNull?.toBoolean()
-        ?: project.providers.gradleProperty("isSonatypeRelease").orNull?.toBoolean()
         ?: false
 
 // overload for Groovy
