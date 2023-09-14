@@ -54,7 +54,7 @@ class FirDelegatedMemberScope(
     private fun buildScope(delegateField: FirField): FirTypeScope? = delegateField.symbol.resolvedReturnType.scope(
         session,
         scopeSession,
-        FakeOverrideTypeCalculator.DoNothing,
+        FakeOverrideTypeCalculator.Forced,
         requiredMembersPhase = null,
     )
 

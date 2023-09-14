@@ -1,0 +1,48 @@
+fun foo() {
+  return DelegatedB().invoke()
+}
+
+interface A {
+  operator fun invoke() {
+  }
+
+  operator fun invoke(value: String) {
+    return <this>.bar(value = value)
+  }
+
+}
+
+fun A.bar(value: String) {
+}
+
+open class DelegatedB : B<String> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun invoke() {
+    <this>.#$$delegate_0.invoke()
+  }
+
+  override operator fun invoke(value: String) {
+    <this>.#$$delegate_0.invoke(value = value)
+  }
+
+  private /* final field */ val $$delegate_0: C<String> = C<String>()
+
+}
+
+interface B<out T : Any?> : A {
+
+}
+
+class C<out T : Any?> : B<T> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
