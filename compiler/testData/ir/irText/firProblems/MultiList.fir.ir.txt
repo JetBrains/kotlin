@@ -354,11 +354,6 @@ FILE fqName:<root> fileName:/MultiList.kt
         public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] E of java.util.ArrayList?>?): kotlin.Unit declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] <root>.Some<T of <root>.SomeList>?>?
-    FUN FAKE_OVERRIDE name:elementData visibility:public/*package*/ modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>, p0:kotlin.Int) returnType:@[FlexibleNullability] <root>.Some<T of <root>.SomeList>? [fake_override]
-      overridden:
-        public/*package*/ open fun elementData (p0: kotlin.Int): @[FlexibleNullability] E of java.util.ArrayList? declared in java.util.ArrayList
-      $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-      VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:trimToSize visibility:public modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun trimToSize (): kotlin.Unit declared in java.util.ArrayList
@@ -548,11 +543,6 @@ FILE fqName:<root> fileName:/MultiList.kt
         public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] <root>.Some<T of <root>.SomeList>?>?): kotlin.Unit declared in <root>.SomeList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<kotlin.String>>
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] <root>.Some<kotlin.String>?>?
-    FUN FAKE_OVERRIDE name:elementData visibility:public/*package*/ modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<kotlin.String>>, p0:kotlin.Int) returnType:@[FlexibleNullability] <root>.Some<kotlin.String>? [fake_override]
-      overridden:
-        public/*package*/ open fun elementData (p0: kotlin.Int): @[FlexibleNullability] <root>.Some<T of <root>.SomeList>? declared in <root>.SomeList
-      $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<kotlin.String>>
-      VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:trimToSize visibility:public modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<kotlin.String>>) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun trimToSize (): kotlin.Unit declared in <root>.SomeList

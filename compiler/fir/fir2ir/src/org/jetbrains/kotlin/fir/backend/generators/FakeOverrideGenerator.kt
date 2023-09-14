@@ -236,10 +236,9 @@ class FakeOverrideGenerator(
         // But they are treated differently in IR (real declarations have already been declared before) and such methods are present among realDeclarationSymbols
         if (originalSymbol in realDeclarationSymbols) return
 
-        if (!session.visibilityChecker.isVisibleForOverriding(klass.moduleData, klass.symbol, originalDeclaration)) return
-
-        val origin = IrDeclarationOrigin.FAKE_OVERRIDE
         val baseSymbol = originalSymbol.unwrapSubstitutionAndIntersectionOverrides() as S
+
+        if (!session.visibilityChecker.isVisibleForOverriding(klass.moduleData, klass.symbol, baseSymbol.fir)) return
 
         val (fakeOverrideFirDeclaration, baseFirSymbolsForFakeOverride) = when {
             originalSymbol.shouldHaveComputedBaseSymbolsForClass(classLookupTag) -> {
@@ -268,7 +267,7 @@ class FakeOverrideGenerator(
             ?: createIrDeclaration(
                 fakeOverrideFirDeclaration,
                 irClass,
-                origin,
+                IrDeclarationOrigin.FAKE_OVERRIDE,
                 isLocal
             )
         if (containsErrorTypes(irDeclaration)) {

@@ -6,11 +6,6 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.ArrayList'
           <E>: kotlin.String
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A1 modality:FINAL visibility:public superTypes:[java.util.ArrayList<kotlin.String>]'
-    FUN FAKE_OVERRIDE name:elementData visibility:public/*package*/ modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, p0:kotlin.Int) returnType:@[FlexibleNullability] kotlin.String? [fake_override]
-      overridden:
-        public/*package*/ open fun elementData (p0: kotlin.Int): @[FlexibleNullability] E of java.util.ArrayList? declared in java.util.ArrayList
-      $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
-      VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int
@@ -208,11 +203,6 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun remove (x: kotlin.String): kotlin.Boolean declared in <root>.A2'
           CONST Boolean type=kotlin.Boolean value=true
-    FUN FAKE_OVERRIDE name:elementData visibility:public/*package*/ modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, p0:kotlin.Int) returnType:@[FlexibleNullability] kotlin.String? [fake_override]
-      overridden:
-        public/*package*/ open fun elementData (p0: kotlin.Int): @[FlexibleNullability] E of java.util.ArrayList? declared in java.util.ArrayList
-      $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.String>
-      VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int
