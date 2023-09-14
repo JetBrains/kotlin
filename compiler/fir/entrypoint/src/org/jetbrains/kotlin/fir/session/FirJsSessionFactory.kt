@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.analysis.FirEmptyOverridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsModuleKind
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsPlatformDiagnosticSuppressor
@@ -25,7 +22,7 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
+import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -54,9 +51,10 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             null,
             null,
             init,
-            registerExtraComponents = { session ->
-                session.registerJsSpecificComponents(compilerConfiguration)
-                registerExtraComponents(session)
+            registerExtraComponents = {
+                it.registerDefaultComponents()
+                it.registerJsComponents(compilerConfiguration)
+                registerExtraComponents(it)
             },
             registerExtraCheckers = { it.registerJsCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider() },
@@ -93,7 +91,8 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         compilerConfiguration.languageVersionSettings,
         extensionRegistrars,
         registerExtraComponents = {
-            it.registerJsSpecificComponents(compilerConfiguration)
+            it.registerDefaultComponents()
+            it.registerJsComponents(compilerConfiguration)
             registerExtraComponents(it)
         },
         createKotlinScopeProvider = { FirKotlinScopeProvider() },
@@ -107,15 +106,12 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
     )
 
     @OptIn(SessionConfiguration::class)
-    fun FirSession.registerJsSpecificComponents(compilerConfiguration: CompilerConfiguration) {
-        register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
+    private fun FirSession.registerJsComponents(compilerConfiguration: CompilerConfiguration) {
         register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
         register(
             FirTypeSpecificityComparatorProvider::class,
             FirTypeSpecificityComparatorProvider(JsTypeSpecificityComparatorWithoutDelegate(typeContext))
         )
-        register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
-        register(FirOverridesBackwardCompatibilityHelper::class, FirEmptyOverridesBackwardCompatibilityHelper)
         register(FirPlatformDiagnosticSuppressor::class, FirJsPlatformDiagnosticSuppressor())
 
         val moduleKind = compilerConfiguration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)

@@ -34,8 +34,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
 
     override fun createSourcesSession(module: KtSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module, FirKotlinScopeProvider(::wrapScopeWithJvmMapped)) { context ->
-            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
-            registerJavaSpecificResolveComponents()
+            registerJavaComponents(JavaModuleResolver.getInstance(project))
             val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.moduleData, project, context.contentScope)
             register(JavaSymbolProvider::class, javaSymbolProvider)
 
@@ -59,8 +58,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
 
     override fun createLibrarySession(module: KtModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
         return doCreateLibrarySession(module) { context ->
-            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
-            registerJavaSpecificResolveComponents()
+            registerJavaComponents(JavaModuleResolver.getInstance(project))
             val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.moduleData, project, context.contentScope)
             register(
                 FirSymbolProvider::class,
@@ -81,8 +79,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
 
     override fun createBinaryLibrarySession(module: KtBinaryModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
-            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
-            registerJavaSpecificResolveComponents()
+            registerJavaComponents(JavaModuleResolver.getInstance(project))
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
             registerLibraryScopeAwareCallConflictResolverFactory()
         }

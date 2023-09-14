@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
@@ -51,7 +52,8 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             languageVersionSettings,
             extensionRegistrars,
             registerExtraComponents = {
-                it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver(), predefinedJavaComponents)
+                it.registerDefaultComponents()
+                it.registerJavaComponents(projectEnvironment.getJavaModuleResolver(), predefinedJavaComponents)
                 registerExtraComponents(it)
             },
             createKotlinScopeProvider = { FirKotlinScopeProvider(::wrapScopeWithJvmMapped) },
@@ -106,8 +108,8 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             importTracker,
             init,
             registerExtraComponents = {
-                it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver(), predefinedJavaComponents)
-                it.registerJavaSpecificResolveComponents()
+                it.registerDefaultComponents()
+                it.registerJavaComponents(projectEnvironment.getJavaModuleResolver(), predefinedJavaComponents)
                 registerExtraComponents(it)
             },
             registerExtraCheckers = { it.registerJvmCheckers() },

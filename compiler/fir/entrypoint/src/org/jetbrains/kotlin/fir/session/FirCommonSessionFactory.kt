@@ -9,20 +9,15 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirVisibilityChecker
-import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.analysis.FirDefaultOverridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
+import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
@@ -54,6 +49,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             languageVersionSettings,
             extensionRegistrars,
             registerExtraComponents = {
+                it.registerDefaultComponents()
                 registerExtraComponents(it)
             },
             createKotlinScopeProvider = { FirKotlinScopeProvider() },
@@ -82,7 +78,6 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
         )
     }
 
-    @OptIn(SessionConfiguration::class)
     fun createModuleBasedSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
@@ -106,10 +101,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             importTracker,
             init,
             registerExtraComponents = {
-                it.register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
-                it.register(ConeCallConflictResolverFactory::class, DefaultCallConflictResolverFactory)
-                it.register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
-                it.register(FirOverridesBackwardCompatibilityHelper::class, FirDefaultOverridesBackwardCompatibilityHelper)
+                it.registerDefaultComponents()
                 registerExtraComponents(it)
             },
             registerExtraCheckers = {},

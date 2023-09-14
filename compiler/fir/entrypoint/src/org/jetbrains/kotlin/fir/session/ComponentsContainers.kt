@@ -122,12 +122,15 @@ class FirSharableJavaComponents(
 }
 
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerCommonJavaComponents(
+fun FirSession.registerJavaComponents(
     javaModuleResolver: JavaModuleResolver,
     predefinedComponents: FirSharableJavaComponents? = null,
 ) {
     val jsr305State = languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState)
-    register(FirAnnotationTypeQualifierResolver::class, FirAnnotationTypeQualifierResolver(this, jsr305State, javaModuleResolver))
+    register(
+        FirAnnotationTypeQualifierResolver::class,
+        FirAnnotationTypeQualifierResolver(this, jsr305State, javaModuleResolver)
+    )
     register(FirEnhancedSymbolsStorage::class, predefinedComponents?.enhancementStorage ?: FirEnhancedSymbolsStorage(this))
     register(FirMappedSymbolStorage::class, predefinedComponents?.mappedStorage ?: FirMappedSymbolStorage(this))
     register(FirSyntheticPropertiesStorage::class, FirSyntheticPropertiesStorage(this))
@@ -142,6 +145,17 @@ fun FirSession.registerCommonJavaComponents(
     register(CompilerRequiredAnnotationEnhancementProvider::class, JavaCompilerRequiredAnnotationEnhancementProvider)
     register(FirAnnotationsPlatformSpecificSupportComponent::class, FirJvmAnnotationsPlatformSpecificSupportComponent)
     register(FirPrimaryConstructorSuperTypeCheckerPlatformComponent::class, FirJvmPrimaryConstructorSuperTypeCheckerPlatformComponent)
+
+    register(FirVisibilityChecker::class, FirJavaVisibilityChecker)
+    register(ConeCallConflictResolverFactory::class, JvmCallConflictResolverFactory)
+    register(
+        FirTypeSpecificityComparatorProvider::class,
+        FirTypeSpecificityComparatorProvider(JvmTypeSpecificityComparator(typeContext))
+    )
+    register(FirPlatformClassMapper::class, FirJavaClassMapper(this))
+    register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
+    register(FirOverridesBackwardCompatibilityHelper::class, FirJvmOverridesBackwardCompatibilityHelper)
+    register(FirInlineCheckerPlatformSpecificComponent::class, FirJvmInlineCheckerComponent())
 }
 
 // -------------------------- Resolve components --------------------------
@@ -179,23 +193,6 @@ fun FirSession.registerResolveComponents(lookupTracker: LookupTracker? = null, e
         )
     }
     register(FirExpectActualMatchingContextFactory::class, FirExpectActualMatchingContextImpl.Factory)
-}
-
-/*
- * Resolve components which have specific implementations on JVM
- */
-@OptIn(SessionConfiguration::class)
-fun FirSession.registerJavaSpecificResolveComponents() {
-    register(FirVisibilityChecker::class, FirJavaVisibilityChecker)
-    register(ConeCallConflictResolverFactory::class, JvmCallConflictResolverFactory)
-    register(
-        FirTypeSpecificityComparatorProvider::class,
-        FirTypeSpecificityComparatorProvider(JvmTypeSpecificityComparator(typeContext))
-    )
-    register(FirPlatformClassMapper::class, FirJavaClassMapper(this))
-    register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
-    register(FirOverridesBackwardCompatibilityHelper::class, FirJvmOverridesBackwardCompatibilityHelper)
-    register(FirInlineCheckerPlatformSpecificComponent::class, FirJvmInlineCheckerComponent())
 }
 
 @OptIn(SessionConfiguration::class)

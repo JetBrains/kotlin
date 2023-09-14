@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.analysis.providers.impl.util.mergeInto
 import org.jetbrains.kotlin.analysis.utils.errors.withKtModuleEntry
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -113,9 +112,8 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerIdeComponents(project)
             registerCommonComponents(languageVersionSettings)
             registerCommonComponentsAfterExtensionsAreConfigured()
-            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
+            registerJavaComponents(JavaModuleResolver.getInstance(project))
             registerResolveComponents()
-            registerJavaSpecificResolveComponents()
 
             val provider = LLFirProvider(
                 this,
@@ -195,9 +193,8 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerIdeComponents(project)
             registerCommonComponents(languageVersionSettings)
             registerCommonComponentsAfterExtensionsAreConfigured()
-            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
+            registerJavaComponents(JavaModuleResolver.getInstance(project))
             registerResolveComponents()
-            registerJavaSpecificResolveComponents()
 
             val ktFile = module.file as? KtFile
 
