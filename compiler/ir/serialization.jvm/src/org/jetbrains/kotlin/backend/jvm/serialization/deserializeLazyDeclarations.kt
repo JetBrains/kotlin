@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.backend.jvm.serialization
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.DefaultFakeOverrideClassFilter
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideDeclarationTable
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
+import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureFactory
@@ -149,8 +149,8 @@ fun makeSimpleFakeOverrideBuilder(
     symbolTable: SymbolTable,
     typeSystemContext: IrTypeSystemContext,
     symbolDeserializer: IrSymbolDeserializer
-): FakeOverrideBuilder {
-    return FakeOverrideBuilder(
+): IrLinkerFakeOverrideProvider {
+    return IrLinkerFakeOverrideProvider(
         object : FileLocalAwareLinker {
             override fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrPropertySymbol =
                 symbolDeserializer.referencePropertyByLocalSignature(idSignature)

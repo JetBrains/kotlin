@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.PartialLinkageErrorsLogged
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
+import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -41,7 +41,7 @@ internal class PartialLinkageSupportForLinkerImpl(
 
     override fun shouldBeSkipped(declaration: IrDeclaration) = patcher.shouldBeSkipped(declaration)
 
-    override fun exploreClassifiers(fakeOverrideBuilder: FakeOverrideBuilder) {
+    override fun exploreClassifiers(fakeOverrideBuilder: IrLinkerFakeOverrideProvider) {
         val entries = fakeOverrideBuilder.fakeOverrideCandidates
         if (entries.isEmpty()) return
 

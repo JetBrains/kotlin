@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
+import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -70,7 +70,7 @@ class FakeOverrideRebuilder(
     // Map from the old fake override symbol to the new (rebuilt) symbol.
     private val fakeOverrideMap = hashMapOf<IrSymbol, IrSymbol>()
 
-    private val fakeOverrideBuilder = FakeOverrideBuilder(
+    private val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
         LocalFakeOverridesStorage(),
         symbolTable,
         mangler,

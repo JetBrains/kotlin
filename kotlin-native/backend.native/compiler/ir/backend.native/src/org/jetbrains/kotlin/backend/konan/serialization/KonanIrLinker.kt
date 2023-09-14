@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
+import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.konan.CacheDeserializationStrategy
@@ -314,7 +314,7 @@ internal class KonanIrLinker(
         KonanForwardDeclarationModuleDeserializer(it, this, stubGenerator)
     }
 
-    override val fakeOverrideBuilder = FakeOverrideBuilder(
+    override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
             linker = this,
             symbolTable = symbolTable,
             mangler = KonanManglerIr,

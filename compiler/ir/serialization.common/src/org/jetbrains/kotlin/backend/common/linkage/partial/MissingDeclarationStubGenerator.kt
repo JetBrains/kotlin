@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.guessName
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
+import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
  *
  * Note: This is a special type of [IrProvider]. It should not be used in row with other IR providers, because it may bring to
  * undesired situation when stubs for unbound fake override symbols are generated even before the corresponding call of
- * [FakeOverrideBuilder.provideFakeOverrides] is made leaving no chance for proper linkage of fake overrides. This IR provider
+ * [IrLinkerFakeOverrideProvider.provideFakeOverrides] is made leaving no chance for proper linkage of fake overrides. This IR provider
  * should be applied only after the fake overrides generation.
  */
 internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns) : IrProvider {

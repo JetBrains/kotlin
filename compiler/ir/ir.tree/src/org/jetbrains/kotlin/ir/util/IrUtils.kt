@@ -1225,11 +1225,8 @@ val IrFunction.allParameters: List<IrValueParameter>
 val IrFunction.allParametersCount: Int
     get() = if (this is IrConstructor) explicitParametersCount + 1 else explicitParametersCount
 
-// This is essentially the same as FakeOverrideBuilder,
-// but it bypasses SymbolTable.
-// TODO: merge it with FakeOverrideBuilder.
-private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy(
-    friendModules = emptyMap(),
+private object BindToNewEmptySymbols : FakeOverrideBuilderStrategy(
+    friendModules = emptyMap(), // TODO: this is probably not correct. Should be fixed by KT-61384. But it's not important for current usages
     unimplementedOverridesStrategy = ProcessAsFakeOverrides
 ) {
     override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
@@ -1259,7 +1256,7 @@ fun IrClass.addFakeOverrides(
     implementedMembers: List<IrOverridableMember> = emptyList(),
     ignoredParentSymbols: List<IrSymbol> = emptyList()
 ) {
-    IrOverridingUtil(typeSystem, FakeOverrideBuilderForLowerings(), emptyList())
+    IrOverridingUtil(typeSystem, BindToNewEmptySymbols, emptyList())
         .buildFakeOverridesForClassUsingOverriddenSymbols(this,
                                                           implementedMembers = implementedMembers,
                                                           compatibilityMode = false,

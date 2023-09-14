@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
+import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -32,7 +32,7 @@ interface PartialLinkageSupportForLinker {
      * Note: Those classifiers that were detected as partially linked are excluded from the fake overrides generation
      * to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
      */
-    fun exploreClassifiers(fakeOverrideBuilder: FakeOverrideBuilder)
+    fun exploreClassifiers(fakeOverrideBuilder: IrLinkerFakeOverrideProvider)
 
     /**
      * For local use only in inline lazy-IR functions.
@@ -58,7 +58,7 @@ interface PartialLinkageSupportForLinker {
         val DISABLED = object : PartialLinkageSupportForLinker {
             override val isEnabled get() = false
             override fun shouldBeSkipped(declaration: IrDeclaration) = true
-            override fun exploreClassifiers(fakeOverrideBuilder: FakeOverrideBuilder) = Unit
+            override fun exploreClassifiers(fakeOverrideBuilder: IrLinkerFakeOverrideProvider) = Unit
             override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
             override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Sequence<IrModuleFragment>) = Unit
             override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, root: IrDeclaration) = Unit

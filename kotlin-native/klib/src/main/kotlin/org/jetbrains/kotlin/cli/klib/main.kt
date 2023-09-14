@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.cli.klib
 
 // TODO: Extract `library` package as a shared jar?
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
+import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.BasicIrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
@@ -194,7 +194,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?, v
     class KlibToolLinker(
         module: ModuleDescriptor, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable
     ) : KotlinIrLinker(module, KlibToolLogger, irBuiltIns, symbolTable, emptyList()) {
-        override val fakeOverrideBuilder = FakeOverrideBuilder(
+        override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
             linker = this,
             symbolTable = symbolTable,
             mangler = KonanManglerIr,
