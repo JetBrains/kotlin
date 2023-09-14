@@ -834,7 +834,8 @@ class BodyResolveContext(
             val receiverTypeRef = property.receiverParameter?.typeRef
             addLocalScope(FirLocalScope(holder.session))
             if (!forContracts && receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef &&
-                !property.isLocal && property.delegate == null
+                !property.isLocal && property.delegate == null &&
+                property.contextReceivers.isEmpty()
             ) {
                 storeBackingField(property, holder.session)
             }

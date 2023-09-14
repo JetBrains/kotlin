@@ -4,7 +4,7 @@ class A<T>(val a: T)
 class B(val b: Any)
 class C(val c: Any)
 
-<!MUST_BE_INITIALIZED!>context(A<String>, B) var p: Int<!>
+context(A<String>, B) var p: Int
     get() {
         this@A.a.length
         this@B.b
@@ -15,10 +15,10 @@ class C(val c: Any)
         this@A.a.length
         this@B.b
         <!NO_THIS!>this<!>
-        field = value
+        <!UNRESOLVED_REFERENCE!>field<!> = value
     }
 
-<!MUST_BE_INITIALIZED!>context(A<Int>, A<String>, B) var p: Int<!>
+context(A<Int>, A<String>, B) var p: Int
     get() {
         this@A.a.<!UNRESOLVED_REFERENCE!>toDouble<!>()
         this@A.a.length
@@ -30,7 +30,7 @@ class C(val c: Any)
         this@A.a.length
         this@B.b
         <!NO_THIS!>this<!>
-        field = value
+        <!UNRESOLVED_REFERENCE!>field<!> = value
     }
 
 context(A<Int>, A<String>, B) val C.p: Int
