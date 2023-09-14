@@ -15,25 +15,6 @@ fun isVisibleForOverride(overriding: IrOverridableMember, fromSuper: IrOverridab
     return fromSuper.isVisibleInClass(overriding.parentAsClass)
 }
 
-// Based on findMemberWithMaxVisibility from VisibilityUtil.kt.
-fun findMemberWithMaxVisibility(members: Collection<IrOverridableMember>): IrOverridableMember {
-    assert(members.isNotEmpty())
-
-    var member: IrOverridableMember? = null
-    for (candidate in members) {
-        if (member == null) {
-            member = candidate
-            continue
-        }
-
-        val result = DescriptorVisibilities.compare(member.visibility, candidate.visibility)
-        if (result != null && result < 0) {
-            member = candidate
-        }
-    }
-    return member ?: error("Could not find a visible member")
-}
-
 fun IrDeclarationWithVisibility.isEffectivelyPrivate(): Boolean {
     fun DescriptorVisibility.isNonPrivate(): Boolean =
         this == DescriptorVisibilities.PUBLIC

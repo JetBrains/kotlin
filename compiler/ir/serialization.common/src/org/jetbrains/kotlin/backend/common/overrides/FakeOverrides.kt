@@ -281,7 +281,6 @@ class FakeOverrideBuilder(
 
     fun provideFakeOverrides(klass: IrClass, compatibilityMode: CompatibilityMode) {
         buildFakeOverrideChainsForClass(klass, compatibilityMode)
-        irOverridingUtil.clear()
         haveFakeOverrides.add(klass)
     }
 
