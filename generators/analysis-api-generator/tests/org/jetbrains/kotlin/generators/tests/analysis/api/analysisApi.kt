@@ -515,6 +515,13 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             ) {
                 model(it, "staticDeclaredMemberScope")
             }
+
+            test(
+                AbstractCombinedDeclaredMemberScopeTest::class,
+                filter = frontendIs(FrontendKind.Fir),
+            ) {
+                model(it, "combinedDeclaredMemberScope")
+            }
         }
     }
 }

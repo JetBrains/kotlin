@@ -1,0 +1,5 @@
+fun foo(action: () -> kotlin.Int)
+
+val `$$result`: kotlin.Unit
+
+abstract class Person

@@ -47,6 +47,11 @@ abstract class AbstractStaticDeclaredMemberScopeTest : AbstractMemberScopeTestBa
     override fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol> = getStaticDeclaredMemberScope().getAllSymbols()
 }
 
+abstract class AbstractCombinedDeclaredMemberScopeTest : AbstractMemberScopeTestBase() {
+    context(KtAnalysisSession)
+    override fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol> = getCombinedDeclaredMemberScope().getAllSymbols()
+}
+
 abstract class AbstractDelegateMemberScopeTest : AbstractMemberScopeTestBase() {
     context(KtAnalysisSession)
     override fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol> = getDelegatedMemberScope().getCallableSymbols()

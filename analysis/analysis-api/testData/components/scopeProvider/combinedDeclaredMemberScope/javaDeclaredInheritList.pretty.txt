@@ -1,0 +1,5 @@
+open fun add(s: kotlin.String!): kotlin.Int
+
+open operator fun removeAt(index: kotlin.Int): kotlin.String!
+
+constructor()

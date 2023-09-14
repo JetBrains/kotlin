@@ -45,4 +45,10 @@ public class FirIdeNormalAnalysisScriptSourceModuleStaticDeclaredMemberScopeTest
     public void testAllFilesPresentInStaticDeclaredMemberScope() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+
+    @Test
+    @TestMetadata("scriptWithClassDeclaration.kts")
+    public void testScriptWithClassDeclaration() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/scriptWithClassDeclaration.kts");
+    }
 }
