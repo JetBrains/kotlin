@@ -4,8 +4,6 @@
 // TARGET_BACKEND: JVM
 // TARGET_BACKEND: JVM_IR
 // TARGET_BACKEND: JS_IR
-// K2 JS_IR MUTE_REASON: java.lang.NullPointerException at org.jetbrains.kotlin.fir.backend.Fir2IrClassifierStorage.getIrClassSymbol
-// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
 
 // Test that if we have two different files with the same name in the same package, KT-54028 doesn't reproduce.
 

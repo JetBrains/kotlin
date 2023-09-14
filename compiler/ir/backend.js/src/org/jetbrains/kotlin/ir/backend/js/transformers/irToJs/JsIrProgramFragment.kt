@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import java.io.File
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
+class JsIrProgramFragments(val mainFragment: JsIrProgramFragment, val exportFragment: JsIrProgramFragment? = null)
+
 class JsIrProgramFragment(val name: String, val packageFqn: String) {
     val nameBindings = mutableMapOf<String, JsName>()
     val optionalCrossModuleImports = hashSetOf<String>()
@@ -303,6 +305,4 @@ fun JsStatement.renameImportedSymbolInternalName(newName: JsName): JsStatement {
     }
 }
 
-val List<JsIrProgramFragment>.mainFragment: JsIrProgramFragment get() = first()
-val List<JsIrProgramFragment>.exportFragment: JsIrProgramFragment? get() = getOrNull(1)
 val JsIrProgramFragment.hasEffect: Boolean get() = eagerInitializers.statements.isNotEmpty()

@@ -75,3 +75,8 @@ fun <T> Collection<T>.atMostOne(): T? {
  * If there are more such elements, throws an exception.
  */
 inline fun <T> Iterable<T>.atMostOne(predicate: (T) -> Boolean): T? = this.filter(predicate).atMostOne()
+
+fun <K, V> MutableMap<K, MutableList<V>>.putToMultiMap(key: K, value: V) {
+    val list = getOrPut(key) { mutableListOf() }
+    list.add(value)
+}

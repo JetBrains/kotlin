@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.getAnalyzerServices
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.lightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.*
@@ -282,9 +283,9 @@ open class FirFrontendFacade(
 
         val (ktFiles, lightTreeFiles) = when (parser) {
             FirParser.LightTree -> {
-                emptyList<KtFile>() to testServices.sourceFileProvider.getKtSourceFilesForSourceFiles(module.files).values
+                emptyMap<TestFile, KtFile>() to testServices.sourceFileProvider.getKtSourceFilesForSourceFiles(module.files)
             }
-            FirParser.Psi -> testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values to emptyList()
+            FirParser.Psi -> testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project) to emptyMap()
         }
 
         val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
@@ -304,21 +305,27 @@ open class FirFrontendFacade(
             sessionConfigurator,
             predefinedJavaComponents,
             project,
-            ktFiles
+            ktFiles.values
         )
 
         val firAnalyzerFacade = FirAnalyzerFacade(
             moduleBasedSession,
-            ktFiles,
-            lightTreeFiles,
+            ktFiles.values,
+            lightTreeFiles.values,
             parser,
             testServices.lightTreeSyntaxDiagnosticsReporterHolder?.reporter,
         )
         val firFiles = firAnalyzerFacade.runResolution()
-        val filesMap = firFiles.mapNotNull { firFile ->
-            val testFile = module.files.firstOrNull { it.name == firFile.name } ?: return@mapNotNull null
-            testFile to firFile
-        }.toMap()
+
+        val usedFilesMap = when (parser) {
+            FirParser.LightTree -> lightTreeFiles
+            FirParser.Psi -> ktFiles
+        }
+
+        val filesMap = usedFilesMap.keys
+            .zip(firFiles)
+            .onEach { assert(it.first.name == it.second.name) }
+            .toMap()
 
         return FirOutputPartForDependsOnModule(module, moduleBasedSession, firAnalyzerFacade, filesMap)
     }

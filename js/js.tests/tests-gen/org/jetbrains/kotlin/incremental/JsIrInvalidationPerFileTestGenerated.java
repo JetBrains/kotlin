@@ -176,6 +176,12 @@ public class JsIrInvalidationPerFileTestGenerated extends AbstractJsIrInvalidati
     }
 
     @Test
+    @TestMetadata("fileNameClash")
+    public void testFileNameClash() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/fileNameClash/");
+    }
+
+    @Test
     @TestMetadata("friendDependency")
     public void testFriendDependency() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/friendDependency/");

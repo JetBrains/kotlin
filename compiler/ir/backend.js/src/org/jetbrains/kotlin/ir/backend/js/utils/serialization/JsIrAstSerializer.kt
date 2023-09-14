@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -15,8 +16,8 @@ import java.io.DataOutputStream
 import java.io.OutputStream
 import java.util.*
 
-fun List<JsIrProgramFragment>.serializeTo(output: OutputStream) {
-    JsIrAstSerializer().appendAll(this).saveTo(output)
+fun JsIrProgramFragments.serializeTo(output: OutputStream) {
+    JsIrAstSerializer().append(this).saveTo(output)
 }
 
 private class DataWriter {
@@ -89,9 +90,9 @@ private class JsIrAstSerializer {
     private val fileStack: Deque<String> = ArrayDeque()
     private val importedNames = mutableSetOf<JsName>()
 
-    fun appendAll(fragments: List<JsIrProgramFragment>): JsIrAstSerializer {
-        fragmentSerializer.writeInt(fragments.size)
-        fragments.forEach(::append)
+    fun append(fragments: JsIrProgramFragments): JsIrAstSerializer {
+        append(fragments.mainFragment)
+        fragmentSerializer.ifNotNull(fragments.exportFragment, ::append)
         return this
     }
 

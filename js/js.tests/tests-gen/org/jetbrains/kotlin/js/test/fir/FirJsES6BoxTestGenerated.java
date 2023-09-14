@@ -2456,6 +2456,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
             }
 
             @Test
+            @TestMetadata("fileNameClash.kt")
+            public void testFileNameClash() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/fileNameClash.kt");
+            }
+
+            @Test
             @TestMetadata("nonIndetifierModuleName.kt")
             public void testNonIndetifierModuleName() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/export/nonIndetifierModuleName.kt");

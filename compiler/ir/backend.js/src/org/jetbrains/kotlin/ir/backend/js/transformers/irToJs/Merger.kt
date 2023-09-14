@@ -364,3 +364,57 @@ class Merger(
         }
     }
 }
+
+fun List<JsIrModule>.merge(): JsIrModule {
+    assert(isNotEmpty()) { "Can't merge empty list of modules" }
+    val firstModule = first()
+
+    return if (size == 1) {
+        firstModule
+    } else {
+        val fragments = mutableListOf<JsIrProgramFragment>()
+        var reexportedInModuleWithName: String? = null
+
+        for (module in this) {
+            fragments.addAll(module.fragments)
+            module.reexportedInModuleWithName?.let { reexportedInModuleWithName = it }
+        }
+
+        JsIrModule(firstModule.moduleName, firstModule.externalModuleName, fragments, reexportedInModuleWithName)
+    }
+}
+
+fun List<JsIrModuleHeader>.merge(): JsIrModuleHeader {
+    assert(isNotEmpty()) { "Can't merge empty list of module headers" }
+    val firstModule = first()
+
+    return if (size == 1) {
+        firstModule
+    } else {
+        val definitions = mutableSetOf<String>()
+        val nameBindings = mutableMapOf<String, String>()
+        val optionalCrossModuleImports = mutableSetOf<String>()
+        var reexportedInModuleWithName: String? = null
+        var importedWithEffectInModuleWithName: String? = null
+
+        for (header in this) {
+            definitions.addAll(header.definitions)
+            nameBindings.putAll(header.nameBindings)
+            optionalCrossModuleImports.addAll(header.optionalCrossModuleImports)
+
+            header.reexportedInModuleWithName?.let { reexportedInModuleWithName = it }
+            header.importedWithEffectInModuleWithName?.let { importedWithEffectInModuleWithName = it }
+        }
+
+        JsIrModuleHeader(
+            firstModule.moduleName,
+            firstModule.externalModuleName,
+            definitions,
+            nameBindings,
+            optionalCrossModuleImports,
+            reexportedInModuleWithName,
+            importedWithEffectInModuleWithName,
+            null
+        )
+    }
+}

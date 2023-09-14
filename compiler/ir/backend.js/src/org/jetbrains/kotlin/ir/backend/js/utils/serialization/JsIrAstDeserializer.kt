@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import java.nio.ByteBuffer
 import java.util.*
 
-fun deserializeJsIrProgramFragment(input: ByteArray): List<JsIrProgramFragment> {
+fun deserializeJsIrProgramFragment(input: ByteArray): JsIrProgramFragments {
     return JsIrAstDeserializer(input).readFragments()
 }
 
@@ -76,8 +77,8 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         return if (readBoolean()) then() else null
     }
 
-    fun readFragments(): List<JsIrProgramFragment> {
-        return readList { readFragment() }
+    fun readFragments(): JsIrProgramFragments {
+        return JsIrProgramFragments(readFragment(), ifTrue { readFragment() })
     }
 
     fun readFragment(): JsIrProgramFragment {
