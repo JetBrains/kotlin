@@ -10,27 +10,20 @@ fun Project.preparePublication() {
     tasks.register("preparePublication") {
         assert(project.version != "unspecified")
 
-        val repositoryProviders = mapOf<String?, String?>(
-            "sonatype-nexus-staging" to "sonatype",
-            "sonatype-nexus-snapshots" to "sonatype"
-        )
         val isRelease: Boolean by extra(!project.version.toString().contains("-SNAPSHOT"))
 
         val repo: String? = properties["kotlin.build.deploy-repo"]?.toString() ?: properties["deploy-repo"]?.toString()
-        val repoProvider = repositoryProviders.getOrDefault(repo, repo)
-        val isSonatypePublish: Boolean by extra(repoProvider == "sonatype")
+        val repoProvider = when (repo) {
+            "sonatype-nexus-staging" -> "sonatype"
+            "sonatype-nexus-snapshots" -> "sonatype"
+            else -> repo
+        }
 
         val deployRepoUrl = (properties["kotlin.build.deploy-url"] ?: properties["deploy-url"])?.toString()?.takeIf { it.isNotBlank() }
 
-        val sonatypeSnapshotsUrl = if (isSonatypePublish && !isRelease) {
-            "https://oss.sonatype.org/content/repositories/snapshots/"
-        } else {
-            null
-        }
-        val deployUrlFromParameters = deployRepoUrl ?: sonatypeSnapshotsUrl
+        val sonatypeSnapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots/".takeIf { repo == "sonatype-nexus-snapshots" }
 
-        val repoUrl: String by extra((deployUrlFromParameters ?: "file://${rootProject.buildDir}/repo").toString())
-        logger.info("Deployment repository preliminary url: $repoUrl ($repoProvider)")
+        val repoUrl: String by extra((deployRepoUrl ?: sonatypeSnapshotsUrl ?: "file://${rootProject.buildDir}/repo").toString())
 
         val username: String? by extra(
             properties["kotlin.build.deploy-username"]?.toString() ?: properties["kotlin.${repoProvider}.user"]?.toString()
@@ -40,7 +33,9 @@ fun Project.preparePublication() {
         )
 
         doLast {
-            logger.warn("Deployment repository url: $repoUrl")
+            logger.warn(
+                "Deploy. url: $repoUrl, provider: $repoProvider, username: $username, password: ${"***".takeIf { password != null }}"
+            )
         }
     }
 }
