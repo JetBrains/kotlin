@@ -117,7 +117,8 @@ class WasmBoxRunner(
 
             val disableExceptions = DISABLE_WASM_EXCEPTION_HANDLING in testServices.moduleStructure.allDirectives
 
-            val exceptions = listOf(WasmVM.V8, WasmVM.SpiderMonkey).mapNotNull { vm ->
+            // TODO: KT-61958 Update SpiderMonkey and return its usage in tests when they switch to the final opcodes for GC and FTR proposals. 
+            val exceptions = listOf(WasmVM.V8, /*WasmVM.SpiderMonkey*/).mapNotNull { vm ->
                 vm.runWithCathedExceptions(
                     debugMode = debugMode,
                     disableExceptions = disableExceptions,
