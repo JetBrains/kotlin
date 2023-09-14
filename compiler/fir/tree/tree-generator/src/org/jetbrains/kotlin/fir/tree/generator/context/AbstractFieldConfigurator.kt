@@ -34,19 +34,25 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
             return TypeVariable(name, upperBounds, variance).also(element.params::add)
         }
 
-        fun parentArg(parent: Element, argument: String, type: TypeRef) {
-            parentArg(parent, NamedTypeParameterRef(argument), type)
+        fun parentArgs(parent: Element, vararg arguments: Pair<String, TypeRef>) {
+            parentArgs(parent, listOf(*arguments))
         }
 
-        fun parentArg(parent: Element, argument: NamedTypeParameterRef, type: TypeRef) {
-            require(parent in element.parents) {
+        private fun parentArgs(parent: Element, arguments: List<Pair<String, TypeRef>>) {
+            parentArgs(parent, arguments.map { (name, arg) -> NamedTypeParameterRef(name) to arg })
+        }
+
+        @JvmName("parentArgs2")
+        private fun parentArgs(parent: Element, arguments: List<Pair<NamedTypeParameterRef, TypeRef>>) {
+            val parentIndex = element.parentRefs.indexOfFirst { it.element == parent }
+            require(parentIndex >= 0) {
                 "$parent is not parent of $element"
             }
-            val argMap = element.parentsArguments.getOrPut(parent) { mutableMapOf() }
-            require(argument !in argMap) {
-                "Argument $argument already defined for parent $parent of $element"
+            val parentRef = element.parentRefs[parentIndex]
+            require(parentRef.args.isEmpty()) {
+                "Parent $parent of element $element already has type arguments: $parentRef"
             }
-            argMap[argument] = type
+            element.parentRefs[parentIndex] = parentRef.copy(arguments.toMap())
         }
 
         fun needTransformOtherChildren() {

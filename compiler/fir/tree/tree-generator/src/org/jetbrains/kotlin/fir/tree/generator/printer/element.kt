@@ -56,21 +56,22 @@ fun SmartPrinter.printElement(element: Element) {
         print(typeParameters())
         val needPureAbstractElement = !isInterface && !allParents.any { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }
 
-        if (parents.isNotEmpty() || needPureAbstractElement) {
+        if (parentRefs.isNotEmpty() || needPureAbstractElement) {
             print(" : ")
             if (needPureAbstractElement) {
                 print("${pureAbstractElementType.type}()")
-                if (parents.isNotEmpty()) {
+                if (parentRefs.isNotEmpty()) {
                     print(", ")
                 }
             }
             print(
-                parents.joinToString(", ") {
-                    var result = it.type
-                    parentsArguments[it]?.let { arguments ->
-                        result += arguments.values.joinToString(", ", "<", ">") { it.typeWithArguments }
+                parentRefs.joinToString(", ") {
+                    // TODO: Factor out
+                    var result = it.element.type
+                    if (it.args.isNotEmpty()) {
+                        result += it.args.values.joinToString(", ", "<", ">") { it.typeWithArguments }
                     }
-                    result + it.kind.braces()
+                    result + it.element.kind.braces()
                 },
             )
         }
@@ -134,14 +135,16 @@ fun SmartPrinter.printElement(element: Element) {
             if (needTransformOtherChildren) {
                 println()
                 abstract()
-                if (element.parents.any { it.needTransformOtherChildren }) {
+                if (element.parentRefs.any { it.element.needTransformOtherChildren }) {
                     print("override ")
                 }
                 println(transformFunctionDeclaration("OtherChildren", typeWithArguments))
             }
 
             if (element == AbstractFirTreeBuilder.baseFirElement) {
-                require(isInterface)
+                require(isInterface) {
+                    "$element must be an interface"
+                }
                 println()
                 println("fun accept(visitor: FirVisitorVoid) = accept(visitor, null)")
                 println()

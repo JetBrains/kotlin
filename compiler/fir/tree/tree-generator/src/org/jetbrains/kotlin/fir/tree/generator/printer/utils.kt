@@ -61,9 +61,9 @@ fun Implementation.collectImports(base: List<String> = emptyList(), kind: Import
 }
 
 fun Element.collectImports(): List<String> {
-    val baseTypes = parents.mapTo(mutableListOf()) { it.fullQualifiedName }
+    val baseTypes = parentRefs.mapTo(mutableListOf()) { it.fullQualifiedName!! }
     baseTypes += AbstractFirTreeBuilder.baseFirElement.fullQualifiedName
-    baseTypes += parentsArguments.values.flatMap { it.values }.mapNotNull { it.fullQualifiedName }
+    baseTypes += parentRefs.flatMap { it.args.values }.mapNotNull { it.fullQualifiedName } // TODO: Use recursive import collection for TypeRefs
     if (needPureAbstractElement) {
         baseTypes += pureAbstractElementType.fullQualifiedName
     }

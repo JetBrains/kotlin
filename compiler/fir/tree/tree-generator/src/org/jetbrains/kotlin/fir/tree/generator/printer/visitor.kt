@@ -21,12 +21,12 @@ private val elementsWithMultipleSupertypesForDefaultVisitor = mapOf(
 
 private fun Element.isAcceptableForDefaultVisiting(): Boolean {
     if (this == AbstractFirTreeBuilder.baseFirElement) return false
-    val hasSingleSupertype = parents.size == 1 && parents.single().name != "Element"
+    val hasSingleSupertype = parentRefs.size == 1 && parentRefs.single().element.name != "Element"
     return hasSingleSupertype || this in elementsWithMultipleSupertypesForDefaultVisitor
 }
 
 private fun Element.getNameOfSupertypeForDefaultVisiting(): String {
-    val parentForDefaultVisiting = parents.singleOrNull() ?: elementsWithMultipleSupertypesForDefaultVisitor.getValue(this)
+    val parentForDefaultVisiting = parentRefs.singleOrNull()?.element ?: elementsWithMultipleSupertypesForDefaultVisitor.getValue(this)
     return parentForDefaultVisiting.name
 }
 

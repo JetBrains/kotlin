@@ -166,11 +166,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         loopJump.configure {
-            parentArg(jump, "E", loop)
+            parentArgs(jump, "E" to loop)
         }
 
         returnExpression.configure {
-            parentArg(jump, "E", function)
+            parentArgs(jump, "E" to function)
             +field("result", expression).withTransform()
             needTransformOtherChildren()
         }
