@@ -80,6 +80,7 @@ internal fun PhaseContext.fir2Ir(
             evaluatedConstTracker = configuration
                     .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
             inlineConstTracker = null,
+            expectActualTracker = configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
             allowNonCachedDeclarations = false,
             useIrFakeOverrideBuilder = configuration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
     )

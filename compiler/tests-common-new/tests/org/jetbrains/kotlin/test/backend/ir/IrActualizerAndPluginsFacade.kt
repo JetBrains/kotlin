@@ -40,6 +40,7 @@ class IrActualizerAndPluginsFacade(
                 inputArtifact.irMangler,
                 mapOf(module.name to module.friendDependencies.map { it.moduleName }),
                 useIrFakeOverrideBuilder = CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION in module.directives,
+                expectActualTracker = null,
             )
             inputArtifact.irActualizerResult = result
         }

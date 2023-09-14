@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 
 /**
@@ -36,6 +37,7 @@ data class Fir2IrConfiguration(
     val linkViaSignatures: Boolean,
     val evaluatedConstTracker: EvaluatedConstTracker,
     val inlineConstTracker: InlineConstTracker?,
+    val expectActualTracker: ExpectActualTracker?,
     val allowNonCachedDeclarations: Boolean,
     val useIrFakeOverrideBuilder: Boolean,
 )

@@ -184,6 +184,7 @@ fun convertAnalyzedFirToIr(
         evaluatedConstTracker = input.configuration
             .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
         inlineConstTracker = input.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
+        expectActualTracker = input.configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
         allowNonCachedDeclarations = false,
         useIrFakeOverrideBuilder = input.configuration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
     )

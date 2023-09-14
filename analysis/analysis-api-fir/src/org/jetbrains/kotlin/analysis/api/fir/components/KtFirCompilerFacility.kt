@@ -141,8 +141,9 @@ internal class KtFirCompilerFacility(
             effectiveConfiguration.languageVersionSettings,
             diagnosticsReporter,
             linkViaSignatures = false,
-            effectiveConfiguration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER] ?: EvaluatedConstTracker.create(),
-            effectiveConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
+            evaluatedConstTracker = effectiveConfiguration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER] ?: EvaluatedConstTracker.create(),
+            inlineConstTracker = effectiveConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
+            expectActualTracker = effectiveConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
             allowNonCachedDeclarations = true,
             useIrFakeOverrideBuilder = effectiveConfiguration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
         )

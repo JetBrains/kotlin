@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -27,7 +28,8 @@ object IrActualizer {
         mangler: KotlinMangler.IrMangler,
         // TODO: drop this argument in favor of using [IrModuleDescriptor::shouldSeeInternalsOf] in FakeOverrideBuilder KT-61384
         friendModules: Map<String, List<String>>,
-        useIrFakeOverrideBuilder: Boolean
+        useIrFakeOverrideBuilder: Boolean,
+        expectActualTracker: ExpectActualTracker?
     ): IrActualizedResult {
         val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
 
@@ -37,7 +39,8 @@ object IrActualizer {
             mainFragment,
             dependentFragments,
             typeSystemContext,
-            ktDiagnosticReporter
+            ktDiagnosticReporter,
+            expectActualTracker
         ).collect()
         if (languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
             IrExpectActualAnnotationMatchingChecker(expectActualMap, actualDeclarations, typeSystemContext, ktDiagnosticReporter).check()

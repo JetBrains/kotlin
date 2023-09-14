@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProv
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
@@ -171,7 +170,8 @@ fun FirResult.convertToIrAndActualize(
                 commonMemberStorage.symbolTable,
                 irMangler,
                 Fir2IrConverter.friendModulesMap(outputs.last().session),
-                fir2IrConfiguration.useIrFakeOverrideBuilder
+                fir2IrConfiguration.useIrFakeOverrideBuilder,
+                fir2IrConfiguration.expectActualTracker
             )
         }
     }
