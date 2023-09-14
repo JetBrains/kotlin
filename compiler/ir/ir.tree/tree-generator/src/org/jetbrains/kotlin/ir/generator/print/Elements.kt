@@ -17,7 +17,6 @@ import java.io.File
 
 fun printElements(generationPath: File, model: Model) = sequence {
     for (element in model.elements) {
-        if (element.suppressPrint) continue
 
         val elementName = element.toPoet()
         val selfParametrizedElementName = element.toPoetSelfParameterized()

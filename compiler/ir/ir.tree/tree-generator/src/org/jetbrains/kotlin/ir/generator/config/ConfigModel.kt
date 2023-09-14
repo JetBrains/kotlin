@@ -52,7 +52,6 @@ class ElementConfig(
     var typeKind: TypeKind? = null
 
     var generationCallback: (TypeSpec.Builder.() -> Unit)? = null
-    var suppressPrint = false
     var kDoc: String? = null
 
     override val element get() = this

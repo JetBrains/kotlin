@@ -44,7 +44,6 @@ class Element(
     val fieldsToSkipInIrFactoryMethod = config.fieldsToSkipInIrFactoryMethod
 
     val generationCallback = config.generationCallback
-    val suppressPrint = config.suppressPrint
     val propertyName = config.propertyName
     val kDoc = config.kDoc
     val additionalImports: List<Import> = config.additionalImports
