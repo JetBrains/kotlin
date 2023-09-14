@@ -427,7 +427,13 @@ object AbstractExpectActualCompatibilityChecker {
             return Incompatible.Modality
         }
 
-        if (!areCompatibleCallableVisibilities(expectDeclaration.visibility, expectModality, actualDeclaration.visibility)) {
+        if (!areCompatibleCallableVisibilities(
+                expectDeclaration.visibility,
+                expectModality,
+                expectContainingClass?.modality,
+                actualDeclaration.visibility
+            )
+        ) {
             return Incompatible.Visibility
         }
 
@@ -468,7 +474,7 @@ object AbstractExpectActualCompatibilityChecker {
                 getFunctionsIncompatibility(expectDeclaration, actualDeclaration)?.let { return it }
 
             expectDeclaration is PropertySymbolMarker && actualDeclaration is PropertySymbolMarker ->
-                getPropertiesIncompatibility(expectDeclaration, actualDeclaration)?.let { return it }
+                getPropertiesIncompatibility(expectDeclaration, actualDeclaration, expectContainingClass)?.let { return it }
 
             expectDeclaration is EnumEntrySymbolMarker && actualDeclaration is EnumEntrySymbolMarker -> {
                 // do nothing, entries are matched only by name
@@ -562,10 +568,12 @@ object AbstractExpectActualCompatibilityChecker {
     private fun areCompatibleCallableVisibilities(
         expectVisibility: Visibility,
         expectModality: Modality?,
+        expectContainingClassModality: Modality?,
         actualVisibility: Visibility,
     ): Boolean {
         val compare = Visibilities.compare(expectVisibility, actualVisibility)
-        return if (expectModality != Modality.FINAL) {
+        val effectiveModality = effectiveModality(expectModality, expectContainingClassModality)
+        return if (effectiveModality != Modality.FINAL) {
             // For overridable declarations visibility should match precisely, see KT-19664
             compare == 0
         } else {
@@ -652,12 +660,13 @@ object AbstractExpectActualCompatibilityChecker {
     private fun getPropertiesIncompatibility(
         expected: PropertySymbolMarker,
         actual: PropertySymbolMarker,
+        expectContainingClass: RegularClassSymbolMarker?,
     ): Incompatible.WeakIncompatible<*>? {
         return when {
             !equalBy(expected, actual) { p -> p.isVar } -> Incompatible.PropertyKind
             !equalBy(expected, actual) { p -> p.isLateinit } -> Incompatible.PropertyLateinitModifier
             expected.isConst && !actual.isConst -> Incompatible.PropertyConstModifier
-            !arePropertySettersWithCompatibleVisibilities(expected, actual) -> Incompatible.PropertySetterVisibility
+            !arePropertySettersWithCompatibleVisibilities(expected, actual, expectContainingClass) -> Incompatible.PropertySetterVisibility
             else -> null
         }
     }
@@ -666,10 +675,16 @@ object AbstractExpectActualCompatibilityChecker {
     private fun arePropertySettersWithCompatibleVisibilities(
         expected: PropertySymbolMarker,
         actual: PropertySymbolMarker,
+        expectContainingClass: RegularClassSymbolMarker?,
     ): Boolean {
         val expectedSetter = expected.setter ?: return true
         val actualSetter = actual.setter ?: return true
-        return areCompatibleCallableVisibilities(expectedSetter.visibility, expectedSetter.modality, actualSetter.visibility)
+        return areCompatibleCallableVisibilities(
+            expectedSetter.visibility,
+            expectedSetter.modality,
+            expectContainingClass?.modality,
+            actualSetter.visibility
+        )
     }
 
     // ---------------------------------------- Utils ----------------------------------------
