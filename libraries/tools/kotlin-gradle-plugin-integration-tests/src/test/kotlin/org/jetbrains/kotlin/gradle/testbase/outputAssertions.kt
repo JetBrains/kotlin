@@ -329,3 +329,13 @@ fun CommandLineArguments.assertCommandLineArgumentsContain(
         }
     }
 }
+
+/**
+ * Asserts that the command line arguments do not contain any duplicates.
+ */
+fun CommandLineArguments.assertNoDuplicates() {
+    assert(args.size == args.toSet().size) {
+        buildResult.printBuildOutput()
+        "Link task has duplicated arguments: ${args.joinToString()}"
+    }
+}

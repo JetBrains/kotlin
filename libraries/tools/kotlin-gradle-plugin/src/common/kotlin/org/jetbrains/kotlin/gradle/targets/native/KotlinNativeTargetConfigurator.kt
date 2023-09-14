@@ -88,15 +88,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         }
     }
 
-    private fun Project.syncLanguageSettingsToLinkTask(binary: NativeBinary) {
-        tasks.named<KotlinNativeLink>(binary.linkTaskName).configure { linkTask ->
-            // We propagate compilation free args to the link task for now (see KT-33717).
-            linkTask.toolOptions.freeCompilerArgs.addAll(
-                binary.compilation.compilerOptions.options.freeCompilerArgs
-            )
-        }
-    }
-
     private fun Project.createRunTask(binary: Executable) {
         val taskName = binary.runTaskName ?: return
         registerTask<Exec>(taskName) { exec ->
@@ -235,11 +226,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         // Create link and run tasks.
         target.binaries.all {
             project.createLinkTask(it)
-        }
-        project.runOnceAfterEvaluated("Sync language settings for NativeLinkTask") {
-            target.binaries.all { binary ->
-                project.syncLanguageSettingsToLinkTask(binary)
-            }
         }
 
         target.binaries.withType(Executable::class.java).all {

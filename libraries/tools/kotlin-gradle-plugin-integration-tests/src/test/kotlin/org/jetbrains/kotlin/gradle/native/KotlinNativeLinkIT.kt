@@ -28,7 +28,11 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
     @DisplayName("KT-56280: should propagate freeCompilerArgs from compilation")
     @GradleTest
     fun shouldUseCompilationFreeCompilerArgs(gradleVersion: GradleVersion) {
-        nativeProject("native-link-simple", gradleVersion) {
+        nativeProject(
+            "native-link-simple",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
             buildGradle.appendText(
                 """
                 |
@@ -47,25 +51,9 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
             )
 
             build("linkReleaseExecutableHost") {
-                val linkTaskOutput = output
-                    .substringAfter("Task :linkReleaseExecutableHost")
-                    .substringBefore("Task :linkHost")
-                assert(linkTaskOutput.isNotEmpty()) {
-                    "Could not get :linkReleaseExecutableHost task output!"
-                }
-
-                val args = linkTaskOutput
-                    .substringAfterLast("Transformed arguments = [")
-                    .substringBefore("]")
-                    .lines()
-                    .map { it.trim() }
-                assert(
-                    args.isNotEmpty() &&
-                            args.contains("-e") &&
-                            args.contains("main")
-                ) {
-                    printBuildOutput()
-                    "Link task arguments does not contain '-e main'!"
+                extractNativeTasksCommandLineArgumentsFromOutput(":linkReleaseExecutableHost") {
+                    assertCommandLineArgumentsContain("-e", "main")
+                    assertNoDuplicates()
                 }
             }
         }
