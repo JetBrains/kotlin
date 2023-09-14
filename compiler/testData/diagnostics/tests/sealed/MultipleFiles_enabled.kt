@@ -37,4 +37,7 @@ package bar
 
 import foo.Base
 
+typealias TA = Base
+
 class E : <!SEALED_INHERITOR_IN_DIFFERENT_PACKAGE!>Base<!>()
+class E2 : <!SEALED_INHERITOR_IN_DIFFERENT_PACKAGE!>TA<!>()

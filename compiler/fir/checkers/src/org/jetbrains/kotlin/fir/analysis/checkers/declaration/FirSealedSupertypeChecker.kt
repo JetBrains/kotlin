@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -35,7 +36,7 @@ object FirSealedSupertypeChecker : FirClassChecker() {
     private fun checkGlobalDeclaration(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val subclassPackage = declaration.classId.packageFqName
         for (superTypeRef in declaration.superTypeRefs) {
-            val superClassId = superTypeRef.coneType.classId ?: continue
+            val superClassId = superTypeRef.coneType.fullyExpandedClassId(context.session) ?: continue
 
             if (superClassId.isLocal) {
                 continue
@@ -60,7 +61,7 @@ object FirSealedSupertypeChecker : FirClassChecker() {
 
     private fun checkLocalDeclaration(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         for (it in declaration.superTypeRefs) {
-            val classId = it.coneType.classId ?: continue
+            val classId = it.coneType.fullyExpandedClassId(context.session) ?: continue
 
             if (classId.isLocal) {
                 continue
