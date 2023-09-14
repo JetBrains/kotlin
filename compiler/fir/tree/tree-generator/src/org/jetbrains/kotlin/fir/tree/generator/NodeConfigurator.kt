@@ -162,8 +162,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         jump.configure {
-            withArg("E", targetElement)
-            +field("target", jumpTargetType.withArgs("E"))
+            val e = withArg("E", targetElement)
+            +field("target", jumpTargetType to listOf(e))
         }
 
         loopJump.configure {
@@ -227,9 +227,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         constExpression.configure {
-            withArg("T")
-            +field("kind", constKindType.withArgs("T"), withReplace = true)
-            +field("value", "T", null)
+            val t = withArg("T")
+            +field("kind", constKindType to listOf(t), withReplace = true)
+            +field("value", t)
         }
 
         functionCall.configure {
@@ -572,7 +572,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         smartCastExpression.configure {
             +field("originalExpression", expression, withReplace = true).withTransform()
-            +field("typesFromSmartCast", "Collection<ConeKotlinType>", null, customType = coneKotlinTypeType)
+            +field("typesFromSmartCast", StandardTypes.collection to listOf(coneKotlinTypeType))
             +field("smartcastType", typeRef)
             +field("smartcastTypeWithoutNullableNothing", typeRef, nullable = true)
             +booleanField("isStable")
@@ -748,7 +748,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         whenExpression.configure {
             +field("subject", expression, nullable = true).withTransform()
-            +field("subjectVariable", variable.withArgs("E" to TypeRef.Star), nullable = true)
+            +field("subjectVariable", variable, nullable = true)
             +fieldList("branches", whenBranch).withTransform()
             +field("exhaustivenessStatus", exhaustivenessStatusType, nullable = true, withReplace = true)
             +booleanField("usedAsExpression")

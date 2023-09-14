@@ -23,10 +23,6 @@ abstract class AbstractFirTreeBuilder {
             "Element",
             Element.Kind.Other
         )
-
-        const val string = "String"
-        const val boolean = "Boolean"
-        const val int = "Int"
     }
 
     val elements = mutableListOf(baseFirElement)
