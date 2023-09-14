@@ -106,6 +106,7 @@ open class JvmIrCodegenFactory(
         val shouldStubOrphanedExpectSymbols: Boolean = false,
         val shouldReferenceUndiscoveredExpectSymbols: Boolean = false,
         val shouldDeduplicateBuiltInSymbols: Boolean = false,
+        val doNotLoadDependencyModuleHeaders: Boolean = false,
     )
 
     data class JvmIrBackendInput(
@@ -230,7 +231,7 @@ open class JvmIrCodegenFactory(
             }
         }
 
-        val dependencies = if (ideCodegenSettings.shouldStubAndNotLinkUnboundSymbols) {
+        val dependencies = if (ideCodegenSettings.doNotLoadDependencyModuleHeaders) {
             emptyList()
         } else {
             psi2irContext.moduleDescriptor.collectAllDependencyModulesTransitively().map {
