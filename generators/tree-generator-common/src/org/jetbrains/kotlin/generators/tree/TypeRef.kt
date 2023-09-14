@@ -78,6 +78,41 @@ class ClassRef<P : TypeParameterRef> private constructor(
     override fun toString() = canonicalName
 }
 
+interface ElementOrRef<Element, Field> : ParametrizedTypeRef<ElementOrRef<Element, Field>, NamedTypeParameterRef>, ClassOrElementRef
+        where Element : AbstractElement<Element, Field>,
+              Field : AbstractField {
+    val element: Element
+}
+
+data class ElementRef<Element : AbstractElement<Element, Field>, Field : AbstractField>(
+    override val element: Element,
+    override val args: Map<NamedTypeParameterRef, TypeRef> = emptyMap(),
+    override val nullable: Boolean = false,
+) : ElementOrRef<Element, Field> {
+    override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) = ElementRef(element, args, nullable)
+    override fun copy(nullable: Boolean) = ElementRef(element, args, nullable)
+
+    override val type: String
+        get() = element.type
+    override val packageName: String?
+        get() = element.packageName
+
+    override fun getTypeWithArguments(notNull: Boolean): String {
+        return element.type + generics
+    }
+
+    override fun toString() = buildString {
+        append(element.name)
+        append("<")
+        append(args)
+        append(">")
+        if (nullable) {
+            append("?")
+        }
+    }
+}
+
+
 sealed interface TypeParameterRef : TypeRef
 
 data class PositionTypeParameterRef(

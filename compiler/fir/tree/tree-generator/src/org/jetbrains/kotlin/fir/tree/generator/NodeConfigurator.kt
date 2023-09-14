@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFieldConfigurator
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder.Companion.baseFirElement
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.model.*
-import org.jetbrains.kotlin.generators.tree.SimpleTypeArgument
 import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.TypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -171,7 +170,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         returnExpression.configure {
-            parentArg(jump, "E", function.withArgs("E" to TypeRef.Star))
+            parentArg(jump, "E", function)
             +field("result", expression).withTransform()
             needTransformOtherChildren()
         }
@@ -781,13 +780,4 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("contractCall", functionCall)
         }
     }
-}
-
-// TODO: Replace with org.jetbrains.kotlin.generators.tree.withArgs
-fun Element.withArgs(vararg replacements: Pair<String, TypeRef>): AbstractElement {
-    val replaceMap = replacements.toMap()
-    val newArguments = params.map { param ->
-        replaceMap[param.name]?.let { SimpleTypeArgument(it.type, null) } ?: error("Type variable $param not found in $this")
-    }
-    return ElementWithArguments(this, newArguments)
 }

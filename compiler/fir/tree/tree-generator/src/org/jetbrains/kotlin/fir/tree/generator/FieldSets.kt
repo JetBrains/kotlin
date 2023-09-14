@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeProjection
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeRef
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.model.*
-import org.jetbrains.kotlin.generators.tree.TypeRef
 
 object FieldSets {
     val calleeReference by lazy { field("calleeReference", reference, withReplace = true) }
@@ -35,7 +34,7 @@ object FieldSets {
 
     val arguments by lazy { fieldList("arguments", expression) }
 
-    val declarations by lazy { fieldList(declaration.withArgs("E" to TypeRef.Star)) }
+    val declarations by lazy { fieldList(declaration).apply { useInBaseTransformerDetection = false } }
 
     val annotations by lazy {
         fieldList(

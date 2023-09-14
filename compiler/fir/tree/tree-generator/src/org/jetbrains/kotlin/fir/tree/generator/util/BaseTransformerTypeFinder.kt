@@ -6,27 +6,34 @@
 package org.jetbrains.kotlin.fir.tree.generator.util
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
-import org.jetbrains.kotlin.fir.tree.generator.model.AbstractElement
+import org.jetbrains.kotlin.fir.tree.generator.model.Element
+import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.model.FieldList
 import org.jetbrains.kotlin.fir.tree.generator.model.FirField
+import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 
+/**
+ * For each FIR element, sets its [Element.baseTransformerType] to one of it parents if that parent FIR type is used at least once as
+ * a type of [Field], except when that [Field] is explicitly opted out of it via [Field.useInBaseTransformerDetection].
+ */
 fun detectBaseTransformerTypes(builder: AbstractFirTreeBuilder) {
-    val usedAsFieldType = mutableMapOf<AbstractElement, Boolean>().withDefault { false }
+    val usedAsFieldType = hashSetOf<GenericElementOrRef<*, *>>()
     for (element in builder.elements) {
         for (field in element.allFirFields) {
+            if (!field.useInBaseTransformerDetection) continue
             val fieldElement = when (field) {
                 is FirField -> field.element
-                is FieldList -> field.baseType as AbstractElement
-                else -> throw IllegalArgumentException()
+                is FieldList -> field.baseType as GenericElementOrRef<*, *>
+                else -> error("Invalid field type: $field")
             }
             if (fieldElement == AbstractFirTreeBuilder.baseFirElement) continue
-            usedAsFieldType[fieldElement] = true
+            usedAsFieldType.add(fieldElement)
         }
     }
 
     for (element in builder.elements) {
         element.traverseParents {
-            if (usedAsFieldType.getValue(it)) {
+            if (it in usedAsFieldType) {
                 element.baseTransformerType = it
                 return@traverseParents
             }

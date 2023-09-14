@@ -10,20 +10,17 @@ import org.jetbrains.kotlin.generators.tree.printer.generics
 /**
  * A common interface representing a FIR or IR tree element.
  */
-interface AbstractElement<Element : AbstractElement<Element, Field>, Field : AbstractField> : FieldContainer, ImplementationKindOwner,
-    TypeRef /* TODO: Replace with ElementOrRef */ {
+interface AbstractElement<Element, Field> : ElementOrRef<Element, Field>, FieldContainer, ImplementationKindOwner
+        where Element : AbstractElement<Element, Field>,
+              Field : AbstractField {
 
     val name: String
 
     val fields: Set<Field>
 
-    val parents: List<Element>
-
     val params: List<TypeVariable>
 
-    // TODO: Remove this property as soon as we replace org.jetbrains.kotlin.fir.tree.generator.model.ElementWithArguments with
-    // a generic ElementRef class
-    val typeArguments: List<TypeArgument>
+    val parents: List<Element>
 
     val parentsArguments: Map<Element, Map<TypeRef, TypeRef>>
 

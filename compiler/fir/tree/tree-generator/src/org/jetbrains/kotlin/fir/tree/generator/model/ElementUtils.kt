@@ -49,7 +49,7 @@ fun field(name: String, type: TypeRef, argument: String? = null, nullable: Boole
     }
 }
 
-fun field(name: String, element: AbstractElement, nullable: Boolean = false, withReplace: Boolean = false): Field {
+fun field(name: String, element: ElementOrRef, nullable: Boolean = false, withReplace: Boolean = false): Field {
     return FirField(name, element, nullable, withReplace)
 }
 
@@ -63,8 +63,8 @@ fun fieldList(name: String, type: TypeRef, withReplace: Boolean = false, useMuta
     return FieldList(name, type, withReplace, useMutableOrEmpty)
 }
 
-fun fieldList(element: AbstractElement, withReplace: Boolean = false, useMutableOrEmpty: Boolean = false): Field {
-    return FieldList(element.name.replaceFirstChar(Char::lowercaseChar) + "s", element, withReplace, useMutableOrEmpty)
+fun fieldList(elementOrRef: ElementOrRef, withReplace: Boolean = false, useMutableOrEmpty: Boolean = false): Field {
+    return FieldList(elementOrRef.element.name.replaceFirstChar(Char::lowercaseChar) + "s", elementOrRef, withReplace, useMutableOrEmpty)
 }
 
 // ----------- Field set -----------

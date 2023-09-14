@@ -79,6 +79,8 @@ class Element(
     }
 }
 
+// FIXME: Replace this class with `typealias ElementRef = org.jetbrains.kotlin.generators.tree.ElementRef<Element, Field>`
+// FIXME: as soon as Element implements the org.jetbrains.kotlin.generators.tree.AbstractElement interface.
 data class ElementRef(
     val element: Element,
     override val args: Map<NamedTypeParameterRef, TypeRef> = emptyMap(),
