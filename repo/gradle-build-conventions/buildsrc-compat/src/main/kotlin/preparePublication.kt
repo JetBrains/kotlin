@@ -1,9 +1,3 @@
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import kotlinx.coroutines.runBlocking
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 
@@ -37,9 +31,7 @@ fun Project.preparePublication() {
         }
         val deployUrlFromParameters = deployRepoUrl ?: deployFolder ?: sonatypeSnapshotsUrl
 
-        val isDeployStagingRepoGenerationRequired: Boolean by extra(isSonatypeRelease && deployUrlFromParameters == null)
-
-        var repoUrl: String by extra((deployUrlFromParameters ?: "file://${rootProject.buildDir}/repo").toString())
+        val repoUrl: String by extra((deployUrlFromParameters ?: "file://${rootProject.buildDir}/repo").toString())
         logger.info("Deployment repository preliminary url: $repoUrl ($repoProvider)")
 
         val username: String? by extra(
@@ -48,39 +40,6 @@ fun Project.preparePublication() {
         val password: String? by extra(
             properties["deployRepoPassword"]?.toString() ?: properties["kotlin.${repoProvider}.password"]?.toString()
         )
-
-        if (isDeployStagingRepoGenerationRequired) {
-            doFirst {
-                HttpClient().use { client ->
-                    runBlocking {
-                        val sonatypeUsername = requireNotNull(username) {
-                            "Username to authenticate on sonatype staging was not provided!"
-                        }
-                        val sonatypePassword = requireNotNull(password) {
-                            "Password to authenticate on sonatype staging was not provided!"
-                        }
-
-                        val response = client.post("https://oss.sonatype.org/service/local/staging/profiles/169b36e205a64e/start") {
-                            basicAuth(sonatypeUsername, sonatypePassword)
-                            contentType(ContentType.Application.Xml)
-                            accept(ContentType.Application.Xml)
-                            setBody("<promoteRequest><data><description>Repository for publishing $version</description></data></promoteRequest>")
-                        }
-
-                        if (response.status.value in 200..299) {
-                            val responseText = response.bodyAsText()
-                            val repoId = responseText
-                                .substringAfter("<stagingRepositoryId>")
-                                .substringBefore("</stagingRepositoryId>")
-                            repoUrl = "https://oss.sonatype.org/service/local/staging/deployByRepositoryId/$repoId/"
-                            logger.warn("##teamcity[setParameter name='system.deploy-url' value='$repoUrl']")
-                        } else {
-                            throw GradleException("Failed to connect to sonatype API: ${response.status.description}")
-                        }
-                    }
-                }
-            }
-        }
 
         doLast {
             logger.warn("Deployment repository url: $repoUrl")
