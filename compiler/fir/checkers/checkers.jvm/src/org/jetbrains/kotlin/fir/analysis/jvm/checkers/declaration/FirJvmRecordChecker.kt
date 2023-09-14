@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -30,7 +31,7 @@ object FirJvmRecordChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.superTypeRefs.firstOrNull()?.let { typeRef ->
             // compiler automatically adds java.lang.Record supertype, so we should check only for explicit type declarations
-            if (typeRef.source != null && typeRef.coneTypeSafe<ConeClassLikeType>()?.classId == StandardClassIds.Java.Record) {
+            if (typeRef.source != null && typeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedClassId(context.session) == StandardClassIds.Java.Record) {
                 reporter.reportOn(typeRef.source, FirJvmErrors.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, context)
                 return
             }
