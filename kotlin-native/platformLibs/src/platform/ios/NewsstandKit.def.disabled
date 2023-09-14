@@ -5,3 +5,4 @@ modules = NewsstandKit
 
 compilerOpts = -framework NewsstandKit
 linkerOpts = -framework NewsstandKit
+# Deprecated in Xcode14, removed in Xcode 15

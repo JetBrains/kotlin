@@ -5,3 +5,4 @@ package = platform.ExposureNotification
 modules = ExposureNotification
 compilerOpts = -framework ExposureNotification
 linkerOpts = -framework ExposureNotification
+# Removed in Xcode 15

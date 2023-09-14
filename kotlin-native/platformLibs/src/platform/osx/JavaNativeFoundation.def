@@ -2,7 +2,8 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Cor
 language = Objective-C
 package = platform.JavaNativeFoundation
 
-modules.macos_x64 = JavaNativeFoundation
+# Xcode 15 does not have a module for this framework.
+# modules.macos_x64 = JavaNativeFoundation
 compilerOpts.macos_x64 = -framework JavaNativeFoundation
 linkerOpts.macos_x64 = -framework JavaNativeFoundation
 
