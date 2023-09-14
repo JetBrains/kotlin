@@ -35,9 +35,6 @@ internal sealed class WasmVM(val shortName: String) {
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
-                "--experimental-wasm-gc",
-                "--wasm-final-types",
-                "--wasm-disable-deprecated",
                 *jsFiles.toTypedArray(),
                 "--module",
                 entryMjs,
