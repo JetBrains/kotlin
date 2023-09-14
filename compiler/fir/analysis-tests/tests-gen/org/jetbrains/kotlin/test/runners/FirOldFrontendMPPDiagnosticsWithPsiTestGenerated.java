@@ -349,30 +349,6 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         runTest("compiler/testData/diagnostics/tests/multiplatform/widerVisibilityInActualClassifier.kt");
     }
 
-    @Test
-    @TestMetadata("widerVisibility_expectIsEffectivelyFinal.kt")
-    public void testWiderVisibility_expectIsEffectivelyFinal() throws Exception {
-        runTest("compiler/testData/diagnostics/tests/multiplatform/widerVisibility_expectIsEffectivelyFinal.kt");
-    }
-
-    @Test
-    @TestMetadata("widerVisibility_expectIsEffectivelyFinal_fakeOverride.kt")
-    public void testWiderVisibility_expectIsEffectivelyFinal_fakeOverride() throws Exception {
-        runTest("compiler/testData/diagnostics/tests/multiplatform/widerVisibility_expectIsEffectivelyFinal_fakeOverride.kt");
-    }
-
-    @Test
-    @TestMetadata("widerVisibility_expectSetterIsEffectivelyFinal.kt")
-    public void testWiderVisibility_expectSetterIsEffectivelyFinal() throws Exception {
-        runTest("compiler/testData/diagnostics/tests/multiplatform/widerVisibility_expectSetterIsEffectivelyFinal.kt");
-    }
-
-    @Test
-    @TestMetadata("widerVisibility_expectSetterIsEffectivelyFinal_fakeOverride.kt")
-    public void testWiderVisibility_expectSetterIsEffectivelyFinal_fakeOverride() throws Exception {
-        runTest("compiler/testData/diagnostics/tests/multiplatform/widerVisibility_expectSetterIsEffectivelyFinal_fakeOverride.kt");
-    }
-
     @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker")
     @TestDataPath("$PROJECT_ROOT")
