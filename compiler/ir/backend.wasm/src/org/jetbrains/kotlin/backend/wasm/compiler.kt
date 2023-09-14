@@ -250,8 +250,6 @@ fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
         }.sorted()
         .joinToString("\n")
 
-    val d = "$"
-
     //language=js
     return """
 export async function instantiate(imports={}, runInitializer=true) {
@@ -320,23 +318,11 @@ $imports
       }
     } catch (e) {
       if (e instanceof WebAssembly.CompileError) {
-        const styles = [];
-        const styled = (t, css, escSeq) => isBrowser ? (styles.push(css, /* reset */""), `%c$d{t}%c`) : `\x1b[$d{escSeq}m$d{t}\x1b[m`;
-        const name = t => styled(t, "font-weight:bold", 1);
-        const uri = t => styled(t, "text-decoration:underline", 4);
-        const cli = t => styled(t, "font-family:monospace", 2);
-        
-        let text = `Using experimental Kotlin/Wasm may require enabling experimental features in the target environment.
-
-- $d{name("Chrome")}: enable $d{name("WebAssembly Garbage Collection")} at $d{uri("chrome://flags/#enable-webassembly-garbage-collection")} or run the program with the $d{cli("--js-flags=--experimental-wasm-gc")} command line argument.
-- $d{name("Firefox")}: enable $d{name("javascript.options.wasm_function_references")} and $d{name("javascript.options.wasm_gc")} at $d{uri("about:config")}.
-- $d{name("Edge")}: run the program with the $d{cli("--js-flags=--experimental-wasm-gc")} command line argument.
-- $d{name("Node.js")}: run the program with the $d{cli("--experimental-wasm-gc")} command line argument.
-
-For more information see $d{uri("https://kotl.in/wasm_help/")}.
+        let text = `Please make sure that your runtime environment supports the latest version of Wasm GC and Exception-Handling proposals.
+For more information, see https://kotl.in/wasm-help
 `;
         if (isBrowser) {
-          console.error(text, ...styles);
+          console.error(text);
         } else {
           const t = "\n" + text;
           if (typeof console !== "undefined" && console.log !== void 0) 
