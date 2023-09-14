@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.generator.elementBaseType
 import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
 import org.jetbrains.kotlin.utils.addToStdlib.castAll
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
+import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 private object InferredOverriddenType : TypeRef {
     override val type: String
@@ -34,7 +35,7 @@ fun config2model(config: Config): Model {
             name = ec.name,
             packageName = ec.category.packageName,
             params = ec.params,
-            fields = ec.fields.mapTo(mutableListOf(), ::transformFieldConfig),
+            fields = ec.fields.mapTo(mutableSetOf(), ::transformFieldConfig),
             additionalFactoryMethodParameters = ec.additionalIrFactoryMethodParameters.mapTo(mutableListOf(), ::transformFieldConfig)
         ).also {
             ec2el[ec.element] = it
@@ -85,6 +86,7 @@ private fun transformFieldConfig(fc: FieldConfig): Field = when (fc) {
 }
 
 @OptIn(UnsafeCastFunction::class)
+@Suppress("UNCHECKED_CAST")
 private fun replaceElementRefs(config: Config, mapping: Map<ElementConfig, Element>): Element {
     val visited = mutableMapOf<TypeRef, TypeRef>()
 
@@ -110,7 +112,7 @@ private fun replaceElementRefs(config: Config, mapping: Map<ElementConfig, Eleme
         }.also { visited[type] = it }
     }
 
-    val rootEl = transform(config.rootElement) as ElementRef
+    val rootEl = transform(config.rootElement) as GenericElementRef<Element, Field>
 
     for (ec in config.elements) {
         val el = mapping[ec.element]!!
@@ -119,8 +121,8 @@ private fun replaceElementRefs(config: Config, mapping: Map<ElementConfig, Eleme
             .partitionIsInstance<TypeRef, ElementRef>()
         el.elementParents = elParents.takeIf { it.isNotEmpty() || el == rootEl.element } ?: listOf(rootEl)
         el.otherParents = otherParents.castAll<ClassRef<*>>().toList()
-        el.visitorParent = ec.visitorParent?.let(::transform) as ElementRef?
-        el.transformerReturnType = (ec.transformerReturnType?.let(::transform) as ElementRef?)?.element
+        el.visitorParent = ec.visitorParent?.let(::transform) as GenericElementRef<Element, Field>?
+        el.transformerReturnType = (ec.transformerReturnType?.let(::transform) as GenericElementRef<Element, Field>?)?.element
 
         for (field in el.fields) {
             when (field) {

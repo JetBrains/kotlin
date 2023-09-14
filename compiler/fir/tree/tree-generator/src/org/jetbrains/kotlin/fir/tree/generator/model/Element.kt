@@ -62,7 +62,7 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
     var doesNotNeedImplementation: Boolean = false
 
     val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || parentRefs.any { it.element.needTransformOtherChildren }
-    override val overridenFields: MutableMap<Field, MutableMap<Field, Boolean>> = mutableMapOf()
+    val overridenFields: MutableMap<Field, MutableMap<Field, Boolean>> = mutableMapOf()
     val useNullableForReplace: MutableSet<Field> = mutableSetOf()
     val allImplementations: List<Implementation> by lazy {
         if (doesNotNeedImplementation) {
@@ -146,10 +146,6 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
 
     override fun toString(): String {
         return typeWithArguments
-    }
-
-    override fun get(fieldName: String): Field? {
-        return allFields.firstOrNull { it.name == fieldName }
     }
 
     enum class Kind(val packageName: String) {

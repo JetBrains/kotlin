@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.ir.generator.config.ElementConfigOrRef
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Element.Companion.elementName2typeName
-import org.jetbrains.kotlin.ir.generator.model.ElementRef
 import org.jetbrains.kotlin.ir.generator.util.*
 import org.jetbrains.kotlin.types.Variance
+import  org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 fun Element.toPoet() = ClassName(packageName, typeName)
 fun Element.toPoetSelfParameterized() = toPoet().parameterizedByIfAny(poetTypeVariables)
@@ -21,7 +21,7 @@ val Element.poetTypeVariables get() = params.map { TypeVariableName(it.name) }
 
 fun TypeRef.toPoet(): TypeName {
     return when (this) {
-        is ElementRef -> ClassName(element.packageName, element.typeName).parameterizedByIfAny(typeArgsToPoet())
+        is GenericElementRef<*, *> -> ClassName(element.packageName!!, element.type).parameterizedByIfAny(typeArgsToPoet())
         is ClassRef<*> -> ClassName(packageName, simpleNames).parameterizedByIfAny(typeArgsToPoet())
         is NamedTypeParameterRef -> TypeVariableName(name)
         is ElementConfigOrRef -> ClassName(this.element.category.packageName, elementName2typeName(element.name)).parameterizedByIfAny(
@@ -50,7 +50,7 @@ private fun ParametrizedTypeRef<*, *>.typeArgsToPoet(): List<TypeName> {
         return fromPositional(args as Map<PositionTypeParameterRef, TypeRef>)
     } else {
         check(positional.isEmpty()) { "Can't yet handle mixed index-name args" }
-        this as ElementRef // Named args must only be used with generated elements (for now)
+        this as GenericElementRef<*, *> // Named args must only be used with generated elements (for now)
 
         val args = args.entries
             .associate { p -> PositionTypeParameterRef(element.params.withIndex().single { it.value.name == p.key.name }.index) to p.value }
@@ -68,7 +68,7 @@ fun TypeVariable.toPoet() = TypeVariableName(
 
 val ClassOrElementRef.typeKind: TypeKind
     get() = when (this) {
-        is ElementRef -> element.kind!!.typeKind
+        is GenericElementRef<*, *> -> element.kind!!.typeKind
         is ClassRef<*> -> kind
         else -> error("Unexpected type: $this")
     }

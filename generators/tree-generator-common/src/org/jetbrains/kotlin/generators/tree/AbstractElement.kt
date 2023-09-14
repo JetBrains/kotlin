@@ -20,17 +20,19 @@ interface AbstractElement<Element, Field> : ElementOrRef<Element, Field>, FieldC
 
     val parentRefs: List<ElementOrRef<Element, Field>>
 
-    val overridenFields: Map<Field, Map<Field, Boolean>>
-
     val isSealed: Boolean
         get() = false
 
-    override val allParents: List<ImplementationKindOwner>
+    override val allParents: List<Element>
         get() = parentRefs.map { it.element }
 
     override fun getTypeWithArguments(notNull: Boolean): String = type + generics
 
     override val allFields: List<Field>
+
+    override fun get(fieldName: String): Field? {
+        return allFields.firstOrNull { it.name == fieldName }
+    }
 }
 
 val AbstractElement<*, *>.generics: String
