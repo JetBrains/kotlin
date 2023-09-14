@@ -13,9 +13,11 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -24,7 +26,6 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
@@ -41,7 +42,7 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
             return
         }
 
-        val declarationAnnotation = declaration.findAnnotation(StandardClassIds.Annotations.JvmStatic)
+        val declarationAnnotation = declaration.findAnnotation(StandardClassIds.Annotations.JvmStatic, context.session)
 
         if (declarationAnnotation != null) {
             checkAnnotated(declaration, context, reporter, declaration.source)
@@ -200,7 +201,7 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
         targetSource: KtSourceElement?,
     ) {
         if (declaration !is FirProperty) return
-        if (declaration.isConst || declaration.backingField?.hasAnnotationNamedAs(StandardClassIds.Annotations.JvmField) == true) {
+        if (declaration.isConst || declaration.backingField?.hasAnnotationNamedAs(StandardClassIds.Annotations.JvmField, context.session) == true) {
             reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_CONST_OR_JVM_FIELD, context)
         }
     }
@@ -236,13 +237,13 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
 
     private fun FirClassLikeSymbol<*>.isCompanion() = (this as? FirRegularClassSymbol)?.isCompanion == true
 
-    private fun FirDeclaration.hasAnnotationNamedAs(classId: ClassId): Boolean {
-        return findAnnotation(classId) != null
+    private fun FirDeclaration.hasAnnotationNamedAs(classId: ClassId, session: FirSession): Boolean {
+        return findAnnotation(classId, session) != null
     }
 
-    private fun FirDeclaration.findAnnotation(classId: ClassId): FirAnnotation? {
+    private fun FirDeclaration.findAnnotation(classId: ClassId, session: FirSession): FirAnnotation? {
         return annotations.firstOrNull {
-            it.annotationTypeRef.coneType.classId == classId
+            it.annotationTypeRef.coneType.fullyExpandedClassId(session) == classId
         }
     }
 }
