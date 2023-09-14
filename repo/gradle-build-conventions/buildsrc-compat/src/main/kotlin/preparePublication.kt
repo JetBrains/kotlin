@@ -16,29 +16,28 @@ fun Project.preparePublication() {
         )
         val isRelease: Boolean by extra(!project.version.toString().contains("-SNAPSHOT"))
 
-        val repo: String? = properties["deployRepo"]?.toString() ?: properties["deploy-repo"]?.toString()
+        val repo: String? = properties["kotlin.build.deploy-repo"]?.toString() ?: properties["deploy-repo"]?.toString()
         val repoProvider = repositoryProviders.getOrDefault(repo, repo)
         val isSonatypePublish: Boolean by extra(repoProvider == "sonatype")
         val isSonatypeRelease: Boolean by extra(isSonatypePublish && isRelease)
 
-        val deployRepoUrl = (properties["deployRepoUrl"] ?: properties["deploy-url"])?.toString()?.takeIf { it.isNotBlank() }
-        val deployFolder = properties["deployRepoFolder"]?.toString()
-            ?.let { "file://${rootProject.buildDir}/$it" }
+        val deployRepoUrl = (properties["kotlin.build.deploy-url"] ?: properties["deploy-url"])?.toString()?.takeIf { it.isNotBlank() }
+
         val sonatypeSnapshotsUrl = if (isSonatypePublish && !isRelease) {
             "https://oss.sonatype.org/content/repositories/snapshots/"
         } else {
             null
         }
-        val deployUrlFromParameters = deployRepoUrl ?: deployFolder ?: sonatypeSnapshotsUrl
+        val deployUrlFromParameters = deployRepoUrl ?: sonatypeSnapshotsUrl
 
         val repoUrl: String by extra((deployUrlFromParameters ?: "file://${rootProject.buildDir}/repo").toString())
         logger.info("Deployment repository preliminary url: $repoUrl ($repoProvider)")
 
         val username: String? by extra(
-            properties["deployRepoUsername"]?.toString() ?: properties["kotlin.${repoProvider}.user"]?.toString()
+            properties["kotlin.build.deploy-username"]?.toString() ?: properties["kotlin.${repoProvider}.user"]?.toString()
         )
         val password: String? by extra(
-            properties["deployRepoPassword"]?.toString() ?: properties["kotlin.${repoProvider}.password"]?.toString()
+            properties["kotlin.build.deploy-password"]?.toString() ?: properties["kotlin.${repoProvider}.password"]?.toString()
         )
 
         doLast {
