@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.firImplementationDetailType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
-import org.jetbrains.kotlin.generators.tree.*
-import java.io.File
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
+import org.jetbrains.kotlin.generators.tree.ImplementationKindOwner
+import org.jetbrains.kotlin.generators.tree.TypeRef
+import org.jetbrains.kotlin.generators.tree.typeWithArguments
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-
-class GeneratedFile(val file: File, val newText: String)
 
 enum class ImportKind(val postfix: String) {
     Element(""), Implementation(".impl"), Builder(".builder")

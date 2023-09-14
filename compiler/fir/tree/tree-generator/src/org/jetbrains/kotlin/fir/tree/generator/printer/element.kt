@@ -108,8 +108,7 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
 }
 
 fun Element.generateCode(generationPath: File): GeneratedFile {
-    val dir = generationPath.resolve(packageName.replace(".", "/"))
-    val file = File(dir, "$type.kt")
+    val file = getPathForFile(generationPath, packageName, type)
     val stringBuilder = StringBuilder()
     SmartPrinter(stringBuilder).apply {
         printCopyright()

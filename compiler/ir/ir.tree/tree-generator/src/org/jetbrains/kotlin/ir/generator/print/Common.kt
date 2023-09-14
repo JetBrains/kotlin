@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeSpec
-import org.jetbrains.kotlin.ir.generator.util.GeneratedFile
+import org.jetbrains.kotlin.generators.tree.GeneratedFile
+import org.jetbrains.kotlin.generators.tree.getPathForFile
 import org.jetbrains.kotlin.ir.generator.util.Import
 import java.io.File
 
@@ -50,9 +51,4 @@ private fun String.unbacktickIdentifiers(vararg identifiers: String): String {
         result = result.replace("`$identifier`", identifier)
     }
     return result
-}
-
-fun getPathForFile(generationPath: File, packageName: String, typeName: String): File {
-    val dir = generationPath.resolve(packageName.replace(".", "/"))
-    return File(dir, "$typeName.kt")
 }
