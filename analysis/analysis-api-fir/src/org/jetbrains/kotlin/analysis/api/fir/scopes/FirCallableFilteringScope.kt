@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * A base implementation for [FirNonStaticCallablesOnlyScope] and [FirDeclaredMembersOnlyScope], which both filter callables based on some
+ * condition.
+ */
 internal abstract class FirCallableFilteringScope(private val baseScope: FirContainingNamesAwareScope) : FirContainingNamesAwareScope() {
     protected abstract fun isTargetCallable(callable: FirCallableSymbol<*>): Boolean
 

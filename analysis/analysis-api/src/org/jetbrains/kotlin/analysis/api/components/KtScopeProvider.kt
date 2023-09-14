@@ -157,7 +157,11 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
         withValidityAssertion { analysisSession.scopeProvider.getCombinedMemberScope(this) }
 
     /**
-     * Returns a [KtScope] containing the *non-static* callables and all classifiers explicitly declared in the given [KtSymbolWithMembers].
+     * Returns a [KtScope] containing the *non-static* callables (functions, properties, and constructors) explicitly declared in the given
+     * [KtSymbolWithMembers].
+     *
+     * The declared member scope does not contain classifiers (including the companion object). To retrieve the classifiers declared in this
+     * [KtSymbolWithMembers], please use the *static* declared member scope provided by [getStaticDeclaredMemberScope].
      *
      * @see getStaticDeclaredMemberScope
      */
@@ -165,7 +169,8 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
         withValidityAssertion { analysisSession.scopeProvider.getDeclaredMemberScope(this) }
 
     /**
-     * Returns a [KtScope] containing the *static* members explicitly declared in the given [KtSymbolWithMembers].
+     * Returns a [KtScope] containing the *static* callables (functions and properties) and all classifiers (classes and objects) explicitly
+     * declared in the given [KtSymbolWithMembers].
      *
      * It is worth noting that, while Java classes may contain declarations of static callables freely, in Kotlin only enum classes define
      * static callables. Hence, for non-enum Kotlin classes, it is not expected that the static declared member scope will contain any

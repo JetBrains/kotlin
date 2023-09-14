@@ -105,7 +105,7 @@ internal class KtFirScopeProvider(
     ): FirContainingNamesAwareScope {
         val combinedScope = getCombinedFirKotlinDeclaredMemberScope(classSymbol)
         return when (kind) {
-            DeclaredMemberScopeKind.NON_STATIC -> FirNonStaticCallablesScope(combinedScope)
+            DeclaredMemberScopeKind.NON_STATIC -> FirNonStaticCallablesOnlyScope(combinedScope)
             DeclaredMemberScopeKind.STATIC -> FirStaticScope(combinedScope)
         }
     }
@@ -115,11 +115,14 @@ internal class KtFirScopeProvider(
         val scopeSession = getScopeSession()
 
         val firScope = when (kind) {
-            DeclaredMemberScopeKind.NON_STATIC -> JavaScopeProvider.getUseSiteMemberScope(
-                firJavaClass,
-                useSiteSession,
-                scopeSession,
-                memberRequiredPhase = FirResolvePhase.TYPES,
+            // `FirNoClassifiersScope` is a workaround for non-static member scopes containing classifiers (see KT-61900).
+            DeclaredMemberScopeKind.NON_STATIC -> FirNoClassifiersScope(
+                JavaScopeProvider.getUseSiteMemberScope(
+                    firJavaClass,
+                    useSiteSession,
+                    scopeSession,
+                    memberRequiredPhase = FirResolvePhase.TYPES,
+                )
             )
             DeclaredMemberScopeKind.STATIC -> JavaScopeProvider.getStaticScope(firJavaClass, useSiteSession, scopeSession) ?: return null
         }

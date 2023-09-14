@@ -13,7 +13,7 @@ public abstract class JavaClass {
 
     public static int y = 1;
 
-    public class C1 {
+    public static class C1 {
     }
 }
 

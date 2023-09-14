@@ -9,4 +9,8 @@ open fun hashCode(): kotlin.Int
 
 open fun toString(): kotlin.String
 
+open class NestedClass
+
+open class NestedSuperClass
+
 constructor()

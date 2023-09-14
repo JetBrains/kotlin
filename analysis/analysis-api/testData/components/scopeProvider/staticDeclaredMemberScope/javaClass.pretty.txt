@@ -1,3 +1,5 @@
+open fun bar(): kotlin.String!
+
 open var foo: kotlin.Int
 
-open fun bar(): kotlin.String!
+open class NestedClass
