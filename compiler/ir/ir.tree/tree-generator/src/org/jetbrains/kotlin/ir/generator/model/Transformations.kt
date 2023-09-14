@@ -65,15 +65,9 @@ private fun transformFieldConfig(fc: FieldConfig): Field = when (fc) {
     )
     is ListFieldConfig -> {
         val listType = when (fc.mutability) {
-            ListFieldConfig.Mutability.List -> type(
-                "kotlin.collections",
-                "MutableList",
-            )
-            ListFieldConfig.Mutability.Array -> type(
-                "kotlin.",
-                "Array",
-            )
-            else -> type("kotlin.collections", "List")
+            ListFieldConfig.Mutability.List -> StandardTypes.mutableList
+            ListFieldConfig.Mutability.Array -> StandardTypes.array
+            else -> StandardTypes.list
         }
         ListField(
             fc,
