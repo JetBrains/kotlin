@@ -47,9 +47,9 @@ fun printElements(generationPath: File, model: Model) = sequence {
 
             for (field in element.fields) {
                 if (!field.printProperty) continue
-                val poetType = field.type.toPoet().copy(nullable = field.nullable)
+                val poetType = field.typeRef.toPoet().copy(nullable = field.nullable)
                 addProperty(PropertySpec.builder(field.name, poetType).apply {
-                    mutable(field.mutable)
+                    mutable(field.isMutable)
                     if (field.isOverride) {
                         addModifiers(KModifier.OVERRIDE)
                     }
@@ -215,13 +215,13 @@ fun printElements(generationPath: File, model: Model) = sequence {
                                     args.add(transformMethodName)
                                 }
                                 is ListField -> {
-                                    if (child.mutable) {
+                                    if (child.isMutable) {
                                         append(" = ")
                                         append(child.name)
                                         if (child.nullable) append("?")
                                     }
                                     append(".%M(%N, %N)")
-                                    args.add(if (child.mutable) transformIfNeeded else transformInPlace)
+                                    args.add(if (child.isMutable) transformIfNeeded else transformInPlace)
                                 }
                             }
 
@@ -229,7 +229,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
                             args.add(dataParam)
 
                             if (child is SingleField) {
-                                val elRef = child.type as ElementRef
+                                val elRef = child.typeRef as ElementRef
                                 if (!elRef.element.transform) {
                                     append(" as %T")
                                     if (child.nullable) append("?")

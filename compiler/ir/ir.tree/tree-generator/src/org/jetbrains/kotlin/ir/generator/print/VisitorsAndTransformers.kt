@@ -124,7 +124,7 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
         when (field) {
             is SingleField -> addStatement("$access = $transformTypeFunName($visitorParam, $access, data)")
             is ListField -> {
-                if (field.mutable) {
+                if (field.isMutable) {
                     addStatement("$access = $access.map { $transformTypeFunName($visitorParam, it, data) }")
                 } else {
                     beginControlFlow("for (i in 0 until $access.size)")
@@ -144,7 +144,7 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
         val irTypeFields = this.fields
             .filter {
                 val type = when (it) {
-                    is SingleField -> it.type
+                    is SingleField -> it.typeRef
                     is ListField -> it.elementType
                 }
                 type.toString() == irTypeType.toString()
