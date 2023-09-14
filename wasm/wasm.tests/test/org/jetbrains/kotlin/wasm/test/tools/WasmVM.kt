@@ -22,9 +22,6 @@ internal sealed class WasmVM(val shortName: String) {
     object V8 : WasmVM("V8") {
         override fun run(entryMjs: String, jsFiles: List<String>, workingDirectory: File?, disableExceptionHandlingIfPossible: Boolean) {
             tool.run(
-                "--experimental-wasm-gc",
-                "--wasm-final-types",
-                "--wasm-disable-deprecated",
                 *jsFiles.toTypedArray(),
                 "--module",
                 entryMjs,
