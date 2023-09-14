@@ -264,24 +264,22 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
 
     class ClassifierCandidate(val scope: FirScope, val availableSymbol: AvailableSymbol<ClassId>)
 
-    fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): AvailableSymbol<ClassId>? {
-        for (scope in positionScopes) {
-            val classifierSymbol = scope.findFirstClassifierByName(targetClassName) ?: continue
-            val classifierLookupTag = classifierSymbol.toLookupTag() as? ConeClassLikeLookupTag ?: continue
-
-            return AvailableSymbol(classifierLookupTag.classId, ImportKind.fromScope(scope))
-        }
-
-        return null
-    }
+    fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): AvailableSymbol<ClassId>? =
+        positionScopes.firstNotNullOfOrNull { scope -> findFirstClassifierSymbolByName(scope, targetClassName) }
 
     fun findClassifiersInScopesByName(scopes: List<FirScope>, targetClassName: Name): List<ClassifierCandidate> =
         scopes.mapNotNull { scope ->
-            val classifierSymbol = scope.findFirstClassifierByName(targetClassName) ?: return@mapNotNull null
-            val classifierLookupTag = classifierSymbol.toLookupTag() as? ConeClassLikeLookupTag ?: return@mapNotNull null
+            val classifierSymbol = findFirstClassifierSymbolByName(scope, targetClassName) ?: return@mapNotNull null
 
-            ClassifierCandidate(scope, AvailableSymbol(classifierLookupTag.classId, ImportKind.fromScope(scope)))
+            ClassifierCandidate(scope, classifierSymbol)
         }
+
+    private fun findFirstClassifierSymbolByName(scope: FirScope, targetClassName: Name): AvailableSymbol<ClassId>? {
+        val classifierSymbol = scope.findFirstClassifierByName(targetClassName) ?: return null
+        val classifierLookupTag = classifierSymbol.toLookupTag() as? ConeClassLikeLookupTag ?: return null
+
+        return AvailableSymbol(classifierLookupTag.classId, ImportKind.fromScope(scope))
+    }
 
     fun findFunctionsInScopes(scopes: List<FirScope>, name: Name): List<AvailableSymbol<FirFunctionSymbol<*>>> {
         return scopes.flatMap { scope ->
