@@ -1861,32 +1861,44 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface MultipleDefaultsInheritedFromSupertypes : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = MultipleDefaultsInheritedFromSupertypes::class
+        val name: Name
         val valueParameter: KtSymbol
+        val baseFunctions: List<KtCallableSymbol>
     }
 
     interface MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverride : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverride::class
+        val name: Name
         val valueParameter: KtSymbol
+        val baseFunctions: List<KtCallableSymbol>
     }
 
     interface MultipleDefaultsInheritedFromSupertypesDeprecationError : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = MultipleDefaultsInheritedFromSupertypesDeprecationError::class
+        val name: Name
         val valueParameter: KtSymbol
+        val baseFunctions: List<KtCallableSymbol>
     }
 
     interface MultipleDefaultsInheritedFromSupertypesDeprecationWarning : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = MultipleDefaultsInheritedFromSupertypesDeprecationWarning::class
+        val name: Name
         val valueParameter: KtSymbol
+        val baseFunctions: List<KtCallableSymbol>
     }
 
     interface MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideDeprecationError : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideDeprecationError::class
+        val name: Name
         val valueParameter: KtSymbol
+        val baseFunctions: List<KtCallableSymbol>
     }
 
     interface MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideDeprecationWarning : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideDeprecationWarning::class
+        val name: Name
         val valueParameter: KtSymbol
+        val baseFunctions: List<KtCallableSymbol>
     }
 
     interface TypealiasExpandsToArrayOfNothings : KtFirDiagnostic<KtElement> {
