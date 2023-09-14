@@ -80,6 +80,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
         }
 
         @Test
+        @TestMetadata("annotationUsage.kt")
+        public void testAnnotationUsage() throws Exception {
+            runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/annotationUsage.kt");
+        }
+
+        @Test
         @TestMetadata("customName.kt")
         public void testCustomName() throws Exception {
             runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/customName.kt");

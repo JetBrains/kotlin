@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -758,6 +759,11 @@ class CallAndReferenceGenerator(
                 } ?: return@convertWithOffsets IrErrorCallExpressionImpl(
                     startOffset, endOffset, type, "No annotation constructor found: $symbol"
                 )
+
+            // Annotation constructor may come unresolved on partial module compilation (inside the IDE).
+            // Here it is resolved together with default parameter values, as transformers convert them to constants.
+            // Also see 'IrConstAnnotationTransformer'.
+            firConstructorSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
             val irConstructor = declarationStorage.getIrConstructorSymbol(firConstructorSymbol)
 
