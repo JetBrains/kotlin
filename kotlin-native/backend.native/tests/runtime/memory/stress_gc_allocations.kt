@@ -2,85 +2,127 @@
  * Copyright 2010-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class, kotlin.native.concurrent.ObsoleteWorkersApi::class)
 
-import kotlin.test.*
 import kotlin.concurrent.AtomicInt
+import kotlin.concurrent.Volatile
 import kotlin.native.concurrent.*
+import kotlin.native.identityHashCode
 import kotlin.native.internal.MemoryUsageInfo
+import kotlin.native.ref.createCleaner
+import kotlin.random.Random
 
+// Copying what's done in kotlinx.benchmark
+// TODO: Could we benefit, if this was in stdlib, and the compiler just new about it?
 object Blackhole {
-    // On MIPS `AtomicLong` does not support `addAndGet`. TODO: Fix it.
-    private val hole = AtomicInt(0)
+    @Volatile
+    var i0: Int = Random.nextInt()
+    var i1 = i0 + 1
 
-    fun consume(value: Any) {
-        hole.addAndGet(value.hashCode().toInt())
+    fun consume(value: Any?) {
+        consume(value.identityHashCode())
     }
 
-    fun discharge() {
-        println(hole.value)
+    fun consume(i: Int) {
+        if ((i0 == i) && (i1 == i)) {
+            i0 = i
+        }
     }
 }
 
-// Keep a class to ensure we allocate in heap.
-// TODO: Protect it from escape analysis.
-class MemoryHog(val size: Int, val value: Byte, val stride: Int) {
-    val data = ByteArray(size)
-
+class ArrayOfBytes(bytes: Int) {
+    val data = ByteArray(bytes)
     init {
-        for (i in 0 until size step stride) {
-            data[i] = value
+        // Write into every OS page.
+        for (i in 0 until data.size step 4096) {
+            data[i] = 42
         }
         Blackhole.consume(data)
     }
 }
 
-val peakRssBytes: Long
-    get() {
-        val value = MemoryUsageInfo.peakResidentSetSizeBytes
-        if (value == 0L) {
-            fail("Error trying to obtain peak RSS. Check if current platform is supported")
+class ArrayOfBytesWithFinalizer(bytes: Int) {
+    val impl = ArrayOfBytes(bytes)
+    val cleaner = createCleaner(impl) {
+        Blackhole.consume(it)
+    }
+}
+
+fun allocateGarbage() {
+    // Total amount of objects here:
+    // - 1 big object with finalizer
+    // - 9 big objects
+    // - 9990 small objects with finalizers
+    // - 90000 small objects without finalizers
+    // And total size is ~50MiB
+    for (i in 0..100_000) {
+        val obj: Any = when {
+            i == 50_000 -> ArrayOfBytesWithFinalizer(1_000_000) // ~1MiB
+            i % 10_000 == 0 -> ArrayOfBytes(1_000_000) // ~1MiB
+            i % 10 == 0 -> ArrayOfBytesWithFinalizer(((i / 100) % 10) * 80) // ~1-100 pointers
+            else -> ArrayOfBytes(((i / 100) % 10) * 80) // ~1-100 pointers
         }
-        return value
+        Blackhole.consume(obj)
     }
+}
 
-@Test
-fun test() {
-    // One item is ~10MiB.
-    val size = 10_000_000
-    // Total amount is ~1TiB.
-    val count = 100_000
-    val value: Byte = 42
-    // Try to make sure each page is written
-    val stride = 4096
-    // Limit memory usage at ~700MiB. This limit was exercised by -Xallocator=mimalloc and legacy MM.
-    val rssDiffLimit: Long = 700_000_000
-    // Trigger GC after ~100MiB are allocated
-    val retainLimit: Long = 100_000_000
-    val progressReportsCount = 100
-
-    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
-        kotlin.native.runtime.GC.autotune = false
-        kotlin.native.runtime.GC.targetHeapBytes = retainLimit
-        kotlin.native.runtime.GC.pauseOnTargetHeapOverflow = true
-    }
-
+class PeakRSSChecker(private val rssDiffLimitBytes: Long) {
     // On Linux, the child process might immediately commit the same amount of memory as the parent.
     // So, measure difference between peak RSS measurements.
-    val initialPeakRss = peakRssBytes
+    private val initialBytes = MemoryUsageInfo.peakResidentSetSizeBytes.also {
+        check(it != 0L) { "Error trying to obtain peak RSS. Check if current platform is supported" }
+    }
 
-    for (i in 0..count) {
-        if (i % (count / progressReportsCount) == 0) {
-            println("Allocating iteration ${i + 1} of $count")
-        }
-        MemoryHog(size, value, stride)
-        val diffPeakRss = peakRssBytes - initialPeakRss
-        if (diffPeakRss > rssDiffLimit) {
-            // If GC does not exist, this should eventually fail.
-            fail("Increased peak RSS by $diffPeakRss which is more than $rssDiffLimit")
+    fun check(): Long {
+        val diffBytes = MemoryUsageInfo.peakResidentSetSizeBytes - initialBytes
+        check(diffBytes <= rssDiffLimitBytes) { "Increased peak RSS by $diffBytes bytes which is more than $rssDiffLimitBytes" }
+        return diffBytes
+    }
+}
+
+fun main() {
+    // allocateGarbage allocates ~50MiB. Make total amount per mutator ~5GiB.
+    val count = 100
+    // Total amount overall is ~20GiB
+    val threadCount = 4
+    val progressReportsCount = 10
+    // Setting the initial boundary to ~50MiB. The scheduler will adapt this value
+    // dynamically with no upper limit.
+    kotlin.native.runtime.GC.targetHeapBytes = 50_000_000
+    kotlin.native.runtime.GC.minHeapBytes = 50_000_000
+    // Limit memory usage at ~200MiB. 4 times the initial boundary yet still
+    // way less than total expected allocated amount.
+    val peakRSSChecker = PeakRSSChecker(200_000_000L)
+
+    val workers = Array(threadCount) { Worker.start() }
+    val globalCount = AtomicInt(0)
+    val finalGlobalCount = count * workers.size
+    workers.forEach {
+        it.executeAfter(0L) {
+            for (i in 0 until count) {
+                allocateGarbage()
+                peakRSSChecker.check()
+                globalCount.getAndAdd(1)
+            }
         }
     }
 
-    // Make sure `Blackhole` does not get optimized out.
-    Blackhole.discharge()
+    val reportStep = finalGlobalCount / progressReportsCount
+    var lastReportCount = -reportStep
+    while (true) {
+        val diffPeakRss = peakRSSChecker.check()
+        val currentCount = globalCount.value
+        if (currentCount >= finalGlobalCount) {
+            break
+        }
+        if (lastReportCount + reportStep <= currentCount) {
+            println("Allocating iteration $currentCount of $finalGlobalCount with peak RSS increase: $diffPeakRss bytes")
+            lastReportCount = currentCount
+        }
+    }
+
+    workers.forEach {
+        it.requestTermination().result
+    }
+    peakRSSChecker.check()
 }
