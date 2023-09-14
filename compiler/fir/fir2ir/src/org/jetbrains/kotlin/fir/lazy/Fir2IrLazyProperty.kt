@@ -9,11 +9,8 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.isAnnotationClass
-import org.jetbrains.kotlin.fir.backend.ConversionTypeOrigin
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.asCompileTimeIrInitializer
+import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.generators.generateOverriddenPropertySymbols
-import org.jetbrains.kotlin.fir.backend.toIrConst
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -188,7 +185,7 @@ class Fir2IrLazyProperty(
                     fir.getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                     else -> origin
                 },
-                fir.getter, isSetter = false, fir, containingClass, symbol, isFakeOverride
+                fir.getter, isSetter = false, fir, containingClass, symbol, isFakeOverride, this.symbol
             )
         }.apply {
             parent = this@Fir2IrLazyProperty.parent
@@ -216,7 +213,7 @@ class Fir2IrLazyProperty(
                         fir.setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                         else -> origin
                     },
-                    fir.setter, isSetter = true, fir, containingClass, symbol, isFakeOverride
+                    fir.setter, isSetter = true, fir, containingClass, symbol, isFakeOverride, this.symbol
                 ).apply {
                     parent = this@Fir2IrLazyProperty.parent
                     correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
@@ -228,6 +225,15 @@ class Fir2IrLazyProperty(
 
     override var overriddenSymbols: List<IrPropertySymbol> by lazyVar(lock) {
         if (containingClass == null) return@lazyVar emptyList()
+        if (isFakeOverride && parent is Fir2IrLazyClass) {
+            fakeOverrideGenerator.calcBaseSymbolsForFakeOverrideProperty(
+                containingClass, this, fir.symbol
+            )
+            fakeOverrideGenerator.getOverriddenSymbolsForFakeOverride(this)?.let {
+                assert(!it.contains(symbol)) { "Cannot add function $symbol to its own overriddenSymbols" }
+                return@lazyVar it
+            }
+        }
         fir.generateOverriddenPropertySymbols(containingClass)
     }
 

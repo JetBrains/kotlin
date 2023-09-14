@@ -55,6 +55,8 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
     // ------------------------------------ package fragments ------------------------------------
@@ -105,6 +107,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                     function.isJavaOrEnhancement -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
             else -> function.computeIrOrigin(predefinedOrigin, parentOrigin = (irParent as? IrDeclaration)?.origin)
         }
+        val parentIsExternal = irParent.isExternalParent()
         // We don't generate signatures for local classes
         // We attempt to avoid signature generation for non-local classes, with the following exceptions:
         // - special mode (generateSignatures) oriented on special backend modes
@@ -115,15 +118,15 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         val signature =
             runUnless(
                 isLocal ||
-                        !configuration.linkViaSignatures && irParent !is Fir2IrLazyClass &&
+                        !configuration.linkViaSignatures && !parentIsExternal &&
                         function.dispatchReceiverType?.isPrimitive != true && function.containerSource == null &&
                         updatedOrigin != IrDeclarationOrigin.FAKE_OVERRIDE && !function.isOverride
             ) {
                 signatureComposer.composeSignature(function, fakeOverrideOwnerLookupTag)
             }
-        if (irParent is Fir2IrLazyClass && signature != null) {
+        if (parentIsExternal && signature != null) {
             // For private functions signature is null, fallback to non-lazy function
-            return lazyDeclarationsGenerator.createIrLazyFunction(function as FirSimpleFunction, signature, irParent, updatedOrigin)
+            return lazyDeclarationsGenerator.createIrLazyFunction(function as FirSimpleFunction, signature, irParent!!, updatedOrigin)
         }
         val name = simpleFunction?.name
             ?: if (isLambda) SpecialNames.ANONYMOUS else SpecialNames.NO_NAME_PROVIDED
@@ -272,21 +275,22 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                         property.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES
                 -> IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
 
-                else -> property.computeIrOrigin(predefinedOrigin)
+                else -> property.computeIrOrigin(predefinedOrigin, parentOrigin = (irParent as? IrDeclaration)?.origin)
             }
         // See similar comments in createIrFunction above
+        val parentIsExternal = irParent.isExternalParent()
         val signature =
             runUnless(
                 isLocal ||
-                        !configuration.linkViaSignatures && irParent !is Fir2IrLazyClass &&
+                        !configuration.linkViaSignatures && !parentIsExternal &&
                         property.dispatchReceiverType?.isPrimitive != true && property.containerSource == null &&
                         origin != IrDeclarationOrigin.FAKE_OVERRIDE && !property.isOverride
             ) {
                 signatureComposer.composeSignature(property, fakeOverrideOwnerLookupTag)
             }
-        if (irParent is Fir2IrLazyClass && signature != null) {
+        if (parentIsExternal && signature != null) {
             // For private functions signature is null, fallback to non-lazy property
-            return lazyDeclarationsGenerator.createIrLazyProperty(property, signature, irParent, origin)
+            return lazyDeclarationsGenerator.createIrLazyProperty(property, signature, irParent!!, origin)
         }
         return property.convertWithOffsets { startOffset, endOffset ->
             val result = declareIrProperty(signature) { symbol ->
@@ -399,6 +403,14 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             }
             result
         }
+    }
+
+    @OptIn(ExperimentalContracts::class)
+    private fun IrDeclarationParent?.isExternalParent(): Boolean {
+        contract {
+            returns(true) implies (this@isExternalParent != null)
+        }
+        return this is Fir2IrLazyClass || this is IrExternalPackageFragment
     }
 
     /**

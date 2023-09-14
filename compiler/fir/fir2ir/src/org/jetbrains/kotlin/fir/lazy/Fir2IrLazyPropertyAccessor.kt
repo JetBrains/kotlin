@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.name.Name
@@ -35,7 +37,8 @@ class Fir2IrLazyPropertyAccessor(
     private val firParentProperty: FirProperty,
     firParentClass: FirRegularClass?,
     symbol: IrSimpleFunctionSymbol,
-    isFakeOverride: Boolean
+    isFakeOverride: Boolean,
+    override var correspondingPropertySymbol: IrPropertySymbol?
 ) : AbstractFir2IrLazyFunction<FirCallableDeclaration>(components, startOffset, endOffset, origin, symbol, isFakeOverride) {
     init {
         symbol.bind(this)
@@ -110,7 +113,14 @@ class Fir2IrLazyPropertyAccessor(
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
         if (firParentClass == null) return@lazyVar emptyList()
-        firParentProperty.generateOverriddenAccessorSymbols(firParentClass, !isSetter)
+        // If property accessor is created then corresponding property is definitely created too
+        @OptIn(IrSymbolInternals::class)
+        correspondingPropertySymbol!!.owner.overriddenSymbols.mapNotNull {
+            when (isSetter) {
+                false -> declarationStorage.findGetterOfProperty(it)
+                true -> declarationStorage.findSetterOfProperty(it)
+            }
+        }
     }
 
     override val initialSignatureFunction: IrFunction? by lazy {

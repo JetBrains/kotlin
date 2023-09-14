@@ -62,8 +62,12 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         fun create(startOffset: Int, endOffset: Int, isPropertyForField: Boolean): Fir2IrLazyProperty {
             val firContainingClass = (lazyParent as? Fir2IrLazyClass)?.fir
             val isFakeOverride = !isPropertyForField && fir.isFakeOverride(firContainingClass)
+            // It is really required to create those properties with DEFINED origin
+            // Using `declarationOrigin` here (IR_EXTERNAL_JAVA_DECLARATION_STUB in particular) causes some tests to fail, including
+            // FirPsiBlackBoxCodegenTestGenerated.Reflection.Properties.testJavaStaticField
+            val originForProperty = if (isPropertyForField) IrDeclarationOrigin.DEFINED else declarationOrigin
             return Fir2IrLazyProperty(
-                components, startOffset, endOffset, declarationOrigin,
+                components, startOffset, endOffset, originForProperty,
                 fir, firContainingClass, symbol, isFakeOverride
             ).apply {
                 this.parent = lazyParent

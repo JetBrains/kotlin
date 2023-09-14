@@ -207,6 +207,22 @@ class FakeOverrideGenerator(
         baseFunctionSymbols[fakeOverride] = baseFirSymbolsForFakeOverride
     }
 
+    internal fun calcBaseSymbolsForFakeOverrideProperty(
+        klass: FirClass,
+        fakeOverride: IrProperty,
+        originalSymbol: FirPropertySymbol,
+    ) {
+        val scope = klass.unsubstitutedScope()
+        val classLookupTag = klass.symbol.toLookupTag()
+        val baseFirSymbolsForFakeOverride =
+            if (originalSymbol.shouldHaveComputedBaseSymbolsForClass(classLookupTag)) {
+                computeBaseSymbols(originalSymbol, FirTypeScope::getDirectOverriddenProperties, scope, classLookupTag)
+            } else {
+                listOf(originalSymbol)
+            }
+        basePropertySymbols[fakeOverride] = baseFirSymbolsForFakeOverride
+    }
+
     private fun FirCallableSymbol<*>.shouldHaveComputedBaseSymbolsForClass(classLookupTag: ConeClassLikeLookupTag): Boolean =
         fir.origin.fromSupertypes && dispatchReceiverClassLookupTagOrNull() == classLookupTag
 
@@ -399,6 +415,14 @@ class FakeOverrideGenerator(
     ): List<IrPropertySymbol> {
         return getOverriddenSymbolsInSupertypes(
             overridden, superClasses
+        ) { declarationStorage.getIrPropertySymbol(it) as IrPropertySymbol }
+    }
+
+    internal fun getOverriddenSymbolsForFakeOverride(property: IrProperty): List<IrPropertySymbol>? {
+        val baseSymbols = basePropertySymbols[property] ?: return null
+        return getOverriddenSymbolsInSupertypes(
+            property,
+            baseSymbols
         ) { declarationStorage.getIrPropertySymbol(it) as IrPropertySymbol }
     }
 
