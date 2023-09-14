@@ -262,9 +262,9 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
     private val firSession: FirSession
         get() = firResolveSession.useSiteFirSession
 
-    class ClassifierCandidate(val scope: FirScope, val availableSymbol: AvailableSymbol<ClassId>)
+    class ClassifierCandidate(val scope: FirScope, val availableSymbol: AvailableSymbol<FirClassLikeSymbol<*>>)
 
-    fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): AvailableSymbol<ClassId>? =
+    fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): AvailableSymbol<FirClassLikeSymbol<*>>? =
         positionScopes.firstNotNullOfOrNull { scope -> findFirstClassifierSymbolByName(scope, targetClassName) }
 
     fun findClassifiersInScopesByName(scopes: List<FirScope>, targetClassName: Name): List<ClassifierCandidate> =
@@ -274,11 +274,10 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
             ClassifierCandidate(scope, classifierSymbol)
         }
 
-    private fun findFirstClassifierSymbolByName(scope: FirScope, targetClassName: Name): AvailableSymbol<ClassId>? {
-        val classifierSymbol = scope.findFirstClassifierByName(targetClassName) ?: return null
-        val classifierLookupTag = classifierSymbol.toLookupTag() as? ConeClassLikeLookupTag ?: return null
+    private fun findFirstClassifierSymbolByName(scope: FirScope, targetClassName: Name): AvailableSymbol<FirClassLikeSymbol<*>>? {
+        val classifierSymbol = scope.findFirstClassifierByName(targetClassName) as? FirClassLikeSymbol<*> ?: return null
 
-        return AvailableSymbol(classifierLookupTag.classId, ImportKind.fromScope(scope))
+        return AvailableSymbol(classifierSymbol, ImportKind.fromScope(scope))
     }
 
     fun findFunctionsInScopes(scopes: List<FirScope>, name: Name): List<AvailableSymbol<FirFunctionSymbol<*>>> {
@@ -747,7 +746,7 @@ private class ElementsToShortenCollector(
 
         val name = classId.shortClassName
         val availableClassifiers = shorteningContext.findClassifiersInScopesByName(scopes, name)
-        val matchingAvailableSymbol = availableClassifiers.firstOrNull { it.availableSymbol.symbol == classId }
+        val matchingAvailableSymbol = availableClassifiers.firstOrNull { it.availableSymbol.symbol.classId == classId }
         val scopeForClass = matchingAvailableSymbol?.scope ?: return false
 
         if (availableClassifiers.map { it.scope }.hasScopeCloserThan(scopeForClass, element)) return false
@@ -804,7 +803,7 @@ private class ElementsToShortenCollector(
                     )
                 }
                 // The class with name `classId.shortClassName` happens to be the same class referenced by this qualified access.
-                availableClassifier.symbol == classId -> {
+                availableClassifier.symbol.classId == classId -> {
                     // Respect caller's request to use star import, if it's not already star-imported.
                     return when {
                         availableClassifier.importKind == ImportKind.EXPLICIT && importAllInParent -> {
@@ -839,7 +838,7 @@ private class ElementsToShortenCollector(
     }
 
     private fun importedClassifierOverwritesAvailableClassifier(
-        availableClassifier: AvailableSymbol<ClassId>,
+        availableClassifier: AvailableSymbol<FirClassLikeSymbol<*>>,
         importAllInParent: Boolean
     ): Boolean {
         val importKindFromOption = if (importAllInParent) ImportKind.STAR else ImportKind.EXPLICIT
@@ -869,7 +868,7 @@ private class ElementsToShortenCollector(
                 val positionScopes = shorteningContext.findScopesAtPosition(expression, getNamesToImport(), contextProvider) ?: return
                 val availableClassifier = shorteningContext.findFirstClassifierInScopesByName(positionScopes, shortClassName) ?: return
                 when {
-                    availableClassifier.symbol == classToImport -> return
+                    availableClassifier.symbol.classId == classToImport -> return
                     importedClassifierOverwritesAvailableClassifier(availableClassifier, importAllInParent) -> {
                         importAffectsUsages = true
                     }
