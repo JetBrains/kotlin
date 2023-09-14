@@ -1335,6 +1335,18 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
             }
 
             @Test
+            @TestMetadata("FunctionQualifiedWithJavaSubclass.kt")
+            public void testFunctionQualifiedWithJavaSubclass() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/FunctionQualifiedWithJavaSubclass.kt");
+            }
+
+            @Test
+            @TestMetadata("FunctionQualifiedWithKotlinSubclass.kt")
+            public void testFunctionQualifiedWithKotlinSubclass() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/FunctionQualifiedWithKotlinSubclass.kt");
+            }
+
+            @Test
             @TestMetadata("StaticFieldQualified.kt")
             public void testStaticFieldQualified() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/StaticFieldQualified.kt");
@@ -1506,6 +1518,146 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
             @Test
             public void testAllFilesPresentInQualified() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Nested
+            @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Callables {
+                @Test
+                public void testAllFilesPresentInCallables() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("functionFromClass.kt")
+                public void testFunctionFromClass() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/functionFromClass.kt");
+                }
+
+                @Test
+                @TestMetadata("functionFromInterface.kt")
+                public void testFunctionFromInterface() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/functionFromInterface.kt");
+                }
+
+                @Test
+                @TestMetadata("functionFromSuperClass.kt")
+                public void testFunctionFromSuperClass() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/functionFromSuperClass.kt");
+                }
+
+                @Test
+                @TestMetadata("functionFromSuperInterface.kt")
+                public void testFunctionFromSuperInterface() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/functionFromSuperInterface.kt");
+                }
+
+                @Test
+                @TestMetadata("functionFromSuperSuperInterface.kt")
+                public void testFunctionFromSuperSuperInterface() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/functionFromSuperSuperInterface.kt");
+                }
+
+                @Test
+                @TestMetadata("propertyFromClass.kt")
+                public void testPropertyFromClass() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/propertyFromClass.kt");
+                }
+
+                @Test
+                @TestMetadata("propertyFromInterface.kt")
+                public void testPropertyFromInterface() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/propertyFromInterface.kt");
+                }
+
+                @Test
+                @TestMetadata("propertyFromSuperClass.kt")
+                public void testPropertyFromSuperClass() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/propertyFromSuperClass.kt");
+                }
+
+                @Test
+                @TestMetadata("propertyFromSuperInterface.kt")
+                public void testPropertyFromSuperInterface() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/propertyFromSuperInterface.kt");
+                }
+
+                @Test
+                @TestMetadata("propertyFromSuperSuperInterface.kt")
+                public void testPropertyFromSuperSuperInterface() throws Exception {
+                    runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/propertyFromSuperSuperInterface.kt");
+                }
+
+                @Nested
+                @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported")
+                @TestDataPath("$PROJECT_ROOT")
+                public class NotImported {
+                    @Test
+                    public void testAllFilesPresentInNotImported() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @Test
+                    @TestMetadata("functionFromClass.kt")
+                    public void testFunctionFromClass() throws Exception {
+                        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported/functionFromClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("functionFromInterface.kt")
+                    public void testFunctionFromInterface() throws Exception {
+                        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported/functionFromInterface.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("functionFromSuperClass.kt")
+                    public void testFunctionFromSuperClass() throws Exception {
+                        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported/functionFromSuperClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("functionFromSuperInterface.kt")
+                    public void testFunctionFromSuperInterface() throws Exception {
+                        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported/functionFromSuperInterface.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("functionFromSuperSuperInterface.kt")
+                    public void testFunctionFromSuperSuperInterface() throws Exception {
+                        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported/functionFromSuperSuperInterface.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("propertyFromClass.kt")
+                    public void testPropertyFromClass() throws Exception {
+                        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported/propertyFromClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("propertyFromInterface.kt")
+                    public void testPropertyFromInterface() throws Exception {
+                        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported/propertyFromInterface.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("propertyFromSuperClass.kt")
+                    public void testPropertyFromSuperClass() throws Exception {
+                        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported/propertyFromSuperClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("propertyFromSuperInterface.kt")
+                    public void testPropertyFromSuperInterface() throws Exception {
+                        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported/propertyFromSuperInterface.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("propertyFromSuperSuperInterface.kt")
+                    public void testPropertyFromSuperSuperInterface() throws Exception {
+                        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported/propertyFromSuperSuperInterface.kt");
+                    }
+                }
             }
 
             @Nested
@@ -1682,6 +1834,18 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
             @TestMetadata("errorInLatestQualifer.kt")
             public void testErrorInLatestQualifer() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors/errorInLatestQualifer.kt");
+            }
+
+            @Test
+            @TestMetadata("invalidPropertyAccessOnFunction.kt")
+            public void testInvalidPropertyAccessOnFunction() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors/invalidPropertyAccessOnFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("invalidPropertyAccessOnFunctionFromSuperClass.kt")
+            public void testInvalidPropertyAccessOnFunctionFromSuperClass() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors/invalidPropertyAccessOnFunctionFromSuperClass.kt");
             }
         }
     }
