@@ -23,6 +23,13 @@ public abstract class KtScopeProvider : KtAnalysisSessionComponent() {
 
     public abstract fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope
 
+    public open fun getCombinedMemberScope(symbol: KtSymbolWithMembers): KtScope = getCompositeScope(
+        listOf(
+            getMemberScope(symbol),
+            getStaticMemberScope(symbol),
+        )
+    )
+
     public abstract fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope
 
     public abstract fun getStaticDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope
@@ -142,6 +149,12 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
      */
     public fun KtSymbolWithMembers.getStaticMemberScope(): KtScope =
         withValidityAssertion { analysisSession.scopeProvider.getStaticMemberScope(this) }
+
+    /**
+     * Returns a [KtScope] containing all members from [getMemberScope] and [getStaticMemberScope].
+     */
+    public fun KtSymbolWithMembers.getCombinedMemberScope(): KtScope =
+        withValidityAssertion { analysisSession.scopeProvider.getCombinedMemberScope(this) }
 
     /**
      * Returns a [KtScope] containing the *non-static* callables and all classifiers explicitly declared in the given [KtSymbolWithMembers].
