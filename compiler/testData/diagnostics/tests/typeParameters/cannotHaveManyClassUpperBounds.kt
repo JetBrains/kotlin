@@ -17,3 +17,9 @@ class A5<T> where T : C1, T : <!ONLY_ONE_CLASS_BOUND_ALLOWED!>E1<!>
 
 object O1
 class A6<<!CONFLICTING_UPPER_BOUNDS!>T<!>> where T : <!FINAL_UPPER_BOUND!>O1<!>, T : <!ONLY_ONE_CLASS_BOUND_ALLOWED!>C2<!>
+
+typealias TA1 = C1
+typealias TA2 = C2
+
+class A7<T> where T : C1, T : <!REPEATED_BOUND!>TA1<!>
+class A8<T> where T : C1, T : <!ONLY_ONE_CLASS_BOUND_ALLOWED!>TA2<!>

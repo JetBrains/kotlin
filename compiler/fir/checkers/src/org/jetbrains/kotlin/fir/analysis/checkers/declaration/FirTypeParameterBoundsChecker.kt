@@ -108,7 +108,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
     private fun checkBoundUniqueness(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         val seenClasses = mutableSetOf<FirRegularClassSymbol>()
         val allNonErrorBounds = declaration.symbol.resolvedBounds.filter { it !is FirErrorTypeRef }
-        val uniqueBounds = allNonErrorBounds.distinctBy { it.coneType.classId ?: it.coneType }
+        val uniqueBounds = allNonErrorBounds.distinctBy { it.coneType.fullyExpandedClassId(context.session) ?: it.coneType }
 
         uniqueBounds.forEach { bound ->
             bound.coneType.toRegularClassSymbol(context.session)?.let { symbol ->
