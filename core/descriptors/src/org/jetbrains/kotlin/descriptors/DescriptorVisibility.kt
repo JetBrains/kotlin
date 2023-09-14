@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 abstract class DescriptorVisibility protected constructor() {
@@ -78,6 +79,8 @@ abstract class DescriptorVisibility protected constructor() {
 
     // Should be overloaded in Java visibilities
     fun customEffectiveVisibility(): EffectiveVisibility? = delegate.customEffectiveVisibility()
+
+    open fun visibleFromPackage(fromPackage: FqName, myPackage: FqName): Boolean = true
 }
 
 abstract class DelegatedDescriptorVisibility(override val delegate: Visibility) : DescriptorVisibility() {

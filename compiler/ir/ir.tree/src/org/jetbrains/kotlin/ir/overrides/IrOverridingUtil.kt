@@ -216,12 +216,6 @@ class IrOverridingUtil(
         return trueFakeOverrides.ifEmpty { customizedFakeOverrides }
     }
 
-    private fun filterVisibleFakeOverrides(toFilter: Collection<IrOverridableMember>): Collection<IrOverridableMember> {
-        return toFilter.filter { member: IrOverridableMember ->
-            !DescriptorVisibilities.isPrivate(member.visibility) && member.visibility != DescriptorVisibilities.INVISIBLE_FAKE
-        }
-    }
-
     private fun determineModalityForFakeOverride(
         members: Collection<IrOverridableMember>,
         current: IrClass
@@ -328,7 +322,7 @@ class IrOverridingUtil(
         addedFakeOverrides: MutableList<IrOverridableMember>,
         compatibilityMode: Boolean
     ) {
-        val effectiveOverridden = filterVisibleFakeOverrides(overridables)
+        val effectiveOverridden = overridables.filter { it.isVisibleInClass(currentClass) }
 
         // The descriptor based algorithm goes further building invisible fakes here,
         // but we don't use invisible fakes in IR

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
@@ -40,6 +41,11 @@ public class JavaDescriptorVisibilities {
                 boolean useSpecialRulesForPrivateSealedConstructors
         ) {
             return areInSamePackage(what, from);
+        }
+
+        @Override
+        public boolean visibleFromPackage(@NotNull FqName fromPackage, @NotNull FqName myPackage) {
+            return fromPackage.equals(myPackage);
         }
     };
 
