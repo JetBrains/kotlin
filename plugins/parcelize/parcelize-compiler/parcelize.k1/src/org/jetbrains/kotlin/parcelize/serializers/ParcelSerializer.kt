@@ -44,7 +44,7 @@ interface ParcelSerializer {
         val frameMap: FrameMap
     ) {
         fun findParcelerClass(type: KotlinType): KotlinType? {
-            return typeParcelers.firstOrNull { it.first == type }?.second
+            return typeParcelers.firstOrNull { it.mappedType == type }?.parcelerType
         }
     }
 

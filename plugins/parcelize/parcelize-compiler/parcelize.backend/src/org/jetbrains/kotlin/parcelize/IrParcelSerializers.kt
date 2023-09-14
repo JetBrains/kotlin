@@ -35,6 +35,20 @@ fun AndroidIrBuilder.writeParcelWith(
     return with(serializer) { writeParcel(parcel, flags, value) }
 }
 
+class IrExtensionFunctionOnReadCallingSerializer(
+    private val delegated: IrParcelSerializer,
+    private val converterExtensionFunction: IrSimpleFunctionSymbol
+) : IrParcelSerializer by delegated {
+    override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
+        val delegatedResult = with(delegated) {
+            readParcel(parcel)
+        }
+        return irCall(converterExtensionFunction).apply {
+            extensionReceiver = delegatedResult
+        }
+    }
+}
+
 // Creates a serializer from a pair of parcel methods of the form reader()T and writer(T)V.
 class IrSimpleParcelSerializer(private val reader: IrSimpleFunctionSymbol, private val writer: IrSimpleFunctionSymbol) :
     IrParcelSerializer {
@@ -412,7 +426,12 @@ class IrListParcelSerializer(
         }
     }
 
-    private fun listSymbols(symbols: AndroidSymbols): Pair<IrConstructorSymbol, IrSimpleFunctionSymbol> {
+    data class ListSymbols(
+        val constructor: IrConstructorSymbol,
+        val function: IrSimpleFunctionSymbol,
+    )
+
+    private fun listSymbols(symbols: AndroidSymbols): ListSymbols {
         // If the IrClass refers to a concrete type, try to find a constructor with capacity or fall back
         // the the default constructor if none exist.
         if (!irClass.isJvmInterface) {
@@ -424,16 +443,31 @@ class IrListParcelSerializer(
                 function.name.asString() == "add" && function.valueParameters.size == 1
             }
 
-            return constructor.symbol to add.symbol
+            return ListSymbols(
+                constructor = constructor.symbol,
+                function = add.symbol
+            )
         }
 
         return when (irClass.fqNameWhenAvailable?.asString()) {
-            "kotlin.collections.MutableList", "kotlin.collections.List", "java.util.List" ->
-                symbols.arrayListConstructor to symbols.arrayListAdd
-            "kotlin.collections.MutableSet", "kotlin.collections.Set", "java.util.Set" ->
-                symbols.linkedHashSetConstructor to symbols.linkedHashSetAdd
-            "java.util.NavigableSet", "java.util.SortedSet" ->
-                symbols.treeSetConstructor to symbols.treeSetAdd
+            "kotlin.collections.MutableList",
+            "kotlin.collections.List",
+            "java.util.List",
+            in BuiltinParcelableTypes.IMMUTABLE_LIST_FQNAMES -> ListSymbols(
+                constructor = symbols.arrayListConstructor,
+                function = symbols.arrayListAdd
+            )
+            "kotlin.collections.MutableSet",
+            "kotlin.collections.Set",
+            "java.util.Set",
+            in BuiltinParcelableTypes.IMMUTABLE_SET_FQNAMES -> ListSymbols(
+                constructor = symbols.linkedHashSetConstructor,
+                function = symbols.linkedHashSetAdd
+            )
+            "java.util.NavigableSet", "java.util.SortedSet" -> ListSymbols(
+                constructor = symbols.treeSetConstructor,
+                function = symbols.treeSetAdd
+            )
             else -> error("Unknown list interface type: ${irClass.render()}")
         }
     }
@@ -506,7 +540,12 @@ class IrMapParcelSerializer(
         }
     }
 
-    private fun mapSymbols(symbols: AndroidSymbols): Pair<IrConstructorSymbol, IrSimpleFunctionSymbol> {
+    data class MapSymbols(
+        val constructor: IrConstructorSymbol,
+        val function: IrSimpleFunctionSymbol,
+    )
+
+    private fun mapSymbols(symbols: AndroidSymbols): MapSymbols {
         // If the IrClass refers to a concrete type, try to find a constructor with capacity or fall back
         // the the default constructor if none exist.
         if (!irClass.isJvmInterface) {
@@ -520,14 +559,25 @@ class IrMapParcelSerializer(
                 function.name.asString() == "put" && function.valueParameters.size == 2
             }
 
-            return constructor.symbol to put.symbol
+            return MapSymbols(
+                constructor = constructor.symbol,
+                function = put.symbol,
+            )
         }
 
         return when (irClass.fqNameWhenAvailable?.asString()) {
-            "kotlin.collections.MutableMap", "kotlin.collections.Map", "java.util.Map" ->
-                symbols.linkedHashMapConstructor to symbols.linkedHashMapPut
-            "java.util.SortedMap", "java.util.NavigableMap" ->
-                symbols.treeMapConstructor to symbols.treeMapPut
+            "kotlin.collections.MutableMap",
+            "kotlin.collections.Map",
+            "java.util.Map",
+            in BuiltinParcelableTypes.IMMUTABLE_MAP_FQNAMES -> MapSymbols(
+                constructor = symbols.linkedHashMapConstructor,
+                function = symbols.linkedHashMapPut,
+            )
+            "java.util.SortedMap",
+            "java.util.NavigableMap" -> MapSymbols(
+                constructor = symbols.treeMapConstructor,
+                function = symbols.treeMapPut
+            )
             else -> error("Unknown map interface type: ${irClass.render()}")
         }
     }

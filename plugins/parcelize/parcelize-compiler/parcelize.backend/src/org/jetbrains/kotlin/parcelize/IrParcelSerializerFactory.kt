@@ -15,6 +15,35 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.RAW_VALUE_ANNOTATION_FQ_NAMES
 
 class IrParcelSerializerFactory(private val symbols: AndroidSymbols) {
+    private val supportedBySimpleListSerializer = setOf(
+        "kotlin.collections.List", "kotlin.collections.MutableList", "kotlin.collections.ArrayList",
+        "java.util.List", "java.util.ArrayList",
+        *BuiltinParcelableTypes.IMMUTABLE_LIST_FQNAMES.toTypedArray()
+    )
+
+    // TODO: More java collections?
+    // TODO: Add tests for all of these types, not just some common ones...
+    private val supportedByListSerializer = setOf(
+        "kotlin.collections.MutableList", "kotlin.collections.List", "java.util.List",
+        "kotlin.collections.ArrayList", "java.util.ArrayList",
+        "kotlin.collections.ArrayDeque", "java.util.ArrayDeque",
+        "kotlin.collections.MutableSet", "kotlin.collections.Set", "java.util.Set",
+        "kotlin.collections.HashSet", "java.util.HashSet",
+        "kotlin.collections.LinkedHashSet", "java.util.LinkedHashSet",
+        "java.util.NavigableSet", "java.util.SortedSet",
+        *BuiltinParcelableTypes.IMMUTABLE_LIST_FQNAMES.toTypedArray(),
+        *BuiltinParcelableTypes.IMMUTABLE_SET_FQNAMES.toTypedArray(),
+    )
+
+    private val supportedByMapSerializer = setOf(
+        "kotlin.collections.MutableMap", "kotlin.collections.Map", "java.util.Map",
+        "kotlin.collections.HashMap", "java.util.HashMap",
+        "kotlin.collections.LinkedHashMap", "java.util.LinkedHashMap",
+        "java.util.SortedMap", "java.util.NavigableMap", "java.util.TreeMap",
+        "java.util.concurrent.ConcurrentHashMap",
+        *BuiltinParcelableTypes.IMMUTABLE_MAP_FQNAMES.toTypedArray(),
+    )
+
     /**
      * Resolve the given [irType] to a corresponding [IrParcelSerializer]. This depends on the TypeParcelers which
      * are currently in [scope], as well as the type of the enclosing Parceleable class [parcelizeType], which is needed
@@ -192,43 +221,56 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols) {
                 )
             }
 
-            // TODO: More java collections?
-            // TODO: Add tests for all of these types, not just some common ones...
-            // FIXME: Is the support for ArrayDeque missing in the old BE?
-            "kotlin.collections.MutableList", "kotlin.collections.List", "java.util.List",
-            "kotlin.collections.ArrayList", "java.util.ArrayList",
-            "kotlin.collections.ArrayDeque", "java.util.ArrayDeque",
-            "kotlin.collections.MutableSet", "kotlin.collections.Set", "java.util.Set",
-            "kotlin.collections.HashSet", "java.util.HashSet",
-            "kotlin.collections.LinkedHashSet", "java.util.LinkedHashSet",
-            "java.util.NavigableSet", "java.util.SortedSet" -> {
+            in supportedByListSerializer -> {
                 val elementType = (irType as IrSimpleType).arguments.single().upperBound(irBuiltIns)
-                if (!scope.hasCustomSerializer(elementType) && classifierFqName in setOf(
-                        "kotlin.collections.List", "kotlin.collections.MutableList", "kotlin.collections.ArrayList",
-                        "java.util.List", "java.util.ArrayList"
-                    )
+                if (!scope.hasCustomSerializer(elementType) &&
+                    classifierFqName in supportedBySimpleListSerializer
                 ) {
-                    when (elementType.erasedUpperBound.fqNameWhenAvailable?.asString()) {
-                        "android.os.IBinder" ->
-                            return iBinderListSerializer
-                        "kotlin.String", "java.lang.String" ->
-                            return stringListSerializer
+                    val elementTypeAsString = elementType.erasedUpperBound.fqNameWhenAvailable?.asString()
+                    val simpleSerializer =
+                        if (classifierFqName in BuiltinParcelableTypes.IMMUTABLE_LIST_FQNAMES) {
+                            when (elementTypeAsString) {
+                                "android.os.IBinder" -> iBinderPersistentListSerializer
+                                "kotlin.String", "java.lang.String" -> stringPersistentListSerializer
+                                else -> null
+                            }
+                        } else {
+                            when (elementTypeAsString) {
+                                "android.os.IBinder" -> iBinderListSerializer
+                                "kotlin.String", "java.lang.String" -> stringListSerializer
+                                else -> null
+                            }
+                        }
+
+                    if (simpleSerializer != null) {
+                        return simpleSerializer
                     }
                 }
+
+                val listSerializer = IrListParcelSerializer(classifier, elementType, get(elementType, scope, parcelizeType, strict()))
+                val actualSerializer =
+                    when (classifierFqName) {
+                        in BuiltinParcelableTypes.IMMUTABLE_LIST_FQNAMES -> IrExtensionFunctionOnReadCallingSerializer(
+                            delegated = listSerializer,
+                            converterExtensionFunction = symbols.kotlinIterableToPersistentListExtension
+                        )
+                        in BuiltinParcelableTypes.IMMUTABLE_SET_FQNAMES -> IrExtensionFunctionOnReadCallingSerializer(
+                            delegated = listSerializer,
+                            converterExtensionFunction = symbols.kotlinIterableToPersistentSetExtension
+                        )
+                        else -> listSerializer
+                    }
+
                 return wrapNullableSerializerIfNeeded(
                     irType,
-                    IrListParcelSerializer(classifier, elementType, get(elementType, scope, parcelizeType, strict()))
+                    actualSerializer
                 )
             }
 
-            "kotlin.collections.MutableMap", "kotlin.collections.Map", "java.util.Map",
-            "kotlin.collections.HashMap", "java.util.HashMap",
-            "kotlin.collections.LinkedHashMap", "java.util.LinkedHashMap",
-            "java.util.SortedMap", "java.util.NavigableMap", "java.util.TreeMap",
-            "java.util.concurrent.ConcurrentHashMap" -> {
+            in supportedByMapSerializer -> {
                 val keyType = (irType as IrSimpleType).arguments[0].upperBound(irBuiltIns)
                 val valueType = irType.arguments[1].upperBound(irBuiltIns)
-                val parceler =
+                val mapSerializer =
                     IrMapParcelSerializer(
                         classifier,
                         keyType,
@@ -236,7 +278,17 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols) {
                         get(keyType, scope, parcelizeType, strict()),
                         get(valueType, scope, parcelizeType, strict())
                     )
-                return wrapNullableSerializerIfNeeded(irType, parceler)
+
+                val actualSerializer =
+                    if (classifierFqName in BuiltinParcelableTypes.IMMUTABLE_MAP_FQNAMES) {
+                        IrExtensionFunctionOnReadCallingSerializer(
+                            mapSerializer,
+                            symbols.kotlinMapToPersistentMapExtension
+                        )
+                    } else {
+                        mapSerializer
+                    }
+                return wrapNullableSerializerIfNeeded(irType, actualSerializer)
             }
         }
 
@@ -297,9 +349,21 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols) {
 
     private val stringArraySerializer = IrSimpleParcelSerializer(symbols.parcelCreateStringArray, symbols.parcelWriteStringArray)
     private val stringListSerializer = IrSimpleParcelSerializer(symbols.parcelCreateStringArrayList, symbols.parcelWriteStringList)
+    private val stringPersistentListSerializer by lazy {
+        IrExtensionFunctionOnReadCallingSerializer(
+            delegated = stringListSerializer,
+            converterExtensionFunction = symbols.kotlinIterableToPersistentListExtension,
+        )
+    }
     private val iBinderSerializer = IrSimpleParcelSerializer(symbols.parcelReadStrongBinder, symbols.parcelWriteStrongBinder)
     private val iBinderArraySerializer = IrSimpleParcelSerializer(symbols.parcelCreateBinderArray, symbols.parcelWriteBinderArray)
     private val iBinderListSerializer = IrSimpleParcelSerializer(symbols.parcelCreateBinderArrayList, symbols.parcelWriteBinderList)
+    private val iBinderPersistentListSerializer by lazy {
+        IrExtensionFunctionOnReadCallingSerializer(
+            delegated = iBinderListSerializer,
+            converterExtensionFunction = symbols.kotlinIterableToPersistentListExtension,
+        )
+    }
     private val serializableSerializer = IrSimpleParcelSerializer(symbols.parcelReadSerializable, symbols.parcelWriteSerializable)
     private val stringSerializer = IrSimpleParcelSerializer(symbols.parcelReadString, symbols.parcelWriteString)
     private val byteSerializer = IrSimpleParcelSerializer(symbols.parcelReadByte, symbols.parcelWriteByte)

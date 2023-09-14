@@ -284,6 +284,12 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
     }
 
     @Test
+    @TestMetadata("listSimplePersistent.kt")
+    public void testListSimplePersistent() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/listSimplePersistent.kt");
+    }
+
+    @Test
     @TestMetadata("lists.kt")
     public void testLists() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/lists.kt");
@@ -299,6 +305,12 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
     @TestMetadata("mapSimple.kt")
     public void testMapSimple() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/mapSimple.kt");
+    }
+
+    @Test
+    @TestMetadata("mapSimplePersistent.kt")
+    public void testMapSimplePersistent() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/mapSimplePersistent.kt");
     }
 
     @Test
