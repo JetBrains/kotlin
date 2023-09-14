@@ -33,7 +33,8 @@ class IrActualizerAndPluginsFacade(
                 inputArtifact.dependentIrModuleFragments,
                 inputArtifact.diagnosticReporter,
                 typeSystemContext,
-                testServices.compilerConfigurationProvider.getCompilerConfiguration(module).languageVersionSettings
+                testServices.compilerConfigurationProvider.getCompilerConfiguration(module).languageVersionSettings,
+                expectActualTracker = null,
             )
             inputArtifact.irActualizerResult = result
         }

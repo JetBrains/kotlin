@@ -171,6 +171,7 @@ fun ModuleCompilerAnalyzedOutput.convertToJsIr(
         evaluatedConstTracker = configuration
             .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
         inlineConstTracker = null,
+        expectActualTracker = configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
         allowNonCachedDeclarations = false,
     )
 

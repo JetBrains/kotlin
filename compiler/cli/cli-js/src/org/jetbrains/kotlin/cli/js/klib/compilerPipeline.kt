@@ -240,6 +240,7 @@ fun transformFirToIr(
             evaluatedConstTracker = moduleStructure.compilerConfiguration
                 .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
             inlineConstTracker = null,
+            expectActualTracker = moduleStructure.compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
             allowNonCachedDeclarations = false,
         ),
         IrGenerationExtension.getInstances(moduleStructure.project),

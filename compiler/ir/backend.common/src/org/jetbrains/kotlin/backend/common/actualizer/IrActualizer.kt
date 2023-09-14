@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -22,7 +23,8 @@ object IrActualizer {
         dependentFragments: List<IrModuleFragment>,
         diagnosticReporter: DiagnosticReporter,
         typeSystemContext: IrTypeSystemContext,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        expectActualTracker: ExpectActualTracker?
     ): IrActualizedResult {
         val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
 
@@ -32,7 +34,8 @@ object IrActualizer {
             mainFragment,
             dependentFragments,
             typeSystemContext,
-            ktDiagnosticReporter
+            ktDiagnosticReporter,
+            expectActualTracker
         ).collect()
         if (languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
             IrExpectActualAnnotationMatchingChecker(expectActualMap, actualDeclarations, typeSystemContext, ktDiagnosticReporter).check()

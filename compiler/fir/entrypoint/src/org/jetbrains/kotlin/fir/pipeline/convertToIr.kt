@@ -159,7 +159,8 @@ fun FirResult.convertToIrAndActualize(
                 commonIrOutputs.map { it.irModuleFragment },
                 fir2IrConfiguration.diagnosticReporter,
                 actualizerTypeContextProvider(fir2IrResult.irModuleFragment.irBuiltins),
-                fir2IrConfiguration.languageVersionSettings
+                fir2IrConfiguration.languageVersionSettings,
+                fir2IrConfiguration.expectActualTracker
             )
         }
     }

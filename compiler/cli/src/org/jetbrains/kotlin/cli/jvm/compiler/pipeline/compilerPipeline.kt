@@ -189,6 +189,7 @@ fun convertAnalyzedFirToIr(
         evaluatedConstTracker = input.configuration
             .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
         inlineConstTracker = input.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
+        expectActualTracker = input.configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
         allowNonCachedDeclarations = false,
     )
     val (irModuleFragment, components, pluginContext, irActualizedResult) =

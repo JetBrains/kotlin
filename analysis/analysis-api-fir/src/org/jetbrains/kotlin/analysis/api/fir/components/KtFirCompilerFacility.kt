@@ -139,6 +139,7 @@ internal class KtFirCompilerFacility(
             linkViaSignatures = false,
             effectiveConfiguration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER] ?: EvaluatedConstTracker.create(),
             effectiveConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
+            expectActualTracker = effectiveConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
             allowNonCachedDeclarations = true
         )
 

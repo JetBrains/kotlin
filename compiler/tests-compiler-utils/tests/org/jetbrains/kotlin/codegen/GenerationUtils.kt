@@ -136,6 +136,7 @@ object GenerationUtils {
             evaluatedConstTracker = configuration
                 .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
             inlineConstTracker = configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
+            expectActualTracker = configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
             allowNonCachedDeclarations = false
         )
 

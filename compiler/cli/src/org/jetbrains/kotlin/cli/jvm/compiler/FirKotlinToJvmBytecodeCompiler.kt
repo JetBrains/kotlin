@@ -165,6 +165,7 @@ object FirKotlinToJvmBytecodeCompiler {
             evaluatedConstTracker = moduleConfiguration
                 .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
             inlineConstTracker = moduleConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
+            expectActualTracker = moduleConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
             allowNonCachedDeclarations = false,
         )
         val fir2IrAndIrActualizerResult = firResult.convertToIrAndActualizeForJvm(
