@@ -42,7 +42,7 @@ KtFunctionSymbol:
       receiverParameter: null
       returnType: KtTypeErrorType:
         annotationsList: []
-        type: ERROR CLASS: Incomplete code
+        type: ERROR_TYPE
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

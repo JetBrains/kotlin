@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossiblyNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.types.KtErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -226,7 +227,7 @@ public class DebugSymbolRenderer(
             appendLine()
             append("type: ")
             when (typeToRender) {
-                is KtClassErrorType -> append("ERROR_TYPE")
+                is KtErrorType -> append("ERROR_TYPE")
                 else -> append(typeToRender.asStringForDebugging())
             }
         }

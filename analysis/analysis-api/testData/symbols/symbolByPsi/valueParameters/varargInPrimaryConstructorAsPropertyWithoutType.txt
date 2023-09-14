@@ -37,7 +37,7 @@ KtConstructorSymbol:
             ownTypeArguments: [
               out KtTypeErrorType:
                 annotationsList: []
-                type: ERROR CLASS: Incomplete code
+                type: ERROR_TYPE
             ]
             type: kotlin/Array<out ERROR CLASS: Incomplete code>
           symbolKind: LOCAL
@@ -64,7 +64,7 @@ KtConstructorSymbol:
             ownTypeArguments: [
               out KtTypeErrorType:
                 annotationsList: []
-                type: ERROR CLASS: Incomplete code
+                type: ERROR_TYPE
             ]
             type: kotlin/Array<out ERROR CLASS: Incomplete code>
           symbolKind: ACCESSOR
@@ -100,7 +100,7 @@ KtConstructorSymbol:
           ownTypeArguments: [
             out KtTypeErrorType:
               annotationsList: []
-              type: ERROR CLASS: Incomplete code
+              type: ERROR_TYPE
           ]
           type: kotlin/Array<out ERROR CLASS: Incomplete code>
         setter: null
@@ -128,7 +128,7 @@ KtConstructorSymbol:
       receiverParameter: null
       returnType: KtTypeErrorType:
         annotationsList: []
-        type: ERROR CLASS: Incomplete code
+        type: ERROR_TYPE
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

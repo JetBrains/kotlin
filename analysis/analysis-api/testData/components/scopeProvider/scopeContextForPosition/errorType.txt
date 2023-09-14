@@ -2,7 +2,7 @@ element: e
 implicit receivers:
   type: KtTypeErrorType:
     annotationsList: []
-    type: ERROR CLASS: Cannot infer argument for type parameter T
+    type: ERROR_TYPE
   owner symbol: KtFirAnonymousFunctionSymbol
 
 scopes:

@@ -52,7 +52,7 @@ KtFunctionSymbol:
             type: ERROR_TYPE
           KtTypeErrorType:
             annotationsList: []
-            type: ERROR CLASS: Incomplete code
+            type: ERROR_TYPE
         ]
         type: kotlin/Function2<kotlin/Int, ERROR CLASS: Symbol not found for p2, ERROR CLASS: Incomplete code>
       symbolKind: LOCAL
@@ -75,7 +75,7 @@ KtFunctionSymbol:
       receiverParameter: null
       returnType: KtTypeErrorType:
         annotationsList: []
-        type: ERROR CLASS: No type for parameter
+        type: ERROR_TYPE
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
