@@ -5,9 +5,24 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator
 
+import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
+import org.jetbrains.kotlin.utils.SmartPrinter
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
+
+private val COPYRIGHT = File("license/COPYRIGHT_HEADER.txt").readText()
+
+internal fun SmartPrinter.printCopyright() {
+    println(COPYRIGHT)
+    println()
+}
+
+internal fun SmartPrinter.printGeneratedMessage() {
+    println(GeneratorsFileUtil.GENERATED_MESSAGE)
+    println()
+}
+
 
 fun getGenerationPath(rootPath: File, packageName: String): File =
     packageName

@@ -5,17 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs
 
+import org.jetbrains.kotlin.analysis.api.fir.generator.*
 import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticListRenderer
 import org.jetbrains.kotlin.fir.checkers.generator.printImports
-import org.jetbrains.kotlin.fir.tree.generator.printer.printCopyright
-import org.jetbrains.kotlin.fir.tree.generator.printer.printGeneratedMessage
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
-import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticConverter
-import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticList
-import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticParameter
-import org.jetbrains.kotlin.analysis.api.fir.generator.simpleName
 import org.jetbrains.kotlin.utils.SmartPrinter
 import java.io.File
 import kotlin.reflect.KType

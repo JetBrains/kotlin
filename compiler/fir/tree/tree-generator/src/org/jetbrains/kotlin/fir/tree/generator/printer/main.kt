@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
+import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil.GENERATED_MESSAGE
 import org.jetbrains.kotlin.utils.SmartPrinter
 import java.io.File
 
-private val COPYRIGHT = File("license/COPYRIGHT_HEADER.txt").readText()
-
 const val VISITOR_PACKAGE = "org.jetbrains.kotlin.fir.visitors"
 const val BASE_PACKAGE = "org.jetbrains.kotlin.fir"
+
+internal const val TREE_GENERATOR_README = "compiler/fir/tree/tree-generator/Readme.md"
 
 fun generateElements(builder: AbstractFirTreeBuilder, generationPath: File): List<GeneratedFile> {
     val generatedFiles = mutableListOf<GeneratedFile>()
@@ -28,14 +29,4 @@ fun generateElements(builder: AbstractFirTreeBuilder, generationPath: File): Lis
     generatedFiles += printDefaultVisitorVoid(builder.elements, generationPath)
     generatedFiles += printTransformer(builder.elements, generationPath)
     return generatedFiles
-}
-
-fun SmartPrinter.printCopyright() {
-    println(COPYRIGHT)
-    println()
-}
-
-fun SmartPrinter.printGeneratedMessage() {
-    println(GENERATED_MESSAGE)
-    println()
 }

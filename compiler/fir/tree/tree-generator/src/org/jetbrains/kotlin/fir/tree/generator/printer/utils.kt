@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import java.io.File
-
-class GeneratedFile(val file: File, val newText: String)
 
 enum class ImportKind(val postfix: String) {
     Element(""), Implementation(".impl"), Builder(".builder")

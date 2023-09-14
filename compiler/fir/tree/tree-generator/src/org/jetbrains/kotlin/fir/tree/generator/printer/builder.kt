@@ -7,31 +7,22 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.declarationAttributesType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
+import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
 import org.jetbrains.kotlin.generators.tree.typeWithArguments
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
-fun Builder.generateCode(generationPath: File): GeneratedFile {
-    val dir = generationPath.resolve(packageName.replace(".", "/"))
-    val file = File(dir, "$type.kt")
-    val stringBuilder = StringBuilder()
-    SmartPrinter(stringBuilder).apply {
-        printCopyright()
-        println("@file:Suppress(\"DuplicatedCode\", \"unused\")")
-        println()
-        println("package $packageName")
-        println()
+fun Builder.generateCode(generationPath: File): GeneratedFile =
+    printGeneratedType(generationPath, TREE_GENERATOR_README, packageName, type, fileSuppressions = listOf("DuplicatedCode", "unused")) {
         val imports = collectImports()
         imports.forEach { println("import $it") }
         if (imports.isNotEmpty()) {
             println()
         }
-        printGeneratedMessage()
         printBuilder(this@generateCode)
     }
-    return GeneratedFile(file, stringBuilder.toString())
-}
 
 private fun SmartPrinter.printBuilder(builder: Builder) {
     if (builder is LeafBuilder && builder.allFields.isEmpty()) {

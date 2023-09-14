@@ -7,26 +7,18 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
+import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
 import org.jetbrains.kotlin.generators.tree.printer.multipleUpperBoundsList
+import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
 import org.jetbrains.kotlin.generators.tree.printer.typeParameters
 import org.jetbrains.kotlin.generators.tree.typeWithArguments
-import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
-
 import java.io.File
 
-fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFile {
-    val dir = File(generationPath, VISITOR_PACKAGE.replace(".", "/"))
-    val file = File(dir, "FirTransformer.kt")
-    val stringBuilder = StringBuilder()
-    SmartPrinter(stringBuilder).apply {
-        printCopyright()
-        println("package $VISITOR_PACKAGE")
-        println()
+fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFile =
+    printGeneratedType(generationPath, TREE_GENERATOR_README, VISITOR_PACKAGE, "FirTransformer") {
         elements.forEach { println("import ${it.fullQualifiedName}") }
         println()
-        printGeneratedMessage()
-
         println("abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {")
         println()
         withIndent {
@@ -66,5 +58,3 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
         }
         println("}")
     }
-    return GeneratedFile(file, stringBuilder.toString())
-}

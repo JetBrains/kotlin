@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JS_DIAGNOSTICS_LI
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JVM_DIAGNOSTICS_LIST
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.NATIVE_DIAGNOSTICS_LIST
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.RegularDiagnosticData
-import org.jetbrains.kotlin.fir.tree.generator.printer.printCopyright
-import org.jetbrains.kotlin.fir.tree.generator.printer.printGeneratedMessage
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
 import java.io.File
 

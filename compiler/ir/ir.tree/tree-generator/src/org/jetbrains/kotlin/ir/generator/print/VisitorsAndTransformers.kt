@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
 import org.jetbrains.kotlin.ir.generator.IrTree
 import org.jetbrains.kotlin.ir.generator.VISITOR_PACKAGE
 import org.jetbrains.kotlin.ir.generator.irTypeType
 import org.jetbrains.kotlin.ir.generator.model.*
-import org.jetbrains.kotlin.ir.generator.util.GeneratedFile
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.File
 

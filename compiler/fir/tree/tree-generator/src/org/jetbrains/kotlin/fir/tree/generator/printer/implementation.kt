@@ -8,33 +8,24 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
 import org.jetbrains.kotlin.generators.tree.printer.braces
+import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
 import org.jetbrains.kotlin.generators.tree.printer.typeParameters
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
-fun Implementation.generateCode(generationPath: File): GeneratedFile {
-    val dir = generationPath.resolve(packageName.replace(".", "/"))
-    val file = File(dir, "$type.kt")
-    val stringBuilder = StringBuilder()
-    SmartPrinter(stringBuilder).apply {
-        printCopyright()
-        println("@file:Suppress(\"DuplicatedCode\", \"unused\")")
-        println()
-        println("package $packageName")
-        println()
+fun Implementation.generateCode(generationPath: File): GeneratedFile =
+    printGeneratedType(generationPath, TREE_GENERATOR_README, packageName, type, fileSuppressions = listOf("DuplicatedCode", "unused")) {
         val imports = collectImports()
         imports.forEach { println("import $it") }
         if (imports.isNotEmpty()) {
             println()
         }
-        printGeneratedMessage()
         printImplementation(this@generateCode)
     }
-    return GeneratedFile(file, stringBuilder.toString())
-}
 
 fun SmartPrinter.printImplementation(implementation: Implementation) {
     fun Field.transform() {

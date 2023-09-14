@@ -11,31 +11,20 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.util.get
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.printer.braces
-import org.jetbrains.kotlin.generators.tree.printer.multipleUpperBoundsList
-import org.jetbrains.kotlin.generators.tree.printer.typeParameters
+import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
-fun Element.generateCode(generationPath: File): GeneratedFile {
-    val dir = generationPath.resolve(packageName.replace(".", "/"))
-    val file = File(dir, "$type.kt")
-    val stringBuilder = StringBuilder()
-    SmartPrinter(stringBuilder).apply {
-        printCopyright()
-        println("package $packageName")
-        println()
+fun Element.generateCode(generationPath: File): GeneratedFile =
+    printGeneratedType(generationPath, TREE_GENERATOR_README, packageName, type) {
         val imports = collectImports()
         imports.forEach { println("import $it") }
         if (imports.isNotEmpty()) {
             println()
         }
-        printGeneratedMessage()
         printElement(this@generateCode)
     }
-    return GeneratedFile(file, stringBuilder.toString())
-}
 
 fun SmartPrinter.printElement(element: Element) {
     with(element) {
