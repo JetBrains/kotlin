@@ -70,10 +70,13 @@ val FirCallableDeclaration.isIntersectionOverride: Boolean get() = origin == Fir
 val FirCallableDeclaration.isSubstitutionOverride: Boolean get() = origin is FirDeclarationOrigin.SubstitutionOverride
 val FirCallableDeclaration.isSubstitutionOrIntersectionOverride: Boolean get() = isSubstitutionOverride || isIntersectionOverride
 val FirCallableDeclaration.isDelegated: Boolean get() = origin == FirDeclarationOrigin.Delegated
+val FirCallableDeclaration.isCopyCreatedInScope: Boolean get() = isSubstitutionOrIntersectionOverride || isDelegated
 
 val FirCallableSymbol<*>.isIntersectionOverride: Boolean get() = origin == FirDeclarationOrigin.IntersectionOverride
 val FirCallableSymbol<*>.isSubstitutionOverride: Boolean get() = origin is FirDeclarationOrigin.SubstitutionOverride
 val FirCallableSymbol<*>.isSubstitutionOrIntersectionOverride: Boolean get() = isSubstitutionOverride || isIntersectionOverride
+val FirCallableSymbol<*>.isDelegated: Boolean get() = origin == FirDeclarationOrigin.Delegated
+val FirCallableSymbol<*>.isCopyCreatedInScope: Boolean get() = isSubstitutionOrIntersectionOverride || isDelegated
 
 inline val <reified D : FirCallableDeclaration> D.originalForSubstitutionOverride: D?
     get() = if (isSubstitutionOverride || isSynthetic) originalForSubstitutionOverrideAttr else null

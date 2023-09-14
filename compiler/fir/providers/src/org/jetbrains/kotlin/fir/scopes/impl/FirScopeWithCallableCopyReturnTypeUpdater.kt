@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.isDelegated
-import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
+import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirDelegatingTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -60,7 +59,7 @@ class FirScopeWithCallableCopyReturnTypeUpdater(
     }
 
     private fun updateReturnType(declaration: FirCallableDeclaration) {
-        if (declaration.isSubstitutionOrIntersectionOverride || declaration.isDelegated) {
+        if (declaration.isCopyCreatedInScope) {
             callableCopyTypeCalculator.computeReturnType(declaration)
         }
     }

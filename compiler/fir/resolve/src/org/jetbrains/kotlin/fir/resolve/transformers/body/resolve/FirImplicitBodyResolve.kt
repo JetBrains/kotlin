@@ -228,7 +228,7 @@ open class ReturnTypeCalculatorWithJump(
             }
         }
 
-        if (declaration.isSubstitutionOrIntersectionOverride) {
+        if (declaration.isCopyCreatedInScope) {
             val callableCopySubstitutionForTypeUpdater = declaration.attributes.callableCopySubstitutionForTypeUpdater
                 ?: return declaration.returnTypeRef as FirResolvedTypeRef
 
@@ -278,8 +278,9 @@ open class ReturnTypeCalculatorWithJump(
     private fun computeReturnTypeRef(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         (declaration.returnTypeRef as? FirResolvedTypeRef)?.let { return it }
         val symbol = declaration.symbol
-        require(!symbol.isSubstitutionOrIntersectionOverride) {
-            "fakeOverrideSubstitution was not calculated for substitution or intersection override: $symbol with ${declaration.returnTypeRef}"
+        require(!symbol.isCopyCreatedInScope) {
+            "callableCopySubstitution was not calculated for callable copy: " +
+                    "$symbol with origin ${declaration.origin} and return type ${declaration.returnTypeRef}"
         }
 
         return resolveDeclaration(declaration)

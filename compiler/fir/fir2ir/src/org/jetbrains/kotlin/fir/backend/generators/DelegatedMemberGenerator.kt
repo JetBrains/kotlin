@@ -90,7 +90,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         val delegateToScope = firField.initializer!!.resolvedType
             .fullyExpandedType(session)
             .lowerBoundIfFlexible()
-            .scope(session, scopeSession, CallableCopyTypeCalculator.DoNothing, null) ?: return
+            .scope(session, scopeSession, CallableCopyTypeCalculator.Forced, null) ?: return
 
         val subClassLookupTag = firSubClass.symbol.toLookupTag()
 
