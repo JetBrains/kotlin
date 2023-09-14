@@ -71,4 +71,14 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector/smartCasts"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
         }
     }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/contextCollector/typeParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TypeParameters {
+        @Test
+        public void testAllFilesPresentInTypeParameters() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector/typeParameters"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        }
+    }
 }

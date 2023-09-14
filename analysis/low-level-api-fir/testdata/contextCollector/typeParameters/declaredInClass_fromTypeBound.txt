@@ -1,0 +1,28 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol MyParam
+                FirTypeParameterSymbol Other : R|MyParam|
+
+FILE: [ResolvedTo(IMPORTS)] declaredInClass_fromTypeBound.kt
+    public final [ResolvedTo(STATUS)] class Outer<[ResolvedTo(STATUS)] MyParam, [ResolvedTo(STATUS)] Other : R|MyParam|> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(STATUS)] MyParam, [ResolvedTo(STATUS)] Other : R|MyParam|>(): R|test/Outer<MyParam, Other>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

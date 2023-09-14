@@ -71,4 +71,14 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerTestGenerat
             }
         }
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/typeParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TypeParameters {
+        @Test
+        public void testAllFilesPresentInTypeParameters() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/typeParameters"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+    }
 }

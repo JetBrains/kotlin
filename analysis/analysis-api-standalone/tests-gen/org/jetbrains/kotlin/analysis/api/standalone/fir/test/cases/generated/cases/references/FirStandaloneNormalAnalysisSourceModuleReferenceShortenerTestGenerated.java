@@ -755,4 +755,38 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
             }
         }
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/typeParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TypeParameters {
+        @Test
+        public void testAllFilesPresentInTypeParameters() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/typeParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("functionTypeParameterVsType.kt")
+        public void testFunctionTypeParameterVsType() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/typeParameters/functionTypeParameterVsType.kt");
+        }
+
+        @Test
+        @TestMetadata("typeParameterVsNestedType.kt")
+        public void testTypeParameterVsNestedType() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/typeParameters/typeParameterVsNestedType.kt");
+        }
+
+        @Test
+        @TestMetadata("typeParameterVsType_conflict.kt")
+        public void testTypeParameterVsType_conflict() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/typeParameters/typeParameterVsType_conflict.kt");
+        }
+
+        @Test
+        @TestMetadata("typeParameterVsType_noConflict.kt")
+        public void testTypeParameterVsType_noConflict() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/typeParameters/typeParameterVsType_noConflict.kt");
+        }
+    }
 }

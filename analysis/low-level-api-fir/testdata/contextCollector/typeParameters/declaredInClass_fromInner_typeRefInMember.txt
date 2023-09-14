@@ -1,0 +1,55 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol MyParam
+    Element 8
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Inner<Outer(MyParam)> : R|kotlin/Any|
+    Element 9
+        Implicit receiver:
+            FirRegularClassSymbol public final class Outer<MyParam> : R|kotlin/Any|
+                Type: test/Outer<MyParam>
+    Element 10
+        Scope: FirMemberTypeParameterScope
+    Element 11
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class Inner<Outer(MyParam)> : R|kotlin/Any|
+                Type: test/Outer.Inner<MyParam>
+    Element 12
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|MyParam|
+
+FILE: [ResolvedTo(IMPORTS)] declaredInClass_fromInner_typeRefInMember.kt
+    public final [ResolvedTo(STATUS)] class Outer<[ResolvedTo(STATUS)] MyParam> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(STATUS)] MyParam>(): R|test/Outer<MyParam>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner [ResolvedTo(STATUS)] class Inner<[ResolvedTo(STATUS)] Outer(MyParam)> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] test/Outer<MyParam>.constructor(): R|test/Outer.Inner<MyParam>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun member([ResolvedTo(BODY_RESOLVE)] p: R|MyParam|): R|kotlin/Unit| {
+            }
+
+        }
+
+    }

@@ -293,4 +293,56 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
             runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCasts/when.kt");
         }
     }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/contextCollector/typeParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TypeParameters {
+        @Test
+        public void testAllFilesPresentInTypeParameters() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector/typeParameters"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("declaredInClass_fromContextReceiver.kt")
+        public void testDeclaredInClass_fromContextReceiver() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/typeParameters/declaredInClass_fromContextReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("declaredInClass_fromInner_typeBound.kt")
+        public void testDeclaredInClass_fromInner_typeBound() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/typeParameters/declaredInClass_fromInner_typeBound.kt");
+        }
+
+        @Test
+        @TestMetadata("declaredInClass_fromInner_typeRefInMember.kt")
+        public void testDeclaredInClass_fromInner_typeRefInMember() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/typeParameters/declaredInClass_fromInner_typeRefInMember.kt");
+        }
+
+        @Test
+        @TestMetadata("declaredInClass_fromNested_typeBound.kt")
+        public void testDeclaredInClass_fromNested_typeBound() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/typeParameters/declaredInClass_fromNested_typeBound.kt");
+        }
+
+        @Test
+        @TestMetadata("declaredInClass_fromNested_typeRefInMember.kt")
+        public void testDeclaredInClass_fromNested_typeRefInMember() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/typeParameters/declaredInClass_fromNested_typeRefInMember.kt");
+        }
+
+        @Test
+        @TestMetadata("declaredInClass_fromSuperType.kt")
+        public void testDeclaredInClass_fromSuperType() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/typeParameters/declaredInClass_fromSuperType.kt");
+        }
+
+        @Test
+        @TestMetadata("declaredInClass_fromTypeBound.kt")
+        public void testDeclaredInClass_fromTypeBound() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/contextCollector/typeParameters/declaredInClass_fromTypeBound.kt");
+        }
+    }
 }
