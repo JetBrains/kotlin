@@ -126,4 +126,4 @@ private fun StringBuilder.renderIncompatibleClassScopes(
     })
 }
 
-private const val INDENTATION_UNIT = "    "
+internal const val INDENTATION_UNIT = "    "

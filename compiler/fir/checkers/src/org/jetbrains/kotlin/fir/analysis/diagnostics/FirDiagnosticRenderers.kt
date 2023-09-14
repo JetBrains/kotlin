@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.ContextIndependentParameterRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.calleeReference
@@ -66,10 +67,12 @@ object FirDiagnosticRenderers {
         }
     }
 
-    private val CALLABLE_FQ_NAME = Renderer { symbol: FirCallableSymbol<*> ->
-        symbol.callableId.asSingleFqName().asString()
+    val CALLABLES_FQ_NAMES = object : ContextIndependentParameterRenderer<Collection<FirCallableSymbol<*>>> {
+        override fun render(obj: Collection<FirCallableSymbol<*>>) = "\n" + obj.joinToString("\n") { symbol ->
+            val origin = symbol.containingClassLookupTag()?.classId?.asFqNameString()
+            INDENTATION_UNIT + SYMBOL.render(symbol) + origin?.let { ", defined in $it" }.orEmpty()
+        } + "\n"
     }
-    val CALLABLES_FQ_NAMES = KtDiagnosticRenderers.COLLECTION(CALLABLE_FQ_NAME)
 
     val RENDER_COLLECTION_OF_TYPES = Renderer { types: Collection<ConeKotlinType> ->
         types.joinToString(separator = ", ") { type ->

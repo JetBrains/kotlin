@@ -1516,8 +1516,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FQ_NAMES_IN_TYPES
         )
 
-        val multipleDefaultsMessage = "More than one function overridden by ''{0}'' declares a default value for ''{1}'': {2}."
-        val multipleDefaultsNotAllowed = " As the compiler can not make sure these values agree, this is not allowed."
+        val multipleDefaultsMessage = "More than one function overridden by ''{0}'' declares a default value for ''{1}'': {2}"
+        val multipleDefaultsNotAllowed = "As the compiler can not make sure these values agree, this is not allowed."
         map.put(
             MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES,
             multipleDefaultsMessage + multipleDefaultsNotAllowed,
@@ -1532,7 +1532,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL,
             CALLABLES_FQ_NAMES,
         )
-        val multipleDefaultsDiscouraged = " As the compiler can not make sure these values agree, this will be prohibited in the future."
+        val multipleDefaultsDiscouraged = "As the compiler can not make sure these values agree, this will be prohibited in the future."
         map.put(
             MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_DEPRECATION,
             multipleDefaultsMessage + multipleDefaultsDiscouraged,
