@@ -46,7 +46,7 @@ struct GCSchedulerConfig {
     std::atomic<double> heapTriggerCoefficient = 0.9;
     // See `mutatorAssists()`.
     std::atomic<std::underlying_type_t<MutatorAssists>> mutatorAssistsImpl =
-            static_cast<std::underlying_type_t<MutatorAssists>>(MutatorAssists::kDefault);
+            static_cast<std::underlying_type_t<MutatorAssists>>(MutatorAssists::kDisable);
 
     std::chrono::microseconds regularGcInterval() const { return std::chrono::microseconds(regularGcIntervalMicroseconds.load()); }
 

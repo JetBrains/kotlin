@@ -153,7 +153,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     val concurrentWeakSweep: Boolean
-        get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: true
+        get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: false
 
     val gcMutatorsCooperate: Boolean by lazy {
         val mutatorsCooperate = configuration.get(BinaryOptions.gcMutatorsCooperate)
