@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.types
 import kotlin.reflect.KClass
 
 class AbbreviatedTypeAttribute(
-    val coneType: ConeKotlinType
-): ConeAttribute<AbbreviatedTypeAttribute>() {
+    val coneType: ConeKotlinType,
+) : ConeAttribute<AbbreviatedTypeAttribute>() {
     override fun union(other: AbbreviatedTypeAttribute?): AbbreviatedTypeAttribute? = null
     override fun intersect(other: AbbreviatedTypeAttribute?): AbbreviatedTypeAttribute? = null
     override fun add(other: AbbreviatedTypeAttribute?): AbbreviatedTypeAttribute? = null
