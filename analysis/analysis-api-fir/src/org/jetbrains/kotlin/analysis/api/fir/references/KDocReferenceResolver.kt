@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KtScopeKind
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import kotlin.reflect.KClass
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 
 internal object KDocReferenceResolver {
@@ -192,12 +192,7 @@ internal object KDocReferenceResolver {
                 currentScope
                     .getClassifierSymbols(fqNamePart)
                     .filterIsInstance<KtSymbolWithMembers>()
-                    .flatMap {
-                        listOf(
-                            it.getDeclaredMemberScope(),
-                            it.getStaticMemberScope(),
-                        )
-                    }
+                    .map { it.getCombinedMemberScope() }
                     .toList()
                     .asCompositeScope()
             }
@@ -258,19 +253,12 @@ internal object KDocReferenceResolver {
 
             else -> {
                 getClassOrObjectSymbolByClassId(classId)
-                    ?.let {
-                        listOf(
-                            it.getDeclaredMemberScope(),
-                            it.getStaticMemberScope(),
-                        )
-                    }
-                    ?.asCompositeScope()
+                    ?.getCombinedMemberScope()
                     ?.getCallableSymbols(callableId.callableName)
                     ?.let(::addAll)
             }
         }
     }
-
 
     private fun generateNameInterpretations(fqName: FqName): Sequence<FqNameInterpretation> = sequence {
         val parts = fqName.pathSegments()
