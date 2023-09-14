@@ -287,7 +287,6 @@ enum class LanguageFeature(
     // 2.0
 
     EnhanceNullabilityOfPrimitiveArrays(KOTLIN_2_0, kind = BUG_FIX), // KT-54521
-    AllowActualMemberWiderVisibilityIfExpectIsEffectivelyFinal(KOTLIN_2_0, kind = BUG_FIX), // KT-61955
 
     /**
      * This feature is highly related to ForbidInferringTypeVariablesIntoEmptyIntersection and while they belong to the same LV,
