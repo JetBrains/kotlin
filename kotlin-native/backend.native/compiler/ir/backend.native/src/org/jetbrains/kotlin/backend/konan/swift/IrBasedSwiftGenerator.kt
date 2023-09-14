@@ -297,7 +297,6 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
     private fun mapTypeToSwift(declaration: IrType): SwiftCode.Type? = SwiftCode.build {
         when {
             declaration.isNullable() -> null
-            declaration.isAny() -> kotlinAnySwiftType
             declaration.isUnit() -> "Void".type
             declaration.isPrimitiveType() -> when (declaration.getPrimitiveType()!!) {
                 PrimitiveType.BYTE -> "Int8"
@@ -321,11 +320,20 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
 
     private fun bridgeFor(declaration: IrType): Bridge? = SwiftCode.build {
         val cType = mapTypeToC(declaration) ?: return null
-        val swiftType = mapTypeToSwift(declaration) ?: return null
+        val swiftType = mapTypeToSwift(declaration)
 
-        return when (declaration.computeBinaryType()) {
-            is BinaryType.Primitive -> Bridge.AsIs(swiftType, cType)
-            is BinaryType.Reference -> Bridge.Object(swiftType, cType)
+        when {
+            swiftType != null -> Bridge.AsIs(swiftType, cType)
+            declaration.isAny() -> {
+                val type = "AnyObject".type.let { if (declaration.isNullable()) it.optional else it }
+                return Bridge.Object(type, cType)
+            }
+            declaration.computeBinaryType() is BinaryType.Reference -> {
+                // FIXME: generate particular types
+                val type = kotlinAnySwiftType.let { if (declaration.isNullable()) it.optional else it }
+                return Bridge.Object(type, cType)
+            }
+            else -> return null
         }
     }
 
