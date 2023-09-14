@@ -1,0 +1,94 @@
+/generics.kt:(33,46): info: Generated Viper text for genericMethod:
+field pkg$$class_Box$member_t: dom$Nullable[dom$Any]
+
+method pkg$$class_Box$member_genericMethod(this: Ref, local$x: dom$Nullable[dom$Any])
+  returns (ret: dom$Nullable[dom$Any])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+{
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Box())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+  ret := local$x
+  goto label$ret
+  label label$ret
+}
+
+/generics.kt:(88,97): info: Generated Viper text for createBox:
+field pkg$$class_Box$member_t: dom$Nullable[dom$Any]
+
+method pkg$$global$createBox() returns (ret: Int)
+{
+  var local$boolBox: Ref
+  var anonymous$1: Ref
+  var local$b: Bool
+  var anonymous$2: dom$Nullable[dom$Any]
+  var local$intBox: Ref
+  var anonymous$3: Ref
+  var anonymous$4: dom$Nullable[dom$Any]
+  anonymous$1 := pkg$$class_Box$member_Box((dom$Casting$cast(true, dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]))
+  local$boolBox := anonymous$1
+  inhale acc(local$boolBox.pkg$$class_Box$member_t, write)
+  anonymous$2 := local$boolBox.pkg$$class_Box$member_t
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$2): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+  exhale acc(local$boolBox.pkg$$class_Box$member_t, write)
+  local$b := (dom$Casting$cast(anonymous$2, dom$Type$Boolean()): Bool)
+  anonymous$3 := pkg$$class_Box$member_Box((dom$Casting$cast(2, dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]))
+  local$intBox := anonymous$3
+  inhale acc(local$intBox.pkg$$class_Box$member_t, write)
+  anonymous$4 := local$intBox.pkg$$class_Box$member_t
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$4): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+  exhale acc(local$intBox.pkg$$class_Box$member_t, write)
+  ret := (dom$Casting$cast(anonymous$4, dom$Type$Int()): Int)
+  goto label$ret
+  label label$ret
+}
+
+method pkg$$class_Box$member_Box(local$t: dom$Nullable[dom$Any])
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Box())
+
+
+/generics.kt:(208,223): info: Generated Viper text for setGenericField:
+field pkg$$class_Box$member_t: dom$Nullable[dom$Any]
+
+method pkg$$global$setGenericField() returns (ret: dom$Unit)
+{
+  var local$box: Ref
+  var anonymous$1: Ref
+  anonymous$1 := pkg$$class_Box$member_Box((dom$Casting$cast(3, dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]))
+  local$box := anonymous$1
+  inhale acc(local$box.pkg$$class_Box$member_t, write)
+  local$box.pkg$$class_Box$member_t := (dom$Casting$cast(5, dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any])
+  exhale acc(local$box.pkg$$class_Box$member_t, write)
+  label label$ret
+}
+
+method pkg$$class_Box$member_Box(local$t: dom$Nullable[dom$Any])
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Box())
+
+
+/generics.kt:(274,284): info: Generated Viper text for genericFun:
+method pkg$$global$genericFun(local$t: dom$Nullable[dom$Any])
+  returns (ret: dom$Nullable[dom$Any])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+{
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$t): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+  ret := local$t
+  goto label$ret
+  label label$ret
+}
+
+/generics.kt:(303,318): info: Generated Viper text for callGenericFunc:
+method pkg$$global$callGenericFunc() returns (ret: dom$Unit)
+{
+  var local$x: Int
+  var anonymous$1: dom$Nullable[dom$Any]
+  anonymous$1 := pkg$$global$genericFun((dom$Casting$cast(3, dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]))
+  local$x := (dom$Casting$cast(anonymous$1, dom$Type$Int()): Int)
+  label label$ret
+}
+
+method pkg$$global$genericFun(local$t: dom$Nullable[dom$Any])
+  returns (ret: dom$Nullable[dom$Any])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+

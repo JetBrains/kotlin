@@ -20,7 +20,7 @@ class ClassPropertyAccess(val receiver: ExpEmbedding, val getter: GetterEmbeddin
     }
 }
 
-abstract class BackingFieldAccess(val field: VariableEmbedding) {
+abstract class BackingFieldAccess(val field: FieldEmbedding) {
     fun <RTC : ResultTrackingContext> access(
         receiver: ExpEmbedding,
         ctx: StmtConversionContext<RTC>,
@@ -34,7 +34,7 @@ abstract class BackingFieldAccess(val field: VariableEmbedding) {
     }
 }
 
-class BackingFieldGetter(field: VariableEmbedding) : BackingFieldAccess(field), GetterEmbedding {
+class BackingFieldGetter(field: FieldEmbedding) : BackingFieldAccess(field), GetterEmbedding {
     override fun getValue(receiver: ExpEmbedding, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
         ctx.withResult(field.type) {
             access(receiver, this) {
@@ -46,7 +46,7 @@ class BackingFieldGetter(field: VariableEmbedding) : BackingFieldAccess(field), 
         }
 }
 
-class BackingFieldSetter(field: VariableEmbedding) : BackingFieldAccess(field), SetterEmbedding {
+class BackingFieldSetter(field: FieldEmbedding) : BackingFieldAccess(field), SetterEmbedding {
     override fun setValue(receiver: ExpEmbedding, value: ExpEmbedding, ctx: StmtConversionContext<ResultTrackingContext>) {
         access(receiver, ctx) {
             addStatement(Stmt.assign(it.toViper(), value.withType(field.type).toViper()))

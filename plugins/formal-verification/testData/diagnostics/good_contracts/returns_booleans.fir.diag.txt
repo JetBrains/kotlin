@@ -68,3 +68,33 @@ method pkg$$global$binary_logic_expressions(local$a: Bool, local$b: Bool)
   ensures ret == false ==> local$b && false
   ensures ret == true ==> (true || local$a) && (local$b || true)
 
+
+/returns_booleans.kt:(1268,1281): info: Generated Viper text for isNullOrEmpty:
+method pkg$$global$isNullOrEmpty(this: dom$Nullable[Ref])
+  returns (ret: Bool)
+  ensures ret == false ==> this != (dom$Nullable$null(): dom$Nullable[Ref])
+{
+  var anonymous$1: Bool
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$special$Nullable(dom$Type$pkg$kotlin$collections$class_Collection()))
+  if (this == (dom$Nullable$null(): dom$Nullable[Ref]) &&
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||
+  this != (dom$Nullable$null(): dom$Nullable[Ref]) &&
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) !=
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) &&
+  (dom$Casting$cast(this, dom$Type$pkg$kotlin$collections$class_Collection()): Ref) ==
+  (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$pkg$kotlin$collections$class_Collection()): Ref)) {
+    anonymous$1 := true
+  } else {
+    var anonymous$2: Bool
+    anonymous$2 := pkg$kotlin$collections$class_Collection$member_isEmpty((dom$Casting$cast(this,
+      dom$Type$pkg$kotlin$collections$class_Collection()): Ref))
+    anonymous$1 := anonymous$2
+  }
+  ret := anonymous$1
+  goto label$ret
+  label label$ret
+}
+
+method pkg$kotlin$collections$class_Collection$member_isEmpty(this: Ref)
+  returns (ret: Bool)

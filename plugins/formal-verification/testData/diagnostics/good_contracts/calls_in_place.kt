@@ -51,3 +51,11 @@ inline fun <!VIPER_TEXT!>loopUntil<!>(lambda: () -> Boolean)
     }
     while (!lambda()) { /* no body */ }
 }
+
+@OptIn(ExperimentalContracts::class)
+fun <R> <!VIPER_TEXT!>run<!>(block: () -> R): R {
+    contract {
+        callsInPlace(block, EXACTLY_ONCE)
+    }
+    return block()
+}

@@ -133,3 +133,22 @@ method pkg$$global$loopUntil(local$lambda: Ref) returns (ret: dom$Unit)
   label label$break$1
   label label$ret
 }
+
+/calls_in_place.kt:(1178,1181): info: Generated Viper text for run:
+method pkg$$global$run(local$block: Ref)
+  returns (ret: dom$Nullable[dom$Any])
+  requires acc(local$block.special$function_object_call_counter, write)
+  ensures acc(local$block.special$function_object_call_counter, write)
+  ensures old(local$block.special$function_object_call_counter) <=
+    local$block.special$function_object_call_counter
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+  ensures local$block.special$function_object_call_counter ==
+    old(local$block.special$function_object_call_counter) + 1
+{
+  var anonymous$1: dom$Nullable[dom$Any]
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$block): dom$Type), dom$Type$Function())
+  special$invoke_function_object(local$block)
+  ret := anonymous$1
+  goto label$ret
+  label label$ret
+}

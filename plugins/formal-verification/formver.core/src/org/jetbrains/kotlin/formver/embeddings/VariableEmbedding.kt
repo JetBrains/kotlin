@@ -19,12 +19,6 @@ class VariableEmbedding(val name: MangledName, override val type: TypeEmbedding)
 
     override fun toViper(): Exp.LocalVar = Exp.LocalVar(name, type.viperType)
 
-    fun toField(
-        pos: Position = Position.NoPosition,
-        info: Info = Info.NoInfo,
-        trafos: Trafos = Trafos.NoTrafos,
-    ): Field = Field(name, type.viperType, pos, info, trafos)
-
     fun toFieldAccess(
         field: Field,
         pos: Position = Position.NoPosition,

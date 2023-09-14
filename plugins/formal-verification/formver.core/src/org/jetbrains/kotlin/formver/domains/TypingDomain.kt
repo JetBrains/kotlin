@@ -81,6 +81,11 @@ const val TYPE_DOMAIN_NAME = "Type"
  *   // Axioms of the form isSubtype(ClassType(), AnyType())
  *
  *   axiom {
+ *     forall t: Type :: { isSubtype(t, NullableType(AnyType())) }
+ *       isSubtype(t, NullableType(AnyType()))
+ *   }
+ *
+ *   axiom {
  *     (forall t: Type ::isSubtype(t, t))
  *   }
  *   axiom {
@@ -259,6 +264,17 @@ class TypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(TYPE_DOMAIN_
             )
         }
 
+    private val nullableAnyTop =
+        createAnonymousDomainAxiom(
+            Exp.Forall1(
+                t.decl(),
+                Exp.Trigger1(
+                    isSubtype(t.use(), nullableType(anyType()))
+                ),
+                isSubtype(t.use(), nullableType(anyType()))
+            )
+        )
+
     private val isSubtypeSuperType =
         classes.flatMap { cls ->
             cls.superTypes.map { superType ->
@@ -269,7 +285,7 @@ class TypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(TYPE_DOMAIN_
         }
 
     override val axioms: List<DomainAxiom> =
-        nullableTypesNotNonNullable + isNullableNonNullable + isNullableNullable + nonNullableTypesSubtypeAny + nullableTypesDifferent +
+        nullableTypesNotNonNullable + isNullableNonNullable + isNullableNullable + nonNullableTypesSubtypeAny + nullableAnyTop + nullableTypesDifferent +
                 subtypeReflexive + subtypeTransitive + subtypeAntiSymmetric + nonNullableSubtypeNullable + nullableCovariant + nothingBottom + isSubtypeSuperType
 }
 

@@ -189,8 +189,8 @@ data class Cast(val exp: ExpEmbedding, override val type: TypeEmbedding) : ExpEm
     override fun toViper() = CastingDomain.cast(exp.toViper(), type)
 }
 
-data class FieldAccess(val receiver: ExpEmbedding, val field: VariableEmbedding) : ExpEmbedding {
+data class FieldAccess(val receiver: ExpEmbedding, val field: FieldEmbedding) : ExpEmbedding {
     override val type: TypeEmbedding = field.type
-    override fun toViper() = Exp.FieldAccess(receiver.toViper(), field.toField())
+    override fun toViper() = Exp.FieldAccess(receiver.toViper(), field.toViper())
     fun getAccessPredicate(perm: PermExp = PermExp.FullPerm()) = AccessPredicate.FieldAccessPredicate(toViper(), perm)
 }

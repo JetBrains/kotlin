@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.formver.PluginConfiguration
+import org.jetbrains.kotlin.formver.embeddings.FieldEmbedding
 import org.jetbrains.kotlin.formver.embeddings.MethodEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
@@ -20,6 +22,7 @@ interface ProgramConversionContext {
     fun embedFunction(symbol: FirFunctionSymbol<*>): MethodEmbedding
     fun embedType(type: ConeKotlinType): TypeEmbedding
     fun embedType(exp: FirExpression): TypeEmbedding = embedType(exp.resolvedType)
+    fun getField(field: FirPropertySymbol): FieldEmbedding?
     fun newAnonName(): AnonymousName
     fun newWhileIndex(): Int
 }

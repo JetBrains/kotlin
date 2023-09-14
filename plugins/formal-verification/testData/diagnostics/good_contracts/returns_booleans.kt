@@ -54,3 +54,12 @@ fun <!VIPER_TEXT!>call_fun_with_contracts<!>(b: Boolean): Boolean {
     val a = binary_logic_expressions(b, b)
     return a
 }
+
+@OptIn(ExperimentalContracts::class)
+public fun <T> Collection<T>?.<!VIPER_TEXT!>isNullOrEmpty<!>(): Boolean {
+    contract {
+        returns(false) implies (this@isNullOrEmpty != null)
+    }
+
+    return this == null || this.isEmpty()
+}

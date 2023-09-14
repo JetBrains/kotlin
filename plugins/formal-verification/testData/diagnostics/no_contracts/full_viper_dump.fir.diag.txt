@@ -187,6 +187,12 @@ domain dom$Type  {
   }
 
   axiom {
+    (forall t: dom$Type ::
+      { dom$Type$isSubtype(t, dom$Type$special$Nullable(dom$Type$Any())) }
+      dom$Type$isSubtype(t, dom$Type$special$Nullable(dom$Type$Any())))
+  }
+
+  axiom {
     (forall t: dom$Type, t2: dom$Type ::t != t2 ==>
       dom$Type$special$Nullable(t) != dom$Type$special$Nullable(t2))
   }
