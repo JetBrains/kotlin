@@ -94,7 +94,7 @@ class FakeOverrideCopier(
         declaration.factory.createValueParameter(
             startOffset = declaration.startOffset,
             endOffset = declaration.endOffset,
-            origin = mapDeclarationOrigin(declaration.origin),
+            origin = IrDeclarationOrigin.DEFINED,
             name = symbolRenamer.getValueParameterName(declaration.symbol),
             type = declaration.type.remapType(),
             isAssignable = declaration.isAssignable,
