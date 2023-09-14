@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -26,8 +26,8 @@ object ArrayEqualityCanBeReplacedWithEquals : FirBasicExpressionChecker() {
         val left = arguments.getOrNull(0) ?: return
         val right = arguments.getOrNull(1) ?: return
 
-        if (left.resolvedType.classId != StandardClassIds.Array) return
-        if (right.resolvedType.classId != StandardClassIds.Array) return
+        if (left.resolvedType.fullyExpandedClassId(context.session) != StandardClassIds.Array) return
+        if (right.resolvedType.fullyExpandedClassId(context.session) != StandardClassIds.Array) return
 
         reporter.reportOn(expression.source, ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS, context)
     }

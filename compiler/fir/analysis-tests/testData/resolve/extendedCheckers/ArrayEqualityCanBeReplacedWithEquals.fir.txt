@@ -1,9 +1,16 @@
 FILE: ArrayEqualityCanBeReplacedWithEquals.kt
+    public final typealias A<T> = R|kotlin/Array<T>|
     public final fun foo(p: R|kotlin/Int|): R|kotlin/Unit| {
         lval a: R|kotlin/Array<kotlin/Int>| = R|kotlin/arrayOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
         lval b: R|kotlin/Array<kotlin/Int>| = R|kotlin/arrayOf|<R|kotlin/Int|>(vararg(Int(3), Int(2), Int(1)))
+        lval c: R|A<kotlin/Int>| = R|kotlin/arrayOf|<R|kotlin/Int|>(vararg(Int(3), Int(2), Int(1)))
         when () {
             ==(R|<local>/a|, R|<local>/b|) ->  {
+            }
+        }
+
+        when () {
+            ==(R|<local>/a|, R|<local>/c|) ->  {
             }
         }
 
