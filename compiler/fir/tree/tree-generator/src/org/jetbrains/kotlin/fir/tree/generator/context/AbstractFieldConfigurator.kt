@@ -49,10 +49,6 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
             argMap[argument] = type
         }
 
-        fun TypeRef.withArgs(vararg args: String): Pair<TypeRef, List<TypeRef>> {
-            return this to args.map { NamedTypeParameterRef(it) }
-        }
-
         fun needTransformOtherChildren() {
             element._needTransformOtherChildren = true
         }

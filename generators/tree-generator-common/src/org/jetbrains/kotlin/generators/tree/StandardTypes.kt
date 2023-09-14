@@ -6,5 +6,9 @@
 package org.jetbrains.kotlin.generators.tree
 
 object StandardTypes {
+    val boolean = type<Boolean>()
+    val string = type<String>()
+    val int = type<Int>()
+    val collection = type<Collection<*>>()
     val map = type<Map<*, *>>()
 }
