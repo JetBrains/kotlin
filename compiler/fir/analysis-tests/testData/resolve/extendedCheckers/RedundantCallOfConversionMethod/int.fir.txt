@@ -1,3 +1,8 @@
 FILE: int.kt
     public final val foo: R|kotlin/Int| = Int(1).R|kotlin/Int.toInt|()
         public get(): R|kotlin/Int|
+    public final typealias IntAlias = R|kotlin/Int|
+    public final val aliased: R|IntAlias| = Int(1)
+        public get(): R|IntAlias|
+    public final val bar: R|kotlin/Int| = R|/aliased|.R|kotlin/Int.toInt|()
+        public get(): R|kotlin/Int|
