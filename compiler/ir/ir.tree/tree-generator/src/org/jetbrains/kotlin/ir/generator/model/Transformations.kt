@@ -125,7 +125,7 @@ private fun replaceElementRefs(config: Config, mapping: Map<ElementConfig, Eleme
         for (field in el.fields) {
             when (field) {
                 is SingleField -> {
-                    field.type = transform(field.type)
+                    field.typeRef = transform(field.typeRef)
                 }
                 is ListField -> {
                     field.elementType = transform(field.elementType)
@@ -167,7 +167,7 @@ private fun addAbstractElement(elements: List<Element>) {
 private fun configureDescriptorApiAnnotation(elements: List<Element>) {
     for (el in elements) {
         for (field in el.fields) {
-            val type = field.type
+            val type = field.typeRef
             if (type is ClassRef<*> && type.packageName.startsWith("org.jetbrains.kotlin.descriptors") &&
                 type.simpleName.endsWith("Descriptor") && type.simpleName != "ModuleDescriptor"
             ) {
@@ -192,7 +192,7 @@ private fun processFieldOverrides(elements: List<Element>) {
                             type.takeUnless { it is InferredOverriddenType } ?: overriddenType
                         when (field) {
                             is SingleField -> {
-                                field.type = transformInferredType(field.type, (overriddenField as SingleField).type)
+                                field.typeRef = transformInferredType(field.typeRef, (overriddenField as SingleField).typeRef)
                             }
                             is ListField -> {
                                 field.elementType = transformInferredType(field.elementType, (overriddenField as ListField).elementType)

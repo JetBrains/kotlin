@@ -35,6 +35,16 @@ sealed class Field : AbstractField() {
 
     var withBindThis = true
 
+    abstract override var isVolatile: Boolean
+
+    abstract override var isFinal: Boolean
+
+    abstract override var isLateinit: Boolean
+
+    abstract override var isParameter: Boolean
+
+    abstract override var isMutable: Boolean
+
     override fun getTypeWithArguments(notNull: Boolean): String = type + generics + if (nullable && !notNull) "?" else ""
 
     fun copy(): Field = internalCopy().also {

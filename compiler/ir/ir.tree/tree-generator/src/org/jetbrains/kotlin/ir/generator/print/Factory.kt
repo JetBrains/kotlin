@@ -43,7 +43,7 @@ internal fun printFactory(generationPath: File, model: Model): GeneratedFile {
                                 .sortedBy { (_, defaultValue) -> defaultValue != null } // All parameters with default values must go last
                             fields.forEach { (field, defaultValue) ->
                                 addParameter(
-                                    ParameterSpec.builder(field.name, field.type.toPoet().copy(nullable = field.nullable))
+                                    ParameterSpec.builder(field.name, field.typeRef.toPoet().copy(nullable = field.nullable))
                                         .defaultValue(defaultValue)
                                         .build(),
                                 )

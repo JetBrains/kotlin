@@ -101,12 +101,11 @@ data class ElementRef(
 
 sealed class Field(
     config: FieldConfig,
-    val name: String,
-    val nullable: Boolean,
-    val mutable: Boolean,
+    override val name: String,
+    override val nullable: Boolean,
+    override var isMutable: Boolean,
     val isChild: Boolean,
-) {
-    abstract val type: TypeRef
+) : AbstractField() {
     abstract val baseDefaultValue: CodeBlock?
     abstract val baseGetter: CodeBlock?
     var isOverride = false
@@ -119,13 +118,32 @@ sealed class Field(
     val printProperty = config.printProperty
     val generationCallback = config.generationCallback
 
-    override fun toString() = "$name: $type"
+    override fun toString() = "$name: $typeRef"
+
+    override val isVolatile: Boolean
+        get() = false
+
+    override val isFinal: Boolean
+        get() = false
+
+    override val isLateinit: Boolean
+        get() = false
+
+    override val isParameter: Boolean
+        get() = false
+
+    override val type: String
+        get() = typeRef.type
+    override val packageName: String?
+        get() = typeRef.packageName
+
+    override fun getTypeWithArguments(notNull: Boolean): String = typeRef.getTypeWithArguments(notNull)
 }
 
 class SingleField(
     config: FieldConfig,
     name: String,
-    override var type: TypeRef,
+    override var typeRef: TypeRef,
     nullable: Boolean,
     mutable: Boolean,
     isChild: Boolean,
@@ -133,7 +151,7 @@ class SingleField(
     override val baseGetter: CodeBlock?,
 ) : Field(config, name, nullable, mutable, isChild) {
     override val transformable: Boolean
-        get() = mutable
+        get() = isMutable
 }
 
 class ListField(
@@ -148,6 +166,6 @@ class ListField(
     override val baseDefaultValue: CodeBlock?,
     override val baseGetter: CodeBlock?,
 ) : Field(config, name, nullable, mutable, isChild) {
-    override val type: TypeRef
+    override val typeRef: TypeRef
         get() = listType.withArgs(elementType)
 }
