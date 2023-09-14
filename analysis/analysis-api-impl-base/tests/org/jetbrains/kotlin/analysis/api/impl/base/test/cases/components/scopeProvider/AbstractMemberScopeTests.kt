@@ -27,7 +27,7 @@ abstract class AbstractMemberScopeTestBase : AbstractSymbolByFqNameTest() {
     }
 }
 
-abstract class AbstractMemberScopeByFqNameTest : AbstractMemberScopeTestBase() {
+abstract class AbstractMemberScopeTest : AbstractMemberScopeTestBase() {
     context(KtAnalysisSession)
     override fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol> = getMemberScope().getAllSymbols()
 }

@@ -476,14 +476,14 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             }
 
             test(
-                AbstractMemberScopeByFqNameTest::class,
+                AbstractMemberScopeTest::class,
                 filter = frontendIs(FrontendKind.Fir),
             ) {
                 when (it.analysisApiMode) {
                     AnalysisApiMode.Ide ->
-                        model(it, "memberScopeByFqName")
+                        model(it, "memberScope")
                     AnalysisApiMode.Standalone ->
-                        model(it, "memberScopeByFqName", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                        model(it, "memberScope", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
                 }
             }
 
