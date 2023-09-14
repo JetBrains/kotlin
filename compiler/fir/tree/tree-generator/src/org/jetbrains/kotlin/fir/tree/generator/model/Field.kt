@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.fir.tree.generator.printer.generics
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 
 sealed class Field : AbstractField() {
     open var withReplace: Boolean = false
@@ -15,6 +16,12 @@ sealed class Field : AbstractField() {
     open var needsSeparateTransform: Boolean = false
     var parentHasSeparateTransform: Boolean = true
     open var needTransformInOtherChildren: Boolean = false
+
+    /**
+     * @see org.jetbrains.kotlin.fir.tree.generator.util.detectBaseTransformerTypes
+     */
+    var useInBaseTransformerDetection = true
+
     open var customInitializationCall: String? = null
 
     open val defaultValueInImplementation: String? get() = null
@@ -40,6 +47,7 @@ sealed class Field : AbstractField() {
             copy.arguments.addAll(arguments)
             copy.needsSeparateTransform = needsSeparateTransform
             copy.needTransformInOtherChildren = needTransformInOtherChildren
+            copy.useInBaseTransformerDetection = useInBaseTransformerDetection
             copy.isMutable = isMutable
             copy.overridenTypes += overridenTypes
             copy.arbitraryImportables += arbitraryImportables
@@ -186,14 +194,12 @@ class SimpleField(
 
 class FirField(
     override val name: String,
-    val element: AbstractElement,
+    val element: ElementOrRef,
     override val nullable: Boolean,
     override var withReplace: Boolean,
 ) : Field() {
     init {
-        if (element is ElementWithArguments) {
-            arguments += element.typeArguments.map { NamedTypeParameterRef(it.name) }
-        }
+        arguments += element.args.values
     }
 
     override val type: String get() = element.type
@@ -254,5 +260,5 @@ class FieldList(
         )
     }
 
-    override val isFirType: Boolean = baseType is AbstractElement
+    override val isFirType: Boolean = baseType is GenericElementOrRef<*, *> && baseType.element is Element
 }

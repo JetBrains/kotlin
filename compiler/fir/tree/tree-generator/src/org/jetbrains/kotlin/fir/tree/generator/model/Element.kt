@@ -8,21 +8,10 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.util.set
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.AbstractElement as CommonAbstractElement
+import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
+import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
-interface AbstractElement : CommonAbstractElement<AbstractElement, Field> {
-    val baseTransformerType: AbstractElement?
-    val transformerType: AbstractElement
-    val doesNotNeedImplementation: Boolean
-    val needTransformOtherChildren: Boolean
-    val allImplementations: List<Implementation>
-    val allFirFields: List<Field>
-    val defaultImplementation: Implementation?
-    val customImplementations: List<Implementation>
-    val useNullableForReplace: Set<Field>
-}
-
-class Element(override val name: String, kind: Kind) : AbstractElement {
+class Element(override val name: String, kind: Kind) : AbstractElement<Element, Field> {
     companion object {
         private val allowedKinds = setOf(
             ImplementationKind.Interface,
@@ -32,20 +21,30 @@ class Element(override val name: String, kind: Kind) : AbstractElement {
         )
     }
 
+    override val element: Element
+        get() = this
+
+    override val args: Map<NamedTypeParameterRef, TypeRef>
+        get() = emptyMap()
+
+    override val nullable: Boolean
+        get() = false
+
+    override fun copy(nullable: Boolean) = ElementRef(this, args, nullable)
+
+    override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) = ElementRef(this, args, nullable)
+
     override val fields = mutableSetOf<Field>()
     override val type: String = "Fir$name"
     override val packageName: String = BASE_PACKAGE + kind.packageName.let { if (it.isBlank()) it else "." + it }
     override val fullQualifiedName: String get() = super.fullQualifiedName!!
     override val parents = mutableListOf<Element>()
-    override var defaultImplementation: Implementation? = null
-    override val customImplementations = mutableListOf<Implementation>()
+    var defaultImplementation: Implementation? = null
+    val customImplementations = mutableListOf<Implementation>()
 
     override val params = mutableListOf<TypeVariable>()
 
-    override val typeArguments: List<TypeArgument>
-        get() = emptyList()
-
-    override val parentsArguments = mutableMapOf<AbstractElement, MutableMap<TypeRef, TypeRef>>()
+    override val parentsArguments = mutableMapOf<Element, MutableMap<TypeRef, TypeRef>>()
     override var kind: ImplementationKind? = null
         set(value) {
             if (value !in allowedKinds) {
@@ -57,15 +56,15 @@ class Element(override val name: String, kind: Kind) : AbstractElement {
 
     override var isSealed: Boolean = false
 
-    override var baseTransformerType: Element? = null
-    override val transformerType: Element get() = baseTransformerType ?: this
+    var baseTransformerType: Element? = null
+    val transformerType: Element get() = baseTransformerType ?: this
 
-    override var doesNotNeedImplementation: Boolean = false
+    var doesNotNeedImplementation: Boolean = false
 
-    override val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || parents.any { it.needTransformOtherChildren }
+    val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || parents.any { it.needTransformOtherChildren }
     override val overridenFields: MutableMap<Field, MutableMap<Field, Boolean>> = mutableMapOf()
-    override val useNullableForReplace: MutableSet<Field> = mutableSetOf()
-    override val allImplementations: List<Implementation> by lazy {
+    val useNullableForReplace: MutableSet<Field> = mutableSetOf()
+    val allImplementations: List<Implementation> by lazy {
         if (doesNotNeedImplementation) {
             emptyList()
         } else {
@@ -139,7 +138,7 @@ class Element(override val name: String, kind: Kind) : AbstractElement {
         result.values.toList()
     }
 
-    override val allFirFields: List<Field> by lazy {
+    val allFirFields: List<Field> by lazy {
         allFields.filter { it.isFirType }
     }
 
@@ -162,12 +161,6 @@ class Element(override val name: String, kind: Kind) : AbstractElement {
     }
 }
 
-class ElementWithArguments(val element: Element, override val typeArguments: List<TypeArgument>) : AbstractElement by element {
-    override fun equals(other: Any?): Boolean {
-        return element.equals(other)
-    }
+typealias ElementRef = GenericElementRef<Element, Field>
 
-    override fun hashCode(): Int {
-        return element.hashCode()
-    }
-}
+typealias ElementOrRef = GenericElementOrRef<Element, Field>

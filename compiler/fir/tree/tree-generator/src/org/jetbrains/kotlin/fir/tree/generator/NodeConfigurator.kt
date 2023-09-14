@@ -171,7 +171,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         returnExpression.configure {
-            parentArg(jump, "E", function.withArgs("E" to TypeRef.Star))
+            parentArg(jump, "E", function)
             +field("result", expression).withTransform()
             needTransformOtherChildren()
         }
@@ -781,13 +781,4 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("contractCall", functionCall)
         }
     }
-}
-
-// TODO: Replace with org.jetbrains.kotlin.generators.tree.withArgs
-fun Element.withArgs(vararg replacements: Pair<String, TypeRef>): AbstractElement {
-    val replaceMap = replacements.toMap()
-    val newArguments = params.map { param ->
-        replaceMap[param.name]?.let { SimpleTypeArgument(it.type, null) } ?: error("Type variable $param not found in $this")
-    }
-    return ElementWithArguments(this, newArguments)
 }

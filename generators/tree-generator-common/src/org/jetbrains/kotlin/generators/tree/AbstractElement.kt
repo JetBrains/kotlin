@@ -8,18 +8,17 @@ package org.jetbrains.kotlin.generators.tree
 /**
  * A common interface representing a FIR or IR tree element.
  */
-interface AbstractElement<Element : AbstractElement<Element, Field>, Field : AbstractField> : FieldContainer, ImplementationKindOwner,
-    TypeRef /* TODO: Replace with ElementOrRef */ {
+interface AbstractElement<Element, Field> : ElementOrRef<Element, Field>, FieldContainer, ImplementationKindOwner
+        where Element : AbstractElement<Element, Field>,
+              Field : AbstractField {
 
     val name: String
 
     val fields: Set<Field>
 
-    val parents: List<Element>
-
     val params: List<TypeVariable> // TODO: Rename to `typeParameters` (rn this name would clash with the extension function)
 
-    val typeArguments: List<TypeArgument>
+    val parents: List<Element>
 
     val parentsArguments: Map<Element, Map<TypeRef, TypeRef>>
 
