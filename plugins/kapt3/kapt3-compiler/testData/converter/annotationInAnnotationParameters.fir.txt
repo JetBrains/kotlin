@@ -1,0 +1,61 @@
+package a;
+
+/**
+ * public final annotation class a/A : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface A {
+}
+
+////////////////////
+
+package b;
+
+/**
+ * public final annotation class b/B : kotlin/Annotation {
+ *
+ *   // signature: <init>(La/A;)V
+ *   public constructor(value: a/A)
+ *
+ *   // getter: value()La/A;
+ *   public final val value: a/A
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface B {
+
+    public abstract a.A value();
+}
+
+////////////////////
+
+package b;
+
+/**
+ * public final class b/C : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@B(value = @a.A())
+public final class C {
+
+    public C() {
+        super();
+    }
+}

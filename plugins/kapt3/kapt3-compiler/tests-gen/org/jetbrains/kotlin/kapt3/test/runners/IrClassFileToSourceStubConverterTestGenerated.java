@@ -44,6 +44,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("annotationInAnnotationParameters.kt")
+    public void testAnnotationInAnnotationParameters() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/annotationInAnnotationParameters.kt");
+    }
+
+    @Test
     @TestMetadata("annotationWithFqNames.kt")
     public void testAnnotationWithFqNames() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/annotationWithFqNames.kt");

@@ -31,6 +31,12 @@ public class SymbolLightClassesEqualityByPsiForLibraryTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("annotationInAnnotationParameters.kt")
+    public void testAnnotationInAnnotationParameters() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/annotationInAnnotationParameters.kt");
+    }
+
+    @Test
     @TestMetadata("annotationWithSetParamPropertyModifier.kt")
     public void testAnnotationWithSetParamPropertyModifier() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/annotationWithSetParamPropertyModifier.kt");

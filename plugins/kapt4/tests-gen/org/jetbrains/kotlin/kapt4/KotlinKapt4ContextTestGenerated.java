@@ -44,6 +44,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
     }
 
     @Test
+    @TestMetadata("annotationInAnnotationParameters.kt")
+    public void testAnnotationInAnnotationParameters() throws Exception {
+        runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/annotationInAnnotationParameters.kt");
+    }
+
+    @Test
     @TestMetadata("annotationWithFqNames.kt")
     public void testAnnotationWithFqNames() throws Exception {
         runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/annotationWithFqNames.kt");
