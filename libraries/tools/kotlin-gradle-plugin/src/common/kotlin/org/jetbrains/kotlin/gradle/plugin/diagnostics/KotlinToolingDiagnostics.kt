@@ -642,6 +642,19 @@ object KotlinToolingDiagnostics {
             """.trimIndent(),
         )
     }
+
+    object WasmSourceSetsNotFoundError : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(nameOfRequestedSourceSet: String) = build(
+            """
+                KotlinSourceSet with name '$nameOfRequestedSourceSet' not found:
+                The SourceSet requested ('$nameOfRequestedSourceSet') was renamed in Kotlin 1.9.20
+    
+                In order to migrate you might want to replace: 
+                val wasmMain by getting -> val wasmJsMain by getting
+                val wasmTest by getting -> val wasmJsTest by getting
+            """.trimIndent()
+        )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
