@@ -818,7 +818,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 )
             }
             put(AnalysisFlags.optIn, useExperimentalFqNames + optIn?.toList().orEmpty())
-            put(AnalysisFlags.skipExpectedActualDeclarationChecker, expectActualLinker)
+            put(AnalysisFlags.skipExpectedActualDeclarationChecker, expectActualLinker || metadataKlib) // TODO (KT-61136): drop `expectActualLinker` later, after the appropriate changes in the Gradle plugin
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
             put(AnalysisFlags.allowResultReturnType, allowResultReturnType)
             ExplicitApiMode.fromString(explicitApi)?.also { put(AnalysisFlags.explicitApiMode, it) } ?: collector.report(

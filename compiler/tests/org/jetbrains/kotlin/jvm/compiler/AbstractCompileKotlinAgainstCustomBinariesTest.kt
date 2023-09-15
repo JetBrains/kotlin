@@ -686,14 +686,14 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     fun testAnonymousObjectTypeMetadataKlib() {
         val klibLibrary = compileCommonLibrary(
             libraryName = "library",
-            listOf("-Xexpect-actual-linker"),
+            listOf("-Xmetadata-klib"),
         )
         compileKotlin(
             "anonymousObjectTypeMetadata.kt",
             tmpdir,
             listOf(klibLibrary),
             K2MetadataCompiler(),
-            listOf("-Xexpect-actual-linker")
+            listOf("-Xmetadata-klib")
         )
     }
     

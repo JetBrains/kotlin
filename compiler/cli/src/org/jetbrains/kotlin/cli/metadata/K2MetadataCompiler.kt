@@ -101,7 +101,8 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         val environment =
             KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.METADATA_CONFIG_FILES)
 
-        val mode = if(arguments.expectActualLinker) "KLib" else "metadata"
+        // TODO (KT-61136): drop `expectActualLinker` later, after the appropriate changes in the Gradle plugin
+        val mode = if (arguments.expectActualLinker || arguments.metadataKlib) "KLib" else "metadata"
 
         val sourceFiles = environment.getSourceFiles()
         performanceManager.notifyCompilerInitialized(sourceFiles.size, environment.countLinesOfCode(sourceFiles), "$mode mode for $moduleName module")
@@ -120,7 +121,8 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
             val useFir = configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
             val metadataSerializer = when {
                 useFir -> FirMetadataSerializer(configuration, environment)
-                arguments.expectActualLinker -> K2MetadataKlibSerializer(configuration, environment)
+                // TODO (KT-61136): drop `expectActualLinker` later, after the appropriate changes in the Gradle plugin
+                arguments.expectActualLinker || arguments.metadataKlib -> K2MetadataKlibSerializer(configuration, environment)
                 else -> MetadataSerializer(configuration, environment, dependOnOldBuiltIns = true)
             }
             metadataSerializer.analyzeAndSerialize()
