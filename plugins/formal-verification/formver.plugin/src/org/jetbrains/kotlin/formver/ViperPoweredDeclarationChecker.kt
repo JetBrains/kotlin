@@ -43,6 +43,7 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
     FirSimpleFunctionChecker() {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!config.conversionSelection.applicable(declaration)) return
+        config.clearMinorErrors()
         var program: Program? = null
         try {
             val programConversionContext = ProgramConverter(session, config)

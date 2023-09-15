@@ -20,6 +20,10 @@ class PluginConfiguration(
         }
     }
 
+    fun clearMinorErrors() {
+        minorErrors.clear()
+    }
+
     fun addMinorError(error: String) {
         minorErrors.add(error)
     }
