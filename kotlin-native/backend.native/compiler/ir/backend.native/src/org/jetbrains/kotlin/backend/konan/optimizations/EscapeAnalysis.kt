@@ -355,6 +355,8 @@ internal object EscapeAnalysis {
     ) {
         private val symbols = context.ir.symbols
 
+        val rootSet = callGraph.rootSet
+
         private fun DataFlowIR.Type.resolved(): DataFlowIR.Type.Declared {
             if (this is DataFlowIR.Type.Declared) return this
             val hash = (this as DataFlowIR.Type.External).hash
@@ -362,6 +364,8 @@ internal object EscapeAnalysis {
         }
 
         val escapeAnalysisResults = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, FunctionEscapeAnalysisResult>()
+        // TODO: Probably this is too much - save only what's really needed for dynamic allocation.
+        val pointsToGraphs = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, PointsToGraph>()
 
         val averageNumberOfNodes = (callGraph.directEdges.keys.sumByLong {
             moduleDFG.functions[it]!!.body.allScopes.sumOf { it.nodes.size }.toLong()
@@ -389,10 +393,39 @@ internal object EscapeAnalysis {
 
             analyze(callGraph)
 
+            // After allocating statically try to allocate dynamically (by passing outer stack to callees).
+            tryAllocDynamically()
+
+            with(stats) {
+                println("Total functions analyzed: ${pointsToGraphs.size}")
+                println("Managed to alloc on stack: $staticStackAllocsCount out of ${globalAllocsCount + staticStackAllocsCount}" +
+                        " (${staticStackAllocsCount * 100.0 / (globalAllocsCount + staticStackAllocsCount)}%)")
+                println("stackAllocs = ${staticStackAllocsCount}, heapAllocs = ${globalAllocsCount}")
+                println("escapedAllocsCount = ${escapedAllocsCount * 100.0 / (globalAllocsCount + staticStackAllocsCount)}%")
+                println("localAllocsCount = ${localAllocsCount * 100.0 / (globalAllocsCount + staticStackAllocsCount)}%")
+                println("leakedToParametersAllocsCount = ${leakedToParametersAllocsCount * 100.0 / (globalAllocsCount + staticStackAllocsCount)}%")
+                println("Total ea result size: $totalEAResultSize")
+                println("Total points-to graph size: $totalPTGSize")
+                println("Total data flow graph size: $totalDFGSize")
+                println("Number of failed to converge components: $failedToConvergeCount")
+            }
+
+            statsPerFunction.entries.toList()
+                    .sortedByDescending { it.value.escapedAllocsCount }
+                    .forEach { (function, stats) ->
+                        println(function)
+                        with(stats) {
+                            println("    stackAllocs = ${staticStackAllocsCount}, heapAllocs = ${globalAllocsCount}")
+                            println("    escapedAllocsCount = ${escapedAllocsCount * 100.0 / (globalAllocsCount + staticStackAllocsCount)}%")
+                            println("    localAllocsCount = ${localAllocsCount * 100.0 / (globalAllocsCount + staticStackAllocsCount)}%")
+                            println("    leakedToParametersAllocsCount = ${leakedToParametersAllocsCount * 100.0 / (globalAllocsCount + staticStackAllocsCount)}%")
+                        }
+                    }
+
             context.logMultiple {
                 with(stats) {
-                    +("Managed to alloc on stack: $stackAllocsCount out of ${globalAllocsCount + stackAllocsCount}" +
-                            " (${stackAllocsCount * 100.0 / (globalAllocsCount + stackAllocsCount)}%)")
+                    +("Managed to alloc on stack: $staticStackAllocsCount out of ${globalAllocsCount + staticStackAllocsCount}" +
+                            " (${staticStackAllocsCount * 100.0 / (globalAllocsCount + staticStackAllocsCount)}%)")
                     +"Total ea result size: $totalEAResultSize"
                     +"Total points-to graph size: $totalPTGSize"
                     +"Total data flow graph size: $totalDFGSize"
@@ -437,7 +470,11 @@ internal object EscapeAnalysis {
 
         private class Stats {
             var globalAllocsCount = 0
-            var stackAllocsCount = 0
+            var staticStackAllocsCount = 0
+            var leakedToParametersAllocsCount = 0
+            var escapedAllocsCount = 0
+            var localAllocsCount = 0
+            var dynamicStackAllocAttemptsCount = 0
             var totalEAResultSize = 0
             var totalPTGSize = 0
             var totalDFGSize = 0
@@ -445,22 +482,44 @@ internal object EscapeAnalysis {
 
         private val stats = Stats()
 
+        private val statsPerFunction = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, Stats>()
+
         private fun PointsToGraph.saveLifetimes() {
+            pointsToGraphs[functionSymbol] = this
             val eaResult = escapeAnalysisResults[functionSymbol]!!
             stats.totalEAResultSize += eaResult.numberOfDrains + eaResult.escapes.size + eaResult.pointsTo.edges.size
 
             stats.totalPTGSize += allNodes.size
             stats.totalDFGSize += function.body.allScopes.sumOf { it.nodes.size }
 
+            val localStats = Stats()
+            statsPerFunction[functionSymbol] = localStats
+
             for (node in nodes.keys) {
                 node.ir?.let {
                     val lifetime = lifetimeOf(node)
 
                     if (node.isAlloc) {
-                        if (lifetime == Lifetime.GLOBAL)
+                        if (lifetime == Lifetime.GLOBAL) {
                             ++stats.globalAllocsCount
-                        if (lifetime == Lifetime.STACK)
-                            ++stats.stackAllocsCount
+                            ++localStats.globalAllocsCount
+                        }
+                        if (lifetime == Lifetime.STACK) {
+                            ++stats.staticStackAllocsCount
+                            ++localStats.staticStackAllocsCount
+                        }
+
+                        val computedLifetime = lifetimeOf(nodes[node]!!)
+                        if (computedLifetime == Lifetime.LOCAL) {
+                            ++stats.localAllocsCount
+                            ++localStats.localAllocsCount
+                        } else if (computedLifetime == Lifetime.GLOBAL) {
+                            ++stats.escapedAllocsCount
+                            ++localStats.escapedAllocsCount
+                        } else if (computedLifetime != Lifetime.STACK) {
+                            ++stats.leakedToParametersAllocsCount
+                            ++localStats.leakedToParametersAllocsCount
+                        }
 
                         lifetimes[it] = lifetime
                     }
@@ -575,7 +634,7 @@ internal object EscapeAnalysis {
                     if (nodes.isEmpty()) return
                     val directEdges = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, CallGraphNode>()
                     val reversedEdges = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, MutableList<DataFlowIR.FunctionSymbol.Declared>>()
-                    val subCallGraph = CallGraph(directEdges, reversedEdges, emptyList())
+                    val subCallGraph = CallGraph(directEdges, reversedEdges, emptyList(), emptyList())
                     for (node in nodes) {
                         reversedEdges[node] = mutableListOf()
                     }
@@ -662,6 +721,342 @@ internal object EscapeAnalysis {
             return pointsToGraphs
         }
 
+        // TODO: Describe the algorithm.
+        private enum class StackType {
+            INNER,
+            OUTER
+        }
+
+        @JvmInline
+        @Suppress("RESERVED_MEMBER_INSIDE_VALUE_CLASS")
+        private value class ParametersBitMask(val rawData: IntArray) {
+            override fun equals(other: Any?) = other is ParametersBitMask && rawData.contentEquals(other.rawData)
+
+            override fun hashCode() = rawData.contentHashCode()
+
+            fun set(index: Int) {
+                rawData[index / 32] = rawData[index / 32] or (1 shl (index % 32))
+            }
+
+            fun get(index: Int) = rawData[index / 32] and (1 shl (index % 32)) != 0
+
+            companion object {
+                fun empty(symbol: DataFlowIR.FunctionSymbol) =
+                        ParametersBitMask(IntArray(symbol.parameters.size / 32 + 1))
+
+                inline fun construct(symbol: DataFlowIR.FunctionSymbol, locality: (Int) -> Boolean) =
+                        empty(symbol).apply {
+                            for (index in 0..symbol.parameters.size)
+                                if (locality(index))
+                                    set(index)
+                        }
+            }
+        }
+
+        private data class FunctionWithParametersLocality(val symbol: DataFlowIR.FunctionSymbol, val locality: ParametersBitMask) {
+            override fun equals(other: Any?) =
+                    other === this || (other is FunctionWithParametersLocality && symbol == other.symbol && locality.rawData.contentEquals(other.locality.rawData))
+
+            override fun hashCode() = symbol.hashCode() * 31 + locality.rawData.contentHashCode()
+
+            companion object {
+                fun allGlobal(symbol: DataFlowIR.FunctionSymbol) =
+                        FunctionWithParametersLocality(symbol, ParametersBitMask(IntArray(symbol.parameters.size / 32 + 1)))
+
+                inline fun construct(symbol: DataFlowIR.FunctionSymbol, locality: (Int) -> Boolean) =
+                        FunctionWithParametersLocality(symbol, ParametersBitMask.construct(symbol, locality))
+            }
+        }
+
+        private interface StackSelectionStrategy {
+            fun getStackType(functionWithLocality: FunctionWithParametersLocality, callSite: CallGraphNode.CallSite): StackType
+        }
+
+        private fun tryAllocDynamically() {
+            val strategy = comeUpWithStackSelectionStrategy()
+
+            computeDynamicStackSizes(strategy)
+        }
+
+        private fun comeUpWithStackSelectionStrategy(): StackSelectionStrategy {
+            //return buildBottomStackSelectionStrategy()
+            return buildTopStackSelectionStrategy()
+        }
+
+        // Always tries to pass own stack.
+        private fun buildBottomStackSelectionStrategy(): StackSelectionStrategy =
+                object : StackSelectionStrategy {
+                    override fun getStackType(functionWithLocality: FunctionWithParametersLocality, callSite: CallGraphNode.CallSite) = StackType.INNER
+                }
+
+        // Always tries to pass outer stack.
+        private fun buildTopStackSelectionStrategy(): StackSelectionStrategy {
+            /*
+             * Consideration: if the locality = 0, meaning no parameter is local with respect to the outer stack,
+             * it is safe to pass on the local stack instead of the outer (if some object can be allocated on the outer stack,
+             * it can be allocated on the local stack as well because of the locality).
+             */
+            val computationStates = mutableMapOf<FunctionWithParametersLocality, ComputationState>()
+            val stackTypes = mutableMapOf<Pair<FunctionWithParametersLocality, CallGraphNode.CallSite>, StackType>()
+            var computationItems = rootSet.map { rootSymbol ->
+                FunctionWithParametersLocality.allGlobal(rootSymbol).also { rootWithLocality ->
+                    computationStates[rootWithLocality] = ComputationState.NEW
+                    val callSites = callGraph.directEdges[rootSymbol]!!.callSites.filter {
+                        !it.isVirtual && callGraph.directEdges.containsKey(it.actualCallee) // TODO: What about external callees?
+                    }
+                    for (callSite in callSites) {
+                        stackTypes[Pair(rootWithLocality, callSite)] = StackType.INNER
+                    }
+                }
+            }.toMutableList()
+            do {
+                val nextComputationItems = mutableListOf<FunctionWithParametersLocality>()
+                while (computationItems.isNotEmpty()) {
+                    val item = computationItems.peek()!!
+                    val state = computationStates[item]!!
+                    val pointsToGraph = pointsToGraphs[item.symbol] ?: error("No points-to graph for ${item.symbol}")
+                    val callSites = callGraph.directEdges[item.symbol]!!.callSites.filter {
+                        !it.isVirtual && callGraph.directEdges.containsKey(it.actualCallee) // TODO: What about external callees?
+                    }
+                    when (state) {
+                        ComputationState.NEW -> {
+                            computationStates[item] = ComputationState.PENDING
+                            for (callSite in callSites) {
+                                val key = Pair(item, callSite)
+                                if (stackTypes[key] == StackType.INNER) continue
+                                if (pointsToGraph.nodes[callSite.node]!!.startDepth > Depths.ROOT_SCOPE) {
+                                    stackTypes[key] = StackType.INNER
+                                    continue
+                                }
+                                val calleeWithLocality = computeCalleeLocality(pointsToGraph, item.locality, callSite, StackType.OUTER)
+                                val calleeComputationState = computationStates[calleeWithLocality]
+                                if (calleeComputationState == ComputationState.DONE) {
+                                    stackTypes[key] = StackType.OUTER
+                                    continue
+                                }
+                                if (calleeComputationState == ComputationState.PENDING)
+                                    stackTypes[key] = StackType.INNER
+                                else {
+                                    stackTypes[key] = StackType.OUTER
+                                    computationStates[calleeWithLocality] = ComputationState.NEW
+                                    computationItems.push(calleeWithLocality)
+                                }
+                            }
+                        }
+
+                        ComputationState.PENDING -> {
+                            computationItems.pop()
+                            computationStates[item] = ComputationState.DONE
+
+                            for (callSite in callSites) {
+                                val stackType = stackTypes[Pair(item, callSite)]!!
+                                val calleeWithLocality = computeCalleeLocality(pointsToGraph, item.locality, callSite, stackType)
+                                val calleeComputationState = computationStates[calleeWithLocality]
+                                when (stackType) {
+                                    StackType.OUTER ->
+                                        if (calleeComputationState != ComputationState.DONE)
+                                            error("Should be handled")
+
+                                    StackType.INNER -> {
+                                        if (calleeComputationState == ComputationState.DONE) continue
+//                                        if (computationStates[calleeWithLocality] == ComputationState.PENDING)
+//                                            error("A cycle detected")
+                                        if (calleeComputationState == null) {
+                                            computationStates[calleeWithLocality] = ComputationState.NEW
+                                            nextComputationItems.add(calleeWithLocality)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        ComputationState.DONE -> {
+                            computationItems.pop()
+                        }
+                    }
+                }
+                computationItems = nextComputationItems
+            } while (computationItems.isNotEmpty())
+
+            return object : StackSelectionStrategy {
+                override fun getStackType(functionWithLocality: FunctionWithParametersLocality, callSite: CallGraphNode.CallSite) =
+                        stackTypes[Pair(functionWithLocality, callSite)]
+                                ?: error("No stack type for [locality=${functionWithLocality.locality}] ${functionWithLocality.symbol}" +
+                                        " at call site ${callSite.call.callee}")
+            }
+        }
+
+        class DynamicAllocStats {
+            var maxAllocs = 0
+            var sumAllocs = 0
+            var count = 0
+        }
+
+        private fun computeDynamicStackSizes(strategy: StackSelectionStrategy) {
+            val computationStates = mutableMapOf<FunctionWithParametersLocality, ComputationState>()
+            // How much a function would allocate from the outer stack, including its callees.
+            val outerStackSizes = mutableMapOf<FunctionWithParametersLocality, Int>()
+            val dynamicAllocStats = mutableMapOf<DataFlowIR.FunctionSymbol, DynamicAllocStats>()
+            var computationItems = rootSet.map { rootSymbol ->
+                FunctionWithParametersLocality.allGlobal(rootSymbol).also {
+                    computationStates[it] = ComputationState.NEW
+                }
+            }.toMutableList()
+            do {
+                val nextComputationItems = mutableListOf<FunctionWithParametersLocality>()
+                while (computationItems.isNotEmpty()) {
+                    val item = computationItems.peek()!!
+                    val state = computationStates[item]!!
+                    val pointsToGraph = pointsToGraphs[item.symbol] ?: error("No points-to graph for ${item.symbol}")
+                    val callSites = callGraph.directEdges[item.symbol]!!.callSites.filter {
+                        !it.isVirtual && callGraph.directEdges.containsKey(it.actualCallee) // TODO: What about external callees?
+                    }
+                    when (state) {
+                        ComputationState.NEW -> {
+                            computationStates[item] = ComputationState.PENDING
+                            for (callSite in callSites) {
+                                if (strategy.getStackType(item, callSite) == StackType.INNER) continue
+                                val calleeWithLocality = computeCalleeLocality(pointsToGraph, item.locality, callSite, StackType.OUTER)
+                                val calleeComputationState = computationStates[calleeWithLocality]
+                                if (calleeComputationState == ComputationState.DONE) continue
+                                if (calleeComputationState == ComputationState.PENDING)
+                                    error("A cycle detected")
+                                computationStates[calleeWithLocality] = ComputationState.NEW
+                                computationItems.push(calleeWithLocality)
+                            }
+                        }
+
+                        ComputationState.PENDING -> {
+                            computationItems.pop()
+                            computationStates[item] = ComputationState.DONE
+
+                            val localsToAllocOnOuterStack = findLocalsToAllocOnOuterStack(pointsToGraph, item.locality)
+                            val allocatedOnOuterStackCount = localsToAllocOnOuterStack.count {
+                                // Skip arrays for now. TODO: Support.
+                                (it.node as? DataFlowIR.Node.NewObject)?.constructedType?.resolved()?.irClass?.let { arrayItemSizeOf(it) } == null
+                            }
+                            outerStackSizes[item] = allocatedOnOuterStackCount + callSites.filter { strategy.getStackType(item, it) == StackType.OUTER }
+                                    .sumOf {
+                                        val calleeWithLocality = computeCalleeLocality(pointsToGraph, item.locality, it, StackType.OUTER)
+                                        outerStackSizes[calleeWithLocality] ?: error("Should be computed")
+                                    }
+
+                            val stats = dynamicAllocStats.getOrPut(item.symbol) { DynamicAllocStats() }
+                            ++stats.count
+                            if (allocatedOnOuterStackCount > stats.maxAllocs)
+                                stats.maxAllocs = allocatedOnOuterStackCount
+                            stats.sumAllocs += allocatedOnOuterStackCount
+
+//                        println("Computed for ${item.symbol}")
+//                        println("    ${item.locality.rawData.contentToString()}")
+//                        outerStackSizes.keys.forEach { k ->
+//                            if (k.symbol == item.symbol) {
+//                                println("        ${k.locality.rawData.contentToString()}")
+//                            }
+//                        }
+
+                            for (callSite in callSites) {
+                                if (strategy.getStackType(item, callSite) == StackType.OUTER) continue
+                                val calleeWithLocality = computeCalleeLocality(pointsToGraph, item.locality, callSite, StackType.INNER)
+                                val calleeComputationState = computationStates[calleeWithLocality]
+                                if (calleeComputationState == ComputationState.DONE) continue
+//                                if (computationStates[calleeWithLocality] == ComputationState.PENDING)
+//                                    error("A cycle detected")
+                                if (calleeComputationState == null) {
+                                    computationStates[calleeWithLocality] = ComputationState.NEW
+                                    nextComputationItems.add(calleeWithLocality)
+                                }
+                            }
+                        }
+
+                        ComputationState.DONE -> {
+                            computationItems.pop()
+                        }
+                    }
+                }
+                computationItems = nextComputationItems
+            } while (computationItems.isNotEmpty())
+
+            // How much at maximum a function would allocate from own stack dynamically, including its callees.
+            val innerStackSizes = mutableMapOf<DataFlowIR.FunctionSymbol, Int>()
+            for (functionWithLocality in outerStackSizes.keys) {
+                val (symbol, locality) = functionWithLocality
+                val pointsToGraph = pointsToGraphs[symbol]!!
+                val callSites = callGraph.directEdges[symbol]!!.callSites.filter {
+                    !it.isVirtual && callGraph.directEdges.containsKey(it.actualCallee)
+                }
+                val curInnerStackSize = callSites.filter { strategy.getStackType(functionWithLocality, it) == StackType.INNER }
+                        .sumOf {
+                            val calleeWithLocality = computeCalleeLocality(pointsToGraph, locality, it, StackType.INNER)
+                            outerStackSizes[calleeWithLocality] ?: error("Should be computed")
+                        }
+                val prevInnerStackSize = innerStackSizes[symbol]
+                if (prevInnerStackSize == null || prevInnerStackSize < curInnerStackSize)
+                    innerStackSizes[symbol] = curInnerStackSize
+            }
+            innerStackSizes.toList().sortedByDescending { it.second }.forEach { (symbol, size) -> println("$symbol : $size") }
+            println("Dynamic stack allocations (analyzed ${dynamicAllocStats.size} functions):")
+            println("    max: ${dynamicAllocStats.values.sumOf { it.maxAllocs } * 100.0 / (stats.globalAllocsCount + stats.staticStackAllocsCount)}%")
+            println("    avg: ${dynamicAllocStats.values.sumOf { it.sumAllocs * 1.0 / it.count } * 100.0 / (stats.globalAllocsCount + stats.staticStackAllocsCount)}%")
+        }
+
+        private fun computeCalleeLocality(
+                callerPointsToGraph: PointsToGraph,
+                callerLocality: ParametersBitMask,
+                callSite: CallGraphNode.CallSite,
+                stackType: StackType
+        ): FunctionWithParametersLocality {
+            require(stackType == StackType.INNER || callerPointsToGraph.nodes[callSite.node]!!.startDepth <= Depths.ROOT_SCOPE) {
+                "Calls inside a loop should pass the local stack, not the outer"
+            }
+            val arguments = callSite.arguments
+            if (callSite.call is DataFlowIR.Node.NewObject) {
+                require(arguments.size == callSite.actualCallee.parameters.size) {
+                    "Unexpected number of arguments to call (and alloc) ${callSite.actualCallee}" +
+                            " from ${callerPointsToGraph.functionSymbol}: ${callSite.actualCallee.parameters.size} != ${arguments.size}"
+                }
+            } else {
+                require(arguments.size == callSite.actualCallee.parameters.size + 1) {
+                    "Unexpected number of arguments to call (w/o alloc) ${callSite.actualCallee}" +
+                            " from ${callerPointsToGraph.functionSymbol}: ${callSite.actualCallee.parameters.size} != ${arguments.size - 1}"
+                }
+            }
+            return FunctionWithParametersLocality.construct(callSite.actualCallee) { index ->
+                if (callSite.call is DataFlowIR.Node.NewObject && index == arguments.size)
+                    return@construct true // Actual constructor call returns Unit.
+                val arg = callerPointsToGraph.nodes[arguments[index]]
+                        ?: return@construct true // TODO: Looks like it - noone can reference it.
+                // TODO: What if an object with STACK kind actually won't be allocated on the stack?
+                when (stackType) {
+                    StackType.INNER -> arg.kind == PointsToGraphNodeKind.STACK
+                    StackType.OUTER -> when (arg.kind) {
+                        PointsToGraphNodeKind.GLOBAL -> false // Just escapes.
+                        PointsToGraphNodeKind.STACK -> true // Local for either stack type.
+                        PointsToGraphNodeKind.LOCAL -> false // Escapes to the outer scope - dangerous to alloc on the stack, even dynamically.
+                        PointsToGraphNodeKind.PARAMETER, PointsToGraphNodeKind.RETURN_VALUE -> {
+                            (arg.startDepth <= Depths.ROOT_SCOPE) && // Otherwise the above comment applies here as well.
+                                    (0..callerPointsToGraph.functionSymbol.parameters.size).all { paramIndex ->
+                                        !arg.referencedBy.get(paramIndex) || callerLocality.get(paramIndex)
+                                    }
+                        }
+                    }
+                }
+            }
+        }
+
+        private fun findLocalsToAllocOnOuterStack(pointsToGraph: PointsToGraph, locality: ParametersBitMask) =
+                pointsToGraph.nodes.values.filter { ptgNode ->
+//                    if (ptgNode.node?.let { it.isAlloc && it.ir != null } == true) {
+//                        println("${pointsToGraph.ids[ptgNode.node]}: ${ptgNode.kind}")
+//                    }
+                    ptgNode.node?.let { it.isAlloc && it.ir != null } == true &&
+                            ptgNode.startDepth <= Depths.ROOT_SCOPE &&
+                            (ptgNode.kind == PointsToGraphNodeKind.PARAMETER || ptgNode.kind == PointsToGraphNodeKind.RETURN_VALUE) &&
+                            (0..pointsToGraph.functionSymbol.parameters.size).all { paramIndex ->
+                                !ptgNode.referencedBy.get(paramIndex) || locality.get(paramIndex)
+                            }
+                }
+
         private fun arrayLengthOf(node: DataFlowIR.Node): Int? =
                 (node as? DataFlowIR.Node.SimpleConst<*>)?.value as? Int
                 // In case of several possible values, it's unknown what is used.
@@ -736,7 +1131,8 @@ internal object EscapeAnalysis {
 
             val calleeEAResult = if (callSite.isVirtual) {
                 context.log { "A virtual call: $callee" }
-                FunctionEscapeAnalysisResult.pessimistic(callee.parameters.size)
+                //FunctionEscapeAnalysisResult.pessimistic(callee.parameters.size)
+                FunctionEscapeAnalysisResult.optimistic()
             } else {
                 context.log { "An external call: $callee" }
                 if (callee.name?.startsWith("kfun:kotlin.") == true
@@ -750,7 +1146,8 @@ internal object EscapeAnalysis {
                     )
                 } else {
                     context.log { "An unknown function - assume pessimistic result" }
-                    FunctionEscapeAnalysisResult.pessimistic(callee.parameters.size)
+                    //FunctionEscapeAnalysisResult.pessimistic(callee.parameters.size)
+                    FunctionEscapeAnalysisResult.optimistic()
                 }
             }
 
@@ -776,7 +1173,7 @@ internal object EscapeAnalysis {
             class Field(node: PointsToGraphNode, val field: DataFlowIR.Field) : PointsToGraphEdge(node)
         }
 
-        private class PointsToGraphNode(val startDepth: Int, val node: DataFlowIR.Node?) {
+        private class PointsToGraphNode(functionSymbol: DataFlowIR.FunctionSymbol, val startDepth: Int, val node: DataFlowIR.Node?) {
             val edges = mutableListOf<PointsToGraphEdge>()
             val reversedEdges = mutableListOf<PointsToGraphEdge.Assignment>()
 
@@ -814,6 +1211,8 @@ internal object EscapeAnalysis {
                     else it.actualDrain.also { drain = it }
                 }
             val isActualDrain get() = this == actualDrain
+
+            val referencedBy = ParametersBitMask.empty(functionSymbol)
         }
 
         private data class ArrayStaticAllocation(val node: PointsToGraphNode, val irClass: IrClass, val size: Int)
@@ -830,7 +1229,7 @@ internal object EscapeAnalysis {
             val allNodes = mutableListOf<PointsToGraphNode>()
 
             fun newNode(depth: Int, node: DataFlowIR.Node?) =
-                    PointsToGraphNode(depth, node).also { allNodes.add(it) }
+                    PointsToGraphNode(functionSymbol, depth, node).also { allNodes.add(it) }
             fun newNode() = newNode(Depths.INFINITY, null)
             fun newDrain() = newNode().also { it.drain = it }
 
@@ -1178,9 +1577,17 @@ internal object EscapeAnalysis {
                 for (callSite in callSites) {
                     val callee = callSite.actualCallee
                     val calleeEAResult = callGraph.directEdges[callee]?.symbol
-                            ?.takeIf { !callSite.isVirtual }
+//                            ?.takeIf { !callSite.isVirtual }
+//                            ?.let {
+//                                escapeAnalysisResults[it] ?: FunctionEscapeAnalysisResult.pessimistic(it.parameters.size)
+//                            }
+                            //?.takeIf { !callSite.isVirtual }
                             ?.let {
-                                escapeAnalysisResults[it] ?: FunctionEscapeAnalysisResult.pessimistic(it.parameters.size)
+                                escapeAnalysisResults[it] ?: (
+                                        //if (callSite.isVirtual)
+                                        FunctionEscapeAnalysisResult.optimistic())
+//                                        else
+//                                            FunctionEscapeAnalysisResult.pessimistic(it.parameters.size))
                             }
                             ?: getExternalFunctionEAResult(callSite)
                     val originalCall = originalCalls[callSite.call] ?: callSite.call
@@ -1345,6 +1752,8 @@ internal object EscapeAnalysis {
                         +"    TO ${edge.to.debugString(toArg?.let { nodeToString(it) })}"
                     }
                 }
+
+                logDigraph(false)
             }
 
             fun buildClosure(): FunctionEscapeAnalysisResult {
@@ -1860,13 +2269,31 @@ internal object EscapeAnalysis {
                     findReferencing(node, referencingEscapeOrigins)
             }
 
+            private fun propagateEscapeOrigins() {
+                escapeOrigins.forEach { propagateEscapeOrigin(it) }
+                for (node in allNodes) {
+                    if (escapes(node))
+                        node.depth = Depths.GLOBAL
+                }
+            }
+
+            private fun computeReferencedBy() {
+                for (index in parameters.indices) {
+                    val reachable = mutableSetOf<PointsToGraphNode>()
+                    findReachable(parameters[index], reachable, false, null)
+                    for (node in reachable)
+                        node.referencedBy.set(index)
+                }
+            }
+
             private fun computeLifetimes() {
                 propagateLifetimes()
 
-                escapeOrigins.forEach { propagateEscapeOrigin(it) }
+                propagateEscapeOrigins()
+                computeReferencedBy()
 
                 // TODO: To a setting?
-                val allowedToAlloc = 65536
+                val allowedToAlloc = 2_000_000_000//65536
                 val stackArrayCandidates = mutableListOf<ArrayStaticAllocation>()
                 for ((node, ptgNode) in nodes) {
                     if (node.ir == null) continue
@@ -1886,7 +2313,7 @@ internal object EscapeAnalysis {
                             if (itemSize != null) {
                                 val sizeArgument = node.arguments.first().node
                                 val arrayLength = arrayLengthOf(sizeArgument)?.takeIf { it >= 0 }
-                                val arraySize = arraySize(itemSize, arrayLength ?: Int.MAX_VALUE)
+                                val arraySize = arraySize(itemSize, arrayLength ?: 1)//Int.MAX_VALUE)
                                 if (arraySize <= allowedToAlloc) {
                                     stackArrayCandidates += ArrayStaticAllocation(ptgNode, irClass, arraySize.toInt())
                                 } else {
