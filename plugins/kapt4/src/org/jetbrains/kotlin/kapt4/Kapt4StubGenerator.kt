@@ -965,7 +965,7 @@ internal class Kapt4StubGenerator {
             data1 = lightClass.files.map {
                 JvmFileClassUtil.manglePartName(qualifiedName.replace('.', '/'), it.name)
             }.toTypedArray(),
-            extraInt = METADATA_JVM_IR_FLAG or METADATA_FIR_FLAG or METADATA_JVM_IR_STABLE_ABI_FLAG
+            extraInt = METADATA_JVM_IR_FLAG or METADATA_JVM_IR_STABLE_ABI_FLAG
         )
 
     private fun elementMapping(lightClass: PsiClass): Multimap<KtElement, PsiElement> =

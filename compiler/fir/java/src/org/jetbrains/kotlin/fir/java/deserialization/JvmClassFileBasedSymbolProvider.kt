@@ -136,7 +136,6 @@ class JvmClassFileBasedSymbolProvider(
     private val KotlinJvmBinaryClass.abiStability: DeserializedContainerAbiStability
         get() = when {
             session.languageVersionSettings.getFlag(AnalysisFlags.allowUnstableDependencies) -> DeserializedContainerAbiStability.STABLE
-            classHeader.isUnstableFirBinary -> DeserializedContainerAbiStability.FIR_UNSTABLE
             classHeader.isUnstableJvmIrBinary -> DeserializedContainerAbiStability.IR_UNSTABLE
             else -> DeserializedContainerAbiStability.STABLE
         }

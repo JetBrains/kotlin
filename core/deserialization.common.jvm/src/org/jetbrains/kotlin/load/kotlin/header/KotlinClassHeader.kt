@@ -62,9 +62,6 @@ class KotlinClassHeader(
     val isUnstableJvmIrBinary: Boolean
         get() = extraInt.has(METADATA_JVM_IR_FLAG) && !extraInt.has(METADATA_JVM_IR_STABLE_ABI_FLAG)
 
-    val isUnstableFirBinary: Boolean
-        get() = extraInt.has(METADATA_FIR_FLAG) && !extraInt.has(METADATA_JVM_IR_STABLE_ABI_FLAG)
-
     val isPreRelease: Boolean
         get() = extraInt.has(METADATA_PRE_RELEASE_FLAG)
 

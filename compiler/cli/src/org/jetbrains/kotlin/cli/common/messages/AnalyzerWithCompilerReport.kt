@@ -185,7 +185,6 @@ class AnalyzerWithCompilerReport(
                     diagnostics.any { it.factory == Errors.INCOMPATIBLE_CLASS },
                     diagnostics.any { it.factory == Errors.PRE_RELEASE_CLASS },
                     diagnostics.any { it.factory == Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS },
-                    diagnostics.any { it.factory == Errors.FIR_COMPILED_CLASS },
                     messageCollector,
                 )
             }
@@ -195,7 +194,6 @@ class AnalyzerWithCompilerReport(
             hasIncompatibleClasses: Boolean,
             hasPrereleaseClasses: Boolean,
             hasUnstableClasses: Boolean,
-            hasFirUnstableClasses: Boolean,
             messageCollector: MessageCollector,
         ) {
             if (hasIncompatibleClasses) {
@@ -219,14 +217,6 @@ class AnalyzerWithCompilerReport(
                 messageCollector.report(
                     ERROR,
                     "Classes compiled by an unstable version of the Kotlin compiler were found in dependencies. " +
-                            "Remove them from the classpath or use '-Xallow-unstable-dependencies' to suppress errors"
-                )
-            }
-
-            if (hasFirUnstableClasses) {
-                messageCollector.report(
-                    ERROR,
-                    "Classes compiled by the new Kotlin compiler frontend were found in dependencies. " +
                             "Remove them from the classpath or use '-Xallow-unstable-dependencies' to suppress errors"
                 )
             }
