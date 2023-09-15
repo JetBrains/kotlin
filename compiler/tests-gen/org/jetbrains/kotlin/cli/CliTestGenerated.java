@@ -1010,6 +1010,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/nonExistingSourcePath.args");
         }
 
+        @TestMetadata("nonExistingSourcePathK2.args")
+        public void testNonExistingSourcePathK2() throws Exception {
+            runTest("compiler/testData/cli/jvm/nonExistingSourcePathK2.args");
+        }
+
         @TestMetadata("nonLocalDisabled.args")
         public void testNonLocalDisabled() throws Exception {
             runTest("compiler/testData/cli/jvm/nonLocalDisabled.args");
