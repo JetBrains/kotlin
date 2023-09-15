@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -38,6 +39,9 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
         getConstructorDelegationCall(declaration)?.let { delegatedConstructor ->
             reporter.reportOn(delegatedConstructor.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, context)
         }
+        if (isProhibitedEnumConstructor(declaration, lastClass)) {
+            reporter.reportOn(source, FirErrors.EXPECTED_ENUM_CONSTRUCTOR, context)
+        }
 
         if (isProhibitedPrivateDeclaration(declaration)) {
             reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION, context)
@@ -63,6 +67,10 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
 
     private fun isProhibitedPrivateDeclaration(declaration: FirMemberDeclaration): Boolean {
         return declaration !is FirConstructor && declaration !is FirPropertyAccessor && Visibilities.isPrivate(declaration.visibility)
+    }
+
+    private fun isProhibitedEnumConstructor(declaration: FirMemberDeclaration, lastClass: FirClass?): Boolean {
+        return declaration is FirConstructor && lastClass?.classKind == ClassKind.ENUM_CLASS
     }
 
     private fun isProhibitedDeclarationWithBody(declaration: FirMemberDeclaration): Boolean {
