@@ -27971,30 +27971,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                 public void testAllFilesPresentInMultiModule() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
-
-                @Test
-                @TestMetadata("defaultArgument.kt")
-                public void testDefaultArgument() throws Exception {
-                    runTest("compiler/testData/codegen/box/multiplatform/multiModule/defaultArgument.kt");
-                }
-
-                @Test
-                @TestMetadata("expectActualLink.kt")
-                public void testExpectActualLink() throws Exception {
-                    runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualLink.kt");
-                }
-
-                @Test
-                @TestMetadata("expectActualMemberLink.kt")
-                public void testExpectActualMemberLink() throws Exception {
-                    runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualMemberLink.kt");
-                }
-
-                @Test
-                @TestMetadata("expectActualTypealiasLink.kt")
-                public void testExpectActualTypealiasLink() throws Exception {
-                    runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualTypealiasLink.kt");
-                }
             }
         }
 
