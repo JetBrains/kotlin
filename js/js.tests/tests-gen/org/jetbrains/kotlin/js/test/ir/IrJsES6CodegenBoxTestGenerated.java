@@ -60,6 +60,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
+        @TestMetadata("platformDependent.kt")
+        public void testPlatformDependent() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/platformDependent.kt");
+        }
+
+        @Test
         @TestMetadata("resolveWithLowPriorityAnnotation.kt")
         public void testResolveWithLowPriorityAnnotation() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/resolveWithLowPriorityAnnotation.kt");

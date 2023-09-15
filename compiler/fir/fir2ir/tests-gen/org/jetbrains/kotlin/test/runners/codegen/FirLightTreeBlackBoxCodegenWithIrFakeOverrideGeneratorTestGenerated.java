@@ -354,6 +354,12 @@ public class FirLightTreeBlackBoxCodegenWithIrFakeOverrideGeneratorTestGenerated
         }
 
         @Test
+        @TestMetadata("platformDependent.kt")
+        public void testPlatformDependent() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/platformDependent.kt");
+        }
+
+        @Test
         @TestMetadata("propertyWithPropertyInInitializerAsParameter.kt")
         public void testPropertyWithPropertyInInitializerAsParameter() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/propertyWithPropertyInInitializerAsParameter.kt");

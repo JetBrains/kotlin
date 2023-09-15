@@ -77,12 +77,6 @@ public class FirLightTreeOldFrontendNativeDiagnosticsTestGenerated extends Abstr
     }
 
     @Test
-    @TestMetadata("overridesMemberWithPlatformDependent.kt")
-    public void testOverridesMemberWithPlatformDependent() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/overridesMemberWithPlatformDependent.kt");
-    }
-
-    @Test
     @TestMetadata("sharedImmutable.kt")
     public void testSharedImmutable() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/sharedImmutable.kt");
