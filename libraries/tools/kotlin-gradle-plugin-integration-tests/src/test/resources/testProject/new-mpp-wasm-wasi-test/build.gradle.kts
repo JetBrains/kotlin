@@ -3,7 +3,9 @@ plugins {
 }
 
 with(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.apply(rootProject)) {
-    nodeVersion = "20.2.0"
+    // canary nodejs that supports recent Wasm GC changes
+    nodeVersion = "21.0.0-v8-canary202309167e82ab1fa2"
+    nodeDownloadBaseUrl = "https://nodejs.org/download/v8-canary"
 }
 
 with(org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin.apply(rootProject)) {
