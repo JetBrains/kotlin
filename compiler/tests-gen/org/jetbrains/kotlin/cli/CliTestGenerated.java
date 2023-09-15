@@ -720,11 +720,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/internalArgWrongPrefix.args");
         }
 
-        @TestMetadata("internalArgumentOverrideExtraArgument.args")
-        public void testInternalArgumentOverrideExtraArgument() throws Exception {
-            runTest("compiler/testData/cli/jvm/internalArgumentOverrideExtraArgument.args");
-        }
-
         @TestMetadata("invalidMetadataVersion.args")
         public void testInvalidMetadataVersion() throws Exception {
             runTest("compiler/testData/cli/jvm/invalidMetadataVersion.args");
@@ -978,21 +973,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")
         public void testMultipleTextRangesInDiagnosticsOrder() throws Exception {
             runTest("compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.args");
-        }
-
-        @TestMetadata("newInferenceImpliesProgressiveModeForNI.args")
-        public void testNewInferenceImpliesProgressiveModeForNI() throws Exception {
-            runTest("compiler/testData/cli/jvm/newInferenceImpliesProgressiveModeForNI.args");
-        }
-
-        @TestMetadata("newInferenceImpliesSamConversions.args")
-        public void testNewInferenceImpliesSamConversions() throws Exception {
-            runTest("compiler/testData/cli/jvm/newInferenceImpliesSamConversions.args");
-        }
-
-        @TestMetadata("newInferenceWithOldFlagImpliesSamConversions.args")
-        public void testNewInferenceWithOldFlagImpliesSamConversions() throws Exception {
-            runTest("compiler/testData/cli/jvm/newInferenceWithOldFlagImpliesSamConversions.args");
         }
 
         @TestMetadata("newLineInPackage.args")
