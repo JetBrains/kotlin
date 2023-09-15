@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.test.WithMuteInDatabase
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Base class for all Kotlin Gradle plugin integration tests.
@@ -37,4 +39,12 @@ abstract class KGPBaseTest {
     lateinit var workingDir: Path
 
     internal open fun TestProject.customizeProject() {}
+
+    @AfterAll
+    fun checkThatDefaultKonanHasNotBeenCreated() {
+        if (System.getenv("TEAMCITY_VERSION") != null) {
+            val userHomeDir = System.getProperty("user.home")
+            assertDirectoryDoesNotExist(Paths.get("$userHomeDir/.konan"))
+        }
+    }
 }

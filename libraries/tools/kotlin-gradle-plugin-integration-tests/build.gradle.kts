@@ -1,6 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.jvm.toolchain.internal.NoToolchainAvailableException
 import org.jetbrains.kotlin.pill.PillExtension
+import java.nio.file.Paths
 
 plugins {
     kotlin("jvm")
@@ -126,6 +127,16 @@ val cleanTestKitCacheTask = tasks.register<Delete>("cleanTestKitCache") {
     description = "Deletes temporary Gradle TestKit cache"
 
     delete(project.buildDir.resolve("testKitCache"))
+}
+
+tasks.register<Delete>("cleanUserHomeKonanDir") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Deletes ~/.konan dir before tests. This step is necessary to ensure that no test inadvertently creates this directory during execution."
+
+    val userHomeKonanDir = Paths.get("${System.getProperty("user.home")}/.konan")
+    delete(userHomeKonanDir)
+
+    println("Default .konan directory user's home has been deleted: $userHomeKonanDir")
 }
 
 fun Test.includeMppAndAndroid(include: Boolean) = includeTestsWithPattern(include) {
@@ -329,6 +340,9 @@ tasks.withType<Test> {
     dependsOn(":gradle:kotlin-compiler-args-properties:install")
     dependsOn(":examples:annotation-processor-example:install")
     dependsOn(":kotlin-dom-api-compat:install")
+    if (project.kotlinBuildProperties.isTeamcityBuild) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:cleanUserHomeKonanDir")
+    }
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)

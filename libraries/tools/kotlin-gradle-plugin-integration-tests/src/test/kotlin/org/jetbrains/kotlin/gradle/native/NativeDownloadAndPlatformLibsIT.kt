@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -50,36 +50,6 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
                 .toFile()
                 .apply { mkdirs() }.toPath()
         )
-
-    @AfterEach
-    fun checkThatUserKonanDirIsEmptyAfterTest() {
-        val userHomeDir = System.getProperty("user.home")
-        assertFileNotExists(Paths.get("$userHomeDir/.konan/kotlin-native-prebuilt-$platformName-$currentCompilerVersion"))
-    }
-
-    @DisplayName("Downloading K/N distribution in default .konan dir")
-    @GradleTest
-    fun testLibrariesGenerationInDefaultKonanDir(gradleVersion: GradleVersion) {
-
-        checkThatUserKonanDirIsEmptyAfterTest()
-
-        val userHomeDir = System.getProperty("user.home")
-        platformLibrariesProject("linuxX64", gradleVersion = gradleVersion) {
-            build("assemble", buildOptions = defaultBuildOptions.copy(konanDataDir = null)) {
-                assertOutputContains("Kotlin/Native distribution: .*kotlin-native-prebuilt-$platformName".toRegex())
-                assertOutputDoesNotContain("Generate platform libraries for ")
-
-                // checking that konan was downloaded and native dependencies were not downloaded into ~/.konan dir
-                assertDirectoryExists(Paths.get("$userHomeDir/.konan/dependencies"))
-                assertDirectoryExists(Paths.get("$userHomeDir/.konan/kotlin-native-prebuilt-$platformName-$currentCompilerVersion"))
-            }
-        }
-
-        // clean ~/.konan after test it should not be with all inheritors of KGPBaseTest
-        Paths.get("$userHomeDir/.konan/dependencies").deleteRecursively()
-        Paths.get("$userHomeDir/.konan/kotlin-native-prebuilt-$platformName-$currentCompilerVersion").deleteRecursively()
-
-    }
 
     @OptIn(EnvironmentalVariablesOverride::class)
     @DisplayName("K/N Gradle project build (on Linux or Mac) with a dependency from a Maven")

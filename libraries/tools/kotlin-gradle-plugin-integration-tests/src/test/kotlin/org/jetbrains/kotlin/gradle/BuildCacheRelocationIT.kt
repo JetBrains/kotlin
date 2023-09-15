@@ -331,6 +331,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Kotlin incremental compilation with `kotlin.incremental.classpath.snapshot.enabled` feature should work correctly")
     @GradleTest
     fun testKotlinIncrementalCompilation_withICClasspathSnapshot(gradleVersion: GradleVersion) {
