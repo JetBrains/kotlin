@@ -28,7 +28,6 @@ fun CompilerConfiguration.setupCommonArguments(
 
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
     put(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS, arguments.useFirExtendedCheckers)
-    put(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER, arguments.expectActualLinker)
     put(CommonConfigurationKeys.METADATA_KLIB, arguments.metadataKlib)
     putIfNotNull(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot)
     put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, arguments.reportOutputFiles)
