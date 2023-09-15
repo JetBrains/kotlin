@@ -1532,7 +1532,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL,
             CALLABLES_FQ_NAMES,
         )
-        val multipleDefaultsDiscouraged = "As the compiler can not make sure these values agree, this will be prohibited in the future."
+        val multipleDefaultsDiscouraged = "As the compiler can not make sure these values agree, this will be prohibited in the future." +
+                " See: https://youtrack.jetbrains.com/issue/KT-36188"
         map.put(
             MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_DEPRECATION,
             multipleDefaultsMessage + multipleDefaultsDiscouraged,
