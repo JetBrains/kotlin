@@ -21,11 +21,6 @@ class Kapt4IT : Kapt3IT() {
         forceKapt4()
     }
 
-    @Disabled("Currently failing. See KT-60950")
-    override fun kaptGenerateStubsShouldNotCaptureSourcesStateInConfigurationCache(gradleVersion: GradleVersion) {}
-
-    @Disabled("Currently failing. See KT-60951")
-    override fun testChangeClasspathICRebuild(gradleVersion: GradleVersion) {}
 
     @Disabled("Doesn't make sense in Kapt 4")
     override fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {}
@@ -68,12 +63,6 @@ class Kapt4ClassLoadersCacheIT : Kapt3ClassLoadersCacheIT() {
 
     @Disabled("Doesn't work in 2.0. Neither with Kapt 3 nor with Kapt 4")
     override fun testMPPKaptPresence(gradleVersion: GradleVersion) {}
-
-    @Disabled("Currently failing. See KT-60950")
-    override fun kaptGenerateStubsShouldNotCaptureSourcesStateInConfigurationCache(gradleVersion: GradleVersion) {}
-
-    @Disabled("Currently failing. See KT-60951")
-    override fun testChangeClasspathICRebuild(gradleVersion: GradleVersion) {}
 }
 
 fun TestProject.forceKapt4() {

@@ -11,8 +11,12 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.base.kapt3.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil.formatOutputMessage
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -25,6 +29,8 @@ import org.jetbrains.kotlin.kapt3.base.Kapt
 import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
+import org.jetbrains.kotlin.kapt3.base.util.info
+import org.jetbrains.kotlin.kapt3.measureTimeMillis
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
@@ -38,10 +44,11 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
     @OptIn(KtAnalysisApiInternals::class)
     override fun doAnalysis(configuration: CompilerConfiguration): Boolean {
         val optionsBuilder = configuration[KAPT_OPTIONS]!!
+        val messageCollector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
         val logger = MessageCollectorBackedKaptLogger(
             KaptFlag.VERBOSE in optionsBuilder.flags,
             KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
-            configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)!!
+            messageCollector
         )
 
         if (optionsBuilder.mode == AptMode.WITH_COMPILATION) {
@@ -96,10 +103,10 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                     configuration[CommonConfigurationKeys.METADATA_VERSION]
                 ).use { context ->
                     if (options.mode.generateStubs)
-                        generateStubs(context)
+                        generateStubs(context, messageCollector, configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES))
 
                     if (options.mode.runAnnotationProcessing)
-                        runProcessors(context, options, logger)
+                        runProcessors(context, options)
                 }
                 true
             }
@@ -109,10 +116,15 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         }
     }
 
-    private fun generateStubs(context: Kapt4ContextForStubGeneration) {
+    private fun generateStubs(context: Kapt4ContextForStubGeneration, messageCollector: MessageCollector, reportOutputFiles: Boolean) {
         val generator = with(context) { Kapt4StubGenerator() }
-        val stubs = generator.generateStubs().values.filterNotNull().toList()
-        for (kaptStub in stubs) {
+        val (stubGenerationTime, classesToStubs) = measureTimeMillis { generator.generateStubs() }
+
+        context.logger.info { "Java stub generation took $stubGenerationTime ms" }
+        val infoBuilder = if (context.logger.isVerbose) StringBuilder("Stubs for Kotlin classes: ") else null
+
+        for ((lightClass, kaptStub) in classesToStubs) {
+            if (kaptStub == null) continue
             val stub = kaptStub.file
             val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
 
@@ -121,23 +133,33 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             val packageDir = if (packageName.isEmpty()) stubsOutputDir else File(stubsOutputDir, packageName.replace('.', '/'))
             packageDir.mkdirs()
 
-            val sourceFile = File(packageDir, "$className.java")
-            sourceFile.writeText(stub.prettyPrint(context.context))
+            val generatedFile = File(packageDir, "$className.java")
+            generatedFile.writeText(stub.prettyPrint(context.context))
 
-            kaptStub.writeMetadataIfNeeded(forSource = sourceFile)
+            infoBuilder?.append(generatedFile.path)
+
+            kaptStub.writeMetadataIfNeeded(forSource = generatedFile)
+
+            if (reportOutputFiles) {
+                val ktFiles = when(lightClass) {
+                    is KtLightClassForFacade -> lightClass.files
+                    else -> listOfNotNull(lightClass.kotlinOrigin?.containingKtFile)
+                }
+                val report = formatOutputMessage(ktFiles.map { it.virtualFilePath }, generatedFile.path)
+                messageCollector.report(CompilerMessageSeverity.OUTPUT, report)
+            }
         }
+
+        context.logger.info { infoBuilder.toString() }
+
         File(context.options.stubsOutputDir, "error").apply { mkdirs() }.resolve("NonExistentClass.java")
             .writeText("package error;\npublic class NonExistentClass {}\n")
     }
 
-    private fun runProcessors(
-        context: Kapt4ContextForStubGeneration,
-        options: KaptOptions,
-        logger: KaptLogger,
-    ) {
+    private fun runProcessors(context: Kapt4ContextForStubGeneration, options: KaptOptions) {
         val sources = options.collectJavaSourceFiles(context.sourcesToReprocess)
         if (sources.isEmpty()) return
-        EfficientProcessorLoader(options, logger).use {
+        EfficientProcessorLoader(options, context.logger).use {
             context.doAnnotationProcessing(sources, it.loadProcessors().processors)
         }
     }
