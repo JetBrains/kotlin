@@ -14,7 +14,7 @@ internal class KotlinCompileCommonConfig(
 ) : AbstractKotlinCompileConfig<KotlinCompileCommon>(compilationInfo) {
     init {
         configureTask { task ->
-            task.expectActualLinker.value(
+            task.produceMetadataKlib.value(
                 providers.provider {
                     (compilationInfo.origin as? KotlinCommonCompilation)?.isKlibCompilation == true
                 }
