@@ -46,7 +46,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
             reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION, context)
         }
 
-        if (isProhibitedDeclarationWithBody(declaration, isTopLevelOrInsideClass)) {
+        if (isProhibitedDeclarationWithBody(declaration)) {
             reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY, context)
         }
     }
@@ -68,7 +68,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
         return isTopLevelOrInsideClass && declaration !is FirConstructor && Visibilities.isPrivate(declaration.visibility)
     }
 
-    private fun isProhibitedDeclarationWithBody(declaration: FirMemberDeclaration, isTopLevelOrInsideClass: Boolean): Boolean {
-        return isTopLevelOrInsideClass && declaration is FirFunction && declaration.hasBody
+    private fun isProhibitedDeclarationWithBody(declaration: FirMemberDeclaration): Boolean {
+        return declaration is FirFunction && declaration.hasBody
     }
 }

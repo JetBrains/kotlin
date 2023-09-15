@@ -13,7 +13,7 @@ expect interface My {
 
     open val a: Int
     open val b: String
-    open val c: String get() = ""
+    open val c: String <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = ""
     <!REDUNDANT_MODIFIER!>open<!> abstract val e: Int
 
     val f: Int

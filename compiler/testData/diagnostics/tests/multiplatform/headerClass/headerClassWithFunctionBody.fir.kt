@@ -18,8 +18,8 @@
     val prop: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
 
     var getSet: String
-        get() = "no"
-        set(value) {}
+        <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
+        <!EXPECTED_DECLARATION_WITH_BODY!>set(value)<!> {}
 
     <!EXPECTED_DECLARATION_WITH_BODY!>fun functionWithBody(x: Int): Int<!> {
         return x + 1

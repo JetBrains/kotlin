@@ -17,10 +17,10 @@
     var backingFieldVar: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
 
     val customAccessorVal: String
-    get() = "no"
+    <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
     var customAccessorVar: String
-    get() = "no"
-    set(value) {}
+    <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
+    <!EXPECTED_DECLARATION_WITH_BODY!>set(value)<!> {}
 
     <!EXPECTED_LATEINIT_PROPERTY!>lateinit<!> var lateinitVar: String
 
