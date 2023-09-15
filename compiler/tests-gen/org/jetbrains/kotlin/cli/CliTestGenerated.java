@@ -1200,11 +1200,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.args");
         }
 
-        @TestMetadata("useDeclarationThatWasExperimentalWithoutMarker2.args")
-        public void testUseDeclarationThatWasExperimentalWithoutMarker2() throws Exception {
-            runTest("compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker2.args");
-        }
-
         @TestMetadata("useMixedNamedArgumentsFlag.args")
         public void testUseMixedNamedArgumentsFlag() throws Exception {
             runTest("compiler/testData/cli/jvm/useMixedNamedArgumentsFlag.args");

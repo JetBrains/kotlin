@@ -1,4 +1,0 @@
-compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker2.kt:8:5: error: this declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
-    cbrt(z.toDouble())
-    ^
-COMPILATION_ERROR
