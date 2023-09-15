@@ -12,6 +12,7 @@ More fine-grained test tasks exist covering different parts of Gradle plugins:
 - `kgpJsTests` - runs all tests for Kotlin Gradle Plugin/Js platform (parallel execution)
 - `kgpAndroidTests` - runs all tests for Kotlin Gradle Plugin/Android platform (parallel execution)
 - `kgpMppTests` - run all tests for Kotlin Gradle Multiplatform plugin (parallel execution)
+- `kgpNativeTests` - run all tests for Kotlin Gradle Plugin with K/N (parallel execution)
 - `kgpDaemonTests` - runs all tests for Gradle and Kotlin daemons (sequential execution)
 - `kgpOtherTests` - run all tests for support Gradle plugins, such as kapt, allopen, etc (parallel execution)
 - `kgpAllParallelTests` - run all tests for all platforms except daemons tests (parallel execution)
@@ -30,7 +31,7 @@ also require the Gradle plugin marker artifacts to be installed:
 
 If you want to run only one test class, you need to append `--tests` flag with value of test class, which you want to run
 ```shell
-./gradlew :kotlin-gradle-plugin-integration-tests:kgpAllTests --tests <class-name-with-package>
+./gradlew :kotlin-gradle-plugin-integration-tests:kgpAllParallelTests --tests <class-name-with-package>
 ```
 
 #### How to work with the tests

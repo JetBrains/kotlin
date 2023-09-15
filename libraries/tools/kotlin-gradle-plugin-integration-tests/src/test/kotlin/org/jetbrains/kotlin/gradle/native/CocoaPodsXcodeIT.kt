@@ -19,7 +19,6 @@ import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("K/N tests cocoapods with xcodebuild")
@@ -201,6 +200,9 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
             ?.let {
                 it.append("kotlin_version=${defaultBuildOptions.kotlinVersion}")
                 it.append("test_fixes_version=${defaultBuildOptions.kotlinVersion}")
+                defaultBuildOptions.konanDataDir?.let { konanDataDir ->
+                    it.append("konan.data.dir=${konanDataDir.toAbsolutePath().normalize()}")
+                }
             }
 
         for ((subproject, frameworkName) in subprojectsToFrameworkNamesMap) {
