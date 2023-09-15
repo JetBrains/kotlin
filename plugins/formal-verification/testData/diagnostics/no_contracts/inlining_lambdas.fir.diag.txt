@@ -57,12 +57,13 @@ method pkg$$global$lambda_if() returns (ret: Int)
   if (true) {
     var anonymous$2: Int
     var anonymous$3: Int
+    var anonymous$4: Int
     anonymous$3 := 0
     if (anonymous$3 == 0) {
-      anonymous$2 := anonymous$3 + 1
+      anonymous$4 := anonymous$3 + 1
     } else {
-      anonymous$2 := anonymous$3 + 2}
-    anonymous$2 := anonymous$2
+      anonymous$4 := anonymous$3 + 2}
+    anonymous$2 := anonymous$4
     anonymous$1 := anonymous$2
     goto inline$pkg$$global$invoke$label$ret
     label inline$pkg$$global$invoke$label$ret

@@ -120,7 +120,21 @@ method pkg$$global$empty_when() returns (ret: Int)
   label label$ret
 }
 
-/when.kt:(1053,1060): info: Generated Viper text for when_is:
+/when.kt:(1015,1028): info: Generated Viper text for unused_result:
+method pkg$$global$unused_result() returns (ret: Int)
+{
+  var local$x: Int
+  var anonymous$1: Int
+  var anonymous$2: Int
+  anonymous$2 := 5
+  anonymous$1 := 0
+  local$x := anonymous$1
+  ret := local$x
+  goto label$ret
+  label label$ret
+}
+
+/when.kt:(1222,1229): info: Generated Viper text for when_is:
 method pkg$$global$when_is(local$x: Ref) returns (ret: Bool)
 {
   var anonymous$1: Bool

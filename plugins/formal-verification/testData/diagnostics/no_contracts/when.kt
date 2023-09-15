@@ -59,6 +59,18 @@ fun <!VIPER_TEXT!>empty_when<!>(): Int {
     return 1
 }
 
+fun <!VIPER_TEXT!>unused_result<!>(): Int {
+    val x = when {
+        else -> {
+            when {
+                else -> 5
+            }
+            0
+        }
+    }
+    return x
+}
+
 open class Foo()
 class Bar() : Foo()
 

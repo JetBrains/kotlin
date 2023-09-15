@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
@@ -89,10 +86,11 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         val subj = whenExpression.subject?.let { data.convertAndStore(it) }
-        val ctx = if (whenExpression.usedAsExpression) {
-            data.withResult(data.embedType(whenExpression))
+        val type = data.embedType(whenExpression)
+        val ctx = if (type != NothingTypeEmbedding && type != UnitTypeEmbedding) {
+            data.withResult(type)
         } else {
-            data
+            data.withoutResult()
         }
         ctx.withWhenSubject(subj) { ctxWithSubj ->
             convertWhenBranches(whenExpression.branches.iterator(), ctxWithSubj)
