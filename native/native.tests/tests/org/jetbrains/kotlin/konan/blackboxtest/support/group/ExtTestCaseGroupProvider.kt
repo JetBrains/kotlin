@@ -125,7 +125,6 @@ private class ExtTestDataFile(
             },
             optInsForSourceCode = optInsForSourceCode + structure.directives.multiValues(USE_EXPERIMENTAL_DIRECTIVE),
             optInsForCompiler = optInsForCompiler,
-            expectActualLinker = EXPECT_ACTUAL_LINKER_DIRECTIVE in structure.directives,
             generatedSourcesDir = computeGeneratedSourcesDir(
                 testDataBaseDir = testRoots.baseDir,
                 testDataFile = testDataFile,
@@ -182,7 +181,6 @@ private class ExtTestDataFile(
         testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
-        if (testDataFileSettings.expectActualLinker) args += "-Xexpect-actual-linker"
         return TestCompilerArgs(args)
     }
 
@@ -555,7 +553,6 @@ private class ExtTestDataFile(
             "-UseCorrectExecutionOrderForVarargArguments"           // Run only correct one
         )
 
-        private const val EXPECT_ACTUAL_LINKER_DIRECTIVE = "EXPECT_ACTUAL_LINKER"
         private const val USE_EXPERIMENTAL_DIRECTIVE = "USE_EXPERIMENTAL"
 
         private const val NATIVE_STANDALONE_DIRECTIVE = "NATIVE_STANDALONE"
@@ -581,7 +578,6 @@ private class ExtTestDataFileSettings(
     val languageSettings: Set<String>,
     val optInsForSourceCode: Set<String>,
     val optInsForCompiler: Set<String>,
-    val expectActualLinker: Boolean,
     val generatedSourcesDir: File,
     val nominalPackageName: PackageName
 )
