@@ -19,6 +19,17 @@ import org.jetbrains.kotlin.util.WeakPair
 import org.jetbrains.kotlin.util.component1
 import org.jetbrains.kotlin.util.component2
 
+/**
+ * Compute the recursive type-alias expansion in the given type.
+ *
+ * A type of an expect class, that is actualized by a typealias will be expanded to the expansion of the typealias,
+ * when supplied with the session of actual.
+ *
+ * See `/docs/fir/k2_kmp.md`
+ *
+ * @param useSiteSession Session to be used for classifier lookups, see [toSymbol]
+ * @return Type, that is expanded to the concrete class type w.r.t to the [useSiteSession]
+ */
 fun ConeClassLikeType.fullyExpandedType(
     useSiteSession: FirSession,
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = { alias ->
@@ -40,6 +51,9 @@ fun ConeClassLikeType.fullyExpandedType(
     return fullyExpandedTypeNoCache(useSiteSession, expandedConeType)
 }
 
+/**
+ * @see fullyExpandedType
+ */
 fun ConeKotlinType.fullyExpandedType(
     useSiteSession: FirSession
 ): ConeKotlinType = when (this) {
@@ -50,6 +64,9 @@ fun ConeKotlinType.fullyExpandedType(
     else -> this
 }
 
+/**
+ * @see fullyExpandedType
+ */
 fun ConeSimpleKotlinType.fullyExpandedType(
     useSiteSession: FirSession
 ): ConeSimpleKotlinType = when (this) {
@@ -167,6 +184,9 @@ private fun mapTypeAliasArguments(
     return substitutor.substituteOrSelf(resultingType)
 }
 
+/**
+ * @see fullyExpandedType
+ */
 fun FirTypeAlias.fullyExpandedConeType(useSiteSession: FirSession): ConeClassLikeType? {
     return expandedConeType?.fullyExpandedType(useSiteSession)
 }

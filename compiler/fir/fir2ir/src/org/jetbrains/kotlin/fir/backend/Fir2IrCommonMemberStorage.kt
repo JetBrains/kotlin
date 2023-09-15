@@ -14,6 +14,13 @@ import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * This storage contains the shared state of FIR2IR.
+ *
+ * State is shared between the conversions of different modules in the same platform compilation.
+ *
+ * See `/docs/fir/k2_kmp.md`
+ */
 class Fir2IrCommonMemberStorage(
     signatureComposer: IdSignatureComposer,
     firMangler: FirMangler

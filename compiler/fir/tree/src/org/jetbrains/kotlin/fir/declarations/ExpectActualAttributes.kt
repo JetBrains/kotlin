@@ -17,12 +17,27 @@ private object ExpectForActualAttributeKey : FirDeclarationDataKey()
 
 typealias ExpectForActualData = Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<FirBasedSymbol<*>>>
 
+/**
+ * Actual declaration -> (many) expect declaration mapping. For top-level declarations.
+ *
+ * Populated by [FirResolvePhase.EXPECT_ACTUAL_MATCHING] phase for every top-level actual declaration.
+ *
+ * **Note: Mapping is computed from the declaration-site session of the actual declaration and not refined on the use-sites**
+ *
+ * See `/docs/fir/k2_kmp.md`
+ */
 @SymbolInternals
 var FirDeclaration.expectForActual: ExpectForActualData? by FirDeclarationDataRegistry.data(ExpectForActualAttributeKey)
 
+/**
+ * @see expectForActual
+ */
 fun FirFunctionSymbol<*>.getSingleExpectForActualOrNull(): FirFunctionSymbol<*>? =
     (this as FirBasedSymbol<*>).getSingleExpectForActualOrNull() as? FirFunctionSymbol<*>
 
+/**
+ * @see expectForActual
+ */
 fun FirBasedSymbol<*>.getSingleExpectForActualOrNull(): FirBasedSymbol<*>? {
     val expectForActual = expectForActual ?: return null
     val compatibleOrWeakCompatible: List<FirBasedSymbol<*>> =
@@ -30,6 +45,9 @@ fun FirBasedSymbol<*>.getSingleExpectForActualOrNull(): FirBasedSymbol<*>? {
     return compatibleOrWeakCompatible.singleOrNull()
 }
 
+/**
+ * @see expectForActual
+ */
 val FirBasedSymbol<*>.expectForActual: ExpectForActualData?
     get() {
         lazyResolveToPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
@@ -45,4 +63,40 @@ typealias MemberExpectForActualData =
         Map<Pair</* actual member */ FirBasedSymbol<*>, /* expect class */ FirRegularClassSymbol>,
                 Map</* expect member */ FirBasedSymbol<*>, ExpectActualCompatibility<*>>>
 
+/**
+ * Actual class + expect class + actual member declaration -> (many) expect member declaration mapping.
+ *
+ * This attribute allows finding complex actualizations through type-aliases.
+ *
+ * ```kotlin
+ * // MODULE: common
+ * expect class A {
+ *     fun foo() // expect.1
+ * }
+ * expect class B {
+ *     fun foo() // expect.2
+ * }
+ *
+ * // MODULE: platform()(common)
+ *
+ * actual typealias A = Impl
+ * actual typealias B = Impl
+ *
+ * // attribute: memberExpectForActual
+ * // value: {
+ * //  (symbol: expect class A, symbol: impl.1) => { symbol: expect.1 => Compatible },
+ * //  (symbol: expect class B, symbol: impl.1) => { symbol: expect.2 => Compatible },
+ * // }
+ * class Impl {
+ *     fun foo() {} // impl.1
+ * }
+ * ```
+ *
+ * Populated by [FirResolvePhase.EXPECT_ACTUAL_MATCHING] phase for every top-level class declaration that is either actual class or
+ * expansion of actual type-alias.
+ *
+ * **Note: Mapping is computed from the declaration-site session of the actual declaration and not refined on the use-sites**
+ *
+ * See `/docs/fir/k2_kmp.md`
+ */
 var FirRegularClass.memberExpectForActual: MemberExpectForActualData? by FirDeclarationDataRegistry.data(MemberExpectForActualAttributeKey)

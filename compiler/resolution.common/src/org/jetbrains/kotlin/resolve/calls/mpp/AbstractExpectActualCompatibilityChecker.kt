@@ -23,6 +23,12 @@ import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 import java.util.*
 
+/**
+ * This object is responsible for matching and checking of
+ * expect-actual pairs
+ *
+ * See `/docs/fir/k2_kmp.md` for details
+ */
 object AbstractExpectActualCompatibilityChecker {
     fun <T : DeclarationSymbolMarker> getClassifiersCompatibility(
         expectClassSymbol: RegularClassSymbolMarker,

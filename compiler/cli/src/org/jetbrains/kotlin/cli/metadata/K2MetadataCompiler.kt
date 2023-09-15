@@ -37,6 +37,14 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
+/**
+ * This class is the entry-point for compiling Kotlin code into a metadata KLib.
+ *
+ * **Note: `2` in the name stands for Kotlin `TO` metadata compiler.
+ * This entry-point used by both K1 and K2.**
+ *
+ * Please see `/docs/fir/k2_kmp.md` for more info on the K2/FIR implementation.
+ */
 class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
 
     override val defaultPerformanceManager: CommonCompilerPerformanceManager = K2MetadataCompilerPerformanceManager()
