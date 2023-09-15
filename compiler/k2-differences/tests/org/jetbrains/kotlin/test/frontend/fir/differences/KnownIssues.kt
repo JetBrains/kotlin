@@ -466,6 +466,9 @@ private val mutableKnownDisappearedDiagnostics = mutableMapOf(
     "DEPRECATION" to IssueInfo("25-4702763", 60682),
     "MISSING_DEPENDENCY_CLASS" to IssueInfo("25-4767673", 61536),
     "MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED" to IssueInfo("25-4777559", 61662),
+    "NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS" to IssueInfo("25-4807758", 61964),
+    "JS_NAME_CLASH" to IssueInfo("25-4807759", 61965),
+    "JS_FAKE_NAME_CLASH" to IssueInfo("25-4807760", 61966),
     //<::>knownDisappearedDiagnostics
 )
 
@@ -584,6 +587,7 @@ private val mutableKnownIntroducedDiagnostics = mutableMapOf(
     "ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED" to IssueInfo("25-4777560", 61663),
     "CAPTURED_VAL_INITIALIZATION" to IssueInfo("25-4777561", 61664),
     "EXPRESSION_EXPECTED" to IssueInfo("25-4777562", 61665),
+    "DELEGATE_SPECIAL_FUNCTION_MISSING" to IssueInfo("25-4807761", 61967),
     //<::>knownIntroducedDiagnostics
 )
 

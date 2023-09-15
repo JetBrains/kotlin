@@ -35,7 +35,10 @@ dependencies {
     // don't need here, but otherwise getDeclaredFields fails
     testRuntimeOnly(commonDependency("com.google.guava:guava:12.0"))
 
-    testApiJUnit5()
+    testImplementation(libs.junit4)
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 optInToExperimentalCompilerApi()

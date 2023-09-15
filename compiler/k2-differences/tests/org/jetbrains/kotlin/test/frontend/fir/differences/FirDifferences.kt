@@ -256,6 +256,7 @@ val equivalentDiagnostics = listOf(
     listOf(
         "ACTUAL_WITHOUT_EXPECT",
         "NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS",
+        "EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE",
     ),
     listOf(
         "PACKAGE_OR_CLASSIFIER_REDECLARATION",
