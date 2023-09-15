@@ -459,7 +459,6 @@ internal constructor(
             args.enableAssertions = debuggable
             args.target = konanTarget.name
             args.produce = outputKind.name.toLowerCaseAsciiOnly()
-            args.expectActualLinker = sharedCompilationData != null
             args.metadataKlib = sharedCompilationData != null
             args.nodefaultlibs = sharedCompilationData != null
             args.manifestFile = sharedCompilationData?.manifestFile?.absolutePath
