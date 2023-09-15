@@ -1052,6 +1052,12 @@ class Fir2IrDeclarationStorage(
                      */
                     cache[declaration] = cachedInSymbolTable
                 }
+                declaration.origin.generatedAnyMethod -> {
+                    /*
+                     * Generated methods from Any for data and value classes are session-dependant
+                     */
+                    cache[declaration] = cachedInSymbolTable
+                }
                 else -> {
                     error("IR declaration with signature \"$signature\" found in SymbolTable and not found in declaration storage")
                 }

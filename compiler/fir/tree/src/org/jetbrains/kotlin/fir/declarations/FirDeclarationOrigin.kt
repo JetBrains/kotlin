@@ -12,7 +12,8 @@ sealed class FirDeclarationOrigin(
     private val displayName: String? = null,
     val fromSupertypes: Boolean = false,
     val generated: Boolean = false,
-    val fromSource: Boolean = false
+    val fromSource: Boolean = false,
+    val generatedAnyMethod: Boolean = false,
 ) {
     object Source : FirDeclarationOrigin(fromSource = true)
     object Library : FirDeclarationOrigin()
@@ -23,9 +24,9 @@ sealed class FirDeclarationOrigin(
         object Library : Java("Java(Library)")
     }
 
-    sealed class Synthetic : FirDeclarationOrigin() {
-        object DataClassMember : Synthetic()
-        object ValueClassMember : Synthetic()
+    sealed class Synthetic(generatedAnyMethod: Boolean = false) : FirDeclarationOrigin(generatedAnyMethod = generatedAnyMethod) {
+        object DataClassMember : Synthetic(generatedAnyMethod = true)
+        object ValueClassMember : Synthetic(generatedAnyMethod = true)
         object JavaProperty : Synthetic()
         object DelegateField : Synthetic()
         object PluginFile : Synthetic()
