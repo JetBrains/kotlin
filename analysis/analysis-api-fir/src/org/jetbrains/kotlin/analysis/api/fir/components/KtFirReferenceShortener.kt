@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
@@ -97,7 +96,7 @@ internal class KtFirReferenceShortener(
             kDocQualifiersToShorten = emptyList(),
         )
 
-        val towerContext = createTowerDataContextProvider(declarationToVisit)
+        val towerContext = FirTowerContextProviderByContextCollector.create(firResolveSession, declarationToVisit)
 
         //TODO: collect all usages of available symbols in the file and prevent importing symbols that could introduce name clashes, which
         // may alter the meaning of existing code.
@@ -139,10 +138,6 @@ internal class KtFirReferenceShortener(
         )
     }
 
-    private fun createTowerDataContextProvider(declaration: KtElement): FirTowerContextProvider {
-        return FirTowerContextProviderByContextCollector(declaration, firResolveSession)
-    }
-
     private fun KtElement.getCorrespondingFirElement(): FirElement? {
         require(this is KtFile || this is KtDeclaration)
 
@@ -159,30 +154,33 @@ internal class KtFirReferenceShortener(
     private fun buildSymbol(firSymbol: FirBasedSymbol<*>): KtSymbol = analysisSession.firSymbolBuilder.buildSymbol(firSymbol)
 }
 
-private class FirTowerContextProviderByContextCollector(
-    targetElement: KtElement,
-    firResolveSession: LLFirResolveSession,
+private class FirTowerContextProviderByContextCollector private constructor(
+    private val contextProvider: ContextCollector.ContextProvider
 ) : FirTowerContextProvider {
 
-    private val contextProvider: ContextCollector.ContextProvider = run {
-        val firFile = targetElement.containingKtFile.getOrBuildFirFile(firResolveSession)
+    companion object {
+        fun create(firResolveSession: LLFirResolveSession, targetElement: KtElement): FirTowerContextProviderByContextCollector {
+            val firFile = targetElement.containingKtFile.getOrBuildFirFile(firResolveSession)
 
-        val sessionHolder = run {
-            val firSession = firResolveSession.useSiteFirSession
-            val scopeSession = firResolveSession.getScopeSessionFor(firSession)
+            val sessionHolder = run {
+                val firSession = firResolveSession.useSiteFirSession
+                val scopeSession = firResolveSession.getScopeSessionFor(firSession)
 
-            SessionHolderImpl(firSession, scopeSession)
+                SessionHolderImpl(firSession, scopeSession)
+            }
+
+            val designation = ContextCollector.computeDesignation(firFile, targetElement)
+
+            val contextProvider = ContextCollector.process(
+                firFile,
+                sessionHolder,
+                designation,
+                shouldCollectBodyContext = false, // we only query SELF context
+                filter = { ContextCollector.FilterResponse.CONTINUE }
+            )
+
+            return FirTowerContextProviderByContextCollector(contextProvider)
         }
-
-        val designation = ContextCollector.computeDesignation(firFile, targetElement)
-
-        ContextCollector.process(
-            firFile,
-            sessionHolder,
-            designation,
-            shouldCollectBodyContext = false, // we only query SELF context
-            filter = { ContextCollector.FilterResponse.CONTINUE }
-        )
     }
 
     override fun getClosestAvailableParentContext(ktElement: KtElement): FirTowerDataContext? {
@@ -869,7 +867,7 @@ private class ElementsToShortenCollector(
                 val shortClassName = classToImport.shortClassName
                 if (expression.getReferencedNameAsName() != shortClassName) return
 
-                val contextProvider = LowLevelFirApiFacadeForResolveOnAir.getOnAirGetTowerContextProvider(firResolveSession, expression)
+                val contextProvider = FirTowerContextProviderByContextCollector.create(firResolveSession, expression)
                 val positionScopes = shorteningContext.findScopesAtPosition(expression, getNamesToImport(), contextProvider) ?: return
                 val availableClassifier = shorteningContext.findFirstClassifierInScopesByName(positionScopes, shortClassName) ?: return
                 when {
