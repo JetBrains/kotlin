@@ -51,7 +51,7 @@ internal abstract class CInteropCommonizerTask
         sourceSets: Provider<Set<KotlinSourceSet>>,
 
         @get:Classpath
-        val libraryFile: Provider<File>,
+        val libraryFile: Provider<List<File>>,
 
         @get:Classpath
         val dependencies: FileCollection,
@@ -211,7 +211,7 @@ internal abstract class CInteropCommonizerTask
         GradleCliCommonizer(commonizerRunner).commonizeLibraries(
             konanHome = konanHome,
             outputTargets = group.targets,
-            inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.filter { it.exists() }.toSet(),
+            inputLibraries = cinteropsForTarget.flatMap { it.libraryFile.get() }.filter { it.exists() }.toSet(),
             dependencyLibraries = getCInteropCommonizerGroupDependencies(group),
             outputDirectory = outputDirectory,
             logLevel = commonizerLogLevel,
@@ -249,7 +249,7 @@ private fun CInteropProcess.toGist(): CInteropGist {
             project.multiplatformExtension.targets.getByName(targetName)
                 .compilations.getByName(compilationName).kotlinSourceSets
         },
-        libraryFile = outputFileProvider,
+        libraryFile = outputFileProvider.map { listOf(it) },
         dependencies = libraries
     )
 }

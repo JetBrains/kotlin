@@ -186,6 +186,21 @@ interface KotlinDependencyHandler {
         name: String,
         version: String
     ): Dependency
+
+    fun foreign(properties: Map<String, ForeignDependencyPropertyValue>): ForeignDependency
+}
+
+// In SPM plugin
+// KotlinDependencyHandler.foreign
+sealed class ForeignDependencyPropertyValue
+class StringValue(val value: String): ForeignDependencyPropertyValue()
+class ListValue(val value: List<String>): ForeignDependencyPropertyValue()
+
+
+data class ForeignDependency(val properties: Map<String, ForeignDependencyPropertyValue>) {
+    fun hasKey(key: String): Boolean = properties.containsKey(key)
+    fun str(key: String): String = (properties[key] as StringValue).value
+    fun list(key: String): List<String> = (properties[key] as ListValue).value
 }
 
 interface HasKotlinDependencies {

@@ -7,6 +7,7 @@ plugins {
     id("gradle-plugin-common-configuration")
     id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
+    kotlin("plugin.serialization")
 }
 
 repositories {
@@ -60,6 +61,7 @@ dependencies {
         }
     }
 
+    commonImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-serialization-json"))
     commonCompileOnly(project(":compiler:cli"))
     commonCompileOnly(project(":daemon-common"))
     commonCompileOnly(project(":kotlin-daemon-client"))

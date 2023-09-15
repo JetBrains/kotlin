@@ -10,11 +10,11 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
-import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
-import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.directoryNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.moduleName
+import org.jetbrains.kotlin.gradle.utils.getOrPut
 import java.io.File
 
 class DefaultKotlinDependencyHandler(
@@ -195,4 +195,58 @@ class DefaultKotlinDependencyHandler(
             directory = directory,
             scope = scope,
         )
+
+    override fun foreign(properties: Map<String, ForeignDependencyPropertyValue>): ForeignDependency {
+        val dependency = ForeignDependency(properties)
+        val container = project.getExtension<ForeignDependencyContainer>(foreignDependenciesContainerExtension)!!
+        container.dependencies.add(dependency)
+        return dependency
+    }
 }
+
+fun KotlinDependencyHandler.swiftPackageManager(url: String, version: String, packageName: String, products: List<String>) {
+    foreign(
+        mapOf(
+            "provider" to "spm",
+            "url" to url,
+            "packageName" to packageName,
+            "version" to version,
+            "products" to products,
+        ).mapValues {
+            val foo = it.value
+            when (foo) {
+                is String -> StringValue(foo)
+                is List<*> -> ListValue(foo as List<String>)
+                else -> error("")
+            }
+        }
+    )
+}
+
+fun KotlinDependencyHandler.swiftPackageManager(path: String, packageName: String, products: List<String>) {
+    foreign(
+        mapOf(
+            "provider" to "spm",
+            "path" to path,
+            "packageName" to packageName,
+            "products" to products,
+        ).mapValues {
+            val foo = it.value
+            when (foo) {
+                is String -> StringValue(foo)
+                is List<*> -> ListValue(foo as List<String>)
+                else -> error("")
+            }
+        }
+    )
+}
+
+//fun KotlinDependencyHandler.cocoapods(name: String, version: String) {
+//    foreign(
+//        mapOf(
+//            "provider" to "cocoapods",
+//            "name" to name,
+//            "version" to version,
+//        )
+//    )
+//}

@@ -64,9 +64,15 @@ internal fun CInteropCommonizerDependent.Factory.from(
         .map { compilation -> Scope.create(compilation) }.toSet()
         .ifEmpty { return null }
 
-    val interops: Set<CInteropIdentifier> = filteredCompilations
-        .flatMap { compilation -> compilation.cinterops.ifEmpty { return null } }
-        .map { cinterop -> cinterop.identifier }.toSet()
+    val interops: MutableSet<CInteropIdentifier> = filteredCompilations
+        .flatMap { compilation -> compilation.cinterops }
+        .map { cinterop -> cinterop.identifier }.toMutableSet()
+
+    interops.addAll(
+        scopes.map {
+            CInteropIdentifier(it, "spmInterops")
+        }
+    )
 
     return CInteropCommonizerDependent(target, scopes, interops)
 }

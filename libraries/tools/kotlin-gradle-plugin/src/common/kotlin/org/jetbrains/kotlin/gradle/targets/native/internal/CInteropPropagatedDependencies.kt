@@ -93,6 +93,12 @@ private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilati
     val cinteropTasks = compilation.cinterops.map { interop -> interop.interopProcessingTaskName }
         .mapNotNull { taskName -> tasks.findByName(taskName) as? CInteropProcess }
 
+    val interopKlibs = project.fileTree(
+        project.layout.buildDirectory.dir("spmInterop")
+    )
+    interopKlibs.builtBy(project.tasks.named("spmInterops"))
+    interopKlibs.include("**/*.klib")
+
     return project.filesProvider { cinteropTasks.map { it.outputFile } }
-        .builtBy(*cinteropTasks.toTypedArray())
+        .builtBy(*cinteropTasks.toTypedArray()).plus(interopKlibs)
 }
