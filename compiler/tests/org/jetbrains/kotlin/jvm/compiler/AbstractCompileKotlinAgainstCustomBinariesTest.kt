@@ -706,29 +706,38 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         assertEquals("Output:\n$output", ExitCode.COMPILATION_ERROR, exitCode)
     }
 
-    fun testAnonymousObjectTypeMetadata() {
+    fun testAnonymousObjectTypeMetadata() = doTestAnonymousObjectTypeMetadata()
+
+    fun testAnonymousObjectTypeMetadataKlib() = doTestAnonymousObjectTypeMetadata(listOf("-Xmetadata-klib"))
+
+    /**
+     * This test does exactly the same as [testAnonymousObjectTypeMetadataKlib] but using the old (now deprecated)
+     * CLI argument `-Xexpect-actual-linker` instead of its successor `-Xmetadata-klib`.
+     *
+     * The test is needed only to check that the old CLI argument still works as needed.
+     */
+    fun testAnonymousObjectTypeMetadataKlibWithOldCLIKey() = doTestAnonymousObjectTypeMetadata(listOf("-Xexpect-actual-linker")) { output ->
+        output.lines().filterNot { "argument -Xexpect-actual-linker is deprecated" in it }.joinToString("\n")
+    }
+
+    private fun doTestAnonymousObjectTypeMetadata(
+        extraCommandLineArguments: List<String> = emptyList(),
+        filterOutput: (String) -> String = { output -> output }
+    ) {
         val library = compileCommonLibrary(
             libraryName = "library",
+            additionalOptions = extraCommandLineArguments,
+            checkKotlinOutput = { output ->
+                assertEquals(normalizeOutput("" to ExitCode.OK), filterOutput(output))
+            }
         )
+
         compileKotlin(
             "anonymousObjectTypeMetadata.kt",
             tmpdir,
             listOf(library),
             K2MetadataCompiler(),
-        )
-    }
-
-    fun testAnonymousObjectTypeMetadataKlib() {
-        val klibLibrary = compileCommonLibrary(
-            libraryName = "library",
-            listOf("-Xmetadata-klib"),
-        )
-        compileKotlin(
-            "anonymousObjectTypeMetadata.kt",
-            tmpdir,
-            listOf(klibLibrary),
-            K2MetadataCompiler(),
-            listOf("-Xmetadata-klib")
+            additionalOptions = extraCommandLineArguments
         )
     }
 

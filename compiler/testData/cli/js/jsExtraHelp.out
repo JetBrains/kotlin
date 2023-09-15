@@ -89,7 +89,6 @@ where advanced options include:
                              Enable the checks on uniqueness of signatures
   -Xexpect-actual-classes    'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
                              Kotlin reports a warning every time you use them. You can use this flag to mute the warning.
-  -Xexpect-actual-linker     Enable experimental expect/actual linker
   -Xexplicit-api={strict|warning|disable}
                              Force compiler to report errors on all public API declarations without explicit visibility or return type.
                              Use 'warning' level to issue warnings instead of errors.
