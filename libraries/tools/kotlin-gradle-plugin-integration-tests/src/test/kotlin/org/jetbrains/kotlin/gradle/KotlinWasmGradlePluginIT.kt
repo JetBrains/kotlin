@@ -39,9 +39,13 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
         project("new-mpp-wasm-wasi-test", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
-            buildAndFail(":wasmWasiTest") {
+            build(
+                // TODO remove as soon as KT-61971 fixed
+                ":kotlinNodeJsSetup", 
+                ":wasmWasiTest"
+            ) {
                 assertTasksExecuted(":compileKotlinWasmWasi")
-                assertTasksFailed(":wasmWasiNodeTest")
+                assertTasksExecuted(":wasmWasiNodeTest")
             }
         }
     }
