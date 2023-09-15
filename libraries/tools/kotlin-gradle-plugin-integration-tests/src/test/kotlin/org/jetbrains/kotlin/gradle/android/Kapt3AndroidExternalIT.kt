@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.api.JavaVersion
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.Kapt3BaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -207,6 +208,35 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         ) {
             build("kaptDebugKotlin") {
                 assertKaptSuccessful()
+            }
+        }
+    }
+
+    @DisplayName("KT-61622: common sources are attached in MPP + Android project")
+    @GradleAndroidTest
+    fun testMppAndroidKapt(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "mpp-android-kapt".withPrefix,
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
+            buildJdk = jdkVersion.location
+        ) {
+            build(":shared:compileDebugKotlinAndroid") {
+                assertTasksExecuted(
+                    ":shared:kaptGenerateStubsDebugKotlinAndroid",
+                    ":shared:kaptDebugKotlinAndroid",
+                    ":shared:compileDebugKotlinAndroid",
+                )
+
+                assertCompilerArguments(
+                    ":shared:kaptGenerateStubsDebugKotlinAndroid",
+                    "src/commonMain/kotlin/hilt/error/sampleapp/Annotations.kt",
+                    "src/commonMain/kotlin/hilt/error/sampleapp/CommonMainViewModel.kt",
+                )
             }
         }
     }
