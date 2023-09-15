@@ -102,6 +102,7 @@ class CompilerArgumentsContentProspectorTest {
             CommonCompilerArguments::useFirExtendedCheckers,
             CommonCompilerArguments::disableUltraLightClasses,
             CommonCompilerArguments::useMixedNamedArguments,
+            CommonCompilerArguments::metadataKlib,
             CommonCompilerArguments::expectActualLinker,
             CommonCompilerArguments::extendedCompilerChecks,
             CommonCompilerArguments::disableDefaultScriptingPlugin,

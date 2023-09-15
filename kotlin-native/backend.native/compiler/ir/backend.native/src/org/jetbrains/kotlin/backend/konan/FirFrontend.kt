@@ -68,7 +68,7 @@ internal inline fun <F> PhaseContext.firFrontend(
             resolvedLibraries,
             dependencyList,
             extensionRegistrars,
-            metadataCompilationMode = configuration.get(KonanConfigKeys.METADATA_KLIB) ?: false,
+            metadataCompilationMode = config.metadataKlib,
             isCommonSource = isCommonSource,
             fileBelongsToModule = fileBelongsToModule,
             registerExtraComponents = {

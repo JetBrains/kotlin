@@ -109,6 +109,7 @@ where advanced options include:
   -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
   -Xlegacy-smart-cast-after-try Allow var smart casts despite assignment in try block
   -Xlist-phases              List backend phases
+  -Xmetadata-klib            Produce a klib that only contains the declarations metadata
   -Xmetadata-version         Change metadata version of the generated binary files
   -Xmulti-platform           Enable experimental language support for multi-platform projects
   -Xnew-inference            Enable new experimental generic type inference algorithm

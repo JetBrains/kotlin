@@ -48,6 +48,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.languageVersion = from.languageVersion
     to.legacySmartCastAfterTry = from.legacySmartCastAfterTry
     to.listPhases = from.listPhases
+    to.metadataKlib = from.metadataKlib
     to.metadataVersion = from.metadataVersion
     to.multiPlatform = from.multiPlatform
     to.newInference = from.newInference

@@ -64,6 +64,9 @@ object CommonConfigurationKeys {
     val EXPECT_ACTUAL_LINKER = CompilerConfigurationKey.create<Boolean>("Experimental expect/actual linker")
 
     @JvmField
+    val METADATA_KLIB = CompilerConfigurationKey.create<Boolean>("Produce metadata klib")
+
+    @JvmField
     val USE_FIR_EXTENDED_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir extended checkers")
 
     @JvmField

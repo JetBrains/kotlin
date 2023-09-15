@@ -573,6 +573,17 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
 
     @Argument(
+        value = "-Xmetadata-klib",
+        description = "Produce a klib that only contains the declarations metadata"
+    )
+    var metadataKlib: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    /** TODO: replace by [metadataKlib] */
+    @Argument(
         value = "-Xexpect-actual-linker",
         description = "Enable experimental expect/actual linker"
     )

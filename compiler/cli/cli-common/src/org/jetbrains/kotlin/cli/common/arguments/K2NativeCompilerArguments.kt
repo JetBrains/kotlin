@@ -369,9 +369,6 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-Xallocator", valueDescription = "std | mimalloc | custom", description = "Allocator used in runtime")
     var allocator: String? = null
 
-    @Argument(value = "-Xmetadata-klib", description = "Produce a klib that only contains the declarations metadata")
-    var metadataKlib: Boolean = false
-
     @Argument(
         value = "-Xheader-klib-path",
         description = "Save a klib that only contains the public abi to the given path"

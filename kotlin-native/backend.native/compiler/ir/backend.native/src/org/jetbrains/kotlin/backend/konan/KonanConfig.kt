@@ -224,7 +224,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val produce get() = configuration.get(KonanConfigKeys.PRODUCE)!!
 
-    internal val metadataKlib get() = configuration.get(KonanConfigKeys.METADATA_KLIB)!!
+    internal val metadataKlib get() = configuration.getBoolean(CommonConfigurationKeys.METADATA_KLIB)
 
     internal val headerKlibPath get() = configuration.get(KonanConfigKeys.HEADER_KLIB)
 
