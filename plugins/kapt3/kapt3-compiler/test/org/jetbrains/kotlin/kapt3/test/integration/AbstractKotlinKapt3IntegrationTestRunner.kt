@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.kapt3.test.integration
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.base.kapt3.KaptFlag
+import org.jetbrains.kotlin.kapt3.base.KaptFlag
+import org.jetbrains.kotlin.kapt3.base.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.kapt3.test.JvmCompilerWithKaptFacade
 import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt3.test.KaptEnvironmentConfigurator
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives
-import org.jetbrains.kotlin.kapt3.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.bind

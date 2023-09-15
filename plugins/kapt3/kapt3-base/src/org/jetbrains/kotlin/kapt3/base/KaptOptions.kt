@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.base.kapt3
+package org.jetbrains.kotlin.kapt3.base
 
 import org.jetbrains.kotlin.kapt3.base.incremental.SourcesToReprocess
 import java.io.File

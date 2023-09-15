@@ -193,7 +193,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         /**
          * Kapt option that expects a Boolean value. It has a default value to be used when its value is not set.
          *
-         * IMPORTANT: The default value should typically match those defined in org.jetbrains.kotlin.base.kapt3.KaptFlag.
+         * IMPORTANT: The default value should typically match those defined in org.jetbrains.kotlin.kapt3.base.KaptFlag.
          */
         private enum class BooleanOption(
             val optionName: String,

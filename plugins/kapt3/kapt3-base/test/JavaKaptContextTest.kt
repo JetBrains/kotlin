@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.kapt.base.test
 
-import com.sun.tools.javac.processing.AnnotationProcessingError
-import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
-import org.jetbrains.kotlin.base.kapt3.KaptFlag
-import org.jetbrains.kotlin.base.kapt3.KaptOptions
-import org.jetbrains.kotlin.kapt3.base.KaptContext
-import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
+import org.jetbrains.kotlin.kapt3.base.*
 import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
 import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError

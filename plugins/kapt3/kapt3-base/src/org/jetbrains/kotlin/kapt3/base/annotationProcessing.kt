@@ -12,7 +12,6 @@ import com.sun.tools.javac.processing.AnnotationProcessingError
 import com.sun.tools.javac.processing.JavacFiler
 import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.kapt3.base.incremental.*
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaFileManager
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.kapt3
 
-import org.jetbrains.kotlin.base.kapt3.KaptOptions
+import org.jetbrains.kotlin.kapt3.base.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.ProcessorLoader
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.util.ServiceLoaderLite

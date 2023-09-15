@@ -11,8 +11,6 @@ import com.sun.tools.javac.main.Option
 import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Log
 import com.sun.tools.javac.util.Options
-import org.jetbrains.kotlin.base.kapt3.KaptFlag
-import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.incremental.JavaClassCacheManager
 import org.jetbrains.kotlin.kapt3.base.incremental.SourcesToReprocess
 import org.jetbrains.kotlin.kapt3.base.javac.*

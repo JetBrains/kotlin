@@ -20,12 +20,6 @@ import com.intellij.openapi.project.Project
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.base.kapt3.AptMode.APT_ONLY
-import org.jetbrains.kotlin.base.kapt3.AptMode.WITH_COMPILATION
-import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
-import org.jetbrains.kotlin.base.kapt3.KaptFlag
-import org.jetbrains.kotlin.base.kapt3.KaptOptions
-import org.jetbrains.kotlin.base.kapt3.collectJavaSourceFiles
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -42,10 +36,9 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.kapt3.base.KaptContext
-import org.jetbrains.kotlin.kapt3.base.LoadedProcessors
-import org.jetbrains.kotlin.kapt3.base.ProcessorLoader
-import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
+import org.jetbrains.kotlin.kapt3.base.*
+import org.jetbrains.kotlin.kapt3.base.AptMode.APT_ONLY
+import org.jetbrains.kotlin.kapt3.base.AptMode.WITH_COMPILATION
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.kapt3.base.util.info

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.kapt3
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.base.kapt3.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
@@ -41,10 +40,10 @@ import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.kapt.cli.KaptCliOption
 import org.jetbrains.kotlin.kapt.cli.KaptCliOption.*
 import org.jetbrains.kotlin.kapt.cli.KaptCliOption.Companion.ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
-import org.jetbrains.kotlin.kapt3.base.Kapt
+import org.jetbrains.kotlin.kapt3.base.*
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
+import org.jetbrains.kotlin.kapt3.base.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
-import org.jetbrains.kotlin.kapt3.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile

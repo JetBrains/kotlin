@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
-import org.jetbrains.kotlin.base.kapt3.KaptFlag
+import org.jetbrains.kotlin.kapt3.base.KaptFlag
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object KaptTestDirectives : SimpleDirectivesContainer() {

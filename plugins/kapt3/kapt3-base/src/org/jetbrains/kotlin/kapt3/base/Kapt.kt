@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.kapt3.base
 
 import com.sun.tools.javac.util.Context
-import org.jetbrains.kotlin.base.kapt3.*
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
+import org.jetbrains.kotlin.kapt3.base.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.kapt3.base.util.info
-import org.jetbrains.kotlin.kapt3.util.doOpenInternalPackagesIfRequired
 import kotlin.system.measureTimeMillis
 
 object Kapt {

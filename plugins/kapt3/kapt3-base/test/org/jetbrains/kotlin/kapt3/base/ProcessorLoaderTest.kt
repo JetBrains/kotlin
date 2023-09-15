@@ -5,11 +5,6 @@
 
 package org.jetbrains.kotlin.kapt3.base
 
-import org.jetbrains.kotlin.base.kapt3.KaptOptions
-import org.jetbrains.kotlin.kapt3.base.newClassesFolder
-import org.jetbrains.kotlin.kapt3.base.newFile
-import org.jetbrains.kotlin.kapt3.base.newSourcesFolder
-import org.jetbrains.kotlin.kapt3.base.newStubsFolder
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
