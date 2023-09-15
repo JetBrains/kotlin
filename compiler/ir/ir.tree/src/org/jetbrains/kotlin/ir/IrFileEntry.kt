@@ -30,3 +30,39 @@ interface IrFileEntry {
     fun getColumnNumber(offset: Int): Int
     fun getLineAndColumnNumbers(offset: Int): LineAndColumn
 }
+
+abstract class AbstractIrFileEntry : IrFileEntry {
+    protected abstract val lineStartOffsets: IntArray
+
+    override fun getLineNumber(offset: Int): Int {
+        if (offset < 0) return UNDEFINED_LINE_NUMBER
+        val index = lineStartOffsets.binarySearch(offset)
+        return if (index >= 0) index else -index - 2
+    }
+
+    override fun getColumnNumber(offset: Int): Int {
+        if (offset < 0) return UNDEFINED_COLUMN_NUMBER
+        val lineNumber = getLineNumber(offset)
+        if (lineNumber < 0) return UNDEFINED_COLUMN_NUMBER
+        return offset - lineStartOffsets[lineNumber]
+    }
+
+    override fun getLineAndColumnNumbers(offset: Int): LineAndColumn {
+        if (offset < 0) return LineAndColumn(UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
+        val lineNumber = getLineNumber(offset)
+        if (lineNumber < 0) return LineAndColumn(lineNumber, UNDEFINED_COLUMN_NUMBER)
+        val columnNumber = offset - lineStartOffsets[lineNumber]
+        return LineAndColumn(lineNumber, columnNumber)
+    }
+
+    override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
+        SourceRangeInfo(
+            filePath = name,
+            startOffset = beginOffset,
+            startLineNumber = getLineNumber(beginOffset),
+            startColumnNumber = getColumnNumber(beginOffset),
+            endOffset = endOffset,
+            endLineNumber = getLineNumber(endOffset),
+            endColumnNumber = getColumnNumber(endOffset)
+        )
+}

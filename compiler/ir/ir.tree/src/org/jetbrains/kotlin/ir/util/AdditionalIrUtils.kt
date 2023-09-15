@@ -260,46 +260,26 @@ val IrFileEntry.lineStartOffsets: IntArray
 
 class NaiveSourceBasedFileEntryImpl(
     override val name: String,
-    private val lineStartOffsets: IntArray = intArrayOf(),
+    override val lineStartOffsets: IntArray = intArrayOf(),
     override val maxOffset: Int = UNDEFINED_OFFSET
-) : IrFileEntry {
+) : AbstractIrFileEntry() {
     val lineStartOffsetsAreEmpty: Boolean
         get() = lineStartOffsets.isEmpty()
 
     override fun getLineNumber(offset: Int): Int {
         if (offset == SYNTHETIC_OFFSET) return 0
-        if (offset < 0) return UNDEFINED_LINE_NUMBER
-        val index = lineStartOffsets.binarySearch(offset)
-        return if (index >= 0) index else -index - 2
+        return super.getLineNumber(offset)
     }
 
     override fun getColumnNumber(offset: Int): Int {
         if (offset == SYNTHETIC_OFFSET) return 0
-        if (offset < 0) return UNDEFINED_COLUMN_NUMBER
-        val lineNumber = getLineNumber(offset)
-        if (lineNumber < 0) return UNDEFINED_COLUMN_NUMBER
-        return offset - lineStartOffsets[lineNumber]
+        return super.getColumnNumber(offset)
     }
 
     override fun getLineAndColumnNumbers(offset: Int): LineAndColumn {
         if (offset == SYNTHETIC_OFFSET) return LineAndColumn(0, 0)
-        if (offset < 0) return LineAndColumn(UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
-        val lineNumber = getLineNumber(offset)
-        if (lineNumber < 0) return LineAndColumn(lineNumber, UNDEFINED_COLUMN_NUMBER)
-        val columnNumber = offset - lineStartOffsets[lineNumber]
-        return LineAndColumn(lineNumber, columnNumber)
+        return super.getLineAndColumnNumbers(offset)
     }
-
-    override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
-        SourceRangeInfo(
-            filePath = name,
-            startOffset = beginOffset,
-            startLineNumber = getLineNumber(beginOffset),
-            startColumnNumber = getColumnNumber(beginOffset),
-            endOffset = endOffset,
-            endLineNumber = getLineNumber(endOffset),
-            endColumnNumber = getColumnNumber(endOffset)
-        )
 }
 
 private fun IrClass.getPropertyDeclaration(name: String): IrProperty? {
