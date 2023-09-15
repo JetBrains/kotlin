@@ -1,4 +1,4 @@
-fun foo(s: String, t: String?) {
-    s!!
-    t?.toString()
+fun foo(a: Int, b: Int) {
+    println(a / 0)
+    println(b / 0)
 }
