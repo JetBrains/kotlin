@@ -1,24 +1,6 @@
-buildscript {
-  ext.deps = [
-      'kotlin': [
-          'stdlib': [
-              'common': "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version",
-              'jdk': "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-          ]
-      ],
-      'other' : [
-          'ap_example': "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
-      ]
-  ]
-
-  repositories {
-    mavenLocal()
-    mavenCentral()
-  }
-
-  dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-  }
+plugins {
+  id "org.jetbrains.kotlin.multiplatform" apply false
+  id "org.jetbrains.kotlin.kapt" apply false
 }
 
 allprojects {

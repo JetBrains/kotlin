@@ -36,9 +36,6 @@ class Kapt4IT : Kapt3IT() {
 
     @Disabled("Doesn't make sense in Kapt 4")
     override fun testRepeatableAnnotationsWithOldJvmBackend(gradleVersion: GradleVersion) {}
-
-   @Disabled("Doesn't work in 2.0. Neither with Kapt 3 nor with Kapt 4")
-    override fun testMPPKaptPresence(gradleVersion: GradleVersion) {}
 }
 
 @DisplayName("Kapt 4 with classloaders cache")

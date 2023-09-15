@@ -1,5 +1,15 @@
-apply plugin: 'org.jetbrains.kotlin.platform.common'
+plugins {
+  id "org.jetbrains.kotlin.multiplatform"
+  id "org.jetbrains.kotlin.kapt"
+}
+
+kotlin {
+  compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
+  jvm {
+    withJava()
+  }
+}
 
 dependencies {
-  implementation deps.kotlin.stdlib.common
+  kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
 }

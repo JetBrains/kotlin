@@ -950,13 +950,28 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
-    @DisplayName("kapt works with old MPP")
+    @DisplayName("Kapt with MPP/Jvm")
     @GradleTest
     open fun testMPPKaptPresence(gradleVersion: GradleVersion) {
-        project("mpp-kapt-presence".withPrefix, gradleVersion) {
+        project(
+            "mpp-kapt-presence".withPrefix,
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
 
-            build("build") {
-                assertTasksExecuted(":dac:jdk:kaptGenerateStubsKotlin", ":dac:jdk:compileKotlin")
+            build(":dac:compileKotlinJvm") {
+                assertTasksExecuted(
+                    ":dac:kaptGenerateStubsKotlinJvm",
+                    ":dac:kaptKotlinJvm",
+                    ":dac:compileKotlinJvm"
+                )
+
+                // KT-61622: checking if kapt tasks are getting common sources in default configuration
+                val commonSources = arrayOf(
+                    "src/commonMain/kotlin/DocumentationService.kt",
+                    "src/commonMain/kotlin/Item.kt",
+                )
+                assertCompilerArguments(":dac:kaptGenerateStubsKotlinJvm", *commonSources)
             }
         }
     }
