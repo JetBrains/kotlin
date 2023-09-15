@@ -19,6 +19,8 @@ data class SourceRangeInfo(
     val endColumnNumber: Int
 )
 
+data class LineAndColumn(val line: Int, val column: Int)
+
 interface IrFileEntry {
     val name: String
     val maxOffset: Int
@@ -26,4 +28,5 @@ interface IrFileEntry {
     fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo
     fun getLineNumber(offset: Int): Int
     fun getColumnNumber(offset: Int): Int
+    fun getLineAndColumnNumbers(offset: Int): LineAndColumn
 }

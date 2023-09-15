@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -33,6 +34,9 @@ class MultifileFacadeFileEntry(
         error("Multifile facade doesn't support debug info: $className")
 
     override fun getColumnNumber(offset: Int): Int =
+        error("Multifile facade doesn't support debug info: $className")
+
+    override fun getLineAndColumnNumbers(offset: Int): LineAndColumn =
         error("Multifile facade doesn't support debug info: $className")
 }
 

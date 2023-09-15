@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.IrFileEntry
-import org.jetbrains.kotlin.ir.PsiIrFileEntry
-import org.jetbrains.kotlin.ir.SourceRangeInfo
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
@@ -105,6 +102,7 @@ open class ModuleGenerator(override val context: GeneratorContext) : Generator {
             override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo = TODO("Not yet implemented")
             override fun getLineNumber(offset: Int): Int = TODO("Not yet implemented")
             override fun getColumnNumber(offset: Int): Int = TODO("Not yet implemented")
+            override fun getLineAndColumnNumbers(offset: Int): LineAndColumn = TODO("Not yet implemented")
         }
         val fakeFile = IrFileImpl(
             fakeFileEntry,

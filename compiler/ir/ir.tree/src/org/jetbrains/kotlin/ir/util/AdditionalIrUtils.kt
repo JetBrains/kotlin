@@ -277,7 +277,17 @@ class NaiveSourceBasedFileEntryImpl(
         if (offset == SYNTHETIC_OFFSET) return 0
         if (offset < 0) return UNDEFINED_COLUMN_NUMBER
         val lineNumber = getLineNumber(offset)
-        return if (lineNumber < 0) UNDEFINED_COLUMN_NUMBER else offset - lineStartOffsets[lineNumber]
+        if (lineNumber < 0) return UNDEFINED_COLUMN_NUMBER
+        return offset - lineStartOffsets[lineNumber]
+    }
+
+    override fun getLineAndColumnNumbers(offset: Int): LineAndColumn {
+        if (offset == SYNTHETIC_OFFSET) return LineAndColumn(0, 0)
+        if (offset < 0) return LineAndColumn(UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
+        val lineNumber = getLineNumber(offset)
+        if (lineNumber < 0) return LineAndColumn(lineNumber, UNDEFINED_COLUMN_NUMBER)
+        val columnNumber = offset - lineStartOffsets[lineNumber]
+        return LineAndColumn(lineNumber, columnNumber)
     }
 
     override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
