@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -89,13 +90,17 @@ internal class LLFirImplicitBodyTargetResolver(
         }
     }
 
-    override fun rawResolve(target: FirElementWithResolveState): Unit = when {
-        target is FirScript -> resolveScript(target)
-        target is FirCallableDeclaration && target.attributes.callableCopySubstitutionForTypeUpdater != null -> {
-            transformer.returnTypeCalculator.callableCopyTypeCalculator.computeReturnType(target)
-            Unit
+    override fun rawResolve(target: FirElementWithResolveState) {
+        when {
+            target is FirScript -> resolveScript(target)
+            target is FirCallableDeclaration && target.attributes.callableCopySubstitutionForTypeUpdater != null -> {
+                transformer.returnTypeCalculator.callableCopyTypeCalculator.computeReturnType(target)
+                Unit
+            }
+
+            else -> super.rawResolve(target)
         }
 
-        else -> super.rawResolve(target)
+        LLFirDeclarationModificationService.bodyResolved(target, resolverPhase)
     }
 }

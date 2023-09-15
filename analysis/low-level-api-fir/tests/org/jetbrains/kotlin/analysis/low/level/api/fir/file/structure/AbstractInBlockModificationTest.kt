@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 import com.intellij.extapi.psi.ASTDelegatePsiElement
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
@@ -67,6 +68,21 @@ internal fun testInBlockModification(
     testServices: TestServices,
     dumpFirFile: Boolean,
 ): String = resolveWithCaches(file) { firSession ->
+    // We are trying to invoke a test case twice inside one session to be sure that sequent modifications are work
+    val firstAttempt = doTestInBlockModification(file, elementToModify, testServices, dumpFirFile, firSession)
+    val secondAttempt = doTestInBlockModification(file, elementToModify, testServices, dumpFirFile, firSession)
+    testServices.assertions.assertEquals(firstAttempt, secondAttempt) { "Invocations must be the same" }
+
+    firstAttempt
+}
+
+private fun doTestInBlockModification(
+    file: KtFile,
+    elementToModify: PsiElement,
+    testServices: TestServices,
+    dumpFirFile: Boolean,
+    firSession: LLFirResolveSession,
+): String {
     val declaration = elementToModify.getNonLocalContainingOrThisDeclaration() ?: file
     val firDeclarationBefore = declaration.getOrBuildFirOfType<FirDeclaration>(firSession)
     val declarationToRender = if (dumpFirFile) {
@@ -116,7 +132,7 @@ internal fun testInBlockModification(
         "The declaration must have the same in the resolved state"
     }
 
-    "BEFORE MODIFICATION:\n$textBefore\nAFTER MODIFICATION:\n$textAfterModification"
+    return "BEFORE MODIFICATION:\n$textBefore\nAFTER MODIFICATION:\n$textAfterModification"
 }
 
 /**

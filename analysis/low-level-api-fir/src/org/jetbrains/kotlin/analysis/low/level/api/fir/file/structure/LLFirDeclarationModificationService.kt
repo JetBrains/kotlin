@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
@@ -26,13 +27,18 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
 import org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics.MODULE_OUT_OF_BLOCK_MODIFICATION
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
@@ -66,6 +72,9 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     private var inBlockModificationQueue: MutableSet<ChangeType.InBlock>? = null
 
     private fun addModificationToQueue(modification: ChangeType.InBlock) {
+        // There is no sense to add into the queue elements with unresolved body
+        if (!modification.blockOwner.hasFirBody) return
+
         val queue = inBlockModificationQueue ?: HashSet<ChangeType.InBlock>().also { inBlockModificationQueue = it }
         queue += modification
     }
@@ -161,7 +170,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         }
     }
 
-    private fun inBlockModification(declaration: KtElement, ktModule: KtModule) {
+    private fun inBlockModification(declaration: KtAnnotated, ktModule: KtModule) {
         val resolveSession = ktModule.getFirResolveSession(project)
         val firDeclaration = when (declaration) {
             is KtCodeFragment -> declaration.getOrBuildFirFile(resolveSession).codeFragment
@@ -173,6 +182,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         }
 
         invalidateAfterInBlockModification(firDeclaration)
+        declaration.hasFirBody = false
 
         val moduleSession = firDeclaration.llFirResolvableSession ?: errorWithFirSpecificEntries(
             "${LLFirResolvableModuleSession::class.simpleName} is not found",
@@ -210,6 +220,53 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     companion object {
         fun getInstance(project: Project): LLFirDeclarationModificationService =
             project.getService(LLFirDeclarationModificationService::class.java)
+
+        /**
+         * This function have to be called from Low Level FIR body transformers.
+         * It is fine to have false-positives, but false-negatives are not acceptable.
+         */
+        internal fun bodyResolved(element: FirElementWithResolveState, phase: FirResolvePhase) {
+            when (element) {
+                is FirSimpleFunction -> {
+                    // in-block modifications only applicable to functions with an explicit type,
+                    // so we mark only fully resolved functions
+                    if (phase != FirResolvePhase.BODY_RESOLVE) return
+                }
+
+                is FirProperty -> {
+                    // in-block modifications only applicable to properties with an explicit type,
+                    // but existed backing field can lead to the entire body resolution even on
+                    // implicit body phase, so we will mark this phase as fully resolved too to be safe
+                    if (phase != FirResolvePhase.BODY_RESOLVE && phase != FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) return
+                }
+
+                is FirCodeFragment -> {
+                    // in-block modifications only applicable to fully resolved code fragments
+                    if (phase != FirResolvePhase.BODY_RESOLVE) return
+                }
+
+                else -> return
+            }
+
+            val declaration = element.source?.psi as? KtAnnotated ?: return
+            when (declaration) {
+                is KtNamedFunction -> {
+                    if (declaration.isReanalyzableContainer()) {
+                        declaration.hasFirBody = true
+                    }
+                }
+
+                is KtProperty -> {
+                    if (declaration.isReanalyzableContainer() || declaration.accessors.any(KtPropertyAccessor::isReanalyzableContainer)) {
+                        declaration.hasFirBody = true
+                    }
+                }
+
+                is KtCodeFragment -> {
+                    declaration.hasFirBody = true
+                }
+            }
+        }
     }
 }
 
@@ -230,6 +287,28 @@ private sealed class ChangeType {
         override fun hashCode(): Int = blockOwner.hashCode()
     }
 }
+
+/**
+ * The purpose of this property as user data is to avoid FIR building in case the [KtAnnotated]
+ * doesn't have an associated FIR with body.
+ *
+ * [KtProperty] is used as an anchor for [KtPropertyAccessor]s to avoid extra memory consumption.
+ */
+private var KtAnnotated.hasFirBody: Boolean
+    get() = when (this) {
+        is KtNamedFunction, is KtProperty, is KtCodeFragment -> getUserData(hasFirBodyKey) == true
+        is KtPropertyAccessor -> property.hasFirBody
+        else -> false
+    }
+    set(value) {
+        val declarationAnchor = if (this is KtPropertyAccessor) property else this
+        declarationAnchor.putUserData(
+            hasFirBodyKey,
+            value.takeIf { it },
+        )
+    }
+
+private val hasFirBodyKey = Key.create<Boolean?>("HAS_FIR_BODY")
 
 /**
  * Covered by org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractInBlockModificationTest
