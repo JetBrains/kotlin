@@ -110,20 +110,6 @@ sealed interface Stmt : IntoSilver<viper.silver.ast.Stmt> {
         )
     }
 
-    data class Assume(
-        val exp: Exp,
-        val position: Position = Position.NoPosition,
-        val info: Info = Info.NoInfo,
-        val trafos: Trafos = Trafos.NoTrafos,
-    ) : Stmt {
-        override fun toSilver(): viper.silver.ast.Assume = viper.silver.ast.Assume(
-            exp.toSilver(),
-            position.toSilver(),
-            info.toSilver(),
-            trafos.toSilver()
-        )
-    }
-
     data class Seqn(
         val stmts: List<Stmt>,
         val scopedStmtsDeclaration: List<Declaration>,
