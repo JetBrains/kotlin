@@ -39,7 +39,6 @@ class Verifier {
             StdIOReporter("stdout_reporter", true),
             `NoopSymbExLog$`.`MODULE$` as SymbExLogger<out MemberSymbExLogger>,
         )
-        verifier.start()
     }
 
     /** Check whether the Viper program is consistent.  Return true on success.
@@ -59,17 +58,17 @@ class Verifier {
      */
     fun verify(program: Program, onFailure: (VerificationError) -> Unit): Boolean {
         val viperProgram = program.toSilver()
-        var success = true
 
+        verifier.start()
         val results = verifier.verify(viperProgram, emptySeq<SilverCfg>(), null.toScalaOption<String?>())
 
+        var success = true
         for (result in results) {
             if (result.isFatal) {
                 onFailure(VerificationError(result))
                 success = false
             }
         }
-
         return success
     }
 }
