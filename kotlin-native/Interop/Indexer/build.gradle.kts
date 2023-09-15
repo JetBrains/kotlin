@@ -67,7 +67,7 @@ if (libclangextIsEnabled) {
 
     val llvmLibs = listOf(
             "clangAST", "clangASTMatchers", "clangAnalysis", "clangBasic", "clangDriver", "clangEdit",
-            "clangFrontend", "clangFrontendTool", "clangLex", "clangParse", "clangSema", "clangEdit",
+            "clangFrontend", "clangFrontendTool", "clangLex", "clangParse", "clangSema",
             "clangRewrite", "clangRewriteFrontend", "clangStaticAnalyzerFrontend",
             "clangStaticAnalyzerCheckers", "clangStaticAnalyzerCore", "clangSerialization",
             "clangToolingCore",
