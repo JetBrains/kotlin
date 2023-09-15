@@ -34,7 +34,7 @@ abstract class KlibMetadataSerializer(
     val metadataVersion: BinaryVersion,
     val project: Project?,
     val exportKDoc: Boolean = false,
-    val skipExpects: Boolean = false,
+    val skipExpects: Boolean,
     val includeOnlyModuleContent: Boolean = false,
     private val allowErrorTypes: Boolean,
     val produceHeaderKlib: Boolean = false,

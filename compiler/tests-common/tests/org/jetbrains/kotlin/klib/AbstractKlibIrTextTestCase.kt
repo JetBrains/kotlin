@@ -122,7 +122,6 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
             metadataVersion = KlibMetadataVersion.INSTANCE,
             project = project,
             exportKDoc = false,
-            skipExpects = true,
             allowErrorTypes = allowErrors
         )
 
