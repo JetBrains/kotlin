@@ -11,10 +11,13 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 
@@ -39,6 +42,9 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
         getConstructorDelegationCall(declaration)?.let { delegatedConstructor ->
             reporter.reportOn(delegatedConstructor.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, context)
         }
+        for (propertyParameter in getConstructorProhibitedPropertyParameters(declaration, lastClass)) {
+            reporter.reportOn(propertyParameter.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, context)
+        }
         if (isProhibitedEnumConstructor(declaration, lastClass)) {
             reporter.reportOn(source, FirErrors.EXPECTED_ENUM_CONSTRUCTOR, context)
         }
@@ -50,6 +56,18 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
         if (isProhibitedDeclarationWithBody(declaration)) {
             reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY, context)
         }
+    }
+
+    private fun getConstructorProhibitedPropertyParameters(
+        declaration: FirMemberDeclaration,
+        containingClass: FirClass?,
+    ): List<FirValueParameter> {
+        if (declaration is FirPrimaryConstructor &&
+            containingClass != null && containingClass.classKind != ClassKind.ANNOTATION_CLASS && !containingClass.isInline
+        ) {
+            return declaration.valueParameters.filter { it.source.valOrVarKeyword != null }
+        }
+        return emptyList()
     }
 
     private fun getConstructorDelegationCall(declaration: FirMemberDeclaration): FirDelegatedConstructorCall? {
