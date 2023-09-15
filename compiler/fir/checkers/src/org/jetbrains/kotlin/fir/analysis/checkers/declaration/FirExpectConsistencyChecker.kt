@@ -23,10 +23,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
         val source = declaration.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
 
-        val isTopLevel = context.containingDeclarations.size == 1
         val lastClass = context.containingDeclarations.lastOrNull() as? FirClass
-        val isTopLevelOrInsideClass = isTopLevel || lastClass != null
-
         if (declaration is FirAnonymousInitializer) {
             if (lastClass?.isExpect == true) {
                 reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY, context)
@@ -42,7 +39,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
             reporter.reportOn(delegatedConstructor.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, context)
         }
 
-        if (isProhibitedPrivateDeclaration(declaration, isTopLevelOrInsideClass)) {
+        if (isProhibitedPrivateDeclaration(declaration)) {
             reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION, context)
         }
 
@@ -64,8 +61,8 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
         return null
     }
 
-    private fun isProhibitedPrivateDeclaration(declaration: FirMemberDeclaration, isTopLevelOrInsideClass: Boolean): Boolean {
-        return isTopLevelOrInsideClass && declaration !is FirConstructor && Visibilities.isPrivate(declaration.visibility)
+    private fun isProhibitedPrivateDeclaration(declaration: FirMemberDeclaration): Boolean {
+        return declaration !is FirConstructor && declaration !is FirPropertyAccessor && Visibilities.isPrivate(declaration.visibility)
     }
 
     private fun isProhibitedDeclarationWithBody(declaration: FirMemberDeclaration): Boolean {
