@@ -47,7 +47,7 @@ internal class LLFirResolveSessionDepended(
     private val ktToFirMapping: KtToFirMapping?,
 ) : LLFirResolveSession(
     originalFirResolveSession.moduleProvider,
-    originalFirResolveSession.moduleKindProvider,
+    originalFirResolveSession.resolutionStrategyProvider,
     originalFirResolveSession.sessionProvider,
     LLDependedScopeSessionProvider(originalFirResolveSession.project),
     LLDependedDiagnosticProvider

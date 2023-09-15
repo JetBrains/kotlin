@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.KtModuleKind
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleResolutionStrategy
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLDiagnosticProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLEmptyDiagnosticProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleKindProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleResolutionStrategyProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSimpleResolvableModuleKindProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSimpleResolutionStrategyProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSourceDiagnosticProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
@@ -43,28 +43,28 @@ class LLFirResolveSessionService(project: Project) {
     private fun create(module: KtModule, factory: (KtModule) -> LLFirSession): LLFirResolvableResolveSession {
         val moduleProvider = LLModuleProvider(module)
         val sessionProvider = LLSessionProvider(module, factory)
-        val moduleKindProvider = createModuleKindProvider(module, moduleProvider)
+        val resolutionStrategyProvider = createResolutionStrategyProvider(module, moduleProvider)
         val diagnosticProvider = createDiagnosticProvider(moduleProvider, sessionProvider)
 
-        return LLFirResolvableResolveSession(moduleProvider, moduleKindProvider, sessionProvider, diagnosticProvider)
+        return LLFirResolvableResolveSession(moduleProvider, resolutionStrategyProvider, sessionProvider, diagnosticProvider)
     }
 
-    private fun createModuleKindProvider(module: KtModule, moduleProvider: LLModuleProvider): LLModuleKindProvider {
+    private fun createResolutionStrategyProvider(module: KtModule, moduleProvider: LLModuleProvider): LLModuleResolutionStrategyProvider {
         return when (module) {
-            is KtSourceModule -> LLSourceModuleKindProvider
-            is KtLibraryModule, is KtLibrarySourceModule -> LLLibraryModuleKindProvider(module)
-            is KtScriptModule -> LLScriptModuleKindProvider(module)
+            is KtSourceModule -> LLSourceModuleResolutionStrategyProvider
+            is KtLibraryModule, is KtLibrarySourceModule -> LLLibraryModuleResolutionStrategyProvider(module)
+            is KtScriptModule -> LLScriptModuleResolutionStrategyProvider(module)
             is KtCodeFragmentModule -> {
                 val contextElement = module.codeFragment.context
                 if (contextElement != null) {
                     val contextModule = moduleProvider.getModule(contextElement)
-                    val contextModuleKindProvider = createModuleKindProvider(contextModule, moduleProvider)
-                    LLCodeFragmentKindProvider(contextModuleKindProvider)
+                    val contextResolutionStrategyProvider = createResolutionStrategyProvider(contextModule, moduleProvider)
+                    LLCodeFragmentResolutionStrategyProvider(contextResolutionStrategyProvider)
                 } else {
-                    LLSimpleResolvableModuleKindProvider(module)
+                    LLSimpleResolutionStrategyProvider(module)
                 }
             }
-            is KtNotUnderContentRootModule -> LLSimpleResolvableModuleKindProvider(module)
+            is KtNotUnderContentRootModule -> LLSimpleResolutionStrategyProvider(module)
             else -> {
                 errorWithFirSpecificEntries("Unexpected ${module::class.java}") {
                     withEntry("module", module) { it.moduleDescription }
@@ -88,37 +88,37 @@ class LLFirResolveSessionService(project: Project) {
     }
 }
 
-private object LLSourceModuleKindProvider : LLModuleKindProvider {
-    override fun getKind(module: KtModule): KtModuleKind {
+private object LLSourceModuleResolutionStrategyProvider : LLModuleResolutionStrategyProvider {
+    override fun getKind(module: KtModule): LLModuleResolutionStrategy {
         return when (module) {
-            is KtSourceModule -> KtModuleKind.RESOLVABLE_MODULE
-            is KtBuiltinsModule, is KtLibraryModule -> KtModuleKind.BINARY_MODULE
+            is KtSourceModule -> LLModuleResolutionStrategy.LAZY
+            is KtBuiltinsModule, is KtLibraryModule -> LLModuleResolutionStrategy.STATIC
             else -> unexpectedElementError("module", module)
         }
     }
 }
 
-private class LLLibraryModuleKindProvider(private val useSiteModule: KtModule) : LLModuleKindProvider {
-    override fun getKind(module: KtModule): KtModuleKind {
+private class LLLibraryModuleResolutionStrategyProvider(private val useSiteModule: KtModule) : LLModuleResolutionStrategyProvider {
+    override fun getKind(module: KtModule): LLModuleResolutionStrategy {
         LLFirLibraryOrLibrarySourceResolvableModuleSession.checkIsValidKtModule(module)
-        return if (module == useSiteModule) KtModuleKind.RESOLVABLE_MODULE else KtModuleKind.BINARY_MODULE
+        return if (module == useSiteModule) LLModuleResolutionStrategy.LAZY else LLModuleResolutionStrategy.STATIC
     }
 }
 
-private class LLScriptModuleKindProvider(private val useSiteModule: KtModule) : LLModuleKindProvider {
-    override fun getKind(module: KtModule): KtModuleKind {
+private class LLScriptModuleResolutionStrategyProvider(private val useSiteModule: KtModule) : LLModuleResolutionStrategyProvider {
+    override fun getKind(module: KtModule): LLModuleResolutionStrategy {
         return when (module) {
-            useSiteModule, is KtSourceModule -> KtModuleKind.RESOLVABLE_MODULE
-            is KtBuiltinsModule, is KtLibraryModule -> KtModuleKind.BINARY_MODULE
+            useSiteModule, is KtSourceModule -> LLModuleResolutionStrategy.LAZY
+            is KtBuiltinsModule, is KtLibraryModule -> LLModuleResolutionStrategy.STATIC
             else -> unexpectedElementError("module", module)
         }
     }
 }
 
-private class LLCodeFragmentKindProvider(private val delegate: LLModuleKindProvider) : LLModuleKindProvider {
-    override fun getKind(module: KtModule): KtModuleKind {
+private class LLCodeFragmentResolutionStrategyProvider(private val delegate: LLModuleResolutionStrategyProvider) : LLModuleResolutionStrategyProvider {
+    override fun getKind(module: KtModule): LLModuleResolutionStrategy {
         return when (module) {
-            is KtCodeFragmentModule -> KtModuleKind.RESOLVABLE_MODULE
+            is KtCodeFragmentModule -> LLModuleResolutionStrategy.LAZY
             else -> delegate.getKind(module)
         }
     }

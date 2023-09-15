@@ -33,12 +33,12 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class LLFirResolvableResolveSession(
     moduleProvider: LLModuleProvider,
-    moduleKindProvider: LLModuleKindProvider,
+    resolutionStrategyProvider: LLModuleResolutionStrategyProvider,
     sessionProvider: LLSessionProvider,
     diagnosticProvider: LLDiagnosticProvider
 ) : LLFirResolveSession(
     moduleProvider = moduleProvider,
-    moduleKindProvider = moduleKindProvider,
+    resolutionStrategyProvider = resolutionStrategyProvider,
     sessionProvider = sessionProvider,
     scopeSessionProvider = LLDefaultScopeSessionProvider,
     diagnosticProvider = diagnosticProvider
@@ -64,9 +64,9 @@ internal class LLFirResolvableResolveSession(
     ): FirBasedSymbol<*> {
         val containingKtFile = ktDeclaration.containingKtFile
         val module = getModule(containingKtFile.originalKtFile ?: containingKtFile)
-        return when (getModuleKind(module)) {
-            KtModuleKind.RESOLVABLE_MODULE -> findSourceFirSymbol(ktDeclaration, module).also { resolveFirToPhase(it.fir, phase) }
-            KtModuleKind.BINARY_MODULE -> findFirCompiledSymbol(ktDeclaration, module)
+        return when (getModuleResolutionStrategy(module)) {
+            LLModuleResolutionStrategy.LAZY -> findSourceFirSymbol(ktDeclaration, module).also { resolveFirToPhase(it.fir, phase) }
+            LLModuleResolutionStrategy.STATIC -> findFirCompiledSymbol(ktDeclaration, module)
         }
     }
 
@@ -86,7 +86,7 @@ internal class LLFirResolvableResolveSession(
     }
 
     private fun findSourceFirDeclarationByDeclaration(ktDeclaration: KtDeclaration, module: KtModule): FirBasedSymbol<*> {
-        require(getModuleKind(module) == KtModuleKind.RESOLVABLE_MODULE) {
+        require(getModuleResolutionStrategy(module) == LLModuleResolutionStrategy.LAZY) {
             "Declaration should be resolvable module, instead it had ${module::class}"
         }
 
@@ -107,8 +107,8 @@ internal class LLFirResolvableResolveSession(
         return findDeclarationInSourceViaResolve(ktDeclaration)
     }
 
-    private fun getModuleKind(module: KtModule): KtModuleKind {
-        return moduleKindProvider.getKind(module)
+    private fun getModuleResolutionStrategy(module: KtModule): LLModuleResolutionStrategy {
+        return resolutionStrategyProvider.getKind(module)
     }
 
     private fun findDeclarationInSourceViaResolve(ktDeclaration: KtExpression): FirBasedSymbol<*> {

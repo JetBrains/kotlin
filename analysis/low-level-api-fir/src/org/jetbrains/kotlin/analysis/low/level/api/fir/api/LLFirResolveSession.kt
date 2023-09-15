@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLDiagnosticProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleKindProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleResolutionStrategyProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLScopeSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSessionProvider
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.KtFile
  */
 abstract class LLFirResolveSession(
     val moduleProvider: LLModuleProvider,
-    val moduleKindProvider: LLModuleKindProvider,
+    val resolutionStrategyProvider: LLModuleResolutionStrategyProvider,
     val sessionProvider: LLSessionProvider,
     val scopeSessionProvider: LLScopeSessionProvider,
     val diagnosticProvider: LLDiagnosticProvider
