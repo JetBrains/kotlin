@@ -26,7 +26,7 @@ private:
 
 class Allocator::ThreadData::Impl : private Pinned {
 public:
-    explicit Impl(Allocator::Impl& allocator) noexcept : alloc_(allocator.heap()) {}
+    explicit Impl(Allocator::Impl& allocator, gcScheduler::GCScheduler::ThreadData& gcScheduler) noexcept : alloc_(allocator.heap(), gcScheduler) {}
 
     alloc::CustomAllocator& alloc() noexcept { return alloc_; }
 

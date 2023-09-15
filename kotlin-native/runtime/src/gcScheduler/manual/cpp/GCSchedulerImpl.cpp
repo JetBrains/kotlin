@@ -22,6 +22,12 @@ gcScheduler::GCScheduler::~GCScheduler() = default;
 
 ALWAYS_INLINE void gcScheduler::GCScheduler::ThreadData::safePoint() noexcept {}
 
+ALWAYS_INLINE void gcScheduler::GCScheduler::ThreadData::onAllocation(size_t bytes) noexcept {}
+
+ALWAYS_INLINE void gcScheduler::GCScheduler::ThreadData::onStoppedForGC() noexcept {
+    runningBytes_ = 0;
+}
+
 void gcScheduler::GCScheduler::schedule() noexcept {
     RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     mm::GlobalData::Instance().gc().Schedule();

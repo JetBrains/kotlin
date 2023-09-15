@@ -9,7 +9,7 @@
 
 using namespace kotlin;
 
-alloc::Allocator::ThreadData::ThreadData(Allocator& allocator) noexcept : impl_(std::make_unique<Impl>(allocator.impl())) {}
+alloc::Allocator::ThreadData::ThreadData(Allocator& allocator, gcScheduler::GCScheduler::ThreadData& gcScheduler) noexcept : impl_(std::make_unique<Impl>(allocator.impl(), gcScheduler)) {}
 
 alloc::Allocator::ThreadData::~ThreadData() = default;
 

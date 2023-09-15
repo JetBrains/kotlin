@@ -209,7 +209,7 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     }
     finalizerQueue.TransferAllFrom(allocator_.impl().heap().ExtractFinalizerQueue());
 #endif
-    scheduler.onGCFinish(epoch, alloc::allocatedBytes());
+    scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();

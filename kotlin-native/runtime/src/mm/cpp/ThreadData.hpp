@@ -32,7 +32,7 @@ public:
         globalsThreadQueue_(GlobalsRegistry::Instance()),
         specialRefRegistry_(SpecialRefRegistry::instance()),
         gcScheduler_(GlobalData::Instance().gcScheduler(), *this),
-        allocator_(GlobalData::Instance().allocator()),
+        allocator_(GlobalData::Instance().allocator(), gcScheduler_),
         gc_(GlobalData::Instance().gc(), *this),
         suspensionData_(ThreadState::kNative, *this) {}
 

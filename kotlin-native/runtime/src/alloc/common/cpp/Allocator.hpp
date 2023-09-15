@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "GC.hpp"
+#include "GCScheduler.hpp"
 #include "Utils.hpp"
 
 namespace kotlin::alloc {
@@ -22,7 +23,7 @@ public:
     public:
         class Impl;
 
-        explicit ThreadData(Allocator& allocator) noexcept;
+        explicit ThreadData(Allocator& allocator, gcScheduler::GCScheduler::ThreadData& gcScheduler) noexcept;
         ~ThreadData();
 
         Impl& impl() noexcept { return *impl_; }

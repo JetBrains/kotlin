@@ -108,6 +108,7 @@ void Mark(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQue
 template <typename Traits>
 void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, mm::ThreadData& thread) {
     auto handle = gcHandle.collectThreadRoots(thread);
+    thread.gcScheduler().onStoppedForGC();
     // TODO: Remove useless mm::ThreadRootSet abstraction.
     for (auto value : mm::ThreadRootSet(thread)) {
         if (internal::collectRoot<Traits>(markQueue, value.object)) {

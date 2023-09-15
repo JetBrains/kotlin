@@ -34,8 +34,11 @@ public:
         Impl& impl() noexcept { return *impl_; }
 
         void safePoint() noexcept;
+        void onAllocation(size_t bytes) noexcept;
+        void onStoppedForGC() noexcept;
 
     private:
+        size_t runningBytes_ = 0;
         std::unique_ptr<Impl> impl_;
     };
 

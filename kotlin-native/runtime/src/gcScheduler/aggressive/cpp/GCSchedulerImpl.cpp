@@ -34,6 +34,15 @@ ALWAYS_INLINE void gcScheduler::GCScheduler::ThreadData::safePoint() noexcept {
     impl().scheduler().safePoint();
 }
 
+ALWAYS_INLINE void gcScheduler::GCScheduler::ThreadData::onAllocation(size_t bytes) noexcept {
+    if (!compiler::gcMemoryBigChunks())
+        impl().scheduler().onAllocation(bytes);
+}
+
+ALWAYS_INLINE void gcScheduler::GCScheduler::ThreadData::onStoppedForGC() noexcept {
+    runningBytes_ = 0;
+}
+
 void gcScheduler::GCScheduler::schedule() noexcept {
     RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     impl().impl().schedule();
@@ -54,10 +63,13 @@ void gcScheduler::GCScheduler::scheduleAndWaitFinalized() noexcept {
 }
 
 ALWAYS_INLINE void gcScheduler::GCScheduler::setAllocatedBytes(size_t bytes) noexcept {
-    impl().impl().setAllocatedBytes(bytes);
+    if (compiler::gcMemoryBigChunks())
+        impl().impl().setAllocatedBytes(bytes);
 }
 
-ALWAYS_INLINE void gcScheduler::GCScheduler::onGCStart() noexcept {}
+ALWAYS_INLINE void gcScheduler::GCScheduler::onGCStart() noexcept {
+    impl().impl().onGCStart();
+}
 
 ALWAYS_INLINE void gcScheduler::GCScheduler::onGCFinish(int64_t epoch, size_t aliveBytes) noexcept {
     impl().impl().onGCFinish(epoch, aliveBytes);

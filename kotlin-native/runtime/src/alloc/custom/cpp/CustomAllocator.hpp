@@ -15,12 +15,13 @@
 #include "NextFitPage.hpp"
 #include "Memory.h"
 #include "FixedBlockPage.hpp"
+#include "GCScheduler.hpp"
 
 namespace kotlin::alloc {
 
 class CustomAllocator {
 public:
-    explicit CustomAllocator(Heap& heap) noexcept;
+    CustomAllocator(Heap& heap, gcScheduler::GCScheduler::ThreadData& gcScheduler) noexcept;
 
     ~CustomAllocator();
 
@@ -50,6 +51,7 @@ private:
     uint8_t* AllocateInFixedBlockPage(uint32_t cellCount) noexcept;
 
     Heap& heap_;
+    gcScheduler::GCScheduler::ThreadData& gcScheduler_;
     NextFitPage* nextFitPage_;
     FixedBlockPage* fixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
     ExtraObjectPage* extraObjectPage_;

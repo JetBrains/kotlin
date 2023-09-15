@@ -21,13 +21,21 @@ struct ObjectFactoryTraits {
     using Allocator = alloc::AllocatorWithGC<alloc::AllocatorBasic, ObjectFactoryTraits>;
     using ObjectData = gc::GC::ObjectData;
 
+    explicit ObjectFactoryTraits(gcScheduler::GCScheduler::ThreadData& gcScheduler) noexcept : gcScheduler_(gcScheduler) {}
+
     Allocator CreateAllocator() noexcept { return Allocator(alloc::AllocatorBasic(), *this); }
+
+    void SafePointAllocation(size_t size) noexcept {
+        gcScheduler_.onAllocation(size);
+    }
 
     void OnOOM(size_t size) noexcept {
         RuntimeLogDebug({kTagGC}, "Attempt to GC on OOM at size=%zu", size);
         // TODO: This will print the log for "manual" scheduling. Fix this.
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinished();
     }
+
+    gcScheduler::GCScheduler::ThreadData& gcScheduler_;
 };
 
 using ObjectFactoryImpl = ObjectFactory<ObjectFactoryTraits>;
@@ -46,7 +54,8 @@ private:
 
 class Allocator::ThreadData::Impl : private Pinned {
 public:
-    explicit Impl(Allocator::Impl& allocator) noexcept :
+    Impl(Allocator::Impl& allocator, gcScheduler::GCScheduler::ThreadData& gcScheduler) noexcept :
+        objectFactoryTraits_(gcScheduler),
         objectFactoryThreadQueue_(allocator.objectFactory(), objectFactoryTraits_.CreateAllocator()),
         extraObjectDataFactoryThreadQueue_(allocator.extraObjectDataFactory()) {}
 
@@ -54,7 +63,7 @@ public:
     ExtraObjectDataFactory::ThreadQueue& extraObjectDataFactoryThreadQueue() noexcept { return extraObjectDataFactoryThreadQueue_; }
 
 private:
-    [[no_unique_address]] ObjectFactoryTraits objectFactoryTraits_;
+    ObjectFactoryTraits objectFactoryTraits_;
     ObjectFactoryImpl::ThreadQueue objectFactoryThreadQueue_;
     ExtraObjectDataFactory::ThreadQueue extraObjectDataFactoryThreadQueue_;
 };

@@ -33,6 +33,20 @@ ALWAYS_INLINE void gcScheduler::GCScheduler::ThreadData::safePoint() noexcept {
     impl().mutatorAssists().safePoint();
 }
 
+ALWAYS_INLINE void gcScheduler::GCScheduler::ThreadData::onAllocation(size_t bytes) noexcept {
+    if (compiler::gcMemoryBigChunks())
+        return;
+    runningBytes_ += bytes;
+    if (runningBytes_ >= 10 * 1024) {
+        impl().scheduler().onAllocation(runningBytes_);
+        runningBytes_ = 0;
+    }
+}
+
+ALWAYS_INLINE void gcScheduler::GCScheduler::ThreadData::onStoppedForGC() noexcept {
+    runningBytes_ = 0;
+}
+
 void gcScheduler::GCScheduler::schedule() noexcept {
     RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     impl().impl().schedule();
@@ -53,7 +67,8 @@ void gcScheduler::GCScheduler::scheduleAndWaitFinalized() noexcept {
 }
 
 ALWAYS_INLINE void gcScheduler::GCScheduler::setAllocatedBytes(size_t bytes) noexcept {
-    impl().impl().setAllocatedBytes(bytes);
+    if (compiler::gcMemoryBigChunks())
+        impl().impl().setAllocatedBytes(bytes);
 }
 
 ALWAYS_INLINE void gcScheduler::GCScheduler::onGCStart() noexcept {

@@ -63,8 +63,15 @@ public:
     }
 
     void onGCStart() noexcept {
+        lastAliveSetBytes_.fetch_add(allocatedBytes_.exchange(0, std::memory_order_relaxed), std::memory_order_relaxed);
         regularIntervalPacer_.OnPerformFullGC();
         timer_.restart(config_.regularGcInterval());
+    }
+
+    void onAllocation(size_t bytes) noexcept {
+        auto total = allocatedBytes_.fetch_add(bytes, std::memory_order_relaxed) + bytes;
+        total += lastAliveSetBytes_.load(std::memory_order_relaxed);
+        setAllocatedBytes(total);
     }
 
     void setAllocatedBytes(size_t bytes) noexcept {
@@ -86,6 +93,7 @@ public:
     }
 
     void onGCFinish(int64_t epoch, size_t bytes) noexcept {
+        lastAliveSetBytes_.store(bytes, std::memory_order_relaxed);
         scheduleGC_.onGCFinish(epoch);
         heapGrowthController_.updateBoundaries(bytes);
         // Must wait for all mutators to be released. GC thread cannot continue.
@@ -102,6 +110,8 @@ public:
     MutatorAssists& mutatorAssists() noexcept { return mutatorAssists_; }
 
 private:
+    std::atomic<size_t> allocatedBytes_ = 0;
+    std::atomic<size_t> lastAliveSetBytes_ = 0;
     GCSchedulerConfig& config_;
     EpochScheduler scheduleGC_;
     mm::AppStateTracking& appStateTracking_;

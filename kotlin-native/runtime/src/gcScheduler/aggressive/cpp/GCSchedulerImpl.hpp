@@ -68,6 +68,16 @@ public:
         }
     }
 
+    void onGCStart() noexcept {
+        lastAliveSetBytes_.fetch_add(allocatedBytes_.exchange(0, std::memory_order_relaxed), std::memory_order_relaxed);
+    }
+
+    void onAllocation(size_t bytes) noexcept {
+        auto total = allocatedBytes_.fetch_add(bytes, std::memory_order_relaxed) + bytes;
+        total += lastAliveSetBytes_.load(std::memory_order_relaxed);
+        setAllocatedBytes(total);
+    }
+
     void safePoint() noexcept {
         if (safePointTracker_.registerCurrentSafePoint(1)) {
             RuntimeLogDebug({kTagGC}, "Scheduling GC by safepoint");
@@ -76,6 +86,7 @@ public:
     }
 
     void onGCFinish(int64_t epoch, size_t aliveBytes) noexcept {
+        lastAliveSetBytes_.store(aliveBytes, std::memory_order_relaxed);
         scheduleGC_.onGCFinish(epoch);
         heapGrowthController_.updateBoundaries(aliveBytes);
         // Must wait for all mutators to be released. GC thread cannot continue.
@@ -92,6 +103,8 @@ public:
     MutatorAssists& mutatorAssists() noexcept { return mutatorAssists_; }
 
 private:
+    std::atomic<size_t> allocatedBytes_ = 0;
+    std::atomic<size_t> lastAliveSetBytes_ = 0;
     EpochScheduler scheduleGC_;
     HeapGrowthController heapGrowthController_;
     SafePointTracker<> safePointTracker_;

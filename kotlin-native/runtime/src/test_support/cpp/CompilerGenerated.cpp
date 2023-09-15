@@ -83,6 +83,7 @@ extern const int32_t Kotlin_gcMarkSingleThreaded = 0;
 #endif
 extern const int32_t Kotlin_freezingChecksEnabled = 1;
 extern const int32_t Kotlin_freezingEnabled = 1;
+extern const int32_t Kotlin_gcMemoryBigChunks = 0;
 
 extern const TypeInfo* theAnyTypeInfo = theAnyTypeInfoHolder.typeInfo();
 extern const TypeInfo* theArrayTypeInfo = theArrayTypeInfoHolder.typeInfo();
