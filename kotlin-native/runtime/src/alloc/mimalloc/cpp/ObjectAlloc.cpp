@@ -26,9 +26,6 @@ std::once_flag initOptions;
 std::atomic_flag scheduledCompactOnMainThread = ATOMIC_FLAG_INIT;
 #endif
 
-// Only used when `compiler::gcMemoryBigChunks()` is false.
-std::atomic<size_t> allocatedPreciseBytes = 0;
-
 } // namespace
 
 void alloc::initObjectPool() noexcept {
@@ -44,18 +41,10 @@ void alloc::initObjectPool() noexcept {
 }
 
 void* alloc::allocateInObjectPool(size_t size) noexcept {
-    auto ptr = mi_calloc_aligned(1, size, kObjectAlignment);
-    if (!compiler::gcMemoryBigChunks()) {
-        auto totalAllocatedBytes = allocatedPreciseBytes.fetch_add(size, std::memory_order_relaxed);
-        OnMemoryAllocation(totalAllocatedBytes + size);
-    }
-    return ptr;
+    return mi_calloc_aligned(1, size, kObjectAlignment);
 }
 
 void alloc::freeInObjectPool(void* ptr, size_t size) noexcept {
-    if (!compiler::gcMemoryBigChunks()) {
-        allocatedPreciseBytes.fetch_sub(size, std::memory_order_relaxed);
-    }
     mi_free(ptr);
 }
 
@@ -81,15 +70,9 @@ void alloc::compactObjectPoolInMainThread() noexcept {
 }
 
 size_t alloc::allocatedBytes() noexcept {
-    if (compiler::gcMemoryBigChunks()) {
-        return mi_allocated_size();
-    } else {
-        return allocatedPreciseBytes.load(std::memory_order_relaxed);
-    }
+    return mi_allocated_size();
 }
 
 extern "C" void mi_hook_allocation(size_t allocated_size) mi_attr_noexcept {
-    if (compiler::gcMemoryBigChunks()) {
-        OnMemoryAllocation(allocated_size);
-    }
+    OnMemoryAllocation(allocated_size);
 }

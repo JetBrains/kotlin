@@ -102,7 +102,7 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     finalizerQueue.TransferAllFrom(allocator_.impl().heap().ExtractFinalizerQueue());
 #endif
 
-    scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
+    scheduler.onGCFinish(epoch, alloc::allocatedBytes());
 
     resumeTheWorld(gcHandle);
 

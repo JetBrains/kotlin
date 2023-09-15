@@ -28,7 +28,6 @@ class GCHandle;
 struct SweepStats {
     uint64_t sweptCount = 0;
     uint64_t keptCount = 0;
-    size_t keptSizeBytes = 0;
 };
 
 struct MarkStats {
@@ -70,7 +69,6 @@ public:
     [[nodiscard]] GCProcessWeaksScope processWeaks() noexcept;
 
     MarkStats getMarked();
-    size_t getKeptSizeBytes() noexcept;
 
 private:
     uint64_t epoch_;
@@ -119,10 +117,7 @@ public:
     ~GCSweepScope();
 
     void addSweptObject() noexcept { stats_.sweptCount += 1; }
-    void addKeptObject(size_t sizeBytes) noexcept {
-        stats_.keptCount += 1;
-        stats_.keptSizeBytes += sizeBytes;
-    }
+    void addKeptObject() noexcept { stats_.keptCount += 1; }
     // Custom allocator only. To be finalized objects are kept alive.
     void addMarkedObject() noexcept { markedCount_ += 1; }
 };
@@ -137,10 +132,7 @@ public:
     ~GCSweepExtraObjectsScope();
 
     void addSweptObject() noexcept { stats_.sweptCount += 1; }
-    void addKeptObject(size_t sizeBytes) noexcept {
-        stats_.keptCount += 1;
-        stats_.keptSizeBytes += sizeBytes;
-    }
+    void addKeptObject() noexcept { stats_.keptCount += 1; }
 };
 
 class GCHandle::GCGlobalRootSetScope : private GCStageScopeBase {

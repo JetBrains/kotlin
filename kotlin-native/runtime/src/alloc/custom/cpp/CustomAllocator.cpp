@@ -67,9 +67,6 @@ ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo, uint32_t cou
 mm::ExtraObjectData* CustomAllocator::CreateExtraObject() noexcept {
     CustomAllocDebug("CustomAllocator::CreateExtraObject()");
     ExtraObjectPage* page = extraObjectPage_;
-    if (!compiler::gcMemoryBigChunks()) {
-        RecordAllocation(sizeof(mm::ExtraObjectData));
-    }
     if (page) {
         mm::ExtraObjectData* block = page->TryAllocate();
         if (block) {
@@ -121,9 +118,6 @@ uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
     RuntimeAssert(size, "CustomAllocator::Allocate cannot allocate 0 bytes");
     CustomAllocDebug("CustomAllocator::Allocate(%" PRIu64 ")", size);
     uint64_t cellCount = (size + sizeof(Cell) - 1) / sizeof(Cell);
-    if (!compiler::gcMemoryBigChunks()) {
-        RecordAllocation(size); // If `size` overflows `size_t`, we'll fail later anyway.
-    }
     if (cellCount <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE) {
         return AllocateInFixedBlockPage(cellCount);
     } else if (cellCount > NEXT_FIT_PAGE_MAX_BLOCK_SIZE) {
