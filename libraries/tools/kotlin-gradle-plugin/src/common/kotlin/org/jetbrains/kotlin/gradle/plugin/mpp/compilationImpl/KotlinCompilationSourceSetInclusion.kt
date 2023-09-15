@@ -8,6 +8,8 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.internal.KAPT_GENERATE_STUBS_PREFIX
+import org.jetbrains.kotlin.gradle.internal.getKaptTaskName
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
+import org.jetbrains.kotlin.gradle.utils.whenKaptEnabled
 import org.jetbrains.kotlin.tooling.core.extrasFactoryProperty
 import java.util.concurrent.Callable
 
@@ -89,13 +92,26 @@ internal class KotlinCompilationSourceSetInclusion(
     object DefaultAddSourcesToCompileTask : AddSourcesToCompileTask {
         override fun addSources(
             compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>
-        ) = addSourcesToKotlinCompileTask(
-            project = compilation.project,
-            taskName = compilation.compileKotlinTaskName,
-            sourceFileExtensions = sourceSet.customSourceFilesExtensions,
-            addAsCommonSources = addAsCommonSources,
-            sources = { sourceSet.kotlin }
-        )
+        ) {
+            addSourcesToKotlinCompileTask(
+                project = compilation.project,
+                taskName = compilation.compileKotlinTaskName,
+                sourceFileExtensions = sourceSet.customSourceFilesExtensions,
+                addAsCommonSources = addAsCommonSources,
+                sources = { sourceSet.kotlin }
+            )
+
+            compilation.project.whenKaptEnabled {
+                val kaptGenerateStubsTaskName = getKaptTaskName(compilation.compileKotlinTaskName, KAPT_GENERATE_STUBS_PREFIX)
+                addSourcesToKotlinCompileTask(
+                    project = compilation.project,
+                    taskName = kaptGenerateStubsTaskName,
+                    sourceFileExtensions = sourceSet.customSourceFilesExtensions,
+                    addAsCommonSources = addAsCommonSources,
+                    sources = { sourceSet.kotlin }
+                )
+            }
+        }
     }
 
     object NativeAddSourcesToCompileTask : AddSourcesToCompileTask {
