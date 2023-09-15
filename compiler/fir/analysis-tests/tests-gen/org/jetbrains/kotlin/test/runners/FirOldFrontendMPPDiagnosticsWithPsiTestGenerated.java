@@ -1321,6 +1321,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("expectedClassConstructorPropertyParameters.kt")
+        public void testExpectedClassConstructorPropertyParameters() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/expectedClassConstructorPropertyParameters.kt");
+        }
+
+        @Test
         @TestMetadata("explicitConstructorDelegation.kt")
         public void testExplicitConstructorDelegation() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/explicitConstructorDelegation.kt");

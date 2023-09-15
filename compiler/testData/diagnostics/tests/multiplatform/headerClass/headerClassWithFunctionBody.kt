@@ -1,10 +1,7 @@
 // IGNORE_REVERSED_RESOLVE
 // MODULE: m1-common
 // FILE: common.kt
-expect class Foo(
-        <!EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val constructorProperty: String<!>,
-        constructorParameter: String
-) {
+expect class Foo {
     <!EXPECTED_DECLARATION_WITH_BODY!>init<!> {
         "no"
     }

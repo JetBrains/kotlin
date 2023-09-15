@@ -1,10 +1,7 @@
 // IGNORE_REVERSED_RESOLVE
 // MODULE: m1-common
 // FILE: common.kt
-<!NO_ACTUAL_FOR_EXPECT!>expect class Foo(
-        val constructorProperty: String,
-        constructorParameter: String
-) {
+<!NO_ACTUAL_FOR_EXPECT!>expect class Foo {
     <!EXPECTED_DECLARATION_WITH_BODY!>init<!> {
         "no"
     }
