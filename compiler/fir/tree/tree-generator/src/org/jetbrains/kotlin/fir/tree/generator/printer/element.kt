@@ -75,7 +75,7 @@ fun SmartPrinter.printElement(element: Element) {
             )
         }
         print(multipleUpperBoundsList())
-        println("{")
+        println(" {")
         withIndent {
             allFields.forEach { field ->
                 if (field.isFinal && field.fromParent || field.isParameter) return@forEach

@@ -153,11 +153,11 @@ fun Field.call(): String = if (nullable) "?." else "."
 
 fun Element.multipleUpperBoundsList(): String {
     return typeArguments.filterIsInstance<TypeArgumentWithMultipleUpperBounds>().takeIf { it.isNotEmpty() }?.let { arguments ->
-        val upperBoundsList = arguments.joinToString(", ", postfix = " ") { argument ->
+        val upperBoundsList = arguments.joinToString(", ") { argument ->
             argument.upperBounds.joinToString(", ") { upperBound -> "${argument.name} : ${upperBound.typeWithArguments}" }
         }
         " where $upperBoundsList"
-    } ?: " "
+    } ?: ""
 }
 
 fun ImplementationKind?.braces(): String = when (this) {

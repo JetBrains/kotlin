@@ -36,7 +36,7 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
                 element.typeParameters.takeIf { it.isNotBlank() }?.let { print(it) }
                 println(
                     "transform${element.name}($varName: ${element.typeWithArguments}, data: D): ${element.transformerType
-                        .typeWithArguments}${element.multipleUpperBoundsList()}{",
+                        .typeWithArguments}${element.multipleUpperBoundsList()} {",
                 )
                 withIndent {
                     println("return transformElement($varName, data)")
@@ -52,7 +52,7 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
 
                 println(
                     "visit${element.name}($varName: ${element.typeWithArguments}, data: D): ${element.transformerType
-                        .typeWithArguments}${element.multipleUpperBoundsList()}{",
+                        .typeWithArguments}${element.multipleUpperBoundsList()} {",
                 )
                 withIndent {
                     println("return transform${element.name}($varName, data)")

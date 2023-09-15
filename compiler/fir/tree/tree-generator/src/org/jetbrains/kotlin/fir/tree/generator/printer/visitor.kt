@@ -98,7 +98,7 @@ fun printVisitorVoid(elements: List<Element>, generationPath: File): GeneratedFi
                 if (element == AbstractFirTreeBuilder.baseFirElement) continue
                 with(element) {
                     val varName = safeDecapitalizedName
-                    println("open fun ${typeParameters}visit$name($varName: $typeWithArguments)${multipleUpperBoundsList()}{")
+                    println("open fun ${typeParameters}visit$name($varName: $typeWithArguments)${multipleUpperBoundsList()} {")
                     withIndent {
                         println("visitElement($varName)")
                     }
@@ -110,7 +110,7 @@ fun printVisitorVoid(elements: List<Element>, generationPath: File): GeneratedFi
             for (element in elements) {
                 with(element) {
                     val varName = safeDecapitalizedName
-                    println("final override fun ${typeParameters}visit$name($varName: $typeWithArguments, data: Nothing?)${multipleUpperBoundsList()}{")
+                    println("final override fun ${typeParameters}visit$name($varName: $typeWithArguments, data: Nothing?)${multipleUpperBoundsList()} {")
                     withIndent {
                         println("visit$name($varName)")
                     }
