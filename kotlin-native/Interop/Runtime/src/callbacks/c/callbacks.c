@@ -246,7 +246,7 @@ JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiCreateClosure0(J
  * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiFreeClosure0(JNIEnv *env, jclass cls, jlong ptr) {
-    if (ptr == NULL) return;
+    if ((void*)ptr == NULL) return;
     ffi_closure *closure = (ffi_closure*)ptr;
     void* userDataPtr = closure->user_data;
     if (userDataPtr)
