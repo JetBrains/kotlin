@@ -54,8 +54,8 @@ fun test() {
     x10 as <!UNRESOLVED_REFERENCE!>_<!>
     x10 <!CAST_NEVER_SUCCEEDS!>as<!> Foo<<!UNRESOLVED_REFERENCE!>_<!>>
 
-    val x12: Foo<@<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!> Int>? = null
-    val x13: Foo<@<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>() Int>? = null
+    val x12: Foo<@<!UNRESOLVED_REFERENCE!>_<!> Int>? = null
+    val x13: Foo<@<!UNRESOLVED_REFERENCE!>_<!>() Int>? = null
     val x14: Foo<@Anno(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>) Int>? = null
 
     val x15: <!UNRESOLVED_REFERENCE!>_<!><<!UNRESOLVED_REFERENCE!>_<!>>? = null

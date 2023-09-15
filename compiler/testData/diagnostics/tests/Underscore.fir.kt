@@ -2,7 +2,7 @@
 
 import kotlin.Deprecated as <!UNDERSCORE_IS_RESERVED!>___<!>
 
-@<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>___<!>("") data class Pair(val x: Int, val y: Int)
+@___("") data class Pair(val x: Int, val y: Int)
 
 class <!UNDERSCORE_IS_RESERVED!>_<!><<!UNDERSCORE_IS_RESERVED!>________<!>>
 val <!UNDERSCORE_IS_RESERVED!>______<!> = <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!><Int>()
