@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtTypeProjectionElementType
 import org.jetbrains.kotlin.util.getChildren
 
@@ -75,7 +76,7 @@ open class LightTreeSourceNavigator : SourceNavigator {
 
     override fun KtSourceElement.getRawIdentifier(): CharSequence? {
         return when (elementType) {
-            is KtNameReferenceExpressionElementType, KtTokens.IDENTIFIER -> lighterASTNode.toString()
+            is KtNameReferenceExpressionElementType, is KtPlaceHolderStubElementType<*>, KtTokens.IDENTIFIER -> lighterASTNode.toString()
             is KtTypeProjectionElementType -> lighterASTNode.getChildren(treeStructure).last().toString()
             else -> null
         }
