@@ -148,8 +148,7 @@ open class FirImplicitAwareBodyResolveTransformer(
             return transform()
         }
 
-        val canHaveDeepImplicitTypeRefs = member is FirProperty && member.backingField != null
-
+        val canHaveDeepImplicitTypeRefs = member is FirProperty && member.backingField?.returnTypeRef is FirResolvedTypeRef == false
         if (member.returnTypeRef is FirResolvedTypeRef && !canHaveDeepImplicitTypeRefs) return member
         val symbol = member.symbol
         val status = implicitBodyResolveComputationSession.getStatus(symbol)

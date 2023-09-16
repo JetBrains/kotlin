@@ -127,8 +127,8 @@ open class FirDeclarationsResolveTransformer(
         val bodyResolveState = property.bodyResolveState
         if (bodyResolveState == FirPropertyBodyResolveState.EVERYTHING_RESOLVED) return property
 
-        val canHaveDeepImplicitTypeRefs = property.backingField != null
-        if (returnTypeRefBeforeResolve !is FirImplicitTypeRef && implicitTypeOnly && !canHaveDeepImplicitTypeRefs) {
+        val cannotHaveDeepImplicitTypeRefs = property.backingField?.returnTypeRef !is FirImplicitTypeRef
+        if (implicitTypeOnly && returnTypeRefBeforeResolve !is FirImplicitTypeRef && cannotHaveDeepImplicitTypeRefs) {
             return property
         }
 

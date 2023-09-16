@@ -150,35 +150,31 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val one: R|kotlin/Int|by R|/Prp.Prp|()
-        @R|kotlin/Deprecated|[Types](message = String(reason)) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
-            ^ D|/one|.R|/Prp.getValue<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Prp.getValue>#|(Null(null), ::R|/one|)
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val one: R|kotlin/Int|by Prp#()
+        @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ D|/one|.getValue#(Null(null), ::R|/one|)
         }
-    public final [ResolvedTo(STATUS)] class Prp : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Prp] constructor(): R|Prp| {
+    public? final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun getValue(): R|kotlin/Int| {
-            ^getValue Int(1)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> { LAZY_BLOCK }
 
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val one: R|kotlin/Int|by R|/Prp.Prp|()
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val one: R|kotlin/Int|by Prp#()
         @R|kotlin/Deprecated|[Types](message = String(reason)) public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Int| {
-            ^ D|/one|.R|/Prp.getValue<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Prp.getValue>#|(Null(null), ::R|/one|)
+            ^ D|/one|.getValue#(Null(null), ::R|/one|)
         }
-    public final [ResolvedTo(STATUS)] class Prp : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Prp] constructor(): R|Prp| {
+    public? final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun getValue(): R|kotlin/Int| {
-            ^getValue Int(1)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> { LAZY_BLOCK }
 
     }
 
