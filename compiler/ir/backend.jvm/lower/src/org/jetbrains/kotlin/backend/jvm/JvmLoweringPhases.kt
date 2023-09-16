@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.ir.constantValue
 import org.jetbrains.kotlin.backend.jvm.ir.shouldContainSuspendMarkers
 import org.jetbrains.kotlin.backend.jvm.lower.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
@@ -58,9 +56,8 @@ private fun makeCheckParentsPhase(): SameTypeNamedCompilerPhase<CommonBackendCon
     )
 }
 
-internal fun JvmBackendContext.irInlinerIsEnabled(): Boolean {
-    return configuration.getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER)
-}
+internal fun JvmBackendContext.irInlinerIsEnabled(): Boolean =
+    config.enableIrInliner
 
 private class PatchDeclarationParents : FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -101,10 +98,8 @@ private val arrayConstructorPhase = makeIrFilePhase(
 
 internal val expectDeclarationsRemovingPhase = makeIrModulePhase(
     { context: JvmBackendContext ->
-        if (context.state.configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
-            FileLoweringPass.Empty
-        else
-            ExpectDeclarationRemover(context)
+        if (context.config.useFir) FileLoweringPass.Empty
+        else ExpectDeclarationRemover(context)
     },
     name = "ExpectDeclarationsRemoving",
     description = "Remove expect declaration from module fragment"

@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -715,9 +714,7 @@ public abstract class AnnotationCodegen {
     }
 
     private void generateTypeAnnotations(@NotNull Annotated annotated, @Nullable KotlinType type) {
-        if (isAccessor(annotated) ||
-            type == null ||
-            !state.getConfiguration().getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)) {
+        if (isAccessor(annotated) || type == null || !state.getConfig().getEmitJvmTypeAnnotations()) {
             return;
         }
 

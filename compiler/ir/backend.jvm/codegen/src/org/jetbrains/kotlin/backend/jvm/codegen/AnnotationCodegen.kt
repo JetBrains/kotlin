@@ -21,13 +21,15 @@ import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
-import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.backend.jvm.ir.isOptionalAnnotationClass
+import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.TypeAnnotationCollector
 import org.jetbrains.kotlin.codegen.TypePathInfo
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -311,29 +313,29 @@ abstract class AnnotationCodegen(
                     }
                 }.genAnnotations(typeParameter, null, null)
 
-                if (context.state.configuration.getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)) {
-                    var superInterfaceIndex = 1
-                    typeParameter.superTypes.forEach { superType ->
-                        val isClassOrTypeParameter = !superType.isInterface() && !superType.isAnnotation()
-                        val superIndex = if (isClassOrTypeParameter) 0 else superInterfaceIndex++
-                        object : AnnotationCodegen(classCodegen, true) {
-                            override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
-                                throw RuntimeException(
-                                    "Error during generation: only type annotations should be presented on type parameters bounds: " +
-                                            "${ir2string(typeParameter)} in ${ir2string(typeParameter)}"
-                                )
-                            }
+                if (!context.config.emitJvmTypeAnnotations) return
 
-                            override fun visitTypeAnnotation(descr: String, path: TypePath?, visible: Boolean): AnnotationVisitor {
-                                return visitor(
-                                    TypeReference.newTypeParameterBoundReference(boundType, index, superIndex).value,
-                                    path,
-                                    descr,
-                                    visible
-                                )
-                            }
-                        }.generateTypeAnnotations(typeParameterContainer, superType)
-                    }
+                var superInterfaceIndex = 1
+                typeParameter.superTypes.forEach { superType ->
+                    val isClassOrTypeParameter = !superType.isInterface() && !superType.isAnnotation()
+                    val superIndex = if (isClassOrTypeParameter) 0 else superInterfaceIndex++
+                    object : AnnotationCodegen(classCodegen, true) {
+                        override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
+                            throw RuntimeException(
+                                "Error during generation: only type annotations should be presented on type parameters bounds: " +
+                                        "${ir2string(typeParameter)} in ${ir2string(typeParameter)}"
+                            )
+                        }
+
+                        override fun visitTypeAnnotation(descr: String, path: TypePath?, visible: Boolean): AnnotationVisitor {
+                            return visitor(
+                                TypeReference.newTypeParameterBoundReference(boundType, index, superIndex).value,
+                                path,
+                                descr,
+                                visible
+                            )
+                        }
+                    }.generateTypeAnnotations(typeParameterContainer, superType)
                 }
             }
         }
@@ -398,7 +400,7 @@ abstract class AnnotationCodegen(
         type: IrType?
     ) {
         if ((annotated as? IrDeclaration)?.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
-            type == null || !context.state.configuration.getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)
+            type == null || !context.config.emitJvmTypeAnnotations
         ) {
             return
         }

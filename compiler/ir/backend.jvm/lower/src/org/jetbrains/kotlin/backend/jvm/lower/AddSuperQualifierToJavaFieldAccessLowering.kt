@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -24,11 +23,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 
 internal val addSuperQualifierToJavaFieldAccessPhase = makeIrFilePhase(
     { context ->
-        if (context.state.configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            AddSuperQualifierToJavaFieldAccessLowering
-        } else {
-            FileLoweringPass.Empty
-        }
+        if (context.config.useFir) AddSuperQualifierToJavaFieldAccessLowering
+        else FileLoweringPass.Empty
     },
     name = "AddSuperQualifierToJavaFieldAccess",
     description = "Make `\$delegate` methods for optimized delegated properties static",

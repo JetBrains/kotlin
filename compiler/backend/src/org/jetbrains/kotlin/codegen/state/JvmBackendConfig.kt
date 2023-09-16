@@ -102,4 +102,12 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
     val oldInnerClassesLogic: Boolean = configuration.getBoolean(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC)
 
     val supportMultiFieldValueClasses: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)
+
+    val enableDebugMode: Boolean = configuration.getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
+
+    val enableIrInliner: Boolean = configuration.getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER)
+
+    val useFir: Boolean = configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
+
+    val emitJvmTypeAnnotations: Boolean = configuration.getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)
 }

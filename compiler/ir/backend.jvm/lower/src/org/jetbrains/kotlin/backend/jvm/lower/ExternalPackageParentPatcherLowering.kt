@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmFileFacadeClass
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
@@ -20,19 +18,14 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 
-internal val externalPackageParentPatcherPhase = makeIrModulePhase(
-    ::createLowering,
+internal val externalPackageParentPatcherPhase = makeIrModulePhase<JvmBackendContext>(
+    { context ->
+        if (context.config.useFir) ExternalPackageParentPatcherLowering(context)
+        else FileLoweringPass.Empty
+    },
     name = "ExternalPackageParentPatcherLowering",
     description = "Replace parent from package fragment to FileKt class for top-level callables (K2 only)"
 )
-
-private fun createLowering(context: CommonBackendContext): FileLoweringPass {
-    require(context is JvmBackendContext)
-    return when (context.configuration[CommonConfigurationKeys.USE_FIR]) {
-        true -> ExternalPackageParentPatcherLowering(context)
-        false, null -> FileLoweringPass.Empty
-    }
-}
 
 class ExternalPackageParentPatcherLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
