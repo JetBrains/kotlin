@@ -180,7 +180,6 @@ class CompilerArgumentsContentProspectorTest {
             K2JVMCompilerArguments::javaModulePath,
             K2JVMCompilerArguments::assertionsMode,
             K2JVMCompilerArguments::buildFile,
-            K2JVMCompilerArguments::declarationsOutputPath,
             K2JVMCompilerArguments::javaPackagePrefix,
             K2JVMCompilerArguments::supportCompatqualCheckerFrameworkAnnotations,
             K2JVMCompilerArguments::jspecifyAnnotations,

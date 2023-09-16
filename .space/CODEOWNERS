@@ -129,7 +129,6 @@
 /compiler/testData/codegen/composeLikeBytecodeText/ "Kotlin JVM"
 /compiler/testData/codegen/customScript/ "Kotlin Compiler Core"
 /compiler/testData/codegen/defaultArguments/reflection/ "Kotlin JVM"
-/compiler/testData/codegen/dumpDeclarations/ "Kotlin JVM"
 /compiler/testData/codegen/helpers/ "Kotlin JVM"
 /compiler/testData/codegen/innerClassInfo/ "Kotlin JVM"
 /compiler/testData/codegen/java6/ "Kotlin JVM"

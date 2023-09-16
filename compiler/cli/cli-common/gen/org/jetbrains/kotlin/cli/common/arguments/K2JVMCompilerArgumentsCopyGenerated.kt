@@ -19,7 +19,6 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.buildFile = from.buildFile
     to.classpath = from.classpath
     to.compileJava = from.compileJava
-    to.declarationsOutputPath = from.declarationsOutputPath
     to.defaultScriptExtension = from.defaultScriptExtension
     to.destination = from.destination
     to.disableStandardScript = from.disableStandardScript

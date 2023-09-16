@@ -314,17 +314,6 @@ This can be used in the event of problems with the new implementation."""
         }
 
     @Argument(
-        value = "-Xdump-declarations-to",
-        valueDescription = "<path>",
-        description = "Path to the JSON file where Java-to-Kotlin declaration mappings should be dumped."
-    )
-    var declarationsOutputPath: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xsuppress-missing-builtins-error",
         description = """Suppress the "cannot access built-in declaration" error (useful with '-no-stdlib')."""
     )
