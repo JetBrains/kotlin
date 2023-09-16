@@ -629,6 +629,17 @@ class ControlFlowGraphBuilder {
         return exitGraph()
     }
 
+    fun enterSnippet(snippet: FirSnippet): SnippetEnterNode {
+        // TODO: is it really function?
+        return enterGraph(snippet, "SNIPPET_GRAPH", ControlFlowGraph.Kind.Function) {
+            createSnippetEnterNode(it) to createSnippetExitNode(it)
+        }
+    }
+
+    fun exitSnippet(): Pair<ScriptExitNode, ControlFlowGraph> {
+        return exitGraph()
+    }
+
     fun enterCodeFragment(codeFragment: FirCodeFragment): CodeFragmentEnterNode {
         return enterGraph(codeFragment, "CODE_FRAGMENT_GRAPH", ControlFlowGraph.Kind.Function) {
             createCodeFragmentEnterNode(it) to createCodeFragmentExitNode(it)

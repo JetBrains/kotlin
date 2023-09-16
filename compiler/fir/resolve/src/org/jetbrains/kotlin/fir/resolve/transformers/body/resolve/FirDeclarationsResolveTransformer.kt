@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.snippetScopesConfigurators
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -616,6 +618,13 @@ open class FirDeclarationsResolveTransformer(
             }
         }
 
+    fun withScriptCodeFragment(scriptCodeFragment: FirScriptCodeFragment, action: () -> FirScriptCodeFragment): FirScriptCodeFragment {
+        return when (scriptCodeFragment) {
+            is FirScript -> withScript(scriptCodeFragment) { action() as FirScript }
+            is FirSnippet -> withSnippet(scriptCodeFragment) { action() as FirSnippet }
+        }
+    }
+
     fun withScript(script: FirScript, action: () -> FirScript): FirScript {
         dataFlowAnalyzer.enterScript(script)
         val result = context.withScript(script, components) {
@@ -625,8 +634,29 @@ open class FirDeclarationsResolveTransformer(
         return result
     }
 
+    fun withSnippet(snippet: FirSnippet, action: () -> FirSnippet): FirSnippet {
+        dataFlowAnalyzer.enterSnippet(snippet)
+        val result = context.withSnippet(snippet, components) {
+            action()
+        }
+
+        session.extensionService.snippetScopesConfigurators.forEach {
+            it.registerVariables(result.statements.filterIsInstance(FirVariable::class.java).map { it.symbol })
+        }
+
+        // Pass
+
+
+        dataFlowAnalyzer.exitSnippet() // TODO: FirSnippet should be a FirControlFlowGraphOwner, KT-???
+        return result
+    }
+
     override fun transformScript(script: FirScript, data: ResolutionMode): FirScript = withScript(script) {
         transformDeclarationContent(script, data) as FirScript
+    }
+
+    override fun transformSnippet(snippet: FirSnippet, data: ResolutionMode): FirSnippet = withSnippet(snippet) {
+        transformDeclarationContent(snippet, data) as FirSnippet
     }
 
     override fun transformCodeFragment(codeFragment: FirCodeFragment, data: ResolutionMode): FirCodeFragment {

@@ -250,6 +250,18 @@ abstract class FirDataFlowAnalyzer(
         return graph
     }
 
+    // ----------------------------------- Snippets ------------------------------------------
+
+    fun enterSnippet(snippet: FirSnippet) {
+        graphBuilder.enterSnippet(snippet).mergeIncomingFlow()
+    }
+
+    fun exitSnippet(): ControlFlowGraph {
+        val (node, graph) = graphBuilder.exitSnippet()
+        node.mergeIncomingFlow()
+        return graph
+    }
+
     // ----------------------------------- Code Fragment ------------------------------------------
 
     fun enterCodeFragment(codeFragment: FirCodeFragment) {

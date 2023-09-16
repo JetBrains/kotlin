@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.declarations.FirSnippet
 
 /**
  * This interface describes how to process nested declarations.
@@ -31,6 +32,9 @@ internal interface LLFirResolveTargetVisitor {
      * Access to elements inside [FirScript] will be performed inside [action].
      */
     fun withScript(firScript: FirScript, action: () -> Unit): Unit = action()
+
+
+    fun withSnippet(firSnippet: FirSnippet, action: () -> Unit): Unit = action()
 
     /**
      * This method will be performed on some target element depends on [LLFirResolveTarget] implementation.

@@ -53,6 +53,10 @@ internal abstract class LLFirAbstractBodyTargetResolver(
         transformer.context.withScript(firScript, transformer.components, action)
     }
 
+    override fun withSnippet(firSnippet: FirSnippet, action: () -> Unit) {
+        transformer.context.withSnippet(firSnippet, transformer.components, action)
+    }
+
     override fun withFile(firFile: FirFile, action: () -> Unit) {
         transformer.context.withFile(firFile, transformer.components, action)
     }
@@ -78,9 +82,12 @@ internal abstract class LLFirAbstractBodyTargetResolver(
         target.transformSingle(transformer, ResolutionMode.ContextIndependent)
     }
 
-    protected fun resolveScript(script: FirScript) {
-        transformer.declarationsTransformer?.withScript(script) {
-            script.parameters.forEach { it.transformSingle(transformer, ResolutionMode.ContextIndependent) }
+
+    protected fun resolveScriptCodeFragment(script: FirScriptCodeFragment) {
+        transformer.declarationsTransformer?.withScriptCodeFragment(script) {
+            if (script is FirScript) {
+                script.parameters.forEach { it.transformSingle(transformer, ResolutionMode.ContextIndependent) }
+            }
             script.transformStatements(
                 transformer = object : FirTransformer<Any?>() {
                     override fun <E : FirElement> transformElement(element: E, data: Any?): E {

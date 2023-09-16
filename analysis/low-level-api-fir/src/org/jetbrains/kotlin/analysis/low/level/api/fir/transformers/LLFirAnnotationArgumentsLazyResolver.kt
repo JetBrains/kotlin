@@ -73,6 +73,14 @@ private class LLFirAnnotationArgumentsTargetResolver(
         super.withScript(firScript, actionWithCollector)
     }
 
+    override fun withSnippet(firSnippet: FirSnippet, action: () -> Unit) {
+        val actionWithCollector = actionWithContextCollector(action) { collector, context ->
+            collector.addDeclarationContext(firSnippet, context)
+        }
+
+        super.withSnippet(firSnippet, actionWithCollector)
+    }
+
     override fun withFile(firFile: FirFile, action: () -> Unit) {
         val actionWithCollector = actionWithContextCollector(action) { collector, context ->
             collector.addFileContext(firFile, context.towerDataContext)

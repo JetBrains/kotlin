@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.tree.generator.FieldSets.initializer
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.modality
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.name
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.receivers
+import org.jetbrains.kotlin.fir.tree.generator.FieldSets.replName
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.returnTypeRef
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.scopeProvider
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.smartcastStability
@@ -485,13 +486,21 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +symbol("FirFileSymbol")
         }
 
+        scriptCodeFragment.configure {
+            +fieldList(statement, withReplace = true, useMutableOrEmpty = true).withTransform()
+            +field("resultPropertyName", nameType, nullable = true)
+            +fieldList(contextReceiver, useMutableOrEmpty = true)
+        }
+
         script.configure {
             +name
-            +fieldList(statement, withReplace = true, useMutableOrEmpty = true).withTransform()
             +symbol("FirScriptSymbol")
             +fieldList("parameters", variable, withReplace = false)
-            +fieldList(contextReceiver, useMutableOrEmpty = true)
-            +field("resultPropertyName", nameType, nullable = true)
+        }
+
+        snippet.configure {
+            +symbol("FirSnippetSymbol")
+            +replName
         }
 
         codeFragment.configure {

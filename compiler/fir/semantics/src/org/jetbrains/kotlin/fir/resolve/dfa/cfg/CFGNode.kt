@@ -365,6 +365,20 @@ class ScriptExitNode(owner: ControlFlowGraph, override val fir: FirScript, level
     }
 }
 
+// ----------------------------------- Snippets ----------------------------------------
+
+class SnippetEnterNode(owner: ControlFlowGraph, override val fir: FirSnippet, level: Int) : CFGNode<FirSnippet>(owner, level), GraphEnterNodeMarker {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitSnippetEnterNode(this, data)
+    }
+}
+
+class SnippetExitNode(owner: ControlFlowGraph, override val fir: FirSnippet, level: Int) : CFGNode<FirSnippet>(owner, level), GraphExitNodeMarker {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitSnippetExitNode(this, data)
+    }
+}
+
 // ----------------------------------- Code Fragments ------------------------------------------
 
 class CodeFragmentEnterNode(owner: ControlFlowGraph, override val fir: FirCodeFragment, level: Int) : CFGNode<FirCodeFragment>(owner, level), GraphEnterNodeMarker {

@@ -254,7 +254,7 @@ private class LLFirBodyTargetResolver(
 
     override fun rawResolve(target: FirElementWithResolveState) {
         when (target) {
-            is FirScript -> target.takeUnless(FirScript::isCertainlyResolved)?.let(::resolveScript)
+            is FirScriptCodeFragment -> target.takeUnless(FirScriptCodeFragment::isCertainlyResolved)?.let(::resolveScriptCodeFragment)
             else -> super.rawResolve(target)
         }
     }
@@ -414,11 +414,11 @@ private fun StateKeeperScope<FirFunction, FirDesignationWithFile>.preserveContra
     }
 }
 
-private fun FirScript.findResultProperty(): FirProperty? = statements.findIsInstanceAnd<FirProperty> {
+private fun FirScriptCodeFragment.findResultProperty(): FirProperty? = statements.findIsInstanceAnd<FirProperty> {
     it.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty
 }
 
-private val FirScript.isCertainlyResolved: Boolean
+private val FirScriptCodeFragment.isCertainlyResolved: Boolean
     get() {
         val dependentProperty = findResultProperty() ?: return false
 

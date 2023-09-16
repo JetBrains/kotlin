@@ -87,7 +87,7 @@ internal class KtFirScopeProvider(
         val useSiteSession = analysisSession.useSiteSession
         if (classSymbol is KtFirScriptSymbol) {
             return KtFirDelegatingNamesAwareScope(
-                FirScriptDeclarationsScope(useSiteSession, classSymbol.firSymbol.fir),
+                FirScriptCodeFragmentDeclarationsScope(useSiteSession, classSymbol.firSymbol.fir),
                 builder,
             )
         }
@@ -242,7 +242,7 @@ internal class KtFirScopeProvider(
         is FirDefaultSimpleImportingScope -> KtScopeKind.DefaultSimpleImportingScope(indexInTower)
         is FirDefaultStarImportingScope -> KtScopeKind.DefaultStarImportingScope(indexInTower)
 
-        is FirScriptDeclarationsScope -> KtScopeKind.ScriptMemberScope(indexInTower)
+        is FirScriptCodeFragmentDeclarationsScope -> KtScopeKind.ScriptMemberScope(indexInTower)
 
         else -> unexpectedElementError("scope", firScope)
     }

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.scopes.computeImportingScopes
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirSnippetDeclarationsScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirWhenSubjectImportingScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -571,6 +572,37 @@ class BodyResolveContext(
 
         return withTowerDataContexts(newContext) {
             withContainer(codeFragment, f)
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    fun <T> withSnippet(snippet: FirSnippet, holder: SessionHolder, f: () -> T): T {
+        val towerElementsForScript = holder.collectTowerDataElementsForSnippet(snippet)
+
+        val statics = towerDataContext
+            .addNonLocalScopeIfNotNull(towerElementsForScript.staticScope)
+            .addNonLocalScopeIfNotNull(FirSnippetDeclarationsScope(holder.session))
+
+
+        val forMembersResolution =
+            statics
+                .addContextReceiverGroup(towerElementsForScript.implicitReceivers)
+
+        val newContexts = FirRegularTowerDataContexts(
+            regular = forMembersResolution,
+            forClassHeaderAnnotations = towerDataContext,
+            forNestedClasses = forMembersResolution,
+            forCompanionObject = statics,
+            forConstructorHeaders = null,
+            forEnumEntries = null,
+            primaryConstructorPureParametersScope = null,
+            primaryConstructorAllParametersScope = null
+        )
+
+        return withTowerDataContexts(newContexts) {
+            withContainer(snippet) {
+                f()
+            }
         }
     }
 

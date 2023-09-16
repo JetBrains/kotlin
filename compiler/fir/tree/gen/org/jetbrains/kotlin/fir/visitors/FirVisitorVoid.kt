@@ -49,7 +49,9 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirScriptCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.declarations.FirSnippet
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -342,8 +344,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(file)
     }
 
+    open fun visitScriptCodeFragment(scriptCodeFragment: FirScriptCodeFragment) {
+        visitElement(scriptCodeFragment)
+    }
+
     open fun visitScript(script: FirScript) {
         visitElement(script)
+    }
+
+    open fun visitSnippet(snippet: FirSnippet) {
+        visitElement(snippet)
     }
 
     open fun visitCodeFragment(codeFragment: FirCodeFragment) {
@@ -966,8 +976,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitFile(file)
     }
 
+    final override fun visitScriptCodeFragment(scriptCodeFragment: FirScriptCodeFragment, data: Nothing?) {
+        visitScriptCodeFragment(scriptCodeFragment)
+    }
+
     final override fun visitScript(script: FirScript, data: Nothing?) {
         visitScript(script)
+    }
+
+    final override fun visitSnippet(snippet: FirSnippet, data: Nothing?) {
+        visitSnippet(snippet)
     }
 
     final override fun visitCodeFragment(codeFragment: FirCodeFragment, data: Nothing?) {

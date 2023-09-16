@@ -16,7 +16,7 @@ import kotlin.reflect.KClass
 
 abstract class FirScriptConfiguratorExtension(
     session: FirSession,
-) : FirExtension(session) {
+) : FirScriptCodeFragmentExtension<FirScriptBuilder>, FirExtension(session) {
     companion object {
         val NAME = FirExtensionPointName("ScriptConfigurator")
     }
@@ -27,9 +27,6 @@ abstract class FirScriptConfiguratorExtension(
     final override val extensionType: KClass<out FirExtension> = FirScriptConfiguratorExtension::class
 
     fun interface Factory : FirExtension.Factory<FirScriptConfiguratorExtension>
-
-    abstract fun FirScriptBuilder.configureContainingFile(fileBuilder: FirFileBuilder)
-    abstract fun FirScriptBuilder.configure(sourceFile: KtSourceFile)
 }
 
 val FirExtensionService.scriptConfigurators: List<FirScriptConfiguratorExtension> by FirExtensionService.registeredExtensions()

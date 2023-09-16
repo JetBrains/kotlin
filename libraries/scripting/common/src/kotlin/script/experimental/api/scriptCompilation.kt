@@ -177,6 +177,9 @@ val ScriptCompilationConfigurationKeys.hostConfiguration by PropertiesCollection
  */
 val ScriptCompilationConfigurationKeys.isStandalone by PropertiesCollection.key<Boolean>(true)
 
+
+val ScriptCompilationConfigurationKeys.isReplSnippet by PropertiesCollection.key<Boolean>(false)
+
 /**
  * The sub-builder DSL for configuring refinement callbacks
  */

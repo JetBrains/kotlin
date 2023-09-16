@@ -14,12 +14,11 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolveState
-import org.jetbrains.kotlin.fir.declarations.FirScript
-import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.FirSnippet
 import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSnippetSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
@@ -31,7 +30,7 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal class FirScriptImpl(
+internal class FirSnippetImpl(
     override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
@@ -41,10 +40,9 @@ internal class FirScriptImpl(
     override var statements: MutableOrEmptyList<FirStatement>,
     override val resultPropertyName: Name?,
     override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
-    override val name: Name,
-    override val symbol: FirScriptSymbol,
-    override val parameters: MutableList<FirVariable>,
-) : FirScript() {
+    override val symbol: FirSnippetSymbol,
+    override val replName: Name,
+) : FirSnippet() {
     init {
         symbol.bind(this)
         @OptIn(ResolveStateAccess::class)
@@ -55,23 +53,21 @@ internal class FirScriptImpl(
         annotations.forEach { it.accept(visitor, data) }
         statements.forEach { it.accept(visitor, data) }
         contextReceivers.forEach { it.accept(visitor, data) }
-        parameters.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirScriptImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSnippetImpl {
         transformAnnotations(transformer, data)
         transformStatements(transformer, data)
         contextReceivers.transformInplace(transformer, data)
-        parameters.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirScriptImpl {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSnippetImpl {
         annotations.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirScriptImpl {
+    override fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirSnippetImpl {
         statements.transformInplace(transformer, data)
         return this
     }

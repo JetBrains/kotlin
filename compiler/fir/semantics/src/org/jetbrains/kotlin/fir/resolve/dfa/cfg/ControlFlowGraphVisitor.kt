@@ -100,6 +100,16 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    // ----------------------------------- Snippets ------------------------------------------
+
+    open fun visitSnippetEnterNode(node: SnippetEnterNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitSnippetExitNode(node: SnippetExitNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     // ----------------------------------- Code Fragments ------------------------------------------
 
     open fun visitCodeFragmentEnterNode(node: CodeFragmentEnterNode, data: D): R {

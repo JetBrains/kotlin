@@ -18,15 +18,14 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolveState
-import org.jetbrains.kotlin.fir.declarations.FirScript
-import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.FirSnippet
 import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.declarations.builder.FirScriptCodeFragmentBuilder
-import org.jetbrains.kotlin.fir.declarations.impl.FirScriptImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirSnippetImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSnippetSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
@@ -36,7 +35,7 @@ import org.jetbrains.kotlin.name.Name
  */
 
 @FirBuilderDsl
-class FirScriptBuilder : FirScriptCodeFragmentBuilder, FirAnnotationContainerBuilder {
+class FirSnippetBuilder : FirScriptCodeFragmentBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
@@ -46,12 +45,11 @@ class FirScriptBuilder : FirScriptCodeFragmentBuilder, FirAnnotationContainerBui
     override val statements: MutableList<FirStatement> = mutableListOf()
     override var resultPropertyName: Name? = null
     override val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
-    lateinit var name: Name
-    lateinit var symbol: FirScriptSymbol
-    val parameters: MutableList<FirVariable> = mutableListOf()
+    lateinit var symbol: FirSnippetSymbol
+    lateinit var replName: Name
 
-    override fun build(): FirScript {
-        return FirScriptImpl(
+    override fun build(): FirSnippet {
+        return FirSnippetImpl(
             source,
             resolvePhase,
             annotations.toMutableOrEmpty(),
@@ -61,18 +59,17 @@ class FirScriptBuilder : FirScriptCodeFragmentBuilder, FirAnnotationContainerBui
             statements.toMutableOrEmpty(),
             resultPropertyName,
             contextReceivers.toMutableOrEmpty(),
-            name,
             symbol,
-            parameters,
+            replName,
         )
     }
 
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildScript(init: FirScriptBuilder.() -> Unit): FirScript {
+inline fun buildSnippet(init: FirSnippetBuilder.() -> Unit): FirSnippet {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
-    return FirScriptBuilder().apply(init).build()
+    return FirSnippetBuilder().apply(init).build()
 }

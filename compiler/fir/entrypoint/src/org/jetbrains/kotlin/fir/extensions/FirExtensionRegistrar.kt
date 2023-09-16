@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.backend.Fir2IrScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
+import org.jetbrains.kotlin.fir.builder.FirSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
 import kotlin.reflect.KClass
 
@@ -96,6 +97,16 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         @JvmName("plusScriptConfiguratorExtension")
         operator fun (FirScriptConfiguratorExtension.Factory).unaryPlus() {
             registerExtension(FirScriptConfiguratorExtension::class, this)
+        }
+
+        @JvmName("plusSnippetConfiguratorExtension")
+        operator fun (FirSnippetConfiguratorExtension.Factory).unaryPlus() {
+            registerExtension(FirSnippetConfiguratorExtension::class, this)
+        }
+
+        @JvmName("plusSnippetScopesExtension")
+        operator fun (FirSnippetScopesExtension.Factory).unaryPlus() {
+            registerExtension(FirSnippetScopesExtension::class, this)
         }
 
         @JvmName("plusFir2IrScriptConfiguratorExtension")

@@ -89,6 +89,9 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     messageCollector
                 )
 
+                assert(sourceFiles.size == 1)
+                assert(sourceDependencies.size == 0)
+
                 val firstFailure = sourceDependencies.firstOrNull { it.sourceDependencies is ResultWithDiagnostics.Failure }
                     ?.let { it.sourceDependencies as ResultWithDiagnostics.Failure }
 

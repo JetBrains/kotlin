@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeParameter
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeParameterRef
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeProjection
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeRef
-import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.valueParameter
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 
@@ -87,4 +86,6 @@ object FieldSets {
     val scopeProvider by lazy { field("scopeProvider", firScopeProviderType) }
 
     val smartcastStability by lazy { field(smartcastStabilityType) }
+
+    val replName by lazy { field("replName", nameType) }
 }

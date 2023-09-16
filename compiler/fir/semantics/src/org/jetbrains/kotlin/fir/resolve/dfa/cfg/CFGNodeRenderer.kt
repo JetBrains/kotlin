@@ -110,6 +110,9 @@ fun CFGNode<*>.render(): String =
                 is ScriptEnterNode -> "Enter class ${fir.name}"
                 is ScriptExitNode -> "Exit class ${fir.name}"
 
+                is SnippetEnterNode -> "Enter class ${fir.name}"
+                is SnippetExitNode -> "Exit class ${fir.name}"
+
                 is CodeFragmentEnterNode -> "Enter code fragment"
                 is CodeFragmentExitNode -> "Exit code fragment"
 

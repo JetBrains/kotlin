@@ -49,7 +49,9 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirScriptCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.declarations.FirSnippet
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -343,8 +345,16 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(file, data)
     }
 
+    open fun transformScriptCodeFragment(scriptCodeFragment: FirScriptCodeFragment, data: D): FirScriptCodeFragment {
+        return transformElement(scriptCodeFragment, data)
+    }
+
     open fun transformScript(script: FirScript, data: D): FirScript {
         return transformElement(script, data)
+    }
+
+    open fun transformSnippet(snippet: FirSnippet, data: D): FirSnippet {
+        return transformElement(snippet, data)
     }
 
     open fun transformCodeFragment(codeFragment: FirCodeFragment, data: D): FirCodeFragment {
@@ -967,8 +977,16 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformFile(file, data)
     }
 
+    final override fun visitScriptCodeFragment(scriptCodeFragment: FirScriptCodeFragment, data: D): FirScriptCodeFragment {
+        return transformScriptCodeFragment(scriptCodeFragment, data)
+    }
+
     final override fun visitScript(script: FirScript, data: D): FirScript {
         return transformScript(script, data)
+    }
+
+    final override fun visitSnippet(snippet: FirSnippet, data: D): FirSnippet {
+        return transformSnippet(snippet, data)
     }
 
     final override fun visitCodeFragment(codeFragment: FirCodeFragment, data: D): FirCodeFragment {

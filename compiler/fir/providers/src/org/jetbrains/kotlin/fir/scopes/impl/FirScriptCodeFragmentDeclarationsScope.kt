@@ -15,14 +15,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-class FirScriptDeclarationsScope(
+class FirScriptCodeFragmentDeclarationsScope(
     val useSiteSession: FirSession,
-    val script: FirScript,
+    private val scriptCodeFragment: FirScriptCodeFragment,
 ) : FirContainingNamesAwareScope() {
 
     private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> = run {
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol<*>>>()
-        loop@ for (statement in script.statements) {
+        loop@ for (statement in scriptCodeFragment.statements) {
             if (statement is FirCallableDeclaration) {
                 val name = when (statement) {
                     is FirVariable -> if (statement.isSynthetic) continue@loop else statement.name
@@ -38,7 +38,7 @@ class FirScriptDeclarationsScope(
 
     private val classIndex: Map<Name, FirRegularClassSymbol> = run {
         val result = mutableMapOf<Name, FirRegularClassSymbol>()
-        for (declaration in script.statements) {
+        for (declaration in scriptCodeFragment.statements) {
             if (declaration is FirRegularClass) {
                 result[declaration.name] = declaration.symbol
             }

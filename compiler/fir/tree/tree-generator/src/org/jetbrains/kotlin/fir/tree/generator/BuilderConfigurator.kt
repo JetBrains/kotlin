@@ -380,8 +380,16 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             fields from resolvedQualifier
         }
 
+        val scriptCodeFragmentBuilder by builder {
+            fields from scriptCodeFragment without "symbol"
+        }
+
         builder(script) {
-            withCopy()
+            parents += scriptCodeFragmentBuilder
+        }
+
+        builder(snippet) {
+            parents += scriptCodeFragmentBuilder
         }
 
         builder(codeFragment) {

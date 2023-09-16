@@ -49,7 +49,9 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirScriptCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.declarations.FirSnippet
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -256,7 +258,11 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitFile(file: FirFile, data: D): R  = visitElement(file, data)
 
+    open fun visitScriptCodeFragment(scriptCodeFragment: FirScriptCodeFragment, data: D): R  = visitElement(scriptCodeFragment, data)
+
     open fun visitScript(script: FirScript, data: D): R  = visitElement(script, data)
+
+    open fun visitSnippet(snippet: FirSnippet, data: D): R  = visitElement(snippet, data)
 
     open fun visitCodeFragment(codeFragment: FirCodeFragment, data: D): R  = visitElement(codeFragment, data)
 

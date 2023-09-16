@@ -1132,6 +1132,41 @@ open class PsiRawFirBuilder(
                 BodyBuildingMode.NORMAL -> file.packageFqNameByTree
                 BodyBuildingMode.LAZY_BODIES -> file.packageFqName
             }
+
+            val configureFileDeclarations: FirFileBuilder.() -> Unit = {
+                if (file is KtCodeFragment) {
+                    declarations += convertCodeFragment(file)
+                } else {
+                    for (declaration in file.declarations) {
+                        declarations += when (declaration) {
+                            is KtScript -> {
+                                requireWithAttachment(
+                                    file.declarations.size == 1,
+                                    message = { "Expect the script to be the only declaration in the file" },
+                                ) {
+                                    withEntry("fileName", file.name)
+                                }
+
+                                convertScript(declaration, declaration.declarations, name, sourceFile,this)
+                            }
+                            is KtDestructuringDeclaration -> listOf(buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement()))
+                            else -> listOf(declaration.convert())
+                        }
+                    }
+
+                    for (danglingModifierList in file.danglingModifierLists) {
+                        declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifierList)
+                    }
+                }
+            }
+
+            return convertFile(file, configureFileDeclarations)
+        }
+
+        private fun convertFile(
+            file: KtFile,
+            configureDeclarations: FirFileBuilder.() -> Unit
+        ): FirFile {
             return buildFile {
                 symbol = FirFileSymbol()
                 source = file.toFirSourceElement()
@@ -1169,87 +1204,89 @@ open class PsiRawFirBuilder(
                     }
                 }
 
-                if (file is KtCodeFragment) {
-                    declarations += convertCodeFragment(file)
-                } else {
-                    for (declaration in file.declarations) {
-                        declarations += when (declaration) {
-                            is KtScript -> {
-                                requireWithAttachment(
-                                    file.declarations.size == 1,
-                                    message = { "Expect the script to be the only declaration in the file" },
-                                ) {
-                                    withEntry("fileName", file.name)
-                                }
-
-                                convertScript(declaration, name, sourceFile) {
-                                    for (configurator in baseSession.extensionService.scriptConfigurators) {
-                                        with(configurator) { configureContainingFile(this@buildFile) }
-                                    }
-                                }
-                            }
-                            is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
-                            else -> declaration.convert()
-                        }
-                    }
-
-                    for (danglingModifierList in file.danglingModifierLists) {
-                        declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifierList)
-                    }
-                }
+                configureDeclarations()
             }
         }
 
         private fun convertScript(
             script: KtScript,
+            scriptDeclarations: List<KtDeclaration>,
             fileName: String,
             sourceFile: KtSourceFile?,
-            setup: FirScriptBuilder.() -> Unit = {},
-        ): FirScript {
-            return buildScript {
-                source = script.toFirSourceElement()
-                moduleData = baseModuleData
-                origin = FirDeclarationOrigin.Source
-                name = Name.special("<script-$fileName>")
-                symbol = FirScriptSymbol(context.packageFqName.child(name))
-                for (declaration in script.declarations) {
-                    when (declaration) {
-                        is KtScriptInitializer -> {
-                            declaration.body?.let { statements.add(it.toFirStatement()) }
-                        }
-                        is KtDestructuringDeclaration -> {
-                            val destructuringContainerVar = generateTemporaryVariable(
-                                baseModuleData,
-                                declaration.toFirSourceElement(),
-                                "destruct",
-                                declaration.initializer.toFirExpression { ConeSyntaxDiagnostic("Initializer required for destructuring declaration") },
-                                extractAnnotationsTo = { extractAnnotationsTo(it) }
-                            ).apply {
-                                isDestructuringDeclarationContainerVariable = true
-                            }
-                            val destructuringBlock = generateDestructuringBlock(
-                                baseModuleData,
-                                declaration,
-                                destructuringContainerVar,
-                                tmpVariable = false,
-                                localEntries = false,
-                            ).apply {
-                                statements.forEach {
-                                    (it as FirProperty).destructuringDeclarationContainerVariable = destructuringContainerVar.symbol
-                                }
-                            }
-                            statements.add(destructuringContainerVar)
-                            statements.addAll(destructuringBlock.statements)
-                        }
-                        else -> {
-                            statements.add(declaration.toFirStatement())
-                        }
+            containingFile: FirFileBuilder?,
+        ): List<FirScriptCodeFragment> {
+            // TODO: we will need an extension on session
+            if (fileName.endsWith("jupyter.kts")) {
+                return scriptDeclarations.map { declaration ->
+                    buildSnippet {
+                        origin = FirDeclarationOrigin.Source
+                        symbol = FirSnippetSymbol()
+                        source = script.toFirSourceElement()
+                        configureScriptCodeFragment(listOf(declaration))
+                        configureWithConfigurators(sourceFile, containingFile, baseSession.extensionService.snippetConfigurators)
                     }
                 }
-                setup()
-                if (sourceFile != null) {
-                    for (configurator in baseSession.extensionService.scriptConfigurators) {
-                        with(configurator) { configure(sourceFile) }
+            } else {
+                return listOf(buildScript {
+                    origin = FirDeclarationOrigin.Source
+                    name = Name.special("<script-$fileName>")
+                    symbol = FirScriptSymbol(context.packageFqName.child(name))
+                    source = script.toFirSourceElement()
+                    configureScriptCodeFragment(scriptDeclarations)
+                    configureWithConfigurators(sourceFile, containingFile, baseSession.extensionService.scriptConfigurators)
+                })
+            }
+        }
+
+        private fun FirScriptCodeFragmentBuilder.configureWithConfigurators(sourceFile: KtSourceFile?,
+                                                                            containingFile: FirFileBuilder?,
+                                                                            configurators: List<FirScriptCodeFragmentExtension<*>>) {
+            if (sourceFile != null) {
+                for (configurator in configurators) {
+                    with(configurator) {
+                        this as FirScriptCodeFragmentExtension<FirScriptCodeFragmentBuilder>
+                        if (containingFile != null) {
+                            configureContainingFile(containingFile)
+                        }
+                        configure(sourceFile)
+                    }
+                }
+            }
+        }
+
+        private fun FirScriptCodeFragmentBuilder.configureScriptCodeFragment(declarations: List<KtDeclaration>) {
+            moduleData = baseModuleData
+            for (declaration in declarations) {
+                when (declaration) {
+                    is KtScriptInitializer -> {
+                        declaration.body?.let { statements.add(it.toFirStatement()) }
+                    }
+                    is KtDestructuringDeclaration -> {
+                        val destructuringContainerVar = generateTemporaryVariable(
+                            baseModuleData,
+                            declaration.toFirSourceElement(),
+                            "destruct",
+                            declaration.initializer.toFirExpression { ConeSyntaxDiagnostic("Initializer required for destructuring declaration") },
+                            extractAnnotationsTo = { extractAnnotationsTo(it) }
+                        ).apply {
+                            isDestructuringDeclarationContainerVariable = true
+                        }
+                        val destructuringBlock = generateDestructuringBlock(
+                            baseModuleData,
+                            declaration,
+                            destructuringContainerVar,
+                            tmpVariable = false,
+                            localEntries = false,
+                        ).apply {
+                            statements.forEach {
+                                (it as FirProperty).destructuringDeclarationContainerVariable = destructuringContainerVar.symbol
+                            }
+                        }
+                        statements.add(destructuringContainerVar)
+                        statements.addAll(destructuringBlock.statements)
+                    }
+                    else -> {
+                        statements.add(declaration.toFirStatement())
                     }
                 }
             }
@@ -1275,7 +1312,9 @@ open class PsiRawFirBuilder(
             val ktFile = script.containingKtFile
             val fileName = ktFile.name
             val fileForSource = (data as? FirScript)?.psi?.containingFile as? KtFile ?: ktFile
-            return convertScript(script, fileName, KtPsiSourceFile(fileForSource))
+
+            // TODO: What to do with it
+            return convertScript(script, script.declarations, fileName, KtPsiSourceFile(fileForSource), containingFile = null).single()
         }
 
         protected fun KtEnumEntry.toFirEnumEntry(

@@ -49,7 +49,9 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirScriptCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.declarations.FirSnippet
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -192,7 +194,11 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitRegularClass(regularClass: FirRegularClass)  = visitClass(regularClass)
 
-    override fun visitScript(script: FirScript)  = visitDeclaration(script)
+    override fun visitScriptCodeFragment(scriptCodeFragment: FirScriptCodeFragment)  = visitDeclaration(scriptCodeFragment)
+
+    override fun visitScript(script: FirScript)  = visitScriptCodeFragment(script)
+
+    override fun visitSnippet(snippet: FirSnippet)  = visitScriptCodeFragment(snippet)
 
     override fun visitCodeFragment(codeFragment: FirCodeFragment)  = visitDeclaration(codeFragment)
 

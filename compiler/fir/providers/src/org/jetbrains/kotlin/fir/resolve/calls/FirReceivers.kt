@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirSnippet
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSnippetSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -323,5 +325,21 @@ class ImplicitReceiverValueForScript(
 ) {
     override fun createSnapshot(): ContextReceiverValue<FirScriptSymbol> =
         ImplicitReceiverValueForScript(boundSymbol, type, labelName, useSiteSession, scopeSession, mutable = false, contextReceiverNumber)
+}
+
+
+class ImplicitReceiverValueForSnippet(
+    boundSymbol: FirSnippetSymbol,
+    type: ConeKotlinType,
+    labelName: Name?,
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    mutable: Boolean = true,
+    contextReceiverNumber: Int,
+) : ContextReceiverValue<FirSnippetSymbol>(
+    boundSymbol, type, labelName, useSiteSession, scopeSession, mutable, contextReceiverNumber
+) {
+    override fun createSnapshot(): ContextReceiverValue<FirSnippetSymbol> =
+        ImplicitReceiverValueForSnippet(boundSymbol, type, labelName, useSiteSession, scopeSession, mutable = false, contextReceiverNumber)
 }
 

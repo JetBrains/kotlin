@@ -54,10 +54,7 @@ class FirScriptConfiguratorExtensionImpl(
     @OptIn(SymbolInternals::class)
     override fun FirScriptBuilder.configureContainingFile(fileBuilder: FirFileBuilder) {
         val sourceFile = fileBuilder.sourceFile ?: return
-        val configuration = getOrLoadConfiguration(sourceFile) ?: run {
-            log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
-            return
-        }
+        val configuration = getOrLoadConfigurationReporting(sourceFile) ?: return
 
         configuration[ScriptCompilationConfiguration.defaultImports]?.forEach { defaultImport ->
             val trimmed = defaultImport.trim()
@@ -172,6 +169,13 @@ class FirScriptConfiguratorExtensionImpl(
     }
 
     private fun KtSourceFile.asString() = path ?: name
+
+    private fun getOrLoadConfigurationReporting(file: KtSourceFile): ScriptCompilationConfiguration? {
+        return getOrLoadConfiguration(file) ?: run {
+            log.warn("Configuration for ${file.asString()} wasn't found. FirScriptBuilder wasn't configured.")
+            return null
+        }
+    }
 
     private fun getOrLoadConfiguration(file: KtSourceFile): ScriptCompilationConfiguration? {
         val service = checkNotNull(session.scriptDefinitionProviderService)

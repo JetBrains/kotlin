@@ -90,7 +90,7 @@ internal class LLFirImplicitBodyTargetResolver(
     }
 
     override fun rawResolve(target: FirElementWithResolveState): Unit = when {
-        target is FirScript -> resolveScript(target)
+        target is FirScriptCodeFragment -> resolveScriptCodeFragment(target)
         target is FirCallableDeclaration && target.attributes.fakeOverrideSubstitution != null -> {
             transformer.returnTypeCalculator.fakeOverrideTypeCalculator.computeReturnType(target)
             Unit
