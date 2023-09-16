@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.codegen.context.ScriptContext
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -71,10 +70,10 @@ class ScriptCodegen private constructor(
     override fun generateKotlinMetadataAnnotation() {
         val serializer = DescriptorSerializer.create(
             scriptDescriptor, JvmSerializerExtension(v.serializationBindings, state), null,
-            state.configuration.languageVersionSettings,
+            state.config.languageVersionSettings,
         )
         val classProto = serializer.classProto(scriptDescriptor).build()
-        writeKotlinMetadata(v, state, KotlinClassHeader.Kind.CLASS, false, JvmAnnotationNames.METADATA_SCRIPT_FLAG) { av ->
+        writeKotlinMetadata(v, state.config, KotlinClassHeader.Kind.CLASS, false, JvmAnnotationNames.METADATA_SCRIPT_FLAG) { av ->
             DescriptorAsmUtil.writeAnnotationData(av, serializer, classProto)
         }
     }

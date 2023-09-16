@@ -390,7 +390,7 @@ class MultifileClassCodegenImpl(
             facadeClassType: Type,
             kotlinPackageFqName: FqName
         ) {
-            writeKotlinMetadata(classBuilder, state, KotlinClassHeader.Kind.MULTIFILE_CLASS, false, flags) { av ->
+            writeKotlinMetadata(classBuilder, state.config, KotlinClassHeader.Kind.MULTIFILE_CLASS, false, flags) { av ->
                 val arv = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME)
                 for (internalName in partInternalNames) {
                     arv.visit(null, internalName)

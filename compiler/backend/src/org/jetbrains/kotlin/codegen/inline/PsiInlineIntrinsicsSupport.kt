@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -27,9 +28,12 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
 class PsiInlineIntrinsicsSupport(
-    override val state: GenerationState,
+    private val state: GenerationState,
     private val reportErrorsOn: KtElement,
 ) : ReifiedTypeInliner.IntrinsicsSupport<KotlinType> {
+    override val config: JvmBackendConfig
+        get() = state.config
+
     override fun putClassInstance(v: InstructionAdapter, type: KotlinType) {
         DescriptorAsmUtil.putJavaLangClassInstance(v, state.typeMapper.mapType(type), type, state.typeMapper)
     }

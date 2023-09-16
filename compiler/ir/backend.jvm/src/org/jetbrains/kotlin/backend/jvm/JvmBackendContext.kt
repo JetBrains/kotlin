@@ -111,7 +111,7 @@ class JvmBackendContext(
 
     override val mapping: Mapping = DefaultMapping()
 
-    val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, state.languageVersionSettings)
+    val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
 
     override val ir = JvmIr(this.symbolTable)
 

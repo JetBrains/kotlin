@@ -84,7 +84,7 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeO
         intrinsicsSupport.reportSuspendTypeUnsupported()
     }
 
-    if (intrinsicsSupport.state.config.stableTypeOf) {
+    if (intrinsicsSupport.config.stableTypeOf) {
         if (intrinsicsSupport.isMutableCollectionType(type)) {
             v.invokestatic(REFLECTION, "mutableCollectionType", Type.getMethodDescriptor(K_TYPE, K_TYPE), false)
         } else if (type.typeConstructor().isNothingConstructor()) {

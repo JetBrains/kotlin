@@ -242,7 +242,7 @@ class AnonymousObjectTransformer(
         val publicAbi = inliningContext.callSiteInfo.isInPublicInlineScope
         writeKotlinMetadata(
             classBuilder,
-            state,
+            state.config,
             header.kind,
             publicAbi,
             header.extraInt and JvmAnnotationNames.METADATA_PUBLIC_ABI_FLAG.inv()

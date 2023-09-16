@@ -309,7 +309,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         boolean publicAbi = InlineUtil.isInPublicInlineScope(descriptor);
 
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.CLASS, publicAbi, 0, av -> {
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, state.getConfig(), KotlinClassHeader.Kind.CLASS, publicAbi, 0, av -> {
             writeAnnotationData(av, serializer, classProto);
             return Unit.INSTANCE;
         });

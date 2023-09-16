@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.codegen.VersionIndependentOpcodes
 import org.jetbrains.kotlin.codegen.addRecordComponent
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.codegen.writeKotlinMetadata
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmTarget
@@ -83,7 +85,8 @@ class ClassCodegen private constructor(
     }
 
     val smap = context.getSourceMapper(irClass)
-    private val state get() = context.state
+    private val state: GenerationState get() = context.state
+    private val config: JvmBackendConfig = context.config
 
     private val innerClasses = mutableSetOf<IrClass>()
     val typeMapper =
@@ -112,15 +115,15 @@ class ClassCodegen private constructor(
     private val jvmSignatureClashDetector = JvmSignatureClashDetector(this)
 
     private val visitor = state.factory.newVisitor(irClass.descriptorOrigin, type, irClass.fileParent.loadSourceFilesInfo()).apply {
-        val signature = typeMapper.mapClassSignature(irClass, type, context.state.classBuilderMode.generateBodies)
+        val signature = typeMapper.mapClassSignature(irClass, type, state.classBuilderMode.generateBodies)
         // Ensure that the backend only produces class names that would be valid in the frontend for JVM.
-        if (context.state.classBuilderMode.generateBodies && signature.hasInvalidName()) {
+        if (state.classBuilderMode.generateBodies && signature.hasInvalidName()) {
             throw IllegalStateException("Generating class with invalid name '${type.className}': ${irClass.dump()}")
         }
         defineClass(
             irClass.psiElement,
-            state.config.classFileVersion,
-            irClass.getFlags(context.state.languageVersionSettings),
+            config.classFileVersion,
+            irClass.getFlags(config.languageVersionSettings),
             signature.name,
             signature.javaGenericSignature,
             signature.superclassName,
@@ -150,9 +153,9 @@ class ClassCodegen private constructor(
         if (shouldSkipCodeGenerationAccordingToGenerationFilter()) return
 
         // Generate PermittedSubclasses attribute for sealed class.
-        if (state.languageVersionSettings.supportsFeature(LanguageFeature.JvmPermittedSubclassesAttributeForSealed) &&
+        if (config.languageVersionSettings.supportsFeature(LanguageFeature.JvmPermittedSubclassesAttributeForSealed) &&
             irClass.modality == Modality.SEALED &&
-            state.config.target >= JvmTarget.JVM_17
+            config.target >= JvmTarget.JVM_17
         ) {
             generatePermittedSubclasses()
         }
@@ -203,7 +206,7 @@ class ClassCodegen private constructor(
         generateKotlinMetadataAnnotation()
 
         if (withinInline || !smap.isTrivial) {
-            visitor.visitSMAP(smap, !context.state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
+            visitor.visitSMAP(smap, !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
         } else {
             smap.sourceInfo!!.sourceFileName?.let {
                 visitor.visitSource(it, null)
@@ -214,7 +217,7 @@ class ClassCodegen private constructor(
 
         generateInnerAndOuterClasses()
 
-        visitor.done(state.config.generateSmapCopyToAnnotation)
+        visitor.done(config.generateSmapCopyToAnnotation)
         jvmSignatureClashDetector.reportErrors()
     }
 
@@ -282,8 +285,8 @@ class ClassCodegen private constructor(
 
         val isMultifileClassOrPart = kind == KotlinClassHeader.Kind.MULTIFILE_CLASS || kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
 
-        var extraFlags = JvmBackendExtension.Default.generateMetadataExtraFlags(state.config.abiStability)
-        if (isMultifileClassOrPart && state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts)) {
+        var extraFlags = JvmBackendExtension.Default.generateMetadataExtraFlags(config.abiStability)
+        if (isMultifileClassOrPart && config.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts)) {
             extraFlags = extraFlags or JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG
         }
         if (metadata is MetadataSource.Script) {
@@ -303,7 +306,7 @@ class ClassCodegen private constructor(
         val isPublicAbi = irClass.symbol in context.publicAbiSymbols || irClass.isInlineSamWrapper ||
                 type.isAnonymousClass && irClass.isInPublicInlineScope
 
-        writeKotlinMetadata(visitor, state, kind, isPublicAbi, extraFlags) { av ->
+        writeKotlinMetadata(visitor, context.config, kind, isPublicAbi, extraFlags) { av ->
             if (metadata != null) {
                 metadataSerializer.serialize(metadata)?.let { (proto, stringTable) ->
                     DescriptorAsmUtil.writeAnnotationData(av, proto, stringTable)
@@ -346,7 +349,7 @@ class ClassCodegen private constructor(
             if (field.origin == IrDeclarationOrigin.PROPERTY_DELEGATE) null
             else methodSignatureMapper.mapFieldSignature(field)
         val fieldName = field.name.asString()
-        val flags = field.computeFieldFlags(context, state.languageVersionSettings)
+        val flags = field.computeFieldFlags(context, config.languageVersionSettings)
         val fv = visitor.newField(
             field.descriptorOrigin, flags, fieldName, fieldType.descriptor,
             fieldSignature, (field.initializer?.expression as? IrConst<*>)?.value

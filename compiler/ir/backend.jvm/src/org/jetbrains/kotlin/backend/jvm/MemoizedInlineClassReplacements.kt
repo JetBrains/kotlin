@@ -38,7 +38,7 @@ class MemoizedInlineClassReplacements(
     val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
 
     private val mangleCallsToJavaMethodsWithValueClasses =
-        context.state.languageVersionSettings.supportsFeature(LanguageFeature.MangleCallsToJavaMethodsWithValueClasses)
+        context.config.languageVersionSettings.supportsFeature(LanguageFeature.MangleCallsToJavaMethodsWithValueClasses)
 
     /**
      * Get a replacement for a function or a constructor.
@@ -165,7 +165,7 @@ class MemoizedInlineClassReplacements(
             dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this, index = -1)
             extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(
                 // The function's name will be mangled, so preserve the old receiver name.
-                this, index = -1, name = Name.identifier(function.extensionReceiverName(context.state))
+                this, index = -1, name = Name.identifier(function.extensionReceiverName(context.config))
             )
             contextReceiverParametersCount = function.contextReceiverParametersCount
             valueParameters = function.valueParameters.mapIndexed { index, parameter ->
@@ -200,7 +200,7 @@ class MemoizedInlineClassReplacements(
             }
             function.extensionReceiverParameter?.let {
                 newValueParameters += it.copyTo(
-                    this, index = newValueParameters.size, name = Name.identifier(function.extensionReceiverName(context.state)),
+                    this, index = newValueParameters.size, name = Name.identifier(function.extensionReceiverName(context.config)),
                     origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
                 )
             }

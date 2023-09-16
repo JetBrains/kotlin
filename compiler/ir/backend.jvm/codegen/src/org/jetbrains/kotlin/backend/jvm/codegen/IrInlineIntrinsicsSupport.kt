@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceTopLevelFlag
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
-import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -41,8 +41,8 @@ class IrInlineIntrinsicsSupport(
     private val reportErrorsOn: IrExpression,
     private val containingFile: IrFile,
 ) : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
-    override val state: GenerationState
-        get() = classCodegen.context.state
+    override val config: JvmBackendConfig
+        get() = classCodegen.context.config
 
     // todo: this likely need to be moved up as IrInlineIntrinsicsSupport is recreated every time in getOrCreateCallGenerator
     private val pluginExtensions = IrGenerationExtension.getInstances(classCodegen.context.state.project)

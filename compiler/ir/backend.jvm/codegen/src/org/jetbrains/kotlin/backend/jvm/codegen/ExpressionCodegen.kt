@@ -28,8 +28,9 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.SAFE
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.BackendErrors
 import org.jetbrains.kotlin.ir.IrElement
@@ -153,7 +154,8 @@ class ExpressionCodegen(
     val typeMapper = classCodegen.typeMapper
     val methodSignatureMapper = classCodegen.methodSignatureMapper
 
-    val state = context.state
+    val state: GenerationState = context.state
+    val config: JvmBackendConfig = context.config
 
     override val visitor: InstructionAdapter
         get() = mv
@@ -217,7 +219,7 @@ class ExpressionCodegen(
         mv.visitCode()
         val startLabel = markNewLabel()
         val info = BlockInfo()
-        if (context.state.classBuilderMode.generateBodies) {
+        if (state.classBuilderMode.generateBodies) {
             if (irFunction.isMultifileBridge()) {
                 // Multifile bridges need to have line number 1 to be filtered out by the intellij debugging filters.
                 mv.visitLineNumber(1, startLabel)
@@ -281,7 +283,7 @@ class ExpressionCodegen(
     }
 
     private fun generateNonNullAssertions() {
-        if (state.config.isParamAssertionsDisabled)
+        if (config.isParamAssertionsDisabled)
             return
 
         if ((DescriptorVisibilities.isPrivate(irFunction.visibility) && !shouldGenerateNonNullAssertionsForPrivateFun(irFunction)) ||
@@ -341,7 +343,7 @@ class ExpressionCodegen(
         if (!expandedType.isNullable() && !isPrimitive(asmType)) {
             mv.load(findLocalIndex(param.symbol), asmType)
             mv.aconst(param.name.asString())
-            val methodName = if (state.config.unifiedNullChecks) "checkNotNullParameter" else "checkParameterIsNotNull"
+            val methodName = if (config.unifiedNullChecks) "checkNotNullParameter" else "checkParameterIsNotNull"
             mv.invokestatic(JvmSymbols.INTRINSICS_CLASS_NAME, methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false)
         }
     }
@@ -371,7 +373,7 @@ class ExpressionCodegen(
             getNameForReceiverParameter(
                 irFunction.toIrBasedDescriptor(),
                 state.bindingContext,
-                context.configuration.languageVersionSettings
+                context.config.languageVersionSettings
             )
         } else {
             param.name.asString()
@@ -985,7 +987,7 @@ class ExpressionCodegen(
     }
 
     private fun generateGlobalReturnFlagIfPossible(expression: IrExpression, label: String) {
-        if (state.config.isInlineDisabled) {
+        if (config.isInlineDisabled) {
             context.ktDiagnosticReporter.at(expression, irFunction).report(BackendErrors.NON_LOCAL_RETURN_IN_DISABLED_INLINE)
             genThrow(mv, "java/lang/UnsupportedOperationException", "Non-local returns are not allowed with inlining disabled")
         } else {
@@ -1444,7 +1446,7 @@ class ExpressionCodegen(
 
         val gapEnd = afterJumpLabel ?: endOfFinallyCode
         tryWithFinallyInfo.gaps.add(gapStart to gapEnd)
-        if (state.languageVersionSettings.supportsFeature(LanguageFeature.ProperFinally)) {
+        if (config.languageVersionSettings.supportsFeature(LanguageFeature.ProperFinally)) {
             for (it in nestedTryWithoutFinally) {
                 it.gaps.add(gapStart to gapEnd)
             }
@@ -1581,8 +1583,8 @@ class ExpressionCodegen(
             mappings,
             IrInlineIntrinsicsSupport(classCodegen, element, irFunction.fileParent),
             context.typeSystem,
-            state.languageVersionSettings,
-            state.config.unifiedNullChecks,
+            config.languageVersionSettings,
+            config.unifiedNullChecks,
         )
 
         return IrInlineCodegen(this, state, callee, signature, mappings, sourceCompiler, reifiedTypeInliner)

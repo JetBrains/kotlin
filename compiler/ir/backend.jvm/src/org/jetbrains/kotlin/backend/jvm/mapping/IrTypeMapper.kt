@@ -107,7 +107,7 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
 
         return JvmCodegenUtil.sanitizeNameIfNeeded(
             computeClassInternalNameAsString(irClass),
-            context.state.languageVersionSettings
+            context.config.languageVersionSettings
         )
     }
 

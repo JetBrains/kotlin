@@ -68,7 +68,7 @@ internal val enumExternalEntriesPhase = makeIrFilePhase(
 class EnumExternalEntriesLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
 
     override fun lower(irFile: IrFile) {
-        if (!context.state.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)) {
+        if (!context.config.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)) {
             return
         }
         irFile.transformChildrenVoid(this)

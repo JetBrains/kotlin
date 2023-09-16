@@ -89,7 +89,7 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
     override fun lower(irClass: IrClass) {
         if (!irClass.isEnumClass) return
         // Also protected by API version check as it relies on EnumEntries in standard library
-        EnumClassTransformer(irClass, context.state.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)).run()
+        EnumClassTransformer(irClass, context.config.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)).run()
     }
 
     private inner class EnumClassTransformer(private val irClass: IrClass, private val supportsEnumEntries: Boolean) {

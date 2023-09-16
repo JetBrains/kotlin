@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.codegen.ASSERTIONS_DISABLED_FIELD_NAME
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
-import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -504,8 +504,8 @@ val IrDeclaration.psiElement: PsiElement?
 val IrMemberAccessExpression<*>.psiElement: PsiElement?
     get() = (symbol.descriptor.original as? DeclarationDescriptorWithSource)?.psiElement
 
-fun IrFunction.extensionReceiverName(state: GenerationState): String {
-    if (!state.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+fun IrFunction.extensionReceiverName(config: JvmBackendConfig): String {
+    if (!config.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
         return AsmUtil.RECEIVER_PARAMETER_NAME
     }
 

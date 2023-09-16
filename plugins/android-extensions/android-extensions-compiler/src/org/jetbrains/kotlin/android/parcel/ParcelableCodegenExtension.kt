@@ -310,7 +310,7 @@ open class ParcelableCodegenExtension : ParcelableExtensionBase, ExpressionCodeg
         codegen.v.visitInnerClass(creatorAsmType.internalName, containerAsmType.internalName, "Creator", ACC_PUBLIC or ACC_STATIC)
         codegenForCreator.v.visitInnerClass(creatorAsmType.internalName, containerAsmType.internalName, "Creator", ACC_PUBLIC or ACC_STATIC)
 
-        writeSyntheticClassMetadata(classBuilderForCreator, codegen.state, InlineUtil.isInPublicInlineScope(parcelableClass))
+        writeSyntheticClassMetadata(classBuilderForCreator, codegen.state.config, InlineUtil.isInPublicInlineScope(parcelableClass))
 
         writeCreatorConstructor(codegenForCreator, creatorClass, creatorAsmType)
         writeNewArrayMethod(codegenForCreator, parcelableClass, parcelableCreatorClassType, creatorClass, parcelerObject)

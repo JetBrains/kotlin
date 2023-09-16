@@ -66,7 +66,7 @@ private class ObjectClassLowering(val context: JvmBackendContext) : ClassLowerin
 
         // Mark object instance field as deprecated if the object visibility is private or protected,
         // and ProperVisibilityForCompanionObjectInstanceField language feature is not enabled.
-        if (!context.state.languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField) &&
+        if (!context.config.languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField) &&
             (irClass.visibility == DescriptorVisibilities.PRIVATE || irClass.visibility == DescriptorVisibilities.PROTECTED)
         ) {
             context.createJvmIrBuilder(irClass.symbol).run {

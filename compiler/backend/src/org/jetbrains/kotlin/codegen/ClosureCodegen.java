@@ -295,7 +295,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         boolean publicAbi = InlineUtil.isInPublicInlineScope(frontendFunDescriptor);
 
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, publicAbi, 0, av -> {
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, state.getConfig(), KotlinClassHeader.Kind.SYNTHETIC_CLASS, publicAbi, 0, av -> {
             writeAnnotationData(av, serializer, functionProto);
             return Unit.INSTANCE;
         });

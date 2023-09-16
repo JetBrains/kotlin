@@ -75,10 +75,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         context.config.lambdasScheme == JvmClosureGenerationScheme.INDY
 
     private val shouldGenerateLightweightLambdas =
-        shouldGenerateIndyLambdas && context.state.languageVersionSettings.supportsFeature(LanguageFeature.LightweightLambdas)
+        shouldGenerateIndyLambdas && context.config.languageVersionSettings.supportsFeature(LanguageFeature.LightweightLambdas)
 
     private val isJavaSamConversionWithEqualsHashCode =
-        context.state.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
+        context.config.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
 
     override fun visitBlock(expression: IrBlock): IrExpression {
         if (!expression.origin.isLambda)

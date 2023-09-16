@@ -33,8 +33,7 @@ internal fun MethodNode.acceptWithStateMachine(
     obtainContinuationClassBuilder: () -> ClassBuilder,
 ) {
     val context = classCodegen.context
-    val state = context.state
-    val languageVersionSettings = state.languageVersionSettings
+    val languageVersionSettings = context.config.languageVersionSettings
     assert(languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) { "Experimental coroutines are unsupported in JVM_IR backend" }
 
     val lineNumber = if (irFunction.startOffset >= 0) {

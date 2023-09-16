@@ -34,7 +34,7 @@ class DescriptorMetadataSerializer(
 ) : MetadataSerializer {
     private val serializerExtension = JvmSerializerExtension(serializationBindings, context.state, context.defaultTypeMapper)
     private val serializer: DescriptorSerializer? = run {
-        val languageVersionSettings = context.state.configuration.languageVersionSettings
+        val languageVersionSettings = context.config.languageVersionSettings
         when (val metadata = irClass.metadata) {
             is DescriptorMetadataSource.Class -> DescriptorSerializer.create(
                 metadata.descriptor, serializerExtension, (parent as? DescriptorMetadataSerializer)?.serializer,

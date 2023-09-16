@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -71,7 +72,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         val methodVisitor: MethodVisitor = wrapWithMaxLocalCalc(methodNode)
 
         if (context.config.generateParametersMetadata && !isSynthetic) {
-            generateParameterNames(irFunction, methodVisitor, context.state)
+            generateParameterNames(irFunction, methodVisitor, context.config)
         }
 
         if (irFunction.isWithAnnotations) {
@@ -211,7 +212,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     }
 
     private fun getThrownExceptions(function: IrFunction): List<String>? {
-        if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.DoNotGenerateThrowsForDelegatedKotlinMembers) &&
+        if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.DoNotGenerateThrowsForDelegatedKotlinMembers) &&
             function.origin == IrDeclarationOrigin.DELEGATED_MEMBER
         ) return null
 
@@ -335,9 +336,9 @@ private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
     origin == IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER ||
             origin == JvmLoweredDeclarationOrigin.SYNTHETIC_MARKER_PARAMETER
 
-private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, state: GenerationState) {
+private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, config: JvmBackendConfig) {
     irFunction.extensionReceiverParameter?.let {
-        mv.visitParameter(irFunction.extensionReceiverName(state), 0)
+        mv.visitParameter(irFunction.extensionReceiverName(config), 0)
     }
     for (irParameter in irFunction.valueParameters) {
         // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared

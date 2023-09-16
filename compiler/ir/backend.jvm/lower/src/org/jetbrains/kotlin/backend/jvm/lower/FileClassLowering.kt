@@ -93,7 +93,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
         val isMultifilePart = fileClassInfo.withJvmMultifileClass
 
         val onlyPrivateDeclarationsAndFeatureIsEnabled =
-            context.state.languageVersionSettings.supportsFeature(LanguageFeature.PackagePrivateFileClassesWithAllPrivateMembers) && fileClassMembers
+            context.config.languageVersionSettings.supportsFeature(LanguageFeature.PackagePrivateFileClassesWithAllPrivateMembers) && fileClassMembers
                 .all {
                     val isPrivate = it is IrDeclarationWithVisibility && DescriptorVisibilities.isPrivate(it.visibility)
                     val isInlineOnly = it.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
@@ -101,7 +101,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
                 }
 
         val fileClassOrigin =
-            if (!isMultifilePart || context.state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts))
+            if (!isMultifilePart || context.config.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts))
                 IrDeclarationOrigin.FILE_CLASS
             else
                 IrDeclarationOrigin.SYNTHETIC_FILE_CLASS

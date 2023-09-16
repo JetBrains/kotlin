@@ -772,7 +772,7 @@ internal fun createSingletonLambda(
         areturn(kSerializerType)
     }
 
-    writeSyntheticClassMetadata(lambdaClassBuilder, lambdaCodegen.state, false)
+    writeSyntheticClassMetadata(lambdaClassBuilder, lambdaCodegen.state.config, false)
     lambdaClassBuilder.done(lambdaCodegen.state.config.generateSmapCopyToAnnotation)
 
     return lambdaType

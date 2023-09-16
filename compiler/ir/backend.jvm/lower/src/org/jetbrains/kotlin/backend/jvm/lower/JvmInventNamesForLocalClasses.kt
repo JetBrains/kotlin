@@ -56,7 +56,7 @@ open class JvmInventNamesForLocalClasses(
     }
 
     override fun sanitizeNameIfNeeded(name: String): String {
-        return JvmCodegenUtil.sanitizeNameIfNeeded(name, context.state.languageVersionSettings)
+        return JvmCodegenUtil.sanitizeNameIfNeeded(name, context.config.languageVersionSettings)
     }
 
     override fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String) {

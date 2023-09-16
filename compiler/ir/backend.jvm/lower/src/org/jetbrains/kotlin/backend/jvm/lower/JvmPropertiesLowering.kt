@@ -218,7 +218,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
 
         private fun JvmBackendContext.computeSyntheticMethodName(property: IrProperty, suffix: String): String {
             val baseName =
-                if (state.languageVersionSettings.supportsFeature(LanguageFeature.UseGetterNameForPropertyAnnotationsMethodOnJvm)) {
+                if (config.languageVersionSettings.supportsFeature(LanguageFeature.UseGetterNameForPropertyAnnotationsMethodOnJvm)) {
                     val getter = property.getter
                     if (getter != null) {
                         val needsMangling =

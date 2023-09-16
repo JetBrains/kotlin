@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.codegen.generateIsCheck
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
-import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -56,7 +56,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
 
 
     interface IntrinsicsSupport<KT : KotlinTypeMarker> {
-        val state: GenerationState
+        val config: JvmBackendConfig
 
         fun putClassInstance(v: InstructionAdapter, type: KT)
 

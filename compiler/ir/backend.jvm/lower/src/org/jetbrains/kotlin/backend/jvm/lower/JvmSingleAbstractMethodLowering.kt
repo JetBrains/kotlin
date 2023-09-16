@@ -38,7 +38,7 @@ internal val singleAbstractMethodPhase = makeIrFilePhase(
 private class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : SingleAbstractMethodLowering(context) {
 
     private val isJavaSamConversionWithEqualsHashCode =
-        context.state.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
+        context.config.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
 
     override val inInlineFunctionScope: Boolean
         get() = allScopes.any { (it.irElement as? IrDeclaration)?.isInPublicInlineScope == true }

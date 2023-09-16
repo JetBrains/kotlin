@@ -132,7 +132,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
                 name = oldFunction.name
                 visibility = oldFunction.visibility
                 modality =
-                    if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)) Modality.FINAL
+                    if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)) Modality.FINAL
                     else oldFunction.modality
                 returnType = oldFunction.returnType
                 isInline = oldFunction.isInline

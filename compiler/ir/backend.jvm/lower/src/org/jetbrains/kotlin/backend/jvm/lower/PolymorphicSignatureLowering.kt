@@ -35,7 +35,7 @@ internal val polymorphicSignaturePhase = makeIrFilePhase(
 private class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrElementTransformer<PolymorphicSignatureLowering.Data>,
     FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature))
+        if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature))
             irFile.transformChildren(this, Data(null))
     }
 

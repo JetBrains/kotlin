@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 internal class ApiVersionIsAtLeastEvaluationLowering(val context: JvmBackendContext) : FileLoweringPass,
     IrElementTransformer<ApiVersionIsAtLeastEvaluationLowering.Data> {
 
-    private val apiVersion = context.state.languageVersionSettings.apiVersion.version
+    private val apiVersion = context.config.languageVersionSettings.apiVersion.version
 
     data class Data(val currentFunction: IrFunction?, val isInsideInlinedBlock: Boolean)
 

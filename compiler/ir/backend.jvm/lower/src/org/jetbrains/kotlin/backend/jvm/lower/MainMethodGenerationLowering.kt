@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -69,7 +68,7 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
      *    ```
      */
     override fun lower(irClass: IrClass) {
-        if (!context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExtendedMainConvention)) return
+        if (!context.config.languageVersionSettings.supportsFeature(LanguageFeature.ExtendedMainConvention)) return
         if (!irClass.isFileClass) return
 
         irClass.functions.find { it.isMainMethod() }?.let { mainMethod ->

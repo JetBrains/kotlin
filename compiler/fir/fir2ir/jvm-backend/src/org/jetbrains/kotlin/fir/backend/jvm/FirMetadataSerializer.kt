@@ -62,7 +62,7 @@ fun makeFirMetadataSerializerForIrClass(
         approximator,
         makeElementSerializer(
             irClass.metadata, components.session, components.scopeSession, firSerializerExtension, approximator, parent,
-            context.state.configuration.languageVersionSettings,
+            context.config.languageVersionSettings,
         ),
         irActualizedResult
     )

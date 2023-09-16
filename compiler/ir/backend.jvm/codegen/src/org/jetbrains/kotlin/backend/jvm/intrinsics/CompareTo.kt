@@ -195,7 +195,7 @@ class PrimitiveComparison(
         val b = right.accept(codegen, data).materializedAt(parameterType, right.type)
 
         val useNonIEEE754Comparison =
-            !codegen.context.state.languageVersionSettings.supportsFeature(LanguageFeature.ProperIeee754Comparisons)
+            !codegen.context.config.languageVersionSettings.supportsFeature(LanguageFeature.ProperIeee754Comparisons)
                     && (parameterType == Type.FLOAT_TYPE || parameterType == Type.DOUBLE_TYPE)
                     && (left.isSmartcastFromHigherThanNullable(codegen.context) || right.isSmartcastFromHigherThanNullable(codegen.context))
 

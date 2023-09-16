@@ -107,7 +107,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
     protected void generateKotlinMetadataAnnotation() {
         Pair<DescriptorSerializer, ProtoBuf.Package> serializedPart = serializePackagePartMembers(this, packagePartType);
 
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.FILE_FACADE, false, 0, av -> {
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, state.getConfig(), KotlinClassHeader.Kind.FILE_FACADE, false, 0, av -> {
             writeAnnotationData(av, serializedPart.getFirst(), serializedPart.getSecond());
 
             FqName kotlinPackageFqName = element.getPackageFqName();

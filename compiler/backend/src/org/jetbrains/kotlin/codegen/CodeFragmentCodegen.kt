@@ -79,7 +79,7 @@ class CodeFragmentCodegen private constructor(
     }
 
     override fun generateKotlinMetadataAnnotation() {
-        writeSyntheticClassMetadata(v, state, false)
+        writeSyntheticClassMetadata(v, state.config, false)
     }
 
     private fun genConstructor() {

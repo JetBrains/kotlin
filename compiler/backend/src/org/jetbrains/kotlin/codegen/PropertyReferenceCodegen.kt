@@ -210,7 +210,7 @@ class PropertyReferenceCodegen(
     }
 
     override fun generateKotlinMetadataAnnotation() {
-        writeSyntheticClassMetadata(v, state, InlineUtil.isInPublicInlineScope(classDescriptor))
+        writeSyntheticClassMetadata(v, state.config, InlineUtil.isInPublicInlineScope(classDescriptor))
     }
 
     fun putInstanceOnStack(receiverValue: StackValue?): StackValue {

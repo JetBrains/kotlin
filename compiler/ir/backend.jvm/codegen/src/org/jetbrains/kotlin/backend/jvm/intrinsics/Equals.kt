@@ -189,7 +189,7 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
         val arg1isNullable = arg1Type.isNullable()
 
         val useNonIEEE754Comparison =
-            !classCodegen.context.state.languageVersionSettings.supportsFeature(LanguageFeature.ProperIeee754Comparisons)
+            !classCodegen.context.config.languageVersionSettings.supportsFeature(LanguageFeature.ProperIeee754Comparisons)
                     && (arg0.isSmartcastFromHigherThanNullable(classCodegen.context) || arg1.isSmartcastFromHigherThanNullable(classCodegen.context))
 
         return when {

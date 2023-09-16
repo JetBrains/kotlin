@@ -104,7 +104,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     private fun IrType.isJavaLangRecord() = getClass()!!.hasEqualFqName(JAVA_LANG_RECORD_FQ_NAME)
 
     private fun mangleMemberNameIfRequired(name: String, function: IrSimpleFunction): String {
-        val newName = JvmCodegenUtil.sanitizeNameIfNeeded(name, context.state.languageVersionSettings)
+        val newName = JvmCodegenUtil.sanitizeNameIfNeeded(name, context.config.languageVersionSettings)
 
         val suffix = if (function.isTopLevel) {
             if (function.isInvisibleInMultifilePart()) function.parentAsClass.name.asString() else null

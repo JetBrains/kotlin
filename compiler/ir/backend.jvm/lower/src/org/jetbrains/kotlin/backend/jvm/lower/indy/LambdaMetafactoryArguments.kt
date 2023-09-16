@@ -81,9 +81,8 @@ internal class LambdaMetafactoryArgumentsBuilder(
     private val context: JvmBackendContext,
     private val crossinlineLambdas: Set<IrSimpleFunction>
 ) {
-
     private val isJavaSamConversionWithEqualsHashCode =
-        context.state.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
+        context.config.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
 
     /**
      * @see java.lang.invoke.LambdaMetafactory
