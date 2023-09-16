@@ -10,6 +10,7 @@
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-test-js</artifactId>
   <version>ArtifactsTest.version</version>
+  <packaging>klib</packaging>
   <name>Kotlin Test Js</name>
   <description>Kotlin Test for JS</description>
   <url>https://kotlinlang.org/</url>

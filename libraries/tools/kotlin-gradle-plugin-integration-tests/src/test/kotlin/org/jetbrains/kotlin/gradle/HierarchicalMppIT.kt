@@ -281,7 +281,8 @@ open class HierarchicalMppIT : KGPBaseTest() {
                         "my-lib-bar-metadata-1.0-all.jar",
                         "third-party-lib-metadata-1.0.jar",
                         "kotlin-stdlib-${buildOptions.kotlinVersion}-all.jar",
-                        "kotlin-dom-api-compat-${buildOptions.kotlinVersion}.klib"
+                        "kotlin-dom-api-compat-${buildOptions.kotlinVersion}.klib",
+                        "kotlin-test-js-${buildOptions.kotlinVersion}.klib",
                     ).toSortedSet(),
                     transformedArtifacts().toSortedSet()
                 )

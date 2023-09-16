@@ -46,6 +46,7 @@ val jsApiVariant by configurations.creating {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-api"))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
     }
 }
 val jsRuntimeVariant by configurations.creating {
@@ -54,6 +55,7 @@ val jsRuntimeVariant by configurations.creating {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-runtime"))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
     }
     extendsFrom(jsApiVariant)
 }
@@ -293,30 +295,14 @@ val (jsApi, jsRuntime) = listOf("api", "runtime").map { usage ->
 }
 jsRuntime.extendsFrom(jsApi)
 
-val (jsV1Api, jsV1Runtime) = listOf("api", "runtime").map { usage ->
-    configurations.create("jsV1${usage.capitalize()}") {
-        isCanBeConsumed = true
-        isCanBeResolved = true
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-$usage"))
-            attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
-            attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.legacy)
-        }
-    }
-}
-jsV1Runtime.extendsFrom(jsV1Api)
-
 dependencies {
     jsApi(project(":kotlin-stdlib"))
-    jsV1Api(project(":kotlin-stdlib"))
 }
 
 artifacts {
-    val jsJar = tasks.getByPath(":kotlin-test:kotlin-test-js:libraryJarWithIr")
+    val jsJar = tasks.getByPath(":kotlin-test:kotlin-test-js-ir:jsJar")
     add(jsApi.name, jsJar)
     add(jsRuntime.name, jsJar)
-    add(jsV1Api.name, jsJar)
-    add(jsV1Runtime.name, jsJar)
 }
 
 val jsComponent = componentFactory.adhoc("js").apply {
@@ -324,12 +310,6 @@ val jsComponent = componentFactory.adhoc("js").apply {
         mapToMavenScope("compile")
     }
     addVariantsFromConfiguration(jsRuntime) {
-        mapToMavenScope("runtime")
-    }
-    addVariantsFromConfiguration(jsV1Api) {
-        mapToMavenScope("compile")
-    }
-    addVariantsFromConfiguration(jsV1Runtime) {
         mapToMavenScope("runtime")
     }
 }
@@ -479,9 +459,9 @@ publishing {
         val kotlinTestJsPublication = register("js", MavenPublication::class) {
             artifactId = "kotlin-test-js"
             from(jsComponent)
+            artifact(tasks.getByPath(":kotlin-test:kotlin-test-js-ir:jsLegacyJar") as Jar)
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-js-ir:jsSourcesJar") as org.gradle.jvm.tasks.Jar)
-            artifact(tasks.getByPath(":kotlin-test:kotlin-test-js:javadocJar") as Jar)
-            configureKotlinPomAttributes(project, "Kotlin Test for JS")
+            configureKotlinPomAttributes(project, "Kotlin Test for JS", packaging = "klib")
         }
         configureSbom(
             "Js", "kotlin-test-js",

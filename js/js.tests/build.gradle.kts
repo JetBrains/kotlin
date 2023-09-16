@@ -28,7 +28,7 @@ val testJsRuntime by configurations.creating {
         attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
-        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.legacy)
+        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
     }
 }
 
@@ -73,7 +73,7 @@ dependencies {
     testRuntimeOnly(kotlinStdlib())
     testJsRuntime(kotlinStdlib())
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        testJsRuntime(project(":kotlin-test:kotlin-test-js")) // to be sure that kotlin-test-js built before tests runned
+        testJsRuntime(project(":kotlin-test:kotlin-test-js-ir")) // to be sure that kotlin-test-js built before tests run
     }
     testRuntimeOnly(project(":kotlin-preloader")) // it's required for ant tests
     testRuntimeOnly(project(":compiler:backend-common"))

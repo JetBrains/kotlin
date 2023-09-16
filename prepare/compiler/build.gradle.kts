@@ -136,7 +136,6 @@ val distCompilerPluginProjectsCompat = listOf(
 val distSourcesProjects = listOfNotNull(
     ":kotlin-annotations-jvm",
     ":kotlin-script-runtime",
-    ":kotlin-test:kotlin-test-js".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
     ":kotlin-test:kotlin-test-junit",
     ":kotlin-test:kotlin-test-junit5",
     ":kotlin-test:kotlin-test-testng"
@@ -169,7 +168,8 @@ dependencies {
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         libraries(kotlinStdlib(classifier = "distJsJar"))
         libraries(kotlinStdlib(classifier = "distJsKlib"))
-        libraries(project(":kotlin-test:kotlin-test-js", configuration = "distLibrary"))
+        libraries(project(":kotlin-test:kotlin-test-js-ir", configuration = "jsRuntimeElements"))
+        libraries(project(":kotlin-test:kotlin-test-js-ir", configuration = "jsLegacyRuntimeElements"))
     }
 
     librariesStripVersion(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
@@ -199,6 +199,7 @@ dependencies {
 
     sources(kotlinStdlib("jdk7", classifier = "sources"))
     sources(kotlinStdlib("jdk8", classifier = "sources"))
+    sources(project(":kotlin-test:kotlin-test-js-ir", configuration = "jsSourcesElements"))
 
     if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         sources(kotlinStdlib(classifier = "sources"))
@@ -214,7 +215,6 @@ dependencies {
         distStdlibMinimalForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
 
         distJSContents(project(":kotlin-stdlib", configuration = "distJsContent"))
-        distJSContents(project(":kotlin-test:kotlin-test-js", configuration = "distJs"))
 
         distCommonContents(project(":kotlin-stdlib", configuration = "commonMainMetadataElements"))
         distCommonContents(project(":kotlin-stdlib", configuration = "metadataSourcesElements"))
