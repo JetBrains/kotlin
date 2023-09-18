@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
+import org.jetbrains.kotlin.formver.embeddings.callables.CallableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.callables.insertCall
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
 
 // We assume that thanks to the checks done by the Kotlin compiler, a property with a
@@ -54,17 +56,13 @@ class BackingFieldSetter(field: FieldEmbedding) : BackingFieldAccess(field), Set
     }
 }
 
-class CustomGetter(val getterMethod: MethodSignatureEmbedding) : GetterEmbedding {
+class CustomGetter(val getterMethod: CallableEmbedding) : GetterEmbedding {
     override fun getValue(receiver: ExpEmbedding, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
-        ctx.withResult(getterMethod.returnType) {
-            addStatement(getterMethod.toMethodCall(listOf(receiver).toViper(), resultCtx.resultVar))
-        }
+        getterMethod.insertCall(listOf(receiver), ctx)
 }
 
-class CustomSetter(val setterMethod: MethodSignatureEmbedding) : SetterEmbedding {
+class CustomSetter(val setterMethod: CallableEmbedding) : SetterEmbedding {
     override fun setValue(receiver: ExpEmbedding, value: ExpEmbedding, ctx: StmtConversionContext<ResultTrackingContext>) {
-        ctx.withResult(UnitTypeEmbedding) {
-            addStatement(setterMethod.toMethodCall(listOf(receiver, value).toViper(), resultCtx.resultVar))
-        }
+        setterMethod.insertCall(listOf(receiver, value), ctx)
     }
 }

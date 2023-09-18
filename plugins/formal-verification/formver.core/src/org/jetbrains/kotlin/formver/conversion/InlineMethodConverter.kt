@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.formver.embeddings.MethodEmbedding
+import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.name.Name
 
@@ -43,11 +43,11 @@ class InlineNameMangler(
 
 class InlineMethodConverter(
     private val programCtx: ProgramConversionContext,
-    override val method: MethodEmbedding,
+    override val signature: FullNamedFunctionSignature,
     returnVarName: MangledName,
     private val substitutionParams: Map<Name, SubstitutionItem>,
 ) : MethodConversionContext, ProgramConversionContext by programCtx {
-    override val nameMangler = InlineNameMangler(method.name, returnVarName, substitutionParams)
+    override val nameMangler = InlineNameMangler(signature.name, returnVarName, substitutionParams)
 
     override fun getLambdaOrNull(name: Name): SubstitutionLambda? = substitutionParams[name] as? SubstitutionLambda
 }

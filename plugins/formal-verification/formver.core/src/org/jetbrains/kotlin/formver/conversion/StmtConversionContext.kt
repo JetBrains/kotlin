@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.formver.calleeSymbol
 import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.name.Name
 
@@ -35,7 +34,7 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
     fun withResult(type: TypeEmbedding): StmtConversionContext<VarResultTrackingContext>
 
     fun withInlineContext(
-        inlineMethod: MethodEmbedding,
+        inlineSignature: FullNamedFunctionSignature,
         returnVarName: MangledName,
         substitutionParams: Map<Name, SubstitutionItem>,
     ): StmtConversionContext<RTC>
@@ -79,3 +78,21 @@ fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedSetter(symbol:
         null, is FirDefaultPropertySetter -> getField(symbol)?.let { BackingFieldSetter(it) }
         else -> CustomSetter(embedFunction(setter.symbol))
     }
+
+fun StmtConversionContext<ResultTrackingContext>.getFunctionCallSubstitutionItems(
+    args: List<FirExpression>,
+): List<SubstitutionItem> = args.map { exp ->
+    when (exp) {
+        is FirLambdaArgumentExpression -> {
+            val anonExpr = exp.expression
+            if (anonExpr is FirAnonymousFunctionExpression) {
+                val lambdaBody = anonExpr.anonymousFunction.body!!
+                val lambdaArs = anonExpr.anonymousFunction.valueParameters.map { it.name }
+                SubstitutionLambda(lambdaBody, lambdaArs)
+            } else {
+                TODO("are there any other cases?")
+            }
+        }
+        else -> SubstitutionName(convertAndStore(exp).name)
+    }
+}

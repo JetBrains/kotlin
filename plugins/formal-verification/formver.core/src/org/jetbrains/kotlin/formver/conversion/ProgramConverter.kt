@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -17,8 +18,13 @@ import org.jetbrains.kotlin.formver.PluginConfiguration
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.embeddings.callables.*
 import org.jetbrains.kotlin.formver.viper.MangledName
+import org.jetbrains.kotlin.formver.viper.ast.Method
 import org.jetbrains.kotlin.formver.viper.ast.Program
+import org.jetbrains.kotlin.formver.viper.ast.Stmt
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 
 /**
  * Tracks the top-level information about the program.
@@ -27,7 +33,7 @@ import org.jetbrains.kotlin.formver.viper.ast.Program
  * We need the FirSession to get access to the TypeContext.
  */
 class ProgramConverter(val session: FirSession, override val config: PluginConfiguration) : ProgramConversionContext {
-    private val methods: MutableMap<MangledName, MethodEmbedding> = mutableMapOf()
+    private val methods: MutableMap<MangledName, FunctionEmbedding> = mutableMapOf()
     private val classes: MutableMap<ClassName, ClassTypeEmbedding> = mutableMapOf()
     private val fields: MutableMap<MangledName, FieldEmbedding> = mutableMapOf()
 
@@ -36,32 +42,31 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             domains = listOf(UnitDomain, NullableDomain, CastingDomain, TypeOfDomain, TypeDomain(classes.values.toList()), AnyDomain),
             fields = SpecialFields.all + fields.values.map { it.toViper() },
             functions = SpecialFunctions.all,
-            methods = SpecialMethods.all + methods.values.filter { it.shouldIncludeInProgram }.map { it.viperMethod }.toList(),
+            methods = SpecialMethods.all + methods.values.mapNotNull { it.viperMethod }.toList(),
         )
 
     fun registerForVerification(declaration: FirSimpleFunction) {
-        val embedding = embedFunction(declaration.symbol)
-        embedding.convertBody(this)
+        val signature = embedSignature(declaration.symbol)
+        // Note: it is important that `viperMethod` is only set later, as we need to
+        // place the embedding in the map before processing the body.
+        val embedding = embedUserFunction(declaration.symbol, signature)
+        embedding.viperMethod = convertMethodWithBody(declaration, signature)
     }
 
-    override fun embedFunction(symbol: FirFunctionSymbol<*>): MethodEmbedding {
-        val signature = embedSignature(symbol)
-        return methods.getOrPut(signature.name) {
-            val contractVisitor = ContractDescriptionConversionVisitor(this@ProgramConverter, signature)
+    fun embedUserFunction(symbol: FirFunctionSymbol<*>, signature: FullNamedFunctionSignature): UserFunctionEmbedding {
+        (methods[signature.name] as? UserFunctionEmbedding)?.also { return it }
+        val new = UserFunctionEmbedding(processCallable(symbol, signature))
+        methods[signature.name] = new
+        return new
+    }
 
-            val preconditions = signature.formalArgs.flatMap { it.invariants() } +
-                    signature.formalArgs.flatMap { it.accessInvariants() } +
-                    contractVisitor.getPreconditions(symbol)
-
-            val postconditions = signature.formalArgs.flatMap { it.accessInvariants() } +
-                    signature.params.flatMap { it.dynamicInvariants() } +
-                    signature.returnVar.invariants() +
-                    signature.returnVar.provenInvariants() +
-                    contractVisitor.getPostconditions(symbol)
-
-            UserMethodEmbedding(signature, preconditions, postconditions, symbol)
+    override fun embedFunction(symbol: FirFunctionSymbol<*>): FunctionEmbedding =
+        methods.getOrPut(symbol.embedName()) {
+            val signature = embedSignature(symbol)
+            val embedding = UserFunctionEmbedding(processCallable(symbol, signature))
+            embedding.viperMethod = convertMethodWithoutBody(symbol, signature)
+            embedding
         }
-    }
 
     private fun embedClass(symbol: FirRegularClassSymbol): ClassTypeEmbedding {
         val className = symbol.classId.embedName()
@@ -106,18 +111,31 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     private var nextWhileIndex = 0
     override fun newWhileIndex() = ++nextWhileIndex
 
-    private fun embedSignature(symbol: FirFunctionSymbol<*>): MethodSignatureEmbedding {
+    private fun embedSignature(symbol: FirFunctionSymbol<*>): FullNamedFunctionSignature {
         val retType = symbol.resolvedReturnTypeRef.type
         val params = symbol.valueParameterSymbols.map {
             VariableEmbedding(it.embedName(), embedType(it.resolvedReturnType))
         }
         val receiverType = symbol.receiverType
         val receiver = receiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it)) }
-        return object : MethodSignatureEmbedding {
+        val subSignature = object : NamedFunctionSignature {
             override val name = symbol.embedName()
             override val receiver = receiver
             override val params = params
             override val returnType = embedType(retType)
+        }
+        val contractVisitor = ContractDescriptionConversionVisitor(this@ProgramConverter, subSignature)
+
+        return object : FullNamedFunctionSignature, NamedFunctionSignature by subSignature {
+            override val preconditions = subSignature.formalArgs.flatMap { it.invariants() } +
+                    subSignature.formalArgs.flatMap { it.accessInvariants() } +
+                    contractVisitor.getPreconditions(symbol)
+
+            override val postconditions = subSignature.formalArgs.flatMap { it.accessInvariants() } +
+                    subSignature.params.flatMap { it.dynamicInvariants() } +
+                    subSignature.returnVar.invariants() +
+                    subSignature.returnVar.provenInvariants() +
+                    contractVisitor.getPostconditions(symbol)
         }
     }
 
@@ -136,6 +154,44 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                 fields[fieldName] = FieldEmbedding(it.callableId.embedClassMemberName(), embedType(it.resolvedReturnType))
             }
     }
+
+    private fun processCallable(symbol: FirFunctionSymbol<*>, signature: FullNamedFunctionSignature): CallableEmbedding =
+        if (symbol.isInline) {
+            InlineNamedFunction(signature, symbol)
+        } else {
+            NonInlineNamedFunction(signature)
+        }
+
+    private fun convertMethodWithBody(declaration: FirSimpleFunction, signature: FullNamedFunctionSignature): Method {
+        val body = declaration.body?.let {
+            val methodCtx = object : MethodConversionContext, ProgramConversionContext by this {
+                override val signature: FullNamedFunctionSignature = signature
+                override val nameMangler = NoopNameMangler
+                override fun getLambdaOrNull(name: Name): SubstitutionLambda? = null
+            }
+
+            val stmtCtx = StmtConverter(methodCtx, SeqnBuilder(), NoopResultTrackerFactory, scopeDepth = 0)
+            signature.formalArgs.forEach { arg ->
+                // Ideally we would want to assume these rather than inhale them to prevent inconsistencies with permissions.
+                // Unfortunately Silicon for some reason does not allow Assumes. However, it doesn't matter as long as the
+                // provenInvariants don't contain permissions.
+                arg.provenInvariants().forEach { invariant ->
+                    stmtCtx.addStatement(Stmt.Inhale(invariant))
+                }
+            }
+            stmtCtx.addDeclaration(methodCtx.returnLabel.toDecl())
+            stmtCtx.convert(it)
+            stmtCtx.addStatement(methodCtx.returnLabel.toStmt())
+            stmtCtx.block
+        }
+
+        return signature.toViperMethod(body)
+    }
+
+    private fun convertMethodWithoutBody(symbol: FirFunctionSymbol<*>, signature: FullNamedFunctionSignature): Method? =
+        symbol.isInline.ifFalse {
+            signature.toViperMethod(null)
+        }
 
     private fun unimplementedTypeEmbedding(type: ConeKotlinType): TypeEmbedding =
         when (config.behaviour) {

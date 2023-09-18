@@ -117,9 +117,9 @@ method pkg$$global$testCascadeCustomGetters$() returns (ret: dom$Unit)
   var local$1$succ: Int
   var anonymous$3: Ref
   var anonymous$4: Int
-  anonymous$2 := pkg$$class_IntWrapper$constructor$Tkotlin_Int(42)
-  anonymous$1 := pkg$$class_IntWrapperContainer$constructor$TIntWrapper(anonymous$2)
-  local$1$wrapper := anonymous$1
+  anonymous$1 := pkg$$class_IntWrapper$constructor$Tkotlin_Int(42)
+  anonymous$2 := pkg$$class_IntWrapperContainer$constructor$TIntWrapper(anonymous$1)
+  local$1$wrapper := anonymous$2
   inhale acc(local$1$wrapper.pkg$$class_IntWrapperContainer$member_i, write)
   anonymous$3 := local$1$wrapper.pkg$$class_IntWrapperContainer$member_i
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$3): dom$Type), dom$Type$pkg$$class_IntWrapper())

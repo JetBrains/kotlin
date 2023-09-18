@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.formver.viper.MangledName
-import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Field
 
 class FieldEmbedding(val name: MangledName, val type: TypeEmbedding) {

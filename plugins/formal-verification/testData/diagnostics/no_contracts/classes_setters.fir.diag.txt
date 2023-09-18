@@ -63,9 +63,9 @@ method pkg$$global$testSetterCascade$() returns (ret: dom$Unit)
   var anonymous$1: Ref
   var anonymous$2: Ref
   var anonymous$3: Ref
-  anonymous$2 := pkg$$class_Bar$constructor$Tkotlin_Int(10)
-  anonymous$1 := pkg$$class_Foo$constructor$TBar(anonymous$2)
-  local$1$f := anonymous$1
+  anonymous$1 := pkg$$class_Bar$constructor$Tkotlin_Int(10)
+  anonymous$2 := pkg$$class_Foo$constructor$TBar(anonymous$1)
+  local$1$f := anonymous$2
   inhale acc(local$1$f.pkg$$class_Foo$member_b, write)
   anonymous$3 := local$1$f.pkg$$class_Foo$member_b
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$3): dom$Type), dom$Type$pkg$$class_Bar())

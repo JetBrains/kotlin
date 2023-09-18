@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.formver.embeddings.MethodEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
 import org.jetbrains.kotlin.formver.viper.ast.Label
 import org.jetbrains.kotlin.name.Name
 
 interface MethodConversionContext : ProgramConversionContext {
-    val method: MethodEmbedding
+    val signature: FullNamedFunctionSignature
     val nameMangler: NameMangler
     fun getLambdaOrNull(name: Name): SubstitutionLambda?
 }
@@ -34,7 +34,7 @@ fun MethodConversionContext.embedLocalProperty(symbol: FirPropertySymbol, scopeD
     )
 
 val MethodConversionContext.returnVar: VariableEmbedding
-    get() = VariableEmbedding(nameMangler.mangledReturnValueName, method.returnType)
+    get() = VariableEmbedding(nameMangler.mangledReturnValueName, signature.returnType)
 
 // It seems like Viper will propagate the weakest precondition through the label correctly even in the absence of
 // explicit invariants; we only need to add those if we want to make a stronger claim.

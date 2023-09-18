@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
-import org.jetbrains.kotlin.formver.embeddings.MethodEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Label
 import org.jetbrains.kotlin.name.Name
@@ -53,11 +53,11 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
     }
 
     override fun withInlineContext(
-        inlineMethod: MethodEmbedding,
+        inlineSignature: FullNamedFunctionSignature,
         returnVarName: MangledName,
         substitutionParams: Map<Name, SubstitutionItem>,
     ): StmtConversionContext<RTC> =
-        copy(methodCtx = InlineMethodConverter(this, inlineMethod, returnVarName, substitutionParams))
+        copy(methodCtx = InlineMethodConverter(this, inlineSignature, returnVarName, substitutionParams))
 
     // We can't implement these members using `by` due to Kotlin shenanigans.
     override val resultExp: ExpEmbedding

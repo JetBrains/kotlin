@@ -17,6 +17,7 @@ sealed interface ExpEmbedding {
     fun withType(newType: TypeEmbedding): ExpEmbedding =
         if (newType == type) this else Cast(this, newType)
 }
+
 fun List<ExpEmbedding>.toViper(): List<Exp> = map { it.toViper() }
 
 sealed interface IntArithExpression : ExpEmbedding {
@@ -28,35 +29,35 @@ sealed interface IntArithExpression : ExpEmbedding {
 
 data class Add(
     override val left: ExpEmbedding,
-    override val right: ExpEmbedding
+    override val right: ExpEmbedding,
 ) : IntArithExpression {
     override fun toViper() = Exp.Add(left.toViper(), right.toViper())
 }
 
 data class Sub(
     override val left: ExpEmbedding,
-    override val right: ExpEmbedding
+    override val right: ExpEmbedding,
 ) : IntArithExpression {
     override fun toViper() = Exp.Sub(left.toViper(), right.toViper())
 }
 
 data class Mul(
     override val left: ExpEmbedding,
-    override val right: ExpEmbedding
+    override val right: ExpEmbedding,
 ) : IntArithExpression {
     override fun toViper() = Exp.Mul(left.toViper(), right.toViper())
 }
 
 data class Div(
     override val left: ExpEmbedding,
-    override val right: ExpEmbedding
+    override val right: ExpEmbedding,
 ) : IntArithExpression {
     override fun toViper() = Exp.Div(left.toViper(), right.toViper())
 }
 
 data class Mod(
     override val left: ExpEmbedding,
-    override val right: ExpEmbedding
+    override val right: ExpEmbedding,
 ) : IntArithExpression {
     override fun toViper() = Exp.Mod(left.toViper(), right.toViper())
 }
@@ -71,28 +72,28 @@ sealed interface IntComparisonExpression : ExpEmbedding {
 
 data class LtCmp(
     override val left: ExpEmbedding,
-    override val right: ExpEmbedding
+    override val right: ExpEmbedding,
 ) : IntComparisonExpression {
     override fun toViper() = Exp.LtCmp(left.toViper(), right.toViper())
 }
 
 data class LeCmp(
     override val left: ExpEmbedding,
-    override val right: ExpEmbedding
+    override val right: ExpEmbedding,
 ) : IntComparisonExpression {
     override fun toViper() = Exp.LeCmp(left.toViper(), right.toViper())
 }
 
 data class GtCmp(
     override val left: ExpEmbedding,
-    override val right: ExpEmbedding
+    override val right: ExpEmbedding,
 ) : IntComparisonExpression {
     override fun toViper() = Exp.GtCmp(left.toViper(), right.toViper())
 }
 
 data class GeCmp(
     override val left: ExpEmbedding,
-    override val right: ExpEmbedding
+    override val right: ExpEmbedding,
 ) : IntComparisonExpression {
     override fun toViper() = Exp.GeCmp(left.toViper(), right.toViper())
 }
@@ -100,7 +101,7 @@ data class GeCmp(
 
 data class EqCmp(
     val left: ExpEmbedding,
-    val right: ExpEmbedding
+    val right: ExpEmbedding,
 ) : ExpEmbedding {
     override val type = BooleanTypeEmbedding
 
@@ -109,7 +110,7 @@ data class EqCmp(
 
 data class NeCmp(
     val left: ExpEmbedding,
-    val right: ExpEmbedding
+    val right: ExpEmbedding,
 ) : ExpEmbedding {
     override val type = BooleanTypeEmbedding
 
@@ -126,27 +127,27 @@ sealed interface BinaryBooleanExpression : ExpEmbedding {
 
 data class And(
     override val left: ExpEmbedding,
-    override val right: ExpEmbedding
+    override val right: ExpEmbedding,
 ) : BinaryBooleanExpression {
     override fun toViper() = Exp.And(left.toViper(), right.toViper())
 }
 
 data class Or(
     override val left: ExpEmbedding,
-    override val right: ExpEmbedding
+    override val right: ExpEmbedding,
 ) : BinaryBooleanExpression {
     override fun toViper() = Exp.Or(left.toViper(), right.toViper())
 }
 
 data class Implies(
     override val left: ExpEmbedding,
-    override val right: ExpEmbedding
+    override val right: ExpEmbedding,
 ) : BinaryBooleanExpression {
     override fun toViper() = Exp.Implies(left.toViper(), right.toViper())
 }
 
 data class Not(
-    val exp: ExpEmbedding
+    val exp: ExpEmbedding,
 ) : ExpEmbedding {
     override val type = BooleanTypeEmbedding
 

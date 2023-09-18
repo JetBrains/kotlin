@@ -49,16 +49,16 @@ method pkg$$global$testGlobalScopeOverloading$() returns (ret: dom$Unit)
 {
   var anonymous$1: dom$Unit
   var anonymous$2: dom$Unit
-  var anonymous$3: dom$Unit
-  var anonymous$4: Ref
-  var anonymous$5: dom$Unit
-  var anonymous$6: Ref
+  var anonymous$3: Ref
+  var anonymous$4: dom$Unit
+  var anonymous$5: Ref
+  var anonymous$6: dom$Unit
   anonymous$1 := pkg$$global$fakePrint$Tkotlin_Int(42)
   anonymous$2 := pkg$$global$fakePrint$Tkotlin_Boolean(true)
-  anonymous$4 := pkg$$class_Foo$constructor$()
-  anonymous$3 := pkg$$global$fakePrint$TFoo(anonymous$4)
-  anonymous$6 := pkg$$class_Bar$constructor$()
-  anonymous$5 := pkg$$global$fakePrint$TBar(anonymous$6)
+  anonymous$3 := pkg$$class_Foo$constructor$()
+  anonymous$4 := pkg$$global$fakePrint$TFoo(anonymous$3)
+  anonymous$5 := pkg$$class_Bar$constructor$()
+  anonymous$6 := pkg$$global$fakePrint$TBar(anonymous$5)
   label label$ret
 }
 
@@ -89,16 +89,16 @@ method pkg$$global$testClassFunctionOverloading$() returns (ret: dom$Unit)
 {
   var local$1$b: Ref
   var anonymous$1: Ref
-  var anonymous$2: dom$Unit
-  var anonymous$3: Ref
-  var anonymous$4: dom$Unit
-  var anonymous$5: Ref
+  var anonymous$2: Ref
+  var anonymous$3: dom$Unit
+  var anonymous$4: Ref
+  var anonymous$5: dom$Unit
   anonymous$1 := pkg$$class_Bar$constructor$()
   local$1$b := anonymous$1
-  anonymous$3 := pkg$$class_Foo$constructor$()
-  anonymous$2 := pkg$$class_Bar$fun_baz$TFoo(local$1$b, anonymous$3)
-  anonymous$5 := pkg$$class_Bar$constructor$()
-  anonymous$4 := pkg$$class_Bar$fun_baz$TBar(local$1$b, anonymous$5)
+  anonymous$2 := pkg$$class_Foo$constructor$()
+  anonymous$3 := pkg$$class_Bar$fun_baz$TFoo(local$1$b, anonymous$2)
+  anonymous$4 := pkg$$class_Bar$constructor$()
+  anonymous$5 := pkg$$class_Bar$fun_baz$TBar(local$1$b, anonymous$4)
   label label$ret
 }
 

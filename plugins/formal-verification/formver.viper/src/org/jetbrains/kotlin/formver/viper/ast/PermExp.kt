@@ -13,7 +13,8 @@ sealed class PermExp : IntoSilver<viper.silver.ast.PermExp> {
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
     ) : PermExp() {
-        override fun toSilver(): viper.silver.ast.PermExp = viper.silver.ast.WildcardPerm(pos.toSilver(), info.toSilver(), trafos.toSilver())
+        override fun toSilver(): viper.silver.ast.PermExp =
+            viper.silver.ast.WildcardPerm(pos.toSilver(), info.toSilver(), trafos.toSilver())
     }
 
     data class FullPerm(

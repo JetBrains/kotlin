@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.calleeCallableSymbol
 import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.embeddings.callables.InvokeFunctionObjectMethod
+import org.jetbrains.kotlin.formver.embeddings.callables.SpecialKotlinFunctionImplementation
+import org.jetbrains.kotlin.formver.embeddings.callables.SpecialKotlinFunctions
 import org.jetbrains.kotlin.formver.functionCallArguments
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
@@ -41,7 +44,10 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
     override fun visitElement(element: FirElement, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
         handleUnimplementedElement("Not yet implemented for $element (${element.source.text})", data)
 
-    override fun visitReturnExpression(returnExpression: FirReturnExpression, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
+    override fun visitReturnExpression(
+        returnExpression: FirReturnExpression,
+        data: StmtConversionContext<ResultTrackingContext>,
+    ): ExpEmbedding {
         val expr = data.convert(returnExpression.result)
         data.addStatement(Stmt.LocalVarAssign(data.returnVar.toViper(), expr.withType(data.returnVar.type).toViper()))
         data.addStatement(data.returnLabel.toGoto())
@@ -56,7 +62,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
 
     override fun <T> visitConstExpression(
         constExpression: FirConstExpression<T>,
-        data: StmtConversionContext<ResultTrackingContext>
+        data: StmtConversionContext<ResultTrackingContext>,
     ): ExpEmbedding =
         when (constExpression.kind) {
             ConstantValueKind.Int -> IntLit((constExpression.value as Long).toInt())
@@ -168,7 +174,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         }
 
         val callee = data.embedFunction(symbol as FirFunctionSymbol<*>)
-        return callee.insertCall(argsFir, data)
+        return callee.insertFirCallImpl(argsFir, data)
     }
 
     override fun visitImplicitInvokeCall(
@@ -182,9 +188,9 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
                 // NOTE: it is not needed to make distinction between implicit or explicit parameters
                 val lambdaArgs = lambda.lambdaArgs()
                 lambdaArgs.forEach { data.addScopedName(it) }
-                val callArgs = data.method.getFunctionCallSubstitutionItems(implicitInvokeCall.argumentList.arguments, data)
+                val callArgs = data.getFunctionCallSubstitutionItems(implicitInvokeCall.argumentList.arguments)
                 val subs = lambdaArgs.zip(callArgs).toMap()
-                val lambdaCtx = this.newBlock().withInlineContext(this.method, this.resultCtx.resultVar.name, subs)
+                val lambdaCtx = this.newBlock().withInlineContext(this.signature, this.resultCtx.resultVar.name, subs)
                 lambdaCtx.convert(lambda.lambdaBody())
                 // NOTE: It is necessary to drop the last stmt because is a wrong goto
                 val sqn = lambdaCtx.block.copy(stmts = lambdaCtx.block.stmts.dropLast(1))
@@ -223,12 +229,15 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
             condCtx.convertAndCapture(whileLoop.condition)
             bodyCtx.convert(whileLoop.block)
             bodyCtx.convertAndCapture(whileLoop.condition)
-            data.addStatement(Stmt.While(condCtx.resultExp.toViper(), invariants = data.method.postconditions, bodyCtx.block))
+            data.addStatement(Stmt.While(condCtx.resultExp.toViper(), invariants = data.signature.postconditions, bodyCtx.block))
         }
         return UnitLit
     }
 
-    override fun visitBreakExpression(breakExpression: FirBreakExpression, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
+    override fun visitBreakExpression(
+        breakExpression: FirBreakExpression,
+        data: StmtConversionContext<ResultTrackingContext>,
+    ): ExpEmbedding {
         data.addStatement(data.breakLabel.toGoto())
         return UnitLit
     }
@@ -289,10 +298,13 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         thisReceiverExpression: FirThisReceiverExpression,
         data: StmtConversionContext<ResultTrackingContext>,
     ): ExpEmbedding =
-        data.method.receiver
+        data.signature.receiver
             ?: throw IllegalArgumentException("Can't resolve the 'this' receiver since the function does not have one.")
 
-    override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
+    override fun visitTypeOperatorCall(
+        typeOperatorCall: FirTypeOperatorCall,
+        data: StmtConversionContext<ResultTrackingContext>,
+    ): ExpEmbedding {
         val argument = data.convert(typeOperatorCall.arguments[0])
         val conversionType = data.embedType(typeOperatorCall.conversionTypeRef.coneType)
         return when (typeOperatorCall.operation) {
