@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.MatterSupport
+
+modules = MatterSupport
+compilerOpts = -framework MatterSupport
+linkerOpts = -framework MatterSupport
+#Disabled: Swift-only framework
