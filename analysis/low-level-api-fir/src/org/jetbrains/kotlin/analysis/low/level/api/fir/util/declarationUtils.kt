@@ -22,10 +22,12 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirLookupTagEntry
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     firFileBuilder: LLFirFileBuilder,
@@ -173,11 +175,23 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
 }
 
 fun FirAnonymousInitializer.containingClass(): FirRegularClass {
-    val dispatchReceiverType = this.dispatchReceiverType as? ConeLookupTagBasedType
-        ?: error("dispatchReceiverType for FirAnonymousInitializer modifier cannot be null")
+    val dispatchReceiverType = this.dispatchReceiverType
+    checkWithAttachment(
+        condition = dispatchReceiverType != null,
+        message = { "dispatchReceiverType for ${FirAnonymousInitializer::class.simpleName} modifier cannot be null" },
+    ) {
+        withFirEntry("initializer", this@containingClass)
+    }
 
-    val dispatchReceiverSymbol = dispatchReceiverType.lookupTag.toSymbol(llFirSession)
-        ?: error("symbol for FirAnonymousInitializer cannot be null")
+    val lookupTag = dispatchReceiverType.lookupTag
+    val dispatchReceiverSymbol = lookupTag.toSymbol(llFirSession)
+    checkWithAttachment(
+        condition = dispatchReceiverSymbol != null,
+        message = { "symbol for ${FirAnonymousInitializer::class.simpleName} cannot be null" },
+    ) {
+        withFirEntry("initializer", this@containingClass)
+        withFirLookupTagEntry("tag", lookupTag)
+    }
 
     return dispatchReceiverSymbol.fir as FirRegularClass
 }
