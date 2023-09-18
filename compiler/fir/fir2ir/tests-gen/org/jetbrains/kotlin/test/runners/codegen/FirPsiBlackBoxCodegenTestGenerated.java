@@ -37686,6 +37686,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("propertyInUpperCaseWithJava.kt")
+        public void testPropertyInUpperCaseWithJava() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/propertyInUpperCaseWithJava.kt");
+        }
+
+        @Test
         @TestMetadata("protectedJavaFieldInInline.kt")
         public void testProtectedJavaFieldInInline() throws Exception {
             runTest("compiler/testData/codegen/box/properties/protectedJavaFieldInInline.kt");

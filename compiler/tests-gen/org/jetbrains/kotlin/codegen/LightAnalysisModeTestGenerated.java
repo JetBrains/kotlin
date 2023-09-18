@@ -32190,6 +32190,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/properties/privatePropertyWithoutBackingField.kt");
         }
 
+        @TestMetadata("propertyInUpperCaseWithJava.kt")
+        public void testPropertyInUpperCaseWithJava() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/propertyInUpperCaseWithJava.kt");
+        }
+
         @TestMetadata("protectedJavaFieldInInline.kt")
         public void testProtectedJavaFieldInInline() throws Exception {
             runTest("compiler/testData/codegen/box/properties/protectedJavaFieldInInline.kt");

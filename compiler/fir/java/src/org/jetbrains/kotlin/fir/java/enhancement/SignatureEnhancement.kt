@@ -157,17 +157,13 @@ class FirSignatureEnhancement(
                 val accessorSymbol = firElement.symbol
                 val getterDelegate = firElement.getter.delegate
                 val enhancedGetterSymbol = if (getterDelegate is FirJavaMethod) {
-                    enhanceMethod(
-                        getterDelegate, getterDelegate.symbol.callableId, getterDelegate.name, enhancedTypeParameters = null,
-                    )
+                    enhancementsCache.enhancedFunctions.getValue(getterDelegate.symbol, this to getterDelegate.name)
                 } else {
                     getterDelegate.symbol
                 }
                 val setterDelegate = firElement.setter?.delegate
                 val enhancedSetterSymbol = if (setterDelegate is FirJavaMethod) {
-                    enhanceMethod(
-                        setterDelegate, setterDelegate.symbol.callableId, setterDelegate.name, enhancedTypeParameters = null,
-                    )
+                    enhancementsCache.enhancedFunctions.getValue(setterDelegate.symbol, this to setterDelegate.name)
                 } else {
                     setterDelegate?.symbol
                 }
