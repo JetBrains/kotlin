@@ -826,6 +826,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("nestedClassConstructorVsMemberFunctionConflict.kt")
+        public void testNestedClassConstructorVsMemberFunctionConflict() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/nestedClassConstructorVsMemberFunctionConflict.kt");
+        }
+
+        @Test
         @TestMetadata("noLibraryProvidersDuplication.kt")
         public void testNoLibraryProvidersDuplication() throws Exception {
             runTest("compiler/testData/diagnostics/tests/noLibraryProvidersDuplication.kt");

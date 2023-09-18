@@ -15,16 +15,16 @@ class a<!CONFLICTING_OVERLOADS!>()<!> { }
 <!CONFLICTING_OVERLOADS!>fun a()<!> = 1
 
 class Tram {
-    fun f() { }
+    <!CONFLICTING_OVERLOADS!>fun f()<!> { }
 
-    class f() { }
+    class f<!CONFLICTING_OVERLOADS!>()<!> { }
 }
 
 class Yvayva {
     companion object {
-        fun fghj() { }
+        <!CONFLICTING_OVERLOADS!>fun fghj()<!> { }
 
-        class fghj() { }
+        class fghj<!CONFLICTING_OVERLOADS!>()<!> { }
     }
 }
 
