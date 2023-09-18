@@ -74,13 +74,13 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
-            forTestsNotMatching("analysis/low-level-api-fir/testdata/lazyResolve/noRuntime/*" ) {
+            forTestsNotMatching("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/*" ) {
                 defaultDirectives {
                     +WITH_STDLIB
                 }
             }
 
-            forTestsMatching("analysis/low-level-api-fir/testdata/lazyResolve/noRuntime/*") {
+            forTestsMatching("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/*") {
                 defaultDirectives {
                     +NO_RUNTIME
                 }

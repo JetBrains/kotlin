@@ -38,7 +38,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
     }
 
-    testGroup("analysis/low-level-api-fir/tests", "analysis/low-level-api-fir/testdata") {
+    testGroup("analysis/low-level-api-fir/tests", "analysis/low-level-api-fir/testData") {
         testClass<AbstractFirOnAirResolveTest> {
             model("onAirResolve")
         }
