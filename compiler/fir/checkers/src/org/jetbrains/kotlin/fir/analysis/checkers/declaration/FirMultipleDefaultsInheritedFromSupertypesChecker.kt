@@ -20,16 +20,19 @@ import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.Name
 
 object FirMultipleDefaultsInheritedFromSupertypesChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.unsubstitutedScope(context).processAllFunctions {
-            if (it.containingClassLookupTag() != declaration.symbol.toLookupTag()) {
+            val originalIfSubstitutionOverride = it.unwrapSubstitutionOverrides()
+
+            if (originalIfSubstitutionOverride.containingClassLookupTag() != declaration.symbol.toLookupTag()) {
                 return@processAllFunctions
             }
 
-            checkFunction(declaration, it, context, reporter)
+            checkFunction(declaration, originalIfSubstitutionOverride, context, reporter)
         }
     }
 
