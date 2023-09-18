@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -61,30 +62,32 @@ class IrOverridingUtil(
         }
 
     fun buildFakeOverridesForClass(clazz: IrClass, oldSignatures: Boolean) {
-        val superTypes = clazz.superTypes
+        fakeOverrideBuilder.inFile(clazz.fileOrNull) {
+            val superTypes = clazz.superTypes
 
-        val fromCurrent = clazz.declarations.filterIsInstance<IrOverridableMember>()
+            val fromCurrent = clazz.declarations.filterIsInstance<IrOverridableMember>()
 
-        val allFromSuper = superTypes.flatMap { superType ->
-            val superClass = superType.getClass() ?: error("Unexpected super type: $superType")
-            superClass.declarations
-                .filter { it.isOverridableMemberOrAccessor() }
-                .map {
-                    val overriddenMember = it as IrOverridableMember
-                    val fakeOverride = fakeOverrideBuilder.fakeOverrideMember(superType, overriddenMember, clazz)
-                    FakeOverride(fakeOverride, overriddenMember)
-                }
-        }
+            val allFromSuper = superTypes.flatMap { superType ->
+                val superClass = superType.getClass() ?: error("Unexpected super type: $superType")
+                superClass.declarations
+                    .filter { it.isOverridableMemberOrAccessor() }
+                    .map {
+                        val overriddenMember = it as IrOverridableMember
+                        val fakeOverride = fakeOverrideBuilder.fakeOverrideMember(superType, overriddenMember, clazz)
+                        FakeOverride(fakeOverride, overriddenMember)
+                    }
+            }
 
-        val allFromSuperByName = allFromSuper.groupBy { it.override.name }
+            val allFromSuperByName = allFromSuper.groupBy { it.override.name }
 
-        allFromSuperByName.forEach { group ->
-            generateOverridesInFunctionGroup(
-                group.value,
-                fromCurrent.filter { it.name == group.key && !it.isStaticMember },
-                clazz,
-                oldSignatures
-            )
+            allFromSuperByName.forEach { group ->
+                generateOverridesInFunctionGroup(
+                    group.value,
+                    fromCurrent.filter { it.name == group.key && !it.isStaticMember },
+                    clazz,
+                    oldSignatures
+                )
+            }
         }
     }
 

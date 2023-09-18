@@ -86,6 +86,11 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     friendModules = friendModules,
     unimplementedOverridesStrategy = unimplementedOverridesStrategy
 ) {
+
+    override fun inFile(file: IrFile?, block: () -> Unit) {
+        fakeOverrideDeclarationTable.inFile(file, block)
+    }
+
     override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
         val (signature, symbol) = computeFunctionFakeOverrideSymbol(function, manglerCompatibleMode)
 
@@ -286,17 +291,9 @@ class IrLinkerFakeOverrideProvider(
 
         if (!platformSpecificClassFilter.needToConstructFakeOverrides(clazz)) return false
 
-        buildFakeOverridesForSingleClass(clazz, compatibilityMode)
+        irOverridingUtil.buildFakeOverridesForClass(clazz, compatibilityMode.oldSignatures)
 
         return true
-    }
-
-    fun buildFakeOverridesForSingleClass(clazz: IrClass, compatibilityMode: CompatibilityMode) {
-        fakeOverrideDeclarationTable.run {
-            inFile(clazz.fileOrNull) {
-                irOverridingUtil.buildFakeOverridesForClass(clazz, compatibilityMode.oldSignatures)
-            }
-        }
     }
 
     fun provideFakeOverrides(klass: IrClass, compatibilityMode: CompatibilityMode) {

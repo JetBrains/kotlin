@@ -40,6 +40,7 @@ abstract class FakeOverrideBuilderStrategy(
             else -> error("Unexpected fake override: $fakeOverride")
         }
     }
+    abstract fun inFile(file: IrFile?, block: () -> Unit)
 
     protected abstract fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean)
     protected abstract fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean)

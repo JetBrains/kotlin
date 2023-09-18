@@ -1249,6 +1249,8 @@ private object BindToNewEmptySymbols : FakeOverrideBuilderStrategy(
             linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $it"), manglerCompatibleMode)
         }
     }
+
+    override fun inFile(file: IrFile?, block: () -> Unit) { block() }
 }
 
 fun IrClass.addFakeOverrides(
