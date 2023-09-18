@@ -74,12 +74,6 @@ To run the full build:
 This will produce compiler and libraries for all supported targets.
 The full build can take about an hour on a Macbook Pro, but the duration can vary based on your system configuration."
 
-
-
-
-
-
-
 After any of the commands above, `./dist` will contain Kotlin/Native distribution.
 You can use it like a distribution of
 [command-line compiler](https://kotlinlang.org/docs/native-command-line-compiler.html).
