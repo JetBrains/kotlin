@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
@@ -26,9 +27,7 @@ object IrActualizer {
         typeSystemContext: IrTypeSystemContext,
         languageVersionSettings: LanguageVersionSettings,
         symbolTable: SymbolTable,
-        mangler: KotlinMangler.IrMangler,
-        // TODO: drop this argument in favor of using [IrModuleDescriptor::shouldSeeInternalsOf] in FakeOverrideBuilder KT-61384
-        friendModules: Map<String, List<String>>,
+        irOverridingUtil: IrOverridingUtil,
         useIrFakeOverrideBuilder: Boolean,
         expectActualTracker: ExpectActualTracker?
     ): IrActualizedResult {
@@ -80,7 +79,7 @@ object IrActualizer {
 
         if (useIrFakeOverrideBuilder) {
             //   8. Rebuild fake overrides from stretch, as they could become invalid during actualization
-            FakeOverrideRebuilder(symbolTable, mangler, typeSystemContext, mainFragment, friendModules).rebuildFakeOverrides()
+            FakeOverrideRebuilder(symbolTable, irOverridingUtil).rebuildFakeOverrides(mainFragment)
         }
 
         return IrActualizedResult(removedExpectDeclarations)

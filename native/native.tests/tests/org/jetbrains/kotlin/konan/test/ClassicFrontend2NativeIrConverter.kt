@@ -133,6 +133,7 @@ class ClassicFrontend2NativeIrConverter(
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer.mangler,
             irMangler = KonanManglerIr,
             firMangler = null,
+            fir2IrComponents = null,
         )
     }
 

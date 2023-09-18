@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
-import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
-import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
-import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
@@ -16,13 +12,11 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
+import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -58,11 +52,7 @@ import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
  */
 class FakeOverrideRebuilder(
     val symbolTable: SymbolTable,
-    val mangler: KotlinMangler.IrMangler,
-    typeSystemContext: IrTypeSystemContext,
-    val irModule: IrModuleFragment,
-    // TODO: drop this argument in favor of using [IrModuleDescriptor::shouldSeeInternalsOf] in FakeOverrideBuilder KT-61384
-    friendModules: Map<String, List<String>>
+    val irOverridingUtil: IrOverridingUtil,
 ) {
     private val removedFakeOverrides = mutableMapOf<IrClassSymbol, List<IrSymbol>>()
     private val processedClasses = hashSetOf<IrClass>()
@@ -70,17 +60,8 @@ class FakeOverrideRebuilder(
     // Map from the old fake override symbol to the new (rebuilt) symbol.
     private val fakeOverrideMap = hashMapOf<IrSymbol, IrSymbol>()
 
-    private val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
-        LocalFakeOverridesStorage(),
-        symbolTable,
-        mangler,
-        typeSystemContext,
-        friendModules,
-        PartialLinkageSupportForLinker.DISABLED,
-        externalOverridabilityConditions = emptyList(), // TODO: KT-61370, KT-61804.
-    )
 
-    fun rebuildFakeOverrides() {
+    fun rebuildFakeOverrides(irModule: IrModuleFragment) {
         irModule.acceptVoid(RemoveFakeOverridesVisitor(removedFakeOverrides, symbolTable))
         for (clazz in removedFakeOverrides.keys) {
             rebuildClassFakeOverrides(clazz.owner)
@@ -134,7 +115,7 @@ class FakeOverrideRebuilder(
         for (c in irClass.superTypes) {
             c.getClass()?.let { rebuildClassFakeOverrides(it) }
         }
-        fakeOverrideBuilder.buildFakeOverridesForSingleClass(irClass, CompatibilityMode.CURRENT)
+        irOverridingUtil.buildFakeOverridesForClass(irClass, false)
 
         val overriddenMap = mutableMapOf<IrSymbol, IrSymbol>()
 
@@ -166,27 +147,6 @@ class FakeOverrideRebuilder(
                             }
                 )
             }
-        }
-    }
-}
-
-private class LocalFakeOverridesStorage : FileLocalAwareLinker {
-    val funStorage = mutableMapOf<Pair<IrDeclaration, IdSignature>, IrSimpleFunctionSymbolImpl>()
-    val propertyStorage = mutableMapOf<Pair<IrDeclaration, IdSignature>, IrPropertySymbol>()
-    override fun tryReferencingSimpleFunctionByLocalSignature(
-        parent: IrDeclaration,
-        idSignature: IdSignature,
-    ): IrSimpleFunctionSymbol? {
-        if (idSignature.isPubliclyVisible) return null
-        return funStorage.getOrPut(parent to idSignature) {
-            IrSimpleFunctionSymbolImpl()
-        }
-    }
-
-    override fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrPropertySymbol? {
-        if (idSignature.isPubliclyVisible) return null
-        return propertyStorage.getOrPut(parent to idSignature) {
-            IrPropertySymbolImpl()
         }
     }
 }

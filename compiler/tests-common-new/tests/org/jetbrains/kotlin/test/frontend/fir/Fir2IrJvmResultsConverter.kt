@@ -159,6 +159,7 @@ class Fir2IrJvmResultsConverter(
             descriptorMangler = commonMemberStorage.symbolTable.signaturer.mangler,
             irMangler = irMangler,
             firMangler = commonMemberStorage.firSignatureComposer.mangler,
+            fir2IrComponents = mainModuleComponents
         )
 
         return result

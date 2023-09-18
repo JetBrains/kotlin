@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
+import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionPublicSymbolImpl
@@ -556,6 +557,13 @@ class Fir2IrConverter(
             val moduleDescriptor = FirModuleDescriptor(session, kotlinBuiltIns)
             val components = Fir2IrComponentsStorage(
                 session, scopeSession, irFactory, fir2IrExtensions, fir2IrConfiguration, visibilityConverter,
+                { irBuiltins ->
+                    IrOverridingUtil(
+                        typeContextProvider(irBuiltins),
+                        Fir2IrFakeOverrideStrategy(friendModulesMap(session), commonMemberStorage.symbolTable, irMangler),
+                        externalOverridabilityConditions = emptyList(), // TODO: KT-61370, KT-61804.
+                    )
+                },
                 moduleDescriptor, commonMemberStorage, irMangler, specialSymbolProvider, initializedIrBuiltIns
             )
 
@@ -575,13 +583,7 @@ class Fir2IrConverter(
             )
 
             if (fir2IrConfiguration.useIrFakeOverrideBuilder) {
-                FakeOverrideRebuilder(
-                    commonMemberStorage.symbolTable,
-                    irMangler,
-                    typeContextProvider(components.irBuiltIns),
-                    irModuleFragment,
-                    friendModulesMap(session)
-                ).rebuildFakeOverrides()
+                FakeOverrideRebuilder(commonMemberStorage.symbolTable, components.irOverridingUtil).rebuildFakeOverrides(irModuleFragment)
             }
 
             return Fir2IrResult(irModuleFragment, components, moduleDescriptor)

@@ -36,9 +36,8 @@ class IrActualizerAndPluginsFacade(
                 inputArtifact.diagnosticReporter,
                 typeSystemContext,
                 testServices.compilerConfigurationProvider.getCompilerConfiguration(module).languageVersionSettings,
-                inputArtifact.irPluginContext.symbolTable as SymbolTable, // TODO: it's strange place to get it.
-                inputArtifact.irMangler,
-                mapOf(module.name to module.friendDependencies.map { it.moduleName }),
+                inputArtifact.fir2IrComponents!!.symbolTable,
+                inputArtifact.fir2IrComponents!!.irOverridingUtil,
                 useIrFakeOverrideBuilder = CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION in module.directives,
                 expectActualTracker = null,
             )
