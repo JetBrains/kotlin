@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
-import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
@@ -36,22 +35,22 @@ fun SmartPrinter.printElement(element: Element) {
         }
 
         fun override() {
-            if (this != AbstractFirTreeBuilder.baseFirElement) {
+            if (!isRootElement) {
                 print("override ")
             }
         }
 
         print("${kind!!.title} $type")
         print(typeParameters())
-        val needPureAbstractElement = !isInterface && !allParents.any { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }
-        val superTypesStrings = parentRefs.map {
+        val needPureAbstractElement = this.needPureAbstractElement
+        val superTypesStrings = elementParents.map {
             // TODO: Factor out
             var result = it.element.type
             if (it.args.isNotEmpty()) {
                 result += it.args.values.joinToString(", ", "<", ">") { it.typeWithArguments }
             }
             result + it.element.kind.braces()
-        } + additionalSupertypeInterfaces.map { it.type }
+        } + otherParents.map { it.type }
 
         if (superTypesStrings.isNotEmpty() || needPureAbstractElement) {
             print(" : ")
@@ -123,13 +122,13 @@ fun SmartPrinter.printElement(element: Element) {
             if (needTransformOtherChildren) {
                 println()
                 abstract()
-                if (element.parentRefs.any { it.element.needTransformOtherChildren }) {
+                if (element.elementParents.any { it.element.needTransformOtherChildren }) {
                     print("override ")
                 }
                 println(transformFunctionDeclaration("OtherChildren", typeWithArguments))
             }
 
-            if (element == AbstractFirTreeBuilder.baseFirElement) {
+            if (element.isRootElement) {
                 require(isInterface) {
                     "$element must be an interface"
                 }

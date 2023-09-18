@@ -20,13 +20,21 @@ abstract class AbstractElement<Element, Field> : ElementOrRef<Element, Field>, F
 
     abstract val params: List<TypeVariable>
 
-    abstract val parentRefs: List<ElementOrRef<Element, Field>>
+    abstract val elementParents: List<ElementRef<Element, Field>>
+
+    abstract val otherParents: List<ClassRef<*>>
+
+    val parentRefs: List<ClassOrElementRef>
+        get() = elementParents + otherParents
+
+    val isRootElement: Boolean
+        get() = elementParents.isEmpty()
 
     open val isSealed: Boolean
         get() = false
 
     override val allParents: List<Element>
-        get() = parentRefs.map { it.element }
+        get() = elementParents.map { it.element }
 
     final override fun getTypeWithArguments(notNull: Boolean): String = type + generics
 

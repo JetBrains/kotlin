@@ -23,7 +23,7 @@ interface TypeRef : Importable {
     }
 }
 
-interface ClassOrElementRef : TypeRefWithNullability
+sealed interface ClassOrElementRef : TypeRefWithNullability
 
 // Based on com.squareup.kotlinpoet.ClassName
 class ClassRef<P : TypeParameterRef> private constructor(

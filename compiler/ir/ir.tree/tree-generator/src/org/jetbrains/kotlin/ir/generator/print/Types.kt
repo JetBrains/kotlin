@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.generator.model.Element.Companion.elementName2typ
 import org.jetbrains.kotlin.ir.generator.util.*
 import org.jetbrains.kotlin.types.Variance
 import  org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
+import  org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 
 fun Element.toPoet() = ClassName(packageName, typeName)
 fun Element.toPoetSelfParameterized() = toPoet().parameterizedByIfAny(poetTypeVariables)
@@ -68,7 +69,6 @@ fun TypeVariable.toPoet() = TypeVariableName(
 
 val ClassOrElementRef.typeKind: TypeKind
     get() = when (this) {
-        is GenericElementRef<*, *> -> element.kind!!.typeKind
+        is GenericElementOrRef<*, *> -> element.kind!!.typeKind
         is ClassRef<*> -> kind
-        else -> error("Unexpected type: $this")
     }
