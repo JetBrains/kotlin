@@ -5,12 +5,18 @@
 
 package kotlin.collections
 
-
-private enum class State {
-    Ready,
-    NotReady,
-    Done,
-    Failed
+// Use integer constants instead of enum to improve performance:
+// 1) switch over enum values require loading ordinal value and mapping it to a correct tableswitch offset
+//    using SwitchMap array, which is slightly slower compared to comparing integers (assuming that "switch" statement
+//    has only a few cases);
+// 2) at least on JVM, usage of integer states may enable more optimizations; in particular, for the code looping over the iterator,
+//    the JIT can fully eliminate state manipulation (assuming that iterator's methods were inlined and
+//    an iterator's allocation was eliminated) and use only a logic from a computeNext implementation to control iteration.
+private object State {
+    const val NOT_READY: Int = 0
+    const val READY: Int = 1
+    const val DONE: Int = 2
+    const val FAILED: Int = 3
 }
 
 /**
@@ -18,29 +24,36 @@ private enum class State {
  * to implement the iterator, calling [done] when the iteration is complete.
  */
 public abstract class AbstractIterator<T> : Iterator<T> {
-    private var state = State.NotReady
+    private var state = State.NOT_READY
     private var nextValue: T? = null
 
     override fun hasNext(): Boolean {
-        require(state != State.Failed)
         return when (state) {
-            State.Done -> false
-            State.Ready -> true
-            else -> tryToComputeNext()
+            State.DONE -> false
+            State.READY -> true
+            State.NOT_READY -> tryToComputeNext()
+            else -> throw IllegalArgumentException("hasNext called when the iterator is in the FAILED state.")
         }
     }
 
     override fun next(): T {
-        if (!hasNext()) throw NoSuchElementException()
-        state = State.NotReady
+        if (state == State.READY) {
+            state = State.NOT_READY
+            @Suppress("UNCHECKED_CAST")
+            return nextValue as T
+        }
+        if (state == State.DONE || !tryToComputeNext()) {
+            throw NoSuchElementException()
+        }
+        state = State.NOT_READY
         @Suppress("UNCHECKED_CAST")
         return nextValue as T
     }
 
     private fun tryToComputeNext(): Boolean {
-        state = State.Failed
+        state = State.FAILED
         computeNext()
-        return state == State.Ready
+        return state == State.READY
     }
 
     /**
@@ -53,21 +66,21 @@ public abstract class AbstractIterator<T> : Iterator<T> {
      *
      * Failure to call either method will result in the iteration terminating with a failed state
      */
-    abstract protected fun computeNext(): Unit
+    protected abstract fun computeNext(): Unit
 
     /**
      * Sets the next value in the iteration, called from the [computeNext] function
      */
     protected fun setNext(value: T): Unit {
         nextValue = value
-        state = State.Ready
+        state = State.READY
     }
 
     /**
      * Sets the state to done so that the iteration terminates.
      */
     protected fun done() {
-        state = State.Done
+        state = State.DONE
     }
 }
 
