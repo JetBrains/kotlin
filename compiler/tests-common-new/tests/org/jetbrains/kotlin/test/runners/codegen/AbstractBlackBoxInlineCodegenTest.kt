@@ -26,6 +26,7 @@ open class AbstractIrBlackBoxInlineCodegenWithIrInlinerTest : AbstractIrBlackBox
         super.configure(builder)
         builder.useInlineHandlers()
         builder.useIrInliner()
+        builder.useInlineScopesNumbers()
     }
 }
 
@@ -41,6 +42,7 @@ open class AbstractFirLightTreeBlackBoxInlineCodegenWithIrInlinerTest : Abstract
         super.configure(builder)
         builder.useInlineHandlers()
         builder.useIrInliner()
+        builder.useInlineScopesNumbers()
     }
 }
 
@@ -58,6 +60,7 @@ open class AbstractFirPsiBlackBoxInlineCodegenWithIrInlinerTest : AbstractFirPsi
         super.configure(builder)
         builder.useInlineHandlers()
         builder.useIrInliner()
+        builder.useInlineScopesNumbers()
     }
 }
 

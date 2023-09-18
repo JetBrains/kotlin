@@ -100,6 +100,12 @@ fun TestConfigurationBuilder.useIrInliner() {
     }
 }
 
+fun TestConfigurationBuilder.useInlineScopesNumbers() {
+    defaultDirectives {
+        +LanguageSettingsDirectives.ENABLE_INLINE_SCOPES_NUMBERS
+    }
+}
+
 fun TestConfigurationBuilder.applyDumpSmapDirective() {
     forTestsMatching("compiler/testData/codegen/boxInline/smap/*") {
         defaultDirectives {

@@ -28,6 +28,8 @@ abstract class AbstractLocalVariableTestBase<R : ResultingArtifact.FrontendOutpu
             commonServicesConfigurationForDebugTest(it)
         }
 
+        useInlineScopesNumbers()
+
         configureCommonHandlersForLocalVariableTest()
 
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor, ::BlackBoxInlinerCodegenSuppressor)

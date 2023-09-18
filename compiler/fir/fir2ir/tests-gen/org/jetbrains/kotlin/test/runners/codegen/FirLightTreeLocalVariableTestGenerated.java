@@ -110,6 +110,12 @@ public class FirLightTreeLocalVariableTestGenerated extends AbstractFirLightTree
     }
 
     @Test
+    @TestMetadata("manyInlineFunsInObject.kt")
+    public void testManyInlineFunsInObject() throws Exception {
+        runTest("compiler/testData/debug/localVariables/manyInlineFunsInObject.kt");
+    }
+
+    @Test
     @TestMetadata("tryFinally.kt")
     public void testTryFinally() throws Exception {
         runTest("compiler/testData/debug/localVariables/tryFinally.kt");

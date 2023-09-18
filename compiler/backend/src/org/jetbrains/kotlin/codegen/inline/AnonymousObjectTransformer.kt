@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
@@ -325,13 +326,25 @@ class AnonymousObjectTransformer(
             transformationInfo.capturedLambdasToInline, parentRemapper, isConstructor
         )
 
-        val reifiedTypeParametersUsages = if (inliningContext.shouldReifyTypeParametersInObjects)
-            inliningContext.root.inlineMethodReifier.reifyInstructions(sourceNode)
-        else null
+        val reifiedTypeParametersUsages =
+            if (inliningContext.shouldReifyTypeParametersInObjects) {
+                inliningContext.root.inlineMethodReifier.reifyInstructions(sourceNode)
+            } else {
+                null
+            }
+        val inlineScopesGenerator =
+            if (state.configuration.getBoolean(JVMConfigurationKeys.ENABLE_INLINE_SCOPES_NUMBERS)) {
+                InlineScopesGenerator()
+            } else {
+                null
+            }
         val result = MethodInliner(
             sourceNode,
             parameters,
-            inliningContext.subInline(transformationInfo.nameGenerator),
+            inliningContext.subInline(
+                transformationInfo.nameGenerator,
+                inlineScopesGenerator = inlineScopesGenerator
+            ),
             remapper,
             isSameModule,
             { "Transformer for " + transformationInfo.oldClassName },

@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.LocalVariablesSorter
 import org.jetbrains.org.objectweb.asm.commons.MethodRemapper
@@ -158,6 +155,12 @@ class MethodInliner(
         var currentLineNumber = if (isInlineOnlyMethod) sourceMapper.callSite!!.line else -1
         val lambdaInliner = object : InlineAdapter(remappingMethodAdapter, parameters.argsSizeOnStack, sourceMapper) {
             private var transformationInfo: TransformationInfo? = null
+            private var currentLabel: Label? = null
+
+            override fun visitLabel(label: Label?) {
+                currentLabel = label
+                super.visitLabel(label)
+            }
 
             override fun visitLineNumber(line: Int, start: Label) {
                 if (!isInlineOnlyMethod) {
@@ -304,10 +307,38 @@ class MethodInliner(
 
                     val varRemapper = LocalVarRemapper(lambdaParameters, valueParamShift)
 
+                    val inlineScopesGenerator = inliningContext.inlineScopesGenerator
+
+                    // When regenerating anonymous objects we may inline a crossinline lambda before some
+                    // already inlined functions. For these functions their scope numbers should be incremented.
+                    // We also need to temporarily increment the already inlined scopes number by the number of
+                    // inline marker variables that we have found before the crossinline lambda call to assign
+                    // the scope number for this lambda correctly.
+                    var inlineScopeNumberIncrement = 0
+                    if (inlineScopesGenerator != null && isRegeneratingAnonymousObject()) {
+                        val labelToIndex = node.getLabelToIndexMap()
+                        val currentIndex = labelToIndex[currentLabel]
+                        if (currentIndex != null) {
+                            for (variable in node.localVariables) {
+                                val variableStartIndex = labelToIndex[variable.start.label] ?: continue
+                                if (variableStartIndex < currentIndex && isFakeLocalVariableForInline(variable.name)) {
+                                    inlineScopeNumberIncrement += 1
+                                }
+
+                                if (variableStartIndex > currentIndex) {
+                                    variable.name = incrementScopeNumbers(variable.name)
+                                }
+                            }
+                        }
+                    }
+
+                    inlineScopesGenerator?.apply { inlinedScopes += inlineScopeNumberIncrement }
+
                     //TODO add skipped this and receiver
                     val lambdaResult =
                         inliner.doInline(localVariablesSorter, varRemapper, true, info.returnLabels, invokeCall.finallyDepthShift)
 
+                    inlineScopesGenerator?.apply { inlinedScopes -= inlineScopeNumberIncrement }
                     result.mergeWithNotChangeInfo(lambdaResult)
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
                     result.reifiedTypeParametersUsages.mergeAll(info.reifiedTypeParametersUsages)
@@ -417,7 +448,7 @@ class MethodInliner(
         )
 
         val inlineScopesGenerator = inliningContext.inlineScopesGenerator
-        if (inlineScopesGenerator != null && node.localVariables.isNotEmpty()) {
+        if (inlineScopesGenerator != null && node.localVariables.isNotEmpty() && !isRegeneratingAnonymousObject()) {
             inlineScopesGenerator.addInlineScopesInfo(node)
         }
 
@@ -1228,4 +1259,24 @@ class MethodInliner(
             return result
         }
     }
+
+    private fun isRegeneratingAnonymousObject(): Boolean =
+        inliningContext.parent is RegeneratedClassContext
+}
+
+
+private fun incrementScopeNumbers(name: String): String {
+    val scopeNumber = name.getScopeNumber() ?: return name
+    val surroundingScopeNumber = name.getSurroundingScopeNumber()
+    val newName = "${name.dropInlineScopeInfo()}$INLINE_SCOPE_NUMBER_SEPARATOR${scopeNumber + 1}"
+    if (surroundingScopeNumber != null) {
+        val resultingSurroundingScopeNumber =
+            if (surroundingScopeNumber != 0) {
+                surroundingScopeNumber + 1
+            } else {
+                0
+            }
+        return "$newName$INLINE_SCOPE_NUMBER_SEPARATOR$resultingSurroundingScopeNumber"
+    }
+    return newName
 }

@@ -45,6 +45,8 @@ abstract class AbstractAsmLikeInstructionListingTestBase<R : ResultingArtifact.F
             +CHECK_ASM_LIKE_INSTRUCTIONS
         }
 
+        useInlineScopesNumbers()
+
         commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
 
         configureClassicFrontendHandlersStep {

@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.irInlinerIsEnabled
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
+import org.jetbrains.kotlin.codegen.inline.INLINE_SCOPE_NUMBER_SEPARATOR
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
+import org.jetbrains.kotlin.codegen.inline.getSurroundingScopeNumber
+import org.jetbrains.kotlin.config.JVMConfigurationKeys.ENABLE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
@@ -56,8 +59,12 @@ internal class FakeLocalVariablesForIrInlinerLowering(
 
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)
-        irFile.acceptVoid(FunctionParametersProcessor())
-        irFile.accept(LocalVariablesProcessor(), LocalVariablesProcessor.Data(processingOriginalDeclarations = false))
+        if (context.configuration.getBoolean(ENABLE_INLINE_SCOPES_NUMBERS)) {
+            irFile.acceptVoid(ScopeNumberVariableProcessor())
+        } else {
+            irFile.acceptVoid(FunctionParametersProcessor())
+            irFile.accept(LocalVariablesProcessor(), LocalVariablesProcessor.Data(processingOriginalDeclarations = false))
+        }
     }
 
     override fun visitElement(element: IrElement) {
@@ -150,12 +157,16 @@ private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesPro
 
         val varName = declaration.name.asString()
         val varSuffix = when {
-            inlinedStack.size == 1 && !varName.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) -> INLINE_FUN_VAR_SUFFIX
-            else -> ""
+            inlinedStack.size == 1 && !varName.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) ->
+                INLINE_FUN_VAR_SUFFIX
+            else ->
+                ""
         }
         val newName = when {
-            varSuffix.isNotEmpty() && varName == SpecialNames.THIS.asStringStripSpecialMarkers() -> "this_"
-            else -> varName
+            varSuffix.isNotEmpty() && varName == SpecialNames.THIS.asStringStripSpecialMarkers() ->
+                AsmUtil.INLINE_DECLARATION_SITE_THIS
+            else ->
+                varName
         }
         declaration.name = Name.identifier(newName + varSuffix)
         super.visitVariable(declaration, data)
@@ -183,14 +194,79 @@ private class FunctionParametersProcessor : IrElementVisitorVoid {
 
         val varName = this.name.asString().substringAfterLast("_")
         val varNewName = when {
-            this.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER -> {
-                val functionName = (inlinedBlock.inlineDeclaration as? IrDeclarationWithName)?.name
-                functionName?.let { name -> "\$this$$name" } ?: AsmUtil.RECEIVER_PARAMETER_NAME
-            }
-            varName == SpecialNames.THIS.asStringStripSpecialMarkers() -> "this_"
-            else -> varName
+            this.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER ->
+                inlinedBlock.getReceiverParameterName()
+            varName == SpecialNames.THIS.asStringStripSpecialMarkers() ->
+                AsmUtil.INLINE_DECLARATION_SITE_THIS
+            else ->
+                varName
         }
         this.name = Name.identifier(varNewName + INLINE_FUN_VAR_SUFFIX)
         this.origin = IrDeclarationOrigin.DEFINED
     }
+}
+
+private class ScopeNumberVariableProcessor : IrElementVisitorVoid {
+    private val inlinedStack = mutableListOf<Pair<IrInlinedFunctionBlock, Int>>()
+    private var lastInlineScopeNumber = 0
+
+    private inline fun IrInlinedFunctionBlock.insertInStackAndProcess(block: IrInlinedFunctionBlock.() -> Unit) {
+        lastInlineScopeNumber += 1
+        inlinedStack += Pair(this, lastInlineScopeNumber)
+        block()
+        inlinedStack.removeLast()
+    }
+
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
+    }
+
+    override fun visitFunction(declaration: IrFunction) {
+        val processor = ScopeNumberVariableProcessor()
+        declaration.acceptChildrenVoid(processor)
+    }
+
+    override fun visitBlock(expression: IrBlock) {
+        if (expression !is IrInlinedFunctionBlock) {
+            return super.visitBlock(expression)
+        }
+
+        expression.insertInStackAndProcess {
+            super.visitBlock(expression)
+        }
+    }
+
+    override fun visitVariable(declaration: IrVariable) {
+        if (inlinedStack.isEmpty()) {
+            return super.visitVariable(declaration)
+        }
+
+        val (inlinedBlock, scopeNumber) = inlinedStack.last()
+        val name = declaration.name.asString().substringAfterLast("_")
+        val newName = when {
+            declaration.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER ->
+                inlinedBlock.getReceiverParameterName()
+            name == SpecialNames.THIS.asStringStripSpecialMarkers() ->
+                AsmUtil.INLINE_DECLARATION_SITE_THIS
+            else ->
+                name
+        }
+
+        val nameWithScopeNumber = "$newName$INLINE_SCOPE_NUMBER_SEPARATOR$scopeNumber"
+        val nameWithSurroundingScopeNumber =
+            if (name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)) {
+                val surroundingScopeNumber = name.getSurroundingScopeNumber() ?: 0
+                "$nameWithScopeNumber$INLINE_SCOPE_NUMBER_SEPARATOR$surroundingScopeNumber"
+            } else {
+                nameWithScopeNumber
+            }
+
+        declaration.name = Name.identifier(nameWithSurroundingScopeNumber)
+        super.visitVariable(declaration)
+    }
+}
+
+private fun IrInlinedFunctionBlock.getReceiverParameterName(): String {
+    val functionName = (inlineDeclaration as? IrDeclarationWithName)?.name
+    return functionName?.let { "this$$it" } ?: AsmUtil.RECEIVER_PARAMETER_NAME
 }
