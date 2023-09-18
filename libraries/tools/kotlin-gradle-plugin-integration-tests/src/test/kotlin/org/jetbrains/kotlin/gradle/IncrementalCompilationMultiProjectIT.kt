@@ -264,6 +264,7 @@ abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilat
                 plugins {
                     id 'groovy'
                     id 'org.jetbrains.kotlin.jvm'
+                    id 'org.jetbrains.kotlin.test.kotlin-compiler-args-properties'
                 }
                 
                 dependencies {
