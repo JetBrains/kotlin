@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] argsFromInit.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            init {
+            [ResolvedTo(BODY_RESOLVE)] init {
                 <Unresolved name: foo>#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
                     ^ R|<local>/args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
                 }

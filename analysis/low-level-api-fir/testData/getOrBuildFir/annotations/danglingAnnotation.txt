@@ -7,4 +7,4 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] danglingAnnotation.kt
-    @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
+    [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>

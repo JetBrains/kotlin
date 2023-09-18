@@ -3,7 +3,7 @@ FIR element: FirDanglingModifierListImpl
 FIR source kind: DanglingModifierList
 
 FIR element rendered:
-<DANGLING MODIFIER: Top level declaration expected>
+[ResolvedTo(BODY_RESOLVE)] <DANGLING MODIFIER: Top level declaration expected>
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructor.kt
@@ -17,5 +17,5 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructor.kt
 
         public final [ResolvedTo(STATUS)] fun <no name provided>(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        <DANGLING MODIFIER: Top level declaration expected>
+        [ResolvedTo(BODY_RESOLVE)] <DANGLING MODIFIER: Top level declaration expected>
     }
