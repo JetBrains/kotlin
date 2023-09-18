@@ -601,7 +601,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("KT18799: generate annotation value for constant values in documented types")
     @GradleTest
-    fun testKt18799(gradleVersion: GradleVersion) {
+    open fun testKt18799(gradleVersion: GradleVersion) {
         project("kt18799".withPrefix, gradleVersion) {
             build("kaptKotlin")
 

@@ -22,6 +22,9 @@ class Kapt4IT : Kapt3IT() {
     }
 
 
+    @Disabled("Enable when KT-61845 is fixed")
+    override fun testKt18799(gradleVersion: GradleVersion) {}
+
     @Disabled("Doesn't make sense in Kapt 4")
     override fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {}
 
@@ -45,6 +48,9 @@ class Kapt4ClassLoadersCacheIT : Kapt3ClassLoadersCacheIT() {
     override fun TestProject.customizeProject() {
         forceKapt4()
     }
+
+    @Disabled("Enable when KT-61845 is fixed")
+    override fun testKt18799(gradleVersion: GradleVersion) {}
 
     @Disabled("Doesn't make sense in Kapt 4")
     override fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {}
