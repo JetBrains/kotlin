@@ -24691,6 +24691,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("MultipleDefaultsAndSubstitutionOverrides.kt")
+            public void testMultipleDefaultsAndSubstitutionOverrides() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/MultipleDefaultsAndSubstitutionOverrides.kt");
+            }
+
+            @Test
             @TestMetadata("MultipleDefaultsInSupertypesNoExplicitOverride.kt")
             public void testMultipleDefaultsInSupertypesNoExplicitOverride() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/MultipleDefaultsInSupertypesNoExplicitOverride.kt");
