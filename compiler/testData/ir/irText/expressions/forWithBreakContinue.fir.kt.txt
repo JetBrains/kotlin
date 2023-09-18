@@ -3,7 +3,9 @@ fun testForBreak1(ss: List<String>) {
     val <iterator>: Iterator<String> = ss.iterator()
     while (<iterator>.hasNext()) { // BLOCK
       val s: String = <iterator>.next()
-      break
+      { // BLOCK
+        break
+      }
     }
   }
 }
@@ -36,7 +38,9 @@ fun testForContinue1(ss: List<String>) {
     val <iterator>: Iterator<String> = ss.iterator()
     while (<iterator>.hasNext()) { // BLOCK
       val s: String = <iterator>.next()
-      continue
+      { // BLOCK
+        continue
+      }
     }
   }
 }
@@ -63,3 +67,4 @@ fun testForContinue2(ss: List<String>) {
     }
   }
 }
+

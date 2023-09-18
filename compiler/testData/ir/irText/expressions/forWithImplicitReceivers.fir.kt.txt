@@ -45,7 +45,10 @@ fun IReceiver.test() {
     val <iterator>: IntCell = (<this>, FiveTimes).iterator()
     while ((<this>, <iterator>).hasNext()) { // BLOCK
       val i: Int = (<this>, <iterator>).next()
-      println(message = i)
+      { // BLOCK
+        println(message = i)
+      }
     }
   }
 }
+

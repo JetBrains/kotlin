@@ -36,8 +36,6 @@ fun test3(ss: List<String>?) {
       }.iterator()
       L2@ while (<iterator>.hasNext()) { // BLOCK
         val s: String = <iterator>.next()
-        { // BLOCK
-        }
       }
     }
   }
@@ -55,8 +53,6 @@ fun test4(ss: List<String>?) {
       }.iterator()
       L2@ while (<iterator>.hasNext()) { // BLOCK
         val s: String = <iterator>.next()
-        { // BLOCK
-        }
       }
     }
   }
@@ -71,10 +67,12 @@ fun test5() {
     } /*~> Unit */
     var j: Int = 0
     { // BLOCK
-      Inner@ do{ // BLOCK
+      Inner@ do// COMPOSITE {
+      { // BLOCK
         j = j.inc()
         j
-      }      while (when {
+      }
+      // }      while (when {
         greaterOrEqual(arg0 = j, arg1 = 3) -> false
         else -> break@Inner
       })

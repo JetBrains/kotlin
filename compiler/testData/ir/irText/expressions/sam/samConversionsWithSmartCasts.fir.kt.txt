@@ -1,30 +1,40 @@
 fun test1(a: Function0<Unit>) {
   when {
-    a is Runnable -> runStatic(r = a /*as Runnable */)
+    a is Runnable -> { // BLOCK
+      runStatic(r = a /*as Runnable */)
+    }
   }
 }
 
 fun test2(a: Function0<Unit>) {
   when {
-    a is Runnable -> J().run1(r = a /*as Runnable */)
+    a is Runnable -> { // BLOCK
+      J().run1(r = a /*as Runnable */)
+    }
   }
 }
 
 fun test3(a: Function0<Unit>) {
   when {
-    a is Runnable -> J().run2(r1 = a /*as Runnable */, r2 = a /*as Runnable */)
+    a is Runnable -> { // BLOCK
+      J().run2(r1 = a /*as Runnable */, r2 = a /*as Runnable */)
+    }
   }
 }
 
 fun test4(a: Function0<Unit>, b: Function0<Unit>) {
   when {
-    a is Runnable -> J().run2(r1 = a /*as Runnable */, r2 = b /*-> @FlexibleNullability Runnable? */)
+    a is Runnable -> { // BLOCK
+      J().run2(r1 = a /*as Runnable */, r2 = b /*-> @FlexibleNullability Runnable? */)
+    }
   }
 }
 
 fun test5(a: Any) {
   when {
-    a is Runnable -> J().run1(r = a /*as Runnable */)
+    a is Runnable -> { // BLOCK
+      J().run1(r = a /*as Runnable */)
+    }
   }
 }
 
@@ -54,3 +64,4 @@ fun test8(a: Function0<Unit>) {
 fun test9() {
   J().run1(r = ::test9 /*-> @FlexibleNullability Runnable? */)
 }
+

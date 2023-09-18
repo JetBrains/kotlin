@@ -13,9 +13,12 @@ class Box<out T : Foo> {
     get(): String {
       var foo: Foo = <this>.<get-foo>()
       when {
-        foo is Buz -> return foo /*as Buz */.#str /*!! String */
+        foo is Buz -> { // BLOCK
+          return foo /*as Buz */.#str /*!! String */
+        }
       }
       return ""
     }
 
 }
+

@@ -1,12 +1,19 @@
 fun test_1(): String {
   return when {
-    else -> return ""
+    else -> { // BLOCK
+      return ""
+    }
   }
 }
 
 fun test_2(b: Boolean): Boolean {
   return when {
-    b -> true
-    else -> throw NotImplementedError()
+    b -> { // BLOCK
+      true
+    }
+    else -> { // BLOCK
+      throw NotImplementedError()
+    }
   }
 }
+

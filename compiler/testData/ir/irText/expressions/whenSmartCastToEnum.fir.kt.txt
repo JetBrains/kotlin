@@ -25,33 +25,38 @@ fun test() {
   val x: Any? = En.A
   when {
     x is En -> { // BLOCK
-      val tmp0_subject: En = x /*as En */
-      when {
-        EQEQ(arg0 = tmp0_subject, arg1 = En.A) -> { // BLOCK
-          r = "when1"
+      { // BLOCK
+        val tmp0_subject: En = x /*as En */
+        when {
+          EQEQ(arg0 = tmp0_subject, arg1 = En.A) -> { // BLOCK
+            r = "when1"
+          }
+          EQEQ(arg0 = tmp0_subject, arg1 = En.B) -> { // BLOCK
+          }
+          EQEQ(arg0 = tmp0_subject, arg1 = En.C) -> { // BLOCK
+          }
+          else -> noWhenBranchMatchedException()
         }
-        EQEQ(arg0 = tmp0_subject, arg1 = En.B) -> { // BLOCK
-        }
-        EQEQ(arg0 = tmp0_subject, arg1 = En.C) -> { // BLOCK
-        }
-        else -> noWhenBranchMatchedException()
       }
     }
   }
   val y: Any = En.A
   when {
     y is En -> { // BLOCK
-      val tmp1_subject: En = y /*as En */
-      when {
-        EQEQ(arg0 = tmp1_subject, arg1 = En.A) -> { // BLOCK
-          r = "when2"
+      { // BLOCK
+        val tmp1_subject: En = y /*as En */
+        when {
+          EQEQ(arg0 = tmp1_subject, arg1 = En.A) -> { // BLOCK
+            r = "when2"
+          }
+          EQEQ(arg0 = tmp1_subject, arg1 = En.B) -> { // BLOCK
+          }
+          EQEQ(arg0 = tmp1_subject, arg1 = En.C) -> { // BLOCK
+          }
+          else -> noWhenBranchMatchedException()
         }
-        EQEQ(arg0 = tmp1_subject, arg1 = En.B) -> { // BLOCK
-        }
-        EQEQ(arg0 = tmp1_subject, arg1 = En.C) -> { // BLOCK
-        }
-        else -> noWhenBranchMatchedException()
       }
     }
   }
 }
+

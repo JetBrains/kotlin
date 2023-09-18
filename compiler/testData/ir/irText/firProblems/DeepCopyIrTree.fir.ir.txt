@@ -187,23 +187,24 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
                       VAR name:otherTypeParameter type:<root>.IrTypeParameter [val]
                         CALL 'public final fun component2 (): B of kotlin.Pair declared in kotlin.Pair' type=<root>.IrTypeParameter origin=COMPONENT_N(index=2)
                           $this: GET_VAR 'val tmp_1: kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=kotlin.Pair<<root>.IrTypeParameter, <root>.IrTypeParameter> origin=null
-                      CALL 'public final fun mapTo <T, R, C> (destination: C of kotlin.collections.mapTo, transform: kotlin.Function1<T of kotlin.collections.mapTo, R of kotlin.collections.mapTo>): C of kotlin.collections.mapTo declared in kotlin.collections' type=kotlin.collections.MutableList<<root>.IrType> origin=null
-                        <T>: <root>.IrType
-                        <R>: <root>.IrType
-                        <C>: kotlin.collections.MutableList<<root>.IrType>
-                        $receiver: CALL 'public abstract fun <get-superTypes> (): kotlin.collections.MutableList<<root>.IrType> declared in <root>.IrTypeParameter' type=kotlin.collections.MutableList<<root>.IrType> origin=GET_PROPERTY
-                          $this: GET_VAR 'val otherTypeParameter: <root>.IrTypeParameter declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=<root>.IrTypeParameter origin=null
-                        destination: CALL 'public abstract fun <get-superTypes> (): kotlin.collections.MutableList<<root>.IrType> declared in <root>.IrTypeParameter' type=kotlin.collections.MutableList<<root>.IrType> origin=GET_PROPERTY
-                          $this: GET_VAR 'val thisTypeParameter: <root>.IrTypeParameter declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=<root>.IrTypeParameter origin=null
-                        transform: FUN_EXPR type=kotlin.Function1<<root>.IrType, <root>.IrType> origin=LAMBDA
-                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.IrType) returnType:<root>.IrType
-                            VALUE_PARAMETER name:it index:0 type:<root>.IrType
-                            BLOCK_BODY
-                              RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: <root>.IrType): <root>.IrType declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>'
-                                CALL 'public abstract fun remapType (type: <root>.IrType): <root>.IrType declared in <root>.TypeRemapper' type=<root>.IrType origin=null
-                                  $this: CALL 'private final fun <get-typeRemapper> (): <root>.TypeRemapper declared in <root>.DeepCopyIrTreeWithSymbols' type=<root>.TypeRemapper origin=GET_PROPERTY
-                                    $this: GET_VAR '<this>: <root>.DeepCopyIrTreeWithSymbols declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.DeepCopyIrTreeWithSymbols origin=null
-                                  type: GET_VAR 'it: <root>.IrType declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>.<anonymous>' type=<root>.IrType origin=null
+                      BLOCK type=kotlin.collections.MutableList<<root>.IrType> origin=null
+                        CALL 'public final fun mapTo <T, R, C> (destination: C of kotlin.collections.mapTo, transform: kotlin.Function1<T of kotlin.collections.mapTo, R of kotlin.collections.mapTo>): C of kotlin.collections.mapTo declared in kotlin.collections' type=kotlin.collections.MutableList<<root>.IrType> origin=null
+                          <T>: <root>.IrType
+                          <R>: <root>.IrType
+                          <C>: kotlin.collections.MutableList<<root>.IrType>
+                          $receiver: CALL 'public abstract fun <get-superTypes> (): kotlin.collections.MutableList<<root>.IrType> declared in <root>.IrTypeParameter' type=kotlin.collections.MutableList<<root>.IrType> origin=GET_PROPERTY
+                            $this: GET_VAR 'val otherTypeParameter: <root>.IrTypeParameter declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=<root>.IrTypeParameter origin=null
+                          destination: CALL 'public abstract fun <get-superTypes> (): kotlin.collections.MutableList<<root>.IrType> declared in <root>.IrTypeParameter' type=kotlin.collections.MutableList<<root>.IrType> origin=GET_PROPERTY
+                            $this: GET_VAR 'val thisTypeParameter: <root>.IrTypeParameter declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=<root>.IrTypeParameter origin=null
+                          transform: FUN_EXPR type=kotlin.Function1<<root>.IrType, <root>.IrType> origin=LAMBDA
+                            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.IrType) returnType:<root>.IrType
+                              VALUE_PARAMETER name:it index:0 type:<root>.IrType
+                              BLOCK_BODY
+                                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: <root>.IrType): <root>.IrType declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>'
+                                  CALL 'public abstract fun remapType (type: <root>.IrType): <root>.IrType declared in <root>.TypeRemapper' type=<root>.IrType origin=null
+                                    $this: CALL 'private final fun <get-typeRemapper> (): <root>.TypeRemapper declared in <root>.DeepCopyIrTreeWithSymbols' type=<root>.TypeRemapper origin=GET_PROPERTY
+                                      $this: GET_VAR '<this>: <root>.DeepCopyIrTreeWithSymbols declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.DeepCopyIrTreeWithSymbols origin=null
+                                    type: GET_VAR 'it: <root>.IrType declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>.<anonymous>' type=<root>.IrType origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -26,6 +23,7 @@ import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpress
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
@@ -59,6 +57,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -1077,6 +1076,10 @@ class Fir2IrVisitor(
                 return it
             }
         }
+        if (source?.kind is KtRealSourceElementKind) {
+            val lastStatementHasNothingType = (statements.lastOrNull() as? FirExpression)?.resolvedType?.isNothing == true
+            return statements.convertToIrBlock(source, origin, forceUnitType = origin?.isLoop == true || lastStatementHasNothingType)
+        }
         return statements.convertToIrExpressionOrBlock(source, origin)
     }
 
@@ -1111,18 +1114,19 @@ class Fir2IrVisitor(
         return source.convertWithOffsets { startOffset, endOffset ->
             if (origin == IrStatementOrigin.DO_WHILE_LOOP) {
                 IrCompositeImpl(
-                    startOffset, endOffset, type, origin,
+                    startOffset, endOffset, type, null,
                     mapToIrStatements(recognizePostfixIncDec = false).filterNotNull()
                 )
             } else {
                 val irStatements = mapToIrStatements()
                 val singleStatement = irStatements.singleOrNull()
-                if (singleStatement is IrBlock &&
+                if (origin?.isLoop != true && singleStatement is IrBlock &&
                     (singleStatement.origin == IrStatementOrigin.POSTFIX_INCR || singleStatement.origin == IrStatementOrigin.POSTFIX_DECR)
                 ) {
                     singleStatement
                 } else {
-                    IrBlockImpl(startOffset, endOffset, type, origin, irStatements.filterNotNull())
+                    val blockOrigin = if (forceUnitType && origin != IrStatementOrigin.FOR_LOOP) null else origin
+                    IrBlockImpl(startOffset, endOffset, type, blockOrigin, irStatements.filterNotNull())
                 }
             }
         }
@@ -1322,32 +1326,35 @@ class Fir2IrVisitor(
                 condition = convertToIrExpression(whileLoop.condition)
                 body = if (isForLoop) {
                     /*
-                     * for loops in IR should have specific for of their body, because some of lowerings (e.g. `ForLoopLowering`) expects
-                     *   exactly that shape:
+                     * for loops in IR must have their body in the exact following form
+                     * because some of the lowerings (e.g. `ForLoopLowering`) expect it:
                      *
                      * for (x in list) { ...body...}
                      *
                      * IR (loop body):
                      *   IrBlock:
                      *     x = <iterator>.next()
+                     *     ... possible destructured loop variables, in case iterator is a tuple: `for ((a,b,c) in list) { ...body...}` ...
                      *     IrBlock:
                      *         ...body...
                      */
                     firLoopBody.convertWithOffsets { innerStartOffset, innerEndOffset ->
                         val loopBodyStatements = firLoopBody.statements
-                        if (loopBodyStatements.isEmpty()) {
-                            error("Unexpected shape of body of for loop")
+                        val firLoopVarStmt = loopBodyStatements.firstOrNull()
+                            ?: error("Unexpected shape of for loop body: missing body statements")
+
+                        val (destructuredLoopVariables, realStatements) = loopBodyStatements.drop(1).partition {
+                            it is FirProperty && it.initializer is FirComponentCall
                         }
-                        val loopVariables = mutableListOf<IrStatement>()
-                        var loopVariableIndex = 0
-                        for (loopBodyStatement in loopBodyStatements) {
-                            if (loopVariableIndex > 0) {
-                                if (loopBodyStatement !is FirProperty || loopBodyStatement.initializer !is FirComponentCall) {
-                                    break
-                                }
+                        val firExpression = realStatements.singleOrNull() as? FirExpression
+                            ?: error("Unexpected shape of for loop body: must be single real loop statement, but got ${realStatements.size}")
+
+                        val irStatements = buildList {
+                            addIfNotNull(firLoopVarStmt.toIrStatement())
+                            destructuredLoopVariables.forEach { addIfNotNull(it.toIrStatement()) }
+                            if (firExpression !is FirEmptyExpressionBlock) {
+                                add(convertToIrExpression(firExpression))
                             }
-                            loopBodyStatement.toIrStatement()?.let { loopVariables.add(it) }
-                            loopVariableIndex++
                         }
 
                         IrBlockImpl(
@@ -1355,12 +1362,11 @@ class Fir2IrVisitor(
                             innerEndOffset,
                             irBuiltIns.unitType,
                             origin,
-                            loopVariables +
-                                    loopBodyStatements.drop(loopVariableIndex).convertToIrExpressionOrBlock(firLoopBody.source, null)
+                            irStatements,
                         )
                     }
                 } else {
-                    firLoopBody.convertToIrExpressionOrBlock()
+                    firLoopBody.convertToIrExpressionOrBlock(origin)
                 }
                 loopMap.remove(whileLoop)
             }

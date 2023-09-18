@@ -132,7 +132,9 @@ internal class OneElementArrayMap<T : Any> : ArrayMap<T> {
               <this>.<set-notVisited>(<set-?> = false)
               return <this>.<get-value>()
             }
-            else -> throw NoSuchElementException()
+            else -> { // BLOCK
+              throw NoSuchElementException()
+            }
           }
         }
 
@@ -194,9 +196,11 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     <this>.ensureCapacity(index = index)
     when {
       EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null) -> { // BLOCK
-        val <unary>: Int = <this>.<get-size>()
-        <this>.<set-size>(<set-?> = <unary>.inc())
-        <unary>
+        { // BLOCK
+          val <unary>: Int = <this>.<get-size>()
+          <this>.<set-size>(<set-?> = <unary>.inc())
+          <unary>
+        }
       } /*~> Unit */
     }
     <this>.<get-data>().set(index = index, value = value)
@@ -226,18 +230,24 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
 
         protected override fun computeNext() {
           { // BLOCK
-            do{ // BLOCK
+            do// COMPOSITE {
+            { // BLOCK
               val <unary>: Int = <this>.<get-index>()
               <this>.<set-index>(<set-?> = <unary>.inc())
               <unary>
-            }            while (when {
+            }
+            // }            while (when {
               less(arg0 = <this>.<get-index>(), arg1 = <this>.<get-data>().<get-size>()) -> EQEQ(arg0 = <this>.<get-data>().get(index = <this>.<get-index>()), arg1 = null)
               else -> false
             })
           }
           when {
-            greaterOrEqual(arg0 = <this>.<get-index>(), arg1 = <this>.<get-data>().<get-size>()) -> <this>.done()
-            else -> <this>.setNext(value = <this>.<get-data>().get(index = <this>.<get-index>()) as T)
+            greaterOrEqual(arg0 = <this>.<get-index>(), arg1 = <this>.<get-data>().<get-size>()) -> { // BLOCK
+              <this>.done()
+            }
+            else -> { // BLOCK
+              <this>.setNext(value = <this>.<get-data>().get(index = <this>.<get-index>()) as T)
+            }
           }
         }
 
@@ -250,9 +260,11 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   fun remove(index: Int) {
     when {
       EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null).not() -> { // BLOCK
-        val <unary>: Int = <this>.<get-size>()
-        <this>.<set-size>(<set-?> = <unary>.dec())
-        <unary>
+        { // BLOCK
+          val <unary>: Int = <this>.<get-size>()
+          <this>.<set-size>(<set-?> = <unary>.dec())
+          <unary>
+        }
       } /*~> Unit */
     }
     <this>.<get-data>().set(index = index, value = null)
@@ -328,3 +340,4 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   }
 
 }
+

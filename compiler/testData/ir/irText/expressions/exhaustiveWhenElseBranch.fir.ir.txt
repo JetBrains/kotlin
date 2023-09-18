@@ -159,18 +159,19 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: BLOCK type=kotlin.Int origin=WHEN
-              VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:<root>.A [val]
-                GET_VAR 'a: <root>.A declared in <root>.testIfTheElseStatement_empty' type=<root>.A origin=null
-              WHEN type=kotlin.Int origin=WHEN
-                BRANCH
-                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_5: <root>.A declared in <root>.testIfTheElseStatement_empty' type=<root>.A origin=null
-                    arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
-                  then: CONST Int type=kotlin.Int value=1
-                BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value=true
-                  then: CALL 'public final fun noWhenBranchMatchedException (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=null
+            then: BLOCK type=kotlin.Int origin=null
+              BLOCK type=kotlin.Int origin=WHEN
+                VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:<root>.A [val]
+                  GET_VAR 'a: <root>.A declared in <root>.testIfTheElseStatement_empty' type=<root>.A origin=null
+                WHEN type=kotlin.Int origin=WHEN
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                      arg0: GET_VAR 'val tmp_5: <root>.A declared in <root>.testIfTheElseStatement_empty' type=<root>.A origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
+                    then: CONST Int type=kotlin.Int value=1
+                  BRANCH
+                    if: CONST Boolean type=kotlin.Boolean value=true
+                    then: CALL 'public final fun noWhenBranchMatchedException (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=null
   FUN name:testIfTheElseParenthesized_throwsJvm visibility:public modality:FINAL <> (a:<root>.A, flag:kotlin.Boolean) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     VALUE_PARAMETER name:flag index:1 type:kotlin.Boolean
@@ -182,18 +183,19 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: BLOCK type=kotlin.Int origin=WHEN
-              VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:<root>.A [val]
-                GET_VAR 'a: <root>.A declared in <root>.testIfTheElseParenthesized_throwsJvm' type=<root>.A origin=null
-              WHEN type=kotlin.Int origin=WHEN
-                BRANCH
-                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_6: <root>.A declared in <root>.testIfTheElseParenthesized_throwsJvm' type=<root>.A origin=null
-                    arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
-                  then: CONST Int type=kotlin.Int value=1
-                BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value=true
-                  then: CALL 'public final fun noWhenBranchMatchedException (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=null
+            then: BLOCK type=kotlin.Int origin=null
+              BLOCK type=kotlin.Int origin=WHEN
+                VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:<root>.A [val]
+                  GET_VAR 'a: <root>.A declared in <root>.testIfTheElseParenthesized_throwsJvm' type=<root>.A origin=null
+                WHEN type=kotlin.Int origin=WHEN
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                      arg0: GET_VAR 'val tmp_6: <root>.A declared in <root>.testIfTheElseParenthesized_throwsJvm' type=<root>.A origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
+                    then: CONST Int type=kotlin.Int value=1
+                  BRANCH
+                    if: CONST Boolean type=kotlin.Boolean value=true
+                    then: CALL 'public final fun noWhenBranchMatchedException (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=null
   FUN name:testIfTheElseAnnotated_throwsJvm visibility:public modality:FINAL <> (a:<root>.A, flag:kotlin.Boolean) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     VALUE_PARAMETER name:flag index:1 type:kotlin.Boolean
@@ -205,18 +207,19 @@ FILE fqName:<root> fileName:/exhaustiveWhenElseBranch.kt
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: BLOCK type=kotlin.Int origin=WHEN
-              VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:<root>.A [val]
-                GET_VAR 'a: <root>.A declared in <root>.testIfTheElseAnnotated_throwsJvm' type=<root>.A origin=null
-              WHEN type=kotlin.Int origin=WHEN
-                BRANCH
-                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_7: <root>.A declared in <root>.testIfTheElseAnnotated_throwsJvm' type=<root>.A origin=null
-                    arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
-                  then: CONST Int type=kotlin.Int value=1
-                BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value=true
-                  then: CALL 'public final fun noWhenBranchMatchedException (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=null
+            then: BLOCK type=kotlin.Int origin=null
+              BLOCK type=kotlin.Int origin=WHEN
+                VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:<root>.A [val]
+                  GET_VAR 'a: <root>.A declared in <root>.testIfTheElseAnnotated_throwsJvm' type=<root>.A origin=null
+                WHEN type=kotlin.Int origin=WHEN
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                      arg0: GET_VAR 'val tmp_7: <root>.A declared in <root>.testIfTheElseAnnotated_throwsJvm' type=<root>.A origin=null
+                      arg1: GET_ENUM 'ENUM_ENTRY name:V1' type=<root>.A
+                    then: CONST Int type=kotlin.Int value=1
+                  BRANCH
+                    if: CONST Boolean type=kotlin.Boolean value=true
+                    then: CALL 'public final fun noWhenBranchMatchedException (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=null
   FUN name:testLambdaResultExpression_throws visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY

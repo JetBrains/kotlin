@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun foo() {
     do {
         val x = 42
