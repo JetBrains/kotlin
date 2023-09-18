@@ -216,7 +216,9 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractIrJsLocalVariableTest> {
-                model("debug/localVariables")
+                // The tests in the 'inlineScopes' directory are meant to test a JVM backend
+                // specific feature, so there is no reason to enable them for JS.
+                model("debug/localVariables", excludeDirs = listOf("inlineScopes"))
             }
 
             testClass<AbstractFirPsiJsDiagnosticWithBackendTest>(suiteTestClassName = "FirPsiJsKlibDiagnosticsTestGenerated") {

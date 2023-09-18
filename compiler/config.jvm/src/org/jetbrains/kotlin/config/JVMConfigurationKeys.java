@@ -165,4 +165,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> ENABLE_IR_INLINER =
             CompilerConfigurationKey.create("Enable inlining on IR, instead of inlining on bytecode");
+
+    public static final CompilerConfigurationKey<Boolean> USE_INLINE_SCOPES_NUMBERS =
+            CompilerConfigurationKey.create("Use inline scopes numbers for inline marker variables");
 }

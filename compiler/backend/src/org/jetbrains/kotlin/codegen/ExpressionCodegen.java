@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenProvider;
 import org.jetbrains.kotlin.config.ApiVersion;
 import org.jetbrains.kotlin.config.JVMAssertionsMode;
+import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
@@ -131,6 +132,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private final TailRecursionCodegen tailRecursionCodegen;
     public final CallGenerator defaultCallGenerator = new CallGenerator.DefaultCallGenerator(this);
     private final SwitchCodegenProvider switchCodegenProvider;
+    private final InlineScopesGenerator inlineScopesGenerator;
+
     private final TypeSystemCommonBackendContext typeSystem;
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<>();
@@ -165,6 +168,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
         this.switchCodegenProvider = new SwitchCodegenProvider(this);
         this.typeSystem = new ClassicTypeSystemContextImpl(state.getModule().getBuiltIns());
+
+        boolean inlineScopesEnabled = state.getConfiguration().getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS);
+        this.inlineScopesGenerator = inlineScopesEnabled ? new InlineScopesGenerator() : null;
     }
 
     @Nullable
@@ -1567,6 +1573,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @Override
     public int getLastLineNumber() {
         return myLastLineNumber;
+    }
+
+    @Override
+    public InlineScopesGenerator getInlineScopesGenerator() {
+        return inlineScopesGenerator;
     }
 
     private boolean doFinallyOnReturn(@NotNull Label afterReturnLabel, @NotNull List<TryBlockStackElement> nestedTryBlocksWithoutFinally) {

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultDirectives
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.BOX_MAIN_FILE_NAME
 import org.jetbrains.kotlin.test.utils.*
 import java.io.File
@@ -155,7 +156,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
             }
             eventSet.resume()
         }
-        checkSteppingTestResult(frontend, backend, wholeFile, loggedItems)
+        checkSteppingTestResult(frontend, backend, wholeFile, loggedItems, testServices.defaultDirectives)
         virtualMachine.resume()
     }
 

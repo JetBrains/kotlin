@@ -100,6 +100,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val OLD_INNER_CLASSES_LOGIC by directive("Use old logic for generation of InnerClasses attributes")
     val LINK_VIA_SIGNATURES_K1 by directive("Use linkage via signatures instead of descriptors on the K1 frontend")
     val ENABLE_JVM_IR_INLINER by directive("Enable inlining on IR, instead of inlining on bytecode")
+    val USE_INLINE_SCOPES_NUMBERS by directive("Use inline scopes numbers for inline marker variables")
     val GENERATE_PROPERTY_ANNOTATIONS_METHODS by directive(
         description = "Enables corresponding analysis flag (JvmAnalysisFlags.generatePropertyAnnotationsMethods)"
     )

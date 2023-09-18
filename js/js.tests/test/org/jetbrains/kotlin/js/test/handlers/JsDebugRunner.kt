@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.defaultDirectives
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.*
 import java.io.File
@@ -140,7 +141,8 @@ class JsDebugRunner(testServices: TestServices, private val localVariables: Bool
             mainModule.frontendKind,
             mainModule.targetBackend ?: TargetBackend.JS_IR,
             originalFile,
-            loggedItems
+            loggedItems,
+            testServices.defaultDirectives
         )
     }
 

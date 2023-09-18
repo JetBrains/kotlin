@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.codegen.writeKotlinMetadata
-import org.jetbrains.kotlin.config.JvmAnalysisFlags
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -416,10 +413,25 @@ class ClassCodegen private constructor(
         )
         val mv = with(node) { visitor.newMethod(method.descriptorOrigin, access, name, desc, signature, exceptions.toTypedArray()) }
         val smapCopier = SourceMapCopier(classSMAP, smap)
+
         val smapCopyingVisitor = object : MethodVisitor(Opcodes.API_VERSION, mv) {
-            override fun visitLineNumber(line: Int, start: Label) =
-                super.visitLineNumber(smapCopier.mapLineNumber(line), start)
+            private val lineNumberMapping = mutableMapOf<Int, Int>()
+
+            override fun visitLineNumber(line: Int, start: Label) {
+                val newLine = smapCopier.mapLineNumber(line)
+                lineNumberMapping[line] = newLine
+                super.visitLineNumber(newLine, start)
+            }
+
+            override fun visitLocalVariable(name: String, descriptor: String, signature: String?, start: Label, end: Label, index: Int) {
+                if (state.configuration.getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS) && isFakeLocalVariableForInline(name)) {
+                    val newName = updateCallSiteLineNumber(name, lineNumberMapping)
+                    return super.visitLocalVariable(newName, descriptor, signature, start, end, index)
+                }
+                super.visitLocalVariable(name, descriptor, signature, start, end, index)
+            }
         }
+
         if (method.hasContinuation()) {
             // Generate a state machine within this method. The continuation class for it should be generated
             // lazily so that if tail call optimization kicks in, the unused class will not be written to the output.

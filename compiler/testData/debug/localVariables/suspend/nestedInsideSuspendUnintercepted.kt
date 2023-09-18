@@ -30,6 +30,35 @@ suspend fun box() {
     val a = baz()
 }
 
+// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// test.kt:29 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
+// test.kt:30 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
+// test.kt:26 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int
+// test.kt:10 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int
+// test.kt:11 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$foo$2\3\121\2:int=0:int
+// test.kt:20 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$foo$2\3\121\2:int=0:int, $i$f$bar\4\122:int=0:int
+// test.kt:21 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$foo$2\3\121\2:int=0:int, $i$f$bar\4\122:int=0:int, c\4:int=1:int
+// test.kt:7 id: obj:java.lang.Object=java.lang.Integer
+// test.kt:21 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$foo$2\3\121\2:int=0:int, $i$f$bar\4\122:int=0:int, c\4:int=1:int
+// test.kt:22 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$foo$2\3\121\2:int=0:int, $i$f$bar\4\122:int=0:int, c\4:int=1:int
+// test.kt:12 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$foo$2\3\121\2:int=0:int, $i$f$bar\4\122:int=0:int, c\4:int=1:int, $i$a$-bar-TestKt$foo$2$1\5\133\3:int=0:int
+// test.kt:13 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$foo$2\3\121\2:int=0:int, $i$f$bar\4\122:int=0:int, c\4:int=1:int, $i$a$-bar-TestKt$foo$2$1\5\133\3:int=0:int, b\5:int=2:int
+// test.kt:7 id: obj:java.lang.Object=java.lang.Integer
+// test.kt:13 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$foo$2\3\121\2:int=0:int, $i$f$bar\4\122:int=0:int, c\4:int=1:int, $i$a$-bar-TestKt$foo$2$1\5\133\3:int=0:int, b\5:int=2:int
+// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// test.kt:14 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$foo$2\3\121\2:int=0:int, $i$f$bar\4\122:int=0:int, c\4:int=1:int, $i$a$-bar-TestKt$foo$2$1\5\133\3:int=0:int, b\5:int=2:int
+// test.kt:22 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$foo$2\3\121\2:int=0:int, $i$f$bar\4\122:int=0:int, c\4:int=1:int
+// test.kt:23 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$foo$2\3\121\2:int=0:int, $i$f$bar\4\122:int=0:int, c\4:int=1:int
+// test.kt:15 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$foo$2\3\121\2:int=0:int
+// EXPECTATIONS ClassicFrontend JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// test.kt:16 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$foo$2\3\121\2:int=0:int
+// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// test.kt:10 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int
+// test.kt:17 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int, $i$f$foo\2\120:int=0:int
+// test.kt:27 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$baz\1\30:int=0:int
+// test.kt:30 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
+// test.kt:31 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
+
 // EXPECTATIONS JVM_IR
 // test.kt:29 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 // test.kt:30 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null

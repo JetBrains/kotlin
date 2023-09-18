@@ -43,6 +43,26 @@ fun box() {
     val localX = x
 }
 
+// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// test.kt:42 box:
+// test.kt:27 compute:
+// test.kt:28 compute:
+// test.kt:29 compute: a:java.lang.String="a":java.lang.String
+// test.kt:16 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\29:int=0:int
+// test.kt:17 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\29:int=0:int
+// test.kt:18 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\29:int=0:int, gLocal\1:java.lang.String="gLocal":java.lang.String
+// test.kt:7 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\29:int=0:int, gLocal\1:java.lang.String="gLocal":java.lang.String, $i$f$h\2\112:int=0:int
+// test.kt:8 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\29:int=0:int, gLocal\1:java.lang.String="gLocal":java.lang.String, $i$f$h\2\112:int=0:int
+// test.kt:9 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\29:int=0:int, gLocal\1:java.lang.String="gLocal":java.lang.String, $i$f$h\2\112:int=0:int, hLocal\2:java.lang.String="hLocal":java.lang.String
+// test.kt:30 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\29:int=0:int, gLocal\1:java.lang.String="gLocal":java.lang.String, $i$f$h\2\112:int=0:int, hLocal\2:java.lang.String="hLocal":java.lang.String, $i$a$-g-TestKt$compute$1\3\115\0:int=0:int
+// test.kt:31 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\29:int=0:int, gLocal\1:java.lang.String="gLocal":java.lang.String, $i$f$h\2\112:int=0:int, hLocal\2:java.lang.String="hLocal":java.lang.String, $i$a$-g-TestKt$compute$1\3\115\0:int=0:int, b\3:java.lang.String="b":java.lang.String
+// test.kt:11 compute: a:java.lang.String="a":java.lang.String
+// test.kt:20 compute: a:java.lang.String="a":java.lang.String
+// test.kt:36 compute:
+// test.kt:42 box:
+// test.kt:43 box: result:java.lang.String="b":java.lang.String
+// test.kt:44 box: result:java.lang.String="b":java.lang.String, localX:java.lang.String="OK":java.lang.String
+
 // EXPECTATIONS JVM_IR
 // test.kt:42 box:
 // test.kt:27 compute:

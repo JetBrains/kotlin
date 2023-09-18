@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTest {
   @Test
   public void testAllFilesPresentInLocalVariables() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true, "inlineScopes");
   }
 
   @Test
@@ -107,6 +107,12 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
   @TestMetadata("localFunUnused.kt")
   public void testLocalFunUnused() {
     runTest("compiler/testData/debug/localVariables/localFunUnused.kt");
+  }
+
+  @Test
+  @TestMetadata("manyInlineFunsInObject.kt")
+  public void testManyInlineFunsInObject() {
+    runTest("compiler/testData/debug/localVariables/manyInlineFunsInObject.kt");
   }
 
   @Test
