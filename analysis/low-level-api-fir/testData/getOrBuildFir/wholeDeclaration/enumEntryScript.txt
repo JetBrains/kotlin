@@ -8,7 +8,7 @@ public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] enum entry
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-enumEntryScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {

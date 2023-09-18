@@ -8,7 +8,7 @@ public final [ResolvedTo(BODY_RESOLVE)] typealias Str = R|kotlin/String|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] topLevelTypelTypeAliasScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-topLevelTypelTypeAliasScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] typealias Str = R|kotlin/String|

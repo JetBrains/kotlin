@@ -37,7 +37,7 @@ Tower Data Context:
     Element 9
         Context receivers:
             FirScriptSymbol context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-            SCRIPT:
+            SCRIPT: <script-topLevel.kts>
                 lval args: R|kotlin/Array<kotlin/String>|
 
                 public final fun before_Fun(): R|kotlin/Unit|
@@ -56,7 +56,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] topLevel.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)]
+    SCRIPT: [ResolvedTo(TYPES)] <script-topLevel.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun before_Fun(): R|kotlin/Unit| {

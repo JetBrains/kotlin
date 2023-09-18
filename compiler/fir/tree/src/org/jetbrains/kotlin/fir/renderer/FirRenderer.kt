@@ -191,7 +191,7 @@ class FirRenderer(
             annotationRenderer?.render(script)
             printer.print("SCRIPT: ")
             declarationRenderer?.renderPhaseAndAttributes(script) ?: resolvePhaseRenderer?.render(script)
-            printer.newLine()
+            printer.println(script.name)
 
             printer.pushIndent()
             script.parameters.forEach {

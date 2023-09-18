@@ -4,7 +4,7 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-moreStatementsInCopy.kts>
     [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun scriptFunction(): R|kotlin/Int| {

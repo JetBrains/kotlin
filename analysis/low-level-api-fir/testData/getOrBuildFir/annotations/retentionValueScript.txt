@@ -8,7 +8,7 @@ R|kotlin/annotation/AnnotationRetention.SOURCE|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] retentionValueScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-retentionValueScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] annotation class Anno : R|kotlin/Annotation| {

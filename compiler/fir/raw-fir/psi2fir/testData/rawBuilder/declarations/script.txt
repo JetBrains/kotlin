@@ -1,5 +1,5 @@
 FILE: script.kts
-    SCRIPT:
+    SCRIPT: <script-script.kts>
 
         public? final? class Builder : R|kotlin/Any| {
             public? [ContainingClassKey=Builder] constructor(): R|Builder| {

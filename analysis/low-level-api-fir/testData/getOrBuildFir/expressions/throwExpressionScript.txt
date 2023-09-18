@@ -8,7 +8,7 @@ throw R|java/lang/IllegalStateException.IllegalStateException|()
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] throwExpressionScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-throwExpressionScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {

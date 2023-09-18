@@ -8,7 +8,7 @@ R|<local>/args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] argsFromProperty.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-argsFromProperty.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] val bar: R|kotlin/Int| = R|<local>/args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|

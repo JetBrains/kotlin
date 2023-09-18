@@ -8,7 +8,7 @@ Int(0).R|kotlin/Int.rangeTo|(Int(1))
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] forExpressionRangeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-forExpressionRangeScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {

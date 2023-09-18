@@ -8,5 +8,5 @@ import a.b.c
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] qualifiedImportNamePartScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-qualifiedImportNamePartScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|

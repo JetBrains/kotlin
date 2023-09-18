@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] fakeOverrideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakeOverrideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun expression([ResolvedTo(RAW_FIR)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(RAW_FIR)] fakeOverrideScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakeOverrideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun expression([ResolvedTo(RAW_FIR)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakeOverrideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun expression([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
@@ -136,7 +136,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakeOverrideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] fun expression([ResolvedTo(COMPANION_GENERATION)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
@@ -181,7 +181,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakeOverrideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(SUPER_TYPES)] fun expression([ResolvedTo(SUPER_TYPES)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
@@ -226,7 +226,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakeOverrideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] fun expression([ResolvedTo(TYPES)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
@@ -271,7 +271,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakeOverrideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] fun expression([ResolvedTo(STATUS)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
@@ -316,7 +316,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakeOverrideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun expression([ResolvedTo(EXPECT_ACTUAL_MATCHING)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
@@ -361,7 +361,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-fakeOverrideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun expression([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
@@ -406,7 +406,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-fakeOverrideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun expression([ResolvedTo(CONTRACTS)] expression: R|IrConst<*>|): R|kotlin/Unit| {
@@ -460,7 +460,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-fakeOverrideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun expression([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| {
@@ -514,7 +514,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-fakeOverrideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun expression([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] expression: R|IrConst<*>|): R|kotlin/Unit| {
@@ -568,7 +568,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-fakeOverrideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun expression([ResolvedTo(BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| {
@@ -624,7 +624,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] fakeOverrideScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-fakeOverrideScript.kts>
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun expression([ResolvedTo(BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| {
@@ -677,4 +677,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fakeOverrideScript.kts
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IrConst] set([ResolvedTo(BODY_RESOLVE)] value: R|T|): R|kotlin/Unit|
 
         }
-

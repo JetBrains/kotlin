@@ -36,7 +36,7 @@ Tower Data Context:
     Element 9
         Context receivers:
             FirScriptSymbol context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-            SCRIPT:
+            SCRIPT: <script-insideClassMember.kts>
                 lval args: R|kotlin/Array<kotlin/String>|
 
                 public? final? fun before_Fun(): R|kotlin/Unit|
@@ -63,7 +63,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] insideClassMember.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)]
+    SCRIPT: [ResolvedTo(TYPES)] <script-insideClassMember.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun before_Fun(): R|kotlin/Unit| { LAZY_BLOCK }

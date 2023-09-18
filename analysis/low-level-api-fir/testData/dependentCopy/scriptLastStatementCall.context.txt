@@ -31,7 +31,7 @@ Tower Data Context:
     Element 9
         Context receivers:
             FirScriptSymbol context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-            SCRIPT:
+            SCRIPT: <script-scriptLastStatementCall.kts>
                 lval args: R|kotlin/Array<kotlin/String>|
 
                 public? final? class ScriptClass : R|kotlin/Any|

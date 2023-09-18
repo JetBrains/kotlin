@@ -8,7 +8,7 @@ R|kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Int>>|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] wholeTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-wholeTypeScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Int>>| {

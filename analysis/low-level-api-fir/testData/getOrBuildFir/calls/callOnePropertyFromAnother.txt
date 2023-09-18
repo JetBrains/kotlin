@@ -8,7 +8,7 @@ R|/foo|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] callOnePropertyFromAnother.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-callOnePropertyFromAnother.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: R|kotlin/String| = String(foo)

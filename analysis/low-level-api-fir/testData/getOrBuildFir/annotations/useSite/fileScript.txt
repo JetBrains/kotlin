@@ -10,7 +10,7 @@ FILE: [ResolvedTo(IMPORTS)] fileScript.kts
     @FILE:R|Ann|[Types]()
     [ResolvedTo(BODY_RESOLVE)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {

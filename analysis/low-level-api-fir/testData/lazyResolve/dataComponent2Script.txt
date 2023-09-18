@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(RAW_FIR)] dataComponent2Script.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? data [ResolvedTo(SUPER_TYPES)] class DataClass : R|kotlin/Any| {
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? data [ResolvedTo(TYPES)] class DataClass : R|kotlin/Any| {
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
@@ -183,7 +183,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-dataComponent2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
@@ -235,7 +235,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-dataComponent2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
@@ -261,7 +261,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-dataComponent2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
@@ -287,7 +287,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-dataComponent2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
@@ -313,7 +313,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-dataComponent2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
@@ -339,7 +339,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] dataComponent2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-dataComponent2Script.kts>
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(BODY_RESOLVE)] class DataClass : R|kotlin/Any| {
@@ -360,4 +360,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] dataComponent2Script.kts
             public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
         }
-

@@ -1,6 +1,6 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] localPropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-localPropertyScript.kts>
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
@@ -35,4 +35,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localPropertyScript.kts
             }
 
         }
-

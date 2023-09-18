@@ -8,7 +8,7 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationOnReturnTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-annotationOnReturnTypeScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <reified [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T : R|kotlin/Number|> R|kotlin/String|.collectOfType([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] i: R|kotlin/Int|): <ERROR TYPE REF: Symbol not found for Sequence> {

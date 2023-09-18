@@ -8,7 +8,7 @@ Int(1)
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] callArgumentScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-callArgumentScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun y([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|kotlin/Unit| {

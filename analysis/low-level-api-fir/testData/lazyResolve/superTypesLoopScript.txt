@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] superTypesLoopScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class resolveMe : C {
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(RAW_FIR)] superTypesLoopScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class resolveMe : C {
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class resolveMe : C {
@@ -106,7 +106,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(COMPANION_GENERATION)] class resolveMe : C {
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(SUPER_TYPES)] class resolveMe : R|C| {
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(TYPES)] class resolveMe : R|C| {
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class resolveMe : R|C| {
@@ -246,7 +246,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class resolveMe : R|C| {
@@ -281,7 +281,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-superTypesLoopScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class resolveMe : R|C| {
@@ -316,7 +316,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-superTypesLoopScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(CONTRACTS)] class resolveMe : R|C| {
@@ -351,7 +351,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-superTypesLoopScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class resolveMe : R|C| {
@@ -386,7 +386,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-superTypesLoopScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class resolveMe : R|C| {
@@ -421,7 +421,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-superTypesLoopScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(BODY_RESOLVE)] class resolveMe : R|C| {
@@ -456,7 +456,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] superTypesLoopScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-superTypesLoopScript.kts>
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(BODY_RESOLVE)] class resolveMe : R|C| {
@@ -486,4 +486,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypesLoopScript.kts
             }
 
         }
-

@@ -10,5 +10,5 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedPackageNamePartScript.kts
     package a.b.c
 
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-qualifiedPackageNamePartScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|

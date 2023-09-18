@@ -8,7 +8,7 @@ R|/builder|.R|/Builder.version| = String()
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] assignmentStatement.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-assignmentStatement.kts>
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {

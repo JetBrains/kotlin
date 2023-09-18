@@ -8,7 +8,7 @@ Q|A.B|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] firstPartOfQualifiedCallWithNestedClassesScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-firstPartOfQualifiedCallWithNestedClassesScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {

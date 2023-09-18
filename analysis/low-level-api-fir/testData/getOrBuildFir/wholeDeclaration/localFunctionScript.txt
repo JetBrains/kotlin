@@ -10,7 +10,7 @@ local final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/String| {
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/Unit| {
