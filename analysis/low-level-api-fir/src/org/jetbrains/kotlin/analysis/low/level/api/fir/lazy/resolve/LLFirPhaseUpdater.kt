@@ -42,6 +42,8 @@ internal object LLFirPhaseUpdater {
                         statement.accept(PhaseUpdatingTransformer, newPhase)
                     }
                 }
+
+                is FirCodeFragment -> target.block.accept(PhaseUpdatingTransformer, newPhase)
             }
         }
     }
