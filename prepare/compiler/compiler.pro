@@ -319,3 +319,6 @@
     kotlinx.collections.immutable.PersistentMap toPersistentHashMap(java.util.Map);
     kotlinx.collections.immutable.PersistentSet persistentHashSetOf(java.lang.Object[]);
 }
+-keepclassmembers class com.intellij.lang.jvm.JvmParameter {
+    com.intellij.lang.jvm.types.JvmType getType();
+}
