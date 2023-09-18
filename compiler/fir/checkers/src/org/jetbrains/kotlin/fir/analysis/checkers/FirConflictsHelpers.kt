@@ -159,7 +159,20 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirReg
 
         when (it) {
             is FirSimpleFunction -> collect(it.symbol, FirRedeclarationPresenter.represent(it.symbol), functionDeclarations)
-            is FirRegularClass -> collect(it.symbol, FirRedeclarationPresenter.represent(it.symbol), otherDeclarations)
+            is FirRegularClass -> {
+                collect(it.symbol, FirRedeclarationPresenter.represent(it.symbol), otherDeclarations)
+
+                // Objects have implicit FirPrimaryConstructors
+                if (it.symbol.classKind == ClassKind.OBJECT) {
+                    continue
+                }
+
+                it.symbol.expandedClassWithConstructorsScope(context)?.let { (_, scopeWithConstructors) ->
+                    scopeWithConstructors.processDeclaredConstructors { constructor ->
+                        collect(constructor, FirRedeclarationPresenter.represent(constructor, it.symbol), functionDeclarations)
+                    }
+                }
+            }
             is FirTypeAlias -> collect(it.symbol, FirRedeclarationPresenter.represent(it.symbol), otherDeclarations)
             is FirVariable -> collect(it.symbol, FirRedeclarationPresenter.represent(it.symbol), otherDeclarations)
             else -> {}

@@ -59,7 +59,13 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
         declarationConflictingSymbols.forEach { (conflictingDeclaration, symbols) ->
             val typeAliasForConstructorSource = (conflictingDeclaration as? FirConstructorSymbol)?.typeAliasForConstructor?.source
             val source = typeAliasForConstructorSource ?: conflictingDeclaration.source
-            if (symbols.isEmpty()) return@forEach
+            if (
+                symbols.isEmpty() ||
+                // For every implicit constructor there is a parent,
+                // FirRegularClass declaration, and those clash too,
+                // resulting in REDECLARATION.
+                conflictingDeclaration.isImplicitConstructor && symbols.all { it.isImplicitConstructor }
+            ) return@forEach
 
             val factory =
                 if (conflictingDeclaration is FirNamedFunctionSymbol || conflictingDeclaration is FirConstructorSymbol) {
@@ -76,6 +82,8 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
             reporter.reportOn(source, factory, symbols, context)
         }
     }
+
+    private val FirBasedSymbol<*>.isImplicitConstructor get() = source?.kind is KtFakeSourceElementKind.ImplicitConstructor
 
     private fun checkFile(file: FirFile, inspector: FirDeclarationCollector<FirBasedSymbol<*>>, context: CheckerContext) {
         val packageMemberScope: FirPackageMemberScope = context.sessionHolder.scopeSession.getOrBuild(file.packageFqName, PACKAGE_MEMBER) {
