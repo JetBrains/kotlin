@@ -23940,6 +23940,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("unresolvedReference.kt")
+                public void testUnresolvedReference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/unresolvedReference.kt");
+                }
+
+                @Test
                 @TestMetadata("valueParameters.kt")
                 public void testValueParameters() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/valueParameters.kt");

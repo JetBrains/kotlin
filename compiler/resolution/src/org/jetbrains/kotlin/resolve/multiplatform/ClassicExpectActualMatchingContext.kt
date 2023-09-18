@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
+import org.jetbrains.kotlin.types.error.ErrorClassDescriptor
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
@@ -389,6 +390,9 @@ class ClassicExpectActualMatchingContext(
 
         private fun getAnnotationClassDescriptor(): ClassDescriptor? {
             val classDescriptor = annotationDescriptor.annotationClass ?: return null
+            if (classDescriptor is ErrorClassDescriptor) {
+                return null
+            }
             if (!classDescriptor.isExpect) {
                 return classDescriptor
             }
