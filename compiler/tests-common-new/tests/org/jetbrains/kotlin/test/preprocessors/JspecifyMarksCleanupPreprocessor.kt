@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.test.services.*
 
 class JspecifyMarksCleanupPreprocessor(testServices: TestServices) : SourceFilePreprocessor(testServices) {
     override fun process(file: TestFile, content: String) = content.replace(regexToCleanup, "")
-
-    companion object {
-        private val jspecifyMarks = diagnosticsToJspecifyMarks.values.map { it.values }.flatten().joinToString("|")
-        private val regexToCleanup = Regex("""[ ]*// ($jspecifyMarks)(, ($jspecifyMarks))*(?:\r\n|\n)""")
-    }
 }
+
+// Properties need to be outside the preprocessor so that they aren't eagerly initialized, which leads to a deadlock
+// when too many tests that have a dependency on this class are executed in parallel.
+private val jspecifyMarks = diagnosticsToJspecifyMarks.values.map { it.values }.flatten().joinToString("|")
+private val regexToCleanup = Regex("""[ ]*// ($jspecifyMarks)(, ($jspecifyMarks))*(?:\r\n|\n)""")
