@@ -152,46 +152,6 @@ class Fir2IrDeclarationStorage(
 
     private val localStorage: Fir2IrLocalCallableStorage by threadLocal { Fir2IrLocalCallableStorage() }
 
-    // ------------------------------------ preprocessing ------------------------------------
-
-    internal fun preCacheBuiltinClassMembers(firClass: FirRegularClass, irClass: IrClass) {
-        for (declaration in firClass.declarations) {
-            when (declaration) {
-                is FirProperty -> {
-                    val irProperty = irClass.properties.find { it.name == declaration.name }
-                    if (irProperty != null) {
-                        propertyCache[declaration] = irProperty
-                    }
-                }
-                is FirSimpleFunction -> {
-                    val irFunction = irClass.functions.find {
-                        areCompatible(declaration, it)
-                    }
-                    if (irFunction != null) {
-                        functionCache[declaration] = irFunction
-                    }
-                }
-                is FirConstructor -> {
-                    val irConstructor = irClass.constructors.find {
-                        areCompatible(declaration, it)
-                    }
-                    if (irConstructor != null) {
-                        constructorCache[declaration] = irConstructor
-                    }
-                }
-                else -> {}
-            }
-        }
-        val scope = firClass.unsubstitutedScope()
-        scope.getCallableNames().forEach { callableName ->
-            buildList {
-                fakeOverrideGenerator.generateFakeOverridesForName(
-                    irClass, scope, callableName, firClass, this, realDeclarationSymbols = emptySet()
-                )
-            }.also(fakeOverrideGenerator::bindOverriddenSymbols)
-        }
-    }
-
     // ------------------------------------ package fragments ------------------------------------
 
     fun getIrExternalPackageFragment(
@@ -1276,34 +1236,6 @@ class Fir2IrDeclarationStorage(
             firBasedSymbol,
             callableOrigin
         )
-    }
-
-    private fun areCompatible(firFunction: FirFunction, irFunction: IrFunction): Boolean {
-        if (firFunction is FirSimpleFunction && irFunction is IrSimpleFunction) {
-            if (irFunction.name != firFunction.name) return false
-        }
-        return irFunction.valueParameters.size == firFunction.valueParameters.size &&
-                irFunction.valueParameters.zip(firFunction.valueParameters).all { (irParameter, firParameter) ->
-                    val irType = irParameter.type
-                    val firType = firParameter.returnTypeRef.coneType
-                    if (irType is IrSimpleType) {
-                        when (val irClassifierSymbol = irType.classifier) {
-                            is IrTypeParameterSymbol -> {
-                                firType is ConeTypeParameterType
-                            }
-                            is IrClassSymbol -> {
-                                @OptIn(IrSymbolInternals::class)
-                                val irClass = irClassifierSymbol.owner
-                                firType is ConeClassLikeType && irClass.name == firType.lookupTag.name
-                            }
-                            is IrScriptSymbol -> {
-                                false
-                            }
-                        }
-                    } else {
-                        false
-                    }
-                }
     }
 
     private inline fun <reified S : IrSymbol, reified D : IrOverridableDeclaration<S>> ConeClassLookupTagWithFixedSymbol.findIrFakeOverride(

@@ -129,9 +129,31 @@ class IrBuiltInsOverFir(
     override val stringType: IrType get() = stringClass.defaultTypeWithoutArguments
 
     internal val intrinsicConst by lazy {
-        // Old versions of stdlib may not contain @IntrinsicConstEvaluation (AV < 1.7),
-        //   so in this case we should create annotation class manually
-        /*loadClassSafe(StandardClassIds.Annotations.IntrinsicConstEvaluation) ?: */createIntrinsicConstEvaluationClass().symbol
+        /*
+         * Old versions of stdlib may not contain @IntrinsicConstEvaluation (AV < 1.7), so in this case we should create annotation class manually
+         *
+         * Ideally, we should try to load it from FIR at first, but the thing is that this annotation is used for some generated builtin functions
+         *   (see init section below), so if Fir2IrLazyClass for this annotation is created, it will call for `components.fakeOverrideGenerator`,
+         *   which is not initialized by this moment
+         * As a possible way to fix it we can move `init` section of builtins into the separate function for late initialization and call
+         *   for it after Fir2IrComponentsStorage is fully initialized
+         */
+        val irClass = createIntrinsicConstEvaluationClass()
+        val firClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(
+            StandardClassIds.Annotations.IntrinsicConstEvaluation
+        ) as FirRegularClassSymbol?
+
+        if (firClassSymbol != null) {
+            /*
+             * If @IntrinsicConstEvaluation is present in dependencies, we should manually cache relation between FIR and IR class
+             * Without it classifier storage may create another IR class for @IntrinsicConstEvaluation, if it will be referenced
+             *   somewhere in the code
+             */
+            @OptIn(LeakedDeclarationCaches::class)
+            components.classifierStorage.cacheIrClass(firClassSymbol.fir, irClass)
+        }
+
+        irClass.symbol
     }
 
     private val intrinsicConstAnnotation: IrConstructorCall by lazy {

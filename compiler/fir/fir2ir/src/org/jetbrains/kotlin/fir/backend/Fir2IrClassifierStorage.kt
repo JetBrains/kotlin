@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
@@ -65,42 +65,6 @@ class Fir2IrClassifierStorage(
 
     private fun FirTypeRef.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType =
         with(typeConverter) { toIrType(typeOrigin) }
-
-    // ------------------------------------ preprocessing ------------------------------------
-
-    fun preCacheBuiltinClasses() {
-        fun getResolvedClass(classId: ClassId): FirRegularClass? {
-            // toSymbol() can return null when using an old stdlib that's missing some types
-            val firClass = classId.toSymbol(session)?.fir as FirRegularClass? ?: return null
-
-            // Built-in classes may come from sources in the Kotlin project, and so have unresolved types in signatures.
-            // Still, we need return types for all members to make a list of 'IrDeclarations'. Also see 'Fir2IrLazyClass.declarations'.
-            firClass.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-
-            return firClass
-        }
-
-        for ((classId, irBuiltinSymbol) in typeConverter.classIdToSymbolMap) {
-            val firClass = getResolvedClass(classId) ?: continue
-
-            @OptIn(IrSymbolInternals::class)
-            val irClass = irBuiltinSymbol.owner
-            classCache[firClass] = irClass
-            classifiersGenerator.processClassHeader(firClass, irClass)
-            declarationStorage.preCacheBuiltinClassMembers(firClass, irClass)
-        }
-        for ((primitiveClassId, primitiveArrayId) in StandardClassIds.primitiveArrayTypeByElementType) {
-            // toSymbol() can return null when using an old stdlib that's missing some types
-            val firClass = getResolvedClass(primitiveArrayId) ?: continue
-            val irType = typeConverter.classIdToTypeMap[primitiveClassId]
-
-            @OptIn(IrSymbolInternals::class)
-            val irClass = irBuiltIns.primitiveArrayForType[irType]!!.owner
-            classCache[firClass] = irClass
-            classifiersGenerator.processClassHeader(firClass, irClass)
-            declarationStorage.preCacheBuiltinClassMembers(firClass, irClass)
-        }
-    }
 
     // ------------------------------------ type parameters ------------------------------------
 
@@ -197,11 +161,17 @@ class Fir2IrClassifierStorage(
         predefinedOrigin: IrDeclarationOrigin? = null
     ): IrClass {
         return classifiersGenerator.createIrClass(regularClass, parent, predefinedOrigin).also {
-            if (regularClass.visibility == Visibilities.Local) {
-                localStorage[regularClass] = it
-            } else {
-                classCache[regularClass] = it
-            }
+            @OptIn(LeakedDeclarationCaches::class)
+            cacheIrClass(regularClass, it)
+        }
+    }
+
+    @LeakedDeclarationCaches
+    internal fun cacheIrClass(regularClass: FirRegularClass, irClass: IrClass) {
+        if (regularClass.visibility == Visibilities.Local) {
+            localStorage[regularClass] = irClass
+        } else {
+            classCache[regularClass] = irClass
         }
     }
 
