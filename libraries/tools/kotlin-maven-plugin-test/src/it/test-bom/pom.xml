@@ -43,6 +43,19 @@
             <artifactId>kotlin-stdlib-common</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-junit5</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-js</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- Depend on some artifact which itself depends on the old kotlin-reflect -->
         <!-- And expect newer version of kotlin-reflect to be selected -->
