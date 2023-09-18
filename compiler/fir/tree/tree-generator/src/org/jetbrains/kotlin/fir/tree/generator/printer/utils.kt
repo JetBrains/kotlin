@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.firImplementationDetailType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
-import org.jetbrains.kotlin.generators.tree.ImplementationKindOwner
-import org.jetbrains.kotlin.generators.tree.TypeRef
-import org.jetbrains.kotlin.generators.tree.typeWithArguments
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 enum class ImportKind(val postfix: String) {
@@ -110,10 +107,6 @@ private fun List<String>.filterRedundantImports(
         !fqn.startsWith("kotlin.") && fqn.dropLastWhile { it != '.' } != realPackageName
     }.distinct().sorted() + "$VISITOR_PACKAGE.*"
 }
-
-
-val ImplementationKindOwner.needPureAbstractElement: Boolean
-    get() = (kind != ImplementationKind.Interface && kind != ImplementationKind.SealedInterface) && !allParents.any { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }
 
 
 val Field.isVal: Boolean

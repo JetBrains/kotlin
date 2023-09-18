@@ -160,7 +160,7 @@ private fun markLeaves(elements: List<Element>) {
 
 private fun addAbstractElement(elements: List<Element>) {
     for (el in elements) {
-        if (el.kind!!.typeKind == TypeKind.Class && el.elementParents.none { it.element.kind!!.typeKind == TypeKind.Class }) {
+        if (el.needPureAbstractElement) {
             el.otherParents += elementBaseType
         }
     }

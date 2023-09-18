@@ -18,6 +18,9 @@ enum class ImplementationKind(val title: String, val typeKind: TypeKind) {
         get() = typeKind == TypeKind.Interface
 }
 
+val ImplementationKind?.isInterface: Boolean
+    get() = this?.isInterface ?: false
+
 fun ImplementationKind?.braces(): String = when (this) {
     ImplementationKind.Interface, ImplementationKind.SealedInterface -> ""
     ImplementationKind.OpenClass, ImplementationKind.AbstractClass, ImplementationKind.SealedClass -> "()"

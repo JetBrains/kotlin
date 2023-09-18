@@ -19,19 +19,13 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
 
     override val fieldPrinter = FieldPrinter(printer)
 
-    private val Element.isInterface: Boolean
-        get() = kind?.isInterface ?: false
-
-    override fun pureAbstractElementType(element: Element): String? {
-        val needPureAbstractElement =
-            !element.isInterface && !element.allParents.any { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }
-        return if (needPureAbstractElement) pureAbstractElementType.type else null
-    }
+    override fun pureAbstractElementType(element: Element): String? =
+        pureAbstractElementType.takeIf { element.needPureAbstractElement }?.type
 
     override fun SmartPrinter.printAdditionalMethods(element: Element) {
         with(element) {
             fun abstract() {
-                if (!element.isInterface) {
+                if (!kind.isInterface) {
                     print("abstract ")
                 }
             }
@@ -91,7 +85,7 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
             }
 
             if (element == AbstractFirTreeBuilder.baseFirElement) {
-                require(isInterface) {
+                require(kind.isInterface) {
                     "$element must be an interface"
                 }
                 println()
