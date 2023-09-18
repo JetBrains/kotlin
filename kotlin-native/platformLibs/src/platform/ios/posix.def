@@ -13,7 +13,7 @@ headers = alloca.h assert.h complex.h ctype.h dirent.h dlfcn.h err.h errno.h fcn
     sys/queue.h sys/select.h sys/shm.h sys/stat.h \
     sys/syslimits.h sys/time.h sys/times.h sys/utsname.h sys/wait.h
 
-compilerOpts = -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE
+compilerOpts = -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D__CCT_ENABLE_USER_SPACE
 linkerOpts = -ldl -lresolv
 excludedFunctions = acl_valid_link_np add_profil pfctlinput profil unwhiteout zopen getdirentries \
                     uuid_generate_early_random setgrfile \

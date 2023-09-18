@@ -40,6 +40,6 @@ excludedFunctions = __tg_promote KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN \
                     xpc_debugger_api_misuse_info \
                     vm_stats
 
-compilerOpts.macos_x64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE -DSYSCTL_DEF_ENABLED
-compilerOpts.macos_arm64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -DSYSCTL_DEF_ENABLED
+compilerOpts.macos_x64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE -DSYSCTL_DEF_ENABLED -D__CCT_ENABLE_USER_SPACE
+compilerOpts.macos_arm64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -DSYSCTL_DEF_ENABLED -D__CCT_ENABLE_USER_SPACE
 linkerOpts = -ldl -lz -lcurses -lbz2 -lcompression -late -lbsm
