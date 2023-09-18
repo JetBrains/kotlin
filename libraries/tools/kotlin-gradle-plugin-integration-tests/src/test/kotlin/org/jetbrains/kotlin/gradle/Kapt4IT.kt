@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.testbase.TestProject
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -39,6 +39,18 @@ class Kapt4IT : Kapt3IT() {
 
     @Disabled("Doesn't make sense in Kapt 4")
     override fun testRepeatableAnnotationsWithOldJvmBackend(gradleVersion: GradleVersion) {}
+
+    @DisplayName("KT-61879: K2 KAPT works with proguarded compiler jars and enum class")
+    @GradleTest
+    fun testEnumClass(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            javaSourcesDir().resolve("test.kt").appendText("\nenum class TestEnum")
+            build("build") {
+                assertKaptSuccessful()
+                assertFileExists(kotlinClassesDir().resolve("example/TestEnum.class"))
+            }
+        }
+    }
 }
 
 @DisplayName("Kapt 4 with classloaders cache")
