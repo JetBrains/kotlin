@@ -48,10 +48,10 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
     FirSimpleFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!config.shouldConvert(declaration)) return
-        config.clearMinorErrors()
+        val errorCollector = ErrorCollector()
         var program: Program? = null
         try {
-            val programConversionContext = ProgramConverter(session, config)
+            val programConversionContext = ProgramConverter(session, config, errorCollector)
             programConversionContext.registerForVerification(declaration)
             program = programConversionContext.program
 
@@ -73,18 +73,17 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
                 reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT, declaration.name.asString(), context)
             }
         } catch (e: Throwable) {
-            val error = config.formatErrorWithInfos(e.message ?: "No message provided")
+            val error = errorCollector.formatErrorWithInfos(e.message ?: "No message provided")
             reporter.reportOn(declaration.source, PluginErrors.INTERNAL_ERROR, error, context)
             // Note that the below text is only visible during plugin development; Gradle hides it when running the plugin
             // on another project.
             System.err.println("Viper verification failed with an exception.  Viper text:\n${program?.toDebugOutput()}\nException: $e")
         }
 
-        config.forEachMinorError {
+        errorCollector.forEachMinorError {
             reporter.reportOn(declaration.source, PluginErrors.MINOR_INTERNAL_ERROR, it, context)
         }
     }
-
 
     private fun getProgramForLogging(program: Program): Program? = when (config.logLevel) {
         LogLevel.ONLY_WARNINGS -> null

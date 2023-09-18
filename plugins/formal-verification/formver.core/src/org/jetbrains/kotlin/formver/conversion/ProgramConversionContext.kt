@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.formver.ErrorCollector
 import org.jetbrains.kotlin.formver.PluginConfiguration
 import org.jetbrains.kotlin.formver.embeddings.FieldEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.formver.embeddings.callables.FunctionEmbedding
 
 interface ProgramConversionContext {
     val config: PluginConfiguration
+    val errorCollector: ErrorCollector
 
     fun embedFunction(symbol: FirFunctionSymbol<*>): FunctionEmbedding
     fun embedType(type: ConeKotlinType): TypeEmbedding

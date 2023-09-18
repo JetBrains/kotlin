@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.formver.ErrorCollector
 import org.jetbrains.kotlin.formver.PluginConfiguration
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.domains.*
@@ -32,7 +33,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
  * performed via this context to ensure they can be deduplicated.
  * We need the FirSession to get access to the TypeContext.
  */
-class ProgramConverter(val session: FirSession, override val config: PluginConfiguration) : ProgramConversionContext {
+class ProgramConverter(val session: FirSession, override val config: PluginConfiguration, override val errorCollector: ErrorCollector) :
+    ProgramConversionContext {
     private val methods: MutableMap<MangledName, FunctionEmbedding> = mutableMapOf()
     private val classes: MutableMap<ClassName, ClassTypeEmbedding> = mutableMapOf()
     private val fields: MutableMap<MangledName, FieldEmbedding> = mutableMapOf()
@@ -198,7 +200,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             UnsupportedFeatureBehaviour.THROW_EXCEPTION ->
                 throw NotImplementedError("The embedding for type $type is not yet implemented.")
             UnsupportedFeatureBehaviour.ASSUME_UNREACHABLE -> {
-                config.addMinorError("Requested type $type, for which we do not yet have an embedding.")
+                errorCollector.addMinorError("Requested type $type, for which we do not yet have an embedding.")
                 UnitTypeEmbedding
             }
         }

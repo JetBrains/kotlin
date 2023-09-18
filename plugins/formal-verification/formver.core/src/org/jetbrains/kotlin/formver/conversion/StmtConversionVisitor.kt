@@ -319,7 +319,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
             UnsupportedFeatureBehaviour.THROW_EXCEPTION ->
                 TODO(msg)
             UnsupportedFeatureBehaviour.ASSUME_UNREACHABLE -> {
-                data.config.addMinorError(msg)
+                data.errorCollector.addMinorError(msg)
                 data.addStatement(Stmt.Inhale(Exp.BoolLit(false)))
                 UnitLit
             }
@@ -331,7 +331,7 @@ object StmtConversionVisitorExceptionWrapper : FirVisitor<ExpEmbedding, StmtConv
         try {
             return element.accept(StmtConversionVisitor, data)
         } catch (e: Throwable) {
-            data.config.addErrorInfo("... while converting ${element.source.text}")
+            data.errorCollector.addErrorInfo("... while converting ${element.source.text}")
             throw e
         }
     }
