@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.linkage.partial.IrUnimplementedOverridesStrategy
-import org.jetbrains.kotlin.ir.linkage.partial.IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
-import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
+import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
+import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy
+import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
@@ -254,7 +254,7 @@ class IrLinkerFakeOverrideProvider(
     },
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList(),
 ) {
-    private val irOverridingUtil = IrOverridingUtil(
+    private val irFakeOverrideBuilder = IrFakeOverrideBuilder(
         typeSystem,
         IrLinkerFakeOverrideBuilderStrategy(
             linker,
@@ -291,7 +291,7 @@ class IrLinkerFakeOverrideProvider(
 
         if (!platformSpecificClassFilter.needToConstructFakeOverrides(clazz)) return false
 
-        irOverridingUtil.buildFakeOverridesForClass(clazz, compatibilityMode.oldSignatures)
+        irFakeOverrideBuilder.buildFakeOverridesForClass(clazz, compatibilityMode.oldSignatures)
 
         return true
     }

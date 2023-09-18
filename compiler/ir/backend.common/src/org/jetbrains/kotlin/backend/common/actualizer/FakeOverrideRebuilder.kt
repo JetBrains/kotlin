@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
-import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
+import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
  */
 class FakeOverrideRebuilder(
     val symbolTable: SymbolTable,
-    val irOverridingUtil: IrOverridingUtil,
+    val fakeOverrideBuilder: IrFakeOverrideBuilder,
 ) {
     private val removedFakeOverrides = mutableMapOf<IrClassSymbol, List<IrSymbol>>()
     private val processedClasses = hashSetOf<IrClass>()
@@ -115,7 +115,7 @@ class FakeOverrideRebuilder(
         for (c in irClass.superTypes) {
             c.getClass()?.let { rebuildClassFakeOverrides(it) }
         }
-        irOverridingUtil.buildFakeOverridesForClass(irClass, false)
+        fakeOverrideBuilder.buildFakeOverridesForClass(irClass, false)
 
         val overriddenMap = mutableMapOf<IrSymbol, IrSymbol>()
 

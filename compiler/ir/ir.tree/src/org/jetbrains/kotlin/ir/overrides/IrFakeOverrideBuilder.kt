@@ -23,15 +23,9 @@ import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
-// TODO:
-// The below pile of code is basically half of OverridingUtil.java
-// adapted to IR and converted to Kotlin.
-// Need to convert frontend's OverridingUtil to Kotlin and merge this codes
-// to use abstract overridable member interfaces.
-
-class IrOverridingUtil(
+class IrFakeOverrideBuilder(
     private val typeSystem: IrTypeSystemContext,
-    private val fakeOverrideBuilder: FakeOverrideBuilderStrategy,
+    private val strategy: FakeOverrideBuilderStrategy,
     private val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
 ) {
     private val overrideChecker = IrOverrideChecker(typeSystem, externalOverridabilityConditions)
@@ -61,8 +55,11 @@ class IrOverridingUtil(
             }
         }
 
+    /**
+     * This function builds all fake overrides for [clazz] and computes overridden symbols for all its members.
+     */
     fun buildFakeOverridesForClass(clazz: IrClass, oldSignatures: Boolean) {
-        fakeOverrideBuilder.inFile(clazz.fileOrNull) {
+        strategy.inFile(clazz.fileOrNull) {
             val superTypes = clazz.superTypes
 
             val fromCurrent = clazz.declarations.filterIsInstance<IrOverridableMember>()
@@ -73,7 +70,7 @@ class IrOverridingUtil(
                     .filter { it.isOverridableMemberOrAccessor() }
                     .map {
                         val overriddenMember = it as IrOverridableMember
-                        val fakeOverride = fakeOverrideBuilder.fakeOverrideMember(superType, overriddenMember, clazz)
+                        val fakeOverride = strategy.fakeOverrideMember(superType, overriddenMember, clazz)
                         FakeOverride(fakeOverride, overriddenMember)
                     }
             }
@@ -91,6 +88,12 @@ class IrOverridingUtil(
         }
     }
 
+    /**
+     * This function builds all missing fake overrides, assuming that already existing members have correct overriden symbols.
+     *
+     * In particular, if a member of super class can be overridden, but none of the members have it in their overriddenSymbols,
+     * fake override would be created.
+     */
     fun buildFakeOverridesForClassUsingOverriddenSymbols(
         clazz: IrClass,
         implementedMembers: List<IrOverridableMember> = emptyList(),
@@ -108,7 +111,7 @@ class IrOverridingUtil(
                     it !in overriddenMembers && it.symbol !in ignoredParentSymbols && !it.isStaticMember && !DescriptorVisibilities.isPrivate(it.visibility)
                 }
                 .map { overriddenMember ->
-                    val fakeOverride = fakeOverrideBuilder.fakeOverrideMember(superType, overriddenMember, clazz)
+                    val fakeOverride = strategy.fakeOverrideMember(superType, overriddenMember, clazz)
                     FakeOverride(fakeOverride, overriddenMember)
                 }
         }
@@ -333,8 +336,8 @@ class IrOverridingUtil(
         ) { "Overridden symbols should be set for fake override ${fakeOverride.render()}" }
 
         addedFakeOverrides.add(fakeOverride)
-        fakeOverrideBuilder.linkFakeOverride(fakeOverride, compatibilityMode)
-        fakeOverrideBuilder.postProcessGeneratedFakeOverride(fakeOverride, currentClass)
+        strategy.linkFakeOverride(fakeOverride, compatibilityMode)
+        strategy.postProcessGeneratedFakeOverride(fakeOverride, currentClass)
     }
 
     private fun isVisibilityMoreSpecific(

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
+import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
@@ -27,7 +27,7 @@ object IrActualizer {
         typeSystemContext: IrTypeSystemContext,
         languageVersionSettings: LanguageVersionSettings,
         symbolTable: SymbolTable,
-        irOverridingUtil: IrOverridingUtil,
+        fakeOverrideBuilder: IrFakeOverrideBuilder,
         useIrFakeOverrideBuilder: Boolean,
         expectActualTracker: ExpectActualTracker?
     ): IrActualizedResult {
@@ -79,7 +79,7 @@ object IrActualizer {
 
         if (useIrFakeOverrideBuilder) {
             //   8. Rebuild fake overrides from stretch, as they could become invalid during actualization
-            FakeOverrideRebuilder(symbolTable, irOverridingUtil).rebuildFakeOverrides(mainFragment)
+            FakeOverrideRebuilder(symbolTable, fakeOverrideBuilder).rebuildFakeOverrides(mainFragment)
         }
 
         return IrActualizedResult(removedExpectDeclarations)

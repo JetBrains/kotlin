@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.pipeline.applyIrGenerationExtensions
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.*
@@ -37,7 +36,7 @@ class IrActualizerAndPluginsFacade(
                 typeSystemContext,
                 testServices.compilerConfigurationProvider.getCompilerConfiguration(module).languageVersionSettings,
                 inputArtifact.fir2IrComponents!!.symbolTable,
-                inputArtifact.fir2IrComponents!!.irOverridingUtil,
+                inputArtifact.fir2IrComponents!!.fakeOverrideBuilder,
                 useIrFakeOverrideBuilder = CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION in module.directives,
                 expectActualTracker = null,
             )

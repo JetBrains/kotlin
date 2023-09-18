@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
-import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
+import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionPublicSymbolImpl
@@ -558,7 +558,7 @@ class Fir2IrConverter(
             val components = Fir2IrComponentsStorage(
                 session, scopeSession, irFactory, fir2IrExtensions, fir2IrConfiguration, visibilityConverter,
                 { irBuiltins ->
-                    IrOverridingUtil(
+                    IrFakeOverrideBuilder(
                         typeContextProvider(irBuiltins),
                         Fir2IrFakeOverrideStrategy(friendModulesMap(session), commonMemberStorage.symbolTable, irMangler),
                         externalOverridabilityConditions = emptyList(), // TODO: KT-61370, KT-61804.
@@ -583,7 +583,7 @@ class Fir2IrConverter(
             )
 
             if (fir2IrConfiguration.useIrFakeOverrideBuilder) {
-                FakeOverrideRebuilder(commonMemberStorage.symbolTable, components.irOverridingUtil).rebuildFakeOverrides(irModuleFragment)
+                FakeOverrideRebuilder(commonMemberStorage.symbolTable, components.fakeOverrideBuilder).rebuildFakeOverrides(irModuleFragment)
             }
 
             return Fir2IrResult(irModuleFragment, components, moduleDescriptor)

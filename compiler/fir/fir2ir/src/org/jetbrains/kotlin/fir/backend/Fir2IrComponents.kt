@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
-import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
+import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface Fir2IrComponents {
@@ -43,7 +43,7 @@ interface Fir2IrComponents {
     val callGenerator: CallAndReferenceGenerator
     val fakeOverrideGenerator: FakeOverrideGenerator
     val delegatedMemberGenerator: DelegatedMemberGenerator
-    val irOverridingUtil: IrOverridingUtil
+    val fakeOverrideBuilder: IrFakeOverrideBuilder
 
     val extensions: Fir2IrExtensions
     val configuration: Fir2IrConfiguration

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
-import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
+import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
@@ -25,7 +25,7 @@ class Fir2IrComponentsStorage(
     override val extensions: Fir2IrExtensions,
     override val configuration: Fir2IrConfiguration,
     override val visibilityConverter: Fir2IrVisibilityConverter,
-    irOverridingUtilProvider: (IrBuiltIns) -> IrOverridingUtil,
+    irFakeOverrideBuilderProvider: (IrBuiltIns) -> IrFakeOverrideBuilder,
     moduleDescriptor: FirModuleDescriptor,
     commonMemberStorage: Fir2IrCommonMemberStorage,
     irMangler: KotlinMangler.IrMangler,
@@ -49,7 +49,7 @@ class Fir2IrComponentsStorage(
         this, configuration.languageVersionSettings, moduleDescriptor, irMangler
     )
     override val builtIns: Fir2IrBuiltIns = Fir2IrBuiltIns(this, specialSymbolProvider)
-    override val irOverridingUtil: IrOverridingUtil = irOverridingUtilProvider(irBuiltIns)
+    override val fakeOverrideBuilder: IrFakeOverrideBuilder = irFakeOverrideBuilderProvider(irBuiltIns)
 
     override val irProviders: List<IrProvider> = listOf(FirIrProvider(this))
 

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.linkage.partial.IrUnimplementedOverridesStrategy
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -22,17 +21,40 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.Variance
 
+/**
+ * This class is a customization point for IrFakeOverrideBuilder.
+ *
+ * While the main [IrFakeOverrideBuilder] class works on:
+ *   * Choosing for which functions fake overrides should be created.
+ *   * Handling merging overrides coming from different super types
+ *
+ * These class inheritors are responsible for:
+ *   * Actually creating the fake override for a single member of a single super type
+ *   * Creating and registering in appropriate storages of fake override member symbols
+ *
+ */
 abstract class FakeOverrideBuilderStrategy(
     private val friendModules: Map<String, Collection<String>>,
     private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) {
+    /**
+     * Creates a fake override for [member] from [superType] to be added to the class [clazz]
+     */
     fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember =
         buildFakeOverrideMember(superType, member, clazz, friendModules, unimplementedOverridesStrategy)
 
+    /**
+     * This function is a callback for fake override creation finish.
+     *
+     * It can modify the created fake override, if needed.
+     */
     fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableMember, clazz: IrClass) {
         unimplementedOverridesStrategy.postProcessGeneratedFakeOverride(fakeOverride as IrOverridableDeclaration<*>, clazz)
     }
 
+    /**
+     * Create a symbol for the fake override.
+     */
     fun linkFakeOverride(fakeOverride: IrOverridableMember, compatibilityMode: Boolean) {
         when (fakeOverride) {
             is IrFunctionWithLateBinding -> linkFunctionFakeOverride(fakeOverride, compatibilityMode)
@@ -40,9 +62,35 @@ abstract class FakeOverrideBuilderStrategy(
             else -> error("Unexpected fake override: $fakeOverride")
         }
     }
+
+    /**
+     * Most implementations need [file] in which they are working now.
+     *
+     * It should be avoided in the future, but for now it's like this.
+     * For now, it's called with class file when class processing is started.
+     *
+     * Contract:
+     *  * must call [block] exactly once.
+     */
     abstract fun inFile(file: IrFile?, block: () -> Unit)
 
+    /**
+     * Callback for creating a symbol for fake override function.
+     *
+     * Contract:
+     *   * [IrFunctionWithLateBinding.acquireSymbol] must be called inside on [function] argument
+     */
     protected abstract fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean)
+
+    /**
+     * Callback for creating a symbol for fake override property.
+     *
+     * Also, must create symbols for property's getter and setter.
+     *
+     * Contract:
+     *   * [IrPropertyWithLateBinding.acquireSymbol] must be called inside on [property] argument
+     *   * [IrFunctionWithLateBinding.acquireSymbol] must be called inside on getter and setter of [property] argument, if they exist
+     */
     protected abstract fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean)
 }
 

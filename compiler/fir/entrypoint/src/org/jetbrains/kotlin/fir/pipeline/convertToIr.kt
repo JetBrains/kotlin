@@ -168,7 +168,7 @@ fun FirResult.convertToIrAndActualize(
                 actualizerTypeContextProvider(fir2IrResult.irModuleFragment.irBuiltins),
                 fir2IrConfiguration.languageVersionSettings,
                 commonMemberStorage.symbolTable,
-                fir2IrResult.components.irOverridingUtil,
+                fir2IrResult.components.fakeOverrideBuilder,
                 fir2IrConfiguration.useIrFakeOverrideBuilder,
                 fir2IrConfiguration.expectActualTracker,
             )
