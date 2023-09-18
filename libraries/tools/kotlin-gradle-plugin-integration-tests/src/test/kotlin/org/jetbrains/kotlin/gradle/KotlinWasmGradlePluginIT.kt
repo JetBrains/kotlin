@@ -61,4 +61,48 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Check wasi target")
+    @GradleTest
+    fun wasiTargetWithBinaryen(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-wasi-test", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            buildGradleKts.modify {
+                it.replace("wasmWasi {", "wasmWasi {\napplyBinaryen()\nbinaries.executable()")
+            }
+
+            build("assemble") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
+
+                val original = projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/kotlin/new-mpp-wasm-wasi-test-wasm-wasi.wasm")
+                val optimized = projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/new-mpp-wasm-wasi-test-wasm-wasi.wasm")
+                assertTrue {
+                    Files.size(original) > Files.size(optimized)
+                }
+            }
+        }
+    }
+
+    @DisplayName("Check js target")
+    @GradleTest
+    fun jsTargetWithBinaryen(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-js", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            buildGradleKts.modify {
+                it.replace("wasmJs {", "wasmJs {\napplyBinaryen()")
+            }
+
+            build("assemble") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
+
+                val original = projectPath.resolve("build/compileSync/wasmJs/main/productionExecutable/kotlin/redefined-wasm-module-name.wasm")
+                val optimized = projectPath.resolve("build/compileSync/wasmJs/main/productionExecutable/optimized/redefined-wasm-module-name.wasm")
+                assertTrue {
+                    Files.size(original) > Files.size(optimized)
+                }
+            }
+        }
+    }
 }

@@ -10,6 +10,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.Companion.generateBinaryName
@@ -83,7 +84,7 @@ sealed class JsIrBinary(
         get() = target.project
 }
 
-class Executable(
+open class Executable(
     compilation: KotlinJsCompilation,
     name: String,
     mode: KotlinJsBinaryMode
@@ -105,6 +106,26 @@ class Executable(
             mode,
             null
         )
+}
+
+open class ExecutableWasm(
+    compilation: KotlinJsCompilation,
+    name: String,
+    mode: KotlinJsBinaryMode
+) : Executable(
+    compilation,
+    name,
+    mode
+) {
+    val optimizeTaskName: String = optimizeTaskName()
+
+    val optimizeTask: TaskProvider<BinaryenExec>
+        get() = target.project.tasks
+            .withType<BinaryenExec>()
+            .named(optimizeTaskName)
+
+    private fun optimizeTaskName(): String =
+        "${linkTaskName}Optimize"
 }
 
 class Library(

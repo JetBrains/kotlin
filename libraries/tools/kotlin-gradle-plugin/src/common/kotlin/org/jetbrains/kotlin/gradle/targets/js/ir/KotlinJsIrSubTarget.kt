@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -130,9 +132,16 @@ abstract class KotlinJsIrSubTarget(
                     }
                 }
             } else {
-                testJs.dependsOn(binary.linkTask)
-                binary.linkTask.flatMap { linkTask ->
-                    linkTask.outputFileProperty
+                if (project.locateTask<BinaryenExec>((binary as ExecutableWasm).optimizeTaskName) != null) {
+                    testJs.dependsOn(binary.optimizeTask)
+                    binary.optimizeTask.flatMap { optimizeTask ->
+                        optimizeTask.outputFileProperty.asFile
+                    }
+                } else {
+                    testJs.dependsOn(binary.linkTask)
+                    binary.linkTask.flatMap { linkTask ->
+                        linkTask.outputFileProperty
+                    }
                 }
             }
 
