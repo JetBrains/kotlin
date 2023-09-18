@@ -130,6 +130,7 @@ where advanced options include:
   -Xreport-output-files      Report the source-to-output file mapping.
   -Xreport-perf              Report detailed performance statistics.
   -Xself-upper-bound-inference Support inferring type arguments from the self-type upper bounds of the corresponding type parameters.
+  -Xskip-fragments-verification Allow compiling without verification of fragments.
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.
   -Xsuppress-api-version-greater-than-language-version-error

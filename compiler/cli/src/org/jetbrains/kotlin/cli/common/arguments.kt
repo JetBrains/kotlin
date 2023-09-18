@@ -22,7 +22,7 @@ import java.io.File
 
 fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
-    createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
+    createMetadataVersion: ((IntArray) -> BinaryVersion)? = null,
 ) {
     val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
@@ -298,15 +298,67 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         valueTransform = { it.second }
     )
 
-    modules = DFS.topologicalOrder(modules) { dependenciesMap[it].orEmpty() }.asReversed()
-
-    modules.forEachIndexed { i, module ->
-        val dependencies = dependenciesMap[module].orEmpty()
-        val previousModules = modules.subList(0, i)
-        if (dependencies.any { it !in previousModules }) {
-            reportError("There is a cycle in dependencies of module `${module.name}`")
+    when (val result = modules.toTopologicalOrder { dependenciesMap[it].orEmpty() }) {
+        is TopologicalOrder.Result -> modules = result.list
+        is TopologicalOrder.Cycle -> {
+            val path = result.cycle.joinToString(separator = " -> ") { "`${it.name}`" }
+            reportError("There is a cycle in dependencies of module `${result.cycle.first().name}`: $path")
+        }
+        is TopologicalOrder.Disjointed -> {
+            if (arguments.skipFragmentsVerification) {
+                modules = result.list
+            } else {
+                reportError("Incomplete -Xfragment-refines argument. Module topology must have a single final module")
+            }
         }
     }
 
     return HmppCliModuleStructure(modules, dependenciesMap)
+}
+
+private sealed class TopologicalOrder<out T> {
+    data class Result<T>(val list: List<T>) : TopologicalOrder<T>()
+    data class Cycle<T>(val cycle: List<T>) : TopologicalOrder<T>()
+    data class Disjointed<T>(val list: List<T>) : TopologicalOrder<T>()
+}
+
+private fun List<HmppCliModule>.toTopologicalOrder(
+    neighbors: (HmppCliModule) -> Iterable<HmppCliModule>,
+): TopologicalOrder<HmppCliModule> {
+    // Since there should only be a single leaf node in the module graph, there will only
+    // be one module which will result in a complete topological order. If a cycle is
+    // discovered within the topology, it is reported immediately.
+
+    for (node in this) {
+        val handler = object : DFS.NodeHandlerWithListResult<HmppCliModule, HmppCliModule>() {
+            private val path = mutableSetOf<HmppCliModule>()
+            var cycle: List<HmppCliModule>? = null
+
+            override fun beforeChildren(current: HmppCliModule): Boolean {
+                return if (path.add(current)) {
+                    result.addFirst(current)
+                    true
+                } else {
+                    cycle = cycle ?: (path.toList() + path.first())
+                    path.remove(current) // `afterChildren` is not called if false is returned.
+                    false
+                }
+            }
+
+            override fun afterChildren(current: HmppCliModule) {
+                path.remove(current)
+            }
+        }
+
+        DFS.doDfs(node, neighbors, { true }, handler)
+        handler.cycle?.let { return TopologicalOrder.Cycle(it) }
+
+        val result = handler.result()
+        if (result.containsAll(this)) {
+            return TopologicalOrder.Result(result)
+        }
+    }
+
+    val result = DFS.topologicalOrder(this, neighbors).asReversed()
+    return TopologicalOrder.Disjointed(result)
 }

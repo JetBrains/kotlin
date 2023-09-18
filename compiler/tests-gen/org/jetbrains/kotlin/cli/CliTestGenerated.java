@@ -186,6 +186,11 @@ public class CliTestGenerated extends AbstractCliTest {
     public void testSuccessfulCompilationWithScript() {
       runTest("compiler/testData/cli/jvm/hmpp/successfulCompilationWithScript.args");
     }
+
+    @TestMetadata("unrelatedFragments.args")
+    public void testUnrelatedFragments() {
+      runTest("compiler/testData/cli/jvm/hmpp/unrelatedFragments.args");
+    }
   }
 
   @TestMetadata("compiler/testData/cli/jvm/sourceFilesAndDirectories")

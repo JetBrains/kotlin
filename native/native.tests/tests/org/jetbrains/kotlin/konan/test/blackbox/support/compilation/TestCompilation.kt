@@ -239,6 +239,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
                 .sorted().forEach { add(it) }
             sourceModules.flatMapToSet { module -> module.files.map { "-Xfragment-sources=${module.name}:${it.location.path}" } }
                 .sorted().forEach { add(it) }
+            add("-Xskip-fragments-verification")
         }
     }
 }

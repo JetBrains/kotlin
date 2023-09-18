@@ -7,5 +7,5 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-error: there is a cycle in dependencies of module `a`: `a` -> `c` -> `b` -> `a`
+error: incomplete -Xfragment-refines argument. Module topology must have a single final module
 COMPILATION_ERROR
