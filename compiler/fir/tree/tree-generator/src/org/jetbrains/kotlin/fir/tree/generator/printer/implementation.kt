@@ -98,7 +98,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
         }
 
         print(" : ")
-        if (!isInterface && !allParents.any { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }) {
+        if (needPureAbstractElement) {
             print("${pureAbstractElementType.type}(), ")
         }
         print(allParents.joinToString { "${it.typeWithArguments}${it.kind.braces()}" })

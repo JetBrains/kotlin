@@ -9,3 +9,7 @@ interface ImplementationKindOwner : Importable {
     var kind: ImplementationKind?
     val allParents: List<ImplementationKindOwner>
 }
+
+val ImplementationKindOwner.needPureAbstractElement: Boolean
+    get() = !(kind?.isInterface ?: false) &&
+            allParents.none { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }

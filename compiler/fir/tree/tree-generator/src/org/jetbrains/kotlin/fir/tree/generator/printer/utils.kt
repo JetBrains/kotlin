@@ -113,10 +113,6 @@ private fun List<String>.filterRedundantImports(
 }
 
 
-val ImplementationKindOwner.needPureAbstractElement: Boolean
-    get() = (kind != ImplementationKind.Interface && kind != ImplementationKind.SealedInterface) && !allParents.any { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }
-
-
 val Field.isVal: Boolean
     get() = (this is FieldList && !isMutableOrEmpty) || (this is FieldWithDefault && origin is FieldList && !origin.isMutableOrEmpty) || !isMutable
 
