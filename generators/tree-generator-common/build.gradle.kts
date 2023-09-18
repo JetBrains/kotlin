@@ -5,6 +5,8 @@ plugins {
 
 dependencies {
     api(project(":core:compiler.common"))
+
+    implementation(project(":generators"))
 }
 
 sourceSets {

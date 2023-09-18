@@ -42,8 +42,13 @@ class Element(
 
     var visitorParent: ElementRef? = null
     var transformerReturnType: Element? = null
-    val targetKind = config.typeKind
-    override var kind: ImplementationKind? = null
+
+    override var kind: ImplementationKind? = when (config.typeKind) {
+        TypeKind.Class -> ImplementationKind.AbstractClass
+        TypeKind.Interface -> ImplementationKind.Interface
+        null -> null
+    }
+
     val typeName
         get() = elementName2typeName(name)
 
