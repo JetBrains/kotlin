@@ -130,7 +130,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
     // ------------------------------------------------------------------------------
 
-    // Fixed in the LV2.0 branch.
+    // KT-62043
     fun testRawTypes() = muteForK2 {
         compileKotlin("main.kt", tmpdir, listOf(compileLibrary("library")))
     }
