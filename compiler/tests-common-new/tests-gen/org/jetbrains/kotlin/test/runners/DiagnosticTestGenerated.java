@@ -23600,6 +23600,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("unresolvedReference.kt")
+                public void testUnresolvedReference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/unresolvedReference.kt");
+                }
+
+                @Test
                 @TestMetadata("withAnnotationActualTypealias.kt")
                 public void testWithAnnotationActualTypealias() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/withAnnotationActualTypealias.kt");
