@@ -115,6 +115,7 @@ internal interface KotlinGradleProjectChecker {
             IosSourceSetConventionChecker,
             KotlinTargetAlreadyDeclaredChecker,
             InternalGradlePropertiesUsageChecker,
+            WasmSourceSetsNotFoundChecker,
         )
     }
 }
