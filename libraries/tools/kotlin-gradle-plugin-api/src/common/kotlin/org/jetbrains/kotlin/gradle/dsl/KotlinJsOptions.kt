@@ -141,4 +141,12 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
     var useEsClasses: kotlin.Boolean
         get() = options.useEsClasses.get()
         set(value) = options.useEsClasses.set(value)
+
+    /**
+     * Enable ES2015 generator functions usage inside the compiled code
+     * Default value: false
+     */
+    var useEsGenerators: kotlin.Boolean
+        get() = options.useEsGenerators.get()
+        set(value) = options.useEsGenerators.set(value)
 }

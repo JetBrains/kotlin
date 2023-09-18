@@ -268,9 +268,12 @@ internal fun suspendOrReturn(value: Any?, continuation: GeneratorCoroutineImpl):
     val iterator = value.unsafeCast<JsIterator<Any?>>()
     continuation.addNewIterator(iterator)
 
-    val iteratorStep = iterator.next()
-
-    if (iteratorStep.done) continuation.dropLastIterator()
-
-    return iteratorStep.value
+    try {
+        val iteratorStep = iterator.next()
+        if (iteratorStep.done) continuation.dropLastIterator()
+        return iteratorStep.value
+    } catch (e: Throwable) {
+        continuation.dropLastIterator()
+        throw e
+    }
 }

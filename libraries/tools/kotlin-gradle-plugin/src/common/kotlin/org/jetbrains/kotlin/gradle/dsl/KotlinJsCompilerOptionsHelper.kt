@@ -26,6 +26,7 @@ internal object KotlinJsCompilerOptionsHelper {
         args.target = from.target.get()
         args.typedArrays = from.typedArrays.get()
         args.useEsClasses = from.useEsClasses.get()
+        args.useEsGenerators = from.useEsGenerators.get()
     }
 
     internal fun syncOptionsAsConvention(
@@ -47,5 +48,6 @@ internal object KotlinJsCompilerOptionsHelper {
         into.target.convention(from.target)
         into.typedArrays.convention(from.typedArrays)
         into.useEsClasses.convention(from.useEsClasses)
+        into.useEsGenerators.convention(from.useEsGenerators)
     }
 }

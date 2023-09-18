@@ -540,6 +540,11 @@ private class JsIrAstSerializer {
                 writeExpression(x.constructorExpression)
                 writeCollection(x.arguments) { writeExpression(it) }
             }
+
+            override fun visitYield(x: JsYield) {
+                writeByte(ExpressionIds.YIELD)
+                ifNotNull(x.expression) { writeExpression(it) }
+            }
         }
 
         withComments(expression) {

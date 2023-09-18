@@ -41,7 +41,7 @@ internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>
     private val _context = resultContinuation?.context
 
     var isRunning: Boolean = false
-    private val unknown = js("Symbol()").unsafeCast<Result<Any?>>()
+    private val unknown: Result<Any?> = Result(js("Symbol()"))
     private var savedResult: Result<Any?> = unknown
 
     public override val context: CoroutineContext get() = _context!!
@@ -86,6 +86,7 @@ internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>
                     }
 
                     currentResult = step.value
+                    currentException = null
 
                     if (step.done) current.dropLastIterator()
                     if (fastNotEquals(unknown, savedResult)) {
