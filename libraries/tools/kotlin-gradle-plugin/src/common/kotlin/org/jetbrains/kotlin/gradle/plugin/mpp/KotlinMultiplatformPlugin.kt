@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
-import java.nio.file.Path
 import java.nio.file.Paths
 
 class KotlinMultiplatformPlugin : Plugin<Project> {
@@ -272,7 +271,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
                     )
                     it.compilerOptions.freeCompilerArgs.addAll(
                         project.provider {
-                            val swiftLibraries = when (appleTarget.konanTarget) {
+                            val sdkName = when (appleTarget.konanTarget) {
                                 is MACOS_X64, MACOS_ARM64 -> "macosx" // ??? catalyst ???
                                 is IOS_X64, IOS_SIMULATOR_ARM64 -> "iphonesimulator"
                                 is IOS_ARM64 -> "iphoneos"
@@ -283,8 +282,10 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
                                 else -> error("???")
                             }
                             // Get from dependencies pif instead?
-                            val swiftLibrariesPath = Paths.get(runCommand(listOf("xcode-select", "-p")).dropLast(1)).resolve("Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/${swiftLibraries}")
-                            listOf("-linker-option", "-L$swiftLibrariesPath")
+                            val swiftLibrariesPath = Paths.get(runCommand(listOf("xcode-select", "-p")).dropLast(1)).resolve("Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/${sdkName}")
+                            val swiftLibrariesInSdkPath = Paths.get(runCommand(listOf("xcrun", "--sdk", sdkName, "--show-sdk-path")).dropLast(1)).resolve("usr/lib/swift")
+
+                            listOf("-linker-option", "-L$swiftLibrariesPath", "-linker-option", "-L$swiftLibrariesInSdkPath")
                         }
                     )
                 }

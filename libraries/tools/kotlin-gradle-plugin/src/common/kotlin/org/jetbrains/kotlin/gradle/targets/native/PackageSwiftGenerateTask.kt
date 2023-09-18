@@ -255,7 +255,7 @@ abstract class CInteropProcessWithMultipleLibraries @Inject constructor(
             try {
                 konanTargetNames.forEach { konanTargetName ->
                     runCommand(
-                        listOf(
+                        command = listOf(
                             "/Users/Timofey.Solonin/.konan/kotlin-native-prebuilt-macos-aarch64-1.9.20-Beta-224/bin/cinterop",
                             "-def", defFilePath.path,
                             "-target", konanTargetName,
@@ -263,7 +263,7 @@ abstract class CInteropProcessWithMultipleLibraries @Inject constructor(
                                 val argsFromDependency = mutableListOf(
                                     "-compiler-option", "-I${buildDir.resolve("debug/$it.build")}"
                                 )
-                                val expectedDependencyLibPath = spmInteropDir.resolve("$it.klib")
+                                val expectedDependencyLibPath = spmInteropDir.resolve("${it}_$konanTargetName.klib")
                                 if (expectedDependencyLibPath.exists()) {
                                     argsFromDependency.addAll(listOf("-library", expectedDependencyLibPath.path))
                                 }
@@ -277,7 +277,8 @@ abstract class CInteropProcessWithMultipleLibraries @Inject constructor(
                             "-compiler-option", "-fmodules",
                             "-Xmodule-name", target,
                             "-o", spmInteropDir.resolve("${target}_$konanTargetName.klib").path
-                        )
+                        ),
+                        logger = logger
                     )
                 }
             } catch (e: Throwable) {
