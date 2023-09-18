@@ -1,7 +1,7 @@
 /member_functions.kt:(32,42): info: Generated Viper text for member_fun:
 field pkg$$class_Foo$member_x: Int
 
-method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
+method pkg$$class_Foo$fun_member_fun$(this: Ref) returns (ret: Int)
 {
   var anonymous$1: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
@@ -16,51 +16,52 @@ method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
 /member_functions.kt:(84,99): info: Generated Viper text for call_member_fun:
 field pkg$$class_Foo$member_x: Int
 
-method pkg$$class_Foo$member_call_member_fun(this: Ref)
+method pkg$$class_Foo$fun_call_member_fun$(this: Ref)
   returns (ret: dom$Unit)
 {
   var anonymous$1: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
-  anonymous$1 := pkg$$class_Foo$member_member_fun(this)
+  anonymous$1 := pkg$$class_Foo$fun_member_fun$(this)
   label label$ret
 }
 
-method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
+method pkg$$class_Foo$fun_member_fun$(this: Ref) returns (ret: Int)
 
 
 /member_functions.kt:(140,152): info: Generated Viper text for sibling_call:
 field pkg$$class_Foo$member_x: Int
 
-method pkg$$class_Foo$member_sibling_call(this: Ref, local$other: Ref)
+method pkg$$class_Foo$fun_sibling_call$TFoo(this: Ref, local$other: Ref)
   returns (ret: dom$Unit)
 {
   var anonymous$1: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$other): dom$Type), dom$Type$pkg$$class_Foo())
-  anonymous$1 := pkg$$class_Foo$member_member_fun(local$other)
+  anonymous$1 := pkg$$class_Foo$fun_member_fun$(local$other)
   label label$ret
 }
 
-method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
+method pkg$$class_Foo$fun_member_fun$(this: Ref) returns (ret: Int)
 
 
 /member_functions.kt:(207,228): info: Generated Viper text for outer_member_fun_call:
 field pkg$$class_Foo$member_x: Int
 
-method pkg$$global$outer_member_fun_call() returns (ret: dom$Unit)
+method pkg$$global$outer_member_fun_call$() returns (ret: dom$Unit)
 {
   var local$f: Ref
   var anonymous$1: Ref
   var anonymous$2: Int
-  anonymous$1 := pkg$$class_Foo$member_Foo(3)
+  anonymous$1 := pkg$$class_Foo$constructor$Tkotlin_Int(3)
   local$f := anonymous$1
-  anonymous$2 := pkg$$class_Foo$member_member_fun(local$f)
+  anonymous$2 := pkg$$class_Foo$fun_member_fun$(local$f)
   label label$ret
 }
 
-method pkg$$class_Foo$member_Foo(local$x: Int) returns (ret: Ref)
+method pkg$$class_Foo$constructor$Tkotlin_Int(local$x: Int)
+  returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
 
 
-method pkg$$class_Foo$member_member_fun(this: Ref) returns (ret: Int)
+method pkg$$class_Foo$fun_member_fun$(this: Ref) returns (ret: Int)
 

@@ -1,5 +1,6 @@
 /function_object.kt:(4,17): info: Generated Viper text for unit_function:
-method pkg$$global$unit_function(local$f: Ref) returns (ret: dom$Unit)
+method pkg$$global$unit_function$Tkotlin_Function0__kotlin_Unit__(local$f: Ref)
+  returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
   requires special$duplicable(local$f)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -11,7 +12,8 @@ method pkg$$global$unit_function(local$f: Ref) returns (ret: dom$Unit)
 }
 
 /function_object.kt:(72,92): info: Generated Viper text for function_object_call:
-method pkg$$global$function_object_call(local$g: Ref) returns (ret: Int)
+method pkg$$global$function_object_call$Tkotlin_Function2__kotlin_Boolean$kotlin_Int$kotlin_Int__(local$g: Ref)
+  returns (ret: Int)
   requires acc(local$g.special$function_object_call_counter, write)
   requires special$duplicable(local$g)
   ensures acc(local$g.special$function_object_call_counter, write)
@@ -27,7 +29,8 @@ method pkg$$global$function_object_call(local$g: Ref) returns (ret: Int)
 }
 
 /function_object.kt:(155,182): info: Generated Viper text for function_object_nested_call:
-method pkg$$global$function_object_nested_call(local$f: Ref, local$g: Ref)
+method pkg$$global$function_object_nested_call$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Function1__kotlin_Boolean$kotlin_Int__(local$f: Ref,
+  local$g: Ref)
   returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   requires acc(local$g.special$function_object_call_counter, write)

@@ -1,0 +1,90 @@
+/class_constructors.kt:(389,411): info: Generated Viper text for onlySecondConstructors:
+field pkg$$class_Foo$member_a: Int
+
+method pkg$$global$onlySecondConstructors$() returns (ret: dom$Unit)
+{
+  var local$f1: Ref
+  var anonymous$1: Ref
+  var local$shouldBeOne: Int
+  var anonymous$2: Int
+  var local$f2: Ref
+  var anonymous$3: Ref
+  var local$shouldBeAnswer: Int
+  var anonymous$4: Int
+  var local$f3: Ref
+  var anonymous$5: Ref
+  var local$test: Int
+  var anonymous$6: Int
+  anonymous$1 := pkg$$class_Foo$constructor$Tkotlin_Boolean(true)
+  local$f1 := anonymous$1
+  inhale acc(local$f1.pkg$$class_Foo$member_a, write)
+  anonymous$2 := local$f1.pkg$$class_Foo$member_a
+  exhale acc(local$f1.pkg$$class_Foo$member_a, write)
+  local$shouldBeOne := anonymous$2
+  anonymous$3 := pkg$$class_Foo$constructor$Tkotlin_Int(42)
+  local$f2 := anonymous$3
+  inhale acc(local$f2.pkg$$class_Foo$member_a, write)
+  anonymous$4 := local$f2.pkg$$class_Foo$member_a
+  exhale acc(local$f2.pkg$$class_Foo$member_a, write)
+  local$shouldBeAnswer := anonymous$4
+  anonymous$5 := pkg$$class_Foo$constructor$Tkotlin_Int$Tkotlin_Int(10, 32)
+  local$f3 := anonymous$5
+  inhale acc(local$f3.pkg$$class_Foo$member_a, write)
+  anonymous$6 := local$f3.pkg$$class_Foo$member_a
+  exhale acc(local$f3.pkg$$class_Foo$member_a, write)
+  local$test := anonymous$6
+  label label$ret
+}
+
+method pkg$$class_Foo$constructor$Tkotlin_Boolean(local$b: Bool)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+
+
+method pkg$$class_Foo$constructor$Tkotlin_Int(local$n: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+
+
+method pkg$$class_Foo$constructor$Tkotlin_Int$Tkotlin_Int(local$x1: Int, local$x2: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+
+
+/class_constructors.kt:(590,617): info: Generated Viper text for primaryAndSecondConstructor:
+field pkg$$class_Bar$member_a: Int
+
+method pkg$$global$primaryAndSecondConstructor$() returns (ret: dom$Unit)
+{
+  var local$b1: Ref
+  var anonymous$1: Ref
+  var local$shouldBeZero: Int
+  var anonymous$2: Int
+  var local$b2: Ref
+  var anonymous$3: Ref
+  var local$shouldBeAnswer: Int
+  var anonymous$4: Int
+  anonymous$1 := pkg$$class_Bar$constructor$Tkotlin_Boolean(false)
+  local$b1 := anonymous$1
+  inhale acc(local$b1.pkg$$class_Bar$member_a, write)
+  anonymous$2 := local$b1.pkg$$class_Bar$member_a
+  exhale acc(local$b1.pkg$$class_Bar$member_a, write)
+  local$shouldBeZero := anonymous$2
+  anonymous$3 := pkg$$class_Bar$constructor$Tkotlin_Int(42)
+  local$b2 := anonymous$3
+  inhale acc(local$b2.pkg$$class_Bar$member_a, write)
+  anonymous$4 := local$b2.pkg$$class_Bar$member_a
+  exhale acc(local$b2.pkg$$class_Bar$member_a, write)
+  local$shouldBeAnswer := anonymous$4
+  label label$ret
+}
+
+method pkg$$class_Bar$constructor$Tkotlin_Boolean(local$b: Bool)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
+
+
+method pkg$$class_Bar$constructor$Tkotlin_Int(local$a: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
+

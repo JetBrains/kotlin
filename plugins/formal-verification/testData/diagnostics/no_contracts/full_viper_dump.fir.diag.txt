@@ -251,7 +251,7 @@ method special$invoke_function_object(anonymous$0: Ref)
     anonymous$0.special$function_object_call_counter
 
 
-method pkg$$global$f() returns (ret: dom$Unit)
+method pkg$$global$f$() returns (ret: dom$Unit)
 {
   label label$ret
 }

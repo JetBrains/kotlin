@@ -1,5 +1,6 @@
 /calls_in_place_leak.kt:(84,90): info: Generated Viper text for escape:
-method pkg$$global$escape(local$f: Ref) returns (ret: dom$Unit)
+method pkg$$global$escape$Tkotlin_Function0__kotlin_Unit__(local$f: Ref)
+  returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
   requires special$duplicable(local$f)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -13,7 +14,7 @@ method pkg$$global$escape(local$f: Ref) returns (ret: dom$Unit)
 }
 
 /calls_in_place_leak.kt:(294,316): info: Generated Viper text for invalid_calls_in_place:
-method pkg$$global$invalid_calls_in_place(local$f: Ref)
+method pkg$$global$invalid_calls_in_place$Tkotlin_Function0__kotlin_Unit__(local$f: Ref)
   returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -23,11 +24,12 @@ method pkg$$global$invalid_calls_in_place(local$f: Ref)
 {
   var anonymous$1: dom$Unit
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  anonymous$1 := pkg$$global$escape(local$f)
+  anonymous$1 := pkg$$global$escape$Tkotlin_Function0__kotlin_Unit__(local$f)
   label label$ret
 }
 
-method pkg$$global$escape(local$f: Ref) returns (ret: dom$Unit)
+method pkg$$global$escape$Tkotlin_Function0__kotlin_Unit__(local$f: Ref)
+  returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
   requires special$duplicable(local$f)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -35,7 +37,7 @@ method pkg$$global$escape(local$f: Ref) returns (ret: dom$Unit)
     local$f.special$function_object_call_counter
 
 
-/calls_in_place_leak.kt:(294,316): warning: Viper verification error: The precondition of method pkg$$global$escape might not hold. Assertion special$duplicable(local$f) might not hold. (<no position>)
+/calls_in_place_leak.kt:(294,316): warning: Viper verification error: The precondition of method pkg$$global$escape$Tkotlin_Function0__kotlin_Unit__ might not hold. Assertion special$duplicable(local$f) might not hold. (<no position>)
 
 
 /calls_in_place_leak.kt:(294,316): warning: Function invalid_calls_in_place may not satisfy its contract.

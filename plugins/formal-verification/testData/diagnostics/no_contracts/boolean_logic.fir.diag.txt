@@ -1,5 +1,6 @@
 /boolean_logic.kt:(4,12): info: Generated Viper text for negation:
-method pkg$$global$negation(local$x: Bool) returns (ret: Bool)
+method pkg$$global$negation$Tkotlin_Boolean(local$x: Bool)
+  returns (ret: Bool)
 {
   ret := !local$x
   goto label$ret
@@ -7,7 +8,8 @@ method pkg$$global$negation(local$x: Bool) returns (ret: Bool)
 }
 
 /boolean_logic.kt:(56,67): info: Generated Viper text for conjunction:
-method pkg$$global$conjunction(local$x: Bool, local$y: Bool)
+method pkg$$global$conjunction$Tkotlin_Boolean$Tkotlin_Boolean(local$x: Bool,
+  local$y: Bool)
   returns (ret: Bool)
 {
   var anonymous$1: Bool
@@ -21,15 +23,16 @@ method pkg$$global$conjunction(local$x: Bool, local$y: Bool)
 }
 
 /boolean_logic.kt:(127,151): info: Generated Viper text for conjunction_side_effects:
-method pkg$$global$conjunction_side_effects(local$x: Bool, local$y: Bool)
+method pkg$$global$conjunction_side_effects$Tkotlin_Boolean$Tkotlin_Boolean(local$x: Bool,
+  local$y: Bool)
   returns (ret: Bool)
 {
   var anonymous$1: Bool
   var anonymous$2: Bool
-  anonymous$1 := pkg$$global$negation(local$x)
+  anonymous$1 := pkg$$global$negation$Tkotlin_Boolean(local$x)
   if (anonymous$1) {
     var anonymous$3: Bool
-    anonymous$3 := pkg$$global$negation(local$y)
+    anonymous$3 := pkg$$global$negation$Tkotlin_Boolean(local$y)
     anonymous$2 := anonymous$3
   } else {
     anonymous$2 := false}
@@ -38,11 +41,13 @@ method pkg$$global$conjunction_side_effects(local$x: Bool, local$y: Bool)
   label label$ret
 }
 
-method pkg$$global$negation(local$x: Bool) returns (ret: Bool)
+method pkg$$global$negation$Tkotlin_Boolean(local$x: Bool)
+  returns (ret: Bool)
 
 
 /boolean_logic.kt:(324,335): info: Generated Viper text for disjunction:
-method pkg$$global$disjunction(local$x: Bool, local$y: Bool)
+method pkg$$global$disjunction$Tkotlin_Boolean$Tkotlin_Boolean(local$x: Bool,
+  local$y: Bool)
   returns (ret: Bool)
 {
   var anonymous$1: Bool

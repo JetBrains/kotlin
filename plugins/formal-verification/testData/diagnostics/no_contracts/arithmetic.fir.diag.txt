@@ -1,5 +1,6 @@
 /arithmetic.kt:(4,12): info: Generated Viper text for addition:
-method pkg$$global$addition(local$x: Int) returns (ret: dom$Unit)
+method pkg$$global$addition$Tkotlin_Int(local$x: Int)
+  returns (ret: dom$Unit)
 {
   var local$y: Int
   local$y := local$x + local$x
@@ -7,7 +8,8 @@ method pkg$$global$addition(local$x: Int) returns (ret: dom$Unit)
 }
 
 /arithmetic.kt:(47,58): info: Generated Viper text for subtraction:
-method pkg$$global$subtraction(local$x: Int) returns (ret: dom$Unit)
+method pkg$$global$subtraction$Tkotlin_Int(local$x: Int)
+  returns (ret: dom$Unit)
 {
   var local$y: Int
   local$y := local$x - local$x
@@ -15,7 +17,8 @@ method pkg$$global$subtraction(local$x: Int) returns (ret: dom$Unit)
 }
 
 /arithmetic.kt:(93,107): info: Generated Viper text for multiplication:
-method pkg$$global$multiplication(local$x: Int) returns (ret: dom$Unit)
+method pkg$$global$multiplication$Tkotlin_Int(local$x: Int)
+  returns (ret: dom$Unit)
 {
   var local$y: Int
   local$y := local$x * local$x
@@ -23,7 +26,8 @@ method pkg$$global$multiplication(local$x: Int) returns (ret: dom$Unit)
 }
 
 /arithmetic.kt:(142,150): info: Generated Viper text for division:
-method pkg$$global$division(local$x: Int) returns (ret: dom$Unit)
+method pkg$$global$division$Tkotlin_Int(local$x: Int)
+  returns (ret: dom$Unit)
 {
   var local$y: Int
   inhale local$x != 0

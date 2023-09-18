@@ -1,5 +1,5 @@
 /return_break_continue.kt:(4,15): info: Generated Viper text for test_return:
-method pkg$$global$test_return() returns (ret: Int)
+method pkg$$global$test_return$() returns (ret: Int)
 {
   ret := 0
   goto label$ret
@@ -9,7 +9,7 @@ method pkg$$global$test_return() returns (ret: Int)
 }
 
 /return_break_continue.kt:(58,74): info: Generated Viper text for return_from_loop:
-method pkg$$global$return_from_loop() returns (ret: Int)
+method pkg$$global$return_from_loop$() returns (ret: Int)
 {
   var anonymous$1: Bool
   label label$continue$1
@@ -26,7 +26,8 @@ method pkg$$global$return_from_loop() returns (ret: Int)
 }
 
 /return_break_continue.kt:(146,157): info: Generated Viper text for while_break:
-method pkg$$global$while_break(local$b: Bool) returns (ret: Int)
+method pkg$$global$while_break$Tkotlin_Boolean(local$b: Bool)
+  returns (ret: Int)
 {
   var local$i: Int
   var anonymous$1: Bool
@@ -45,7 +46,7 @@ method pkg$$global$while_break(local$b: Bool) returns (ret: Int)
 }
 
 /return_break_continue.kt:(261,275): info: Generated Viper text for while_continue:
-method pkg$$global$while_continue() returns (ret: dom$Unit)
+method pkg$$global$while_continue$() returns (ret: dom$Unit)
 {
   var local$b: Bool
   var anonymous$1: Bool
@@ -62,7 +63,8 @@ method pkg$$global$while_continue() returns (ret: dom$Unit)
 }
 
 /return_break_continue.kt:(361,373): info: Generated Viper text for while_nested:
-method pkg$$global$while_nested(local$b: Bool) returns (ret: dom$Unit)
+method pkg$$global$while_nested$Tkotlin_Boolean(local$b: Bool)
+  returns (ret: dom$Unit)
 {
   var anonymous$1: Bool
   label label$continue$1

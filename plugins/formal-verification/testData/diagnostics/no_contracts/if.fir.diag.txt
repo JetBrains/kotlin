@@ -1,5 +1,5 @@
 /if.kt:(4,13): info: Generated Viper text for simple_if:
-method pkg$$global$simple_if() returns (ret: Int)
+method pkg$$global$simple_if$() returns (ret: Int)
 {
   if (true) {
     ret := 0
@@ -12,7 +12,8 @@ method pkg$$global$simple_if() returns (ret: Int)
 }
 
 /if.kt:(98,113): info: Generated Viper text for if_on_parameter:
-method pkg$$global$if_on_parameter(local$b: Bool) returns (ret: Int)
+method pkg$$global$if_on_parameter$Tkotlin_Boolean(local$b: Bool)
+  returns (ret: Int)
 {
   if (local$b) {
     ret := 0
@@ -25,18 +26,18 @@ method pkg$$global$if_on_parameter(local$b: Bool) returns (ret: Int)
 }
 
 /if.kt:(205,221): info: Generated Viper text for if_as_expression:
-method pkg$$global$if_as_expression() returns (ret: Bool)
+method pkg$$global$if_as_expression$() returns (ret: Bool)
 {
   var local$b: Bool
   var anonymous$1: Bool
   local$b := false
   if (local$b) {
     var anonymous$2: Int
-    anonymous$2 := pkg$$global$simple_if()
+    anonymous$2 := pkg$$global$simple_if$()
     anonymous$1 := false
   } else {
     var anonymous$3: Int
-    anonymous$3 := pkg$$global$if_on_parameter(local$b)
+    anonymous$3 := pkg$$global$if_on_parameter$Tkotlin_Boolean(local$b)
     anonymous$1 := true
   }
   ret := anonymous$1
@@ -44,8 +45,9 @@ method pkg$$global$if_as_expression() returns (ret: Bool)
   label label$ret
 }
 
-method pkg$$global$simple_if() returns (ret: Int)
+method pkg$$global$simple_if$() returns (ret: Int)
 
 
-method pkg$$global$if_on_parameter(local$b: Bool) returns (ret: Int)
+method pkg$$global$if_on_parameter$Tkotlin_Boolean(local$b: Bool)
+  returns (ret: Int)
 

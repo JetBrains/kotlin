@@ -3,12 +3,12 @@ field pkg$$class_AlwaysPlusOne$member_b: Int
 
 field pkg$$class_AlwaysPlusOne$member_num: Int
 
-method pkg$$global$testCustomSetter() returns (ret: dom$Unit)
+method pkg$$global$testCustomSetter$() returns (ret: dom$Unit)
 {
   var local$f: Ref
   var anonymous$1: Ref
   var anonymous$2: dom$Unit
-  anonymous$1 := pkg$$class_AlwaysPlusOne$member_AlwaysPlusOne()
+  anonymous$1 := pkg$$class_AlwaysPlusOne$constructor$()
   local$f := anonymous$1
   inhale acc(local$f.pkg$$class_AlwaysPlusOne$member_b, write)
   local$f.pkg$$class_AlwaysPlusOne$member_b := 1
@@ -17,7 +17,7 @@ method pkg$$global$testCustomSetter() returns (ret: dom$Unit)
   label label$ret
 }
 
-method pkg$$class_AlwaysPlusOne$member_AlwaysPlusOne() returns (ret: Ref)
+method pkg$$class_AlwaysPlusOne$constructor$() returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_AlwaysPlusOne())
 
 
@@ -31,12 +31,12 @@ method pkg$$class_AlwaysPlusOne$setter_num(this: Ref, local$value: Int)
 /classes_setters.kt:(434,444): info: Generated Viper text for testSetter:
 field pkg$$class_Person$member_age: Int
 
-method pkg$$global$testSetter() returns (ret: dom$Unit)
+method pkg$$global$testSetter$() returns (ret: dom$Unit)
 {
   var local$person: Ref
   var anonymous$1: Ref
   var anonymous$2: Int
-  anonymous$1 := pkg$$class_Person$member_Person(19)
+  anonymous$1 := pkg$$class_Person$constructor$Tkotlin_Int(19)
   local$person := anonymous$1
   inhale acc(local$person.pkg$$class_Person$member_age, write)
   anonymous$2 := local$person.pkg$$class_Person$member_age
@@ -47,7 +47,8 @@ method pkg$$global$testSetter() returns (ret: dom$Unit)
   label label$ret
 }
 
-method pkg$$class_Person$member_Person(local$age: Int) returns (ret: Ref)
+method pkg$$class_Person$constructor$Tkotlin_Int(local$age: Int)
+  returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Person())
 
 
@@ -56,14 +57,14 @@ field pkg$$class_Bar$member_a: Int
 
 field pkg$$class_Foo$member_b: Ref
 
-method pkg$$global$testSetterCascade() returns (ret: dom$Unit)
+method pkg$$global$testSetterCascade$() returns (ret: dom$Unit)
 {
   var local$f: Ref
   var anonymous$1: Ref
   var anonymous$2: Ref
   var anonymous$3: Ref
-  anonymous$2 := pkg$$class_Bar$member_Bar(10)
-  anonymous$1 := pkg$$class_Foo$member_Foo(anonymous$2)
+  anonymous$2 := pkg$$class_Bar$constructor$Tkotlin_Int(10)
+  anonymous$1 := pkg$$class_Foo$constructor$TBar(anonymous$2)
   local$f := anonymous$1
   inhale acc(local$f.pkg$$class_Foo$member_b, write)
   anonymous$3 := local$f.pkg$$class_Foo$member_b
@@ -75,29 +76,30 @@ method pkg$$global$testSetterCascade() returns (ret: dom$Unit)
   label label$ret
 }
 
-method pkg$$class_Foo$member_Foo(local$b: Ref) returns (ret: Ref)
+method pkg$$class_Foo$constructor$TBar(local$b: Ref) returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
 
 
-method pkg$$class_Bar$member_Bar(local$a: Int) returns (ret: Ref)
+method pkg$$class_Bar$constructor$Tkotlin_Int(local$a: Int)
+  returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
 
 
 /classes_setters.kt:(585,609): info: Generated Viper text for testSetterNoBackingField:
 field pkg$$class_Baz$member__a: Int
 
-method pkg$$global$testSetterNoBackingField() returns (ret: dom$Unit)
+method pkg$$global$testSetterNoBackingField$() returns (ret: dom$Unit)
 {
   var local$baz: Ref
   var anonymous$1: Ref
   var anonymous$2: dom$Unit
-  anonymous$1 := pkg$$class_Baz$member_Baz()
+  anonymous$1 := pkg$$class_Baz$constructor$()
   local$baz := anonymous$1
   anonymous$2 := pkg$$class_Baz$setter_a(local$baz, 42)
   label label$ret
 }
 
-method pkg$$class_Baz$member_Baz() returns (ret: Ref)
+method pkg$$class_Baz$constructor$() returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Baz())
 
 
@@ -111,7 +113,7 @@ method pkg$$class_Baz$setter_a(this: Ref, local$value: Int)
 /classes_setters.kt:(694,704): info: Generated Viper text for mockInline:
 field pkg$$class_Bar$member_a: Int
 
-method pkg$$global$mockInline(local$b: Ref) returns (ret: dom$Unit)
+method pkg$$global$mockInline$TBar(local$b: Ref) returns (ret: dom$Unit)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$b): dom$Type), dom$Type$pkg$$class_Bar())
   inhale acc(local$b.pkg$$class_Bar$member_a, write)
@@ -123,20 +125,21 @@ method pkg$$global$mockInline(local$b: Ref) returns (ret: dom$Unit)
 /classes_setters.kt:(735,751): info: Generated Viper text for testSetterLambda:
 field pkg$$class_Bar$member_a: Int
 
-method pkg$$global$testSetterLambda() returns (ret: dom$Unit)
+method pkg$$global$testSetterLambda$() returns (ret: dom$Unit)
 {
   var anonymous$1: dom$Unit
   if (true) {
     var anonymous$2: Ref
-    anonymous$2 := pkg$$class_Bar$member_Bar(0)
+    anonymous$2 := pkg$$class_Bar$constructor$Tkotlin_Int(0)
     inhale acc(anonymous$2.pkg$$class_Bar$member_a, write)
     anonymous$2.pkg$$class_Bar$member_a := 42
     exhale acc(anonymous$2.pkg$$class_Bar$member_a, write)
-    label inline$pkg$$global$mockInline$label$ret
+    label inline$pkg$$global$mockInline$TBar$label$ret
   }
   label label$ret
 }
 
-method pkg$$class_Bar$member_Bar(local$a: Int) returns (ret: Ref)
+method pkg$$class_Bar$constructor$Tkotlin_Int(local$a: Int)
+  returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
 

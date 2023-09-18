@@ -1,5 +1,5 @@
 /returns_booleans.kt:(121,133): info: Generated Viper text for returns_true:
-method pkg$$global$returns_true() returns (ret: Bool)
+method pkg$$global$returns_true$() returns (ret: Bool)
   ensures true
   ensures ret == true
 {
@@ -9,7 +9,7 @@ method pkg$$global$returns_true() returns (ret: Bool)
 }
 
 /returns_booleans.kt:(268,281): info: Generated Viper text for returns_false:
-method pkg$$global$returns_false() returns (ret: Bool)
+method pkg$$global$returns_false$() returns (ret: Bool)
   ensures true
   ensures ret == false
 {
@@ -19,7 +19,8 @@ method pkg$$global$returns_false() returns (ret: Bool)
 }
 
 /returns_booleans.kt:(418,435): info: Generated Viper text for conditional_basic:
-method pkg$$global$conditional_basic(local$b: Bool) returns (ret: Bool)
+method pkg$$global$conditional_basic$Tkotlin_Boolean(local$b: Bool)
+  returns (ret: Bool)
   ensures ret == true ==> true
   ensures ret == false ==> local$b
 {
@@ -29,7 +30,8 @@ method pkg$$global$conditional_basic(local$b: Bool) returns (ret: Bool)
 }
 
 /returns_booleans.kt:(612,636): info: Generated Viper text for binary_logic_expressions:
-method pkg$$global$binary_logic_expressions(local$a: Bool, local$b: Bool)
+method pkg$$global$binary_logic_expressions$Tkotlin_Boolean$Tkotlin_Boolean(local$a: Bool,
+  local$b: Bool)
   returns (ret: Bool)
   ensures ret == false ==> local$b && false
   ensures ret == true ==> (true || local$a) && (local$b || true)
@@ -40,7 +42,8 @@ method pkg$$global$binary_logic_expressions(local$a: Bool, local$b: Bool)
 }
 
 /returns_booleans.kt:(855,866): info: Generated Viper text for logical_not:
-method pkg$$global$logical_not(local$b: Bool) returns (ret: Bool)
+method pkg$$global$logical_not$Tkotlin_Boolean(local$b: Bool)
+  returns (ret: Bool)
   ensures ret == true ==> !local$b && local$b
   ensures ret == false ==> local$b || !local$b
 {
@@ -50,27 +53,29 @@ method pkg$$global$logical_not(local$b: Bool) returns (ret: Bool)
 }
 
 /returns_booleans.kt:(1052,1075): info: Generated Viper text for call_fun_with_contracts:
-method pkg$$global$call_fun_with_contracts(local$b: Bool)
+method pkg$$global$call_fun_with_contracts$Tkotlin_Boolean(local$b: Bool)
   returns (ret: Bool)
   ensures ret == true
 {
   var local$a: Bool
   var anonymous$1: Bool
-  anonymous$1 := pkg$$global$binary_logic_expressions(local$b, local$b)
+  anonymous$1 := pkg$$global$binary_logic_expressions$Tkotlin_Boolean$Tkotlin_Boolean(local$b,
+    local$b)
   local$a := anonymous$1
   ret := local$a
   goto label$ret
   label label$ret
 }
 
-method pkg$$global$binary_logic_expressions(local$a: Bool, local$b: Bool)
+method pkg$$global$binary_logic_expressions$Tkotlin_Boolean$Tkotlin_Boolean(local$a: Bool,
+  local$b: Bool)
   returns (ret: Bool)
   ensures ret == false ==> local$b && false
   ensures ret == true ==> (true || local$a) && (local$b || true)
 
 
 /returns_booleans.kt:(1268,1281): info: Generated Viper text for isNullOrEmpty:
-method pkg$$global$isNullOrEmpty(this: dom$Nullable[Ref])
+method pkg$$global$isNullOrEmpty$(this: dom$Nullable[Ref])
   returns (ret: Bool)
   ensures ret == false ==> this != (dom$Nullable$null(): dom$Nullable[Ref])
 {
@@ -87,7 +92,7 @@ method pkg$$global$isNullOrEmpty(this: dom$Nullable[Ref])
     anonymous$1 := true
   } else {
     var anonymous$2: Bool
-    anonymous$2 := pkg$kotlin$collections$class_Collection$member_isEmpty((dom$Casting$cast(this,
+    anonymous$2 := pkg$kotlin$collections$class_Collection$fun_isEmpty$((dom$Casting$cast(this,
       dom$Type$pkg$kotlin$collections$class_Collection()): Ref))
     anonymous$1 := anonymous$2
   }
@@ -96,5 +101,6 @@ method pkg$$global$isNullOrEmpty(this: dom$Nullable[Ref])
   label label$ret
 }
 
-method pkg$kotlin$collections$class_Collection$member_isEmpty(this: Ref)
+method pkg$kotlin$collections$class_Collection$fun_isEmpty$(this: Ref)
   returns (ret: Bool)
+

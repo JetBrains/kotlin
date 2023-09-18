@@ -1,8 +1,8 @@
 /recursion.kt:(4,13): info: Generated Viper text for recursive:
-method pkg$$global$recursive() returns (ret: dom$Unit)
+method pkg$$global$recursive$() returns (ret: dom$Unit)
 {
   var anonymous$1: dom$Unit
-  anonymous$1 := pkg$$global$recursive()
+  anonymous$1 := pkg$$global$recursive$()
   ret := anonymous$1
   goto label$ret
   label label$ret

@@ -5,7 +5,7 @@ field pkg$$class_Foo$member_y: Int
 
 field pkg$$class_Foo$member_b: Bool
 
-method pkg$$class_Foo$member_getY(this: Ref) returns (ret: Int)
+method pkg$$class_Foo$fun_getY$(this: Ref) returns (ret: Int)
 {
   var anonymous$1: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
@@ -26,7 +26,7 @@ field pkg$$class_Foo$member_b: Bool
 
 field pkg$$class_Bar$member_z: Int
 
-method pkg$$class_Bar$member_sum(this: Ref) returns (ret: Int)
+method pkg$$class_Bar$fun_sum$(this: Ref) returns (ret: Int)
 {
   var anonymous$1: Int
   var anonymous$2: Int
@@ -51,17 +51,17 @@ field pkg$$class_Foo$member_b: Bool
 
 field pkg$$class_Bar$member_z: Int
 
-method pkg$$global$callSuperMethod(local$bar: Ref) returns (ret: Int)
+method pkg$$global$callSuperMethod$TBar(local$bar: Ref) returns (ret: Int)
 {
   var anonymous$1: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
-  anonymous$1 := pkg$$class_Foo$member_getY((dom$Casting$cast(local$bar, dom$Type$pkg$$class_Foo()): Ref))
+  anonymous$1 := pkg$$class_Foo$fun_getY$((dom$Casting$cast(local$bar, dom$Type$pkg$$class_Foo()): Ref))
   ret := anonymous$1
   goto label$ret
   label label$ret
 }
 
-method pkg$$class_Foo$member_getY(this: Ref) returns (ret: Int)
+method pkg$$class_Foo$fun_getY$(this: Ref) returns (ret: Int)
 
 
 /inheritance.kt:(279,295): info: Generated Viper text for accessSuperField:
@@ -73,7 +73,8 @@ field pkg$$class_Foo$member_b: Bool
 
 field pkg$$class_Bar$member_z: Int
 
-method pkg$$global$accessSuperField(local$bar: Ref) returns (ret: Bool)
+method pkg$$global$accessSuperField$TBar(local$bar: Ref)
+  returns (ret: Bool)
 {
   var anonymous$1: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
@@ -94,7 +95,7 @@ field pkg$$class_Foo$member_b: Bool
 
 field pkg$$class_Bar$member_z: Int
 
-method pkg$$global$accessNewField(local$bar: Ref) returns (ret: Int)
+method pkg$$global$accessNewField$TBar(local$bar: Ref) returns (ret: Int)
 {
   var anonymous$1: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
@@ -115,17 +116,17 @@ field pkg$$class_Foo$member_b: Bool
 
 field pkg$$class_Bar$member_z: Int
 
-method pkg$$global$callNewMethod(local$bar: Ref) returns (ret: Int)
+method pkg$$global$callNewMethod$TBar(local$bar: Ref) returns (ret: Int)
 {
   var anonymous$1: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
-  anonymous$1 := pkg$$class_Bar$member_sum(local$bar)
+  anonymous$1 := pkg$$class_Bar$fun_sum$(local$bar)
   ret := anonymous$1
   goto label$ret
   label label$ret
 }
 
-method pkg$$class_Bar$member_sum(this: Ref) returns (ret: Int)
+method pkg$$class_Bar$fun_sum$(this: Ref) returns (ret: Int)
 
 
 /inheritance.kt:(456,469): info: Generated Viper text for setSuperField:
@@ -137,7 +138,8 @@ field pkg$$class_Foo$member_b: Bool
 
 field pkg$$class_Bar$member_z: Int
 
-method pkg$$global$setSuperField(local$bar: Ref) returns (ret: dom$Unit)
+method pkg$$global$setSuperField$TBar(local$bar: Ref)
+  returns (ret: dom$Unit)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
   inhale acc(local$bar.pkg$$class_Foo$member_b, write)
@@ -155,7 +157,8 @@ field pkg$$class_Foo$member_b: Bool
 
 field pkg$$class_Bar$member_z: Int
 
-method pkg$$global$accessSuperSuperField(local$baz: Ref) returns (ret: Int)
+method pkg$$global$accessSuperSuperField$TBaz(local$baz: Ref)
+  returns (ret: Int)
 {
   var anonymous$1: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$baz): dom$Type), dom$Type$pkg$$class_Baz())

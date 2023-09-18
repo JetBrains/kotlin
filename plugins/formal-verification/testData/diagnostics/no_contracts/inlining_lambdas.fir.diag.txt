@@ -1,5 +1,6 @@
 /inlining_lambdas.kt:(11,17): info: Generated Viper text for invoke:
-method pkg$$global$invoke(local$f: Ref) returns (ret: Int)
+method pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
+  returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   requires special$duplicable(local$f)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -15,7 +16,7 @@ method pkg$$global$invoke(local$f: Ref) returns (ret: Int)
 }
 
 /inlining_lambdas.kt:(65,77): info: Generated Viper text for explicit_arg:
-method pkg$$global$explicit_arg() returns (ret: Int)
+method pkg$$global$explicit_arg$() returns (ret: Int)
 {
   var anonymous$1: Int
   if (true) {
@@ -24,8 +25,8 @@ method pkg$$global$explicit_arg() returns (ret: Int)
     anonymous$3 := 0
     anonymous$2 := anonymous$3 + anonymous$3
     anonymous$1 := anonymous$2
-    goto inline$pkg$$global$invoke$label$ret
-    label inline$pkg$$global$invoke$label$ret
+    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -33,7 +34,7 @@ method pkg$$global$explicit_arg() returns (ret: Int)
 }
 
 /inlining_lambdas.kt:(127,139): info: Generated Viper text for implicit_arg:
-method pkg$$global$implicit_arg() returns (ret: Int)
+method pkg$$global$implicit_arg$() returns (ret: Int)
 {
   var anonymous$1: Int
   if (true) {
@@ -42,8 +43,8 @@ method pkg$$global$implicit_arg() returns (ret: Int)
     anonymous$3 := 0
     anonymous$2 := anonymous$3 * 2
     anonymous$1 := anonymous$2
-    goto inline$pkg$$global$invoke$label$ret
-    label inline$pkg$$global$invoke$label$ret
+    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -51,7 +52,7 @@ method pkg$$global$implicit_arg() returns (ret: Int)
 }
 
 /inlining_lambdas.kt:(185,194): info: Generated Viper text for lambda_if:
-method pkg$$global$lambda_if() returns (ret: Int)
+method pkg$$global$lambda_if$() returns (ret: Int)
 {
   var anonymous$1: Int
   if (true) {
@@ -65,8 +66,8 @@ method pkg$$global$lambda_if() returns (ret: Int)
       anonymous$4 := anonymous$3 + 2}
     anonymous$2 := anonymous$4
     anonymous$1 := anonymous$2
-    goto inline$pkg$$global$invoke$label$ret
-    label inline$pkg$$global$invoke$label$ret
+    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -74,7 +75,7 @@ method pkg$$global$lambda_if() returns (ret: Int)
 }
 
 /inlining_lambdas.kt:(325,346): info: Generated Viper text for return_value_not_used:
-method pkg$$global$return_value_not_used() returns (ret: dom$Unit)
+method pkg$$global$return_value_not_used$() returns (ret: dom$Unit)
 {
   var anonymous$1: Int
   if (true) {
@@ -83,14 +84,14 @@ method pkg$$global$return_value_not_used() returns (ret: dom$Unit)
     anonymous$3 := 0
     anonymous$2 := anonymous$3
     anonymous$1 := anonymous$2
-    goto inline$pkg$$global$invoke$label$ret
-    label inline$pkg$$global$invoke$label$ret
+    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
   }
   label label$ret
 }
 
 /inlining_lambdas.kt:(382,391): info: Generated Viper text for shadowing:
-method pkg$$global$shadowing() returns (ret: Int)
+method pkg$$global$shadowing$() returns (ret: Int)
 {
   var local$x: Int
   var local$y: Int
@@ -100,13 +101,14 @@ method pkg$$global$shadowing() returns (ret: Int)
   if (true) {
     var anonymous$2: Int
     var anonymous$3: Int
-    var inline$pkg$$global$invoke$local$y: Int
+    var inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$y: Int
     anonymous$3 := 0
-    inline$pkg$$global$invoke$local$y := 0
-    anonymous$2 := anonymous$3 + inline$pkg$$global$invoke$local$y
+    inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$y := 0
+    anonymous$2 := anonymous$3 +
+      inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$y
     anonymous$1 := anonymous$2
-    goto inline$pkg$$global$invoke$label$ret
-    label inline$pkg$$global$invoke$label$ret
+    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -114,7 +116,7 @@ method pkg$$global$shadowing() returns (ret: Int)
 }
 
 /inlining_lambdas.kt:(537,540): info: Generated Viper text for foo:
-method pkg$$global$foo() returns (ret: Int)
+method pkg$$global$foo$() returns (ret: Int)
 {
   var local$x: Int
   var anonymous$1: Int
@@ -125,8 +127,8 @@ method pkg$$global$foo() returns (ret: Int)
     anonymous$3 := 0
     anonymous$2 := anonymous$3 + 1
     anonymous$1 := anonymous$2
-    goto inline$pkg$$global$invoke$label$ret
-    label inline$pkg$$global$invoke$label$ret
+    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -134,27 +136,27 @@ method pkg$$global$foo() returns (ret: Int)
 }
 
 /inlining_lambdas.kt:(604,610): info: Generated Viper text for nested:
-method pkg$$global$nested() returns (ret: Int)
+method pkg$$global$nested$() returns (ret: Int)
 {
   var local$x: Int
   var anonymous$1: Int
   local$x := 2
   if (true) {
-    var inline$pkg$$global$foo$local$x: Int
+    var inline$pkg$$global$foo$$local$x: Int
     var anonymous$2: Int
-    inline$pkg$$global$foo$local$x := 2
+    inline$pkg$$global$foo$$local$x := 2
     if (true) {
       var anonymous$3: Int
       var anonymous$4: Int
       anonymous$4 := 0
       anonymous$3 := anonymous$4 + 1
       anonymous$2 := anonymous$3
-      goto inline$pkg$$global$invoke$label$ret
-      label inline$pkg$$global$invoke$label$ret
+      goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+      label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
     }
     anonymous$1 := anonymous$2
-    goto inline$pkg$$global$foo$label$ret
-    label inline$pkg$$global$foo$label$ret
+    goto inline$pkg$$global$foo$$label$ret
+    label inline$pkg$$global$foo$$label$ret
   }
   ret := anonymous$1
   goto label$ret

@@ -1,7 +1,7 @@
 /is_type_contract.kt:(157,165): info: Generated Viper text for isString:
 field pkg$kotlin$class_String$member_length: Int
 
-method pkg$$global$isString(local$x: dom$Nullable[dom$Any])
+method pkg$$global$isString$NTkotlin_Any(local$x: dom$Nullable[dom$Any])
   returns (ret: Bool)
   ensures ret == true ==>
     dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg$kotlin$class_String())
@@ -15,7 +15,7 @@ method pkg$$global$isString(local$x: dom$Nullable[dom$Any])
 /is_type_contract.kt:(322,330): info: Generated Viper text for isString:
 field pkg$kotlin$class_String$member_length: Int
 
-method pkg$$global$isString(this: dom$Any) returns (ret: Bool)
+method pkg$$global$isString$(this: dom$Any) returns (ret: Bool)
   ensures ret == true ==>
     dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$kotlin$class_String())
 {
@@ -26,7 +26,7 @@ method pkg$$global$isString(this: dom$Any) returns (ret: Bool)
 }
 
 /is_type_contract.kt:(491,508): info: Generated Viper text for subtypeTransitive:
-method pkg$$global$subtypeTransitive(local$x: dom$Unit)
+method pkg$$global$subtypeTransitive$Tkotlin_Unit(local$x: dom$Unit)
   returns (ret: dom$Unit)
   ensures true ==>
     dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
@@ -37,24 +37,25 @@ method pkg$$global$subtypeTransitive(local$x: dom$Unit)
 /is_type_contract.kt:(686,707): info: Generated Viper text for constructorReturnType:
 field pkg$$class_Foo$member_bar: Ref
 
-method pkg$$global$constructorReturnType() returns (ret: Bool)
+method pkg$$global$constructorReturnType$() returns (ret: Bool)
   ensures ret == true
 {
   var anonymous$1: Ref
-  anonymous$1 := pkg$$class_Foo$member_Foo()
+  anonymous$1 := pkg$$class_Foo$constructor$()
   ret := dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$1): dom$Type), dom$Type$pkg$$class_Foo())
   goto label$ret
   label label$ret
 }
 
-method pkg$$class_Foo$member_Foo() returns (ret: Ref)
+method pkg$$class_Foo$constructor$() returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
 
 
 /is_type_contract.kt:(832,848): info: Generated Viper text for subtypeSuperType:
 field pkg$$class_Foo$member_bar: Ref
 
-method pkg$$global$subtypeSuperType(local$bar: Ref) returns (ret: dom$Unit)
+method pkg$$global$subtypeSuperType$TBar(local$bar: Ref)
+  returns (ret: dom$Unit)
   ensures true ==>
     dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Foo())
 {
@@ -65,7 +66,7 @@ method pkg$$global$subtypeSuperType(local$bar: Ref) returns (ret: dom$Unit)
 /is_type_contract.kt:(965,976): info: Generated Viper text for typeOfField:
 field pkg$$class_Foo$member_bar: Ref
 
-method pkg$$global$typeOfField(local$foo: Ref) returns (ret: Bool)
+method pkg$$global$typeOfField$TFoo(local$foo: Ref) returns (ret: Bool)
   ensures ret == true
 {
   var anonymous$1: Ref

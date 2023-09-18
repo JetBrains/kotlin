@@ -1,5 +1,5 @@
 /inline.kt:(42,48): info: Generated Viper text for double:
-method pkg$$global$double(local$x: Int) returns (ret: Int)
+method pkg$$global$double$Tkotlin_Int(local$x: Int) returns (ret: Int)
 {
   var local$y: Int
   local$y := local$x + local$x
@@ -9,23 +9,23 @@ method pkg$$global$double(local$x: Int) returns (ret: Int)
 }
 
 /inline.kt:(140,149): info: Generated Viper text for quadruple:
-method pkg$$global$quadruple(local$x: Int) returns (ret: Int)
+method pkg$$global$quadruple$Tkotlin_Int(local$x: Int) returns (ret: Int)
 {
   var anonymous$1: Int
   var anonymous$2: Int
   if (true) {
-    var inline$pkg$$global$double$local$y: Int
-    inline$pkg$$global$double$local$y := local$x + local$x
-    anonymous$1 := inline$pkg$$global$double$local$y
-    goto inline$pkg$$global$double$label$ret
-    label inline$pkg$$global$double$label$ret
+    var inline$pkg$$global$double$Tkotlin_Int$local$y: Int
+    inline$pkg$$global$double$Tkotlin_Int$local$y := local$x + local$x
+    anonymous$1 := inline$pkg$$global$double$Tkotlin_Int$local$y
+    goto inline$pkg$$global$double$Tkotlin_Int$label$ret
+    label inline$pkg$$global$double$Tkotlin_Int$label$ret
   }
   if (true) {
-    var inline$pkg$$global$double$local$y: Int
-    inline$pkg$$global$double$local$y := local$x + local$x
-    anonymous$2 := inline$pkg$$global$double$local$y
-    goto inline$pkg$$global$double$label$ret
-    label inline$pkg$$global$double$label$ret
+    var inline$pkg$$global$double$Tkotlin_Int$local$y: Int
+    inline$pkg$$global$double$Tkotlin_Int$local$y := local$x + local$x
+    anonymous$2 := inline$pkg$$global$double$Tkotlin_Int$local$y
+    goto inline$pkg$$global$double$Tkotlin_Int$label$ret
+    label inline$pkg$$global$double$Tkotlin_Int$label$ret
   }
   ret := anonymous$1 + anonymous$2
   goto label$ret
@@ -33,7 +33,8 @@ method pkg$$global$quadruple(local$x: Int) returns (ret: Int)
 }
 
 /inline.kt:(225,234): info: Generated Viper text for branching:
-method pkg$$global$branching(local$b: Bool) returns (ret: Int)
+method pkg$$global$branching$Tkotlin_Boolean(local$b: Bool)
+  returns (ret: Int)
 {
   if (local$b) {
     ret := 1
@@ -46,7 +47,7 @@ method pkg$$global$branching(local$b: Bool) returns (ret: Int)
 }
 
 /inline.kt:(365,378): info: Generated Viper text for use_branching:
-method pkg$$global$use_branching() returns (ret: Int)
+method pkg$$global$use_branching$() returns (ret: Int)
 {
   var anonymous$1: Int
   var anonymous$3: Int
@@ -55,24 +56,24 @@ method pkg$$global$use_branching() returns (ret: Int)
     anonymous$2 := false
     if (anonymous$2) {
       anonymous$1 := 1
-      goto inline$pkg$$global$branching$label$ret
+      goto inline$pkg$$global$branching$Tkotlin_Boolean$label$ret
     } else {
       anonymous$1 := 0
-      goto inline$pkg$$global$branching$label$ret
+      goto inline$pkg$$global$branching$Tkotlin_Boolean$label$ret
     }
-    label inline$pkg$$global$branching$label$ret
+    label inline$pkg$$global$branching$Tkotlin_Boolean$label$ret
   }
   if (true) {
     var anonymous$4: Bool
     anonymous$4 := true
     if (anonymous$4) {
       anonymous$3 := 1
-      goto inline$pkg$$global$branching$label$ret
+      goto inline$pkg$$global$branching$Tkotlin_Boolean$label$ret
     } else {
       anonymous$3 := 0
-      goto inline$pkg$$global$branching$label$ret
+      goto inline$pkg$$global$branching$Tkotlin_Boolean$label$ret
     }
-    label inline$pkg$$global$branching$label$ret
+    label inline$pkg$$global$branching$Tkotlin_Boolean$label$ret
   }
   ret := anonymous$1 + anonymous$3
   goto label$ret

@@ -1,5 +1,6 @@
 /calls_in_place.kt:(162,169): info: Generated Viper text for unknown:
-method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
+method pkg$$global$unknown$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
+  returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -15,7 +16,8 @@ method pkg$$global$unknown(local$f: Ref) returns (ret: Int)
 }
 
 /calls_in_place.kt:(309,321): info: Generated Viper text for at_most_once:
-method pkg$$global$at_most_once(local$f: Ref) returns (ret: Int)
+method pkg$$global$at_most_once$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
+  returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -32,7 +34,8 @@ method pkg$$global$at_most_once(local$f: Ref) returns (ret: Int)
 }
 
 /calls_in_place.kt:(466,478): info: Generated Viper text for exactly_once:
-method pkg$$global$exactly_once(local$f: Ref) returns (ret: Int)
+method pkg$$global$exactly_once$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
+  returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -49,7 +52,8 @@ method pkg$$global$exactly_once(local$f: Ref) returns (ret: Int)
 }
 
 /calls_in_place.kt:(623,636): info: Generated Viper text for at_least_once:
-method pkg$$global$at_least_once(local$f: Ref) returns (ret: Int)
+method pkg$$global$at_least_once$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
+  returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -59,13 +63,14 @@ method pkg$$global$at_least_once(local$f: Ref) returns (ret: Int)
 {
   var anonymous$1: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  anonymous$1 := pkg$$global$exactly_once(local$f)
+  anonymous$1 := pkg$$global$exactly_once$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f)
   ret := anonymous$1
   goto label$ret
   label label$ret
 }
 
-method pkg$$global$exactly_once(local$f: Ref) returns (ret: Int)
+method pkg$$global$exactly_once$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
+  returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -75,7 +80,8 @@ method pkg$$global$exactly_once(local$f: Ref) returns (ret: Int)
 
 
 /calls_in_place.kt:(800,809): info: Generated Viper text for loopWhile:
-method pkg$$global$loopWhile(local$lambda: Ref) returns (ret: dom$Unit)
+method pkg$$global$loopWhile$Tkotlin_Function0__kotlin_Boolean__(local$lambda: Ref)
+  returns (ret: dom$Unit)
   requires acc(local$lambda.special$function_object_call_counter, write)
   ensures acc(local$lambda.special$function_object_call_counter, write)
   ensures old(local$lambda.special$function_object_call_counter) <=
@@ -105,7 +111,8 @@ method pkg$$global$loopWhile(local$lambda: Ref) returns (ret: dom$Unit)
 }
 
 /calls_in_place.kt:(990,999): info: Generated Viper text for loopUntil:
-method pkg$$global$loopUntil(local$lambda: Ref) returns (ret: dom$Unit)
+method pkg$$global$loopUntil$Tkotlin_Function0__kotlin_Boolean__(local$lambda: Ref)
+  returns (ret: dom$Unit)
   requires acc(local$lambda.special$function_object_call_counter, write)
   ensures acc(local$lambda.special$function_object_call_counter, write)
   ensures old(local$lambda.special$function_object_call_counter) <=
@@ -135,7 +142,7 @@ method pkg$$global$loopUntil(local$lambda: Ref) returns (ret: dom$Unit)
 }
 
 /calls_in_place.kt:(1178,1181): info: Generated Viper text for run:
-method pkg$$global$run(local$block: Ref)
+method pkg$$global$run$Tkotlin_Function0__R__(local$block: Ref)
   returns (ret: dom$Nullable[dom$Any])
   requires acc(local$block.special$function_object_call_counter, write)
   ensures acc(local$block.special$function_object_call_counter, write)

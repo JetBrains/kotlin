@@ -1,5 +1,6 @@
 /loop.kt:(4,14): info: Generated Viper text for while_loop:
-method pkg$$global$while_loop(local$b: Bool) returns (ret: Bool)
+method pkg$$global$while_loop$Tkotlin_Boolean(local$b: Bool)
+  returns (ret: Bool)
 {
   var anonymous$1: Bool
   label label$continue$1
@@ -18,21 +19,22 @@ method pkg$$global$while_loop(local$b: Bool) returns (ret: Bool)
 }
 
 /loop.kt:(120,144): info: Generated Viper text for while_function_condition:
-method pkg$$global$while_function_condition() returns (ret: dom$Unit)
+method pkg$$global$while_function_condition$() returns (ret: dom$Unit)
 {
   var anonymous$1: Bool
   var anonymous$2: Bool
   label label$continue$1
-  anonymous$2 := pkg$$global$while_loop(true)
+  anonymous$2 := pkg$$global$while_loop$Tkotlin_Boolean(true)
   anonymous$1 := anonymous$2
   while (anonymous$1) {
     var anonymous$3: Bool
-    anonymous$3 := pkg$$global$while_loop(true)
+    anonymous$3 := pkg$$global$while_loop$Tkotlin_Boolean(true)
     anonymous$1 := anonymous$3
   }
   label label$break$1
   label label$ret
 }
 
-method pkg$$global$while_loop(local$b: Bool) returns (ret: Bool)
+method pkg$$global$while_loop$Tkotlin_Boolean(local$b: Bool)
+  returns (ret: Bool)
 

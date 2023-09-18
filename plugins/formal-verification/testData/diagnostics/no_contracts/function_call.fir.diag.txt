@@ -1,5 +1,5 @@
 /function_call.kt:(4,5): info: Generated Viper text for f:
-method pkg$$global$f(local$x: Int) returns (ret: Int)
+method pkg$$global$f$Tkotlin_Int(local$x: Int) returns (ret: Int)
 {
   ret := local$x
   goto label$ret
@@ -7,29 +7,29 @@ method pkg$$global$f(local$x: Int) returns (ret: Int)
 }
 
 /function_call.kt:(27,40): info: Generated Viper text for function_call:
-method pkg$$global$function_call() returns (ret: dom$Unit)
+method pkg$$global$function_call$() returns (ret: dom$Unit)
 {
   var anonymous$1: Int
   var anonymous$2: Int
-  anonymous$1 := pkg$$global$f(0)
-  anonymous$2 := pkg$$global$f(0)
+  anonymous$1 := pkg$$global$f$Tkotlin_Int(0)
+  anonymous$2 := pkg$$global$f$Tkotlin_Int(0)
   label label$ret
 }
 
-method pkg$$global$f(local$x: Int) returns (ret: Int)
+method pkg$$global$f$Tkotlin_Int(local$x: Int) returns (ret: Int)
 
 
 /function_call.kt:(69,89): info: Generated Viper text for function_call_nested:
-method pkg$$global$function_call_nested() returns (ret: dom$Unit)
+method pkg$$global$function_call_nested$() returns (ret: dom$Unit)
 {
   var anonymous$1: Int
   var anonymous$2: Int
   var anonymous$3: Int
-  anonymous$3 := pkg$$global$f(0)
-  anonymous$2 := pkg$$global$f(anonymous$3)
-  anonymous$1 := pkg$$global$f(anonymous$2)
+  anonymous$3 := pkg$$global$f$Tkotlin_Int(0)
+  anonymous$2 := pkg$$global$f$Tkotlin_Int(anonymous$3)
+  anonymous$1 := pkg$$global$f$Tkotlin_Int(anonymous$2)
   label label$ret
 }
 
-method pkg$$global$f(local$x: Int) returns (ret: Int)
+method pkg$$global$f$Tkotlin_Int(local$x: Int) returns (ret: Int)
 

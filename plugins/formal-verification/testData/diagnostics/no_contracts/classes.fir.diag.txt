@@ -3,7 +3,7 @@ field pkg$$class_Foo$member_a: Int
 
 field pkg$$class_Foo$member_b: Int
 
-method pkg$$global$createFoo() returns (ret: dom$Unit)
+method pkg$$global$createFoo$() returns (ret: dom$Unit)
 {
   var local$f: Ref
   var anonymous$1: Ref
@@ -11,7 +11,7 @@ method pkg$$global$createFoo() returns (ret: dom$Unit)
   var anonymous$2: Int
   var local$fb: Int
   var anonymous$3: Int
-  anonymous$1 := pkg$$class_Foo$member_Foo(10, 20)
+  anonymous$1 := pkg$$class_Foo$constructor$Tkotlin_Int$Tkotlin_Int(10, 20)
   local$f := anonymous$1
   inhale acc(local$f.pkg$$class_Foo$member_a, write)
   anonymous$2 := local$f.pkg$$class_Foo$member_a
@@ -24,7 +24,7 @@ method pkg$$global$createFoo() returns (ret: dom$Unit)
   label label$ret
 }
 
-method pkg$$class_Foo$member_Foo(local$a: Int, local$b: Int)
+method pkg$$class_Foo$constructor$Tkotlin_Int$Tkotlin_Int(local$a: Int, local$b: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
 
@@ -32,17 +32,17 @@ method pkg$$class_Foo$member_Foo(local$a: Int, local$b: Int)
 /classes.kt:(147,156): info: Generated Viper text for createBar:
 field pkg$$class_Bar$member_a: dom$Nullable[Ref]
 
-method pkg$$global$createBar() returns (ret: dom$Unit)
+method pkg$$global$createBar$() returns (ret: dom$Unit)
 {
   var local$b: Ref
   var anonymous$1: Ref
-  anonymous$1 := pkg$$class_Bar$member_Bar((dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
+  anonymous$1 := pkg$$class_Bar$constructor$NTBar((dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
     dom$Type$special$Nullable(dom$Type$pkg$$class_Bar())): dom$Nullable[Ref]))
   local$b := anonymous$1
   label label$ret
 }
 
-method pkg$$class_Bar$member_Bar(local$a: dom$Nullable[Ref])
+method pkg$$class_Bar$constructor$NTBar(local$a: dom$Nullable[Ref])
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
 
