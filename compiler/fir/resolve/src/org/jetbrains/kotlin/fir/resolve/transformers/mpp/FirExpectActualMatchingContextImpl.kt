@@ -153,7 +153,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         expectTypeParameters: List<TypeParameterSymbolMarker>,
         actualTypeParameters: List<TypeParameterSymbolMarker>,
         parentSubstitutor: TypeSubstitutorMarker?,
-    ): TypeSubstitutorMarker {
+    ): TypeSubstitutorMarker? {
         return createExpectActualTypeParameterSubstitutor(
             expectTypeParameters.castAll<FirTypeParameterSymbol>(),
             actualTypeParameters.castAll<FirTypeParameterSymbol>(),

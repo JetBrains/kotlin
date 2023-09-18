@@ -127,7 +127,7 @@ object AbstractExpectActualCompatibilityChecker {
             expectTypeParameterSymbols,
             actualTypeParameterSymbols,
             parentSubstitutor
-        )
+        ) ?: error("expect/actual type parameters size is checked earlier")
 
         if (!areCompatibleTypeParameterUpperBounds(expectTypeParameterSymbols, actualTypeParameterSymbols, substitutor)) {
             return Incompatible.ClassTypeParameterUpperBounds
@@ -351,7 +351,7 @@ object AbstractExpectActualCompatibilityChecker {
             expectedTypeParameters,
             actualTypeParameters,
             parentSubstitutor
-        )
+        ) ?: error("expect/actual type parameters size is checked earlier")
 
         if (
             !areCompatibleTypeLists(

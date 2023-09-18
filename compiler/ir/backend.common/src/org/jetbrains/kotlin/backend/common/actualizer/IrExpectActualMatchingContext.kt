@@ -242,7 +242,8 @@ internal abstract class IrExpectActualMatchingContext(
         expectTypeParameters: List<TypeParameterSymbolMarker>,
         actualTypeParameters: List<TypeParameterSymbolMarker>,
         parentSubstitutor: TypeSubstitutorMarker?,
-    ): TypeSubstitutorMarker {
+    ): TypeSubstitutorMarker? {
+        if (expectTypeParameters.size != actualTypeParameters.size) return null
         val expectParameters = expectTypeParameters.castAll<IrTypeParameterSymbol>()
         val actualParameters = actualTypeParameters.castAll<IrTypeParameterSymbol>()
         val actualTypes = actualParameters.map { it.owner.defaultType }

@@ -72,7 +72,7 @@ class IrTypeSubstitutor(
 ) : BaseIrTypeSubstitutor(irBuiltIns) {
 
     init {
-        assert(typeParameters.size == typeArguments.size) {
+        check(typeParameters.size == typeArguments.size) {
             "Unexpected number of type arguments: ${typeArguments.size}\n" +
                     "Type parameters are:\n" +
                     typeParameters.joinToString(separator = "\n") { it.owner.render() } +

@@ -106,7 +106,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
         expectTypeParameters: List<TypeParameterSymbolMarker>,
         actualTypeParameters: List<TypeParameterSymbolMarker>,
         parentSubstitutor: TypeSubstitutorMarker?
-    ): TypeSubstitutorMarker
+    ): TypeSubstitutorMarker?
 
     fun RegularClassSymbolMarker.collectAllMembers(isActualDeclaration: Boolean): List<DeclarationSymbolMarker>
     fun RegularClassSymbolMarker.getMembersForExpectClass(name: Name): List<DeclarationSymbolMarker>

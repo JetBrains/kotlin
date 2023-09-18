@@ -17,7 +17,8 @@ fun createExpectActualTypeParameterSubstitutor(
     actualTypeParameters: List<FirTypeParameterSymbol>,
     useSiteSession: FirSession,
     parentSubstitutor: ConeSubstitutor? = null
-): ConeSubstitutor {
+): ConeSubstitutor? {
+    if (expectedTypeParameters.size != actualTypeParameters.size) return null
     val substitution = expectedTypeParameters.zip(actualTypeParameters).associate { (expectedParameterSymbol, actualParameterSymbol) ->
         expectedParameterSymbol to actualParameterSymbol.toLookupTag().constructType(emptyArray(), isNullable = false)
     }

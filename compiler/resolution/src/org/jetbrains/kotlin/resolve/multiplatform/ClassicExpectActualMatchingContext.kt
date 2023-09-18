@@ -148,7 +148,8 @@ class ClassicExpectActualMatchingContext(
         expectTypeParameters: List<TypeParameterSymbolMarker>,
         actualTypeParameters: List<TypeParameterSymbolMarker>,
         parentSubstitutor: TypeSubstitutorMarker?,
-    ): TypeSubstitutorMarker {
+    ): TypeSubstitutorMarker? {
+        if (expectTypeParameters.size != actualTypeParameters.size) return null
         val expectParameters = expectTypeParameters.castAll<TypeParameterDescriptor>()
         val actualParameters = actualTypeParameters.castAll<TypeParameterDescriptor>()
         val substitutor = TypeSubstitutor.create(
