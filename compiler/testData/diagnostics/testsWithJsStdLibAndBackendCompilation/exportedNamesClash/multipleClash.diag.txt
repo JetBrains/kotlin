@@ -1,0 +1,106 @@
+/Function1.kt:7:1: warning: Exporting name 'test' in ES modules may clash with
+    exporting name 'test' from file '/Class1.kt'
+    exporting name 'test' from file '/Property1.kt'
+
+/Function1.kt:7:1: error: Exporting name 'test' clashes with
+    exporting name 'test' from file '/Class1.kt'
+    package 'foo.bar.baz.test' from file '/Package1.kt'
+    package 'foo.bar.baz.test' from file '/Package2.kt'
+    exporting name 'test' from file '/Property1.kt'
+
+/Function2.kt:13:1: error: Exporting name 'baz' clashes with
+    package 'foo.bar.baz' from file '/Class1.kt'
+    package 'foo.bar.baz' from file '/Function1.kt'
+    package 'foo.bar.baz' from file '/Package1.kt'
+    package 'foo.bar.baz' from file '/Package2.kt'
+    package 'foo.bar.baz' from file '/Property1.kt'
+
+/Function3.kt:18:1: warning: Exporting name 'foo' in ES modules may clash with
+    exporting name 'foo' from file '/Class3.kt'
+    exporting name 'foo' from file '/Property3.kt'
+
+/Function3.kt:18:1: error: Exporting name 'foo' clashes with
+    package 'foo' from file '/Class1.kt'
+    package 'foo' from file '/Class2.kt'
+    exporting name 'foo' from file '/Class3.kt'
+    package 'foo' from file '/Function1.kt'
+    package 'foo' from file '/Function2.kt'
+    package 'foo' from file '/Package1.kt'
+    package 'foo' from file '/Package2.kt'
+    package 'foo' from file '/Property1.kt'
+    package 'foo' from file '/Property2.kt'
+    exporting name 'foo' from file '/Property3.kt'
+
+/Property1.kt:24:1: warning: Exporting name 'test' in ES modules may clash with
+    exporting name 'test' from file '/Class1.kt'
+    exporting name 'test' from file '/Function1.kt'
+
+/Property1.kt:24:1: error: Exporting name 'test' clashes with
+    exporting name 'test' from file '/Class1.kt'
+    exporting name 'test' from file '/Function1.kt'
+    package 'foo.bar.baz.test' from file '/Package1.kt'
+    package 'foo.bar.baz.test' from file '/Package2.kt'
+
+/Property2.kt:30:1: warning: Exporting name 'bar' in ES modules may clash with exporting name 'bar' from file '/Class2.kt'
+
+/Property2.kt:30:1: error: Exporting name 'bar' clashes with
+    package 'foo.bar' from file '/Class1.kt'
+    exporting name 'bar' from file '/Class2.kt'
+    package 'foo.bar' from file '/Function1.kt'
+    package 'foo.bar' from file '/Function2.kt'
+    package 'foo.bar' from file '/Package1.kt'
+    package 'foo.bar' from file '/Package2.kt'
+    package 'foo.bar' from file '/Property1.kt'
+
+/Property3.kt:35:1: warning: Exporting name 'foo' in ES modules may clash with
+    exporting name 'foo' from file '/Class3.kt'
+    exporting name 'foo' from file '/Function3.kt'
+
+/Property3.kt:35:1: error: Exporting name 'foo' clashes with
+    package 'foo' from file '/Class1.kt'
+    package 'foo' from file '/Class2.kt'
+    exporting name 'foo' from file '/Class3.kt'
+    package 'foo' from file '/Function1.kt'
+    package 'foo' from file '/Function2.kt'
+    exporting name 'foo' from file '/Function3.kt'
+    package 'foo' from file '/Package1.kt'
+    package 'foo' from file '/Package2.kt'
+    package 'foo' from file '/Property1.kt'
+    package 'foo' from file '/Property2.kt'
+
+/Class1.kt:41:1: warning: Exporting name 'test' in ES modules may clash with
+    exporting name 'test' from file '/Function1.kt'
+    exporting name 'test' from file '/Property1.kt'
+
+/Class1.kt:41:1: error: Exporting name 'test' clashes with
+    exporting name 'test' from file '/Function1.kt'
+    package 'foo.bar.baz.test' from file '/Package1.kt'
+    package 'foo.bar.baz.test' from file '/Package2.kt'
+    exporting name 'test' from file '/Property1.kt'
+
+/Class2.kt:47:1: warning: Exporting name 'bar' in ES modules may clash with exporting name 'bar' from file '/Property2.kt'
+
+/Class2.kt:47:1: error: Exporting name 'bar' clashes with
+    package 'foo.bar' from file '/Class1.kt'
+    package 'foo.bar' from file '/Function1.kt'
+    package 'foo.bar' from file '/Function2.kt'
+    package 'foo.bar' from file '/Package1.kt'
+    package 'foo.bar' from file '/Package2.kt'
+    package 'foo.bar' from file '/Property1.kt'
+    exporting name 'bar' from file '/Property2.kt'
+
+/Class3.kt:51:1: warning: Exporting name 'foo' in ES modules may clash with
+    exporting name 'foo' from file '/Function3.kt'
+    exporting name 'foo' from file '/Property3.kt'
+
+/Class3.kt:51:1: error: Exporting name 'foo' clashes with
+    package 'foo' from file '/Class1.kt'
+    package 'foo' from file '/Class2.kt'
+    package 'foo' from file '/Function1.kt'
+    package 'foo' from file '/Function2.kt'
+    exporting name 'foo' from file '/Function3.kt'
+    package 'foo' from file '/Package1.kt'
+    package 'foo' from file '/Package2.kt'
+    package 'foo' from file '/Property1.kt'
+    package 'foo' from file '/Property2.kt'
+    exporting name 'foo' from file '/Property3.kt'
