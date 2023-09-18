@@ -9,9 +9,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] initBlockScript.kts
             }
 
             [ResolvedTo(BODY_RESOLVE)] init {
-                [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = Int(10)
-                local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                    public [ResolvedTo(RAW_FIR)] constructor(): R|<local>/B| {
+                [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = Int(10)
+                local final [ResolvedTo(BODY_RESOLVE)] class B : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/B| {
                         super<R|kotlin/Any|>()
                     }
 
@@ -20,3 +20,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] initBlockScript.kts
             }
 
         }
+
