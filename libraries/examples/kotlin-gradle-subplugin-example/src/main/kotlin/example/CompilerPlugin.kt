@@ -55,4 +55,6 @@ public class ExampleComponentRegistrar : ComponentRegistrar {
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         messageCollector.report(CompilerMessageSeverity.INFO, "Project component registration: $exampleValue")
     }
+
+    override val supportsK2: Boolean = true
 }
