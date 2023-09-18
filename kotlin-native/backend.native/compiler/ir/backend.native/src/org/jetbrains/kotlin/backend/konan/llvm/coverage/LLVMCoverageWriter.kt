@@ -6,9 +6,7 @@ package org.jetbrains.kotlin.backend.konan.llvm.coverage
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.llvm.name
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.konan.file.File
@@ -20,11 +18,14 @@ private fun RegionKind.toLLVMCoverageRegionKind(): LLVMCoverageRegionKind = when
 }
 
 private fun LLVMCoverageRegion.populateFrom(region: Region, regionId: Int, filesIndex: Map<IrFile, Int>) = apply {
+    val (lineStart, columnStart) = region.startLineAndColumn
+    val (lineEnd, columnEnd) = region.endLineAndColumn
+
     fileId = filesIndex.getValue(region.file)
-    lineStart = region.startLine
-    columnStart = region.startColumn
-    lineEnd = region.endLine
-    columnEnd = region.endColumn
+    this.lineStart = lineStart
+    this.columnStart = columnStart
+    this.lineEnd = lineEnd
+    this.columnEnd = columnEnd
     counterId = regionId
     kind = region.kind.toLLVMCoverageRegionKind()
     expandedFileId = if (region.kind is RegionKind.Expansion) filesIndex.getValue(region.kind.expandedFile) else 0

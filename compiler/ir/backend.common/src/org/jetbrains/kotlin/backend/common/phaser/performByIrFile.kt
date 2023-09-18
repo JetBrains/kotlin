@@ -64,7 +64,8 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
             } catch (e: Throwable) {
                 CodegenUtil.reportBackendException(e, "IR lowering", irFile.fileEntry.name) { offset ->
                     irFile.fileEntry.takeIf { it.supportsDebugInfo }?.let {
-                        it.getLineNumber(offset) to it.getColumnNumber(offset)
+                        val (line, column) = it.getLineAndColumnNumbers(offset)
+                        line to column
                     }
                 }
             }
@@ -113,7 +114,8 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         thrownFromThread.get()?.let { (e, irFile) ->
             CodegenUtil.reportBackendException(e, "Experimental parallel IR backend", irFile.fileEntry.name) { offset ->
                 irFile.fileEntry.takeIf { it.supportsDebugInfo }?.let {
-                    it.getLineNumber(offset) to it.getColumnNumber(offset)
+                    val (line, column) = it.getLineAndColumnNumbers(offset)
+                    line to column
                 }
             }
         }

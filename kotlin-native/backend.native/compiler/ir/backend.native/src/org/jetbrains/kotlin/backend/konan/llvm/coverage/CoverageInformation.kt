@@ -4,9 +4,8 @@
  */
 package org.jetbrains.kotlin.backend.konan.llvm.coverage
 
-import org.jetbrains.kotlin.backend.konan.llvm.column
-import org.jetbrains.kotlin.backend.konan.llvm.line
 import org.jetbrains.kotlin.backend.konan.llvm.computeSymbolName
+import org.jetbrains.kotlin.backend.konan.llvm.lineAndColumn
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -25,17 +24,11 @@ class Region(
         val file: IrFile,
         val kind: RegionKind
 ) {
-    val startLine: Int
-        get() = file.fileEntry.line(startOffset)
+    val startLineAndColumn: Pair<Int, Int>
+        get() = file.fileEntry.lineAndColumn(startOffset)
 
-    val startColumn: Int
-        get() = file.fileEntry.column(startOffset)
-
-    val endLine: Int
-        get() = file.fileEntry.line(endOffset)
-
-    val endColumn: Int
-        get() = file.fileEntry.column(endOffset)
+    val endLineAndColumn: Pair<Int, Int>
+        get() = file.fileEntry.lineAndColumn(endOffset)
 
     companion object {
         fun fromIr(irElement: IrElement, irFile: IrFile, kind: RegionKind = RegionKind.Code) =
@@ -48,7 +41,7 @@ class Region(
 
     override fun toString(): String {
         val expansion = (kind as? RegionKind.Expansion)?.let { " expand to " + it.expandedFile.name } ?: ""
-        return "${file.name}$expansion: ${kind::class.simpleName} $startLine, $startColumn -> $endLine, $endColumn"
+        return "${file.name}$expansion: ${kind::class.simpleName} $startLineAndColumn -> $endLineAndColumn"
     }
 }
 

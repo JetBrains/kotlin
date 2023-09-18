@@ -259,7 +259,7 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
 /**
  * File entry starts offsets from zero while dwarf number lines/column starting from 1.
  */
-private val NO_SOURCE_FILE = "no source file"
+private const val NO_SOURCE_FILE = "no source file"
 private fun IrFileEntry.location(offset: Int, offsetToNumber: (Int) -> Int): Int {
     // Part "name.isEmpty() || name == NO_SOURCE_FILE" is an awful hack, @minamoto, please fix properly.
     if (offset == UNDEFINED_OFFSET) return 0
@@ -270,9 +270,12 @@ private fun IrFileEntry.location(offset: Int, offsetToNumber: (Int) -> Int): Int
     return result
 }
 
-internal fun IrFileEntry.line(offset: Int) = location(offset, this::getLineNumber)
+internal fun IrFileEntry.lineAndColumn(offset: Int): Pair<Int, Int> {
+    val (line, column) = this.getLineAndColumnNumbers(offset)
+    return location(offset) { line } to location(offset) { column }
+}
 
-internal fun IrFileEntry.column(offset: Int) = location(offset, this::getColumnNumber)
+internal fun IrFileEntry.line(offset: Int) = location(offset, this::getLineNumber)
 
 internal data class FileAndFolder(val file: String, val folder: String) {
     companion object {

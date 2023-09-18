@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.ir.util.inlineFunction
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_ARGUMENTS
@@ -28,10 +27,10 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -781,7 +780,12 @@ internal class CodeGeneratorVisitor(
         }
 
         private val fileScope = (fileScope() as? FileScope)
-        override fun location(offset: Int) = scope?.let { scope -> fileScope?.let{LocationInfo(scope, it.file.fileEntry.line(offset), it.file.fileEntry.column(offset)) } }
+        override fun location(offset: Int) = scope?.let { scope ->
+            fileScope?.let {
+                val (line, column) = it.file.fileEntry.lineAndColumn(offset)
+                LocationInfo(scope, line, column)
+            }
+        }
 
         override fun scope() = scope
 
@@ -909,12 +913,12 @@ internal class CodeGeneratorVisitor(
             verifyModule(llvm.module, "${ir2string(declaration.parent)}::${ir2string(declaration)}")
     }
 
-    private fun IrFunction.location(start: Boolean) =
-            if (context.shouldContainLocationDebugInfo() && startOffset != UNDEFINED_OFFSET) LocationInfo(
-                scope = scope()!!,
-                line = if (start) startLine() else endLine(),
-                column = if (start) startColumn() else endColumn())
-            else null
+    private fun IrFunction.location(start: Boolean): LocationInfo? {
+        if (!context.shouldContainLocationDebugInfo() || startOffset == UNDEFINED_OFFSET) return null
+
+        val (line, column) = if (start) startLineAndColumn() else endLineAndColumn()
+        return LocationInfo(scope = scope()!!, line = line, column = column)
+    }
 
     //-------------------------------------------------------------------------//
 
@@ -2115,7 +2119,8 @@ internal class CodeGeneratorVisitor(
             return if (returnableBlock.inlineFunction != null) {
                 val diScope = functionScope ?: return null
                 val inlinedAt = outerContext.location(returnableBlock.startOffset) ?: return null
-                LocationInfo(diScope, file.fileEntry.line(offset), file.fileEntry.column(offset), inlinedAt)
+                val (line, column) = file.fileEntry.lineAndColumn(offset)
+                LocationInfo(diScope, line, column, inlinedAt)
             } else {
                 outerContext.location(offset)
             }
@@ -2128,7 +2133,8 @@ internal class CodeGeneratorVisitor(
             if (!context.shouldContainLocationDebugInfo() || returnableBlock.startOffset == UNDEFINED_OFFSET)
                 return@lazy null
             val lexicalBlockFile = DICreateLexicalBlockFile(debugInfo.builder, functionScope()!!.scope(), super.file.diFileScope())
-            DICreateLexicalBlock(debugInfo.builder, lexicalBlockFile, super.file.diFileScope(), returnableBlock.startLine(), returnableBlock.startColumn())!!
+            val (line, column) = returnableBlock.startLineAndColumn()
+            DICreateLexicalBlock(debugInfo.builder, lexicalBlockFile, super.file.diFileScope(), line, column)!!
         }
 
         override fun scope() = scope
@@ -2140,7 +2146,10 @@ internal class CodeGeneratorVisitor(
     private open inner class FileScope(val file: IrFile) : InnerScopeImpl() {
         override fun fileScope(): CodeContext? = this
 
-        override fun location(offset: Int) = scope()?.let { LocationInfo(it, file.fileEntry.line(offset), file.fileEntry.column(offset)) }
+        override fun location(offset: Int) = scope()?.let {
+            val (line, column) = file.fileEntry.lineAndColumn(offset)
+            LocationInfo(it, line, column)
+        }
 
         @Suppress("UNCHECKED_CAST")
         private val scope by lazy {
@@ -2271,13 +2280,10 @@ internal class CodeGeneratorVisitor(
     private fun IrElement.startLine() = file().fileEntry.line(this.startOffset)
 
     //-------------------------------------------------------------------------//
-    private fun IrElement.startColumn() = file().fileEntry.column(this.startOffset)
+    private fun IrElement.startLineAndColumn() = file().fileEntry.lineAndColumn(this.startOffset)
 
     //-------------------------------------------------------------------------//
-    private fun IrElement.endLine() = file().fileEntry.line(this.endOffset)
-
-    //-------------------------------------------------------------------------//
-    private fun IrElement.endColumn() = file().fileEntry.column(this.endOffset)
+    private fun IrElement.endLineAndColumn() = file().fileEntry.lineAndColumn(this.endOffset)
 
     //-------------------------------------------------------------------------//
     private fun debugFieldDeclaration(expression: IrField) {

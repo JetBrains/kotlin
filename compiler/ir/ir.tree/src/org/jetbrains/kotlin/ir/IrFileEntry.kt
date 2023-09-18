@@ -55,14 +55,17 @@ abstract class AbstractIrFileEntry : IrFileEntry {
         return LineAndColumn(lineNumber, columnNumber)
     }
 
-    override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
-        SourceRangeInfo(
+    override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo {
+        val (startLineNumber, startColumnNumber) = getLineAndColumnNumbers(beginOffset)
+        val (endLineNumber, endColumnNumber) = getLineAndColumnNumbers(endOffset)
+        return SourceRangeInfo(
             filePath = name,
             startOffset = beginOffset,
-            startLineNumber = getLineNumber(beginOffset),
-            startColumnNumber = getColumnNumber(beginOffset),
+            startLineNumber = startLineNumber,
+            startColumnNumber = startColumnNumber,
             endOffset = endOffset,
-            endLineNumber = getLineNumber(endOffset),
-            endColumnNumber = getColumnNumber(endOffset)
+            endLineNumber = endLineNumber,
+            endColumnNumber = endColumnNumber
         )
+    }
 }

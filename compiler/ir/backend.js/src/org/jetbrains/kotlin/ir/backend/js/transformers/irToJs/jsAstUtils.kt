@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.lower.*
+import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
+import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -618,8 +619,7 @@ inline fun IrElement.getSourceLocation(fileEntry: IrFileEntry, offsetSelector: I
     if (startOffset == UNDEFINED_OFFSET || endOffset == UNDEFINED_OFFSET) return null
     val path = fileEntry.name
     val offset = offsetSelector()
-    val startLine = fileEntry.getLineNumber(offset)
-    val startColumn = fileEntry.getColumnNumber(offset)
+    val (startLine, startColumn) = fileEntry.getLineAndColumnNumbers(offset)
     return JsLocation(path, startLine, startColumn)
 }
 

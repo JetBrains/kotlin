@@ -6,16 +6,20 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 
-import kotlinx.cinterop.*
+import kotlinx.cinterop.cValuesOf
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.toCValues
+import kotlinx.cinterop.toKString
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.MemoryModel
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassGlobalHierarchyInfo
-import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
-import org.jetbrains.kotlin.backend.konan.llvm.objc.*
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.objcinterop.*
@@ -343,7 +347,8 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
                     }
                 }
                 @Suppress("UNCHECKED_CAST") val location = diFunctionScope?.let {
-                    LocationInfo(it as DIScopeOpaqueRef, file.fileEntry.line(offset!!), file.fileEntry.column(offset))
+                    val (line, column) = file.fileEntry.lineAndColumn(offset!!)
+                    LocationInfo(it as DIScopeOpaqueRef, line, column)
                 }
                 generateFunction(this, proto, needSafePoint = false, startLocation = location, endLocation = location) {
                     val args = proto.signature.parameterTypes.indices.map { param(it) }
