@@ -1,4 +1,4 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreText IOKit darwin libkern posix
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit IOSurface Security darwin libkern osx posix
 language = Objective-C
 package = platform.MediaAccessibility
 modules = MediaAccessibility
