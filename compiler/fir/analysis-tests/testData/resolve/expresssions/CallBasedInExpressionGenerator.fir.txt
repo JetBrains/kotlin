@@ -54,17 +54,17 @@ FILE: CallBasedInExpressionGenerator.kt
 
         private final fun gen(argument: R|org/jetbrains/kotlin/codegen/range/inExpression/StackValue|): R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue| {
             ^gen object : R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue| {
-                private constructor(): R|<anonymous>| {
+                private constructor(): R|org/jetbrains/kotlin/codegen/range/inExpression/<anonymous>| {
                     super<R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue|>(R|<local>/argument|, Null(null), R|<local>/argument|.<Unresolved name: type>#, <Unresolved name: Opcodes>#.<Unresolved name: IFEQ>#)
                 }
 
                 public open override fun putSelector(type: R|org/jetbrains/kotlin/codegen/range/inExpression/Type|, kotlinType: R|org/jetbrains/kotlin/codegen/range/inExpression/KotlinType?|, v: R|org/jetbrains/kotlin/codegen/range/inExpression/InstructionAdapter|): R|kotlin/Unit| {
-                    this@R|/<anonymous>|.R|/<anonymous>.invokeFunction|(R|<local>/v|)
+                    this@R|org/jetbrains/kotlin/codegen/range/inExpression/<anonymous>|.R|org/jetbrains/kotlin/codegen/range/inExpression/<anonymous>.invokeFunction|(R|<local>/v|)
                     <Unresolved name: coerceTo>#(R|<local>/type|, R|<local>/kotlinType|, R|<local>/v|)
                 }
 
                 public open override fun condJump(jumpLabel: R|org/jetbrains/kotlin/codegen/range/inExpression/Label|, v: R|org/jetbrains/kotlin/codegen/range/inExpression/InstructionAdapter|, jumpIfFalse: R|kotlin/Boolean|): R|kotlin/Unit| {
-                    this@R|/<anonymous>|.R|/<anonymous>.invokeFunction|(R|<local>/v|)
+                    this@R|org/jetbrains/kotlin/codegen/range/inExpression/<anonymous>|.R|org/jetbrains/kotlin/codegen/range/inExpression/<anonymous>.invokeFunction|(R|<local>/v|)
                     R|<local>/v|.<Unresolved name: visitJumpInsn>#(when () {
                         R|<local>/jumpIfFalse| ->  {
                             <Unresolved name: Opcodes>#.<Unresolved name: IFEQ>#

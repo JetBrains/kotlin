@@ -43,7 +43,7 @@ KtKotlinPropertySymbol:
     getDispatchReceiver(): KtUsualClassType:
       annotationsList: []
       ownTypeArguments: []
-      type: <anonymous>
+      type: test/<anonymous>
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -75,7 +75,7 @@ KtKotlinPropertySymbol:
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
     ownTypeArguments: []
-    type: <anonymous>
+    type: test/<anonymous>
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -98,7 +98,7 @@ KtConstructorSymbol:
   returnType: KtUsualClassType:
     annotationsList: []
     ownTypeArguments: []
-    type: <anonymous>
+    type: test/<anonymous>
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []

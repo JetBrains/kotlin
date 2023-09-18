@@ -83,9 +83,9 @@ class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(
         }
 }
 
-val ANONYMOUS_CLASS_ID = ClassId(FqName.ROOT, FqName.topLevel(SpecialNames.ANONYMOUS), true)
-
-class FirAnonymousObjectSymbol : FirClassSymbol<FirAnonymousObject>(ANONYMOUS_CLASS_ID)
+class FirAnonymousObjectSymbol(packageFqName: FqName) : FirClassSymbol<FirAnonymousObject>(
+    ClassId(packageFqName, SpecialNames.ANONYMOUS_FQ_NAME, true)
+)
 
 class FirTypeAliasSymbol(classId: ClassId) : FirClassLikeSymbol<FirTypeAlias>(classId), TypeAliasSymbolMarker {
     override fun toLookupTag(): ConeClassLikeLookupTag = classId.toLookupTag()

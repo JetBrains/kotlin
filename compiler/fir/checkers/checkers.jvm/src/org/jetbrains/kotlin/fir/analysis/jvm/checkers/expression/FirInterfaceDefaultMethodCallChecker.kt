@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.java.jvmDefaultModeState
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.symbols.impl.ANONYMOUS_CLASS_ID
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.name.SpecialNames.ANONYMOUS_FQ_NAME
 
 object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -51,7 +51,7 @@ object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecke
 
     private fun CheckerContext.findContainingMember(): FirCallableDeclaration? {
         return findClosest {
-            (it is FirSimpleFunction && it.symbol.callableId.classId != ANONYMOUS_CLASS_ID) || it is FirProperty
+            (it is FirSimpleFunction && it.symbol.callableId.classId?.relativeClassName != ANONYMOUS_FQ_NAME) || it is FirProperty
         }
     }
 }

@@ -653,7 +653,7 @@ class LightTreeRawFirDeclarationBuilder(
                     moduleData = baseModuleData
                     classKind = ClassKind.CLASS
                     scopeProvider = baseScopeProvider
-                    symbol = FirAnonymousObjectSymbol()
+                    symbol = FirAnonymousObjectSymbol(context.packageFqName)
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
                     val delegatedSelfType = objectLiteral.toDelegatedSelfType(this)
@@ -777,7 +777,7 @@ class LightTreeRawFirDeclarationBuilder(
                         origin = FirDeclarationOrigin.Source
                         classKind = ClassKind.ENUM_ENTRY
                         scopeProvider = baseScopeProvider
-                        symbol = FirAnonymousObjectSymbol()
+                        symbol = FirAnonymousObjectSymbol(context.packageFqName)
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         val enumClassWrapper = ClassWrapper(
                             modifiers,

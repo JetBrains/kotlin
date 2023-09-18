@@ -152,7 +152,9 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
 
     fun callableIdForName(name: Name) =
         when {
-            context.className.shortNameOrSpecial() == SpecialNames.ANONYMOUS -> CallableId(ANONYMOUS_CLASS_ID, name)
+            context.className.shortNameOrSpecial() == SpecialNames.ANONYMOUS -> CallableId(
+                ClassId(context.packageFqName, SpecialNames.ANONYMOUS_FQ_NAME, true), name
+            )
             context.className.isRoot && !context.inLocalContext -> CallableId(context.packageFqName, name)
             context.inLocalContext -> {
                 val pathFqName =

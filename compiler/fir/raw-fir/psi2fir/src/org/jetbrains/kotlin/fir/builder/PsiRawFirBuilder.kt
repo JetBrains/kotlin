@@ -1312,7 +1312,7 @@ open class PsiRawFirBuilder(
                                 origin = FirDeclarationOrigin.Source
                                 classKind = ClassKind.ENUM_ENTRY
                                 scopeProvider = this@PsiRawFirBuilder.baseScopeProvider
-                                symbol = FirAnonymousObjectSymbol()
+                                symbol = FirAnonymousObjectSymbol(this@PsiRawFirBuilder.context.packageFqName)
                                 status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
 
                                 val delegatedEntrySelfType = buildResolvedTypeRef {
@@ -1559,7 +1559,7 @@ open class PsiRawFirBuilder(
                         origin = FirDeclarationOrigin.Source
                         classKind = ClassKind.CLASS
                         scopeProvider = baseScopeProvider
-                        symbol = FirAnonymousObjectSymbol()
+                        symbol = FirAnonymousObjectSymbol(context.packageFqName)
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
                         val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
