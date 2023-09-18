@@ -33521,6 +33521,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("inGenericArgument.kt")
+            public void testInGenericArgument() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/suspendConversion/inGenericArgument.kt");
+            }
+
+            @Test
             @TestMetadata("overloadResolutionBySuspendModifier.kt")
             public void testOverloadResolutionBySuspendModifier() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/suspendConversion/overloadResolutionBySuspendModifier.kt");
