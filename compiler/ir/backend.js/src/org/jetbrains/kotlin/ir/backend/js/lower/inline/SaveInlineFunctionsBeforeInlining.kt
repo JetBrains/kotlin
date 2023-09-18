@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.inline
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.inline.DefaultInlineFunctionResolver
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.lazy2
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -30,13 +31,12 @@ internal class SaveInlineFunctionsBeforeInlining(context: JsIrBackendContext) : 
 }
 
 internal class JsInlineFunctionResolver(context: JsIrBackendContext) : DefaultInlineFunctionResolver(context) {
+    private val enumEntriesIntrinsic = context.intrinsics.enumEntriesIntrinsic
     private val inlineFunctionsBeforeInlining = context.mapping.inlineFunctionsBeforeInlining
     private val inlineFunctionsBeforeInliningSymbols = hashMapOf<IrFunction, IrFunctionSymbol>()
-    private val excludedFromInliningFunctions = context.intrinsicInlineFunctions
 
     override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
-        return symbol in excludedFromInliningFunctions ||
-                super.shouldExcludeFunctionFromInlining(symbol)
+        return symbol == enumEntriesIntrinsic || super.shouldExcludeFunctionFromInlining(symbol)
     }
 
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {

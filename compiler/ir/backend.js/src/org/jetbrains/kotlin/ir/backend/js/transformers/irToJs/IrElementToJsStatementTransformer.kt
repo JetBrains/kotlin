@@ -96,17 +96,6 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return JsContinue(context.getNameForLoop(jump.loop)?.let { JsNameRef(it) }).withSource(jump, context)
     }
 
-    private fun IrReturn.maybeOptimizeYield(context: JsGenerationContext): IrReturn {
-        return when (val call = (value as? IrCall)?.takeIf { it.isYieldCall(context) && returnTargetSymbol is IrFunctionSymbol }) {
-            null -> this
-            else -> apply { value = call.getValueArgument(0)!! }
-        }
-    }
-
-    private fun IrCall.isYieldCall(context: JsGenerationContext): Boolean {
-        return symbol == context.staticContext.backendContext.intrinsics.jsYieldFunctionSymbol
-    }
-
     private fun IrExpression.maybeOptimizeIntoSwitch(
         context: JsGenerationContext,
         transformer: (() -> JsExpression) -> JsStatement
@@ -154,7 +143,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
                 }
             }
 
-        return expression.maybeOptimizeYield(context).value
+        return expression.value
             .maybeOptimizeIntoSwitch(context, lastStatementTransformer)
             .withSource(expression, context)
     }

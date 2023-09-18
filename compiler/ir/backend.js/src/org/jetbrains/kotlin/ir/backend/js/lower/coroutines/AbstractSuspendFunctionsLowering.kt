@@ -507,12 +507,17 @@ sealed class SuspendFunctionKind {
     object NEEDS_STATE_MACHINE : SuspendFunctionKind()
 }
 
-fun getSuspendFunctionKind(context: CommonBackendContext, function: IrSimpleFunction, body: IrBody): SuspendFunctionKind {
+fun getSuspendFunctionKind(
+    context: CommonBackendContext,
+    function: IrSimpleFunction,
+    body: IrBody,
+    includeSuspendLambda: Boolean = true
+): SuspendFunctionKind {
 
     fun IrSimpleFunction.isSuspendLambda() =
         name.asString() == "invoke" && parentClassOrNull?.let { it.origin === CallableReferenceLowering.Companion.LAMBDA_IMPL } == true
 
-    if (function.isSuspendLambda())
+    if (function.isSuspendLambda() && includeSuspendLambda)
         return SuspendFunctionKind.NEEDS_STATE_MACHINE            // Suspend lambdas always need coroutine implementation.
 
     var numberOfSuspendCalls = 0

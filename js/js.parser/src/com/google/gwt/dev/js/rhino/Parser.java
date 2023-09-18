@@ -901,6 +901,9 @@ public class Parser {
         CodePosition position = ts.tokenPosition;
 
         switch (tt) {
+            case TokenStream.YIELD:
+                return nf.createUnary(TokenStream.YIELD, ts.getOp(), unaryExpr(ts), position);
+
             case TokenStream.UNARYOP:
                 return nf.createUnary(TokenStream.UNARYOP, ts.getOp(), unaryExpr(ts), position);
 

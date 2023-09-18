@@ -51,3 +51,6 @@ internal annotation class JsFun(val code: String)
  */
 @Target(AnnotationTarget.CLASS)
 internal annotation class JsImplicitExport
+
+@Target(AnnotationTarget.FUNCTION)
+internal annotation class JsGenerator

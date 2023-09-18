@@ -6,68 +6,98 @@
 package kotlin.coroutines
 
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.internal.InlineOnly
 
-private val GeneratorFunction = js("(function*(){}).constructor.prototype")
+internal val dummyGenerator = js("""
+    function*(suspended, c){
+      var a = c();
+      if (a === suspended) {
+        a = yield a;
+      }
+      return a;
+    }
+""")
 
-external interface JsIterationStep<T> {
+internal val GeneratorFunction = dummyGenerator.constructor.prototype
+
+internal fun isGeneratorSuspendStep(value: dynamic): Boolean {
+    return value != null && value.constructor === GeneratorFunction
+}
+
+internal external interface JsIterationStep<T> {
     val done: Boolean
     val value: T
 }
 
-external interface JsIterator<T> {
-    fun next(value: Any?): JsIterationStep<T>
+internal external interface JsIterator<T> {
+    fun next(value: Any? = definedExternally): JsIterationStep<T>
 
     @JsName("throw")
-    fun throws(exception: Throwable): JsIterationStep<T>
+    fun throws(exception: Throwable = definedExternally): JsIterationStep<T>
 }
 
-internal class GeneratorCoroutineImpl(
-    generator: (Continuation<Any?>) -> JsIterator<Any?>,
-    private val resultContinuation: Continuation<Any?>?
-) : InterceptedCoroutine(), Continuation<Any?> {
+internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>?) : InterceptedCoroutine(), Continuation<Any?> {
+    private val jsIterators = arrayOf<JsIterator<Any?>>()
     private val _context = resultContinuation?.context
 
-    private val instantiatedGenerators = arrayOf(generator(this))
+    var isRunning: Boolean = false
+    private val unknown = js("Symbol()").unsafeCast<Result<Any?>>()
+    private var savedResult: Result<Any?> = unknown
 
     public override val context: CoroutineContext get() = _context!!
 
-    @Suppress("NOTHING_TO_INLINE")
-    private inline fun dropLastGenerator() = instantiatedGenerators.asDynamic().pop();
+    public fun dropLastIterator() = jsIterators.asDynamic().pop();
+    public fun addNewIterator(iterator: JsIterator<Any?>) = jsIterators.asDynamic().push(iterator);
 
-    @Suppress("NOTHING_TO_INLINE")
-    private inline fun addNewGenerator(generator: JsIterator<Any?>) = instantiatedGenerators.asDynamic().push(generator);
+    @InlineOnly
+    public inline fun shouldResumeImmediately(): Boolean = fastNotEquals(unknown, savedResult)
 
-    private inline fun Any?.asJsIterator(block: JsIterator<Any?>.() -> Unit) {
-        val value = asDynamic()
-        if (value?.constructor === GeneratorFunction) {
-            value.unsafeCast<JsIterator<Any?>>().block()
-        }
-    }
+    @InlineOnly
+    @Suppress("UNUSED_PARAMETER")
+    private inline fun fastEquals(a: Result<Any?>, b: Result<Any?>): Boolean = js("a === b")
+
+    @InlineOnly
+    @Suppress("UNUSED_PARAMETER")
+    private inline fun fastNotEquals(a: Result<Any?>, b: Result<Any?>): Boolean = js("a !== b")
 
     override fun resumeWith(result: Result<Any?>) {
+        if (fastEquals(unknown, savedResult)) savedResult = result
+        if (isRunning) return
+
+        var currentResult: Any? = savedResult.getOrNull()
+        var currentException: Throwable? = savedResult.exceptionOrNull()
+
+        savedResult = unknown
+
         var current = this
-        var currentResult: Any? = result.getOrNull()
-        var currentException: Throwable? = result.exceptionOrNull()
+        val jsIterators = current.jsIterators
 
         while (true) {
-            while (current.instantiatedGenerators.size > 0) {
-                val generator = current.instantiatedGenerators[current.instantiatedGenerators.size - 1]
+            while (jsIterators.size > 0) {
+                val jsIterator = current.jsIterators[current.jsIterators.size - 1]
                 val exception = currentException.also { currentException = null }
+
+                isRunning = true
+
                 try {
                     val step = when (exception) {
-                        null -> generator.next(currentResult)
-                        else -> generator.throws(exception)
+                        null -> jsIterator.next(currentResult)
+                        else -> jsIterator.throws(exception)
                     }
 
                     currentResult = step.value
 
-                    if (step.done) current.dropLastGenerator()
-                    if (currentResult === COROUTINE_SUSPENDED) return
-
-                    currentResult.asJsIterator { current.addNewGenerator(this) }
+                    if (step.done) current.dropLastIterator()
+                    if (fastNotEquals(unknown, savedResult)) {
+                        currentResult = savedResult.getOrNull()
+                        currentException = savedResult.exceptionOrNull()
+                        savedResult = unknown
+                    } else if (currentResult === COROUTINE_SUSPENDED) return
                 } catch (e: Throwable) {
                     currentException = e
-                    current.dropLastGenerator()
+                    current.dropLastIterator()
+                } finally {
+                    isRunning = false
                 }
             }
 

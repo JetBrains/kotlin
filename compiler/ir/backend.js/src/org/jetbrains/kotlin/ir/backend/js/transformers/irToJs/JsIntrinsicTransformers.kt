@@ -274,38 +274,6 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(intrinsics.jsInvokeSuspendSuperTypeWithReceiver, suspendInvokeTransform)
             add(intrinsics.jsInvokeSuspendSuperTypeWithReceiverAndParam, suspendInvokeTransform)
 
-            if (backendContext.compileSuspendAsJsGenerator) {
-                val createGeneratorWrapper = { generator: JsExpression, arguments: List<JsExpression> ->
-                    val continuation = JsName("c", true)
-                    val body = JsBlock().apply { statements += JsReturn(JsInvocation(generator, arguments.plus(continuation.makeRef()))) }
-                    JsFunction(emptyScope, body, "arguments binding").apply {
-                        parameters.add(JsParameter(continuation))
-                    }
-                }
-
-                val createCoroutineUnintercepted = { call: IrCall, context: JsGenerationContext ->
-                    val arguments = translateCallArguments(call, context)
-                    val suspendFunction = call.extensionReceiver?.accept(IrElementToJsExpressionTransformer(), context)!!
-                    val createCoroutineFromGeneratorFunction = backendContext.intrinsics.createCoroutineFromGeneratorFunction.owner
-                    val completion = arguments.last()
-                    val wrapper = when {
-                        arguments.size == 1 -> suspendFunction
-                        else -> createGeneratorWrapper(suspendFunction, arguments.dropLast(1))
-                    }
-
-                    JsInvocation(context.getNameForStaticFunction(createCoroutineFromGeneratorFunction).makeRef(), wrapper, completion)
-                }
-
-                val startCoroutineUninterceptedOrReturn = { call: IrCall, context: JsGenerationContext ->
-                    val generatorCoroutineImpl = backendContext.intrinsics.generatorCoroutineImplClassSymbol.owner
-                    val resumeWithMethod = context.getNameForMemberFunction(generatorCoroutineImpl.resumeWith!!)
-                    JsInvocation(JsNameRef(resumeWithMethod, createCoroutineUnintercepted(call, context)))
-                }
-
-                backendContext.intrinsics.createCoroutineUnintercepted.forEach { add(it, createCoroutineUnintercepted) }
-                backendContext.intrinsics.startCoroutineUninterceptedOrReturn.forEach { add(it, startCoroutineUninterceptedOrReturn) }
-            }
-
             add(intrinsics.jsArguments) { _, _ -> Namer.ARGUMENTS }
 
             add(intrinsics.jsNewAnonymousClass) { call, context ->

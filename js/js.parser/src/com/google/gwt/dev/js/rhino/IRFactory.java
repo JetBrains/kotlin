@@ -181,6 +181,19 @@ public class IRFactory {
     }
 
     /**
+     * Yield (possibly with expression)
+     */
+    public Node createYield(Node expression, CodePosition location) {
+        Node result = new Node(TokenStream.YIELD, location);
+        if (expression == null) {
+            return result;
+        } else {
+            result.addChildToBack(expression);
+            return result;
+        }
+    }
+
+    /**
      * debugger
      */
     public Node createDebugger(CodePosition location) {

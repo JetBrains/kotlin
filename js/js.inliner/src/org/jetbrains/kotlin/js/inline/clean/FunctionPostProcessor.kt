@@ -32,7 +32,7 @@ class FunctionPostProcessor(val root: JsFunction) {
         { RedundantStatementElimination(root).apply() },
         { CoroutineStateElimination(root.body).apply() },
         { BoxingUnboxingElimination(root.body).apply() },
-        { MoveTemporaryVariableDeclarationToAssignment(root.body).apply() }
+        { MoveTemporaryVariableDeclarationToAssignment(root.body).apply() },
     )
     // TODO: reduce to A || B, A && B if possible
 

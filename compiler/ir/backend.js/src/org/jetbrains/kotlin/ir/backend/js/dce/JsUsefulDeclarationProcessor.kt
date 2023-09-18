@@ -30,11 +30,7 @@ internal class JsUsefulDeclarationProcessor(
 
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
         override fun visitCall(expression: IrCall, data: IrDeclaration) {
-            if (expression.symbol in context.intrinsicInlineFunctions) {
-                super.visitElement(expression, data)
-            } else {
-                super.visitCall(expression, data)
-            }
+            super.visitCall(expression, data)
 
             if (expression.usePrototype(data)) {
                 context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(expression.symbol.owner, "access to super type")
@@ -121,10 +117,6 @@ internal class JsUsefulDeclarationProcessor(
                 context.intrinsics.jsInvokeSuspendSuperTypeWithReceiverAndParam -> {
                     invokeFunForLambda(expression)
                         .enqueue(data, "intrinsic: suspendSuperType")
-                }
-
-                in context.intrinsics.createCoroutineUnintercepted, in context.intrinsics.startCoroutineUninterceptedOrReturn -> {
-                    context.intrinsics.createCoroutineFromGeneratorFunction.owner.enqueue(data, "intrinsic: coroutine creation")
                 }
             }
         }

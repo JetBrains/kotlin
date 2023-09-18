@@ -129,7 +129,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
             }
 
         originalFun.annotations = irrelevantAnnotations
-        defaultFunStub.annotations = defaultFunStub.annotations memoryOptimizedPlus exportAnnotations
+        defaultFunStub.annotations = exportAnnotations
         originalFun.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
 
         return listOf(originalFun, defaultFunStub)

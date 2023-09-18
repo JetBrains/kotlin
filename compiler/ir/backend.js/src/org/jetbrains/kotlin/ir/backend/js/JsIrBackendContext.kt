@@ -85,16 +85,6 @@ class JsIrBackendContext(
     val keeper: Keeper =
         Keeper(keep)
 
-    val intrinsicInlineFunctions by lazy2 {
-        buildSet {
-            add(intrinsics.enumEntriesIntrinsic)
-            if (compileSuspendAsJsGenerator) {
-                addAll(intrinsics.createCoroutineUnintercepted)
-                addAll(intrinsics.startCoroutineUninterceptedOrReturn)
-            }
-        }
-    }
-
     val fieldDataCache = WeakHashMap<IrClass, Map<IrField, String>>()
 
     override val builtIns = module.builtIns

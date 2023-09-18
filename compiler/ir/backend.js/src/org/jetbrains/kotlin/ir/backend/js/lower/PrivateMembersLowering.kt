@@ -60,6 +60,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
             visibility = newVisibility
         }.also {
             it.parent = function.parent
+            it.annotations = function.annotations
         }
 
         staticFunction.typeParameters =

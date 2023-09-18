@@ -184,14 +184,17 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsInvokeSuspendSuperTypeWithReceiverAndParam =
         getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendSuperTypeWithReceiverAndParam")
 
-    val generatorCoroutineImplClassSymbol = getInternalClassWithoutPackage("kotlin.coroutines.GeneratorCoroutineImpl")
-    val createCoroutineFromGeneratorFunction =
-        getInternalWithoutPackage("kotlin.coroutines.intrinsics.createCoroutineFromGeneratorFunction")
-
     val createCoroutineUnintercepted =
         getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.createCoroutineUnintercepted")
     val startCoroutineUninterceptedOrReturn =
         getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturn")
+
+    val createCoroutineUninterceptedGeneratorVersion =
+        getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.createCoroutineUninterceptedGeneratorVersion")
+    val startCoroutineUninterceptedOrReturnGeneratorVersion =
+        getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturnGeneratorVersion")
+
+    val suspendOrReturnFunctionSymbol = getInternalWithoutPackage("kotlin.coroutines.intrinsics.suspendOrReturn")
 
     val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")
     val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
@@ -336,6 +339,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("DoNotIntrinsify"))
     val jsFunAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsFun"))
     val jsNameAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsName"))
+    val jsGeneratorAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsGenerator"))
 
     val jsExportAnnotationSymbol by lazy(LazyThreadSafetyMode.NONE) {
         context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsExport"))

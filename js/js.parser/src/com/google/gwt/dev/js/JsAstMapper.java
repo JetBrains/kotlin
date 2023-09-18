@@ -200,6 +200,9 @@ public class JsAstMapper {
             case TokenStream.CONTINUE:
                 return mapContinue(node);
 
+            case TokenStream.YIELD:
+                return mapYield(node);
+
             case TokenStream.OBJLIT:
                 return mapObjectLit(node);
 
@@ -386,6 +389,10 @@ public class JsAstMapper {
 
     private JsContinue mapContinue(Node contNode) {
         return new JsContinue(getTargetLabel(contNode));
+    }
+
+    private JsYield mapYield(Node yieldNode) {
+        return new JsYield(mapExpression(yieldNode.getFirstChild()));
     }
 
     private JsStatement mapDebuggerStatement(Node node) {
