@@ -5,24 +5,19 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
-import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.formver.embeddings.LambdaExp
 import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.name.Name
 
 sealed interface SubstitutionItem {
-    val name: MangledName?
-    fun lambdaBody(): FirBlock? = null
-    fun lambdaArgs(): List<Name>? = null
+    val name: MangledName? get() = null
+    val lambda: LambdaExp? get() = null
 }
 
 data class SubstitutionName(override val name: MangledName) : SubstitutionItem
 
-data class SubstitutionLambda(val body: FirBlock, val args: List<Name>, val scopedNames: Map<Name, Int>) : SubstitutionItem {
-    override val name = null
-    override fun lambdaBody(): FirBlock = body
-    override fun lambdaArgs(): List<Name> = args
-}
+data class SubstitutionLambda(override val lambda: LambdaExp) : SubstitutionItem
 
 class InlineMethodConverter(
     private val programCtx: ProgramConversionContext,

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.InvokeFunctionObjectMethod
 import org.jetbrains.kotlin.formver.embeddings.callables.SpecialKotlinFunctionImplementation
 import org.jetbrains.kotlin.formver.embeddings.callables.SpecialKotlinFunctions
+import org.jetbrains.kotlin.formver.embeddings.callables.insertCall
 import org.jetbrains.kotlin.formver.functionCallArguments
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
@@ -167,14 +168,14 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         val symbol = functionCall.calleeCallableSymbol
         val id = symbol.callableId
         val specialFunc = SpecialKotlinFunctions.byCallableId[id]
-        val argsFir = functionCall.functionCallArguments
+        val args = functionCall.functionCallArguments.map(data::convert)
         if (specialFunc != null) {
             if (specialFunc !is SpecialKotlinFunctionImplementation) return UnitLit
-            return specialFunc.convertCall(argsFir.map(data::convert), data)
+            return specialFunc.convertCall(args, data)
         }
 
         val callee = data.embedFunction(symbol as FirFunctionSymbol<*>)
-        return callee.insertFirCallImpl(argsFir, data)
+        return callee.insertCall(args, data)
     }
 
     override fun visitImplicitInvokeCall(
@@ -182,28 +183,21 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         data: StmtConversionContext<ResultTrackingContext>,
     ): ExpEmbedding {
         val retType = implicitInvokeCall.calleeCallableSymbol.resolvedReturnType
-        val lambda = data.getLambdaOrNull(implicitInvokeCall.calleeReference.name)
-        if (lambda != null) {
-            return data.withResult(data.embedType(retType)) {
-                // NOTE: it is not needed to make distinction between implicit or explicit parameters
-                val lambdaArgs = lambda.lambdaArgs()
-                lambdaArgs.forEach { data.addScopedName(it) }
-                val callArgs = data.getFunctionCallSubstitutionItems(implicitInvokeCall.argumentList.arguments)
-                val subs = lambdaArgs.zip(callArgs).toMap()
-                val lambdaCtx = this.newBlock().withLambdaContext(this.signature, this.resultCtx.resultVar.name, subs, lambda.scopedNames)
-                lambdaCtx.convert(lambda.lambdaBody())
-                // NOTE: It is necessary to drop the last stmt because is a wrong goto
-                val sqn = lambdaCtx.block.copy(stmts = lambdaCtx.block.stmts.dropLast(1))
-                // NOTE: Putting the block inside the then branch of an if-true statement is a little hack to make Viper respect the scoping
-                data.addStatement(Stmt.If(Exp.BoolLit(true), sqn, Stmt.Seqn(listOf(), listOf())))
+        return when (val subItem = data.getLambdaOrNull(implicitInvokeCall.calleeReference.name)) {
+            null -> {
+                val args = implicitInvokeCall.functionCallArguments.map(data::convert)
+                data.withResult(data.embedType(retType)) {
+                    // NOTE: Since it is only relevant to update the number of times that a function object is called,
+                    // the function call invocation is intentionally not assigned to the return variable
+                    data.addStatement(InvokeFunctionObjectMethod.toMethodCall(args.take(1).toViper(), listOf()))
+                }
             }
-        }
-
-        val args = implicitInvokeCall.functionCallArguments.map(data::convert)
-        return data.withResult(data.embedType(retType)) {
-            // NOTE: Since it is only relevant to update the number of times that a function object is called,
-            // the function call invocation is intentionally not assigned to the return variable
-            data.addStatement(InvokeFunctionObjectMethod.toMethodCall(args.take(1).toViper(), listOf()))
+            else -> {
+                // The lambda is already the receiver, so we do not need to convert it.
+                // TODO: do this more uniformly: convert the receiver, see it is a lambda, use insertCall on it.
+                val args = implicitInvokeCall.argumentList.arguments.map(data::convert)
+                subItem.lambda.insertCall(args, data)
+            }
         }
     }
 
@@ -312,6 +306,15 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
             FirOperation.NOT_IS -> Not(Is(argument, conversionType))
             else -> handleUnimplementedElement("Can't embed type operator ${typeOperatorCall.operation}.", data)
         }
+    }
+
+    override fun visitLambdaArgumentExpression(
+        lambdaArgumentExpression: FirLambdaArgumentExpression,
+        data: StmtConversionContext<ResultTrackingContext>,
+    ): ExpEmbedding {
+        // TODO: check whether there are other cases.
+        val function = (lambdaArgumentExpression.expression as FirAnonymousFunctionExpression).anonymousFunction
+        return LambdaExp(data.embedFunctionSignature(function.symbol), function, data.getScopedNames())
     }
 
     private fun handleUnimplementedElement(msg: String, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =

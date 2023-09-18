@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -88,19 +90,16 @@ fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedSetter(symbol:
     }
 
 fun StmtConversionContext<ResultTrackingContext>.getFunctionCallSubstitutionItems(
-    args: List<FirExpression>,
+    args: List<ExpEmbedding>,
 ): List<SubstitutionItem> = args.map { exp ->
     when (exp) {
-        is FirLambdaArgumentExpression -> {
-            val anonExpr = exp.expression
-            if (anonExpr is FirAnonymousFunctionExpression) {
-                val lambdaBody = anonExpr.anonymousFunction.body!!
-                val lambdaArs = anonExpr.anonymousFunction.valueParameters.map { it.name }
-                SubstitutionLambda(lambdaBody, lambdaArs, getScopedNames())
-            } else {
-                TODO("are there any other cases?")
+        is VariableEmbedding -> SubstitutionName(exp.name)
+        is LambdaExp -> SubstitutionLambda(exp)
+        else -> {
+            val result = withResult(exp.type) {
+                resultCtx.resultVar.setValue(exp, this)
             }
+            SubstitutionName(result.name)
         }
-        else -> SubstitutionName(convertAndStore(exp).name)
     }
 }

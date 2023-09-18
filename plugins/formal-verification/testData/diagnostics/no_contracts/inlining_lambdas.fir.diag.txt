@@ -1,21 +1,4 @@
-/inlining_lambdas.kt:(11,17): info: Generated Viper text for invoke:
-method global$fun_invoke$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f: Ref)
-  returns (ret: Int)
-  requires acc(local$f.special$function_object_call_counter, write)
-  requires special$duplicable(local$f)
-  ensures acc(local$f.special$function_object_call_counter, write)
-  ensures old(local$f.special$function_object_call_counter) <=
-    local$f.special$function_object_call_counter
-{
-  var anonymous$1: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  special$invoke_function_object(local$f)
-  ret := anonymous$1
-  goto label$ret
-  label label$ret
-}
-
-/inlining_lambdas.kt:(65,77): info: Generated Viper text for explicit_arg:
+/inlining_lambdas.kt:(136,148): info: Generated Viper text for explicit_arg:
 method global$fun_explicit_arg$fun_take$$return$T_Int() returns (ret: Int)
 {
   var anonymous$1: Int
@@ -35,7 +18,7 @@ method global$fun_explicit_arg$fun_take$$return$T_Int() returns (ret: Int)
   label label$ret
 }
 
-/inlining_lambdas.kt:(127,139): info: Generated Viper text for implicit_arg:
+/inlining_lambdas.kt:(198,210): info: Generated Viper text for implicit_arg:
 method global$fun_implicit_arg$fun_take$$return$T_Int() returns (ret: Int)
 {
   var anonymous$1: Int
@@ -55,7 +38,7 @@ method global$fun_implicit_arg$fun_take$$return$T_Int() returns (ret: Int)
   label label$ret
 }
 
-/inlining_lambdas.kt:(185,194): info: Generated Viper text for lambda_if:
+/inlining_lambdas.kt:(256,265): info: Generated Viper text for lambda_if:
 method global$fun_lambda_if$fun_take$$return$T_Int() returns (ret: Int)
 {
   var anonymous$1: Int
@@ -80,7 +63,7 @@ method global$fun_lambda_if$fun_take$$return$T_Int() returns (ret: Int)
   label label$ret
 }
 
-/inlining_lambdas.kt:(325,346): info: Generated Viper text for return_value_not_used:
+/inlining_lambdas.kt:(396,417): info: Generated Viper text for return_value_not_used:
 method global$fun_return_value_not_used$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
@@ -99,7 +82,7 @@ method global$fun_return_value_not_used$fun_take$$return$T_Unit()
   label label$ret
 }
 
-/inlining_lambdas.kt:(382,391): info: Generated Viper text for shadowing:
+/inlining_lambdas.kt:(453,462): info: Generated Viper text for shadowing:
 method global$fun_shadowing$fun_take$$return$T_Int() returns (ret: Int)
 {
   var local1$x: Int
@@ -125,7 +108,7 @@ method global$fun_shadowing$fun_take$$return$T_Int() returns (ret: Int)
   label label$ret
 }
 
-/inlining_lambdas.kt:(537,540): info: Generated Viper text for foo:
+/inlining_lambdas.kt:(608,611): info: Generated Viper text for foo:
 method global$fun_foo$fun_take$$return$T_Int() returns (ret: Int)
 {
   var local1$x: Int
@@ -147,7 +130,7 @@ method global$fun_foo$fun_take$$return$T_Int() returns (ret: Int)
   label label$ret
 }
 
-/inlining_lambdas.kt:(604,610): info: Generated Viper text for nested:
+/inlining_lambdas.kt:(675,681): info: Generated Viper text for nested:
 method global$fun_nested$fun_take$$return$T_Int() returns (ret: Int)
 {
   var local1$x: Int

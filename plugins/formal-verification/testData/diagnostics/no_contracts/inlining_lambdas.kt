@@ -1,4 +1,7 @@
-inline fun <!VIPER_TEXT!>invoke<!>(f: (Int) -> Int): Int {
+import org.jetbrains.kotlin.formver.plugin.NeverConvert
+
+@NeverConvert
+inline fun invoke(f: (Int) -> Int): Int {
     return f(0)
 }
 

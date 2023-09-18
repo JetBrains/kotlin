@@ -75,22 +75,22 @@ method global$fun_fakePrint$fun_take$T_Boolean$return$T_Unit(local$truth: Bool)
   returns (ret: dom$Unit)
 
 
-method global$fun_fakePrint$fun_take$T_class_global$class_Foo$return$T_Unit(local$f: Ref)
-  returns (ret: dom$Unit)
-
-
 method class_scope_global$class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
 
 
-method global$fun_fakePrint$fun_take$T_class_global$class_Bar$return$T_Unit(local$b: Ref)
+method global$fun_fakePrint$fun_take$T_class_global$class_Foo$return$T_Unit(local$f: Ref)
   returns (ret: dom$Unit)
 
 
 method class_scope_global$class_Bar$constructor$fun_take$$return$T_class_global$class_Bar()
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
+
+
+method global$fun_fakePrint$fun_take$T_class_global$class_Bar$return$T_Unit(local$b: Ref)
+  returns (ret: dom$Unit)
 
 
 /function_overloading.kt:(318,346): info: Generated Viper text for testClassFunctionOverloading:
@@ -119,16 +119,17 @@ method class_scope_global$class_Bar$constructor$fun_take$$return$T_class_global$
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
 
 
-method class_scope_global$class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Foo$return$T_Unit(this: Ref,
-  local$f: Ref)
-  returns (ret: dom$Unit)
-
-
 method class_scope_global$class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
 
 
+method class_scope_global$class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Foo$return$T_Unit(this: Ref,
+  local$f: Ref)
+  returns (ret: dom$Unit)
+
+
 method class_scope_global$class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Bar$return$T_Unit(this: Ref,
   local$b: Ref)
   returns (ret: dom$Unit)
+

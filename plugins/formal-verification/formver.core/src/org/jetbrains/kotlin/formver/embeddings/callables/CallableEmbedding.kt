@@ -5,18 +5,12 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
 
 interface CallableEmbedding : CallableSignature {
     fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding
-
-    // Some callables can *only* be called via the FIR.
-    // TODO: Remove this method once everything implements `insertCallImpl` correctly.
-    fun insertFirCallImpl(firArgs: List<FirExpression>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
-        insertCall(firArgs.map { ctx.convert(it) }, ctx)
 }
 
 fun CallableEmbedding.insertCall(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =

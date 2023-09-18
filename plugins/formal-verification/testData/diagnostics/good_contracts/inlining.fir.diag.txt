@@ -53,6 +53,7 @@ method global$fun_call_invoke_with_int$fun_take$fun_take$T_Int$return$T_Int$retu
   var local1$z: Int
   var anonymous$1: Int
   var anonymous$4: Int
+  var anonymous$5: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   if (true) {
     var anonymous$2: Int
@@ -66,18 +67,17 @@ method global$fun_call_invoke_with_int$fun_take$fun_take$T_Int$return$T_Int$retu
     label inline_label$1$ret
   }
   local1$z := anonymous$1
+  special$invoke_function_object(local$g)
   if (true) {
-    var anonymous$5: Int
     var local2$x: Int
     var anonymous$6: Int
+    local2$x := anonymous$4 + anonymous$4
     special$invoke_function_object(local$g)
-    local2$x := anonymous$5 + anonymous$5
-    special$invoke_function_object(local$g)
-    anonymous$4 := anonymous$6
+    anonymous$5 := anonymous$6
     goto inline_label$1$ret
     label inline_label$1$ret
   }
-  ret := anonymous$4
+  ret := anonymous$5
   goto label$ret
   label label$ret
 }

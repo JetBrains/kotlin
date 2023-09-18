@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.formver.embeddings.FieldEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionEmbedding
+import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
 
 interface ProgramConversionContext {
     val config: PluginConfiguration
     val errorCollector: ErrorCollector
 
     fun embedFunction(symbol: FirFunctionSymbol<*>): FunctionEmbedding
+    fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature
     fun embedType(type: ConeKotlinType): TypeEmbedding
     fun embedType(symbol: FirFunctionSymbol<*>): TypeEmbedding
     fun embedType(exp: FirExpression): TypeEmbedding = embedType(exp.resolvedType)

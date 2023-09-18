@@ -81,14 +81,14 @@ method global$fun_testSetterCascade$fun_take$$return$T_Unit()
   label label$ret
 }
 
-method class_scope_global$class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(local$b: Ref)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
-
-
 method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
+
+
+method class_scope_global$class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(local$b: Ref)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
 
 
 /classes_setters.kt:(641,665): info: Generated Viper text for testSetterNoBackingField:
@@ -124,13 +124,13 @@ field class_scope_global$class_Bar$member_a: Int
 method global$fun_testSetterLambda$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var anonymous$1: dom$Unit
+  var anonymous$1: Ref
+  var anonymous$2: dom$Unit
+  anonymous$1 := class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(0)
   if (true) {
-    var anonymous$2: Ref
-    anonymous$2 := class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(0)
-    inhale acc(anonymous$2.class_scope_global$class_Bar$member_a, write)
-    anonymous$2.class_scope_global$class_Bar$member_a := 42
-    exhale acc(anonymous$2.class_scope_global$class_Bar$member_a, write)
+    inhale acc(anonymous$1.class_scope_global$class_Bar$member_a, write)
+    anonymous$1.class_scope_global$class_Bar$member_a := 42
+    exhale acc(anonymous$1.class_scope_global$class_Bar$member_a, write)
     label inline_label$1$ret
   }
   label label$ret
@@ -139,3 +139,4 @@ method global$fun_testSetterLambda$fun_take$$return$T_Unit()
 method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
+

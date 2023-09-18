@@ -122,7 +122,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     private var nextWhileIndex = 0
     override fun newWhileIndex() = ++nextWhileIndex
 
-    private fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature {
+    override fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature {
         val retType = symbol.resolvedReturnTypeRef.type
         val receiverType = symbol.receiverType
         return object : FunctionSignature {
