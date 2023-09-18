@@ -38,7 +38,6 @@ private object NodeJsUtils {
 
     fun useNodeJsPlugin(project: Project) {
         nodeJsPlugin = NodeJsRootPlugin.apply(project.rootProject)
-        nodeJsPlugin.nodeVersion = project.nodejsVersion
     }
 }
 

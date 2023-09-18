@@ -1,5 +1,6 @@
 import java.net.URI
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 import org.spdx.sbom.gradle.SpdxSbomExtension
 
@@ -54,6 +55,24 @@ tasks.register("resolveDependencies") {
                 "google.d8:v8:mac-arm64-rel-$version@zip",
                 "google.d8:v8:mac64-rel-$version@zip"
             )
+        }
+
+        rootProject.extensions.findByType<NodeJsRootExtension>()?.run {
+            project.resolveDependencies(
+                "org.nodejs:node:$nodeVersion:linux-x64@tar.gz",
+                "org.nodejs:node:$nodeVersion:win-x64@zip",
+                "org.nodejs:node:$nodeVersion:darwin-x64@tar.gz",
+                "org.nodejs:node:$nodeVersion:darwin-arm64@tar.gz"
+            ) {
+                ivy {
+                    url = URI(nodeDownloadBaseUrl)
+                    patternLayout {
+                        artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                    }
+                    metadataSources { artifact() }
+                    content { includeModule("org.nodejs", "node") }
+                }
+            }
         }
 
         rootProject.extensions.findByType<YarnRootExtension>()?.run {
