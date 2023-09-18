@@ -5,3 +5,4 @@ modules = NewsstandKit
 
 compilerOpts = -framework NewsstandKit
 linkerOpts = -framework NewsstandKit
+# Removed from ipad
