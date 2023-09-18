@@ -1252,6 +1252,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("suspendConflictingOverloads.kt")
+        public void testSuspendConflictingOverloads() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/suspendConflictingOverloads.kt");
+        }
+
+        @Test
         @TestMetadata("suspendFunAndPrivateJava.kt")
         public void testSuspendFunAndPrivateJava() throws Exception {
             runTest("compiler/testData/diagnostics/tests/suspendFunAndPrivateJava.kt");
