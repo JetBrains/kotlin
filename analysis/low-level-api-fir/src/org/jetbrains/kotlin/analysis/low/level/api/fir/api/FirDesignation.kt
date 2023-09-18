@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.nullableJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClass
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClassId
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -26,9 +24,11 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirDesignationWithFile(
     path: List<FirRegularClass>,
@@ -105,7 +105,7 @@ private fun collectDesignationPath(target: FirElementWithResolveState): List<Fir
         }
 
         is FirAnonymousInitializer -> {
-            val containingClassId = target.containingClass().symbol.classId
+            val containingClassId = target.containingClassId()
             if (containingClassId.isLocal) return null
             return collectDesignationPathWithContainingClass(target, containingClassId)
         }

@@ -15,15 +15,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirLookupTagEntry
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
@@ -174,26 +172,16 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
     return candidate?.takeIf { it.psi == this }
 }
 
-fun FirAnonymousInitializer.containingClass(): FirRegularClass {
+fun FirAnonymousInitializer.containingClassId(): ClassId {
     val dispatchReceiverType = this.dispatchReceiverType
     checkWithAttachment(
         condition = dispatchReceiverType != null,
         message = { "dispatchReceiverType for ${FirAnonymousInitializer::class.simpleName} modifier cannot be null" },
     ) {
-        withFirEntry("initializer", this@containingClass)
+        withFirEntry("initializer", this@containingClassId)
     }
 
-    val lookupTag = dispatchReceiverType.lookupTag
-    val dispatchReceiverSymbol = lookupTag.toSymbol(llFirSession)
-    checkWithAttachment(
-        condition = dispatchReceiverSymbol != null,
-        message = { "symbol for ${FirAnonymousInitializer::class.simpleName} cannot be null" },
-    ) {
-        withFirEntry("initializer", this@containingClass)
-        withFirLookupTagEntry("tag", lookupTag)
-    }
-
-    return dispatchReceiverSymbol.fir as FirRegularClass
+    return dispatchReceiverType.lookupTag.classId
 }
 
 val ORIGINAL_DECLARATION_KEY = com.intellij.openapi.util.Key<KtDeclaration>("ORIGINAL_DECLARATION_KEY")

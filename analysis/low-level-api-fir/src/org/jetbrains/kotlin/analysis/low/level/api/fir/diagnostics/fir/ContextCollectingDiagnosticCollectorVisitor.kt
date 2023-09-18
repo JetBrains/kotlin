@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.ContextByDesignationCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClass
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClassId
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -65,7 +64,7 @@ internal object PersistenceContextCollector {
             is FirClassLikeDeclaration -> declaration.symbol.classId.isLocal
             is FirCallableDeclaration -> declaration.symbol.callableId.isLocal
             is FirDanglingModifierList -> declaration.containingClass()?.classId?.isLocal == true
-            is FirAnonymousInitializer -> declaration.containingClass().classId.isLocal
+            is FirAnonymousInitializer -> declaration.containingClassId().isLocal
             is FirScript, is FirCodeFragment -> false
             else -> errorWithAttachment("Unsupported declaration ${declaration::class}") {
                 withFirEntry("declaration", declaration)

@@ -514,6 +514,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("initializerConflict.kt")
+        public void testInitializerConflict() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/declarations/initializerConflict.kt");
+        }
+
+        @Test
         @TestMetadata("kt60387.kt")
         public void testKt60387() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/declarations/kt60387.kt");
