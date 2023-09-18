@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // DIAGNOSTICS: -UNRESOLVED_REFERENCE
 // MODULE: m1-common
 // FILE: common.kt

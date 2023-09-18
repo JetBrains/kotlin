@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
-import org.jetbrains.kotlin.mpp.SourceElementMarker
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -388,7 +387,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         override val annotationSymbol: FirAnnotation = annotation
 
         override val classId: ClassId?
-            get() = annotation.toAnnotationClassId(actualSession)
+            get() = getAnnotationConeType()?.lookupTag?.classId
 
         override val isRetentionSource: Boolean
             get() = getAnnotationClass()?.getRetention(actualSession) == AnnotationRetention.SOURCE
@@ -397,7 +396,15 @@ class FirExpectActualMatchingContextImpl private constructor(
             get() = getAnnotationClass()?.hasAnnotation(OptInNames.REQUIRES_OPT_IN_CLASS_ID, actualSession) ?: false
 
         private fun getAnnotationClass(): FirRegularClassSymbol? =
-            annotation.annotationTypeRef.coneType.toRegularClassSymbol(actualSession)
+            getAnnotationConeType()?.toRegularClassSymbol(actualSession)
+
+        private fun getAnnotationConeType(): ConeClassLikeType? {
+            val coneType = annotation.toAnnotationClassLikeType(actualSession)
+            if (coneType is ConeErrorType) {
+                return null
+            }
+            return coneType
+        }
     }
 
     override val DeclarationSymbolMarker.hasSourceAnnotationsErased: Boolean
