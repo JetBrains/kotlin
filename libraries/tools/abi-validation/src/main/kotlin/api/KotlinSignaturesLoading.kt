@@ -244,7 +244,7 @@ private fun ClassBinarySignature.isInPackages(packageNames: Collection<String>):
     packageNames.any { packageName -> name.startsWith(packageName) }
 
 private fun ClassBinarySignature.isInClasses(classNames: Collection<String>): Boolean =
-    classNames.any { className -> className.startsWith(name) }
+    classNames.any { className -> className.startsWith("$name/") }
 
 private fun JarFile.classEntries() = Sequence { entries().iterator() }.filter {
     !it.isDirectory && it.name.endsWith(".class") && !it.name.startsWith("META-INF/")
