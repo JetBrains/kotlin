@@ -93,19 +93,19 @@ method pkg$$global$return_value_not_used$() returns (ret: dom$Unit)
 /inlining_lambdas.kt:(382,391): info: Generated Viper text for shadowing:
 method pkg$$global$shadowing$() returns (ret: Int)
 {
-  var local$x: Int
-  var local$y: Int
+  var local$1$x: Int
+  var local$1$y: Int
   var anonymous$1: Int
-  local$x := 1
-  local$y := 1
+  local$1$x := 1
+  local$1$y := 1
   if (true) {
     var anonymous$2: Int
     var anonymous$3: Int
-    var inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$y: Int
+    var inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$3$y: Int
     anonymous$3 := 0
-    inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$y := 0
+    inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$3$y := 0
     anonymous$2 := anonymous$3 +
-      inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$y
+      inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$3$y
     anonymous$1 := anonymous$2
     goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
     label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
@@ -118,9 +118,9 @@ method pkg$$global$shadowing$() returns (ret: Int)
 /inlining_lambdas.kt:(537,540): info: Generated Viper text for foo:
 method pkg$$global$foo$() returns (ret: Int)
 {
-  var local$x: Int
+  var local$1$x: Int
   var anonymous$1: Int
-  local$x := 2
+  local$1$x := 2
   if (true) {
     var anonymous$2: Int
     var anonymous$3: Int
@@ -138,13 +138,13 @@ method pkg$$global$foo$() returns (ret: Int)
 /inlining_lambdas.kt:(604,610): info: Generated Viper text for nested:
 method pkg$$global$nested$() returns (ret: Int)
 {
-  var local$x: Int
+  var local$1$x: Int
   var anonymous$1: Int
-  local$x := 2
+  local$1$x := 2
   if (true) {
-    var inline$pkg$$global$foo$$local$x: Int
+    var inline$pkg$$global$foo$$local$2$x: Int
     var anonymous$2: Int
-    inline$pkg$$global$foo$$local$x := 2
+    inline$pkg$$global$foo$$local$2$x := 2
     if (true) {
       var anonymous$3: Int
       var anonymous$4: Int

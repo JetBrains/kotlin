@@ -32,11 +32,11 @@ class InlineNameMangler(
     val substitutionParams: Map<Name, SubstitutionItem>,
 ) :
     NameMangler {
-    override fun mangleParameterName(parameter: FirValueParameterSymbol): MangledName =
+    override fun mangleParameterName(parameter: FirValueParameterSymbol, scopeDepth: Int): MangledName =
         substitutionParams[parameter.name]?.name ?: throw Exception("Unnamed parameter used in a way that requires a name.")
 
-    override fun mangleLocalPropertyName(property: FirPropertySymbol): MangledName =
-        InlineName(discriminator, NoopNameMangler.mangleLocalPropertyName(property))
+    override fun mangleLocalPropertyName(property: FirPropertySymbol, scopeDepth: Int): MangledName =
+        InlineName(discriminator, NoopNameMangler.mangleLocalPropertyName(property, scopeDepth))
 
     override val mangledReturnLabelName: MangledName = InlineName(discriminator, NoopNameMangler.mangledReturnLabelName)
 }

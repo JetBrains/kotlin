@@ -15,15 +15,23 @@ import org.jetbrains.kotlin.name.Name
 interface MethodConversionContext : ProgramConversionContext {
     val method: MethodEmbedding
     val nameMangler: NameMangler
-
     fun getLambdaOrNull(name: Name): SubstitutionLambda?
 }
 
 fun MethodConversionContext.embedValueParameter(symbol: FirValueParameterSymbol): VariableEmbedding =
-    VariableEmbedding(nameMangler.mangleParameterName(symbol), embedType(symbol.resolvedReturnType))
+    VariableEmbedding(
+        // Parameters always have scope depth equal to zero
+        nameMangler.mangleParameterName(symbol, 0),
+        embedType(symbol.resolvedReturnType)
+    )
 
-fun MethodConversionContext.embedLocalProperty(symbol: FirPropertySymbol): VariableEmbedding =
-    VariableEmbedding(nameMangler.mangleLocalPropertyName(symbol), embedType(symbol.resolvedReturnType))
+fun MethodConversionContext.embedLocalProperty(symbol: FirPropertySymbol, scopeDepth: Int): VariableEmbedding =
+    VariableEmbedding(
+        nameMangler.mangleLocalPropertyName(
+            symbol,
+            scopeDepth
+        ), embedType(symbol.resolvedReturnType)
+    )
 
 val MethodConversionContext.returnVar: VariableEmbedding
     get() = VariableEmbedding(nameMangler.mangledReturnValueName, method.returnType)

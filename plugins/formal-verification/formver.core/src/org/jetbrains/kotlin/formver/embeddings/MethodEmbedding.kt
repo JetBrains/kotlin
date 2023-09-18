@@ -60,11 +60,12 @@ class UserMethodEmbedding(
             override val method: MethodEmbedding = this@UserMethodEmbedding
 
             override val nameMangler = NoopNameMangler
+
             override fun getLambdaOrNull(name: Name): SubstitutionLambda? = null
         }
 
         body = symbol.fir.body?.let {
-            val stmtCtx = StmtConverter(methodCtx, SeqnBuilder(), NoopResultTrackerFactory)
+            val stmtCtx = StmtConverter(methodCtx, SeqnBuilder(), NoopResultTrackerFactory, scopeDepth = 0)
             signature.formalArgs.forEach { arg ->
                 // Ideally we would want to assume these rather than inhale them to prevent inconsistencies with permissions.
                 // Unfortunately Silicon for some reason does not allow Assumes. However, it doesn't matter as long as the

@@ -47,6 +47,9 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
     }
 
     fun withWhenSubject(subject: VariableEmbedding?, action: (StmtConversionContext<RTC>) -> Unit)
+    fun inNewScope(action: (StmtConversionContext<RTC>) -> ExpEmbedding): ExpEmbedding
+    fun addScopedName(name: Name)
+    fun getScopeDepth(name: Name): Int
 }
 
 fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedPropertyAccess(symbol: FirPropertyAccessExpression): PropertyAccessEmbedding =
@@ -54,11 +57,14 @@ fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedPropertyAccess
         is FirValueParameterSymbol -> LocalPropertyAccess(embedValueParameter(calleeSymbol))
         is FirPropertySymbol ->
             when (val receiverFir = symbol.dispatchReceiver) {
-                null -> LocalPropertyAccess(embedLocalProperty(calleeSymbol))
+                null -> LocalPropertyAccess(embedLocalProperty(calleeSymbol, getScopeDepth(calleeSymbol.name)))
                 else -> ClassPropertyAccess(convert(receiverFir), embedGetter(calleeSymbol), embedSetter(calleeSymbol))
             }
         else -> throw Exception("Property access symbol $calleeSymbol has unsupported type.")
     }
+
+fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedProperty(symbol: FirPropertySymbol): VariableEmbedding =
+    embedLocalProperty(symbol, getScopeDepth(symbol.name))
 
 @OptIn(SymbolInternals::class)
 fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedGetter(symbol: FirPropertySymbol): GetterEmbedding? =

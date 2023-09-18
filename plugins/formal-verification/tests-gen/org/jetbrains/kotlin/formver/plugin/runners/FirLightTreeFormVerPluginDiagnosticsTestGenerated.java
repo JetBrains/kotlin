@@ -276,6 +276,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("shadowing.kt")
+        public void testShadowing() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/shadowing.kt");
+        }
+
+        @Test
         @TestMetadata("subtyping.kt")
         public void testSubtyping() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/subtyping.kt");

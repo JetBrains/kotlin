@@ -57,12 +57,12 @@ method pkg$$global$call_fun_with_contracts$Tkotlin_Boolean(local$b: Bool)
   returns (ret: Bool)
   ensures ret == true
 {
-  var local$a: Bool
+  var local$1$a: Bool
   var anonymous$1: Bool
   anonymous$1 := pkg$$global$binary_logic_expressions$Tkotlin_Boolean$Tkotlin_Boolean(local$b,
     local$b)
-  local$a := anonymous$1
-  ret := local$a
+  local$1$a := anonymous$1
+  ret := local$1$a
   goto label$ret
   label label$ret
 }

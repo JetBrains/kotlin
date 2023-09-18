@@ -40,9 +40,9 @@ method pkg$$global$take_int_return_int_expr$Tkotlin_Int(local$x: Int)
 /basic.kt:(222,242): info: Generated Viper text for with_int_declaration:
 method pkg$$global$with_int_declaration$() returns (ret: Int)
 {
-  var local$x: Int
-  local$x := 0
-  ret := local$x
+  var local$1$x: Int
+  local$1$x := 0
+  ret := local$1$x
   goto label$ret
   label label$ret
 }
@@ -50,8 +50,8 @@ method pkg$$global$with_int_declaration$() returns (ret: Int)
 /basic.kt:(285,299): info: Generated Viper text for int_assignment:
 method pkg$$global$int_assignment$() returns (ret: dom$Unit)
 {
-  var local$x: Int
-  local$x := 0
-  local$x := 1
+  var local$1$x: Int
+  local$1$x := 0
+  local$1$x := 1
   label label$ret
 }

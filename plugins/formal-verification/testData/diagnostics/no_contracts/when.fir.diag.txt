@@ -42,12 +42,12 @@ method pkg$$global$when_return$Tkotlin_Boolean$Tkotlin_Boolean$Tkotlin_Boolean(l
 method pkg$$global$single_branch_when$Tkotlin_Boolean(local$a: Bool)
   returns (ret: Int)
 {
-  var local$x: Int
-  local$x := 1
+  var local$1$x: Int
+  local$1$x := 1
   if (local$a) {
-    local$x := 2
+    local$1$x := 2
   }
-  ret := local$x
+  ret := local$1$x
   goto label$ret
   label label$ret
 }
@@ -57,16 +57,16 @@ method pkg$$global$no_else_when$Tkotlin_Boolean$Tkotlin_Boolean$Tkotlin_Boolean(
   local$b: Bool, local$c: Bool)
   returns (ret: Int)
 {
-  var local$y: Int
-  local$y := 0
+  var local$1$y: Int
+  local$1$y := 0
   if (local$a) {
-    local$y := 1
+    local$1$y := 1
   } elseif (local$b) {
-    local$y := 2
+    local$1$y := 2
   } elseif (local$c) {
-    local$y := 3
+    local$1$y := 3
   }
-  ret := local$y
+  ret := local$1$y
   goto label$ret
   label label$ret
 }
@@ -130,13 +130,13 @@ method pkg$$global$empty_when$() returns (ret: Int)
 /when.kt:(1015,1028): info: Generated Viper text for unused_result:
 method pkg$$global$unused_result$() returns (ret: Int)
 {
-  var local$x: Int
+  var local$1$x: Int
   var anonymous$1: Int
   var anonymous$2: Int
   anonymous$2 := 5
   anonymous$1 := 0
-  local$x := anonymous$1
-  ret := local$x
+  local$1$x := anonymous$1
+  ret := local$1$x
   goto label$ret
   label label$ret
 }

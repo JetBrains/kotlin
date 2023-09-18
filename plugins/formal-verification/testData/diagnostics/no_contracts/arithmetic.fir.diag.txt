@@ -2,8 +2,8 @@
 method pkg$$global$addition$Tkotlin_Int(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local$y: Int
-  local$y := local$x + local$x
+  var local$1$y: Int
+  local$1$y := local$x + local$x
   label label$ret
 }
 
@@ -11,8 +11,8 @@ method pkg$$global$addition$Tkotlin_Int(local$x: Int)
 method pkg$$global$subtraction$Tkotlin_Int(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local$y: Int
-  local$y := local$x - local$x
+  var local$1$y: Int
+  local$1$y := local$x - local$x
   label label$ret
 }
 
@@ -20,8 +20,8 @@ method pkg$$global$subtraction$Tkotlin_Int(local$x: Int)
 method pkg$$global$multiplication$Tkotlin_Int(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local$y: Int
-  local$y := local$x * local$x
+  var local$1$y: Int
+  local$1$y := local$x * local$x
   label label$ret
 }
 
@@ -29,8 +29,8 @@ method pkg$$global$multiplication$Tkotlin_Int(local$x: Int)
 method pkg$$global$division$Tkotlin_Int(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local$y: Int
+  var local$1$y: Int
   inhale local$x != 0
-  local$y := local$x / local$x
+  local$1$y := local$x / local$x
   label label$ret
 }

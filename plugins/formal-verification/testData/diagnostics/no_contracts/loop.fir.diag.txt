@@ -6,10 +6,10 @@ method pkg$$global$while_loop$Tkotlin_Boolean(local$b: Bool)
   label label$continue$1
   anonymous$1 := local$b
   while (anonymous$1) {
-    var local$a: Int
-    var local$c: Int
-    local$a := 1
-    local$c := 2
+    var local$2$a: Int
+    var local$2$c: Int
+    local$2$a := 1
+    local$2$c := 2
     anonymous$1 := local$b
   }
   label label$break$1

@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.name.Name
  * intermediate results, which requires introducing new names.  We thus need a
  * shared context for finding fresh variable names.
  */
-class StmtConverter<out RTC : ResultTrackingContext>(
+data class StmtConverter<out RTC : ResultTrackingContext>(
     private val methodCtx: MethodConversionContext,
     private val seqnCtx: SeqnBuildContext,
     private val resultCtxFactory: ResultTrackerFactory<RTC>,
     private val whileIndex: Int = 0,
-    override val whenSubject: VariableEmbedding? = null
+    override val whenSubject: VariableEmbedding? = null,
+    private val scopeDepth: Int,
+    private val scopedNames: MutableMap<Name, Int> = mutableMapOf(),
 ) : StmtConversionContext<RTC>, SeqnBuildContext by seqnCtx, MethodConversionContext by methodCtx, ResultTrackingContext,
     WhileStackContext<RTC> {
     override val resultCtx: RTC
@@ -40,29 +42,22 @@ class StmtConverter<out RTC : ResultTrackingContext>(
             else -> withResult(embedType(exp)) { capture(convertedExp) }
         }
 
-    override fun newBlock(): StmtConverter<RTC> = StmtConverter(this, SeqnBuilder(), resultCtxFactory, whileIndex, whenSubject)
+    override fun newBlock(): StmtConverter<RTC> = copy(seqnCtx = SeqnBuilder())
     override fun withoutResult(): StmtConversionContext<NoopResultTracker> =
-        StmtConverter(this, this.seqnCtx, NoopResultTrackerFactory, whileIndex, whenSubject)
+        StmtConverter(this, this.seqnCtx, NoopResultTrackerFactory, whileIndex, whenSubject, scopeDepth, scopedNames)
 
     override fun withResult(type: TypeEmbedding): StmtConverter<VarResultTrackingContext> {
         val newResultVar = newAnonVar(type)
         addDeclaration(newResultVar.toLocalVarDecl())
-        return StmtConverter(this, seqnCtx, VarResultTrackerFactory(newResultVar), whileIndex, whenSubject)
+        return StmtConverter(this, seqnCtx, VarResultTrackerFactory(newResultVar), whileIndex, whenSubject, scopeDepth, scopedNames)
     }
 
     override fun withInlineContext(
         inlineMethod: MethodEmbedding,
         returnVarName: MangledName,
         substitutionParams: Map<Name, SubstitutionItem>,
-    ): StmtConversionContext<RTC> {
-        return StmtConverter(
-            InlineMethodConverter(this, inlineMethod, returnVarName, substitutionParams),
-            seqnCtx,
-            resultCtxFactory,
-            whileIndex,
-            whenSubject
-        )
-    }
+    ): StmtConversionContext<RTC> =
+        copy(methodCtx = InlineMethodConverter(this, inlineMethod, returnVarName, substitutionParams))
 
     // We can't implement these members using `by` due to Kotlin shenanigans.
     override val resultExp: ExpEmbedding
@@ -78,7 +73,7 @@ class StmtConverter<out RTC : ResultTrackingContext>(
 
     override fun inNewWhileBlock(action: (StmtConversionContext<RTC>) -> Unit) {
         val freshIndex = newWhileIndex()
-        val ctx = StmtConverter(methodCtx, seqnCtx, resultCtxFactory, freshIndex, whenSubject)
+        val ctx = copy(whileIndex = freshIndex)
         addDeclaration(ctx.continueLabel.toDecl())
         addStatement(ctx.continueLabel.toStmt())
         action(ctx)
@@ -87,7 +82,19 @@ class StmtConverter<out RTC : ResultTrackingContext>(
     }
 
     override fun withWhenSubject(subject: VariableEmbedding?, action: (StmtConversionContext<RTC>) -> Unit) {
-        val ctx = StmtConverter(methodCtx, seqnCtx, resultCtxFactory, whileIndex, subject)
+        val ctx = copy(whenSubject = subject)
         action(ctx)
     }
+
+    override fun inNewScope(action: (StmtConversionContext<RTC>) -> ExpEmbedding): ExpEmbedding {
+        val ctx = copy(scopeDepth = this.scopeDepth + 1, scopedNames = this.scopedNames.toMutableMap())
+        return action(ctx)
+    }
+
+    override fun addScopedName(name: Name) {
+        scopedNames[name] = scopeDepth
+    }
+
+    override fun getScopeDepth(name: Name): Int =
+        scopedNames[name] ?: throw IllegalArgumentException("$name not found in scope $scopedNames")
 }

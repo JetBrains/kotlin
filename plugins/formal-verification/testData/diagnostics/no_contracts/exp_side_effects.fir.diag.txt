@@ -31,7 +31,7 @@ method pkg$$global$test$() returns (ret: dom$Unit)
 {
   var anonymous$1: Ref
   var anonymous$2: Int
-  var local$y: Int
+  var local$1$y: Int
   var anonymous$3: Ref
   var anonymous$4: Int
   var anonymous$5: Int
@@ -45,7 +45,7 @@ method pkg$$global$test$() returns (ret: dom$Unit)
   anonymous$4 := anonymous$3.pkg$$class_Foo$member_x
   exhale acc(anonymous$3.pkg$$class_Foo$member_x, write)
   anonymous$5 := pkg$$global$side_effect$()
-  local$y := anonymous$4 + anonymous$5
+  local$1$y := anonymous$4 + anonymous$5
   label label$ret
 }
 

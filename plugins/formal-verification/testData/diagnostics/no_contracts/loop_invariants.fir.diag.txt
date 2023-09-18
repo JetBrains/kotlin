@@ -48,11 +48,11 @@ method pkg$$global$function_assignment$Tkotlin_Function0__kotlin_Int__(local$f: 
   ensures old(local$f.special$function_object_call_counter) <=
     local$f.special$function_object_call_counter
 {
-  var local$g: Ref
+  var local$1$g: Ref
   var anonymous$1: Bool
   var anonymous$2: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  local$g := local$f
+  local$1$g := local$f
   label label$continue$1
   anonymous$2 := pkg$$global$returns_boolean$()
   anonymous$1 := anonymous$2
@@ -63,7 +63,7 @@ method pkg$$global$function_assignment$Tkotlin_Function0__kotlin_Int__(local$f: 
   {
     var anonymous$3: Int
     var anonymous$4: Bool
-    special$invoke_function_object(local$g)
+    special$invoke_function_object(local$1$g)
     anonymous$4 := pkg$$global$returns_boolean$()
     anonymous$1 := anonymous$4
   }
@@ -89,7 +89,7 @@ method pkg$$global$conditional_function_assignment$Tkotlin_Boolean$Tkotlin_Funct
   ensures old(local$h.special$function_object_call_counter) <=
     local$h.special$function_object_call_counter
 {
-  var local$g: Ref
+  var local$1$g: Ref
   var anonymous$1: Ref
   var anonymous$2: Bool
   var anonymous$3: Bool
@@ -99,7 +99,7 @@ method pkg$$global$conditional_function_assignment$Tkotlin_Boolean$Tkotlin_Funct
     anonymous$1 := local$f
   } else {
     anonymous$1 := local$h}
-  local$g := anonymous$1
+  local$1$g := anonymous$1
   label label$continue$1
   anonymous$3 := pkg$$global$returns_boolean$()
   anonymous$2 := anonymous$3
@@ -113,7 +113,7 @@ method pkg$$global$conditional_function_assignment$Tkotlin_Boolean$Tkotlin_Funct
   {
     var anonymous$4: Int
     var anonymous$5: Bool
-    special$invoke_function_object(local$g)
+    special$invoke_function_object(local$1$g)
     anonymous$5 := pkg$$global$returns_boolean$()
     anonymous$2 := anonymous$5
   }

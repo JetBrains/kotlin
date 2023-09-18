@@ -32,9 +32,9 @@ method pkg$$global$return_subtyping$() returns (ret: dom$Nullable[Int])
 /subtyping.kt:(159,179): info: Generated Viper text for assignment_subtyping:
 method pkg$$global$assignment_subtyping$() returns (ret: dom$Unit)
 {
-  var local$x: dom$Nullable[Bool]
-  local$x := (dom$Casting$cast(false, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
-  local$x := (dom$Casting$cast(true, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
+  var local$1$x: dom$Nullable[Bool]
+  local$1$x := (dom$Casting$cast(false, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
+  local$1$x := (dom$Casting$cast(true, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
   label label$ret
 }
 

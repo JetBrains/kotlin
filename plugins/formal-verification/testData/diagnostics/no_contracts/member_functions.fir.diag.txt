@@ -49,12 +49,12 @@ field pkg$$class_Foo$member_x: Int
 
 method pkg$$global$outer_member_fun_call$() returns (ret: dom$Unit)
 {
-  var local$f: Ref
+  var local$1$f: Ref
   var anonymous$1: Ref
   var anonymous$2: Int
   anonymous$1 := pkg$$class_Foo$constructor$Tkotlin_Int(3)
-  local$f := anonymous$1
-  anonymous$2 := pkg$$class_Foo$fun_member_fun$(local$f)
+  local$1$f := anonymous$1
+  anonymous$2 := pkg$$class_Foo$fun_member_fun$(local$1$f)
   label label$ret
 }
 

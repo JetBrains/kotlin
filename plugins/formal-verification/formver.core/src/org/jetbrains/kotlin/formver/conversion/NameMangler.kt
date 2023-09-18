@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.formver.viper.MangledName
 
 interface NameMangler {
-    fun mangleParameterName(parameter: FirValueParameterSymbol): MangledName
-    fun mangleLocalPropertyName(property: FirPropertySymbol): MangledName
+    fun mangleParameterName(parameter: FirValueParameterSymbol, scopeDepth: Int): MangledName
+    fun mangleLocalPropertyName(property: FirPropertySymbol, scopeDepth: Int): MangledName
     val mangledReturnValueName: MangledName
     val mangledReturnLabelName: MangledName
 }

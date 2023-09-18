@@ -1,9 +1,9 @@
 /inline.kt:(42,48): info: Generated Viper text for double:
 method pkg$$global$double$Tkotlin_Int(local$x: Int) returns (ret: Int)
 {
-  var local$y: Int
-  local$y := local$x + local$x
-  ret := local$y
+  var local$1$y: Int
+  local$1$y := local$x + local$x
+  ret := local$1$y
   goto label$ret
   label label$ret
 }
@@ -14,16 +14,16 @@ method pkg$$global$quadruple$Tkotlin_Int(local$x: Int) returns (ret: Int)
   var anonymous$1: Int
   var anonymous$2: Int
   if (true) {
-    var inline$pkg$$global$double$Tkotlin_Int$local$y: Int
-    inline$pkg$$global$double$Tkotlin_Int$local$y := local$x + local$x
-    anonymous$1 := inline$pkg$$global$double$Tkotlin_Int$local$y
+    var inline$pkg$$global$double$Tkotlin_Int$local$2$y: Int
+    inline$pkg$$global$double$Tkotlin_Int$local$2$y := local$x + local$x
+    anonymous$1 := inline$pkg$$global$double$Tkotlin_Int$local$2$y
     goto inline$pkg$$global$double$Tkotlin_Int$label$ret
     label inline$pkg$$global$double$Tkotlin_Int$label$ret
   }
   if (true) {
-    var inline$pkg$$global$double$Tkotlin_Int$local$y: Int
-    inline$pkg$$global$double$Tkotlin_Int$local$y := local$x + local$x
-    anonymous$2 := inline$pkg$$global$double$Tkotlin_Int$local$y
+    var inline$pkg$$global$double$Tkotlin_Int$local$2$y: Int
+    inline$pkg$$global$double$Tkotlin_Int$local$2$y := local$x + local$x
+    anonymous$2 := inline$pkg$$global$double$Tkotlin_Int$local$2$y
     goto inline$pkg$$global$double$Tkotlin_Int$label$ret
     label inline$pkg$$global$double$Tkotlin_Int$label$ret
   }

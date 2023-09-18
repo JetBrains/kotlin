@@ -28,16 +28,16 @@ method pkg$$global$if_on_parameter$Tkotlin_Boolean(local$b: Bool)
 /if.kt:(205,221): info: Generated Viper text for if_as_expression:
 method pkg$$global$if_as_expression$() returns (ret: Bool)
 {
-  var local$b: Bool
+  var local$1$b: Bool
   var anonymous$1: Bool
-  local$b := false
-  if (local$b) {
+  local$1$b := false
+  if (local$1$b) {
     var anonymous$2: Int
     anonymous$2 := pkg$$global$simple_if$()
     anonymous$1 := false
   } else {
     var anonymous$3: Int
-    anonymous$3 := pkg$$global$if_on_parameter$Tkotlin_Boolean(local$b)
+    anonymous$3 := pkg$$global$if_on_parameter$Tkotlin_Boolean(local$1$b)
     anonymous$1 := true
   }
   ret := anonymous$1

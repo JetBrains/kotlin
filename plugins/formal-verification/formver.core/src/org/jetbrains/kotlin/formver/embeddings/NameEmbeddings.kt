@@ -36,9 +36,13 @@ interface FqMangledName : MangledName {
 /**
  * Representation for Kotlin local variable names.
  */
-data class LocalName(val name: Name) : MangledName {
+data class LocalName(val name: Name, val scopeDepth: Int) : MangledName {
     override val mangled: String
-        get() = "local\$${name.asStringStripSpecialMarkers()}"
+        get() = if (scopeDepth == 0) {
+            "local\$${name.asStringStripSpecialMarkers()}"
+        } else {
+            "local\$$scopeDepth\$${name.asStringStripSpecialMarkers()}"
+        }
 }
 
 data class ClassName(override val packageName: FqName, val className: Name) : FqMangledName {
@@ -109,7 +113,8 @@ fun FirFunctionSymbol<*>.embedTypeSignature(): String = valueParameterSymbols.jo
     param.resolvedReturnType.mangledName
 }
 
-fun FirValueParameterSymbol.embedName(): LocalName = LocalName(name)
+// Parameters always have scope depth equal to zero
+fun FirValueParameterSymbol.embedName(): LocalName = LocalName(name, 0)
 
 fun FirPropertyAccessorSymbol.embedName(): MangledName {
     val className = propertySymbol.callableId.classId!!.embedName()
@@ -139,18 +144,16 @@ fun FirFunctionSymbol<*>.embedName(): MangledName = when (this) {
     }
 }
 
-fun CallableId.embedName(): MangledName = when {
-    isLocal -> {
-        LocalName(callableName)
-    }
-    className != null -> {
-        // The !! is necessary since className is a property from a different package.
-        val name = ClassName(packageName, className!!.shortName())
-        ClassMemberName(name, callableName)
-    }
-    else -> {
-        GlobalName(packageName, callableName)
-    }
+fun CallableId.embedName(scope: Int): MangledName = when {
+    isLocal -> LocalName(callableName, scope)
+    className != null -> embedClassMemberName()
+    else -> GlobalName(packageName, callableName)
+}
+
+fun CallableId.embedClassMemberName(): MangledName {
+    // The !! is necessary since className is a property from a different package.
+    val name = ClassName(packageName, className!!.shortName())
+    return ClassMemberName(name, callableName)
 }
 
 fun ClassId.embedName() = ClassName(packageFqName, shortClassName)

@@ -87,18 +87,18 @@ method pkg$$class_Bar$constructor$() returns (ret: Ref)
 /function_overloading.kt:(318,346): info: Generated Viper text for testClassFunctionOverloading:
 method pkg$$global$testClassFunctionOverloading$() returns (ret: dom$Unit)
 {
-  var local$b: Ref
+  var local$1$b: Ref
   var anonymous$1: Ref
   var anonymous$2: dom$Unit
   var anonymous$3: Ref
   var anonymous$4: dom$Unit
   var anonymous$5: Ref
   anonymous$1 := pkg$$class_Bar$constructor$()
-  local$b := anonymous$1
+  local$1$b := anonymous$1
   anonymous$3 := pkg$$class_Foo$constructor$()
-  anonymous$2 := pkg$$class_Bar$fun_baz$TFoo(local$b, anonymous$3)
+  anonymous$2 := pkg$$class_Bar$fun_baz$TFoo(local$1$b, anonymous$3)
   anonymous$5 := pkg$$class_Bar$constructor$()
-  anonymous$4 := pkg$$class_Bar$fun_baz$TBar(local$b, anonymous$5)
+  anonymous$4 := pkg$$class_Bar$fun_baz$TBar(local$1$b, anonymous$5)
   label label$ret
 }
 
@@ -116,3 +116,4 @@ method pkg$$class_Foo$constructor$() returns (ret: Ref)
 
 method pkg$$class_Bar$fun_baz$TBar(this: Ref, local$b: Ref)
   returns (ret: dom$Unit)
+

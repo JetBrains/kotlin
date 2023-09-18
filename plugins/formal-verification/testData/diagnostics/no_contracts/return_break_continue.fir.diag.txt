@@ -29,18 +29,18 @@ method pkg$$global$return_from_loop$() returns (ret: Int)
 method pkg$$global$while_break$Tkotlin_Boolean(local$b: Bool)
   returns (ret: Int)
 {
-  var local$i: Int
+  var local$1$i: Int
   var anonymous$1: Bool
-  local$i := 0
+  local$1$i := 0
   label label$continue$1
   anonymous$1 := local$b
   while (anonymous$1) {
-    local$i := 1
+    local$1$i := 1
     goto label$break$1
     anonymous$1 := local$b
   }
   label label$break$1
-  ret := local$i
+  ret := local$1$i
   goto label$ret
   label label$ret
 }
@@ -48,15 +48,15 @@ method pkg$$global$while_break$Tkotlin_Boolean(local$b: Bool)
 /return_break_continue.kt:(261,275): info: Generated Viper text for while_continue:
 method pkg$$global$while_continue$() returns (ret: dom$Unit)
 {
-  var local$b: Bool
+  var local$1$b: Bool
   var anonymous$1: Bool
-  local$b := true
+  local$1$b := true
   label label$continue$1
-  anonymous$1 := local$b
+  anonymous$1 := local$1$b
   while (anonymous$1) {
-    local$b := false
+    local$1$b := false
     goto label$continue$1
-    anonymous$1 := local$b
+    anonymous$1 := local$1$b
   }
   label label$break$1
   label label$ret

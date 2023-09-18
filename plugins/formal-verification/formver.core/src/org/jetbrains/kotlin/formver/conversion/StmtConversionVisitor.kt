@@ -50,9 +50,14 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
 
     override fun visitBlock(block: FirBlock, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
         // We ignore the accumulator: we just want to get the result of the last expression.
-        block.statements.fold<_, ExpEmbedding>(UnitLit) { _, it -> data.convert(it) }
+        data.inNewScope { newScopeCtx ->
+            block.statements.fold<_, ExpEmbedding>(UnitLit) { _, it -> newScopeCtx.convert(it) }
+        }
 
-    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
+    override fun <T> visitConstExpression(
+        constExpression: FirConstExpression<T>,
+        data: StmtConversionContext<ResultTrackingContext>
+    ): ExpEmbedding =
         when (constExpression.kind) {
             ConstantValueKind.Int -> IntLit((constExpression.value as Long).toInt())
             ConstantValueKind.Boolean -> BooleanLit(constExpression.value as Boolean)
@@ -176,6 +181,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
             return data.withResult(data.embedType(retType)) {
                 // NOTE: it is not needed to make distinction between implicit or explicit parameters
                 val lambdaArgs = lambda.lambdaArgs()
+                lambdaArgs.forEach { data.addScopedName(it) }
                 val callArgs = data.method.getFunctionCallSubstitutionItems(implicitInvokeCall.argumentList.arguments, data)
                 val subs = lambdaArgs.zip(callArgs).toMap()
                 val lambdaCtx = this.newBlock().withInlineContext(this.method, this.resultCtx.resultVar.name, subs)
@@ -197,10 +203,11 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
 
     override fun visitProperty(property: FirProperty, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         val symbol = property.symbol
+        data.addScopedName(symbol.name)
         if (!symbol.isLocal) {
             throw Exception("StmtConversionVisitor should not encounter non-local properties.")
         }
-        val localVar = data.embedLocalProperty(symbol)
+        val localVar = data.embedProperty(symbol)
         data.addDeclaration(localVar.toLocalVarDecl())
         property.initializer?.let {
             val initializerExp = data.convert(it)

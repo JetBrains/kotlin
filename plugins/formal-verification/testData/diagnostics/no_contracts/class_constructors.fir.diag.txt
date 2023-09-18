@@ -3,36 +3,36 @@ field pkg$$class_Foo$member_a: Int
 
 method pkg$$global$onlySecondConstructors$() returns (ret: dom$Unit)
 {
-  var local$f1: Ref
+  var local$1$f1: Ref
   var anonymous$1: Ref
-  var local$shouldBeOne: Int
+  var local$1$shouldBeOne: Int
   var anonymous$2: Int
-  var local$f2: Ref
+  var local$1$f2: Ref
   var anonymous$3: Ref
-  var local$shouldBeAnswer: Int
+  var local$1$shouldBeAnswer: Int
   var anonymous$4: Int
-  var local$f3: Ref
+  var local$1$f3: Ref
   var anonymous$5: Ref
-  var local$test: Int
+  var local$1$test: Int
   var anonymous$6: Int
   anonymous$1 := pkg$$class_Foo$constructor$Tkotlin_Boolean(true)
-  local$f1 := anonymous$1
-  inhale acc(local$f1.pkg$$class_Foo$member_a, write)
-  anonymous$2 := local$f1.pkg$$class_Foo$member_a
-  exhale acc(local$f1.pkg$$class_Foo$member_a, write)
-  local$shouldBeOne := anonymous$2
+  local$1$f1 := anonymous$1
+  inhale acc(local$1$f1.pkg$$class_Foo$member_a, write)
+  anonymous$2 := local$1$f1.pkg$$class_Foo$member_a
+  exhale acc(local$1$f1.pkg$$class_Foo$member_a, write)
+  local$1$shouldBeOne := anonymous$2
   anonymous$3 := pkg$$class_Foo$constructor$Tkotlin_Int(42)
-  local$f2 := anonymous$3
-  inhale acc(local$f2.pkg$$class_Foo$member_a, write)
-  anonymous$4 := local$f2.pkg$$class_Foo$member_a
-  exhale acc(local$f2.pkg$$class_Foo$member_a, write)
-  local$shouldBeAnswer := anonymous$4
+  local$1$f2 := anonymous$3
+  inhale acc(local$1$f2.pkg$$class_Foo$member_a, write)
+  anonymous$4 := local$1$f2.pkg$$class_Foo$member_a
+  exhale acc(local$1$f2.pkg$$class_Foo$member_a, write)
+  local$1$shouldBeAnswer := anonymous$4
   anonymous$5 := pkg$$class_Foo$constructor$Tkotlin_Int$Tkotlin_Int(10, 32)
-  local$f3 := anonymous$5
-  inhale acc(local$f3.pkg$$class_Foo$member_a, write)
-  anonymous$6 := local$f3.pkg$$class_Foo$member_a
-  exhale acc(local$f3.pkg$$class_Foo$member_a, write)
-  local$test := anonymous$6
+  local$1$f3 := anonymous$5
+  inhale acc(local$1$f3.pkg$$class_Foo$member_a, write)
+  anonymous$6 := local$1$f3.pkg$$class_Foo$member_a
+  exhale acc(local$1$f3.pkg$$class_Foo$member_a, write)
+  local$1$test := anonymous$6
   label label$ret
 }
 
@@ -56,26 +56,26 @@ field pkg$$class_Bar$member_a: Int
 
 method pkg$$global$primaryAndSecondConstructor$() returns (ret: dom$Unit)
 {
-  var local$b1: Ref
+  var local$1$b1: Ref
   var anonymous$1: Ref
-  var local$shouldBeZero: Int
+  var local$1$shouldBeZero: Int
   var anonymous$2: Int
-  var local$b2: Ref
+  var local$1$b2: Ref
   var anonymous$3: Ref
-  var local$shouldBeAnswer: Int
+  var local$1$shouldBeAnswer: Int
   var anonymous$4: Int
   anonymous$1 := pkg$$class_Bar$constructor$Tkotlin_Boolean(false)
-  local$b1 := anonymous$1
-  inhale acc(local$b1.pkg$$class_Bar$member_a, write)
-  anonymous$2 := local$b1.pkg$$class_Bar$member_a
-  exhale acc(local$b1.pkg$$class_Bar$member_a, write)
-  local$shouldBeZero := anonymous$2
+  local$1$b1 := anonymous$1
+  inhale acc(local$1$b1.pkg$$class_Bar$member_a, write)
+  anonymous$2 := local$1$b1.pkg$$class_Bar$member_a
+  exhale acc(local$1$b1.pkg$$class_Bar$member_a, write)
+  local$1$shouldBeZero := anonymous$2
   anonymous$3 := pkg$$class_Bar$constructor$Tkotlin_Int(42)
-  local$b2 := anonymous$3
-  inhale acc(local$b2.pkg$$class_Bar$member_a, write)
-  anonymous$4 := local$b2.pkg$$class_Bar$member_a
-  exhale acc(local$b2.pkg$$class_Bar$member_a, write)
-  local$shouldBeAnswer := anonymous$4
+  local$1$b2 := anonymous$3
+  inhale acc(local$1$b2.pkg$$class_Bar$member_a, write)
+  anonymous$4 := local$1$b2.pkg$$class_Bar$member_a
+  exhale acc(local$1$b2.pkg$$class_Bar$member_a, write)
+  local$1$shouldBeAnswer := anonymous$4
   label label$ret
 }
 

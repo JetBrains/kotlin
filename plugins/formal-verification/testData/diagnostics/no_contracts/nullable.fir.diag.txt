@@ -3,12 +3,12 @@ method pkg$$global$use_nullable_twice$NTkotlin_Int(local$x: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
-  var local$a: dom$Nullable[Int]
-  var local$b: dom$Nullable[Int]
+  var local$1$a: dom$Nullable[Int]
+  var local$1$b: dom$Nullable[Int]
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
-  local$a := local$x
-  local$b := local$x
-  ret := local$a
+  local$1$a := local$x
+  local$1$b := local$x
+  ret := local$1$a
   goto label$ret
   label label$ret
 }
