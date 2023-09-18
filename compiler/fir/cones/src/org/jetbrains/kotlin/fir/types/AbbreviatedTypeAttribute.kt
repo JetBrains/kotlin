@@ -12,7 +12,7 @@ class AbbreviatedTypeAttribute(
 ) : ConeAttribute<AbbreviatedTypeAttribute>() {
     override fun union(other: AbbreviatedTypeAttribute?): AbbreviatedTypeAttribute? = null
     override fun intersect(other: AbbreviatedTypeAttribute?): AbbreviatedTypeAttribute? = null
-    override fun add(other: AbbreviatedTypeAttribute?): AbbreviatedTypeAttribute? = null
+    override fun add(other: AbbreviatedTypeAttribute?): AbbreviatedTypeAttribute = other ?: this
     override fun isSubtypeOf(other: AbbreviatedTypeAttribute?): Boolean = true
     override fun toString(): String = "{${coneType.renderForDebugging()}=}"
 
