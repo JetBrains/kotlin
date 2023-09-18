@@ -290,6 +290,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, arguments.noNewJavaAnnotationTargets)
     put(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC, arguments.oldInnerClassesLogic)
     put(JVMConfigurationKeys.ENABLE_IR_INLINER, arguments.enableIrInliner)
+    put(JVMConfigurationKeys.ENABLE_INLINE_SCOPES_NUMBERS, arguments.enableInlineScopesNumbers)
 
     val assertionsMode =
         JVMAssertionsMode.fromStringOrNull(arguments.assertionsMode)
