@@ -12,7 +12,7 @@ import java.io.File
 
 fun Element.traverseParents(block: (Element) -> Unit) {
     block(this)
-    parentRefs.forEach { it.element.traverseParents(block) }
+    elementParents.forEach { it.element.traverseParents(block) }
 }
 
 operator fun <K, V, U> MutableMap<K, MutableMap<V, U>>.set(k1: K, k2: V, value: U) {

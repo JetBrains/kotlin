@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.utils.SmartPrinter
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.withIndent
 
 /**
@@ -34,16 +33,16 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
             print(element.typeParameters())
 
             val pureAbstractElementType = pureAbstractElementType(element)
-            if (element.parentRefs.isNotEmpty() || pureAbstractElementType != null) {
+            if (element.elementParents.isNotEmpty() || pureAbstractElementType != null) {
                 print(" : ")
                 if (pureAbstractElementType != null) {
                     print("$pureAbstractElementType()")
-                    if (element.parentRefs.isNotEmpty()) {
+                    if (element.elementParents.isNotEmpty()) {
                         print(", ")
                     }
                 }
                 print(
-                    element.parentRefs.joinToString(", ") {
+                    element.elementParents.joinToString(", ") {
                         // TODO: Factor out
                         var result = it.element.type
                         if (it.args.isNotEmpty()) {

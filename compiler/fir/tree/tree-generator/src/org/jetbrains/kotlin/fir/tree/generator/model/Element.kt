@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.util.set
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.ElementOrRef
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
@@ -39,7 +38,12 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
     override val type: String = "Fir$name"
     override val packageName: String = BASE_PACKAGE + kind.packageName.let { if (it.isBlank()) it else "." + it }
     override val fullQualifiedName: String get() = super.fullQualifiedName!!
-    override val parentRefs = mutableListOf<ElementOrRef<Element, Field>>()
+
+    override val elementParents = mutableListOf<ElementRef>()
+
+    override val otherParents: List<ClassRef<*>>
+        get() = emptyList()
+
     var defaultImplementation: Implementation? = null
     val customImplementations = mutableListOf<Implementation>()
 
@@ -61,7 +65,7 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
 
     var doesNotNeedImplementation: Boolean = false
 
-    val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || parentRefs.any { it.element.needTransformOtherChildren }
+    val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || elementParents.any { it.element.needTransformOtherChildren }
     val overridenFields: MutableMap<Field, MutableMap<Field, Boolean>> = mutableMapOf()
     val useNullableForReplace: MutableSet<Field> = mutableSetOf()
     val allImplementations: List<Implementation> by lazy {
@@ -105,7 +109,7 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
 
     val parentFields: List<Field> by lazy {
         val result = LinkedHashMap<String, Field>()
-        parentRefs.forEach { parentRef ->
+        elementParents.forEach { parentRef ->
             val parent = parentRef.element
             val fields = parent.allFields.map { field ->
                 val copy = (field as? SimpleField)?.let { simpleField ->

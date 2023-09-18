@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
-import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
@@ -31,7 +30,7 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
             }
 
             fun override() {
-                if (this != AbstractFirTreeBuilder.baseFirElement) {
+                if (!isRootElement) {
                     print("override ")
                 }
             }
@@ -78,13 +77,13 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
             if (needTransformOtherChildren) {
                 println()
                 abstract()
-                if (element.parentRefs.any { it.element.needTransformOtherChildren }) {
+                if (element.elementParents.any { it.element.needTransformOtherChildren }) {
                     print("override ")
                 }
                 println(transformFunctionDeclaration("OtherChildren", typeWithArguments))
             }
 
-            if (element == AbstractFirTreeBuilder.baseFirElement) {
+            if (element.isRootElement) {
                 require(kind.isInterface) {
                     "$element must be an interface"
                 }

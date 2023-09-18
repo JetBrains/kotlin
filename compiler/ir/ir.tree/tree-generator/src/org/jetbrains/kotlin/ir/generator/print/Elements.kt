@@ -40,7 +40,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
             )
             addTypeVariables(element.params.map { it.toPoet() })
 
-            val (classes, interfaces) = (element.elementParents + element.otherParents).partition { it.typeKind == TypeKind.Class }
+            val (classes, interfaces) = element.parentRefs.partition { it.typeKind == TypeKind.Class }
             classes.singleOrNull()?.let {
                 superclass(it.toPoet())
             }
@@ -77,7 +77,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
                 }.build())
             }
 
-            val isRootElement = element.elementParents.isEmpty()
+            val isRootElement = element.isRootElement
             val acceptMethodName = "accept"
             val transformMethodName = "transform"
             if (element.accept) {
