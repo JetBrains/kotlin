@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._SwiftData_CoreData
+
+modules = _SwiftData_CoreData
+compilerOpts = -framework _SwiftData_CoreData
+linkerOpts = -framework _SwiftData_CoreData
+#Disabled: Unavailable
