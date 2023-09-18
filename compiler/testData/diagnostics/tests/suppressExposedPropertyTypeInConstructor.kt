@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-57458
 
 private enum class Foo { A, B }
