@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsIm
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonTest
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.dependencies
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeJvmAndAndroidPlatformBinaryDependencyResolver
@@ -87,7 +89,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
     }
 
     @Test
-    fun `test - project to project dependency`() {
+    fun `test - project to multiplatform project dependency`() {
         val root = buildProject { setMultiplatformAndroidSourceSetLayoutVersion(2) }
         val producer = buildProject({ withParent(root).withName("producer") }) { configureAndroidAndMultiplatform() }
         val consumer = buildProject({ withParent(root).withName("consumer") }) { configureAndroidAndMultiplatform() }
@@ -95,6 +97,11 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         root.evaluate()
         producer.evaluate()
         consumer.evaluate()
+
+        root.allprojects { project ->
+            project.repositories.mavenLocal()
+            project.repositories.mavenCentral()
+        }
 
         consumer.multiplatformExtension.sourceSets.getByName("commonMain").dependencies {
             implementation(project(":producer"))
@@ -114,6 +121,34 @@ class IdeJvmAndAndroidDependencyResolutionTest {
             regularSourceDependency(":producer/jvmAndAndroidMain"),
         )
     }
+
+    @Test
+    fun `test - project to jvm project dependency`() {
+        val root = buildProject()
+
+        val producer = buildProject({ withParent(root).withName("producer") }) { applyKotlinJvmPlugin() }
+        val consumer = buildProject({ withParent(root).withName("consumer") }) { configureAndroidAndMultiplatform() }
+
+        consumer.multiplatformExtension.sourceSets.commonMain.dependencies {
+            implementation(producer)
+        }
+
+        root.evaluate()
+        producer.evaluate()
+        consumer.evaluate()
+
+        consumer.kotlinIdeMultiplatformImport.resolveDependencies("commonMain")
+            .filter { it !is IdeaKotlinBinaryDependency }
+            .assertMatches(projectArtifactDependency(IdeaKotlinSourceDependency.Type.Regular, ":producer", FilePathRegex(".*producer.jar")))
+
+        consumer.kotlinIdeMultiplatformImport.resolveDependencies("jvmAndAndroidMain")
+            .filter { it !is IdeaKotlinBinaryDependency }
+            .assertMatches(
+                dependsOnDependency(":consumer/commonMain"),
+                projectArtifactDependency(IdeaKotlinSourceDependency.Type.Regular, ":producer", FilePathRegex(".*producer.jar"))
+            )
+    }
+
 
     @Test
     fun `test - KT-59020 - transitive project dependency to self`() {
