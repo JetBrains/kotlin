@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirTypeParameter : FirTypeParameterRef, FirDeclaration() {
+abstract class FirTypeParameter : FirDeclaration(), FirTypeParameterRef {
     abstract override val source: KtSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin

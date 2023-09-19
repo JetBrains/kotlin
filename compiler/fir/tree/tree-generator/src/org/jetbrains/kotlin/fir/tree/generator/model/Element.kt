@@ -41,8 +41,7 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
 
     override val elementParents = mutableListOf<ElementRef>()
 
-    override val otherParents: List<ClassRef<*>>
-        get() = emptyList()
+    override val otherParents = mutableListOf<ClassRef<*>>()
 
     var defaultImplementation: Implementation? = null
     val customImplementations = mutableListOf<Implementation>()

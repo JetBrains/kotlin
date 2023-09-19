@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
-import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.util.get
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.utils.SmartPrinter
@@ -17,9 +16,6 @@ import java.io.File
 private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Element, Field>(printer) {
 
     override val fieldPrinter = FieldPrinter(printer)
-
-    override fun pureAbstractElementType(element: Element): String? =
-        pureAbstractElementType.takeIf { element.needPureAbstractElement }?.type
 
     override fun SmartPrinter.printAdditionalMethods(element: Element) {
         with(element) {

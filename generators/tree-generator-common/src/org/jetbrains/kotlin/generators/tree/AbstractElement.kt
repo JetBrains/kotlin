@@ -20,7 +20,7 @@ interface AbstractElement<Element, Field> : ElementOrRef<Element, Field>, FieldC
 
     val elementParents: List<ElementRef<Element, Field>>
 
-    val otherParents: List<ClassRef<*>>
+    val otherParents: MutableList<ClassRef<*>>
 
     val parentRefs: List<ClassOrElementRef>
         get() = elementParents + otherParents

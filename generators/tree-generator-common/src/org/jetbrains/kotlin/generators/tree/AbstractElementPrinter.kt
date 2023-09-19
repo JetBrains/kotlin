@@ -16,8 +16,6 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
 ) {
     protected abstract val fieldPrinter: AbstractFieldPrinter<Field>
 
-    protected open fun pureAbstractElementType(element: Element): String? = null
-
     protected abstract fun SmartPrinter.printAdditionalMethods(element: Element)
 
     fun printElement(element: Element) {
@@ -32,23 +30,15 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
             print("${kind.title} ${element.type}")
             print(element.typeParameters())
 
-            val pureAbstractElementType = pureAbstractElementType(element)
-            if (element.elementParents.isNotEmpty() || pureAbstractElementType != null) {
+            if (element.parentRefs.isNotEmpty()) {
                 print(" : ")
-                if (pureAbstractElementType != null) {
-                    print("$pureAbstractElementType()")
-                    if (element.elementParents.isNotEmpty()) {
-                        print(", ")
-                    }
-                }
                 print(
-                    element.elementParents.joinToString(", ") {
-                        // TODO: Factor out
-                        var result = it.element.type
-                        if (it.args.isNotEmpty()) {
-                            result += it.args.values.joinToString(", ", "<", ">") { it.typeWithArguments }
+                    element.parentRefs.sortedBy { it.typeKind }.joinToString(", ") { parent ->
+                        var result = parent.type
+                        if (parent is ParametrizedTypeRef<*, *> && parent.args.isNotEmpty()) {
+                            result += parent.args.values.joinToString(", ", "<", ">") { it.typeWithArguments }
                         }
-                        result + it.element.kind.braces()
+                        result + parent.inheritanceClauseParenthesis()
                     },
                 )
             }
@@ -70,6 +60,14 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
             }
             println("}")
         }
+    }
+}
+
+private fun ClassOrElementRef.inheritanceClauseParenthesis(): String = when (this) {
+    is ElementOrRef<*, *> -> element.kind.braces()
+    is ClassRef<*> -> when (kind) {
+        TypeKind.Class -> "()"
+        TypeKind.Interface -> ""
     }
 }
 

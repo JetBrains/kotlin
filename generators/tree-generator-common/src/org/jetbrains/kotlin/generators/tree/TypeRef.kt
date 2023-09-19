@@ -188,3 +188,9 @@ inline fun <reified T : Any> type(vararg args: TypeRef) = T::class.asRef<Positio
 
 fun type(packageName: String, name: String, kind: TypeKind = TypeKind.Interface) =
     ClassRef<PositionTypeParameterRef>(kind, packageName, name)
+
+val ClassOrElementRef.typeKind: TypeKind
+    get() = when (this) {
+        is ElementOrRef<*, *> -> element.kind!!.typeKind
+        is ClassRef<*> -> kind
+    }
