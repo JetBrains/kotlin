@@ -20,7 +20,7 @@ fun test(a: A<out CharSequence>, z: Out<CharSequence>) {
     a.bar { <!ARGUMENT_TYPE_MISMATCH, TYPE_MISMATCH!>z.id()<!> }
 
     a.foo {
-        z.foobar(if (1 > 2) return@foo <!ARGUMENT_TYPE_MISMATCH!>""<!> else "")
+        z.foobar(if (1 > 2) return@foo <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>""<!> else "")
         <!ARGUMENT_TYPE_MISMATCH!>""<!>
     }
 }
