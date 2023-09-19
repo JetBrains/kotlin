@@ -19,11 +19,16 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 abstract class FirEnumEntryDeserializedAccessExpression : FirExpression() {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract val enumClassId: ClassId
+
     abstract val enumEntryName: Name
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitEnumEntryDeserializedAccessExpression(this, data)

@@ -19,12 +19,18 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 abstract class FirQualifiedErrorAccessExpression : FirExpression(), FirDiagnosticHolder {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val diagnostic: ConeDiagnostic
+
     abstract val selector: FirErrorExpression
+
     abstract val receiver: FirExpression
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedErrorAccessExpression(this, data)

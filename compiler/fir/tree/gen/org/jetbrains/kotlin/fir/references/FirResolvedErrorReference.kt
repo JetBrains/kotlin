@@ -19,9 +19,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirResolvedErrorReference : FirResolvedNamedReference(), FirDiagnosticHolder {
+
     abstract override val source: KtSourceElement?
+
     abstract override val name: Name
+
     abstract override val resolvedSymbol: FirBasedSymbol<*>
+
     abstract override val diagnostic: ConeDiagnostic
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedErrorReference(this, data)

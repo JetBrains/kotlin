@@ -23,20 +23,34 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnosticHolder {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val packageFqName: FqName
+
     abstract override val relativeClassFqName: FqName?
+
     abstract override val classId: ClassId?
+
     abstract override val symbol: FirClassLikeSymbol<*>?
+
     abstract override val isNullableLHSForCallableReference: Boolean
+
     abstract override val resolvedToCompanionObject: Boolean
+
     abstract override val canBeValue: Boolean
+
     abstract override val isFullyQualified: Boolean
+
     abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
+
     abstract override val typeArguments: List<FirTypeProjection>
+
     abstract override val diagnostic: ConeDiagnostic
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorResolvedQualifier(this, data)

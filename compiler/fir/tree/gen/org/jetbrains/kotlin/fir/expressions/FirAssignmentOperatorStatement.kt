@@ -16,10 +16,15 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirAssignmentOperatorStatement : FirPureAbstractElement(), FirStatement {
+
     abstract override val source: KtSourceElement?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract val operation: FirOperation
+
     abstract val leftArgument: FirExpression
+
     abstract val rightArgument: FirExpression
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAssignmentOperatorStatement(this, data)

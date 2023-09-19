@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirOuterClassTypeParameterRef : FirPureAbstractElement(), FirTypeParameterRef {
+
     abstract override val source: KtSourceElement?
+
     abstract override val symbol: FirTypeParameterSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitOuterClassTypeParameterRef(this, data)

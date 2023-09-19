@@ -18,13 +18,20 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 abstract class FirIncrementDecrementExpression : FirExpression() {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract val isPrefix: Boolean
+
     abstract val operationName: Name
+
     abstract val expression: FirExpression
+
     abstract val operationSource: KtSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitIncrementDecrementExpression(this, data)

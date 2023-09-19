@@ -18,12 +18,18 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 abstract class FirBinaryLogicExpression : FirExpression() {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract val leftOperand: FirExpression
+
     abstract val rightOperand: FirExpression
+
     abstract val kind: LogicOperationKind
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitBinaryLogicExpression(this, data)

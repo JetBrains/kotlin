@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirImplicitTypeRef : FirTypeRef() {
+
     abstract override val source: KtSourceElement?
+
     abstract override val annotations: List<FirAnnotation>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitImplicitTypeRef(this, data)

@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 sealed interface FirTypeParameterRefsOwner : FirElement {
+
     override val source: KtSourceElement?
+
     val typeParameters: List<FirTypeParameterRef>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeParameterRefsOwner(this, data)

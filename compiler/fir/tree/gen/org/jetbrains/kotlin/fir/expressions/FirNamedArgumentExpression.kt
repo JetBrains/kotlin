@@ -18,12 +18,18 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 abstract class FirNamedArgumentExpression : FirWrappedArgumentExpression() {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val expression: FirExpression
+
     abstract override val isSpread: Boolean
+
     abstract val name: Name
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitNamedArgumentExpression(this, data)

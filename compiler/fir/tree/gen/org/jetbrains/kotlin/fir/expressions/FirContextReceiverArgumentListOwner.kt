@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirContextReceiverArgumentListOwner : FirElement {
+
     override val source: KtSourceElement?
+
     val contextReceiverArguments: List<FirExpression>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitContextReceiverArgumentListOwner(this, data)

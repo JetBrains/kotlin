@@ -23,17 +23,28 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 abstract class FirErrorAnnotationCall : FirAnnotationCall(), FirDiagnosticHolder {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val useSiteTarget: AnnotationUseSiteTarget?
+
     abstract override val annotationTypeRef: FirTypeRef
+
     abstract override val typeArguments: List<FirTypeProjection>
+
     abstract override val argumentList: FirArgumentList
+
     abstract override val calleeReference: FirReference
+
     abstract override val annotationResolvePhase: FirAnnotationResolvePhase
+
     abstract override val diagnostic: ConeDiagnostic
+
     abstract override val argumentMapping: FirAnnotationArgumentMapping
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorAnnotationCall(this, data)

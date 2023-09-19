@@ -17,10 +17,14 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 abstract class FirLazyBlock : FirBlock() {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val statements: List<FirStatement>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLazyBlock(this, data)

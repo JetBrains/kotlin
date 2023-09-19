@@ -22,18 +22,30 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 abstract class FirImplicitInvokeCall : FirFunctionCall() {
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val contextReceiverArguments: List<FirExpression>
+
     abstract override val typeArguments: List<FirTypeProjection>
+
     abstract override val explicitReceiver: FirExpression?
+
     abstract override val dispatchReceiver: FirExpression?
+
     abstract override val extensionReceiver: FirExpression?
+
     abstract override val source: KtSourceElement?
+
     abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
+
     abstract override val argumentList: FirArgumentList
+
     abstract override val calleeReference: FirNamedReference
+
     abstract override val origin: FirFunctionCallOrigin
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitImplicitInvokeCall(this, data)

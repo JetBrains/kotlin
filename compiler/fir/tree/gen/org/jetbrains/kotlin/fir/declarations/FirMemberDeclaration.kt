@@ -19,13 +19,21 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  */
 
 sealed class FirMemberDeclaration : FirDeclaration(), FirTypeParameterRefsOwner {
+
     abstract override val source: KtSourceElement?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val symbol: FirBasedSymbol<out FirDeclaration>
+
     abstract override val moduleData: FirModuleData
+
     abstract override val origin: FirDeclarationOrigin
+
     abstract override val attributes: FirDeclarationAttributes
+
     abstract override val typeParameters: List<FirTypeParameterRef>
+
     abstract val status: FirDeclarationStatus
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitMemberDeclaration(this, data)

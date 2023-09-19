@@ -18,28 +18,51 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirResolvedDeclarationStatus : FirDeclarationStatus {
+
     override val source: KtSourceElement?
+
     override val visibility: Visibility
+
     override val isExpect: Boolean
+
     override val isActual: Boolean
+
     override val isOverride: Boolean
+
     override val isOperator: Boolean
+
     override val isInfix: Boolean
+
     override val isInline: Boolean
+
     override val isTailRec: Boolean
+
     override val isExternal: Boolean
+
     override val isConst: Boolean
+
     override val isLateInit: Boolean
+
     override val isInner: Boolean
+
     override val isCompanion: Boolean
+
     override val isData: Boolean
+
     override val isSuspend: Boolean
+
     override val isStatic: Boolean
+
     override val isFromSealedClass: Boolean
+
     override val isFromEnumClass: Boolean
+
     override val isFun: Boolean
+
     override val hasStableParameterNames: Boolean
+
     override val modality: Modality
+
     val effectiveVisibility: EffectiveVisibility
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedDeclarationStatus(this, data)

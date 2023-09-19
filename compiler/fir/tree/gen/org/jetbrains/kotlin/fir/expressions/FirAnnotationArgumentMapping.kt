@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirAnnotationArgumentMapping : FirPureAbstractElement(), FirElement {
+
     abstract override val source: KtSourceElement?
+
     abstract val mapping: Map<Name, FirExpression>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotationArgumentMapping(this, data)

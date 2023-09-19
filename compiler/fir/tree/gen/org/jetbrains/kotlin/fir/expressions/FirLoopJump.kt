@@ -18,10 +18,14 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 abstract class FirLoopJump : FirJump<FirLoop>() {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val target: FirTarget<FirLoop>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLoopJump(this, data)

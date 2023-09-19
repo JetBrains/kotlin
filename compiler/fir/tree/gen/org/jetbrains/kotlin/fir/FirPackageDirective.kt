@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirPackageDirective : FirPureAbstractElement(), FirElement {
+
     abstract override val source: KtSourceElement?
+
     abstract val packageFqName: FqName
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitPackageDirective(this, data)

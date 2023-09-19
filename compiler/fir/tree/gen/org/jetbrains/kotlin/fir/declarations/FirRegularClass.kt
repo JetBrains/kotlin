@@ -24,23 +24,41 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  */
 
 abstract class FirRegularClass : FirClass() {
+
     abstract override val source: KtSourceElement?
+
     abstract override val moduleData: FirModuleData
+
     abstract override val origin: FirDeclarationOrigin
+
     abstract override val attributes: FirDeclarationAttributes
+
     abstract override val typeParameters: List<FirTypeParameterRef>
+
     abstract override val status: FirDeclarationStatus
+
     abstract override val deprecationsProvider: DeprecationsProvider
+
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
+
     abstract override val classKind: ClassKind
+
     abstract override val declarations: List<FirDeclaration>
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val scopeProvider: FirScopeProvider
+
     abstract val name: Name
+
     abstract override val symbol: FirRegularClassSymbol
+
     abstract val hasLazyNestedClassifiers: Boolean
+
     abstract val companionObjectSymbol: FirRegularClassSymbol?
+
     abstract override val superTypeRefs: List<FirTypeRef>
+
     abstract val contextReceivers: List<FirContextReceiver>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRegularClass(this, data)

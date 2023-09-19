@@ -20,12 +20,19 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  */
 
 abstract class FirCodeFragment : FirDeclaration() {
+
     abstract override val source: KtSourceElement?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val moduleData: FirModuleData
+
     abstract override val origin: FirDeclarationOrigin
+
     abstract override val attributes: FirDeclarationAttributes
+
     abstract override val symbol: FirCodeFragmentSymbol
+
     abstract val block: FirBlock
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCodeFragment(this, data)

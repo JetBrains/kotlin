@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirTypeParameterRef : FirElement {
+
     override val source: KtSourceElement?
+
     val symbol: FirTypeParameterSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeParameterRef(this, data)

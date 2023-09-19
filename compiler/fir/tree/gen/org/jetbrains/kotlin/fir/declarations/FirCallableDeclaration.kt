@@ -22,19 +22,33 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  */
 
 sealed class FirCallableDeclaration : FirMemberDeclaration() {
+
     abstract override val source: KtSourceElement?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val moduleData: FirModuleData
+
     abstract override val origin: FirDeclarationOrigin
+
     abstract override val attributes: FirDeclarationAttributes
+
     abstract override val typeParameters: List<FirTypeParameterRef>
+
     abstract override val status: FirDeclarationStatus
+
     abstract val returnTypeRef: FirTypeRef
+
     abstract val receiverParameter: FirReceiverParameter?
+
     abstract val deprecationsProvider: DeprecationsProvider
+
     abstract override val symbol: FirCallableSymbol<out FirCallableDeclaration>
+
     abstract val containerSource: DeserializedContainerSource?
+
     abstract val dispatchReceiverType: ConeSimpleKotlinType?
+
     abstract val contextReceivers: List<FirContextReceiver>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCallableDeclaration(this, data)

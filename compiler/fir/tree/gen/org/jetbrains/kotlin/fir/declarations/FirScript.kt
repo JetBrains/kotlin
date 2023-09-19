@@ -21,16 +21,27 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  */
 
 abstract class FirScript : FirDeclaration() {
+
     abstract override val source: KtSourceElement?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val moduleData: FirModuleData
+
     abstract override val origin: FirDeclarationOrigin
+
     abstract override val attributes: FirDeclarationAttributes
+
     abstract val name: Name
+
     abstract val statements: List<FirStatement>
+
     abstract override val symbol: FirScriptSymbol
+
     abstract val parameters: List<FirVariable>
+
     abstract val contextReceivers: List<FirContextReceiver>
+
     abstract val resultPropertyName: Name?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitScript(this, data)

@@ -16,10 +16,15 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirWhileLoop : FirLoop() {
+
     abstract override val source: KtSourceElement?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val label: FirLabel?
+
     abstract override val condition: FirExpression
+
     abstract override val block: FirBlock
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhileLoop(this, data)

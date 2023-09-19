@@ -19,15 +19,24 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 abstract class FirSmartCastExpression : FirExpression() {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract val originalExpression: FirExpression
+
     abstract val typesFromSmartCast: Collection<ConeKotlinType>
+
     abstract val smartcastType: FirTypeRef
+
     abstract val smartcastTypeWithoutNullableNothing: FirTypeRef?
+
     abstract val isStable: Boolean
+
     abstract val smartcastStability: SmartcastStability
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSmartCastExpression(this, data)

@@ -19,15 +19,24 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 abstract class FirWhenExpression : FirExpression(), FirResolvable {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val calleeReference: FirReference
+
     abstract val subject: FirExpression?
+
     abstract val subjectVariable: FirVariable?
+
     abstract val branches: List<FirWhenBranch>
+
     abstract val exhaustivenessStatus: ExhaustivenessStatus?
+
     abstract val usedAsExpression: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenExpression(this, data)

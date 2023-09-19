@@ -47,6 +47,7 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
             withIndent {
                 for (field in element.allFields) {
                     if (field.isFinal && field.fromParent || field.isParameter) continue
+                    println()
                     fieldPrinter.printField(field, isImplementation = false, override = field.fromParent) {
                         if (!field.isFinal) {
                             abstract()
