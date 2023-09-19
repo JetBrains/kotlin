@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 
@@ -9,9 +8,9 @@ plugins {
 
 val jsStdlibSources = "${projectDir}/../stdlib/js/src"
 
+@Suppress("UNUSED_VARIABLE")
 kotlin {
-    js(IR) {
-        @Suppress("UNUSED_VARIABLE")
+    js {
         sourceSets {
             val main by getting {
                 if (!kotlinBuildProperties.isInIdeaSync) {
@@ -27,14 +26,6 @@ kotlin {
         }
         val main by compilations.getting
         val test by compilations.getting
-        // TODO: Remove together with kotlin.js.compiler.publish.attribute=false property
-        listOf(main, test).forEach { compilation ->
-            listOf(compilation.compileDependencyConfigurationName, compilation.runtimeDependencyConfigurationName).forEach { configurationName ->
-                configurations[configurationName].attributes {
-                    attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
-                }
-            }
-        }
     }
 }
 
