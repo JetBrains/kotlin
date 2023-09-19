@@ -1,0 +1,19 @@
+import com.example.ImportedAnnotation;
+
+/**
+ * public final class C : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@ImportedAnnotation()
+public final class C {
+
+    public C() {
+        super();
+    }
+}

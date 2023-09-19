@@ -326,6 +326,7 @@ internal class Kapt4StubGenerator {
         val rawQualifiedName = when (annotation.qualifiedName) {
             // A temporary fix for KT-60482
             "<error>" -> (annotation as? KtLightElement<*, *>)?.kotlinOrigin?.node?.let { qualifiedName(it) }
+                ?.also { recordUnresolvedQualifier(it) }
             else -> annotation.qualifiedName
         } ?: return null
 
