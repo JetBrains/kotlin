@@ -141,6 +141,7 @@ signatures diff
 -: platform.PassKit/PKDisbursementVoucherMeta.new|objc:new[100]
 -: platform.PassKit/PKDisbursementVoucherMeta|null[100]
 -: platform.PassKit/PKDisbursementVoucher|null[100]
+-: platform.builtin/builtin_clear_cache|builtin_clear_cache(kotlinx.cinterop.CValuesRef<*>?;kotlinx.cinterop.CValuesRef<*>?){}[100]
 -: platform.darwin/MAC_OS_VERSION_11_0.<get-MAC_OS_VERSION_11_0>|<get-MAC_OS_VERSION_11_0>(){}[100]
 -: platform.darwin/MAC_OS_VERSION_11_0|{}MAC_OS_VERSION_11_0[100]
 -: platform.darwin/MAC_OS_VERSION_11_1.<get-MAC_OS_VERSION_11_1>|<get-MAC_OS_VERSION_11_1>(){}[100]
