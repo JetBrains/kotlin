@@ -53,10 +53,10 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
 
 fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedPropertyAccess(symbol: FirPropertyAccessExpression): PropertyAccessEmbedding =
     when (val calleeSymbol = symbol.calleeSymbol) {
-        is FirValueParameterSymbol -> LocalPropertyAccess(embedValueParameter(calleeSymbol))
+        is FirValueParameterSymbol -> embedValueParameter(calleeSymbol)
         is FirPropertySymbol ->
             when (val receiverFir = symbol.dispatchReceiver) {
-                null -> LocalPropertyAccess(embedLocalProperty(calleeSymbol, getScopeDepth(calleeSymbol.name)))
+                null -> embedLocalProperty(calleeSymbol, getScopeDepth(calleeSymbol.name))
                 else -> ClassPropertyAccess(convert(receiverFir), embedGetter(calleeSymbol), embedSetter(calleeSymbol))
             }
         else -> throw Exception("Property access symbol $calleeSymbol has unsupported type.")

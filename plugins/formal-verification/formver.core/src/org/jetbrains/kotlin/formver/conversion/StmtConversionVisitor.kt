@@ -49,7 +49,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         data: StmtConversionContext<ResultTrackingContext>,
     ): ExpEmbedding {
         val expr = data.convert(returnExpression.result)
-        data.addStatement(Stmt.LocalVarAssign(data.returnVar.toViper(), expr.withType(data.returnVar.type).toViper()))
+        data.returnVar.setValue(expr, data)
         data.addStatement(data.returnLabel.toGoto())
         return UnitLit
     }
@@ -217,7 +217,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         data.addDeclaration(localVar.toLocalVarDecl())
         property.initializer?.let {
             val initializerExp = data.convert(it)
-            data.addStatement(Stmt.LocalVarAssign(localVar.toViper(), initializerExp.withType(localVar.type).toViper()))
+            localVar.setValue(initializerExp, data)
         }
         return UnitLit
     }
