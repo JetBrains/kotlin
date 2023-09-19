@@ -16,7 +16,79 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
 ) {
     protected abstract val fieldPrinter: AbstractFieldPrinter<Field>
 
+    protected abstract val visitorType: ClassRef<*>
+
+    protected abstract val transformerType: ClassRef<*>
+
     protected abstract fun SmartPrinter.printAdditionalMethods(element: Element)
+
+    private fun SmartPrinter.printTypeVariable(typeVariable: TypeVariable) {
+        print(typeVariable.name)
+        if (typeVariable.bounds.size > 1) TODO("Printing multiple upper bounds is not implemented")
+        typeVariable.bounds.singleOrNull()?.let {
+            print(" : ", it.typeWithArguments)
+        }
+    }
+
+    protected fun SmartPrinter.printAcceptMethod(element: Element, hasImplementation: Boolean) {
+        if (!element.hasAcceptMethod) return
+        println()
+        if (!element.isRootElement) {
+            print("override ")
+        }
+        print("fun <R, D> accept(visitor: ${visitorType.simpleName}<R, D>, data: D): R")
+        if (hasImplementation) {
+            print(" = visitor.visit${element.name}(this, data)")
+        }
+        println()
+    }
+
+    protected fun SmartPrinter.printTransformMethod(element: Element, hasImplementation: Boolean, returnType: TypeRef) {
+        if (!element.hasTransformMethod) return
+        println()
+        if (returnType is TypeParameterRef && hasImplementation) {
+            println("@Suppress(\"UNCHECKED_CAST\")")
+        }
+        if (!element.isRootElement) {
+            print("override ")
+        }
+        print("fun <")
+        if (returnType is TypeVariable) {
+            printTypeVariable(returnType)
+            print(", ")
+        }
+        print("D> transform(transformer: ${transformerType.simpleName}<D>, data: D): ", returnType.typeWithArguments)
+        if (hasImplementation) {
+            println(" =")
+            withIndent {
+                println("transformer.transform${element.name}(this, data) as ", returnType.typeWithArguments)
+            }
+        } else {
+            println()
+        }
+    }
+
+    protected fun SmartPrinter.printAcceptChildrenMethod(element: Element, visitorResultType: TypeRef) {
+        if (!element.hasAcceptChildrenMethod) return
+        println()
+        print("fun <")
+        if (visitorResultType is TypeVariable) {
+            printTypeVariable(visitorResultType)
+            print(", ")
+        }
+        print("D> acceptChildren(visitor: ${visitorType.simpleName}<", visitorResultType.typeWithArguments, ", D>, data: D)")
+        println()
+    }
+
+    protected fun SmartPrinter.printTransformChildrenMethod(element: Element, returnType: TypeRef) {
+        if (!element.hasTransformChildrenMethod) return
+        println()
+        print("fun <D> transformChildren(transformer: ${transformerType.simpleName}<D>, data: D)")
+        if (returnType != StandardTypes.unit) {
+            print(": ", returnType.typeWithArguments)
+        }
+        println()
+    }
 
     fun printElement(element: Element) {
         printer.run {
@@ -53,9 +125,6 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
                             abstract()
                         }
                     }
-                }
-                if (element.allFields.isNotEmpty()) {
-                    println()
                 }
                 printAdditionalMethods(element)
             }

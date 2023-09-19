@@ -5,17 +5,24 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
+import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.util.get
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.SmartPrinter
-import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
 private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Element, Field>(printer) {
 
     override val fieldPrinter = FieldPrinter(printer)
+
+    override val visitorType: ClassRef<*>
+        get() = type(VISITOR_PACKAGE, "FirVisitor", TypeKind.Class)
+
+    override val transformerType: ClassRef<*>
+        get() = type(VISITOR_PACKAGE, "FirTransformer", TypeKind.Class)
 
     override fun SmartPrinter.printAdditionalMethods(element: Element) {
         with(element) {
@@ -25,22 +32,12 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                 }
             }
 
-            fun override() {
-                if (!isRootElement) {
-                    print("override ")
-                }
-            }
-
-            override()
-            println("fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visit$name(this, data)")
-
-            println()
-            println("@Suppress(\"UNCHECKED_CAST\")")
-            override()
-            println("fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =")
-            withIndent {
-                println("transformer.transform$name(this, data) as E")
-            }
+            printAcceptMethod(element, hasImplementation = true)
+            printTransformMethod(
+                element,
+                hasImplementation = true,
+                returnType = TypeVariable("E", listOf(AbstractFirTreeBuilder.baseFirElement), Variance.IN_VARIANCE),
+            )
 
             fun Field.replaceDeclaration(override: Boolean, overridenType: TypeRef? = null, forceNullable: Boolean = false) {
                 println()
@@ -85,12 +82,10 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                 }
                 println()
                 println("fun accept(visitor: FirVisitorVoid) = accept(visitor, null)")
-                println()
-                println("fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)")
+                printAcceptChildrenMethod(element, visitorResultType = TypeVariable("R", emptyList(), Variance.INVARIANT))
                 println()
                 println("fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)")
-                println()
-                println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement")
+                printTransformChildrenMethod(element, returnType = AbstractFirTreeBuilder.baseFirElement)
             }
         }
     }

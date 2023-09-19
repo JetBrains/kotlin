@@ -59,6 +59,18 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
 
     override var isSealed: Boolean = false
 
+    override val hasAcceptMethod: Boolean
+        get() = true
+
+    override val hasTransformMethod: Boolean
+        get() = true
+
+    override val hasAcceptChildrenMethod: Boolean
+        get() = isRootElement
+
+    override val hasTransformChildrenMethod: Boolean
+        get() = isRootElement
+
     var baseTransformerType: Element? = null
     val transformerType: Element get() = baseTransformerType ?: this
 

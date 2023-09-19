@@ -58,6 +58,16 @@ class Implementation(val element: Element, val name: String?) : FieldContainer, 
         }
     }
 
+    override val hasAcceptChildrenMethod: Boolean
+        get() {
+            val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
+            val isAbstract = kind == ImplementationKind.AbstractClass || kind == ImplementationKind.SealedClass
+            return !isInterface && !isAbstract
+        }
+
+    override val hasTransformChildrenMethod: Boolean
+        get() = true
+
     fun addParent(parent: Implementation, arg: Importable? = null) {
         _parents += ImplementationWithArg(parent, arg)
     }

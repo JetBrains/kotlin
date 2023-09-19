@@ -8,4 +8,16 @@ package org.jetbrains.kotlin.generators.tree
 interface FieldContainer {
     val allFields: List<AbstractField>
     operator fun get(fieldName: String): AbstractField?
+
+    val hasAcceptMethod: Boolean
+        get() = false
+
+    val hasTransformMethod: Boolean
+        get() = false
+
+    val hasAcceptChildrenMethod: Boolean
+        get() = false
+
+    val hasTransformChildrenMethod: Boolean
+        get() = false
 }
