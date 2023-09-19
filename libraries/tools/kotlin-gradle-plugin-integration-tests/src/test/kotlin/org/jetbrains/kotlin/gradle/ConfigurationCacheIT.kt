@@ -9,10 +9,10 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
-import kotlin.test.assertNotNull
 
 @DisplayName("Configuration cache")
 class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
@@ -105,6 +105,29 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             }
 
             testConfigurationCacheOf(":lib:commonizeCInterop")
+        }
+    }
+
+    @MppGradlePluginTests
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_8_0 // configuration cache and precompiled script plugins fails on earlier versions
+    )
+    @GradleTest
+    fun `test composite build with precompiled script plugins and multiplatform`(gradleVersion: GradleVersion) {
+        project("composite-build-with-precompiled-script-plugins", gradleVersion) {
+            settingsGradleKts.replaceText(
+                "pluginManagement {",
+                """
+                    pluginManagement {
+                        includeBuild("build-logic")
+                """.trimIndent()
+            )
+            subProject("build-logic").projectPath.addPluginManagementToSettings()
+
+            testConfigurationCacheOf(
+                ":lib:transformCommonMainDependenciesMetadata",
+                checkUpToDateOnRebuild = false
+            )
         }
     }
 
