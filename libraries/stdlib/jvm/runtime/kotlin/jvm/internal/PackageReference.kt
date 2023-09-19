@@ -15,12 +15,12 @@ public class PackageReference(
     override val members: Collection<KCallable<*>>
         get() = throw KotlinReflectionNotSupportedError()
 
-    override fun equals(other: Any?) =
+    override fun equals(other: Any?): Boolean =
         other is PackageReference && jClass == other.jClass
 
-    override fun hashCode() =
+    override fun hashCode(): Int =
         jClass.hashCode()
 
-    override fun toString() =
+    override fun toString(): String =
         jClass.toString() + Reflection.REFLECTION_NOT_AVAILABLE
 }

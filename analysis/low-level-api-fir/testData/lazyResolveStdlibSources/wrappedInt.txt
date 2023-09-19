@@ -17,7 +17,7 @@ FILE: [ResolvedTo(RAW_FIR)] TypeReference.kt
         @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val flags: Int = R|<local>/flags|
             internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Int
 
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
+        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
             LAZY_this<R|kotlin/jvm/internal/TypeReference|>
         }
 
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
         @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val flags: Int = R|<local>/flags|
             internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Int
 
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
+        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
             LAZY_this<R|kotlin/jvm/internal/TypeReference|>
         }
 
@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
         @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val flags: Int = R|<local>/flags|
             internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Int
 
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
+        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
             LAZY_this<R|kotlin/jvm/internal/TypeReference|>
         }
 
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
         @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val flags: Int = R|<local>/flags|
             internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Int
 
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
+        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
             LAZY_this<R|kotlin/jvm/internal/TypeReference|>
         }
 
@@ -257,7 +257,7 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
         @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val flags: Int = R|<local>/flags|
             internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Int
 
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
+        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
             LAZY_this<R|kotlin/jvm/internal/TypeReference|>
         }
 
@@ -317,7 +317,7 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
         @SinceKotlin[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val flags: Int = R|<local>/flags|
             internal [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): Int
 
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
+        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] classifier: KClassifier, [ResolvedTo(RAW_FIR)] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] isMarkedNullable: Boolean): R|kotlin/jvm/internal/TypeReference| {
             LAZY_this<R|kotlin/jvm/internal/TypeReference|>
         }
 

@@ -15,4 +15,4 @@ package kotlin.jvm.internal
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 @SinceKotlin("1.8")
-annotation class SourceDebugExtension(val value: Array<String>)
+public annotation class SourceDebugExtension(val value: Array<String>)
