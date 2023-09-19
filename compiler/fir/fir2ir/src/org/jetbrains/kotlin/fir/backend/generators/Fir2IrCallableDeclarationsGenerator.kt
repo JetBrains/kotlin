@@ -977,48 +977,51 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
 
     // ------------------------------------ utilities ------------------------------------
 
-    /**
-     * [firCallable] is function or property (if [irFunction] is a property accessor) for
-     *   which [irFunction] was build
-     *
-     * It is needed to determine proper dispatch receiver type if this declaration is fake-override
-     */
-    private fun computeDispatchReceiverType(
-        irFunction: IrSimpleFunction,
-        firCallable: FirCallableDeclaration?,
-        parent: IrDeclarationParent?,
-    ): IrType? {
-        /*
-         * If some function is not fake-override, then its type should be just
-         *   default type of containing class
-         * For fake overrides the default type calculated in the following way:
-         * 1. Find first overridden function, which is not fake override
-         * 2. Take its containing class
-         * 3. Find supertype of current containing class with type constructor of
-          *   class from step 2
+    companion object {
+        /**
+         * [firCallable] is function or property (if [irFunction] is a property accessor) for
+         *   which [irFunction] was build
+         *
+         * It is needed to determine proper dispatch receiver type if this declaration is fake-override
          */
-        if (firCallable is FirProperty && firCallable.isLocal) return null
-        val containingClass = computeContainingClass(parent) ?: return null
-        val defaultType = containingClass.defaultType
-        if (firCallable == null) return defaultType
-        if (irFunction.origin != IrDeclarationOrigin.FAKE_OVERRIDE) return defaultType
+        context(Fir2IrComponents)
+        internal fun computeDispatchReceiverType(
+            irFunction: IrSimpleFunction,
+            firCallable: FirCallableDeclaration?,
+            parent: IrDeclarationParent?,
+        ): IrType? {
+            /*
+             * If some function is not fake-override, then its type should be just
+             *   default type of containing class
+             * For fake overrides the default type calculated in the following way:
+             * 1. Find first overridden function, which is not fake override
+             * 2. Take its containing class
+             * 3. Find supertype of current containing class with type constructor of
+             *    class from step 2
+             */
+            if (firCallable is FirProperty && firCallable.isLocal) return null
+            val containingClass = computeContainingClass(parent) ?: return null
+            val defaultType = containingClass.defaultType
+            if (firCallable == null) return defaultType
+            if (!irFunction.isFakeOverride) return defaultType
 
-        val originalCallable = firCallable.unwrapFakeOverrides()
-        val containerOfOriginalCallable = originalCallable.containingClassLookupTag() ?: return defaultType
-        val containerOfFakeOverride = firCallable.dispatchReceiverType ?: return defaultType
-        val correspondingSupertype = AbstractTypeChecker.findCorrespondingSupertypes(
-            session.typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false),
-            containerOfFakeOverride,
-            containerOfOriginalCallable
-        ).firstOrNull() as ConeKotlinType? ?: return defaultType
-        return correspondingSupertype.toIrType()
-    }
+            val originalCallable = firCallable.unwrapFakeOverrides()
+            val containerOfOriginalCallable = originalCallable.containingClassLookupTag() ?: return defaultType
+            val containerOfFakeOverride = firCallable.dispatchReceiverType ?: return defaultType
+            val correspondingSupertype = AbstractTypeChecker.findCorrespondingSupertypes(
+                session.typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false),
+                containerOfFakeOverride,
+                containerOfOriginalCallable
+            ).firstOrNull() as ConeKotlinType? ?: return defaultType
+            return correspondingSupertype.toIrType()
+        }
 
-    private fun computeContainingClass(parent: IrDeclarationParent?): IrClass? {
-        return if (parent is IrClass && parent !is Fir2IrDeclarationStorage.NonCachedSourceFileFacadeClass) {
-            parent
-        } else {
-            null
+        private fun computeContainingClass(parent: IrDeclarationParent?): IrClass? {
+            return if (parent is IrClass && parent !is Fir2IrDeclarationStorage.NonCachedSourceFileFacadeClass) {
+                parent
+            } else {
+                null
+            }
         }
     }
 

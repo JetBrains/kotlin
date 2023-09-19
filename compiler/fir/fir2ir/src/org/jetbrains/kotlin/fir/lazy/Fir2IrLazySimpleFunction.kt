@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.contextReceiversForFunctionOrContainingProperty
+import org.jetbrains.kotlin.fir.backend.generators.Fir2IrCallableDeclarationsGenerator
 import org.jetbrains.kotlin.fir.backend.generators.generateOverriddenFunctionSymbols
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -52,7 +53,12 @@ class Fir2IrLazySimpleFunction(
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
         val containingClass = parent as? IrClass
         if (containingClass != null && shouldHaveDispatchReceiver(containingClass)) {
-            createThisReceiverParameter(thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"))
+            val thisType = Fir2IrCallableDeclarationsGenerator.computeDispatchReceiverType(
+                this,
+                fir,
+                containingClass
+            )
+            createThisReceiverParameter(thisType ?: error("No dispatch receiver receiver for function"))
         } else null
     }
 

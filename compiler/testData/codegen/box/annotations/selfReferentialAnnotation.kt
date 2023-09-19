@@ -1,6 +1,5 @@
 // FIR_DUMP
 // DUMP_IR
-// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-61386
 
 annotation class Ann(@Ann(1) val e: Int)
 
