@@ -58,11 +58,11 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun configureTestDependencies(test: KotlinJsTest) {
+        test.dependsOn(nodeJsTaskProviders.nodeJsSetupTaskProvider)
         if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
             test.dependsOn(
                 nodeJsTaskProviders.npmInstallTaskProvider,
                 nodeJsTaskProviders.storeYarnLockTaskProvider,
-                nodeJsTaskProviders.nodeJsSetupTaskProvider
             )
         }
     }
