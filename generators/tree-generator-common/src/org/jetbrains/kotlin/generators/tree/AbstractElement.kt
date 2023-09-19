@@ -40,6 +40,10 @@ interface AbstractElement<Element, Field> : ElementOrRef<Element, Field>, FieldC
 
     override val allFields: List<Field>
 
+    override val walkableChildren: List<Field>
+
+    override val transformableChildren: List<Field>
+
     override fun get(fieldName: String): Field? {
         return allFields.firstOrNull { it.name == fieldName }
     }

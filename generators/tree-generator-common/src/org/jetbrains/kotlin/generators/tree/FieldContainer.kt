@@ -20,4 +20,10 @@ interface FieldContainer {
 
     val hasTransformChildrenMethod: Boolean
         get() = false
+
+    val walkableChildren: List<AbstractField>
+        get() = emptyList()
+
+    val transformableChildren: List<AbstractField>
+        get() = emptyList()
 }

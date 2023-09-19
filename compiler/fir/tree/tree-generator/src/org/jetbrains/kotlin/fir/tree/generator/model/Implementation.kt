@@ -68,6 +68,12 @@ class Implementation(val element: Element, val name: String?) : FieldContainer, 
     override val hasTransformChildrenMethod: Boolean
         get() = true
 
+    override val walkableChildren: List<FieldWithDefault>
+        get() = allFields.filter { it.isFirType && !it.withGetter && it.needAcceptAndTransform }
+
+    override val transformableChildren: List<FieldWithDefault>
+        get() = walkableChildren.filter { it.isMutable }
+
     fun addParent(parent: Implementation, arg: Importable? = null) {
         _parents += ImplementationWithArg(parent, arg)
     }

@@ -151,8 +151,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 if (element.allFirFields.isNotEmpty()) {
                     println()
                     withIndent {
-                        for (field in allFields.filter { it.isFirType }) {
-                            if (field.withGetter || !field.needAcceptAndTransform) continue
+                        for (field in walkableChildren) {
                             when (field.name) {
                                 "explicitReceiver" -> {
                                     val explicitReceiver = implementation["explicitReceiver"]!!
@@ -215,10 +214,8 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 if (!isInterface && !isAbstract) {
                     println(" {")
                     withIndent {
-                        for (field in allFields) {
+                        for (field in transformableChildren) {
                             when {
-                                !field.isMutable || !field.isFirType || field.withGetter || !field.needAcceptAndTransform -> {}
-
                                 field.name == "explicitReceiver" -> {
                                     val explicitReceiver = implementation["explicitReceiver"]!!
                                     val dispatchReceiver = implementation["dispatchReceiver"]!!

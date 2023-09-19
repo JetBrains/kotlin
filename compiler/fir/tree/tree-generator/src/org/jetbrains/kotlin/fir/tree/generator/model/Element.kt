@@ -73,6 +73,12 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
     override val hasTransformChildrenMethod: Boolean
         get() = isRootElement
 
+    override val walkableChildren: List<Field>
+        get() = emptyList() // Use Implementation#walkableChildren instead
+
+    override val transformableChildren: List<Field>
+        get() = emptyList() // Use Implementation#transformableChildren instead
+
     var baseTransformerType: Element? = null
     val transformerType: Element get() = baseTransformerType ?: this
 

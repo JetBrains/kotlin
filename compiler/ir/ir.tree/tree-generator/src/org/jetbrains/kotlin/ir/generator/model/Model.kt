@@ -60,8 +60,8 @@ class Element(
 
     var isLeaf = config.isForcedLeaf
     val childrenOrderOverride: List<String>? = config.childrenOrderOverride
-    var walkableChildren: List<Field> = emptyList()
-    val transformableChildren get() = walkableChildren.filter { it.transformable }
+    override var walkableChildren: List<Field> = emptyList()
+    override val transformableChildren get() = walkableChildren.filter { it.transformable }
 
     val visitFunName = "visit" + (config.visitorName ?: name).replaceFirstChar(Char::uppercaseChar)
     val visitorParam = config.visitorParam ?: config.category.defaultVisitorParam
