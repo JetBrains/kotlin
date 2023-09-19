@@ -511,16 +511,13 @@ class AndroidSymbols(
         receiver: FqName,
         functionName: String,
     ): IrSimpleFunctionSymbol {
-        val functionSymbol =
-            pluginContext
-                .referenceFunctions(CallableId(kotlinxCollectionsImmutable, Name.identifier(functionName)))
-                .firstOrNull { it.owner.extensionReceiverParameter?.type?.classFqName == receiver }
-
-        if (functionSymbol == null) {
-            error("kotlinx.collections.immutable were not found on classpath")
-        }
-
-        return functionSymbol
+        val callableId = CallableId(kotlinxCollectionsImmutable, Name.identifier(functionName))
+        return pluginContext.referenceFunctions(callableId)
+            .firstOrNull {
+                it.owner.extensionReceiverParameter?.type?.classFqName == receiver &&
+                        it.owner.valueParameters.isEmpty()
+            }
+            ?: error("Function from kotlinx.collections.immutable is not found on classpath: $callableId")
     }
 
     val kotlinIterableToPersistentListExtension: IrSimpleFunctionSymbol by lazy {
