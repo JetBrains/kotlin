@@ -19,7 +19,8 @@ abstract class FirFromMissingDependenciesNamedReference : FirNamedReference() {
     abstract override val source: KtSourceElement?
     abstract override val name: Name
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFromMissingDependenciesNamedReference(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitFromMissingDependenciesNamedReference(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

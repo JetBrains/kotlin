@@ -47,7 +47,8 @@ abstract class FirEnumEntry : FirVariable() {
     abstract override val annotations: List<FirAnnotation>
     abstract override val symbol: FirEnumEntrySymbol
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitEnumEntry(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitEnumEntry(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

@@ -22,7 +22,8 @@ abstract class FirDoWhileLoop : FirLoop() {
     abstract override val condition: FirExpression
     abstract override val label: FirLabel?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDoWhileLoop(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitDoWhileLoop(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

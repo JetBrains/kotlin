@@ -50,7 +50,8 @@ abstract class FirBackingField : FirVariable(), FirTypeParametersOwner, FirState
     abstract override val typeParameters: List<FirTypeParameter>
     abstract override val status: FirDeclarationStatus
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitBackingField(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitBackingField(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

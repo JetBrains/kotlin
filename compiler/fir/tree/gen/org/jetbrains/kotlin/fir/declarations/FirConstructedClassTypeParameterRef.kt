@@ -20,7 +20,8 @@ abstract class FirConstructedClassTypeParameterRef : FirPureAbstractElement(), F
     abstract override val source: KtSourceElement?
     abstract override val symbol: FirTypeParameterSymbol
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitConstructedClassTypeParameterRef(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitConstructedClassTypeParameterRef(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

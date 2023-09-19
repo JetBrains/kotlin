@@ -30,7 +30,8 @@ abstract class FirSmartCastExpression : FirExpression() {
     abstract val isStable: Boolean
     abstract val smartcastStability: SmartcastStability
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSmartCastExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitSmartCastExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

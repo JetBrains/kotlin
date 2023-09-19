@@ -24,7 +24,8 @@ abstract class FirEqualityOperatorCall : FirExpression(), FirCall {
     abstract override val argumentList: FirArgumentList
     abstract val operation: FirOperation
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitEqualityOperatorCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitEqualityOperatorCall(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

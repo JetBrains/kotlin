@@ -22,7 +22,8 @@ abstract class FirIntersectionTypeRef : FirTypeRefWithNullability() {
     abstract val leftType: FirTypeRef
     abstract val rightType: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitIntersectionTypeRef(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitIntersectionTypeRef(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

@@ -20,7 +20,8 @@ abstract class FirTypeRefWithNullability : FirTypeRef() {
     abstract override val annotations: List<FirAnnotation>
     abstract val isMarkedNullable: Boolean
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeRefWithNullability(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitTypeRefWithNullability(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

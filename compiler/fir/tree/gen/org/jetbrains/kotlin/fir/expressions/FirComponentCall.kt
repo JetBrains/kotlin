@@ -37,7 +37,8 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override val explicitReceiver: FirExpression
     abstract val componentIndex: Int
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitComponentCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitComponentCall(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

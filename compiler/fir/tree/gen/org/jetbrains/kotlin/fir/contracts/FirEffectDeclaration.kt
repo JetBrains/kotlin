@@ -19,7 +19,8 @@ abstract class FirEffectDeclaration : FirContractElementDeclaration() {
     abstract override val source: KtSourceElement?
     abstract override val effect: ConeEffectDeclaration
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitEffectDeclaration(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitEffectDeclaration(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

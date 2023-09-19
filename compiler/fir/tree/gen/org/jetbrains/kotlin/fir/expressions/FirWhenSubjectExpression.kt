@@ -24,7 +24,8 @@ abstract class FirWhenSubjectExpression : FirExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract val whenRef: FirExpressionRef<FirWhenExpression>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenSubjectExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitWhenSubjectExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

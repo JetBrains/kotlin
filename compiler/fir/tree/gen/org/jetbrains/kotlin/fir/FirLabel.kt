@@ -17,7 +17,8 @@ abstract class FirLabel : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?
     abstract val name: String
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLabel(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitLabel(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

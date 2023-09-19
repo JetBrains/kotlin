@@ -19,7 +19,8 @@ interface FirControlFlowGraphOwner : FirElement {
     override val source: KtSourceElement?
     val controlFlowGraphReference: FirControlFlowGraphReference?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitControlFlowGraphOwner(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitControlFlowGraphOwner(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

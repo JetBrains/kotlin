@@ -29,7 +29,8 @@ abstract class FirAnnotation : FirExpression() {
     abstract val argumentMapping: FirAnnotationArgumentMapping
     abstract val typeArguments: List<FirTypeProjection>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotation(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitAnnotation(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

@@ -23,7 +23,8 @@ abstract class FirArrayLiteral : FirExpression(), FirCall {
     abstract override val annotations: List<FirAnnotation>
     abstract override val argumentList: FirArgumentList
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitArrayLiteral(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitArrayLiteral(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

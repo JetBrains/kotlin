@@ -25,7 +25,8 @@ abstract class FirCheckNotNullCall : FirExpression(), FirCall, FirResolvable {
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirReference
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCheckNotNullCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitCheckNotNullCall(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

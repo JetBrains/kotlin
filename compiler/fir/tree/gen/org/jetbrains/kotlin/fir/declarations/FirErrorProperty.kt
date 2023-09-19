@@ -50,7 +50,8 @@ abstract class FirErrorProperty : FirVariable(), FirDiagnosticHolder {
     abstract override val diagnostic: ConeDiagnostic
     abstract override val symbol: FirErrorPropertySymbol
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorProperty(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitErrorProperty(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

@@ -36,7 +36,8 @@ abstract class FirIntegerLiteralOperatorCall : FirFunctionCall() {
     abstract override val dispatchReceiver: FirExpression?
     abstract override val extensionReceiver: FirExpression?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitIntegerLiteralOperatorCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitIntegerLiteralOperatorCall(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

@@ -19,7 +19,8 @@ abstract class FirArgumentList : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?
     abstract val arguments: List<FirExpression>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitArgumentList(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitArgumentList(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

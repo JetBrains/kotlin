@@ -27,7 +27,8 @@ abstract class FirIncrementDecrementExpression : FirExpression() {
     abstract val expression: FirExpression
     abstract val operationSource: KtSourceElement?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitIncrementDecrementExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitIncrementDecrementExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

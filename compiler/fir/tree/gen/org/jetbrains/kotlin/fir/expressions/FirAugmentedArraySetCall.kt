@@ -25,7 +25,8 @@ abstract class FirAugmentedArraySetCall : FirPureAbstractElement(), FirStatement
     abstract val calleeReference: FirReference
     abstract val arrayAccessSource: KtSourceElement?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAugmentedArraySetCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitAugmentedArraySetCall(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

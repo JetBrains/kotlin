@@ -27,7 +27,8 @@ abstract class FirTypeOperatorCall : FirExpression(), FirCall {
     abstract val conversionTypeRef: FirTypeRef
     abstract val argFromStubType: Boolean
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeOperatorCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitTypeOperatorCall(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

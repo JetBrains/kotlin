@@ -33,7 +33,8 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirResolvable, Fi
     abstract override val source: KtSourceElement?
     abstract val nonFatalDiagnostics: List<ConeDiagnostic>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccessExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitQualifiedAccessExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

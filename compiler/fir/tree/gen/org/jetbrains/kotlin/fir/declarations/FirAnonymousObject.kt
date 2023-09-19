@@ -38,7 +38,8 @@ abstract class FirAnonymousObject : FirClass() {
     abstract override val scopeProvider: FirScopeProvider
     abstract override val symbol: FirAnonymousObjectSymbol
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousObject(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitAnonymousObject(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
