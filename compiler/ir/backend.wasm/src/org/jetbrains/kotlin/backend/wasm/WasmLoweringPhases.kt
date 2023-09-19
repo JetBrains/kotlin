@@ -115,6 +115,12 @@ private val lateinitUsageLoweringPhase = makeWasmModulePhase(
     description = "Insert checks for lateinit field references"
 )
 
+private val rangeContainsLoweringPhase = makeWasmModulePhase(
+    ::RangeContainsLowering,
+    name = "RangeContainsLowering",
+    description = "[Optimization] Optimizes calls to contains() for ClosedRanges"
+)
+
 private val arrayConstructorReferencePhase = makeWasmModulePhase(
     ::WasmArrayConstructorReferenceLowering,
     name = "ArrayConstructorReference",
@@ -637,6 +643,7 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             lateinitNullableFieldsPhase then
             lateinitDeclarationLoweringPhase then
             lateinitUsageLoweringPhase then
+            rangeContainsLoweringPhase then
             arrayConstructorReferencePhase then
             arrayConstructorPhase then
             sharedVariablesLoweringPhase then
