@@ -16,12 +16,9 @@ import java.io.File
  */
 class RelocatableFileToPathConverter(private val baseDir: File) : FileToPathConverter {
 
-    private val unixStyleBaseDirPathPrefix = "${baseDir.invariantSeparatorsPath}/"
-
     override fun toPath(file: File): String {
-        check(file.invariantSeparatorsPath.startsWith(unixStyleBaseDirPathPrefix)) {
-            "The given file '${file.path}' is located outside the base directory '${baseDir.path}'"
-        }
+        // Note: If the given file is located outside `baseDir`, the relative path will start with "../". It's not "clean", but it can work.
+        // TODO: Re-design the code such that `baseDir` always contains the given file (also add a precondition check here).
         return file.relativeTo(baseDir).invariantSeparatorsPath
     }
 

@@ -22,10 +22,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
-import kotlin.io.path.createDirectory
-import kotlin.io.path.isRegularFile
-import kotlin.io.path.readText
-import kotlin.io.path.walk
+import kotlin.io.path.*
 
 @DisplayName("Build cache relocation")
 class BuildCacheRelocationIT : KGPBaseTest() {
@@ -312,63 +309,6 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         }
     }
 
-    @JvmGradlePluginTests
-    @DisplayName("Kotlin incremental compilation should work correctly after cache hint")
-    @GradleTest
-    fun testKotlinIncrementalCompilation(gradleVersion: GradleVersion) {
-        val options = defaultBuildOptions.copy(useGradleClasspathSnapshot = false)
-        checkKotlinIncrementalCompilationAfterCacheHit(gradleVersion, options) {
-            assertNonIncrementalCompilation()
-        }
-    }
-
-    @JvmGradlePluginTests
-    @DisplayName("Kotlin incremental compilation with `kotlin.incremental.useClasspathSnapshot` feature should work correctly")
-    @GradleTest
-    fun testKotlinIncrementalCompilation_withGradleClasspathSnapshot(gradleVersion: GradleVersion) {
-        checkKotlinIncrementalCompilationAfterCacheHit(gradleVersion, defaultBuildOptions.copy(useGradleClasspathSnapshot = true)) {
-            assertIncrementalCompilation(listOf("src/main/kotlin/foo.kt", "src/main/kotlin/fooUsage.kt").toPaths())
-        }
-    }
-
-    @JvmGradlePluginTests
-    @DisplayName("Kotlin incremental compilation with `kotlin.incremental.classpath.snapshot.enabled` feature should work correctly")
-    @GradleTest
-    fun testKotlinIncrementalCompilation_withICClasspathSnapshot(gradleVersion: GradleVersion) {
-        checkKotlinIncrementalCompilationAfterCacheHit(gradleVersion, defaultBuildOptions.copy(useICClasspathSnapshot = true)) {
-            assertIncrementalCompilation(listOf("src/main/kotlin/foo.kt", "src/main/kotlin/fooUsage.kt").toPaths())
-            assertOutputContains("Incremental compilation with ABI snapshot enabled")
-        }
-    }
-
-    private fun checkKotlinIncrementalCompilationAfterCacheHit(
-        gradleVersion: GradleVersion,
-        buildOptions: BuildOptions = defaultBuildOptions,
-        assertions: BuildResult.() -> Unit
-    ) {
-        val (firstProject, secondProject) = prepareTestProjects("buildCacheSimple", gradleVersion, buildOptions)
-
-        // First build, should be stored into the build cache:
-        firstProject.build("assemble") {
-            assertTasksPackedToCache(":compileKotlin")
-        }
-
-        // A cache hit: a clean build without any changes to the project
-        secondProject.build("clean", "assemble") {
-            assertTasksFromCache(":compileKotlin")
-        }
-
-        // Check whether compilation after a cache hit is incremental (KT-34862)
-        val fooKtSourceFile = secondProject.kotlinSourcesDir().resolve("foo.kt")
-        fooKtSourceFile.modify { it.replace("Int = 1", "String = \"abc\"") }
-        secondProject.build("assemble", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG), assertions = assertions)
-        // Revert the change to the return type of foo(), and check if we get a cache hit
-        fooKtSourceFile.modify { it.replace("String = \"abc\"", "Int = 1") }
-        secondProject.build("clean", "assemble") {
-            assertTasksFromCache(":compileKotlin")
-        }
-    }
-
     private fun checkKaptCachingIncrementalBuild(
         firstProject: TestProject,
         secondProject: TestProject
@@ -410,27 +350,70 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     }
 
     @JvmGradlePluginTests
-    @DisplayName("test relocatability for projects using custom build directory") // Regression test for KT-58547
+    @DisplayName("Kotlin incremental compilation should work correctly after cache hint")
     @GradleTest
-    fun testCustomBuildDirectory(gradleVersion: GradleVersion) {
-        val (firstProject, secondProject) = prepareTestProjects("buildCacheSimple", gradleVersion)
-        firstProject.buildGradle.append("buildDir = \"../BUILD_DIR_1\"")
-        secondProject.buildGradle.append("buildDir = \"../BUILD_DIR_2\"")
+    fun testKotlinIncrementalCompilationAfterCacheHit(gradleVersion: GradleVersion) {
+        checkKotlinIncrementalCompilationAfterCacheHit(gradleVersion)
+    }
 
-        firstProject.build(":compileKotlin")
+    @JvmGradlePluginTests
+    @DisplayName("test custom source set and build directory located outside project directory") // Regression test for KT-61852 and KT-58547
+    @GradleTest
+    fun testCustomSourceSetAndBuildDirectory(gradleVersion: GradleVersion) {
+        val projects = mutableListOf<TestProject>()
 
+        checkKotlinIncrementalCompilationAfterCacheHit(
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(useDaemonFallbackStrategy = false)
+        ) { project ->
+            project.projectPath.toFile().resolve("../SOURCE_SET_OUTSIDE_PROJECT/src/main/kotlin").let {
+                it.mkdirs()
+                it.resolve("SomeClass.kt").createNewFile()
+            }
+            project.buildGradle.append("sourceSets { main.java.srcDirs += \"../SOURCE_SET_OUTSIDE_PROJECT/src/main/kotlin\" }")
+            project.buildGradle.append("buildDir = \"../BUILD_DIR_OUTSIDE_PROJECT\"")
+
+            projects.add(project)
+        }
+
+        // Also check that output files do not contain non-relocatable paths
+        val projectPath = projects.first().projectPath
         val outputFilesContainingNonRelocatablePaths =
-            firstProject.projectPath.resolve("../BUILD_DIR_1/kotlin/compileKotlin").walk()
-                .filter {
-                    // Use readText() even for binary files as we don't have a better way for now
-                    it.isRegularFile() && it.readText().contains("BUILD_DIR_1")
-                }.toList()
+            projectPath.resolve("../BUILD_DIR_OUTSIDE_PROJECT/kotlin/compileKotlin").walk().filter {
+                // Use readText() even for binary files as we don't have a better way for now
+                it.isRegularFile() && it.readText().let { text ->
+                    text.contains(projectPath.parent.name) || text.contains("BUILD_DIR_OUTSIDE_PROJECT")
+                }
+            }.toList()
         assert(outputFilesContainingNonRelocatablePaths.isEmpty()) {
             "The following output files contain non-relocatable paths:\n" + outputFilesContainingNonRelocatablePaths.joinToString("\n")
         }
+    }
 
+    private fun checkKotlinIncrementalCompilationAfterCacheHit(
+        gradleVersion: GradleVersion,
+        buildOptions: BuildOptions = defaultBuildOptions,
+        configureProject: (TestProject) -> Unit = {},
+    ) {
+        val (firstProject, secondProject) =
+            prepareTestProjects("buildCacheSimple", gradleVersion, buildOptions, buildJdk = null, configureProject)
+
+        // Build the first project -- It should be a cache miss
+        firstProject.build(":compileKotlin") {
+            assertTasksPackedToCache(":compileKotlin")
+        }
+
+        // Build the second project -- It should be a cache hit
         secondProject.build(":compileKotlin") {
             assertTasksFromCache(":compileKotlin")
+        }
+
+        // Make a change to the second project and build again -- Compilation should be incremental
+        secondProject.kotlinSourcesDir().resolve("foo.kt").modify {
+            it.replace("Int = 1", "String = \"abc\"")
+        }
+        secondProject.build("assemble", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            assertIncrementalCompilation(listOf("src/main/kotlin/foo.kt", "src/main/kotlin/fooUsage.kt").toPaths())
         }
     }
 }
