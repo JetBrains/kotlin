@@ -209,12 +209,20 @@ abstract class FastAnalyzer<V : Value, F : Frame<V>>(
         }
     }
 
+    private fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean = false) {
+        if (useFastMergeControlFlowEdge) {
+            fastMergeControlFlowEdge(dest, frame, canReuse)
+        } else {
+            fullMergeControlFlowEdge(dest, frame, canReuse)
+        }
+    }
+
     /**
      * Updates frame at the index [dest] with its old value if provided and previous control flow node frame [frame].
      * Reuses old frame when possible and when [canReuse] is true.
      * If updated, adds the frame to the queue
      */
-    private fun mergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean = false) {
+    private fun fullMergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean = false) {
         val oldFrame = frames[dest]
         val changes = when {
             canReuse && !isMergeNode[dest] -> {
@@ -229,12 +237,26 @@ abstract class FastAnalyzer<V : Value, F : Frame<V>>(
                 oldFrame.init(frame)
                 true
             }
-            !useFastMergeControlFlowEdge ->
-                try {
-                    oldFrame.merge(frame, interpreter)
-                } catch (e: AnalyzerException) {
-                    throw AnalyzerException(null, "${e.message}\nframe: ${frame.dump()}\noldFrame: ${oldFrame.dump()}")
+            else -> try {
+                oldFrame.merge(frame, interpreter)
+            } catch (e: AnalyzerException) {
+                throw AnalyzerException(null, "${e.message}\nframe: ${frame.dump()}\noldFrame: ${oldFrame.dump()}")
+            }
+        }
+        updateQueue(changes, dest)
+    }
+
+    private fun fastMergeControlFlowEdge(dest: Int, frame: F, canReuse: Boolean) {
+        val oldFrame = frames[dest]
+        val changes = when {
+            oldFrame == null -> {
+                frames[dest] = if (canReuse && !isMergeNode[dest]) {
+                    frame
+                } else {
+                    newFrame(frame.locals, frame.maxStackSize).apply { init(frame) }
                 }
+                true
+            }
             else -> false
         }
         updateQueue(changes, dest)
