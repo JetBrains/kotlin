@@ -162,7 +162,7 @@ public actual enum class CharCategory(internal val value: Int, public actual val
      */
     public actual operator fun contains(char: Char): Boolean = char.getCategoryValue() == this.value
 
-    companion object {
+    public companion object {
         internal fun valueOf(category: Int): CharCategory =
             when (category) {
                 in 0..16 -> entries[category]

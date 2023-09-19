@@ -10,5 +10,5 @@ package kotlin.text
  */
 @SinceKotlin("1.4")
 public actual open class CharacterCodingException(message: String?) : Exception(message) {
-    actual constructor() : this(null)
+    public actual constructor() : this(null)
 }

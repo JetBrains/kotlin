@@ -23,7 +23,7 @@ internal suspend fun <T> returnIfSuspended(argument: Any?): T {
 internal fun <T> interceptContinuationIfNeeded(
     context: CoroutineContext,
     continuation: Continuation<T>
-) = context[ContinuationInterceptor]?.interceptContinuation(continuation) ?: continuation
+): Continuation<T> = context[ContinuationInterceptor]?.interceptContinuation(continuation) ?: continuation
 
 
 @SinceKotlin("1.2")
