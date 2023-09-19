@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -165,6 +166,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
             is FirFunctionSymbol<*>, is FirClassSymbol<*> -> return PropertyStability.STABLE_VALUE
             is FirBackingFieldSymbol -> return if (isVal) PropertyStability.STABLE_VALUE else PropertyStability.MUTABLE_PROPERTY
         }
+        if (this is FirCallableSymbol && this.isExpect) return PropertyStability.EXPECT_PROPERTY
         if (this !is FirVariableSymbol<*>) return null
         if (this is FirFieldSymbol && !this.isFinal) return PropertyStability.MUTABLE_PROPERTY
 

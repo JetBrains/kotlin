@@ -17,6 +17,9 @@ enum class SmartcastStability(private val str: String, val description: String =
     // Smart casts are completely safe
     STABLE_VALUE("stable val"),
 
+    // Smart casts are not safe
+    EXPECT_PROPERTY("expect property"),
+
     // Member value with open / custom getter
     // Smart casts are not safe
     PROPERTY_WITH_GETTER("custom getter", "property that has open or custom getter"),

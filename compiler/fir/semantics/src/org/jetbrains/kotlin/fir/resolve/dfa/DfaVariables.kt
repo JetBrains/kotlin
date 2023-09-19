@@ -36,6 +36,9 @@ enum class PropertyStability(val impliedSmartcastStability: SmartcastStability?)
     // Smartcast may or may not be safe, depending on whether there are concurrent writes to this local variable.
     LOCAL_VAR(null),
 
+    // Smartcast is always unsafe regardless of usage.
+    EXPECT_PROPERTY(SmartcastStability.EXPECT_PROPERTY),
+
     // Open or custom getter.
     // Smartcast is always unsafe regardless of usage.
     PROPERTY_WITH_GETTER(SmartcastStability.PROPERTY_WITH_GETTER),

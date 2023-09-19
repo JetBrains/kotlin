@@ -1724,6 +1724,28 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/smartCasts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class SmartCasts {
+        @Test
+        public void testAllFilesPresentInSmartCasts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/smartCasts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("kt61340_commonCode.kt")
+        public void testKt61340_commonCode() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/kt61340_commonCode.kt");
+        }
+
+        @Test
+        @TestMetadata("kt61340_platformCode.kt")
+        public void testKt61340_platformCode() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/kt61340_platformCode.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun")
     @TestDataPath("$PROJECT_ROOT")
     public class TopLevelFun {
