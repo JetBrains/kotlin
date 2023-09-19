@@ -46,41 +46,21 @@ FILE: [ResolvedTo(IMPORTS)] contract.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] contract.kt
-    public final inline [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
-        [Contract description] <
-            kotlin#.contracts#.contract#(<L> = [ResolvedTo(RAW_FIR)] contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                callsInPlace#(block#, InvocationKind#.EXACTLY_ONCE#)
-            }
-            )
-        >
-     {
-         {
-            kotlin#.contracts#.contract#(<L> = [ResolvedTo(RAW_FIR)] contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                callsInPlace#(block#, InvocationKind#.EXACTLY_ONCE#)
-            }
-            )
+    public final inline [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        Q|kotlin|.<Unresolved name: contracts>#.<Unresolved name: contract>#(<L> = [ResolvedTo(RAW_FIR)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: callsInPlace> <inline=Unknown>  {
+            ^ <Unresolved name: callsInPlace>#(R|<local>/block|, <Unresolved name: InvocationKind>#.<Unresolved name: EXACTLY_ONCE>#)
         }
-
+        )
         block#()
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] contract.kt
-    public final inline [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
-        [Contract description] <
-            kotlin#.contracts#.contract#(<L> = [ResolvedTo(RAW_FIR)] contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                callsInPlace#(block#, InvocationKind#.EXACTLY_ONCE#)
-            }
-            )
-        >
-     {
-         {
-            kotlin#.contracts#.contract#(<L> = [ResolvedTo(RAW_FIR)] contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                callsInPlace#(block#, InvocationKind#.EXACTLY_ONCE#)
-            }
-            )
+    public final inline [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        Q|kotlin|.<Unresolved name: contracts>#.<Unresolved name: contract>#(<L> = [ResolvedTo(RAW_FIR)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: callsInPlace> <inline=Unknown>  {
+            ^ <Unresolved name: callsInPlace>#(R|<local>/block|, <Unresolved name: InvocationKind>#.<Unresolved name: EXACTLY_ONCE>#)
         }
-
+        )
         block#()
     }
 
@@ -88,15 +68,15 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] contract.kt
     public final inline [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [Contract description] <
-            Q|kotlin|.<Unresolved name: contracts>#.<Unresolved name: contract>#(<L> = [ResolvedTo(RAW_FIR)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: callsInPlace> <inline=Unknown>  {
+            Q|kotlin|.<Unresolved name: contracts>#.<Unresolved name: contract>#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: callsInPlace> <inline=Unknown>  {
                 ^ <Unresolved name: callsInPlace>#(R|<local>/block|, <Unresolved name: InvocationKind>#.<Unresolved name: EXACTLY_ONCE>#)
             }
             )
         >
      {
          {
-            kotlin#.contracts#.contract#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                callsInPlace#(block#, InvocationKind#.EXACTLY_ONCE#)
+            Q|kotlin|.<Unresolved name: contracts>#.<Unresolved name: contract>#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: callsInPlace> <inline=Unknown>  {
+                ^ <Unresolved name: callsInPlace>#(R|<local>/block|, <Unresolved name: InvocationKind>#.<Unresolved name: EXACTLY_ONCE>#)
             }
             )
         }
@@ -108,15 +88,15 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] contract.kt
     public final inline [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [Contract description] <
-            Q|kotlin|.<Unresolved name: contracts>#.<Unresolved name: contract>#(<L> = [ResolvedTo(RAW_FIR)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: callsInPlace> <inline=Unknown>  {
+            Q|kotlin|.<Unresolved name: contracts>#.<Unresolved name: contract>#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: callsInPlace> <inline=Unknown>  {
                 ^ <Unresolved name: callsInPlace>#(R|<local>/block|, <Unresolved name: InvocationKind>#.<Unresolved name: EXACTLY_ONCE>#)
             }
             )
         >
      {
          {
-            kotlin#.contracts#.contract#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                callsInPlace#(block#, InvocationKind#.EXACTLY_ONCE#)
+            Q|kotlin|.<Unresolved name: contracts>#.<Unresolved name: contract>#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: callsInPlace> <inline=Unknown>  {
+                ^ <Unresolved name: callsInPlace>#(R|<local>/block|, <Unresolved name: InvocationKind>#.<Unresolved name: EXACTLY_ONCE>#)
             }
             )
         }

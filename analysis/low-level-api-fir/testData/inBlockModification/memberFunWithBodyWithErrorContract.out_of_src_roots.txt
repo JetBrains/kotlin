@@ -5,7 +5,7 @@ public final [ResolvedTo(BODY_RESOLVE)] fun passLambdaValue([ResolvedTo(BODY_RES
     >
  {
      {
-        contract#(l#)
+        <Unresolved name: contract>#(R|<local>/l|)
     }
 
     Int(42)

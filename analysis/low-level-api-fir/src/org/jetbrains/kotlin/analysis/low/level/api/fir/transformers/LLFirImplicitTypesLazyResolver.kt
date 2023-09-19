@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwa
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.scopes.callableCopySubstitutionForTypeUpdater
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 
 internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
     override fun resolve(
@@ -68,14 +69,30 @@ internal class LLFirImplicitBodyTargetResolver(
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
-            is FirFunction -> resolve(target, BodyStateKeepers.FUNCTION)
-            is FirProperty -> resolve(target, BodyStateKeepers.PROPERTY)
-            is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
+            is FirFunction -> {
+                if (target.returnTypeRef is FirImplicitTypeRef) {
+                    resolve(target, BodyStateKeepers.FUNCTION)
+                }
+            }
+
+            is FirProperty -> {
+                if (target.returnTypeRef is FirImplicitTypeRef || target.backingField?.returnTypeRef is FirImplicitTypeRef) {
+                    resolve(target, BodyStateKeepers.PROPERTY)
+                }
+            }
+
+            is FirField -> {
+                if (target.returnTypeRef is FirImplicitTypeRef) {
+                    resolve(target, BodyStateKeepers.FIELD)
+                }
+            }
+
             is FirScript -> {
                 if (target.statements.any { it.isScriptDependentDeclaration }) {
                     resolve(target, BodyStateKeepers.SCRIPT)
                 }
             }
+
             is FirRegularClass,
             is FirTypeAlias,
             is FirFile,
@@ -83,6 +100,8 @@ internal class LLFirImplicitBodyTargetResolver(
             is FirAnonymousInitializer,
             is FirDanglingModifierList,
             is FirFileAnnotationsContainer,
+            is FirEnumEntry,
+            is FirErrorProperty,
             -> {
                 // No implicit bodies here
             }

@@ -245,7 +245,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] field $$delegate_0: R|one/Foo| = prop#
+        private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] field $$delegate_0: R|one/Foo| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -268,7 +268,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] field $$delegate_0: R|one/Foo| = prop#
+        private final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] field $$delegate_0: R|one/Foo| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
