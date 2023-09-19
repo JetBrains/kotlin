@@ -64,9 +64,11 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirPropertyAccessor() {
-    override val receiverParameter: FirReceiverParameter? get() = null
+    override val receiverParameter: FirReceiverParameter?
+        get() = null
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
-    override val isSetter: Boolean get() = !isGetter
+    override val isSetter: Boolean
+        get() = !isGetter
 
     init {
         symbol.bind(this)

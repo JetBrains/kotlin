@@ -31,7 +31,8 @@ internal class FirWhenSubjectExpressionImpl(
     override val whenRef: FirExpressionRef<FirWhenExpression>,
 ) : FirWhenSubjectExpression() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    override val coneTypeOrNull: ConeKotlinType? get() = whenRef.value.subject?.coneTypeOrNull ?: StandardClassIds.Unit.constructClassLikeType()
+    override val coneTypeOrNull: ConeKotlinType?
+        get() = whenRef.value.subject?.coneTypeOrNull ?: StandardClassIds.Unit.constructClassLikeType()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

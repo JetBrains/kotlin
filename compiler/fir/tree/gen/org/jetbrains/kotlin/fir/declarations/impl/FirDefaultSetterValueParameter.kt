@@ -70,7 +70,8 @@ internal class FirDefaultSetterValueParameter(
     override val isNoinline: Boolean,
     override val isVararg: Boolean,
 ) : FirValueParameter() {
-    override val typeParameters: List<FirTypeParameterRef> get() = emptyList()
+    override val typeParameters: List<FirTypeParameterRef>
+        get() = emptyList()
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     override val name: Name = Name.identifier("value")
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null

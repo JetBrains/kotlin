@@ -35,7 +35,8 @@ internal class FirDelegatedConstructorCallImpl(
     override var calleeReference: FirReference,
     override val isThis: Boolean,
 ) : FirDelegatedConstructorCall() {
-    override val isSuper: Boolean get() = !isThis
+    override val isSuper: Boolean
+        get() = !isThis
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

@@ -57,12 +57,15 @@ internal class FirErrorFunctionImpl(
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirErrorFunctionSymbol,
 ) : FirErrorFunction() {
-    override val typeParameters: List<FirTypeParameterRef> get() = emptyList()
+    override val typeParameters: List<FirTypeParameterRef>
+        get() = emptyList()
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, null, diagnostic)
-    override val receiverParameter: FirReceiverParameter? get() = null
+    override val receiverParameter: FirReceiverParameter?
+        get() = null
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
-    override val body: FirBlock? get() = null
+    override val body: FirBlock?
+        get() = null
 
     init {
         symbol.bind(this)

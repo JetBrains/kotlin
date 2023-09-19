@@ -59,16 +59,24 @@ internal class FirErrorPropertyImpl(
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirErrorPropertySymbol,
 ) : FirErrorProperty() {
-    override val typeParameters: List<FirTypeParameterRef> get() = emptyList()
+    override val typeParameters: List<FirTypeParameterRef>
+        get() = emptyList()
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, null, diagnostic)
-    override val receiverParameter: FirReceiverParameter? get() = null
-    override val initializer: FirExpression? get() = null
-    override val delegate: FirExpression? get() = null
-    override val isVar: Boolean get() = false
-    override val isVal: Boolean get() = true
-    override val getter: FirPropertyAccessor? get() = null
-    override val setter: FirPropertyAccessor? get() = null
+    override val receiverParameter: FirReceiverParameter?
+        get() = null
+    override val initializer: FirExpression?
+        get() = null
+    override val delegate: FirExpression?
+        get() = null
+    override val isVar: Boolean
+        get() = false
+    override val isVal: Boolean
+        get() = true
+    override val getter: FirPropertyAccessor?
+        get() = null
+    override val setter: FirPropertyAccessor?
+        get() = null
 
     init {
         symbol.bind(this)

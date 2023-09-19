@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.withIndent
 
 abstract class AbstractFieldPrinter<Field : AbstractField>(
     private val printer: SmartPrinter,
@@ -59,22 +60,21 @@ abstract class AbstractFieldPrinter<Field : AbstractField>(
                 println()
                 return
             }
-            print(" ")
 
             if (field.withGetter) {
-                if (field.customSetter != null) {
-                    println()
-                    pushIndent()
-                }
-                print("get() ")
+                println()
+                pushIndent()
+                print("get()")
             }
-            println("= $defaultValue")
+            println(" = $defaultValue")
             field.customSetter?.let {
                 println("set(value) {")
-                pushIndent()
-                println(it)
-                popIndent()
+                withIndent {
+                    println(it)
+                }
                 println("}")
+            }
+            if (field.withGetter) {
                 popIndent()
             }
         }

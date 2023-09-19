@@ -66,7 +66,8 @@ class FirErrorPrimaryConstructorImpl @FirImplementationDetail constructor(
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorPrimaryConstructor() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
-    override val isPrimary: Boolean get() = true
+    override val isPrimary: Boolean
+        get() = true
 
     init {
         symbol.bind(this)

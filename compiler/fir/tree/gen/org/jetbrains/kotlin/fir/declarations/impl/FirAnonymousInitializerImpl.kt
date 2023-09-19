@@ -41,7 +41,8 @@ internal class FirAnonymousInitializerImpl(
     override val symbol: FirAnonymousInitializerSymbol,
     override val dispatchReceiverType: ConeClassLikeType?,
 ) : FirAnonymousInitializer() {
-    override val annotations: List<FirAnnotation> get() = emptyList()
+    override val annotations: List<FirAnnotation>
+        get() = emptyList()
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {

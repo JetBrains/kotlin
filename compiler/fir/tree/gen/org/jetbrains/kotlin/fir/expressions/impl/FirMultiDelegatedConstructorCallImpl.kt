@@ -28,15 +28,24 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
     override val delegatedConstructorCalls: MutableList<FirDelegatedConstructorCall>,
 ) : FirMultiDelegatedConstructorCall() {
-    override val source: KtSourceElement? get() = delegatedConstructorCalls.last().source
-    override val annotations: List<FirAnnotation> get() = delegatedConstructorCalls.last().annotations
-    override val argumentList: FirArgumentList get() = delegatedConstructorCalls.last().argumentList
-    override val contextReceiverArguments: List<FirExpression> get() = delegatedConstructorCalls.last().contextReceiverArguments
-    override val constructedTypeRef: FirTypeRef get() = delegatedConstructorCalls.last().constructedTypeRef
-    override val dispatchReceiver: FirExpression? get() = delegatedConstructorCalls.last().dispatchReceiver
-    override val calleeReference: FirReference get() = delegatedConstructorCalls.last().calleeReference
-    override val isThis: Boolean get() = delegatedConstructorCalls.last().isThis
-    override val isSuper: Boolean get() = !isThis
+    override val source: KtSourceElement?
+        get() = delegatedConstructorCalls.last().source
+    override val annotations: List<FirAnnotation>
+        get() = delegatedConstructorCalls.last().annotations
+    override val argumentList: FirArgumentList
+        get() = delegatedConstructorCalls.last().argumentList
+    override val contextReceiverArguments: List<FirExpression>
+        get() = delegatedConstructorCalls.last().contextReceiverArguments
+    override val constructedTypeRef: FirTypeRef
+        get() = delegatedConstructorCalls.last().constructedTypeRef
+    override val dispatchReceiver: FirExpression?
+        get() = delegatedConstructorCalls.last().dispatchReceiver
+    override val calleeReference: FirReference
+        get() = delegatedConstructorCalls.last().calleeReference
+    override val isThis: Boolean
+        get() = delegatedConstructorCalls.last().isThis
+    override val isSuper: Boolean
+        get() = !isThis
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         delegatedConstructorCalls.forEach { it.accept(visitor, data) }

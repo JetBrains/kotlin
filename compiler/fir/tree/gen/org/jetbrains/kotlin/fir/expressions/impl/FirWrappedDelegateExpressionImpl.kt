@@ -29,7 +29,8 @@ internal class FirWrappedDelegateExpressionImpl(
     override var delegateProvider: FirExpression,
 ) : FirWrappedDelegateExpression() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    override val coneTypeOrNull: ConeKotlinType? get() = expression.coneTypeOrNull
+    override val coneTypeOrNull: ConeKotlinType?
+        get() = expression.coneTypeOrNull
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

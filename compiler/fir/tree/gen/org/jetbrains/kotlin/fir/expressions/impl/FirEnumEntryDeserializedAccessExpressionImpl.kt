@@ -30,7 +30,8 @@ internal class FirEnumEntryDeserializedAccessExpressionImpl(
     override val enumClassId: ClassId,
     override val enumEntryName: Name,
 ) : FirEnumEntryDeserializedAccessExpression() {
-    override val source: KtSourceElement? get() = null
+    override val source: KtSourceElement?
+        get() = null
     @OptIn(UnresolvedExpressionTypeAccess::class)
     override var coneTypeOrNull: ConeKotlinType? = enumClassId.toLookupTag().constructClassType(emptyArray(), false)
 

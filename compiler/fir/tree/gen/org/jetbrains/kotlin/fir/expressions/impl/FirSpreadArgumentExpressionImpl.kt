@@ -28,8 +28,10 @@ internal class FirSpreadArgumentExpressionImpl(
     override var expression: FirExpression,
 ) : FirSpreadArgumentExpression() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    override val coneTypeOrNull: ConeKotlinType? get() = expression.coneTypeOrNull
-    override val isSpread: Boolean get() = true
+    override val coneTypeOrNull: ConeKotlinType?
+        get() = expression.coneTypeOrNull
+    override val isSpread: Boolean
+        get() = true
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
