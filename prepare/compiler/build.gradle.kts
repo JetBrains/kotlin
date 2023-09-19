@@ -77,7 +77,6 @@ val distMavenContents by configurations.creating {
 val distCommonContents by configurations.creating
 val distStdlibMinimalForTests by configurations.creating
 val buildNumber by configurations.creating
-val distJSContents by configurations.creating
 
 val compilerBaseName = name
 
@@ -213,8 +212,6 @@ dependencies {
         sources(project(":kotlin-test", "combinedJvmSourcesJar"))
 
         distStdlibMinimalForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
-
-        distJSContents(project(":kotlin-stdlib", configuration = "distJsContent"))
 
         distCommonContents(project(":kotlin-stdlib", configuration = "commonMainMetadataElements"))
         distCommonContents(project(":kotlin-stdlib", configuration = "metadataSourcesElements"))
@@ -442,18 +439,12 @@ val distMaven = distTask<Sync>("distMaven") {
     from(distMavenContents)
 }
 
-val distJs = distTask<Sync>("distJs") {
-    destinationDir = File("$distDir/js")
-    from(distJSContents)
-}
-
 distTask<Copy>("dist") {
     destinationDir = File(distDir)
 
     dependsOn(distKotlinc)
     dependsOn(distCommon)
     dependsOn(distMaven)
-    dependsOn(distJs)
     dependsOn(distSbomTask)
 
     from(buildNumber)

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
-import java.nio.file.*
+import kotlin.io.path.copyTo
 
 plugins {
     id("kotlin-multiplatform")
@@ -18,9 +18,6 @@ plugins {
 }
 
 description = "Kotlin Standard Library"
-
-// TODO: JS
-//   - ensure npm publishing
 
 configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
@@ -46,20 +43,15 @@ dependencies {
 
 val builtinsDir = "${rootDir}/core/builtins"
 val builtinsSrcDir = "${buildDir}/src/builtin-sources"
-val builtinsRuntimeSrcDir = "${buildDir}/src/builtin-sources-for-runtime"
 
 val jsCommonDir = "${projectDir}/js"
 val jsCommonSrcDir = "${jsCommonDir}/src"
 val jsCommonTestSrcDir = "${jsCommonDir}/test"
-val jsV1Dir = "${projectDir}/js-v1"
-val jsSrcDir = "$jsV1Dir/src"
-val jsSrcJsDir = "${jsSrcDir}/js"
 
 // for js-ir
 val jsIrDir = "${projectDir}/js-ir"
 val jsIrMainSources = "${buildDir}/src/jsMainSources"
 lateinit var jsIrTarget: KotlinJsTargetDsl
-lateinit var jsV1Target: KotlinJsTargetDsl
 
 val commonOptIns = listOf(
     "kotlin.ExperimentalMultiplatform",
@@ -187,63 +179,11 @@ kotlin {
             }
         }
     }
-    @Suppress("DEPRECATION")
-    jsV1Target = js("jsV1", LEGACY) {
-        nodejs {
-            testTask {
-                enabled = false
-            }
-        }
-        compilations {
-            all {
-                kotlinOptions {
-                    main = "noCall"
-                    moduleKind = "commonjs"
-                    freeCompilerArgs += listOf(
-                        "-Xallow-kotlin-package",
-                        "-Xforce-deprecated-legacy-compiler-usage",
-                        "-Xexpect-actual-classes",
-                    )
-                }
-                compileTaskProvider.configure {
-                    // proper caching
-                    // source map paths are sensitive to relative source location
-                    inputs.property("relativeSrcPath", file(jsV1Dir).relativeTo(projectDir).invariantSeparatorsPath)
-                    // workaround for compiling legacy JS target, remove when this compilation is not needed anymore
-                    // restate the list of opt-ins
-                    compilerOptions.optIn.addAll(commonOptIns)
-                }
-            }
-            val main by getting
-            main.apply {
-                kotlinOptions {
-                    outputFile = "${buildDir}/classes/js-v1/main/kotlin.js"
-                    sourceMap = true
-                }
-            }
-            val runtime by creating {
-                kotlinOptions {
-                    metaInfo = false
-                    outputFile = "${buildDir}/classes/js-v1/runtime/kotlin.js"
-                    sourceMap = true
-                }
-            }
-            val test by getting; test.apply {
-                kotlinOptions {
-                    moduleKind = "umd"
-                }
-                compileTaskProvider.configure {
-                    exclude("*")
-                }
-            }
-        }
-    }
     jsIrTarget = js(IR) {
         if (!kotlinBuildProperties.isTeamcityBuild) {
             browser {}
         }
         nodejs {
-            @Suppress("DEPRECATION")
             testTask {
                 useMocha {
                     timeout = "10s"
@@ -259,8 +199,10 @@ kotlin {
             val main by getting
             main.apply {
                 kotlinOptions {
-                    freeCompilerArgs += "-Xir-module-name=kotlin"
-                    freeCompilerArgs += "-Xexpect-actual-classes"
+                    freeCompilerArgs += listOf(
+                        "-Xir-module-name=kotlin",
+                        "-Xexpect-actual-classes",
+                    )
 
                     if (!kotlinBuildProperties.disableWerror) {
                         allWarningsAsErrors = true
@@ -347,50 +289,6 @@ kotlin {
             kotlin.srcDir("jvm/testLongRunning")
         }
 
-        val jsV1Runtime by getting {
-            val prepareJsV1ComparableSources by tasks.registering(Sync::class)
-            kotlin {
-                srcDir(prepareJsV1ComparableSources)
-                srcDir("$jsCommonDir/runtime")
-                srcDir("$jsV1Dir/runtime")
-            }
-            prepareJsV1ComparableSources.configure {
-                from("${builtinsDir}/native/kotlin") {
-                    include("Comparable.kt")
-                }
-                into(builtinsRuntimeSrcDir)
-            }
-        }
-
-        val jsV1Main by getting {
-            val prepareJsV1BuiltinsSources by tasks.registering(Sync::class)
-            kotlin {
-                srcDir(prepareJsV1BuiltinsSources)
-                srcDir(jsCommonSrcDir)
-                srcDir(jsSrcDir)
-            }
-
-            prepareJsV1BuiltinsSources.configure {
-                from("${builtinsDir}/native/kotlin") {
-                    include("Iterator.kt")
-                    include("Collections.kt")
-                    include("CharSequence.kt")
-                    include("Annotation.kt")
-                }
-                from("${builtinsDir}/src/kotlin/") {
-                    include("annotation/Annotations.kt")
-                    include("Function.kt")
-                    include("Iterators.kt")
-                    include("Range.kt")
-                    include("Progressions.kt")
-                    include("ProgressionIterators.kt")
-                    include("Ranges.kt")
-                    include("Unit.kt")
-                }
-                into(builtinsSrcDir)
-            }
-        }
-
         val jsMain by getting {
             val prepareJsIrMainSources by tasks.registering(Sync::class)
             kotlin {
@@ -469,9 +367,7 @@ kotlin {
                 if (this@sourceSet == jvmCompileOnlyDeclarations) {
                     return@languageSettings
                 }
-                if (this@sourceSet != jsV1Runtime) {
-                    commonOptIns.forEach { optIn(it) }
-                }
+                commonOptIns.forEach { optIn(it) }
                 if (this@sourceSet.name.endsWith("Test")) {
                     commonTestOptIns.forEach { optIn(it) }
                 }
@@ -536,128 +432,8 @@ tasks {
         ownPackages.set(listOf("kotlin"))
     }
 
-    val jsOutputFileName = "${buildDir}/classes/js-v1/kotlin.js"
-    val jsOutputMapFileName = "${jsOutputFileName}.map"
-    val jsOutputMetaFileName = "${buildDir}/classes/js-v1/kotlin.meta.js"
-
-    val mergeJsV1 by registering(NoDebugJavaExec::class) {
-        val compileKotlinJsV1 by getting(org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile::class)
-        val compileRuntimeKotlinJsV1 by getting(org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile::class)
-        dependsOn(compileRuntimeKotlinJsV1, compileKotlinJsV1)
-        val compileRuntimeFiles = compileRuntimeKotlinJsV1.destinationDirectory.asFileTree
-        val compileMainFiles = compileKotlinJsV1.destinationDirectory.asFileTree
-        inputs.files(compileRuntimeFiles).withPathSensitivity(PathSensitivity.RELATIVE)
-        inputs.files(compileMainFiles).withPathSensitivity(PathSensitivity.RELATIVE)
-        inputs.dir(jsSrcDir).withPathSensitivity(PathSensitivity.RELATIVE)
-        inputs.dir(jsCommonSrcDir).withPathSensitivity(PathSensitivity.RELATIVE)
-
-        outputs.file(jsOutputFileName)
-        outputs.file(jsOutputMapFileName)
-        outputs.file(jsOutputMetaFileName)
-        outputs.cacheIf { true }
-
-        val inputFiles = fileTree(jsSrcJsDir) {
-            include("**/*.js")
-        }
-
-        mainClass.set("org.jetbrains.kotlin.cli.js.internal.JSStdlibLinker")
-
-        // local variables for configuration cache work
-        val rootDir = rootDir
-        val jsSrcDir = jsSrcDir
-        val jsOutputFileName = jsOutputFileName
-
-        doFirst {
-            args = listOf(jsOutputFileName, "$rootDir", "$jsSrcDir/wrapper.js") + inputFiles.map { it.path }.sorted() +
-                    (compileRuntimeFiles.map { it.path }.sorted() +
-                            compileMainFiles.map { it.path }.sorted()).filter {
-                        it.endsWith(".js") && !it.endsWith(".meta.js")
-                    }
-        }
-        classpath = configurations["kotlinCompilerClasspath"]
-
-        val sourceMapFile = file(jsOutputMapFileName)
-        val jsOutputMetaFile = file(jsOutputMetaFileName)
-        @Suppress("DEPRECATION")
-        val compileMetaFile = file(compileKotlinJsV1.outputFileProperty.get().path.replace(Regex("\\.js$"), ".meta.js"))
-        val mainJsOutputDir = compileKotlinJsV1.destinationDirectory
-        val sourceMapSourcesBaseDirs = listOf(mainJsOutputDir.get(), "${jsCommonDir}/runtime", jsV1Dir, rootDir).map { File(it.toString()) }
-        doLast {
-            fun AntBuilder.replaceRegexp(file: String, match: String, replace: String) {
-                withGroovyBuilder {
-                    "replaceregexp"(
-                        "file" to file,
-                        "match" to match,
-                        "replace" to replace,
-                        "byline" to "true",
-                        "encoding" to "UTF-8"
-                    )
-                }
-            }
-            ant.replaceRegexp(jsOutputFileName,  "module.exports,\\s*require\\([^)]+\\)", "")
-            ant.replaceRegexp(jsOutputFileName, "function\\s*\\(_,\\s*Kotlin\\)", "function()")
-            ant.replaceRegexp(jsOutputFileName, "return\\s+_;", "")
-
-            val sourceMap = groovy.json.JsonSlurper().parse(sourceMapFile, "UTF-8")
-
-            sourceMap.withGroovyBuilder {
-                @Suppress("UNCHECKED_CAST")
-                val sourcePaths = getProperty("sources") as List<String>
-
-                setProperty("sourcesContent", sourcePaths.map { sourcePath ->
-                    sourceMapSourcesBaseDirs
-                        .map { it.resolve(sourcePath) }
-                        .firstOrNull { it.exists() }
-                        ?.readText().also {
-                            if (it == null) logger.warn("Sources missing for file $sourcePath")
-                        }
-                })
-
-                val sourceMapBasePaths = listOf(
-                    "../../../../",
-                    "../../../",
-                    "../../",
-                    "./",
-                    "libraries/stdlib/js-v1/src/"
-                )
-                val shortPaths = sourcePaths.map { sourcePath ->
-                    val prefixToRemove = sourceMapBasePaths.find { basePath -> sourcePath.startsWith(basePath) }
-                    if (prefixToRemove != null) sourcePath.substring(prefixToRemove.length) else sourcePath
-                }
-                if (shortPaths.size != shortPaths.distinct().size) {
-                    logger.warn("Duplicate source file names found:\n${sourcePaths.sorted().joinToString("\n")}")
-                }
-                setProperty("sources", shortPaths)
-            }
-
-            sourceMapFile.writeText(groovy.json.JsonOutput.toJson(sourceMap))
-            compileMetaFile.copyTo(jsOutputMetaFile, overwrite = true)
-        }
-    }
-
-    val jsV1MainClasses by existing {
-        dependsOn(mergeJsV1)
-    }
-
-    val jsResultingJar by registering(Jar::class) {
-        archiveClassifier.set("js")
-        archiveVersion.set("")
-        destinationDirectory.set(file("$buildDir/lib"))
-
-        includeEmptyDirs = false
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        manifestAttributes(manifest, "Main", multiRelease = true)
-        manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-js"))
-        from(jsOutputFileName)
-        from(jsOutputMetaFileName)
-        from(jsOutputMapFileName)
-        from(jsV1Target.compilations["main"].output.allOutputs)
-        from(jsIrTarget.compilations["main"].output.allOutputs)
-        filesMatching("*.*") { mode = 0b110100100 } // KTI-401
-    }
-
     val jsJar by existing(Jar::class) {
-        manifestAttributes(manifest, "Main", multiRelease = true)
+        manifestAttributes(manifest, "Main")
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-js"))
     }
 
@@ -668,11 +444,12 @@ tasks {
         into(rootProject.buildDir.resolve("js-ir-runtime"))
     }
 
-    val jsV1Jar by existing(Jar::class) {
-        val jsResultingJarFile = jsResultingJar.get().archiveFile
-        inputs.file(jsResultingJarFile)
+    val jsLegacyJar by registering(Jar::class) {
+        archiveAppendix.set("js")
+        val jsJarFile = jsJar.get().archiveFile
+        inputs.file(jsJarFile)
         doLast {
-            Files.copy(jsResultingJarFile.get().asFile.toPath(), archiveFile.get().asFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            jsJarFile.get().asFile.toPath().copyTo(archiveFile.get().asFile.toPath(), overwrite = true)
         }
     }
 
@@ -719,24 +496,18 @@ tasks {
         val jsSourcesJarFile = jsRearrangedSourcesJar.get().archiveFile
         inputs.file(jsSourcesJarFile)
         doLast {
-            Files.copy(jsSourcesJarFile.get().asFile.toPath(), archiveFile.get().asFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            jsSourcesJarFile.get().asFile.toPath().copyTo(archiveFile.get().asFile.toPath(), overwrite = true)
         }
     }
 
     artifacts {
         val distJsJar = configurations.create("distJsJar")
         val distJsSourcesJar = configurations.create("distJsSourcesJar")
-        val distJsContent = configurations.create("distJsContent")
         val distJsKlib = configurations.create("distJsKlib")
 
-        add(distJsJar.name, jsResultingJar)
+        add(distJsJar.name, jsLegacyJar)
         add(distJsSourcesJar.name, jsSourcesJar)
         add(distJsKlib.name, jsJar)
-        mergeJsV1.get().outputs.files.forEach { artifact ->
-            add(distJsContent.name, artifact) {
-                builtBy(mergeJsV1)
-            }
-        }
     }
 
 
@@ -855,11 +626,6 @@ val emptyJavadocJar by tasks.creating(org.gradle.api.tasks.bundling.Jar::class) 
     archiveClassifier.set("javadoc")
 }
 
-val emptyJsJavadocJar by tasks.creating(org.gradle.api.tasks.bundling.Jar::class) {
-    archiveAppendix.set("js")
-    archiveClassifier.set("javadoc")
-}
-
 publishing {
     val artifactBaseName = base.archivesName.get()
     configureMultiModuleMavenPublishing {
@@ -924,13 +690,11 @@ publishing {
         val js = module("jsModule") {
             mavenPublication {
                 artifactId = "$artifactBaseName-js"
-                configureKotlinPomAttributes(project, "Kotlin Standard Library for JS")
-                artifact(emptyJsJavadocJar)
+                configureKotlinPomAttributes(project, "Kotlin Standard Library for JS", packaging = "klib")
+                artifact(tasks.named("jsLegacyJar"))
             }
             variant("jsApiElements")
             variant("jsRuntimeElements")
-            variant("jsV1ApiElements")
-            variant("jsV1RuntimeElements")
             variant("jsSourcesElements")
         }
 

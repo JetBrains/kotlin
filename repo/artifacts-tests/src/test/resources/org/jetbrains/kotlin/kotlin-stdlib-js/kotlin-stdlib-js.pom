@@ -10,6 +10,7 @@
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-stdlib-js</artifactId>
   <version>ArtifactsTest.version</version>
+  <packaging>klib</packaging>
   <name>Kotlin Stdlib Js</name>
   <description>Kotlin Standard Library for JS</description>
   <url>https://kotlinlang.org/</url>
