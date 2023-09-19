@@ -24,6 +24,7 @@ abstract class AbstractFieldPrinter<Field : AbstractField>(
         modifiers: SmartPrinter.() -> Unit = {},
     ) {
         printer.run {
+            printKDoc(field.kDoc)
             if (!isVal(field) && field.isVolatile) {
                 println("@Volatile")
             }

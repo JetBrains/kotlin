@@ -14,6 +14,8 @@ interface AbstractElement<Element, Field> : ElementOrRef<Element, Field>, FieldC
 
     val name: String
 
+    val kDoc: String?
+
     val fields: Set<Field>
 
     val params: List<TypeVariable> // TODO: Rename to `typeParameters` (rn this name would clash with the extension function)

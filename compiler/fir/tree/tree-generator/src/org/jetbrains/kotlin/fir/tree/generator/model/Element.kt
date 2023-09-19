@@ -34,6 +34,8 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
 
     override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) = ElementRef(this, args, nullable)
 
+    override var kDoc: String? = null
+
     override val fields = mutableSetOf<Field>()
     override val type: String = "Fir$name"
     override val packageName: String = BASE_PACKAGE + kind.packageName.let { if (it.isBlank()) it else "." + it }

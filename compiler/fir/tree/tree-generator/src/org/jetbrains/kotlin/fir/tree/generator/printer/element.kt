@@ -32,11 +32,12 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                 }
             }
 
-            printAcceptMethod(element, hasImplementation = true)
+            printAcceptMethod(element, hasImplementation = true, kDoc = null)
             printTransformMethod(
                 element,
                 hasImplementation = true,
                 returnType = TypeVariable("E", listOf(AbstractFirTreeBuilder.baseFirElement), Variance.IN_VARIANCE),
+                kDoc = null,
             )
 
             fun Field.replaceDeclaration(override: Boolean, overridenType: TypeRef? = null, forceNullable: Boolean = false) {
@@ -82,10 +83,10 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                 }
                 println()
                 println("fun accept(visitor: FirVisitorVoid) = accept(visitor, null)")
-                printAcceptChildrenMethod(element, visitorResultType = TypeVariable("R", emptyList(), Variance.INVARIANT))
+                printAcceptChildrenMethod(element, visitorResultType = TypeVariable("R", emptyList(), Variance.INVARIANT), kDoc = null)
                 println()
                 println("fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)")
-                printTransformChildrenMethod(element, returnType = AbstractFirTreeBuilder.baseFirElement)
+                printTransformChildrenMethod(element, returnType = AbstractFirTreeBuilder.baseFirElement, kDoc = null)
             }
         }
     }

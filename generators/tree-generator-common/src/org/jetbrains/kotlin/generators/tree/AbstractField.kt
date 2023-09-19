@@ -14,6 +14,8 @@ abstract class AbstractField : Importable {
 
     open val arguments = mutableListOf<TypeRef>()
 
+    var kDoc: String? = null
+
     abstract val nullable: Boolean
 
     abstract var isVolatile: Boolean

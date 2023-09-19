@@ -30,9 +30,12 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
         }
     }
 
-    protected fun SmartPrinter.printAcceptMethod(element: Element, hasImplementation: Boolean) {
+    protected fun SmartPrinter.printAcceptMethod(element: Element, hasImplementation: Boolean, kDoc: String?) {
         if (!element.hasAcceptMethod) return
         println()
+        if (element.isRootElement) {
+            printKDoc(kDoc)
+        }
         if (!element.isRootElement) {
             print("override ")
         }
@@ -43,9 +46,12 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
         println()
     }
 
-    protected fun SmartPrinter.printTransformMethod(element: Element, hasImplementation: Boolean, returnType: TypeRef) {
+    protected fun SmartPrinter.printTransformMethod(element: Element, hasImplementation: Boolean, returnType: TypeRef, kDoc: String?) {
         if (!element.hasTransformMethod) return
         println()
+        if (element.isRootElement) {
+            printKDoc(kDoc)
+        }
         if (returnType is TypeParameterRef && hasImplementation) {
             println("@Suppress(\"UNCHECKED_CAST\")")
         }
@@ -68,9 +74,12 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
         }
     }
 
-    protected fun SmartPrinter.printAcceptChildrenMethod(element: Element, visitorResultType: TypeRef) {
+    protected fun SmartPrinter.printAcceptChildrenMethod(element: Element, visitorResultType: TypeRef, kDoc: String?) {
         if (!element.hasAcceptChildrenMethod) return
         println()
+        if (element.isRootElement) {
+            printKDoc(kDoc)
+        }
         print("fun <")
         if (visitorResultType is TypeVariable) {
             printTypeVariable(visitorResultType)
@@ -80,9 +89,12 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
         println()
     }
 
-    protected fun SmartPrinter.printTransformChildrenMethod(element: Element, returnType: TypeRef) {
+    protected fun SmartPrinter.printTransformChildrenMethod(element: Element, returnType: TypeRef, kDoc: String?) {
         if (!element.hasTransformChildrenMethod) return
         println()
+        if (element.isRootElement) {
+            printKDoc(kDoc)
+        }
         print("fun <D> transformChildren(transformer: ${transformerType.simpleName}<D>, data: D)")
         if (returnType != StandardTypes.unit) {
             print(": ", returnType.typeWithArguments)
@@ -99,6 +111,7 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
                 }
             }
 
+            printKDoc(element.kDoc)
             print("${kind.title} ${element.type}")
             print(element.typeParameters())
 

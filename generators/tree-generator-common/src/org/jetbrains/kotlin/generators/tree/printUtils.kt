@@ -21,3 +21,18 @@ fun SmartPrinter.printCopyright() {
     println(COPYRIGHT)
     println()
 }
+
+fun SmartPrinter.printKDoc(kDoc: String?) {
+    if (kDoc == null) return
+    println("/**")
+    for (line in kDoc.lineSequence()) {
+        print(" *")
+        if (line.isBlank()) {
+            println()
+        } else {
+            print(" ")
+            println(line)
+        }
+    }
+    println(" */")
+}

@@ -74,7 +74,9 @@ class Element(
 
     val generationCallback = config.generationCallback
     val propertyName = config.propertyName
-    val kDoc = config.kDoc
+
+    override val kDoc = config.kDoc
+
     val additionalImports: List<Import> = config.additionalImports
 
     override fun toString() = name
@@ -124,7 +126,9 @@ sealed class Field(
     abstract val transformable: Boolean
 
     val useInIrFactoryStrategy = config.useFieldInIrFactoryStrategy
-    val kdoc = config.kdoc
+    init {
+        kDoc = config.kdoc
+    }
 
     val printProperty = config.printProperty
     val generationCallback = config.generationCallback
