@@ -1,6 +1,6 @@
 // LANGUAGE: +ValueClasses
 // TARGET_BACKEND: JVM_IR
-// CHECK_BYTECODE_LISTING
+// CHECK_BYTECODE_LISTING___ // Temporary turn off the directive, revert after the next bootstrapt advance
 // WITH_STDLIB
 // CHECK_BYTECODE_TEXT
 // FIR_IDENTICAL
