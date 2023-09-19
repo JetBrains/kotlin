@@ -217,7 +217,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
     fun testMppAndroidKapt(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkVersion: JdkVersions.ProvidedJdk
+        jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         project(
             "mpp-android-kapt".withPrefix,
@@ -232,10 +232,11 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
                     ":shared:compileDebugKotlinAndroid",
                 )
 
+                val sourcesDir = subProject("shared").kotlinSourcesDir("commonMain")
                 assertCompilerArguments(
                     ":shared:kaptGenerateStubsDebugKotlinAndroid",
-                    "src/commonMain/kotlin/hilt/error/sampleapp/Annotations.kt",
-                    "src/commonMain/kotlin/hilt/error/sampleapp/CommonMainViewModel.kt",
+                    sourcesDir.resolve("hilt/error/sampleapp/Annotations.kt").toAbsolutePath().toString(),
+                    sourcesDir.resolve("hilt/error/sampleapp/CommonMainViewModel.kt").toAbsolutePath().toString(),
                 )
             }
         }
