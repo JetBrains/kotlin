@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.KtDefaultJvmErrorMessages
 import org.jetbrains.kotlin.test.FirParser
@@ -78,7 +79,7 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender(module: TestModule) {
                         renderDiagnosticMessage(it.psiFile.name, it.severity, message, position.line, position.column)
                 }
                 is FirDiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
-                    val message = KtDefaultJvmErrorMessages.MAP[it.factory]?.render(it)
+                    val message = RootDiagnosticRendererFactory(it).render(it)
                     val position = finder.findNextPosition(DiagnosticUtils.firstRange(it.textRanges).startOffset, false)
                     reportedDiagnostics +=
                         renderDiagnosticMessage(testFile.relativePath, it.severity, message, position.line, position.column)
