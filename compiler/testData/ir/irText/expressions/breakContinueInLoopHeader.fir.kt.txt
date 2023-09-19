@@ -6,8 +6,7 @@ fun test1(c: Boolean?) {
         EQEQ(arg0 = <elvis>, arg1 = null) -> break@L
         else -> <elvis>
       }
-    }) { // BLOCK
-    }
+    })
   }
 }
 
@@ -19,8 +18,7 @@ fun test2(c: Boolean?) {
         EQEQ(arg0 = <elvis>, arg1 = null) -> continue@L
         else -> <elvis>
       }
-    }) { // BLOCK
-    }
+    })
   }
 }
 

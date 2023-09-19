@@ -1324,7 +1324,8 @@ class Fir2IrVisitor(
                 loopMap[whileLoop] = this
                 label = whileLoop.label?.name
                 condition = convertToIrExpression(whileLoop.condition)
-                body = if (isForLoop) {
+                body = if (firLoopBody is FirEmptyExpressionBlock) null
+                       else if (isForLoop) {
                     /*
                      * for loops in IR must have their body in the exact following form
                      * because some of the lowerings (e.g. `ForLoopLowering`) expect it:

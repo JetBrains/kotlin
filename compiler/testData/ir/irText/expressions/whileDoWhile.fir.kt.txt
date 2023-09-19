@@ -1,7 +1,6 @@
 fun test() {
   var x: Int = 0
-  while (less(arg0 = x, arg1 = 0)) { // BLOCK
-  }
+  while (less(arg0 = x, arg1 = 0))
   while (less(arg0 = x, arg1 = 5)) { // BLOCK
     val <unary>: Int = x
     x = <unary>.inc()
