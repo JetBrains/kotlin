@@ -144,7 +144,7 @@ class TypeDeserializer(
         fun notFoundClass(classIdIndex: Int): ClassDescriptor {
             val classId = c.nameResolver.getClassId(classIdIndex)
             val typeParametersCount = generateSequence(proto) { it.outerType(c.typeTable) }.map { it.argumentCount }.toMutableList()
-            val classNestingLevel = generateSequence(classId, ClassId::getOuterClassId).count()
+            val classNestingLevel = generateSequence(classId, ClassId::outerClassId).count()
             while (typeParametersCount.size < classNestingLevel) {
                 typeParametersCount.add(0)
             }

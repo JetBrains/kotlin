@@ -68,7 +68,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
         cachesFactory.createLazyValue {
             computeNamesGroupedByPackage(
                 FirDeclarationGenerationExtension::getTopLevelClassIds,
-                ClassId::getPackageFqName
+                ClassId::packageFqName
             ) { it.shortClassName.asString() }
         }
 

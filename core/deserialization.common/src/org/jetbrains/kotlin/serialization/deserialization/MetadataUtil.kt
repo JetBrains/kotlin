@@ -15,7 +15,7 @@ import java.io.InputStream
 
 class MetadataClassDataFinder(val finder: KotlinMetadataFinder) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassData? {
-        val topLevelClassId = generateSequence(classId, ClassId::getOuterClassId).last()
+        val topLevelClassId = generateSequence(classId, ClassId::outerClassId).last()
         val stream = finder.findMetadata(topLevelClassId) ?: return null
         val (message, nameResolver, version) = readProto(stream)
         return message.class_List.firstOrNull { classProto ->

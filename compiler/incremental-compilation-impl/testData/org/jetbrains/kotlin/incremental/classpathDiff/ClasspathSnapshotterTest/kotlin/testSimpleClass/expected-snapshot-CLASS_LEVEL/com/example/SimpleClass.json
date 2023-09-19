@@ -10,7 +10,7 @@
         "fqName": "SimpleClass"
       }
     },
-    "local": false
+    "isLocal": false
   },
   "classAbiHash": 8283317449409255124,
   "supertypes": [
