@@ -25,7 +25,7 @@ fun <M> materialize(): Processor<M> = TODO()
 private fun foo(model: Model) {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER("M")!>materialize<!>().<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER("T")!>apply<!> {
         context(
-            this,
+            <!CANNOT_INFER_PARAMETER_TYPE!>this<!>,
             Exec { m, p -> p.process(m) } // Note: Builder inference
         )
     }
