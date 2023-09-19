@@ -966,10 +966,11 @@ open class Kapt3IT : Kapt3BaseIT() {
                     ":dac:compileKotlinJvm"
                 )
 
+                val sourcesDir = subProject("dac").kotlinSourcesDir("commonMain")
                 // KT-61622: checking if kapt tasks are getting common sources in default configuration
                 val commonSources = arrayOf(
-                    "src/commonMain/kotlin/DocumentationService.kt",
-                    "src/commonMain/kotlin/Item.kt",
+                    sourcesDir.resolve("DocumentationService.kt").toAbsolutePath().toString(),
+                    sourcesDir.resolve("Item.kt").toAbsolutePath().toString(),
                 )
                 assertCompilerArguments(":dac:kaptGenerateStubsKotlinJvm", *commonSources)
             }
