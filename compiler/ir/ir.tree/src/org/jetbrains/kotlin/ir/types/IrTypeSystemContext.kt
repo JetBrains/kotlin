@@ -596,17 +596,14 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 
     override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
-        val typeParameters = mutableListOf<IrTypeParameterSymbol>()
-        val typeArguments = mutableListOf<IrTypeArgument>()
-        for ((key, value) in map) {
-            typeParameters += key as IrTypeParameterSymbol
-            typeArguments += value as IrTypeArgument
-        }
-        return IrTypeSubstitutor(typeParameters, typeArguments, irBuiltIns)
+        return IrTypeSubstitutor(
+            map.map { (key, value) -> (key as IrTypeParameterSymbol) to (value as IrTypeArgument) },
+            irBuiltIns
+        )
     }
 
     override fun createEmptySubstitutor(): TypeSubstitutorMarker {
-        return IrTypeSubstitutor(emptyList(), emptyList(), irBuiltIns)
+        return IrTypeSubstitutor(emptyList(), irBuiltIns)
     }
 
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {

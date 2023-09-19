@@ -65,14 +65,18 @@ abstract class BaseIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : Abstr
 }
 
 class IrTypeSubstitutor(
-    typeParameters: List<IrTypeParameterSymbol>,
-    typeArguments: List<IrTypeArgument>,
+    typeParametersAndArguments: List<Pair<IrTypeParameterSymbol, IrTypeArgument>>,
     irBuiltIns: IrBuiltIns,
     private val allowEmptySubstitution: Boolean = false
 ) : BaseIrTypeSubstitutor(irBuiltIns) {
 
-    init {
-        assert(typeParameters.size == typeArguments.size) {
+    constructor(
+        typeParameters: List<IrTypeParameterSymbol>,
+        typeArguments: List<IrTypeArgument>,
+        irBuiltIns: IrBuiltIns,
+        allowEmptySubstitution: Boolean = false,
+    ) : this(typeParameters.zip(typeArguments), irBuiltIns, allowEmptySubstitution) {
+        check(typeParameters.size == typeArguments.size) {
             "Unexpected number of type arguments: ${typeArguments.size}\n" +
                     "Type parameters are:\n" +
                     typeParameters.joinToString(separator = "\n") { it.owner.render() } +
@@ -81,7 +85,7 @@ class IrTypeSubstitutor(
         }
     }
 
-    private val substitution = typeParameters.zip(typeArguments).toMap()
+    private val substitution = typeParametersAndArguments.toMap()
 
     override fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument =
         substitution[typeParameter]
