@@ -44,7 +44,7 @@ fun config2model(config: Config): Model {
 
     val rootElement = replaceElementRefs(config, ec2el)
     configureInterfacesAndAbstractClasses(elements)
-    addAbstractElement(elements)
+    addPureAbstractElement(elements, elementBaseType)
     markLeaves(elements)
     configureDescriptorApiAnnotation(elements)
     processFieldOverrides(elements)
@@ -120,7 +120,7 @@ private fun replaceElementRefs(config: Config, mapping: Map<ElementConfig, Eleme
             .map { transform(it) }
             .partitionIsInstance<TypeRef, ElementRef>()
         el.elementParents = elParents.takeIf { it.isNotEmpty() || el == rootEl.element } ?: listOf(rootEl)
-        el.otherParents = otherParents.castAll<ClassRef<*>>().toList()
+        el.otherParents = otherParents.castAll<ClassRef<*>>().toMutableList()
         el.visitorParent = ec.visitorParent?.let(::transform) as GenericElementRef<Element, Field>?
         el.transformerReturnType = (ec.transformerReturnType?.let(::transform) as GenericElementRef<Element, Field>?)?.element
 
@@ -154,14 +154,6 @@ private fun markLeaves(elements: List<Element>) {
         el.isLeaf = true
         if (el.visitorParent != null) {
             el.accept = true
-        }
-    }
-}
-
-private fun addAbstractElement(elements: List<Element>) {
-    for (el in elements) {
-        if (el.needPureAbstractElement) {
-            el.otherParents += elementBaseType
         }
     }
 }

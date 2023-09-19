@@ -23,7 +23,7 @@ class Element(
     val additionalFactoryMethodParameters: MutableList<Field>,
 ) : AbstractElement<Element, Field>() {
     override var elementParents: List<ElementRef> = emptyList()
-    override var otherParents: List<ClassRef<*>> = emptyList()
+    override var otherParents: MutableList<ClassRef<*>> = mutableListOf()
 
     override val allFields: List<Field>
         get() = fields.toList()

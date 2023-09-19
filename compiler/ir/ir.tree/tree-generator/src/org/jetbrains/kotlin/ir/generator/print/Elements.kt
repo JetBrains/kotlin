@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.generator.elementTransformerType
 import org.jetbrains.kotlin.ir.generator.elementVisitorType
 import org.jetbrains.kotlin.ir.generator.model.*
 import org.jetbrains.kotlin.generators.tree.TypeRefWithNullability
+import org.jetbrains.kotlin.generators.tree.typeKind
 import org.jetbrains.kotlin.ir.generator.util.tryParameterizedBy
 import java.io.File
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef

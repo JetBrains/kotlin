@@ -72,7 +72,7 @@ abstract class ExpressionCheckers {
     @CheckersComponentInternal internal val allGetClassCallCheckers: Set<FirGetClassCallChecker> by lazy { getClassCallCheckers + basicExpressionCheckers + callCheckers }
     @CheckersComponentInternal internal val allSafeCallExpressionCheckers: Set<FirSafeCallExpressionChecker> by lazy { safeCallExpressionCheckers + basicExpressionCheckers }
     @CheckersComponentInternal internal val allEqualityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker> by lazy { equalityOperatorCallCheckers + basicExpressionCheckers + callCheckers }
-    @CheckersComponentInternal internal val allStringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker> by lazy { stringConcatenationCallCheckers + callCheckers + basicExpressionCheckers }
+    @CheckersComponentInternal internal val allStringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker> by lazy { stringConcatenationCallCheckers + basicExpressionCheckers + callCheckers }
     @CheckersComponentInternal internal val allTypeOperatorCallCheckers: Set<FirTypeOperatorCallChecker> by lazy { typeOperatorCallCheckers + basicExpressionCheckers + callCheckers }
     @CheckersComponentInternal internal val allResolvedQualifierCheckers: Set<FirResolvedQualifierChecker> by lazy { resolvedQualifierCheckers + basicExpressionCheckers }
     @CheckersComponentInternal internal val allConstExpressionCheckers: Set<FirConstExpressionChecker> by lazy { constExpressionCheckers + basicExpressionCheckers }

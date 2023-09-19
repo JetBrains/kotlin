@@ -22,7 +22,7 @@ abstract class AbstractElement<Element, Field> : ElementOrRef<Element, Field>, F
 
     abstract val elementParents: List<ElementRef<Element, Field>>
 
-    abstract val otherParents: List<ClassRef<*>>
+    abstract val otherParents: MutableList<ClassRef<*>>
 
     val parentRefs: List<ClassOrElementRef>
         get() = elementParents + otherParents

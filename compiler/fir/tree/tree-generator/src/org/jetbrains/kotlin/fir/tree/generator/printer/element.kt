@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
-import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.util.get
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.*
@@ -42,25 +41,13 @@ fun SmartPrinter.printElement(element: Element) {
 
         print("${kind!!.title} $type")
         print(typeParameters())
-        val needPureAbstractElement = this.needPureAbstractElement
-        val superTypesStrings = elementParents.map {
-            // TODO: Factor out
-            var result = it.element.type
-            if (it.args.isNotEmpty()) {
-                result += it.args.values.joinToString(", ", "<", ">") { it.typeWithArguments }
-            }
-            result + it.element.kind.braces()
-        } + otherParents.map { it.type }
-
-        if (superTypesStrings.isNotEmpty() || needPureAbstractElement) {
-            print(" : ")
-            if (needPureAbstractElement) {
-                print("${pureAbstractElementType.type}()")
-                if (superTypesStrings.isNotEmpty()) {
-                    print(", ")
+        val parentRefs = element.parentRefs
+        if (parentRefs.isNotEmpty()) {
+            print(
+                parentRefs.sortedBy { it.typeKind }.joinToString(prefix = " : ") { parent ->
+                    parent.typeWithArguments + parent.inheritanceClauseParenthesis()
                 }
-            }
-            print(superTypesStrings.joinToString(", "),)
+            )
         }
         print(multipleUpperBoundsList())
         println(" {")
