@@ -81,14 +81,14 @@ method global$fun_testSetterCascade$fun_take$$return$T_Unit()
   label label$ret
 }
 
-method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
-
-
 method class_scope_global$class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(local$b: Ref)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+
+
+method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
 
 
 /classes_setters.kt:(641,665): info: Generated Viper text for testSetterNoBackingField:

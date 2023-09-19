@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
  */
 class ProgramConverter(val session: FirSession, override val config: PluginConfiguration, override val errorCollector: ErrorCollector) :
     ProgramConversionContext {
-    private val methods: MutableMap<MangledName, FunctionEmbedding> = mutableMapOf()
+    private val methods: MutableMap<MangledName, FunctionEmbedding> = SpecialKotlinFunctions.byName.toMutableMap()
     private val classes: MutableMap<MangledName, ClassTypeEmbedding> = mutableMapOf()
     private val fields: MutableMap<MangledName, FieldEmbedding> = mutableMapOf()
 

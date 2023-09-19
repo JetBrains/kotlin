@@ -23,6 +23,8 @@ interface PackagePrefixScope : NameScope {
 
 data class GlobalScope(override val packageName: FqName) : PackagePrefixScope {
     override val suffix = "global"
+
+    constructor(segments: List<String>) : this(FqName.fromSegments(segments))
 }
 
 // We use the embedded class name here.  It's not clear whether className.scope can be anything
@@ -30,6 +32,8 @@ data class GlobalScope(override val packageName: FqName) : PackagePrefixScope {
 // more sense.
 data class ClassScope(override val packageName: FqName, val className: ScopedKotlinName) : PackagePrefixScope {
     override val suffix = "class_scope_${className.mangled}"
+
+    constructor(packageSegments: List<String>, className: ScopedKotlinName) : this(FqName.fromSegments(packageSegments), className)
 }
 
 data object ParameterScope : NameScope {

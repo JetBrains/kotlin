@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.formver.conversion.ProgramConversionContext
-import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
@@ -33,27 +32,29 @@ fun CallableId.embedScopedWithType(type: TypeEmbedding, name: KotlinName) = Scop
 fun ClassId.embedName(): ScopedKotlinName = ScopedKotlinName(GlobalScope(packageFqName), ClassKotlinName(shortClassName))
 fun CallableId.embedGetterName(): ScopedKotlinName = embedScoped(GetterKotlinName(callableName))
 fun CallableId.embedSetterName(): ScopedKotlinName = embedScoped(SetterKotlinName(callableName))
-fun CallableId.embedMemberPropertyName(): MangledName = embedScoped(MemberKotlinName(callableName))
+fun CallableId.embedMemberPropertyName(): ScopedKotlinName = embedScoped(MemberKotlinName(callableName))
+fun CallableId.embedFunctionName(type: TypeEmbedding): ScopedKotlinName =
+    embedScopedWithType(type, FunctionKotlinName(callableName))
 
-fun CallableId.embedPropertyName(scope: Int): MangledName = when {
+fun CallableId.embedPropertyName(scope: Int): ScopedKotlinName = when {
     isLocal -> ScopedKotlinName(LocalScope(scope), SimpleKotlinName(callableName))
     className != null -> embedMemberPropertyName()
     else -> throw IllegalStateException("Name is neither local nor bound to a class; we do not know how to handle this.")
 }
 
 fun FirValueParameterSymbol.embedName(): ScopedKotlinName = ScopedKotlinName(ParameterScope, SimpleKotlinName(name))
-fun FirPropertyAccessorSymbol.embedName(): MangledName = when {
+fun FirPropertyAccessorSymbol.embedName(): ScopedKotlinName = when {
     isGetter -> callableId.embedGetterName()
     isSetter -> callableId.embedSetterName()
     else -> throw IllegalStateException("A property accessor must be a setter or a getter!")
 }
 
-fun FirConstructorSymbol.embedName(ctx: ProgramConversionContext): MangledName =
+fun FirConstructorSymbol.embedName(ctx: ProgramConversionContext): ScopedKotlinName =
     callableId.embedScopedWithType(ctx.embedType(this), ConstructorKotlinName)
 
-fun FirFunctionSymbol<*>.embedName(ctx: ProgramConversionContext): MangledName = when (this) {
+fun FirFunctionSymbol<*>.embedName(ctx: ProgramConversionContext): ScopedKotlinName = when (this) {
     is FirPropertyAccessorSymbol -> embedName()
     is FirConstructorSymbol -> embedName(ctx)
-    else -> callableId.embedScopedWithType(ctx.embedType(this), FunctionKotlinName(callableId.callableName))
+    else -> callableId.embedFunctionName(ctx.embedType(this))
 }
 

@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.calleeCallableSymbol
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.InvokeFunctionObjectMethod
-import org.jetbrains.kotlin.formver.embeddings.callables.SpecialKotlinFunctionImplementation
-import org.jetbrains.kotlin.formver.embeddings.callables.SpecialKotlinFunctions
 import org.jetbrains.kotlin.formver.embeddings.callables.insertCall
 import org.jetbrains.kotlin.formver.functionCallArguments
 import org.jetbrains.kotlin.formver.viper.ast.Exp
@@ -166,16 +164,8 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         val symbol = functionCall.calleeCallableSymbol
-        val id = symbol.callableId
-        val specialFunc = SpecialKotlinFunctions.byCallableId[id]
-        val args = functionCall.functionCallArguments.map(data::convert)
-        if (specialFunc != null) {
-            if (specialFunc !is SpecialKotlinFunctionImplementation) return UnitLit
-            return specialFunc.convertCall(args, data)
-        }
-
         val callee = data.embedFunction(symbol as FirFunctionSymbol<*>)
-        return callee.insertCall(args, data)
+        return callee.insertCall(functionCall.functionCallArguments.map(data::convert), data)
     }
 
     override fun visitImplicitInvokeCall(
