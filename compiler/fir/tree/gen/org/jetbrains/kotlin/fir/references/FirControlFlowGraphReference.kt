@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirControlFlowGraphReference : FirReference() {
+
     abstract override val source: KtSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

@@ -21,16 +21,26 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 abstract class FirQualifiedAccessExpression : FirExpression(), FirResolvable, FirContextReceiverArgumentListOwner {
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val calleeReference: FirReference
+
     abstract override val contextReceiverArguments: List<FirExpression>
+
     abstract val typeArguments: List<FirTypeProjection>
+
     abstract val explicitReceiver: FirExpression?
+
     abstract val dispatchReceiver: FirExpression?
+
     abstract val extensionReceiver: FirExpression?
+
     abstract override val source: KtSourceElement?
+
     abstract val nonFatalDiagnostics: List<ConeDiagnostic>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

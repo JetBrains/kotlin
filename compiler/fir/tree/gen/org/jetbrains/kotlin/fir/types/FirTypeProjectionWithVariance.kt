@@ -16,8 +16,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirTypeProjectionWithVariance : FirTypeProjection() {
+
     abstract override val source: KtSourceElement?
+
     abstract val typeRef: FirTypeRef
+
     abstract val variance: Variance
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirAnnotationContainer : FirElement {
+
     override val source: KtSourceElement?
+
     val annotations: List<FirAnnotation>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

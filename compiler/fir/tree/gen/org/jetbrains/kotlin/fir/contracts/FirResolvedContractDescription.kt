@@ -15,8 +15,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirResolvedContractDescription : FirContractDescription() {
+
     abstract override val source: KtSourceElement?
+
     abstract val effects: List<FirEffectDeclaration>
+
     abstract val unresolvedEffects: List<FirContractElementDeclaration>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

@@ -26,24 +26,43 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  */
 
 abstract class FirSimpleFunction : FirFunction(), FirContractDescriptionOwner, FirTypeParametersOwner {
+
     abstract override val source: KtSourceElement?
+
     abstract override val moduleData: FirModuleData
+
     abstract override val origin: FirDeclarationOrigin
+
     abstract override val attributes: FirDeclarationAttributes
+
     abstract override val status: FirDeclarationStatus
+
     abstract override val returnTypeRef: FirTypeRef
+
     abstract override val receiverParameter: FirReceiverParameter?
+
     abstract override val deprecationsProvider: DeprecationsProvider
+
     abstract override val containerSource: DeserializedContainerSource?
+
     abstract override val dispatchReceiverType: ConeSimpleKotlinType?
+
     abstract override val contextReceivers: List<FirContextReceiver>
+
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
+
     abstract override val valueParameters: List<FirValueParameter>
+
     abstract override val body: FirBlock?
+
     abstract override val contractDescription: FirContractDescription
+
     abstract val name: Name
+
     abstract override val symbol: FirNamedFunctionSymbol
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val typeParameters: List<FirTypeParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

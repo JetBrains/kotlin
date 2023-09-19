@@ -18,9 +18,12 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 abstract class FirExpression : FirPureAbstractElement(), FirStatement {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

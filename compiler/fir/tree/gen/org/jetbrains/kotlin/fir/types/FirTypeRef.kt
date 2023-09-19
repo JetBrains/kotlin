@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 sealed class FirTypeRef : FirPureAbstractElement(), FirAnnotationContainer {
+
     abstract override val source: KtSourceElement?
+
     abstract override val annotations: List<FirAnnotation>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

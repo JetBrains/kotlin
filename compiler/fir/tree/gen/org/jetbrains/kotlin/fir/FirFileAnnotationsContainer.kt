@@ -20,9 +20,13 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  */
 
 abstract class FirFileAnnotationsContainer : FirElementWithResolveState(), FirAnnotationContainer {
+
     abstract override val source: KtSourceElement?
+
     abstract override val moduleData: FirModuleData
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract val containingFileSymbol: FirFileSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

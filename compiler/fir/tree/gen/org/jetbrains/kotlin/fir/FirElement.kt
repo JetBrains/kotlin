@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirElement {
+
     val source: KtSourceElement?
 
     fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

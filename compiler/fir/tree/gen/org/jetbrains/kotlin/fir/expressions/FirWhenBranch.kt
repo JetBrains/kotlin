@@ -16,8 +16,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirWhenBranch : FirPureAbstractElement(), FirElement {
+
     abstract override val source: KtSourceElement?
+
     abstract val condition: FirExpression
+
     abstract val result: FirBlock
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

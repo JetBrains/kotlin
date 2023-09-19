@@ -18,11 +18,17 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirErrorLoop : FirLoop(), FirDiagnosticHolder {
+
     abstract override val source: KtSourceElement?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val block: FirBlock
+
     abstract override val condition: FirExpression
+
     abstract override val label: FirLabel?
+
     abstract override val diagnostic: ConeDiagnostic
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

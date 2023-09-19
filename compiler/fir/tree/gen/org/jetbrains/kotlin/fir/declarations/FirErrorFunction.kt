@@ -26,23 +26,41 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  */
 
 abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
+
     abstract override val source: KtSourceElement?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val moduleData: FirModuleData
+
     abstract override val origin: FirDeclarationOrigin
+
     abstract override val attributes: FirDeclarationAttributes
+
     abstract override val typeParameters: List<FirTypeParameterRef>
+
     abstract override val status: FirDeclarationStatus
+
     abstract override val returnTypeRef: FirTypeRef
+
     abstract override val receiverParameter: FirReceiverParameter?
+
     abstract override val deprecationsProvider: DeprecationsProvider
+
     abstract override val containerSource: DeserializedContainerSource?
+
     abstract override val dispatchReceiverType: ConeSimpleKotlinType?
+
     abstract override val contextReceivers: List<FirContextReceiver>
+
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
+
     abstract override val valueParameters: List<FirValueParameter>
+
     abstract override val body: FirBlock?
+
     abstract override val diagnostic: ConeDiagnostic
+
     abstract override val symbol: FirErrorFunctionSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

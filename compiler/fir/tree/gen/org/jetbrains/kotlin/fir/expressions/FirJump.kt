@@ -19,10 +19,14 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 sealed class FirJump<E : FirTargetElement> : FirExpression() {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract val target: FirTarget<E>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

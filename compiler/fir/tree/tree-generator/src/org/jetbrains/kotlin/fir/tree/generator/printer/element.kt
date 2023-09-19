@@ -79,6 +79,7 @@ fun SmartPrinter.printElement(element: Element) {
         withIndent {
             allFields.forEach { field ->
                 if (field.isFinal && field.fromParent || field.isParameter) return@forEach
+                println()
                 printField(field, isImplementation = false, override = field.fromParent) {
                     if (!field.isFinal) {
                         abstract()

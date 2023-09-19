@@ -17,13 +17,21 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirFunctionTypeRef : FirTypeRefWithNullability() {
+
     abstract override val source: KtSourceElement?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val isMarkedNullable: Boolean
+
     abstract val receiverTypeRef: FirTypeRef?
+
     abstract val parameters: List<FirFunctionTypeParameter>
+
     abstract val returnTypeRef: FirTypeRef
+
     abstract val isSuspend: Boolean
+
     abstract val contextReceiverTypeRefs: List<FirTypeRef>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

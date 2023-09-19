@@ -18,12 +18,18 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 abstract class FirSafeCallExpression : FirExpression() {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract val receiver: FirExpression
+
     abstract val checkedSubjectRef: FirExpressionRef<FirCheckedSafeCallSubject>
+
     abstract val selector: FirStatement
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

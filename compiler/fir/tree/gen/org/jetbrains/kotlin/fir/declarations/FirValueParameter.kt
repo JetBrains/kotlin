@@ -26,33 +26,61 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  */
 
 abstract class FirValueParameter : FirVariable(), FirControlFlowGraphOwner {
+
     abstract override val source: KtSourceElement?
+
     abstract override val moduleData: FirModuleData
+
     abstract override val origin: FirDeclarationOrigin
+
     abstract override val attributes: FirDeclarationAttributes
+
     abstract override val typeParameters: List<FirTypeParameterRef>
+
     abstract override val status: FirDeclarationStatus
+
     abstract override val returnTypeRef: FirTypeRef
+
     abstract override val receiverParameter: FirReceiverParameter?
+
     abstract override val deprecationsProvider: DeprecationsProvider
+
     abstract override val containerSource: DeserializedContainerSource?
+
     abstract override val dispatchReceiverType: ConeSimpleKotlinType?
+
     abstract override val contextReceivers: List<FirContextReceiver>
+
     abstract override val name: Name
+
     abstract override val initializer: FirExpression?
+
     abstract override val delegate: FirExpression?
+
     abstract override val isVar: Boolean
+
     abstract override val isVal: Boolean
+
     abstract override val getter: FirPropertyAccessor?
+
     abstract override val setter: FirPropertyAccessor?
+
     abstract override val backingField: FirBackingField?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
+
     abstract override val symbol: FirValueParameterSymbol
+
     abstract val defaultValue: FirExpression?
+
     abstract val containingFunctionSymbol: FirFunctionSymbol<*>
+
     abstract val isCrossinline: Boolean
+
     abstract val isNoinline: Boolean
+
     abstract val isVararg: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

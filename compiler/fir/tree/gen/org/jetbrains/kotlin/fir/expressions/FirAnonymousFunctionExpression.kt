@@ -18,10 +18,14 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 abstract class FirAnonymousFunctionExpression : FirExpression() {
+
     abstract override val source: KtSourceElement?
+
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+
     abstract override val annotations: List<FirAnnotation>
+
     abstract val anonymousFunction: FirAnonymousFunction
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

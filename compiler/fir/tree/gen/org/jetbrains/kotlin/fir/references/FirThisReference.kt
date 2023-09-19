@@ -17,11 +17,17 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirThisReference : FirReference() {
+
     abstract override val source: KtSourceElement?
+
     abstract val labelName: String?
+
     abstract val boundSymbol: FirBasedSymbol<*>?
+
     abstract val contextReceiverNumber: Int
+
     abstract val isImplicit: Boolean
+
     abstract val diagnostic: ConeDiagnostic?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
