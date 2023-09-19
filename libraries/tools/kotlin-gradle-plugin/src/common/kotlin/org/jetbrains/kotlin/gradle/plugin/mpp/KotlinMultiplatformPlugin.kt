@@ -11,6 +11,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.setupDefaultKotlinHierarchy
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
@@ -81,8 +82,15 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     private fun exportProjectStructureMetadataForOtherBuilds(
         extension: KotlinMultiplatformExtension,
     ) {
-        GlobalProjectStructureMetadataStorage.registerProjectStructureMetadata(extension.project) {
-            extension.kotlinProjectStructureMetadata
+        // Run in AfterEvaluate stage to avoid issues with Precompiled Script Plugins
+        // When Gradle runs `:generatePrecompiledScriptPluginAccessors` it creates dummy project and
+        // applies plugins from *.gradle.kts file to and generates accessors from it.
+        // These dummy projects never gets evaluated and should not expose any Project Structure Metadata.
+        // Putting registerProjectStructureMetadata in AfterEvaluate stage prevents PSM registration in dummy projects.
+        extension.project.launchInStage(AfterEvaluateBuildscript) {
+            GlobalProjectStructureMetadataStorage.registerProjectStructureMetadata(extension.project) {
+                extension.kotlinProjectStructureMetadata
+            }
         }
     }
 
