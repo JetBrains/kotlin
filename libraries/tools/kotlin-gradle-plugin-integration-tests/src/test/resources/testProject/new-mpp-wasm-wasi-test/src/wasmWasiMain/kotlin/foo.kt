@@ -1,3 +1,3 @@
 package my.pack.name
 
-fun foo(): Int = 2
+fun foo(): Int = 1

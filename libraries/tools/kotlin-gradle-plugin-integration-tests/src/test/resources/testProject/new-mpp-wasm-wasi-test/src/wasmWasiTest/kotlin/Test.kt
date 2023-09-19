@@ -6,11 +6,11 @@ import kotlin.test.assertEquals
 
 class WasmTest {
     @Test
-    fun test1() = assertEquals(foo(), 2)
+    fun test1() = assertEquals(foo(), 1)
 
     @Test
     @Ignore
-    fun test2() = assertEquals(foo(), 1)
+    fun test2() = assertEquals(foo(), 2)
 
     @Ignore
     class InnerIgnored {
