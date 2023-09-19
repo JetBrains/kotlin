@@ -280,7 +280,7 @@ abstract class BaseGradleIT {
         val enableCompatibilityMetadataVariant: Boolean? = null,
         val withReports: List<BuildReportType> = emptyList(),
         val enableKpmModelMapping: Boolean? = null,
-        val useDaemonFallbackStrategy: Boolean = false,
+        val useDaemonFallbackStrategy: Boolean? = null,
         val useParsableDiagnosticsFormatting: Boolean = true,
         val showDiagnosticsStacktrace: Boolean? = false, // false by default to not clutter the testdata + stacktraces change often
         val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
@@ -934,7 +934,7 @@ abstract class BaseGradleIT {
                 add("-Pkotlin.kpm.experimentalModelMapping=${options.enableKpmModelMapping}")
             }
 
-            add("-Pkotlin.daemon.useFallbackStrategy=${options.useDaemonFallbackStrategy}")
+            options.useDaemonFallbackStrategy?.let { add("-Pkotlin.daemon.useFallbackStrategy=$it") }
 
             add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")
             add("-Dorg.gradle.unsafe.configuration-cache-problems=${options.configurationCacheProblems.name.lowercase(Locale.getDefault())}")

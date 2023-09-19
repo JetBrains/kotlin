@@ -84,7 +84,7 @@ class SourceToOutputFilesMapTest {
 
     @Test
     fun testSetRelativeFails() {
-        assertFailsWith<IllegalStateException> {
+        assertFailsWith<IllegalArgumentException> {
             stofMap[fooDotKt] = listOf(File("relativePath"))
         }
     }
@@ -93,7 +93,7 @@ class SourceToOutputFilesMapTest {
     fun testGetRelativeFails() {
         stofMap[fooDotKt] = listOf(fooDotClass)
 
-        assertFailsWith<IllegalStateException> {
+        assertFailsWith<IllegalArgumentException> {
             stofMap[fooDotKt.relativeTo(srcDir)]
         }
     }
