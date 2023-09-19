@@ -59,7 +59,7 @@ public open class CharProgression
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
 
-    companion object {
+    public companion object {
         /**
          * Creates CharProgression within the specified bounds of a closed range.
          *
@@ -121,7 +121,7 @@ public open class IntProgression
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
 
-    companion object {
+    public companion object {
         /**
          * Creates IntProgression within the specified bounds of a closed range.
          *
@@ -183,7 +183,7 @@ public open class LongProgression
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
 
-    companion object {
+    public companion object {
         /**
          * Creates LongProgression within the specified bounds of a closed range.
          *

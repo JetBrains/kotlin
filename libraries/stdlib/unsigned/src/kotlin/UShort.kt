@@ -16,7 +16,7 @@ import kotlin.jvm.*
 @JvmInline
 public value class UShort @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: Short) : Comparable<UShort> {
 
-    companion object {
+    public companion object {
         /**
          * A constant holding the minimum value an instance of UShort can have.
          */

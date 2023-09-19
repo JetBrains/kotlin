@@ -106,7 +106,7 @@ public open class $progression
 
     override fun toString(): String = ${"if (step > 0) \"\$first..\$last step \$step\" else \"\$first downTo \$last step \${-step}\""}
 
-    companion object {
+    public companion object {
         /**
          * Creates $progression within the specified bounds of a closed range.
          *

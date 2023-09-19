@@ -72,7 +72,7 @@ public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInc
 
     override fun toString(): String = $toString
 
-    companion object {
+    public companion object {
         /** An empty range of values of type $t. */
         public val EMPTY: $range = $range($emptyBounds)
     }

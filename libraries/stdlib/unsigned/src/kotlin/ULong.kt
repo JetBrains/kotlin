@@ -16,7 +16,7 @@ import kotlin.jvm.*
 @JvmInline
 public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: Long) : Comparable<ULong> {
 
-    companion object {
+    public companion object {
         /**
          * A constant holding the minimum value an instance of ULong can have.
          */

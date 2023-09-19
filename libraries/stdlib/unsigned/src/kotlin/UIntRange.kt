@@ -47,7 +47,7 @@ public class UIntRange(start: UInt, endInclusive: UInt) : UIntProgression(start,
 
     override fun toString(): String = "$first..$last"
 
-    companion object {
+    public companion object {
         /** An empty range of values of type UInt. */
         public val EMPTY: UIntRange = UIntRange(UInt.MAX_VALUE, UInt.MIN_VALUE)
     }
@@ -103,7 +103,7 @@ internal constructor(
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
 
-    companion object {
+    public companion object {
         /**
          * Creates UIntProgression within the specified bounds of a closed range.
 

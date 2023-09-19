@@ -82,7 +82,7 @@ public interface ClosedFloatingPointRange<T : Comparable<T>> : ClosedRange<T> {
     /**
      * Compares two values of range domain type and returns true if first is less than or equal to second.
      */
-    fun lessThanOrEquals(a: T, b: T): Boolean
+    public fun lessThanOrEquals(a: T, b: T): Boolean
 }
 
 

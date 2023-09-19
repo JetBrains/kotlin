@@ -16,7 +16,7 @@ import kotlin.jvm.*
 @JvmInline
 public value class UInt @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: Int) : Comparable<UInt> {
 
-    companion object {
+    public companion object {
         /**
          * A constant holding the minimum value an instance of UInt can have.
          */

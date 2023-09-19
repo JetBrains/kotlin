@@ -10,7 +10,7 @@ package kotlin.collections
 
 /** An iterator over a sequence of values of type `Byte`. */
 public abstract class ByteIterator : Iterator<Byte> {
-    override final fun next() = nextByte()
+    final override fun next(): Byte = nextByte()
 
     /** Returns the next value in the sequence without boxing. */
     public abstract fun nextByte(): Byte
@@ -18,7 +18,7 @@ public abstract class ByteIterator : Iterator<Byte> {
 
 /** An iterator over a sequence of values of type `Char`. */
 public abstract class CharIterator : Iterator<Char> {
-    override final fun next() = nextChar()
+    final override fun next(): Char = nextChar()
 
     /** Returns the next value in the sequence without boxing. */
     public abstract fun nextChar(): Char
@@ -26,7 +26,7 @@ public abstract class CharIterator : Iterator<Char> {
 
 /** An iterator over a sequence of values of type `Short`. */
 public abstract class ShortIterator : Iterator<Short> {
-    override final fun next() = nextShort()
+    final override fun next(): Short = nextShort()
 
     /** Returns the next value in the sequence without boxing. */
     public abstract fun nextShort(): Short
@@ -34,7 +34,7 @@ public abstract class ShortIterator : Iterator<Short> {
 
 /** An iterator over a sequence of values of type `Int`. */
 public abstract class IntIterator : Iterator<Int> {
-    override final fun next() = nextInt()
+    final override fun next(): Int = nextInt()
 
     /** Returns the next value in the sequence without boxing. */
     public abstract fun nextInt(): Int
@@ -42,7 +42,7 @@ public abstract class IntIterator : Iterator<Int> {
 
 /** An iterator over a sequence of values of type `Long`. */
 public abstract class LongIterator : Iterator<Long> {
-    override final fun next() = nextLong()
+    final override fun next(): Long = nextLong()
 
     /** Returns the next value in the sequence without boxing. */
     public abstract fun nextLong(): Long
@@ -50,7 +50,7 @@ public abstract class LongIterator : Iterator<Long> {
 
 /** An iterator over a sequence of values of type `Float`. */
 public abstract class FloatIterator : Iterator<Float> {
-    override final fun next() = nextFloat()
+    final override fun next(): Float = nextFloat()
 
     /** Returns the next value in the sequence without boxing. */
     public abstract fun nextFloat(): Float
@@ -58,7 +58,7 @@ public abstract class FloatIterator : Iterator<Float> {
 
 /** An iterator over a sequence of values of type `Double`. */
 public abstract class DoubleIterator : Iterator<Double> {
-    override final fun next() = nextDouble()
+    final override fun next(): Double = nextDouble()
 
     /** Returns the next value in the sequence without boxing. */
     public abstract fun nextDouble(): Double
@@ -66,7 +66,7 @@ public abstract class DoubleIterator : Iterator<Double> {
 
 /** An iterator over a sequence of values of type `Boolean`. */
 public abstract class BooleanIterator : Iterator<Boolean> {
-    override final fun next() = nextBoolean()
+    final override fun next(): Boolean = nextBoolean()
 
     /** Returns the next value in the sequence without boxing. */
     public abstract fun nextBoolean(): Boolean

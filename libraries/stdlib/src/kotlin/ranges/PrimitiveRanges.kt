@@ -41,7 +41,7 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
 
     override fun toString(): String = "$first..$last"
 
-    companion object {
+    public companion object {
         /** An empty range of values of type Char. */
         public val EMPTY: CharRange = CharRange(1.toChar(), 0.toChar())
     }
@@ -80,7 +80,7 @@ public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, end
 
     override fun toString(): String = "$first..$last"
 
-    companion object {
+    public companion object {
         /** An empty range of values of type Int. */
         public val EMPTY: IntRange = IntRange(1, 0)
     }
@@ -119,7 +119,7 @@ public class LongRange(start: Long, endInclusive: Long) : LongProgression(start,
 
     override fun toString(): String = "$first..$last"
 
-    companion object {
+    public companion object {
         /** An empty range of values of type Long. */
         public val EMPTY: LongRange = LongRange(1, 0)
     }

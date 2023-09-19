@@ -70,7 +70,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println("@JvmInline")
         out.println("public value class $className @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: $storageType) : Comparable<$className> {")
         out.println()
-        out.println("""    companion object {
+        out.println("""    public companion object {
         /**
          * A constant holding the minimum value an instance of $className can have.
          */
@@ -599,7 +599,7 @@ public class ${elementType}Range(start: $elementType, endInclusive: $elementType
 
     override fun toString(): String = "${'$'}first..${'$'}last"
 
-    companion object {
+    public companion object {
         /** An empty range of values of type $elementType. */
         public val EMPTY: ${elementType}Range = ${elementType}Range($elementType.MAX_VALUE, $elementType.MIN_VALUE)
     }
@@ -655,7 +655,7 @@ internal constructor(
 
     override fun toString(): String = if (step > 0) "${'$'}first..${'$'}last step ${'$'}step" else "${'$'}first downTo ${'$'}last step ${'$'}{-step}"
 
-    companion object {
+    public companion object {
         /**
          * Creates ${elementType}Progression within the specified bounds of a closed range.
 

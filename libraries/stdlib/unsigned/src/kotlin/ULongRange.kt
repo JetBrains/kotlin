@@ -47,7 +47,7 @@ public class ULongRange(start: ULong, endInclusive: ULong) : ULongProgression(st
 
     override fun toString(): String = "$first..$last"
 
-    companion object {
+    public companion object {
         /** An empty range of values of type ULong. */
         public val EMPTY: ULongRange = ULongRange(ULong.MAX_VALUE, ULong.MIN_VALUE)
     }
@@ -103,7 +103,7 @@ internal constructor(
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
 
-    companion object {
+    public companion object {
         /**
          * Creates ULongProgression within the specified bounds of a closed range.
 

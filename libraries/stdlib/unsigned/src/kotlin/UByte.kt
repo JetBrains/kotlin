@@ -16,7 +16,7 @@ import kotlin.jvm.*
 @JvmInline
 public value class UByte @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: Byte) : Comparable<UByte> {
 
-    companion object {
+    public companion object {
         /**
          * A constant holding the minimum value an instance of UByte can have.
          */
