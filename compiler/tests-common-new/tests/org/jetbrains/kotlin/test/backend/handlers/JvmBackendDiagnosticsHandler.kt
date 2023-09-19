@@ -5,26 +5,14 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
-import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.KtDefaultJvmErrorMessages
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticReporter
 import org.jetbrains.kotlin.test.frontend.classic.handlers.withNewInferenceModeEnabled
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCodeMetaInfo
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.junit.jupiter.api.fail
-import java.io.File
 
 class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     private val reporter = ClassicDiagnosticReporter(testServices)
@@ -53,41 +41,5 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
     private fun reportKtDiagnostics(module: TestModule, info: BinaryArtifacts.Jvm) {
         val ktDiagnosticReporter = info.classFileFactory.generationState.diagnosticReporter as BaseDiagnosticsCollector
         reportKtDiagnostics(module, ktDiagnosticReporter)
-    }
-
-    private fun checkFullDiagnosticRender(module: TestModule) {
-        if (DiagnosticsDirectives.RENDER_ALL_DIAGNOSTICS_FULL_TEXT !in module.directives) return
-
-        val reportedDiagnostics = mutableListOf<String>()
-        for (testFile in module.files) {
-            val finder =
-                SequentialPositionFinder(testServices.sourceFileProvider.getContentOfSourceFile(testFile).byteInputStream().reader())
-            for (metaInfo in testServices.globalMetadataInfoHandler.getReportedMetaInfosForFile(testFile).sortedBy { it.start }) {
-                when (metaInfo) {
-                    is DiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
-                        val message = DefaultErrorMessages.render(it)
-                        val position = DiagnosticUtils.getLineAndColumnRange(it.psiFile, it.textRanges).start
-                        reportedDiagnostics +=
-                            renderDiagnosticMessage(it.psiFile.name, it.severity, message, position.line, position.column)
-                    }
-                    is FirDiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
-                        val message = KtDefaultJvmErrorMessages.MAP[it.factory]?.render(it)
-                        val position = finder.findNextPosition(DiagnosticUtils.firstRange(it.textRanges).startOffset, false)
-                        reportedDiagnostics +=
-                            renderDiagnosticMessage(testFile.relativePath, it.severity, message, position.line, position.column)
-                    }
-                }
-            }
-        }
-
-        testServices.assertions.assertEqualsToFile(
-            File(FileUtil.getNameWithoutExtension(module.files.first().originalFile.absolutePath) + ".diag.txt"),
-            reportedDiagnostics.joinToString(separator = "\n\n", postfix = "\n")
-        )
-    }
-
-    private fun renderDiagnosticMessage(fileName: String, severity: Severity, message: String?, line: Int, column: Int): String {
-        val severityString = AnalyzerWithCompilerReport.convertSeverity(severity).toString().toLowerCaseAsciiOnly()
-        return "/${fileName}:$line:$column: $severityString: $message"
     }
 }
