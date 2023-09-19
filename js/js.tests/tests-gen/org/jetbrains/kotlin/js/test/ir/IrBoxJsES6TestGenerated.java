@@ -873,6 +873,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
 
         @Test
+        @TestMetadata("boxingUnboxingInsideTheSuspendFunction.kt")
+        public void testBoxingUnboxingInsideTheSuspendFunction() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/boxingUnboxingInsideTheSuspendFunction.kt");
+        }
+
+        @Test
         @TestMetadata("debugStatement.kt")
         public void testDebugStatement() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/debugStatement.kt");
