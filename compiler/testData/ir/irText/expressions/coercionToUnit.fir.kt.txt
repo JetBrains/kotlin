@@ -11,17 +11,17 @@ fun test2(mc: MutableCollection<String>) {
 
 fun test3() {
   { // BLOCK
-    val tmp0_safe_receiver: @FlexibleNullability PrintStream? = #out
+    val tmp_0: @FlexibleNullability PrintStream? = #out
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.println(p0 = "Hello,")
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.println(p0 = "Hello,")
     }
   } /*~> Unit */
   { // BLOCK
-    val tmp1_safe_receiver: @FlexibleNullability PrintStream? = #out
+    val tmp_1: @FlexibleNullability PrintStream? = #out
     when {
-      EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-      else -> tmp1_safe_receiver.println(p0 = "world!")
+      EQEQ(arg0 = tmp_1, arg1 = null) -> null
+      else -> tmp_1.println(p0 = "world!")
     }
   } /*~> Unit */
 }

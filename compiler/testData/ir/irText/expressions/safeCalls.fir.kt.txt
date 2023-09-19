@@ -21,50 +21,50 @@ interface IHost {
 
 fun test1(x: String?): Int? {
   return { // BLOCK
-    val tmp0_safe_receiver: String? = x
+    val tmp_0: String? = x
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.<get-length>()
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.<get-length>()
     }
   }
 }
 
 fun test2(x: String?): Int? {
   return { // BLOCK
-    val tmp1_safe_receiver: String? = x
+    val tmp_1: String? = x
     when {
-      EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-      else -> tmp1_safe_receiver.hashCode()
+      EQEQ(arg0 = tmp_1, arg1 = null) -> null
+      else -> tmp_1.hashCode()
     }
   }
 }
 
 fun test3(x: String?, y: Any?): Boolean? {
   return { // BLOCK
-    val tmp2_safe_receiver: String? = x
+    val tmp_2: String? = x
     when {
-      EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
-      else -> tmp2_safe_receiver.equals(other = y)
+      EQEQ(arg0 = tmp_2, arg1 = null) -> null
+      else -> tmp_2.equals(other = y)
     }
   }
 }
 
 fun test4(x: Ref?) {
   { // BLOCK
-    val tmp3_safe_receiver: Ref? = x
+    val tmp_3: Ref? = x
     when {
-      EQEQ(arg0 = tmp3_safe_receiver, arg1 = null) -> null
-      else -> tmp3_safe_receiver.<set-value>(<set-?> = 0)
+      EQEQ(arg0 = tmp_3, arg1 = null) -> null
+      else -> tmp_3.<set-value>(<set-?> = 0)
     }
   } /*~> Unit */
 }
 
 fun IHost.test5(s: String?): Int? {
   return { // BLOCK
-    val tmp4_safe_receiver: String? = s
+    val tmp_4: String? = s
     when {
-      EQEQ(arg0 = tmp4_safe_receiver, arg1 = null) -> null
-      else -> (<this>, tmp4_safe_receiver).extLength()
+      EQEQ(arg0 = tmp_4, arg1 = null) -> null
+      else -> (<this>, tmp_4).extLength()
     }
   }
 }
@@ -75,10 +75,10 @@ fun Int.foo(): Int {
 
 fun box() {
   { // BLOCK
-    val tmp5_safe_receiver: Int = 42
+    val tmp_5: Int = 42
     when {
-      EQEQ(arg0 = tmp5_safe_receiver, arg1 = null) -> null
-      else -> tmp5_safe_receiver.foo()
+      EQEQ(arg0 = tmp_5, arg1 = null) -> null
+      else -> tmp_5.foo()
     }
   } /*~> Unit */
 }

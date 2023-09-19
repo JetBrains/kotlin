@@ -33,9 +33,9 @@ data class MyContainer {
     when {
       other !is MyContainer -> return false
     }
-    val tmp0_other_with_cast: MyContainer = other as MyContainer
+    val tmp_0: MyContainer = other as MyContainer
     when {
-      EQEQ(arg0 = <this>.#s, arg1 = tmp0_other_with_cast.#s).not() -> return false
+      EQEQ(arg0 = <this>.#s, arg1 = tmp_0.#s).not() -> return false
     }
     return true
   }
@@ -67,10 +67,10 @@ fun box(): String {
     val myContainer: MyContainer = MyContainer(s = "fail")
     myContainer.set($context_receiver_0 = $this$with, index = 0, value = "OK")
     return { // BLOCK
-      val tmp0_elvis_lhs: String? = myContainer.get($context_receiver_0 = $this$with, index = 0)
+      val tmp_1: String? = myContainer.get($context_receiver_0 = $this$with, index = 0)
       when {
-        EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> "fail"
-        else -> tmp0_elvis_lhs
+        EQEQ(arg0 = tmp_1, arg1 = null) -> "fail"
+        else -> tmp_1
       }
     }
   }

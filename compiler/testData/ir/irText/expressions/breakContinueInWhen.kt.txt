@@ -5,9 +5,9 @@ fun testBreakFor() {
 )
   var k: Int = 0
   { // BLOCK
-    val tmp0_iterator: IntIterator = xs.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val x: Int = tmp0_iterator.next()
+    val tmp_0: IntIterator = xs.iterator()
+    while (tmp_0.hasNext()) { // BLOCK
+      val x: Int = tmp_0.next()
       { // BLOCK
         when {
           greater(arg0 = k, arg1 = 2) -> break
@@ -44,9 +44,9 @@ fun testContinueFor() {
 )
   var k: Int = 0
   { // BLOCK
-    val tmp0_iterator: IntIterator = xs.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val x: Int = tmp0_iterator.next()
+    val tmp_1: IntIterator = xs.iterator()
+    while (tmp_1.hasNext()) { // BLOCK
+      val x: Int = tmp_1.next()
       { // BLOCK
         when {
           greater(arg0 = k, arg1 = 2) -> continue

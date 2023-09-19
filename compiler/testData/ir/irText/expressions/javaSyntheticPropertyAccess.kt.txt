@@ -2,15 +2,15 @@ fun test(j: J) {
   j.getFoo() /*~> Unit */
   j.setFoo(x = 1)
   { // BLOCK
-    val tmp0_receiver: J = j
+    val tmp_0: J = j
     { // BLOCK
-      val tmp1: Int = tmp0_receiver.getFoo()
-      tmp0_receiver.setFoo(x = tmp1.inc())
-      tmp1
+      val tmp_1: Int = tmp_0.getFoo()
+      tmp_0.setFoo(x = tmp_1.inc())
+      tmp_1
     }
   } /*~> Unit */
   { // BLOCK
-    val tmp2_receiver: J = j
-    tmp2_receiver.setFoo(x = tmp2_receiver.getFoo().plus(other = 1))
+    val tmp_2: J = j
+    tmp_2.setFoo(x = tmp_2.getFoo().plus(other = 1))
   }
 }

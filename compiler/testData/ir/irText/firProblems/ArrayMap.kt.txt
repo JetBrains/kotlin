@@ -197,11 +197,11 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     when {
       EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null) -> { // BLOCK
         { // BLOCK
-          val tmp0_this: ArrayMapImpl<T> = <this>
+          val tmp_0: ArrayMapImpl<T> = <this>
           { // BLOCK
-            val tmp1: Int = tmp0_this.<get-size>()
-            tmp0_this.<set-size>(<set-?> = tmp1.inc())
-            tmp1
+            val tmp_1: Int = tmp_0.<get-size>()
+            tmp_0.<set-size>(<set-?> = tmp_1.inc())
+            tmp_1
           }
         }
       } /*~> Unit */
@@ -235,11 +235,11 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
           { // BLOCK
             do// COMPOSITE {
             { // BLOCK
-              val tmp0_this: <no name provided><T> = <this>
+              val tmp_2: <no name provided><T> = <this>
               { // BLOCK
-                val tmp1: Int = tmp0_this.<get-index>()
-                tmp0_this.<set-index>(<set-?> = tmp1.inc())
-                tmp1
+                val tmp_3: Int = tmp_2.<get-index>()
+                tmp_2.<set-index>(<set-?> = tmp_3.inc())
+                tmp_3
               }
             } /*~> Unit */
             // }            while (when {
@@ -267,11 +267,11 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     when {
       EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null).not() -> { // BLOCK
         { // BLOCK
-          val tmp0_this: ArrayMapImpl<T> = <this>
+          val tmp_4: ArrayMapImpl<T> = <this>
           { // BLOCK
-            val tmp1: Int = tmp0_this.<get-size>()
-            tmp0_this.<set-size>(<set-?> = tmp1.dec())
-            tmp1
+            val tmp_5: Int = tmp_4.<get-size>()
+            tmp_4.<set-size>(<set-?> = tmp_5.dec())
+            tmp_5
           }
         }
       } /*~> Unit */
@@ -336,12 +336,12 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
       when {
         other !is Entry<T> -> return false
       }
-      val tmp0_other_with_cast: Entry<T> = other as Entry<T>
+      val tmp_6: Entry<T> = other as Entry<T>
       when {
-        EQEQ(arg0 = <this>.#key, arg1 = tmp0_other_with_cast.#key).not() -> return false
+        EQEQ(arg0 = <this>.#key, arg1 = tmp_6.#key).not() -> return false
       }
       when {
-        EQEQ(arg0 = <this>.#value, arg1 = tmp0_other_with_cast.#value).not() -> return false
+        EQEQ(arg0 = <this>.#value, arg1 = tmp_6.#value).not() -> return false
       }
       return true
     }

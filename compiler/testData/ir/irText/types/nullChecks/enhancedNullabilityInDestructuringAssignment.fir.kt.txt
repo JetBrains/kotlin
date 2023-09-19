@@ -52,16 +52,16 @@ class Q<T1 : Any?, T2 : Any?> {
 }
 
 fun test1() {
-  val <destruct>: P = notNullP() /*!! P */
-  val x: Int = <destruct>.component1()
-  val y: Int = <destruct>.component2()
+  val tmp_0: P = notNullP() /*!! P */
+  val x: Int = tmp_0.component1()
+  val y: Int = tmp_0.component2()
   use(x = x, y = y)
 }
 
 fun test2() {
-  val <destruct>: @FlexibleNullability Q<@EnhancedNullability @NotNull String, @EnhancedNullability @NotNull String>? = notNullComponents()
-  val x: @EnhancedNullability @NotNull String = <destruct>.component1() /*!! @NotNull String */
-  val y: @EnhancedNullability @NotNull String = <destruct>.component2() /*!! @NotNull String */
+  val tmp_1: @FlexibleNullability Q<@EnhancedNullability @NotNull String, @EnhancedNullability @NotNull String>? = notNullComponents()
+  val x: @EnhancedNullability @NotNull String = tmp_1.component1() /*!! @NotNull String */
+  val y: @EnhancedNullability @NotNull String = tmp_1.component2() /*!! @NotNull String */
   use(x = x, y = y)
 }
 
@@ -73,16 +73,16 @@ fun test2Desugared() {
 }
 
 fun test3() {
-  val <destruct>: Q<@EnhancedNullability @NotNull String, @EnhancedNullability @NotNull String> = notNullQAndComponents() /*!! Q<@EnhancedNullability @NotNull String, @EnhancedNullability @NotNull String> */
-  val x: @EnhancedNullability @NotNull String = <destruct>.component1() /*!! @NotNull String */
-  val y: @EnhancedNullability @NotNull String = <destruct>.component2() /*!! @NotNull String */
+  val tmp_2: Q<@EnhancedNullability @NotNull String, @EnhancedNullability @NotNull String> = notNullQAndComponents() /*!! Q<@EnhancedNullability @NotNull String, @EnhancedNullability @NotNull String> */
+  val x: @EnhancedNullability @NotNull String = tmp_2.component1() /*!! @NotNull String */
+  val y: @EnhancedNullability @NotNull String = tmp_2.component2() /*!! @NotNull String */
   use(x = x, y = y)
 }
 
 fun test4() {
-  val <destruct>: IndexedValue<@EnhancedNullability @NotNull P> = listOfNotNull() /*!! @FlexibleMutability MutableList<@EnhancedNullability @NotNull P> */.withIndex<@EnhancedNullability @NotNull P>().first<IndexedValue<@EnhancedNullability @NotNull P>>()
-  val x: Int = <destruct>.component1()
-  val y: @EnhancedNullability @NotNull P = <destruct>.component2() /*!! @NotNull P */
+  val tmp_3: IndexedValue<@EnhancedNullability @NotNull P> = listOfNotNull() /*!! @FlexibleMutability MutableList<@EnhancedNullability @NotNull P> */.withIndex<@EnhancedNullability @NotNull P>().first<IndexedValue<@EnhancedNullability @NotNull P>>()
+  val x: Int = tmp_3.component1()
+  val y: @EnhancedNullability @NotNull P = tmp_3.component2() /*!! @NotNull P */
   use(x = x, y = y)
 }
 

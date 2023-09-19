@@ -39,10 +39,10 @@ private fun CoroutineScope.asFairChannel(flow: Flow<*>): ReceiveChannel<Any> {
     val channel: ChannelCoroutine<Any> = $this$produce.<get-channel>() as ChannelCoroutine<Any>
     flow.collect<Any?>(action = local suspend fun <anonymous>(value: Any?) {
       return channel.sendFair(element = { // BLOCK
-        val tmp0_elvis_lhs: Any? = value
+        val tmp_0: Any? = value
         when {
-          EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> Any()
-          else -> tmp0_elvis_lhs
+          EQEQ(arg0 = tmp_0, arg1 = null) -> Any()
+          else -> tmp_0
         }
       })
     }
@@ -55,10 +55,10 @@ private fun CoroutineScope.asChannel(flow: Flow<*>): ReceiveChannel<Any> {
   return <this>.produce<Any>(block = local suspend fun ProducerScope<Any>.<anonymous>() {
     flow.collect<Any?>(action = local suspend fun <anonymous>(value: Any?) {
       return $this$produce.<get-channel>().send(e = { // BLOCK
-        val tmp0_elvis_lhs: Any? = value
+        val tmp_1: Any? = value
         when {
-          EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> Any()
-          else -> tmp0_elvis_lhs
+          EQEQ(arg0 = tmp_1, arg1 = null) -> Any()
+          else -> tmp_1
         }
       })
     }

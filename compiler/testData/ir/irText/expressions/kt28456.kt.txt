@@ -20,20 +20,20 @@ fun testSimpleAssignment(a: A) {
 
 fun testPostfixIncrement(a: A): Int {
   return { // BLOCK
-    val tmp0_array: A = a
-    val tmp1_index0: Int = 1
-    val tmp2_index1: Int = 2
-    val tmp3: Int = tmp0_array.get(xs = [tmp1_index0, tmp2_index1])
-    tmp0_array.set(i = tmp1_index0, j = tmp2_index1, v = tmp3.inc())
-    tmp3
+    val tmp_0: A = a
+    val tmp_1: Int = 1
+    val tmp_2: Int = 2
+    val tmp_3: Int = tmp_0.get(xs = [tmp_1, tmp_2])
+    tmp_0.set(i = tmp_1, j = tmp_2, v = tmp_3.inc())
+    tmp_3
   }
 }
 
 fun testCompoundAssignment(a: A) {
   { // BLOCK
-    val tmp0_array: A = a
-    val tmp1_index0: Int = 1
-    val tmp2_index1: Int = 2
-    tmp0_array.set(i = tmp1_index0, j = tmp2_index1, v = tmp0_array.get(xs = [tmp1_index0, tmp2_index1]).plus(other = 10))
+    val tmp_4: A = a
+    val tmp_5: Int = 1
+    val tmp_6: Int = 2
+    tmp_4.set(i = tmp_5, j = tmp_6, v = tmp_4.get(xs = [tmp_5, tmp_6]).plus(other = 10))
   }
 }

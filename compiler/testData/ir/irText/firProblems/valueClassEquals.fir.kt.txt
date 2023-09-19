@@ -22,9 +22,9 @@ value class Z {
     when {
       other !is Z -> return false
     }
-    val tmp0_other_with_cast: Z = other as Z
+    val tmp_0: Z = other as Z
     when {
-      EQEQ(arg0 = <this>.#s, arg1 = tmp0_other_with_cast.#s).not() -> return false
+      EQEQ(arg0 = <this>.#s, arg1 = tmp_0.#s).not() -> return false
     }
     return true
   }

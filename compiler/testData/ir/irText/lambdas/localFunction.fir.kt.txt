@@ -2,9 +2,9 @@ fun outer() {
   var x: Int = 0
   local fun local() {
     { // BLOCK
-      val <unary>: Int = x
-      x = <unary>.inc()
-      <unary>
+      val tmp_0: Int = x
+      x = tmp_0.inc()
+      tmp_0
     } /*~> Unit */
   }
 

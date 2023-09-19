@@ -20,7 +20,7 @@ data object DataObject {
     when {
       other !is DataObject -> return false
     }
-    val tmp0_other_with_cast: DataObject = other as DataObject
+    val tmp_0: DataObject = other as DataObject
     return true
   }
 

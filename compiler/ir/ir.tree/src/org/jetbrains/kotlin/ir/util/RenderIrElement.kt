@@ -750,12 +750,12 @@ private val IrFunction.safeReturnType: IrType?
 private fun IrLocalDelegatedProperty.renderLocalDelegatedPropertyFlags() =
     if (isVar) "var" else "val"
 
-private class VariableNameData(val normalizeNames: Boolean) {
+internal class VariableNameData(val normalizeNames: Boolean) {
     val nameMap: MutableMap<IrVariableSymbol, String> = mutableMapOf()
     var temporaryIndex: Int = 0
 }
 
-private fun IrVariable.normalizedName(data: VariableNameData): String {
+internal fun IrVariable.normalizedName(data: VariableNameData): String {
     if (data.normalizeNames && (origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE || origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR)) {
         return data.nameMap.getOrPut(symbol) { "tmp_${data.temporaryIndex++}" }
     }

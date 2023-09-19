@@ -33,9 +33,9 @@ data class Counter {
     when {
       other !is Counter -> return false
     }
-    val tmp0_other_with_cast: Counter = other as Counter
+    val tmp_0: Counter = other as Counter
     when {
-      EQEQ(arg0 = <this>.#i, arg1 = tmp0_other_with_cast.#i).not() -> return false
+      EQEQ(arg0 = <this>.#i, arg1 = tmp_0.#i).not() -> return false
     }
     return true
   }
@@ -76,9 +76,9 @@ data class CounterConfig {
     when {
       other !is CounterConfig -> return false
     }
-    val tmp0_other_with_cast: CounterConfig = other as CounterConfig
+    val tmp_1: CounterConfig = other as CounterConfig
     when {
-      EQEQ(arg0 = <this>.#max, arg1 = tmp0_other_with_cast.#max).not() -> return false
+      EQEQ(arg0 = <this>.#max, arg1 = tmp_1.#max).not() -> return false
     }
     return true
   }
@@ -104,11 +104,11 @@ class CounterIterator : Iterator<Int> {
 
   override operator fun next(): Int {
     return { // BLOCK
-      val tmp0_this: Counter = <this>.<get-counter>()
+      val tmp_2: Counter = <this>.<get-counter>()
       { // BLOCK
-        val tmp1: Int = tmp0_this.<get-i>()
-        tmp0_this.<set-i>(<set-?> = tmp1.inc())
-        tmp1
+        val tmp_3: Int = tmp_2.<get-i>()
+        tmp_2.<set-i>(<set-?> = tmp_3.inc())
+        tmp_3
       }
     }
   }
@@ -126,9 +126,9 @@ fun box(): String {
   var result: Int = 0
   with<CounterConfig, Unit>(receiver = CounterConfig(), block = local fun CounterConfig.<anonymous>() {
     { // BLOCK
-      val tmp0_iterator: CounterIterator = Counter().iterator($context_receiver_0 = $this$with)
-      while (tmp0_iterator.hasNext()) { // BLOCK
-        val i: Int = tmp0_iterator.next()
+      val tmp_4: CounterIterator = Counter().iterator($context_receiver_0 = $this$with)
+      while (tmp_4.hasNext()) { // BLOCK
+        val i: Int = tmp_4.next()
         { // BLOCK
           result = result.plus(other = i)
         }

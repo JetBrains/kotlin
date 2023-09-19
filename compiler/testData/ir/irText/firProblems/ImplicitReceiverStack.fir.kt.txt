@@ -76,10 +76,10 @@ fun box(): String {
   val stack: PersistentImplicitReceiverStack = PersistentImplicitReceiverStack(stack = listOf<ImplicitReceiverValue<Nothing>>(elements = [ImplicitReceiverValue<Nothing>(boundSymbol = null, type = "O"), ImplicitReceiverValue<Nothing>(boundSymbol = null, type = "K")]))
   foo(stack = stack)
   return stack.first<ImplicitReceiverValue<*>>().<get-type>().plus(other = { // BLOCK
-    val tmp0_safe_receiver: ImplicitReceiverValue<*>? = stack.get(name = null)
+    val tmp_0: ImplicitReceiverValue<*>? = stack.get(name = null)
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.<get-type>()
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.<get-type>()
     }
   })
 }

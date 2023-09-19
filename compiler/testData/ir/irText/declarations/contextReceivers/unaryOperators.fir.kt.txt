@@ -32,9 +32,9 @@ data class Result {
     when {
       other !is Result -> return false
     }
-    val tmp0_other_with_cast: Result = other as Result
+    val tmp_0: Result = other as Result
     when {
-      EQEQ(arg0 = <this>.#i, arg1 = tmp0_other_with_cast.#i).not() -> return false
+      EQEQ(arg0 = <this>.#i, arg1 = tmp_0.#i).not() -> return false
     }
     return true
   }
@@ -73,21 +73,21 @@ fun box(): String {
   var result: Result = Result(i = 0)
   with<Int, Result>(receiver = 1, block = local fun Int.<anonymous>(): Result {
     { // BLOCK
-      val <unary>: Result = result
-      result = <unary>.inc($context_receiver_0 = $this$with)
-      <unary>
+      val tmp_1: Result = result
+      result = tmp_1.inc($context_receiver_0 = $this$with)
+      tmp_1
     } /*~> Unit */
     { // BLOCK
-      val <unary>: Result = result
-      result = <unary>.inc($context_receiver_0 = $this$with)
-      <unary>
+      val tmp_2: Result = result
+      result = tmp_2.inc($context_receiver_0 = $this$with)
+      tmp_2
     } /*~> Unit */
     result.unaryMinus($context_receiver_0 = $this$with) /*~> Unit */
     result.unaryPlus($context_receiver_0 = $this$with) /*~> Unit */
     return { // BLOCK
-      val <unary>: Result = result
-      result = <unary>.dec($context_receiver_0 = $this$with)
-      <unary>
+      val tmp_3: Result = result
+      result = tmp_3.dec($context_receiver_0 = $this$with)
+      tmp_3
     }
   }
 ) /*~> Unit */

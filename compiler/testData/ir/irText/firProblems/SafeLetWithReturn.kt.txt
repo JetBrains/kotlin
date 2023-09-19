@@ -1,9 +1,9 @@
 fun foo(s: String?): String {
   { // BLOCK
-    val tmp0_safe_receiver: String? = s
+    val tmp_0: String? = s
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
         return it
       }
 )
@@ -14,15 +14,15 @@ fun foo(s: String?): String {
 
 fun bar(s: String?, t: String?): String {
   { // BLOCK
-    val tmp0_safe_receiver: String? = s
+    val tmp_1: String? = s
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.let<String, Nothing?>(block = local fun <anonymous>(it: String): Nothing? {
+      EQEQ(arg0 = tmp_1, arg1 = null) -> null
+      else -> tmp_1.let<String, Nothing?>(block = local fun <anonymous>(it: String): Nothing? {
         return { // BLOCK
-          val tmp0_safe_receiver: String? = t
+          val tmp_2: String? = t
           when {
-            EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-            else -> tmp0_safe_receiver.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
+            EQEQ(arg0 = tmp_2, arg1 = null) -> null
+            else -> tmp_2.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
               return it
             }
 )
@@ -38,10 +38,10 @@ fun bar(s: String?, t: String?): String {
 val String?.baz: String
   get(): String {
     { // BLOCK
-      val tmp0_safe_receiver: String? = <this>
+      val tmp_3: String? = <this>
       when {
-        EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-        else -> tmp0_safe_receiver.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
+        EQEQ(arg0 = tmp_3, arg1 = null) -> null
+        else -> tmp_3.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
           return it
         }
 )

@@ -35,9 +35,9 @@ data class Some<T : Any?> {
     when {
       other !is Some<T> -> return false
     }
-    val tmp0_other_with_cast: Some<T> = other as Some<T>
+    val tmp_0: Some<T> = other as Some<T>
     when {
-      EQEQ(arg0 = <this>.#value, arg1 = tmp0_other_with_cast.#value).not() -> return false
+      EQEQ(arg0 = <this>.#value, arg1 = tmp_0.#value).not() -> return false
     }
     return true
   }

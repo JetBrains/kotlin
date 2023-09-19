@@ -47,9 +47,9 @@ data class LoginSuccessPacket {
     when {
       other !is LoginSuccessPacket -> return false
     }
-    val tmp0_other_with_cast: LoginSuccessPacket = other as LoginSuccessPacket
+    val tmp_0: LoginSuccessPacket = other as LoginSuccessPacket
     when {
-      EQEQ(arg0 = <this>.#id, arg1 = tmp0_other_with_cast.#id).not() -> return false
+      EQEQ(arg0 = <this>.#id, arg1 = tmp_0.#id).not() -> return false
     }
     return true
   }

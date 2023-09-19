@@ -51,6 +51,7 @@ class IrPrettyKotlinDumpHandler(
             KotlinLikeDumpOptions(
                 printFilePath = false,
                 printFakeOverridesStrategy = FakeOverridesStrategy.NONE,
+                normalizeNames = true, // KT-61983: K1 and K2 kotlin-like dumps are closer to each other when tempvar names are normalized
             ),
         )
     }

@@ -45,12 +45,12 @@ data class Test<T : Any?> {
     when {
       other !is Test<T> -> return false
     }
-    val tmp0_other_with_cast: Test<T> = other as Test<T>
+    val tmp_0: Test<T> = other as Test<T>
     when {
-      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_0.#x).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.#y, arg1 = tmp0_other_with_cast.#y).not() -> return false
+      EQEQ(arg0 = <this>.#y, arg1 = tmp_0.#y).not() -> return false
     }
     return true
   }

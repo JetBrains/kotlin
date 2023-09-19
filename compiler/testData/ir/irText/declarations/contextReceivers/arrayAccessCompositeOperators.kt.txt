@@ -33,9 +33,9 @@ data class MyContainer {
     when {
       other !is MyContainer -> return false
     }
-    val tmp0_other_with_cast: MyContainer = other as MyContainer
+    val tmp_0: MyContainer = other as MyContainer
     when {
-      EQEQ(arg0 = <this>.#i, arg1 = tmp0_other_with_cast.#i).not() -> return false
+      EQEQ(arg0 = <this>.#i, arg1 = tmp_0.#i).not() -> return false
     }
     return true
   }
@@ -62,8 +62,8 @@ operator fun MyContainer.plusAssign($context_receiver_0: Int, other: MyContainer
     <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   { // BLOCK
-    val tmp0_this: MyContainer = <this>
-    tmp0_this.<set-i>(<set-?> = tmp0_this.<get-i>().plus(other = other.<get-i>()))
+    val tmp_1: MyContainer = <this>
+    tmp_1.<set-i>(<set-?> = tmp_1.<get-i>().plus(other = other.<get-i>()))
   }
 }
 
@@ -78,9 +78,9 @@ fun box(): String {
   var myContainer: MyContainer = MyContainer(i = 0)
   with<Int, Unit>(receiver = 1, block = local fun Int.<anonymous>() {
     myContainer.plusAssign($context_receiver_0 = $this$with, other = MyContainer(i = { // BLOCK
-      val tmp0: MyContainer = myContainer
-      myContainer = tmp0.inc($context_receiver_0 = $this$with)
-      tmp0
+      val tmp_2: MyContainer = myContainer
+      myContainer = tmp_2.inc($context_receiver_0 = $this$with)
+      tmp_2
     }.get($context_receiver_0 = $this$with, index = 0)))
   }
 )

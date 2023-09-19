@@ -1,10 +1,10 @@
 fun test1(c: Boolean?) {
   L@ while (true) { // BLOCK
     L2@ while ({ // BLOCK
-      val tmp0_elvis_lhs: Boolean? = c
+      val tmp_0: Boolean? = c
       when {
-        EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> break
-        else -> tmp0_elvis_lhs
+        EQEQ(arg0 = tmp_0, arg1 = null) -> break
+        else -> tmp_0
       }
     })
   }
@@ -13,10 +13,10 @@ fun test1(c: Boolean?) {
 fun test2(c: Boolean?) {
   L@ while (true) { // BLOCK
     L2@ while ({ // BLOCK
-      val tmp0_elvis_lhs: Boolean? = c
+      val tmp_1: Boolean? = c
       when {
-        EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> continue
-        else -> tmp0_elvis_lhs
+        EQEQ(arg0 = tmp_1, arg1 = null) -> continue
+        else -> tmp_1
       }
     })
   }
@@ -25,15 +25,15 @@ fun test2(c: Boolean?) {
 fun test3(ss: List<String>?) {
   L@ while (true) { // BLOCK
     { // BLOCK
-      val tmp1_iterator: Iterator<String> = { // BLOCK
-        val tmp0_elvis_lhs: List<String>? = ss
+      val tmp_2: Iterator<String> = { // BLOCK
+        val tmp_3: List<String>? = ss
         when {
-          EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> continue
-          else -> tmp0_elvis_lhs
+          EQEQ(arg0 = tmp_3, arg1 = null) -> continue
+          else -> tmp_3
         }
       }.iterator()
-      L2@ while (tmp1_iterator.hasNext()) { // BLOCK
-        val s: String = tmp1_iterator.next()
+      L2@ while (tmp_2.hasNext()) { // BLOCK
+        val s: String = tmp_2.next()
       }
     }
   }
@@ -42,15 +42,15 @@ fun test3(ss: List<String>?) {
 fun test4(ss: List<String>?) {
   L@ while (true) { // BLOCK
     { // BLOCK
-      val tmp1_iterator: Iterator<String> = { // BLOCK
-        val tmp0_elvis_lhs: List<String>? = ss
+      val tmp_4: Iterator<String> = { // BLOCK
+        val tmp_5: List<String>? = ss
         when {
-          EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> break
-          else -> tmp0_elvis_lhs
+          EQEQ(arg0 = tmp_5, arg1 = null) -> break
+          else -> tmp_5
         }
       }.iterator()
-      L2@ while (tmp1_iterator.hasNext()) { // BLOCK
-        val s: String = tmp1_iterator.next()
+      L2@ while (tmp_4.hasNext()) { // BLOCK
+        val s: String = tmp_4.next()
       }
     }
   }

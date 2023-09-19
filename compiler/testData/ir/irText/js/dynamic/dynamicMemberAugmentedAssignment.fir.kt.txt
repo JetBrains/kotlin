@@ -8,38 +8,38 @@ fun testAugmentedMemberAssignment(d: dynamic) {
 
 fun testSafeAugmentedMemberAssignment(d: dynamic) {
   { // BLOCK
-    val tmp0_safe_receiver: dynamic = d
+    val tmp_0: dynamic = d
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.m += "+="
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.m += "+="
     }
   } /*~> Unit */
   { // BLOCK
-    val tmp1_safe_receiver: dynamic = d
+    val tmp_1: dynamic = d
     when {
-      EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-      else -> tmp1_safe_receiver.m -= "-="
+      EQEQ(arg0 = tmp_1, arg1 = null) -> null
+      else -> tmp_1.m -= "-="
     }
   } /*~> Unit */
   { // BLOCK
-    val tmp2_safe_receiver: dynamic = d
+    val tmp_2: dynamic = d
     when {
-      EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
-      else -> tmp2_safe_receiver.m *= "*="
+      EQEQ(arg0 = tmp_2, arg1 = null) -> null
+      else -> tmp_2.m *= "*="
     }
   } /*~> Unit */
   { // BLOCK
-    val tmp3_safe_receiver: dynamic = d
+    val tmp_3: dynamic = d
     when {
-      EQEQ(arg0 = tmp3_safe_receiver, arg1 = null) -> null
-      else -> tmp3_safe_receiver.m /= "/="
+      EQEQ(arg0 = tmp_3, arg1 = null) -> null
+      else -> tmp_3.m /= "/="
     }
   } /*~> Unit */
   { // BLOCK
-    val tmp4_safe_receiver: dynamic = d
+    val tmp_4: dynamic = d
     when {
-      EQEQ(arg0 = tmp4_safe_receiver, arg1 = null) -> null
-      else -> tmp4_safe_receiver.m %= "%="
+      EQEQ(arg0 = tmp_4, arg1 = null) -> null
+      else -> tmp_4.m %= "%="
     }
   } /*~> Unit */
 }

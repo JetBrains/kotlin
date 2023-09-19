@@ -22,26 +22,26 @@ class C {
 fun testVariable() {
   var x: IntArray = foo()
   { // BLOCK
-    val tmp0_array: IntArray = x
-    val tmp1_index0: Int = 0
-    tmp0_array.set(index = tmp1_index0, value = tmp0_array.get(index = tmp1_index0).plus(other = 1))
+    val tmp_0: IntArray = x
+    val tmp_1: Int = 0
+    tmp_0.set(index = tmp_1, value = tmp_0.get(index = tmp_1).plus(other = 1))
   }
 }
 
 fun testCall() {
   { // BLOCK
-    val tmp0_array: IntArray = foo()
-    val tmp1_index0: Int = bar()
-    tmp0_array.set(index = tmp1_index0, value = tmp0_array.get(index = tmp1_index0).times(other = 2))
+    val tmp_2: IntArray = foo()
+    val tmp_3: Int = bar()
+    tmp_2.set(index = tmp_3, value = tmp_2.get(index = tmp_3).times(other = 2))
   }
 }
 
 fun testMember(c: C) {
   { // BLOCK
-    val tmp0_array: IntArray = c.<get-x>()
-    val tmp1_index0: Int = 0
-    val tmp2: Int = tmp0_array.get(index = tmp1_index0)
-    tmp0_array.set(index = tmp1_index0, value = tmp2.inc())
-    tmp2
+    val tmp_4: IntArray = c.<get-x>()
+    val tmp_5: Int = 0
+    val tmp_6: Int = tmp_4.get(index = tmp_5)
+    tmp_4.set(index = tmp_5, value = tmp_6.inc())
+    tmp_6
   } /*~> Unit */
 }

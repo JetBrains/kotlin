@@ -4,82 +4,82 @@ fun <T : Any?> magic(): T {
 
 fun <T : Any?> test(value: T, value2: T) {
   val x1: Any = { // BLOCK
-    val <elvis>: T = value
+    val tmp_0: T = value
     when {
-      EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-      else -> <elvis>
+      EQEQ(arg0 = tmp_0, arg1 = null) -> 42
+      else -> tmp_0
     }
   }
   val x2: Any = { // BLOCK
-    val <elvis>: T = value
+    val tmp_1: T = value
     when {
-      EQEQ(arg0 = <elvis>, arg1 = null) -> { // BLOCK
-        val <elvis>: T = value2
+      EQEQ(arg0 = tmp_1, arg1 = null) -> { // BLOCK
+        val tmp_2: T = value2
         when {
-          EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-          else -> <elvis>
+          EQEQ(arg0 = tmp_2, arg1 = null) -> 42
+          else -> tmp_2
         }
       }
-      else -> <elvis>
+      else -> tmp_1
     }
   }
   val x3: Any = { // BLOCK
-    val <elvis>: Any? = { // BLOCK
-      val <elvis>: T = value
+    val tmp_3: Any? = { // BLOCK
+      val tmp_4: T = value
       when {
-        EQEQ(arg0 = <elvis>, arg1 = null) -> value2
-        else -> <elvis>
+        EQEQ(arg0 = tmp_4, arg1 = null) -> value2
+        else -> tmp_4
       }
     }
     when {
-      EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-      else -> <elvis>
+      EQEQ(arg0 = tmp_3, arg1 = null) -> 42
+      else -> tmp_3
     }
   }
   val x4: Any = { // BLOCK
-    val <elvis>: Any? = { // BLOCK
-      val <elvis>: T = value
+    val tmp_5: Any? = { // BLOCK
+      val tmp_6: T = value
       when {
-        EQEQ(arg0 = <elvis>, arg1 = null) -> value2
-        else -> <elvis>
+        EQEQ(arg0 = tmp_6, arg1 = null) -> value2
+        else -> tmp_6
       }
     }
     when {
-      EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-      else -> <elvis>
+      EQEQ(arg0 = tmp_5, arg1 = null) -> 42
+      else -> tmp_5
     }
   }
   val x5: Any = { // BLOCK
-    val <elvis>: Any? = magic<Any?>()
+    val tmp_7: Any? = magic<Any?>()
     when {
-      EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-      else -> <elvis>
+      EQEQ(arg0 = tmp_7, arg1 = null) -> 42
+      else -> tmp_7
     }
   }
   val x6: Any = { // BLOCK
-    val <elvis>: Any? = { // BLOCK
-      val <elvis>: T = value
+    val tmp_8: Any? = { // BLOCK
+      val tmp_9: T = value
       when {
-        EQEQ(arg0 = <elvis>, arg1 = null) -> magic<Any?>()
-        else -> <elvis>
+        EQEQ(arg0 = tmp_9, arg1 = null) -> magic<Any?>()
+        else -> tmp_9
       }
     }
     when {
-      EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-      else -> <elvis>
+      EQEQ(arg0 = tmp_8, arg1 = null) -> 42
+      else -> tmp_8
     }
   }
   val x7: Any = { // BLOCK
-    val <elvis>: Any? = { // BLOCK
-      val <elvis>: Any? = magic<Any?>()
+    val tmp_10: Any? = { // BLOCK
+      val tmp_11: Any? = magic<Any?>()
       when {
-        EQEQ(arg0 = <elvis>, arg1 = null) -> value
-        else -> <elvis>
+        EQEQ(arg0 = tmp_11, arg1 = null) -> value
+        else -> tmp_11
       }
     }
     when {
-      EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-      else -> <elvis>
+      EQEQ(arg0 = tmp_10, arg1 = null) -> 42
+      else -> tmp_10
     }
   }
 }

@@ -19,9 +19,9 @@ enum class A : Enum<A> {
 fun testVariableAssignment_throws(a: A) {
   val x: Int
   { // BLOCK
-    val tmp0_subject: A = a
+    val tmp_0: A = a
     when {
-      EQEQ(arg0 = tmp0_subject, arg1 = A.V1) -> { // BLOCK
+      EQEQ(arg0 = tmp_0, arg1 = A.V1) -> { // BLOCK
         x = 11
       }
       else -> noWhenBranchMatchedException()
@@ -31,9 +31,9 @@ fun testVariableAssignment_throws(a: A) {
 
 fun testStatement_empty(a: A) {
   { // BLOCK
-    val tmp1_subject: A = a
+    val tmp_1: A = a
     when {
-      EQEQ(arg0 = tmp1_subject, arg1 = A.V1) -> 1
+      EQEQ(arg0 = tmp_1, arg1 = A.V1) -> 1
       else -> noWhenBranchMatchedException()
     }
   } /*~> Unit */
@@ -41,9 +41,9 @@ fun testStatement_empty(a: A) {
 
 fun testParenthesized_throwsJvm(a: A) {
   { // BLOCK
-    val tmp2_subject: A = a
+    val tmp_2: A = a
     when {
-      EQEQ(arg0 = tmp2_subject, arg1 = A.V1) -> 1
+      EQEQ(arg0 = tmp_2, arg1 = A.V1) -> 1
       else -> noWhenBranchMatchedException()
     }
   } /*~> Unit */
@@ -51,9 +51,9 @@ fun testParenthesized_throwsJvm(a: A) {
 
 fun testAnnotated_throwsJvm(a: A) {
   { // BLOCK
-    val tmp3_subject: A = a
+    val tmp_3: A = a
     when {
-      EQEQ(arg0 = tmp3_subject, arg1 = A.V1) -> 1
+      EQEQ(arg0 = tmp_3, arg1 = A.V1) -> 1
       else -> noWhenBranchMatchedException()
     }
   } /*~> Unit */
@@ -61,9 +61,9 @@ fun testAnnotated_throwsJvm(a: A) {
 
 fun testExpression_throws(a: A): Int {
   return { // BLOCK
-    val tmp4_subject: A = a
+    val tmp_4: A = a
     when {
-      EQEQ(arg0 = tmp4_subject, arg1 = A.V1) -> 1
+      EQEQ(arg0 = tmp_4, arg1 = A.V1) -> 1
       else -> noWhenBranchMatchedException()
     }
   }
@@ -74,9 +74,9 @@ fun testIfTheElseStatement_empty(a: A, flag: Boolean) {
     flag -> 0
     else -> { // BLOCK
       { // BLOCK
-        val tmp5_subject: A = a
+        val tmp_5: A = a
         when {
-          EQEQ(arg0 = tmp5_subject, arg1 = A.V1) -> 1
+          EQEQ(arg0 = tmp_5, arg1 = A.V1) -> 1
           else -> noWhenBranchMatchedException()
         }
       }
@@ -89,9 +89,9 @@ fun testIfTheElseParenthesized_throwsJvm(a: A, flag: Boolean) {
     flag -> 0
     else -> { // BLOCK
       { // BLOCK
-        val tmp6_subject: A = a
+        val tmp_6: A = a
         when {
-          EQEQ(arg0 = tmp6_subject, arg1 = A.V1) -> 1
+          EQEQ(arg0 = tmp_6, arg1 = A.V1) -> 1
           else -> noWhenBranchMatchedException()
         }
       }
@@ -104,9 +104,9 @@ fun testIfTheElseAnnotated_throwsJvm(a: A, flag: Boolean) {
     flag -> 0
     else -> { // BLOCK
       { // BLOCK
-        val tmp7_subject: A = a
+        val tmp_7: A = a
         when {
-          EQEQ(arg0 = tmp7_subject, arg1 = A.V1) -> 1
+          EQEQ(arg0 = tmp_7, arg1 = A.V1) -> 1
           else -> noWhenBranchMatchedException()
         }
       }
@@ -117,9 +117,9 @@ fun testIfTheElseAnnotated_throwsJvm(a: A, flag: Boolean) {
 fun testLambdaResultExpression_throws(a: A) {
   local fun <anonymous>(): Int {
     return { // BLOCK
-      val tmp8_subject: A = a
+      val tmp_8: A = a
       when {
-        EQEQ(arg0 = tmp8_subject, arg1 = A.V1) -> 1
+        EQEQ(arg0 = tmp_8, arg1 = A.V1) -> 1
         else -> noWhenBranchMatchedException()
       }
     }

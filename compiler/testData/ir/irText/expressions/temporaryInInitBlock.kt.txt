@@ -10,10 +10,10 @@ class C {
 
   init {
     <this>.#s = { // BLOCK
-      val tmp0_safe_receiver: Any? = x
+      val tmp_0: Any? = x
       when {
-        EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-        else -> tmp0_safe_receiver.toString()
+        EQEQ(arg0 = tmp_0, arg1 = null) -> null
+        else -> tmp_0.toString()
       }
     }
   }

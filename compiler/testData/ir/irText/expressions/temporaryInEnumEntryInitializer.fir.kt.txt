@@ -14,10 +14,10 @@ enum class En : Enum<En> {
     get
 
   ENTRY = En(x = { // BLOCK
-    val tmp0_safe_receiver: Any? = <get-n>()
+    val tmp_0: Any? = <get-n>()
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.toString()
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.toString()
     }
   })
 

@@ -54,11 +54,11 @@ class DeepCopyIrTreeWithSymbols {
 ))
     <this>.<get-typeRemapper>().withinScope<Unit>(irTypeParametersContainer = <this>, fn = local fun <anonymous>() {
       { // BLOCK
-        val tmp0_iterator: Iterator<Pair<IrTypeParameter, IrTypeParameter>> = <this>.<get-typeParameters>().zip<IrTypeParameter, IrTypeParameter>(other = other.<get-typeParameters>()).iterator()
-        while (tmp0_iterator.hasNext()) { // BLOCK
-          val tmp1_loop_parameter: Pair<IrTypeParameter, IrTypeParameter> = tmp0_iterator.next()
-          val thisTypeParameter: IrTypeParameter = tmp1_loop_parameter.component1()
-          val otherTypeParameter: IrTypeParameter = tmp1_loop_parameter.component2()
+        val tmp_0: Iterator<Pair<IrTypeParameter, IrTypeParameter>> = <this>.<get-typeParameters>().zip<IrTypeParameter, IrTypeParameter>(other = other.<get-typeParameters>()).iterator()
+        while (tmp_0.hasNext()) { // BLOCK
+          val tmp_1: Pair<IrTypeParameter, IrTypeParameter> = tmp_0.next()
+          val thisTypeParameter: IrTypeParameter = tmp_1.component1()
+          val otherTypeParameter: IrTypeParameter = tmp_1.component2()
           { // BLOCK
             otherTypeParameter.<get-superTypes>().mapTo<IrType, IrType, MutableList<IrType>>(destination = thisTypeParameter.<get-superTypes>(), transform = local fun <anonymous>(it: IrType): IrType {
               return <this>.<get-typeRemapper>().remapType(type = it)

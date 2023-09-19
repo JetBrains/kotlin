@@ -105,33 +105,33 @@ data class Test1 {
     when {
       other !is Test1 -> return false
     }
-    val tmp0_other_with_cast: Test1 = other as Test1
+    val tmp_0: Test1 = other as Test1
     when {
-      EQEQ(arg0 = <this>.#stringArray, arg1 = tmp0_other_with_cast.#stringArray).not() -> return false
+      EQEQ(arg0 = <this>.#stringArray, arg1 = tmp_0.#stringArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.#charArray, arg1 = tmp0_other_with_cast.#charArray).not() -> return false
+      EQEQ(arg0 = <this>.#charArray, arg1 = tmp_0.#charArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.#booleanArray, arg1 = tmp0_other_with_cast.#booleanArray).not() -> return false
+      EQEQ(arg0 = <this>.#booleanArray, arg1 = tmp_0.#booleanArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.#byteArray, arg1 = tmp0_other_with_cast.#byteArray).not() -> return false
+      EQEQ(arg0 = <this>.#byteArray, arg1 = tmp_0.#byteArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.#shortArray, arg1 = tmp0_other_with_cast.#shortArray).not() -> return false
+      EQEQ(arg0 = <this>.#shortArray, arg1 = tmp_0.#shortArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.#intArray, arg1 = tmp0_other_with_cast.#intArray).not() -> return false
+      EQEQ(arg0 = <this>.#intArray, arg1 = tmp_0.#intArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.#longArray, arg1 = tmp0_other_with_cast.#longArray).not() -> return false
+      EQEQ(arg0 = <this>.#longArray, arg1 = tmp_0.#longArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.#floatArray, arg1 = tmp0_other_with_cast.#floatArray).not() -> return false
+      EQEQ(arg0 = <this>.#floatArray, arg1 = tmp_0.#floatArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.#doubleArray, arg1 = tmp0_other_with_cast.#doubleArray).not() -> return false
+      EQEQ(arg0 = <this>.#doubleArray, arg1 = tmp_0.#doubleArray).not() -> return false
     }
     return true
   }
@@ -172,9 +172,9 @@ data class Test2<T : Any?> {
     when {
       other !is Test2<T> -> return false
     }
-    val tmp0_other_with_cast: Test2<T> = other as Test2<T>
+    val tmp_1: Test2<T> = other as Test2<T>
     when {
-      EQEQ(arg0 = <this>.#genericArray, arg1 = tmp0_other_with_cast.#genericArray).not() -> return false
+      EQEQ(arg0 = <this>.#genericArray, arg1 = tmp_1.#genericArray).not() -> return false
     }
     return true
   }
@@ -218,9 +218,9 @@ data class Test3 {
     when {
       other !is Test3 -> return false
     }
-    val tmp0_other_with_cast: Test3 = other as Test3
+    val tmp_2: Test3 = other as Test3
     when {
-      EQEQ(arg0 = <this>.#anyArrayN, arg1 = tmp0_other_with_cast.#anyArrayN).not() -> return false
+      EQEQ(arg0 = <this>.#anyArrayN, arg1 = tmp_2.#anyArrayN).not() -> return false
     }
     return true
   }

@@ -1,9 +1,9 @@
 fun sum(vararg args: Int): Int {
   var result: Int = 0
   { // BLOCK
-    val <iterator>: IntIterator = args.iterator()
-    while (<iterator>.hasNext()) { // BLOCK
-      val arg: Int = <iterator>.next()
+    val tmp_0: IntIterator = args.iterator()
+    while (tmp_0.hasNext()) { // BLOCK
+      val arg: Int = tmp_0.next()
       { // BLOCK
         result = result.plus(other = arg)
       }

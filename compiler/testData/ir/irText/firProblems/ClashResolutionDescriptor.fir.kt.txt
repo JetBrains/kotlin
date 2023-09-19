@@ -46,15 +46,15 @@ private val registrationMap: HashMap<Type, Any>
 
 fun resolveClashesIfAny(container: ComponentContainer, clashResolvers: List<PlatformExtensionsClashResolver<*>>) {
   { // BLOCK
-    val <iterator>: Iterator<PlatformExtensionsClashResolver<*>> = clashResolvers.iterator()
-    while (<iterator>.hasNext()) { // BLOCK
-      val resolver: PlatformExtensionsClashResolver<*> = <iterator>.next()
+    val tmp_0: Iterator<PlatformExtensionsClashResolver<*>> = clashResolvers.iterator()
+    while (tmp_0.hasNext()) { // BLOCK
+      val resolver: PlatformExtensionsClashResolver<*> = tmp_0.next()
       { // BLOCK
         val clashedComponents: Collection<ComponentDescriptor> = { // BLOCK
-          val <elvis>: Collection<ComponentDescriptor>? = <get-registrationMap>().get(p0 = resolver.<get-applicableTo>()) as? Collection<ComponentDescriptor>
+          val tmp_1: Collection<ComponentDescriptor>? = <get-registrationMap>().get(p0 = resolver.<get-applicableTo>()) as? Collection<ComponentDescriptor>
           when {
-            EQEQ(arg0 = <elvis>, arg1 = null) -> continue
-            else -> <elvis>
+            EQEQ(arg0 = tmp_1, arg1 = null) -> continue
+            else -> tmp_1
           }
         }
         val substituteDescriptor: ClashResolutionDescriptor<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out Any?>>>>>> = ClashResolutionDescriptor<PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out Any?>>>>>>(container = container, resolver = resolver, clashedComponents = clashedComponents.toList<ComponentDescriptor>())

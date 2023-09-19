@@ -14,10 +14,10 @@ class C {
 
 fun test(nc: C?) {
   { // BLOCK
-    val tmp0_safe_receiver: C? = nc
+    val tmp_0: C? = nc
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.<set-x>(<set-?> = 42)
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.<set-x>(<set-?> = 42)
     }
   } /*~> Unit */
 }

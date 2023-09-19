@@ -64,14 +64,14 @@ fun testVarPrefix() {
 fun testVarPostfix() {
   var x: Int = 0
   val x1: Int = { // BLOCK
-    val <unary>: Int = x
-    x = <unary>.inc()
-    <unary>
+    val tmp_0: Int = x
+    x = tmp_0.inc()
+    tmp_0
   }
   val x2: Int = { // BLOCK
-    val <unary>: Int = x
-    x = <unary>.dec()
-    <unary>
+    val tmp_1: Int = x
+    x = tmp_1.dec()
+    tmp_1
   }
 }
 
@@ -88,106 +88,106 @@ fun testPropPrefix() {
 
 fun testPropPostfix() {
   val p1: Int = { // BLOCK
-    val <unary>: Int = <get-p>()
-    <set-p>(<set-?> = <unary>.inc())
-    <unary>
+    val tmp_2: Int = <get-p>()
+    <set-p>(<set-?> = tmp_2.inc())
+    tmp_2
   }
   val p2: Int = { // BLOCK
-    val <unary>: Int = <get-p>()
-    <set-p>(<set-?> = <unary>.dec())
-    <unary>
+    val tmp_3: Int = <get-p>()
+    <set-p>(<set-?> = tmp_3.dec())
+    tmp_3
   }
 }
 
 fun testArrayPrefix() {
   val a1: Int = { // BLOCK
-    val <array>: IntArray = <get-arr>()
-    val <index_0>: Int = 0
-    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).inc())
-    <array>.get(index = <index_0>)
+    val tmp_4: IntArray = <get-arr>()
+    val tmp_5: Int = 0
+    tmp_4.set(index = tmp_5, value = tmp_4.get(index = tmp_5).inc())
+    tmp_4.get(index = tmp_5)
   }
   val a2: Int = { // BLOCK
-    val <array>: IntArray = <get-arr>()
-    val <index_0>: Int = 0
-    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).dec())
-    <array>.get(index = <index_0>)
+    val tmp_6: IntArray = <get-arr>()
+    val tmp_7: Int = 0
+    tmp_6.set(index = tmp_7, value = tmp_6.get(index = tmp_7).dec())
+    tmp_6.get(index = tmp_7)
   }
 }
 
 fun testArrayPostfix() {
   val a1: Int = { // BLOCK
-    val <array>: IntArray = <get-arr>()
-    val <index_0>: Int = 0
-    val <unary>: Int = <array>.get(index = <index_0>)
-    <array>.set(index = <index_0>, value = <unary>.inc())
-    <unary>
+    val tmp_8: IntArray = <get-arr>()
+    val tmp_9: Int = 0
+    val tmp_10: Int = tmp_8.get(index = tmp_9)
+    tmp_8.set(index = tmp_9, value = tmp_10.inc())
+    tmp_10
   }
   val a2: Int = { // BLOCK
-    val <array>: IntArray = <get-arr>()
-    val <index_0>: Int = 0
-    val <unary>: Int = <array>.get(index = <index_0>)
-    <array>.set(index = <index_0>, value = <unary>.dec())
-    <unary>
+    val tmp_11: IntArray = <get-arr>()
+    val tmp_12: Int = 0
+    val tmp_13: Int = tmp_11.get(index = tmp_12)
+    tmp_11.set(index = tmp_12, value = tmp_13.dec())
+    tmp_13
   }
 }
 
 fun testClassPropPrefix() {
   val p1: Int = { // BLOCK
-    val <receiver>: C = C()
-    <receiver>.<set-p>(<set-?> = <receiver>.<get-p>().inc())
-    <receiver>.<get-p>()
+    val tmp_14: C = C()
+    tmp_14.<set-p>(<set-?> = tmp_14.<get-p>().inc())
+    tmp_14.<get-p>()
   }
   val p2: Int = { // BLOCK
-    val <receiver>: C = C()
-    <receiver>.<set-p>(<set-?> = <receiver>.<get-p>().dec())
-    <receiver>.<get-p>()
+    val tmp_15: C = C()
+    tmp_15.<set-p>(<set-?> = tmp_15.<get-p>().dec())
+    tmp_15.<get-p>()
   }
 }
 
 fun testClassPropPostfix() {
   val p1: Int = { // BLOCK
-    val <receiver>: C = C()
-    val <unary>: Int = <receiver>.<get-p>()
-    <receiver>.<set-p>(<set-?> = <unary>.inc())
-    <unary>
+    val tmp_16: C = C()
+    val tmp_17: Int = tmp_16.<get-p>()
+    tmp_16.<set-p>(<set-?> = tmp_17.inc())
+    tmp_17
   }
   val p2: Int = { // BLOCK
-    val <receiver>: C = C()
-    val <unary>: Int = <receiver>.<get-p>()
-    <receiver>.<set-p>(<set-?> = <unary>.dec())
-    <unary>
+    val tmp_18: C = C()
+    val tmp_19: Int = tmp_18.<get-p>()
+    tmp_18.<set-p>(<set-?> = tmp_19.dec())
+    tmp_19
   }
 }
 
 fun testClassOperatorPrefix() {
   val a1: Int = { // BLOCK
-    val <array>: C = C()
-    val <index_0>: Int = 0
-    <array>.set(i = <index_0>, value = <array>.get(i = <index_0>).inc())
-    <array>.get(i = <index_0>)
+    val tmp_20: C = C()
+    val tmp_21: Int = 0
+    tmp_20.set(i = tmp_21, value = tmp_20.get(i = tmp_21).inc())
+    tmp_20.get(i = tmp_21)
   }
   val a2: Int = { // BLOCK
-    val <array>: C = C()
-    val <index_0>: Int = 0
-    <array>.set(i = <index_0>, value = <array>.get(i = <index_0>).dec())
-    <array>.get(i = <index_0>)
+    val tmp_22: C = C()
+    val tmp_23: Int = 0
+    tmp_22.set(i = tmp_23, value = tmp_22.get(i = tmp_23).dec())
+    tmp_22.get(i = tmp_23)
   }
 }
 
 fun testClassOperatorPostfix() {
   val a1: Int = { // BLOCK
-    val <array>: C = C()
-    val <index_0>: Int = 0
-    val <unary>: Int = <array>.get(i = <index_0>)
-    <array>.set(i = <index_0>, value = <unary>.inc())
-    <unary>
+    val tmp_24: C = C()
+    val tmp_25: Int = 0
+    val tmp_26: Int = tmp_24.get(i = tmp_25)
+    tmp_24.set(i = tmp_25, value = tmp_26.inc())
+    tmp_26
   }
   val a2: Int = { // BLOCK
-    val <array>: C = C()
-    val <index_0>: Int = 0
-    val <unary>: Int = <array>.get(i = <index_0>)
-    <array>.set(i = <index_0>, value = <unary>.dec())
-    <unary>
+    val tmp_27: C = C()
+    val tmp_28: Int = 0
+    val tmp_29: Int = tmp_27.get(i = tmp_28)
+    tmp_27.set(i = tmp_28, value = tmp_29.dec())
+    tmp_29
   }
 }
 
@@ -204,45 +204,45 @@ fun testObjectPropPrefix() {
 
 fun testObjectPropPostfix() {
   val p1: Int = { // BLOCK
-    val <unary>: Int = O.<get-p>()
-    O.<set-p>(<set-?> = <unary>.inc())
-    <unary>
+    val tmp_30: Int = O.<get-p>()
+    O.<set-p>(<set-?> = tmp_30.inc())
+    tmp_30
   }
   val p2: Int = { // BLOCK
-    val <unary>: Int = O.<get-p>()
-    O.<set-p>(<set-?> = <unary>.dec())
-    <unary>
+    val tmp_31: Int = O.<get-p>()
+    O.<set-p>(<set-?> = tmp_31.dec())
+    tmp_31
   }
 }
 
 fun testObjectOperatorPrefix() {
   val a1: Int = { // BLOCK
-    val <array>: O = O
-    val <index_0>: Int = 0
-    <array>.set(i = <index_0>, value = <array>.get(i = <index_0>).inc())
-    <array>.get(i = <index_0>)
+    val tmp_32: O = O
+    val tmp_33: Int = 0
+    tmp_32.set(i = tmp_33, value = tmp_32.get(i = tmp_33).inc())
+    tmp_32.get(i = tmp_33)
   }
   val a2: Int = { // BLOCK
-    val <array>: O = O
-    val <index_0>: Int = 0
-    <array>.set(i = <index_0>, value = <array>.get(i = <index_0>).dec())
-    <array>.get(i = <index_0>)
+    val tmp_34: O = O
+    val tmp_35: Int = 0
+    tmp_34.set(i = tmp_35, value = tmp_34.get(i = tmp_35).dec())
+    tmp_34.get(i = tmp_35)
   }
 }
 
 fun testObjectOperatorPostfix() {
   val a1: Int = { // BLOCK
-    val <array>: O = O
-    val <index_0>: Int = 0
-    val <unary>: Int = <array>.get(i = <index_0>)
-    <array>.set(i = <index_0>, value = <unary>.inc())
-    <unary>
+    val tmp_36: O = O
+    val tmp_37: Int = 0
+    val tmp_38: Int = tmp_36.get(i = tmp_37)
+    tmp_36.set(i = tmp_37, value = tmp_38.inc())
+    tmp_38
   }
   val a2: Int = { // BLOCK
-    val <array>: O = O
-    val <index_0>: Int = 0
-    val <unary>: Int = <array>.get(i = <index_0>)
-    <array>.set(i = <index_0>, value = <unary>.dec())
-    <unary>
+    val tmp_39: O = O
+    val tmp_40: Int = 0
+    val tmp_41: Int = tmp_39.get(i = tmp_40)
+    tmp_39.set(i = tmp_40, value = tmp_41.dec())
+    tmp_41
   }
 }

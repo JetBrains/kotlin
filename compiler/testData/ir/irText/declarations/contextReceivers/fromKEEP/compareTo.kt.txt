@@ -48,12 +48,12 @@ data class Pair<A : Any?, B : Any?> {
     when {
       other !is Pair<A, B> -> return false
     }
-    val tmp0_other_with_cast: Pair<A, B> = other as Pair<A, B>
+    val tmp_0: Pair<A, B> = other as Pair<A, B>
     when {
-      EQEQ(arg0 = <this>.#first, arg1 = tmp0_other_with_cast.#first).not() -> return false
+      EQEQ(arg0 = <this>.#first, arg1 = tmp_0.#first).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.#second, arg1 = tmp0_other_with_cast.#second).not() -> return false
+      EQEQ(arg0 = <this>.#second, arg1 = tmp_0.#second).not() -> return false
     }
     return true
   }

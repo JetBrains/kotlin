@@ -3,9 +3,9 @@ fun use(s: P) {
 
 fun testForInListUnused() {
   { // BLOCK
-    val tmp0_iterator: MutableIterator<@NotNull @EnhancedNullability P> = listOfNotNull() /*!! List<@NotNull @EnhancedNullability P> */ /*as MutableList<*> */.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val x: @NotNull @EnhancedNullability P = tmp0_iterator.next()
+    val tmp_0: MutableIterator<@NotNull @EnhancedNullability P> = listOfNotNull() /*!! List<@NotNull @EnhancedNullability P> */ /*as MutableList<*> */.iterator()
+    while (tmp_0.hasNext()) { // BLOCK
+      val x: @NotNull @EnhancedNullability P = tmp_0.next()
       { // BLOCK
       }
     }
@@ -14,11 +14,11 @@ fun testForInListUnused() {
 
 fun testForInListDestructured() {
   { // BLOCK
-    val tmp0_iterator: MutableIterator<@NotNull @EnhancedNullability P> = listOfNotNull() /*!! List<@NotNull @EnhancedNullability P> */ /*as MutableList<*> */.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val tmp1_loop_parameter: @NotNull @EnhancedNullability P = tmp0_iterator.next()
-      val x: Int = tmp1_loop_parameter /*!! @NotNull P */.component1()
-      val y: Int = tmp1_loop_parameter /*!! @NotNull P */.component2()
+    val tmp_1: MutableIterator<@NotNull @EnhancedNullability P> = listOfNotNull() /*!! List<@NotNull @EnhancedNullability P> */ /*as MutableList<*> */.iterator()
+    while (tmp_1.hasNext()) { // BLOCK
+      val tmp_2: @NotNull @EnhancedNullability P = tmp_1.next()
+      val x: Int = tmp_2 /*!! @NotNull P */.component1()
+      val y: Int = tmp_2 /*!! @NotNull P */.component2()
       { // BLOCK
       }
     }
@@ -34,9 +34,9 @@ fun testDesugaredForInList() {
 
 fun testForInArrayUnused(j: J) {
   { // BLOCK
-    val tmp0_iterator: Iterator<@EnhancedNullability P> = j.arrayOfNotNull() /*!! Array<out @EnhancedNullability P> */ /*as Array<@EnhancedNullability P> */.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val x: @EnhancedNullability P = tmp0_iterator.next()
+    val tmp_3: Iterator<@EnhancedNullability P> = j.arrayOfNotNull() /*!! Array<out @EnhancedNullability P> */ /*as Array<@EnhancedNullability P> */.iterator()
+    while (tmp_3.hasNext()) { // BLOCK
+      val x: @EnhancedNullability P = tmp_3.next()
       { // BLOCK
       }
     }
@@ -45,9 +45,9 @@ fun testForInArrayUnused(j: J) {
 
 fun testForInListUse() {
   { // BLOCK
-    val tmp0_iterator: MutableIterator<@NotNull @EnhancedNullability P> = listOfNotNull() /*!! List<@NotNull @EnhancedNullability P> */ /*as MutableList<*> */.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val x: @NotNull @EnhancedNullability P = tmp0_iterator.next()
+    val tmp_4: MutableIterator<@NotNull @EnhancedNullability P> = listOfNotNull() /*!! List<@NotNull @EnhancedNullability P> */ /*as MutableList<*> */.iterator()
+    while (tmp_4.hasNext()) { // BLOCK
+      val x: @NotNull @EnhancedNullability P = tmp_4.next()
       { // BLOCK
         use(s = x /*!! @NotNull P */)
         use(s = x)
@@ -58,9 +58,9 @@ fun testForInListUse() {
 
 fun testForInArrayUse(j: J) {
   { // BLOCK
-    val tmp0_iterator: Iterator<@EnhancedNullability P> = j.arrayOfNotNull() /*!! Array<out @EnhancedNullability P> */ /*as Array<@EnhancedNullability P> */.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val x: @EnhancedNullability P = tmp0_iterator.next()
+    val tmp_5: Iterator<@EnhancedNullability P> = j.arrayOfNotNull() /*!! Array<out @EnhancedNullability P> */ /*as Array<@EnhancedNullability P> */.iterator()
+    while (tmp_5.hasNext()) { // BLOCK
+      val x: @EnhancedNullability P = tmp_5.next()
       { // BLOCK
         use(s = x /*!! P */)
         use(s = x)
@@ -118,12 +118,12 @@ data class P {
     when {
       other !is P -> return false
     }
-    val tmp0_other_with_cast: P = other as P
+    val tmp_6: P = other as P
     when {
-      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_6.#x).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.#y, arg1 = tmp0_other_with_cast.#y).not() -> return false
+      EQEQ(arg0 = <this>.#y, arg1 = tmp_6.#y).not() -> return false
     }
     return true
   }

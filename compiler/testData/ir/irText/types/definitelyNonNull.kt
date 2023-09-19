@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //!LANGUAGE: +DefinitelyNonNullableTypes
 
 // MUTE_SIGNATURE_COMPARISON_K2: JVM_IR

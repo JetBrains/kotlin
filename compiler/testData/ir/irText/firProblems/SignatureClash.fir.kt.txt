@@ -67,9 +67,9 @@ data class DataClass : Derived, Delegate {
     when {
       other !is DataClass -> return false
     }
-    val tmp0_other_with_cast: DataClass = other as DataClass
+    val tmp_0: DataClass = other as DataClass
     when {
-      EQEQ(arg0 = <this>.#delegate, arg1 = tmp0_other_with_cast.#delegate).not() -> return false
+      EQEQ(arg0 = <this>.#delegate, arg1 = tmp_0.#delegate).not() -> return false
     }
     return true
   }

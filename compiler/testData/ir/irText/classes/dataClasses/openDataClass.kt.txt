@@ -43,12 +43,12 @@ open data class ValidatedProperties {
     when {
       other !is ValidatedProperties -> return false
     }
-    val tmp0_other_with_cast: ValidatedProperties = other as ValidatedProperties
+    val tmp_0: ValidatedProperties = other as ValidatedProperties
     when {
-      EQEQ(arg0 = <this>.<get-test1>(), arg1 = tmp0_other_with_cast.<get-test1>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-test1>(), arg1 = tmp_0.<get-test1>()).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.<get-test2>(), arg1 = tmp0_other_with_cast.<get-test2>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-test2>(), arg1 = tmp_0.<get-test2>()).not() -> return false
     }
     return true
   }

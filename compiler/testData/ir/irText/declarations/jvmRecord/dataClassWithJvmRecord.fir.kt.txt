@@ -33,9 +33,9 @@ data class MyRec : Record {
     when {
       other !is MyRec -> return false
     }
-    val tmp0_other_with_cast: MyRec = other as MyRec
+    val tmp_0: MyRec = other as MyRec
     when {
-      EQEQ(arg0 = <this>.#name, arg1 = tmp0_other_with_cast.#name).not() -> return false
+      EQEQ(arg0 = <this>.#name, arg1 = tmp_0.#name).not() -> return false
     }
     return true
   }

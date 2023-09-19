@@ -35,9 +35,9 @@ data class TestData {
     when {
       other !is TestData -> return false
     }
-    val tmp0_other_with_cast: TestData = other as TestData
+    val tmp_0: TestData = other as TestData
     when {
-      EQEQ(arg0 = <this>.#nn, arg1 = tmp0_other_with_cast.#nn).not() -> return false
+      EQEQ(arg0 = <this>.#nn, arg1 = tmp_0.#nn).not() -> return false
     }
     return true
   }
@@ -70,9 +70,9 @@ value class TestInline {
     when {
       other !is TestInline -> return false
     }
-    val tmp0_other_with_cast: TestInline = other as TestInline
+    val tmp_1: TestInline = other as TestInline
     when {
-      EQEQ(arg0 = <this>.#nn, arg1 = tmp0_other_with_cast.#nn).not() -> return false
+      EQEQ(arg0 = <this>.#nn, arg1 = tmp_1.#nn).not() -> return false
     }
     return true
   }

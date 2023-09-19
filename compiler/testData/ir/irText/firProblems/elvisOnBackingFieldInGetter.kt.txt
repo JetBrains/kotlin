@@ -20,10 +20,10 @@ class Test {
         }
       }
       return { // BLOCK
-        val tmp0_elvis_lhs: ResourceTable? = <this>.#resourceTable
+        val tmp_0: ResourceTable? = <this>.#resourceTable
         when {
-          EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> ResourceTable()
-          else -> tmp0_elvis_lhs
+          EQEQ(arg0 = tmp_0, arg1 = null) -> ResourceTable()
+          else -> tmp_0
         }
       }
     }

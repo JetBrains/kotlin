@@ -24,10 +24,10 @@ val aFloat: A<Float>
 
 val aInt: Float
   field = { // BLOCK
-    val <array>: A<Float> = <get-aFloat>()
-    val <index_0>: Int = 1
-    val <unary>: Float = <array>.get(i = <index_0>)
-    <array>.set(i = <index_0>, v = <unary>.dec())
-    <unary>
+    val tmp_0: A<Float> = <get-aFloat>()
+    val tmp_1: Int = 1
+    val tmp_2: Float = tmp_0.get(i = tmp_1)
+    tmp_0.set(i = tmp_1, v = tmp_2.dec())
+    tmp_2
   }
   get

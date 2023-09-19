@@ -2,15 +2,15 @@ fun test() {
   var x: Int = 0
   while (less(arg0 = x, arg1 = 0))
   while (less(arg0 = x, arg1 = 5)) { // BLOCK
-    val tmp0: Int = x
-    x = tmp0.inc()
-    tmp0
+    val tmp_0: Int = x
+    x = tmp_0.inc()
+    tmp_0
   } /*~> Unit */
   while (less(arg0 = x, arg1 = 10)) { // BLOCK
     { // BLOCK
-      val tmp1: Int = x
-      x = tmp1.inc()
-      tmp1
+      val tmp_1: Int = x
+      x = tmp_1.inc()
+      tmp_1
     } /*~> Unit */
   }
   { // BLOCK
@@ -22,17 +22,17 @@ fun test() {
   }
   { // BLOCK
     do{ // BLOCK
-      val tmp2: Int = x
-      x = tmp2.inc()
-      tmp2
+      val tmp_2: Int = x
+      x = tmp_2.inc()
+      tmp_2
     } /*~> Unit */    while (less(arg0 = x, arg1 = 15))
   }
   { // BLOCK
     do// COMPOSITE {
     { // BLOCK
-      val tmp3: Int = x
-      x = tmp3.inc()
-      tmp3
+      val tmp_3: Int = x
+      x = tmp_3.inc()
+      tmp_3
     } /*~> Unit */
     // }    while (less(arg0 = x, arg1 = 20))
   }

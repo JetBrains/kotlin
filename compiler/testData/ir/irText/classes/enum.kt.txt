@@ -179,9 +179,9 @@ enum class TestEnum6 : Enum<TestEnum6> {
     get
 
   TEST = { // BLOCK
-    val tmp0_y: Int = f()
-    val tmp1_x: Int = f()
-    TestEnum6(x = tmp1_x, y = tmp0_y)
+    val tmp_0: Int = f()
+    val tmp_1: Int = f()
+    TestEnum6(x = tmp_1, y = tmp_0)
   }
 
   fun values(): Array<TestEnum6> /* Synthetic body for ENUM_VALUES */

@@ -10,8 +10,8 @@ interface IB {
 
 fun IB.test(a: IA) {
   { // BLOCK
-    val tmp0_array: IA = a
-    val tmp1_index0: String = ""
-    (<this>, tmp0_array).set(index = tmp1_index0, value = tmp0_array.get(index = tmp1_index0).plus(other = 42))
+    val tmp_0: IA = a
+    val tmp_1: String = ""
+    (<this>, tmp_0).set(index = tmp_1, value = tmp_0.get(index = tmp_1).plus(other = 42))
   }
 }

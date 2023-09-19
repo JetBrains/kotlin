@@ -197,9 +197,9 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     when {
       EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null) -> { // BLOCK
         { // BLOCK
-          val <unary>: Int = <this>.<get-size>()
-          <this>.<set-size>(<set-?> = <unary>.inc())
-          <unary>
+          val tmp_0: Int = <this>.<get-size>()
+          <this>.<set-size>(<set-?> = tmp_0.inc())
+          tmp_0
         }
       } /*~> Unit */
     }
@@ -232,9 +232,9 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
           { // BLOCK
             do// COMPOSITE {
             { // BLOCK
-              val <unary>: Int = <this>.<get-index>()
-              <this>.<set-index>(<set-?> = <unary>.inc())
-              <unary>
+              val tmp_1: Int = <this>.<get-index>()
+              <this>.<set-index>(<set-?> = tmp_1.inc())
+              tmp_1
             }
             // }            while (when {
               less(arg0 = <this>.<get-index>(), arg1 = <this>.<get-data>().<get-size>()) -> EQEQ(arg0 = <this>.<get-data>().get(index = <this>.<get-index>()), arg1 = null)
@@ -261,9 +261,9 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     when {
       EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null).not() -> { // BLOCK
         { // BLOCK
-          val <unary>: Int = <this>.<get-size>()
-          <this>.<set-size>(<set-?> = <unary>.dec())
-          <unary>
+          val tmp_2: Int = <this>.<get-size>()
+          <this>.<set-size>(<set-?> = tmp_2.dec())
+          tmp_2
         }
       } /*~> Unit */
     }
@@ -327,12 +327,12 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
       when {
         other !is Entry<T> -> return false
       }
-      val tmp0_other_with_cast: Entry<T> = other as Entry<T>
+      val tmp_3: Entry<T> = other as Entry<T>
       when {
-        EQEQ(arg0 = <this>.#key, arg1 = tmp0_other_with_cast.#key).not() -> return false
+        EQEQ(arg0 = <this>.#key, arg1 = tmp_3.#key).not() -> return false
       }
       when {
-        EQEQ(arg0 = <this>.#value, arg1 = tmp0_other_with_cast.#value).not() -> return false
+        EQEQ(arg0 = <this>.#value, arg1 = tmp_3.#value).not() -> return false
       }
       return true
     }

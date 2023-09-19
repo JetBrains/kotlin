@@ -14,14 +14,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.CustomKotlinLikeDumpStrategy.Modifiers
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
 
@@ -70,6 +66,7 @@ data class KotlinLikeDumpOptions(
     val printElseAsTrue: Boolean = false,
     val printUnitReturnType: Boolean = false,
     val stableOrder: Boolean = false,
+    val normalizeNames: Boolean = false,
     /*
     TODO add more options:
      always print visibility?
@@ -167,16 +164,21 @@ interface CustomKotlinLikeDumpStrategy {
         * option?
     * unique ids for symbols, or SignatureID?
         * option?
-    * "normalize" names for tmps? ^^ Could unique ids help?
     * wrap/escape invalid identifiers with "`", like "$$delegate"
  */
 
 private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOptions) : IrElementVisitor<Unit, IrDeclaration?> {
+    private val variableNameData = VariableNameData(options.normalizeNames)
+
     private val IrSymbol.safeName
         get() = if (!isBound) {
             "/* ERROR: unbound symbol $signature */"
         } else {
-            (owner as? IrDeclarationWithName)?.name?.toString() ?: "/* ERROR: unnamed symbol $signature */"
+            when (val owner = owner) {
+                is IrVariable -> owner.normalizedName(variableNameData)
+                is IrDeclarationWithName -> owner.name.toString()
+                else -> "/* ERROR: unnamed symbol $signature */"
+            }
         }
 
     private val IrFunctionSymbol.safeValueParameters
@@ -923,7 +925,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         p(declaration.isLateinit, "lateinit")
         p(declaration.isConst, "const")
-        declaration.run { printVariable(isVar, name, type) }
+        declaration.run { printVariable(isVar, normalizedName(variableNameData), type) }
 
         declaration.initializer?.let {
             p.printWithNoIndent(" = ")
@@ -936,7 +938,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printIndent()
 
         // TODO think about better rendering
-        declaration.run { printVariable(isVar, name, type) }
+        declaration.run { printVariable(isVar, name.asString(), type) }
 
         p.printlnWithNoIndent()
         p.pushIndent()
@@ -951,10 +953,10 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printlnWithNoIndent()
     }
 
-    private fun printVariable(isVar: Boolean, name: Name, type: IrType) {
+    private fun printVariable(isVar: Boolean, name: String, type: IrType) {
         p.printWithNoIndent(if (isVar) "var" else "val")
         p.printWithNoIndent(" ")
-        p.printWithNoIndent(name.asString())
+        p.printWithNoIndent(name)
         p.printWithNoIndent(": ")
         type.printTypeWithNoIndent()
     }

@@ -13,9 +13,9 @@ inline fun baz(crossinline block: Function0<Unit>) {
 
 inline fun <T : Any?> Iterable<T>.myForEach(action: Function1<T, Unit>) {
   { // BLOCK
-    val tmp0_iterator: Iterator<T> = <this>.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val element: T = tmp0_iterator.next()
+    val tmp_0: Iterator<T> = <this>.iterator()
+    while (tmp_0.hasNext()) { // BLOCK
+      val element: T = tmp_0.next()
       action.invoke(p1 = element)
     }
   }
