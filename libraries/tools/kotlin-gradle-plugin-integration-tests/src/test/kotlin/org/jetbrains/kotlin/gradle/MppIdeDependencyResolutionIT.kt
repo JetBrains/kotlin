@@ -381,6 +381,15 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    fun `kt-61652 test no CME when jupiter plugin is applied to independet project`(gradleVersion: GradleVersion) {
+        project("kt-61652-CME-when-jupiter-is-applied-to-independet-project", gradleVersion) {
+            resolveIdeDependencies(":app") {
+                assertOutputDoesNotContain("ConcurrentModificationException")
+            }
+        }
+    }
+
     private fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =
         this.filterIsInstance<IdeaKotlinBinaryDependency>().filter {
             it.klibExtra?.isInterop == true && !it.isNativeStdlib && !it.isNativeDistribution
