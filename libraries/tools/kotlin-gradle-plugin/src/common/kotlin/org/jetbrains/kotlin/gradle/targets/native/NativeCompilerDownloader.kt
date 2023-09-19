@@ -118,7 +118,7 @@ class NativeCompilerDownloader(
             ?: error("Unable to parse version $compilerVersion")
         buildString {
             append("${kotlinProperties.nativeBaseDownloadUrl}/")
-            append(if (buildType in listOf("RC", "RC2", "Beta") || buildType.isEmpty()) "releases/" else "dev/")
+            append(if (buildType in listOf("RC", "RC2", "Beta", "Beta2") || buildType.isEmpty()) "releases/" else "dev/")
             append("$compilerVersion/")
             append(simpleOsName)
         }
