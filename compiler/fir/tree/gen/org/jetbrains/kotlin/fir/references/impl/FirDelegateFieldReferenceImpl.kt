@@ -22,7 +22,8 @@ internal class FirDelegateFieldReferenceImpl(
     override val source: KtSourceElement?,
     override val resolvedSymbol: FirDelegateFieldSymbol,
 ) : FirDelegateFieldReference() {
-    override val name: Name get() = Name.identifier("\$delegate")
+    override val name: Name
+        get() = Name.identifier("\$delegate")
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

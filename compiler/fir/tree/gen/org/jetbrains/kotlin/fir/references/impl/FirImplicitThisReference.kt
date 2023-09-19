@@ -23,8 +23,10 @@ internal class FirImplicitThisReference(
     override var contextReceiverNumber: Int,
     override var diagnostic: ConeDiagnostic?,
 ) : FirThisReference() {
-    override val source: KtSourceElement? get() = null
-    override val labelName: String? get() = null
+    override val source: KtSourceElement?
+        get() = null
+    override val labelName: String?
+        get() = null
     override val isImplicit: Boolean = true
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

@@ -28,8 +28,10 @@ internal class FirLambdaArgumentExpressionImpl(
     override var expression: FirExpression,
 ) : FirLambdaArgumentExpression() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    override val coneTypeOrNull: ConeKotlinType? get() = expression.coneTypeOrNull
-    override val isSpread: Boolean get() = false
+    override val coneTypeOrNull: ConeKotlinType?
+        get() = expression.coneTypeOrNull
+    override val isSpread: Boolean
+        get() = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

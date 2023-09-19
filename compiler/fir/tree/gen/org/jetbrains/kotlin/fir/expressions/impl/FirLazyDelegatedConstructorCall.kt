@@ -29,12 +29,18 @@ class FirLazyDelegatedConstructorCall @FirImplementationDetail constructor(
     override var calleeReference: FirReference,
     override val isThis: Boolean,
 ) : FirDelegatedConstructorCall() {
-    override val source: KtSourceElement? get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
-    override val annotations: List<FirAnnotation> get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
-    override val argumentList: FirArgumentList get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
-    override val contextReceiverArguments: List<FirExpression> get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
-    override val dispatchReceiver: FirExpression? get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
-    override val isSuper: Boolean get() = !isThis
+    override val source: KtSourceElement?
+        get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
+    override val annotations: List<FirAnnotation>
+        get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
+    override val argumentList: FirArgumentList
+        get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
+    override val contextReceiverArguments: List<FirExpression>
+        get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
+    override val dispatchReceiver: FirExpression?
+        get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
+    override val isSuper: Boolean
+        get() = !isThis
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         constructedTypeRef.accept(visitor, data)

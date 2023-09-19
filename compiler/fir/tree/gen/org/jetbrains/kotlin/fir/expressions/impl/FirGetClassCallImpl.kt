@@ -31,7 +31,8 @@ internal class FirGetClassCallImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var argumentList: FirArgumentList,
 ) : FirGetClassCall() {
-    override val argument: FirExpression get() = argumentList.arguments.first()
+    override val argument: FirExpression
+        get() = argumentList.arguments.first()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

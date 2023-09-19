@@ -24,11 +24,14 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 class FirEmptyExpressionBlock : FirBlock() {
-    override val source: KtSourceElement? get() = null
+    override val source: KtSourceElement?
+        get() = null
     @OptIn(UnresolvedExpressionTypeAccess::class)
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: List<FirAnnotation> get() = emptyList()
-    override val statements: List<FirStatement> get() = emptyList()
+    override val annotations: List<FirAnnotation>
+        get() = emptyList()
+    override val statements: List<FirStatement>
+        get() = emptyList()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
     }

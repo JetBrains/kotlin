@@ -71,7 +71,8 @@ internal class FirPropertyImpl(
     override var bodyResolveState: FirPropertyBodyResolveState,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirProperty() {
-    override val isVal: Boolean get() = !isVar
+    override val isVal: Boolean
+        get() = !isVar
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {

@@ -42,7 +42,8 @@ internal class FirResolvedQualifierImpl(
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
 ) : FirResolvedQualifier() {
-    override val classId: ClassId? get() = relativeClassFqName?.let {
+    override val classId: ClassId?
+        get() = relativeClassFqName?.let {
     ClassId(packageFqName, it, isLocal = false)
 }
     override var resolvedToCompanionObject: Boolean = (symbol?.fir as? FirRegularClass)?.companionObjectSymbol != null

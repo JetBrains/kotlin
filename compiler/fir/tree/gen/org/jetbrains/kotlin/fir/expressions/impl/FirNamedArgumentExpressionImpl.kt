@@ -31,7 +31,8 @@ internal class FirNamedArgumentExpressionImpl(
     override val name: Name,
 ) : FirNamedArgumentExpression() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    override val coneTypeOrNull: ConeKotlinType? get() = expression.coneTypeOrNull
+    override val coneTypeOrNull: ConeKotlinType?
+        get() = expression.coneTypeOrNull
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

@@ -22,7 +22,8 @@ internal class FirBackingFieldReferenceImpl(
     override val source: KtSourceElement?,
     override val resolvedSymbol: FirBackingFieldSymbol,
 ) : FirBackingFieldReference() {
-    override val name: Name get() = Name.identifier("\$field")
+    override val name: Name
+        get() = Name.identifier("\$field")
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

@@ -59,12 +59,18 @@ internal class FirEnumEntryImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirEnumEntrySymbol,
 ) : FirEnumEntry() {
-    override val receiverParameter: FirReceiverParameter? get() = null
-    override val delegate: FirExpression? get() = null
-    override val isVar: Boolean get() = false
-    override val isVal: Boolean get() = true
-    override val getter: FirPropertyAccessor? get() = null
-    override val setter: FirPropertyAccessor? get() = null
+    override val receiverParameter: FirReceiverParameter?
+        get() = null
+    override val delegate: FirExpression?
+        get() = null
+    override val isVar: Boolean
+        get() = false
+    override val isVal: Boolean
+        get() = true
+    override val getter: FirPropertyAccessor?
+        get() = null
+    override val setter: FirPropertyAccessor?
+        get() = null
 
     init {
         symbol.bind(this)

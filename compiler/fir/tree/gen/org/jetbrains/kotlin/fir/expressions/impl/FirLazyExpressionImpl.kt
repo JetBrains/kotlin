@@ -25,8 +25,10 @@ internal class FirLazyExpressionImpl(
     override val source: KtSourceElement?,
 ) : FirLazyExpression() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    override val coneTypeOrNull: ConeKotlinType? get() = error("FirLazyExpression should be calculated before accessing")
-    override val annotations: List<FirAnnotation> get() = error("FirLazyExpression should be calculated before accessing")
+    override val coneTypeOrNull: ConeKotlinType?
+        get() = error("FirLazyExpression should be calculated before accessing")
+    override val annotations: List<FirAnnotation>
+        get() = error("FirLazyExpression should be calculated before accessing")
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
     }

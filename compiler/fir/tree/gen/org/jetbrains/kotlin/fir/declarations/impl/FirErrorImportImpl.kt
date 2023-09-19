@@ -25,10 +25,14 @@ internal class FirErrorImportImpl(
     override val diagnostic: ConeDiagnostic,
     override var delegate: FirImport,
 ) : FirErrorImport() {
-    override val source: KtSourceElement? get() = delegate.source
-    override val importedFqName: FqName? get() = delegate.importedFqName
-    override val isAllUnder: Boolean get() = delegate.isAllUnder
-    override val aliasName: Name? get() = delegate.aliasName
+    override val source: KtSourceElement?
+        get() = delegate.source
+    override val importedFqName: FqName?
+        get() = delegate.importedFqName
+    override val isAllUnder: Boolean
+        get() = delegate.isAllUnder
+    override val aliasName: Name?
+        get() = delegate.aliasName
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         delegate.accept(visitor, data)

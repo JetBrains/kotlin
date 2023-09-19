@@ -42,10 +42,12 @@ internal class FirErrorResolvedQualifierImpl(
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorResolvedQualifier() {
-    override val classId: ClassId? get() = relativeClassFqName?.let {
+    override val classId: ClassId?
+        get() = relativeClassFqName?.let {
     ClassId(packageFqName, it, isLocal = false)
 }
-    override val resolvedToCompanionObject: Boolean get() = false
+    override val resolvedToCompanionObject: Boolean
+        get() = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

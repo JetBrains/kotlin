@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.withIndent
 
 
 fun SmartPrinter.printField(field: Field, isImplementation: Boolean, override: Boolean, inConstructor: Boolean = false, notNull: Boolean = false, modifiers: SmartPrinter.() -> Unit = {}) {
@@ -51,24 +52,24 @@ fun SmartPrinter.printFieldWithDefaultInImplementation(field: Field) {
     } else {
         print("var")
     }
-    print(" ${field.name}: ${field.getMutableType()} ")
+    print(" ${field.name}: ${field.getMutableType()}")
     if (field.withGetter) {
-        if (field.customSetter != null) {
-            println()
-            pushIndent()
-        }
-        print("get() ")
+        println()
+        pushIndent()
+        print("get()")
     }
     requireNotNull(defaultValue) {
         "No default value for $field"
     }
-    println("= $defaultValue")
+    println(" = $defaultValue")
     field.customSetter?.let {
         println("set(value) {")
-        pushIndent()
-        println(it)
-        popIndent()
+        withIndent {
+            println(it)
+        }
         println("}")
+    }
+    if (field.withGetter) {
         popIndent()
     }
 }

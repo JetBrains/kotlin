@@ -64,7 +64,8 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     override var body: FirBlock?,
 ) : FirConstructor() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
-    override val isPrimary: Boolean get() = true
+    override val isPrimary: Boolean
+        get() = true
 
     init {
         symbol.bind(this)

@@ -50,7 +50,8 @@ internal class FirFileImpl(
     override val sourceFileLinesMapping: KtSourceFileLinesMapping?,
     override val symbol: FirFileSymbol,
 ) : FirFile() {
-    override val annotations: List<FirAnnotation> get() = annotationsContainer?.annotations ?: emptyList()
+    override val annotations: List<FirAnnotation>
+        get() = annotationsContainer?.annotations ?: emptyList()
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {

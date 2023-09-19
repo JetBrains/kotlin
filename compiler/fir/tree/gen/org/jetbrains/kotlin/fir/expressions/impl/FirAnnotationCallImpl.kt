@@ -40,8 +40,10 @@ internal class FirAnnotationCallImpl(
     override var annotationResolvePhase: FirAnnotationResolvePhase,
 ) : FirAnnotationCall() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    override val coneTypeOrNull: ConeKotlinType? get() = annotationTypeRef.coneTypeOrNull
-    override val annotations: List<FirAnnotation> get() = emptyList()
+    override val coneTypeOrNull: ConeKotlinType?
+        get() = annotationTypeRef.coneTypeOrNull
+    override val annotations: List<FirAnnotation>
+        get() = emptyList()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotationTypeRef.accept(visitor, data)

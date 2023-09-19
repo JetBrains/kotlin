@@ -23,11 +23,15 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
  */
 
 internal class FirLazyBlockImpl : FirLazyBlock() {
-    override val source: KtSourceElement? get() = error("FirLazyBlock should be calculated before accessing")
+    override val source: KtSourceElement?
+        get() = error("FirLazyBlock should be calculated before accessing")
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    override val coneTypeOrNull: ConeKotlinType? get() = error("FirLazyBlock should be calculated before accessing")
-    override val annotations: List<FirAnnotation> get() = error("FirLazyBlock should be calculated before accessing")
-    override val statements: List<FirStatement> get() = error("FirLazyBlock should be calculated before accessing")
+    override val coneTypeOrNull: ConeKotlinType?
+        get() = error("FirLazyBlock should be calculated before accessing")
+    override val annotations: List<FirAnnotation>
+        get() = error("FirLazyBlock should be calculated before accessing")
+    override val statements: List<FirStatement>
+        get() = error("FirLazyBlock should be calculated before accessing")
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
     }

@@ -38,7 +38,8 @@ internal class FirSmartCastExpressionImpl(
     override val smartcastStability: SmartcastStability,
 ) : FirSmartCastExpression() {
     override val source: KtSourceElement? = originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastExpression)
-    override val isStable: Boolean get() = smartcastStability == SmartcastStability.STABLE_VALUE
+    override val isStable: Boolean
+        get() = smartcastStability == SmartcastStability.STABLE_VALUE
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
