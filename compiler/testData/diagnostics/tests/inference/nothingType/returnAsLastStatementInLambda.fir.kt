@@ -32,9 +32,9 @@ fun foo() {
     // Doesn't work both in K1 and K2, but probably should (KT-58232 for tracking)
     val dates3 = <!NEW_INFERENCE_ERROR!>myRun {
         when {
-            else -> return@myRun buildList {
+            else -> return@myRun <!RETURN_TYPE_MISMATCH!>buildList {
                 add(4)
-            }
+            }<!>
         }
     }<!>
 }
