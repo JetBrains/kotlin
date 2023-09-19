@@ -70,7 +70,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
                         addAnnotation(descriptorApiAnnotation)
                     }
 
-                    field.kdoc?.let {
+                    field.kDoc?.let {
                         addKdoc(it)
                     }
 

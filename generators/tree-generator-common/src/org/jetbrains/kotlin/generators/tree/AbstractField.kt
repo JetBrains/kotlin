@@ -14,6 +14,8 @@ abstract class AbstractField {
     val nullable: Boolean
         get() = typeRef.nullable
 
+    var kDoc: String? = null
+
     abstract val isVolatile: Boolean
 
     abstract val isFinal: Boolean

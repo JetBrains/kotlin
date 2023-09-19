@@ -30,6 +30,8 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
     override val nullable: Boolean
         get() = false
 
+    override var kDoc: String? = null
+
     override val fields = mutableSetOf<Field>()
     override val type: String = "Fir$name"
     override val packageName: String = BASE_PACKAGE + kind.packageName.let { if (it.isBlank()) it else "." + it }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tree.printer
 
 import org.jetbrains.kotlin.generators.tree.AbstractElement
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
+import org.jetbrains.kotlin.utils.SmartPrinter
 
 /**
  * The angle bracket-delimited list of type parameters to print, or empty string if the element has no type parameters.
@@ -51,3 +52,18 @@ val AbstractElement<*, *>.generics: String
     get() = params.takeIf { it.isNotEmpty() }
         ?.let { it.joinToString(", ", "<", ">") { it.name } }
         ?: ""
+
+fun SmartPrinter.printKDoc(kDoc: String?) {
+    if (kDoc == null) return
+    println("/**")
+    for (line in kDoc.lineSequence()) {
+        print(" *")
+        if (line.isBlank()) {
+            println()
+        } else {
+            print(" ")
+            println(line)
+        }
+    }
+    println(" */")
+}

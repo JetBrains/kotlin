@@ -63,6 +63,7 @@ sealed class Field : AbstractField() {
         }
         copy.fromParent = fromParent
         copy.parentHasSeparateTransform = parentHasSeparateTransform
+        copy.kDoc = kDoc
     }
 
     protected abstract fun internalCopy(): Field

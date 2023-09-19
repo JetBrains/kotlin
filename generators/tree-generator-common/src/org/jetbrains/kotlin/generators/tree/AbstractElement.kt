@@ -16,6 +16,8 @@ abstract class AbstractElement<Element, Field> : ElementOrRef<Element, Field>, F
 
     abstract val name: String
 
+    abstract val kDoc: String?
+
     abstract val fields: Set<Field>
 
     abstract val params: List<TypeVariable>
