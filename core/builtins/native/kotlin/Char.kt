@@ -108,7 +108,7 @@ public class Char private constructor() : Comparable<Char> {
 
     public override fun hashCode(): Int
 
-    companion object {
+    public companion object {
         /**
          * The minimum value of a character code unit.
          */

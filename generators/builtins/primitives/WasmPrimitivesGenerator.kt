@@ -29,10 +29,6 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
         }
     }
 
-    override fun CompanionObjectBuilder.modifyGeneratedCompanionObject(thisKind: PrimitiveType) {
-        isPublic = true
-    }
-
     override fun primitiveConstants(type: PrimitiveType): List<Any> {
         return when (type) {
             PrimitiveType.FLOAT -> listOf(

@@ -15,7 +15,7 @@ import kotlin.native.internal.*
 /** Represents a 8-bit signed integer. */
 public class Byte private constructor() : Number(), Comparable<Byte> {
     @CanBePrecreated
-    companion object {
+    public companion object {
         /**
          * A constant holding the minimum value an instance of Byte can have.
          */
@@ -448,7 +448,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
 /** Represents a 16-bit signed integer. */
 public class Short private constructor() : Number(), Comparable<Short> {
     @CanBePrecreated
-    companion object {
+    public companion object {
         /**
          * A constant holding the minimum value an instance of Short can have.
          */
@@ -879,7 +879,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
 /** Represents a 32-bit signed integer. */
 public class Int private constructor() : Number(), Comparable<Int> {
     @CanBePrecreated
-    companion object {
+    public companion object {
         /**
          * A constant holding the minimum value an instance of Int can have.
          */
@@ -1363,7 +1363,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
 /** Represents a 64-bit signed integer. */
 public class Long private constructor() : Number(), Comparable<Long> {
     @CanBePrecreated
-    companion object {
+    public companion object {
         /**
          * A constant holding the minimum value an instance of Long can have.
          */
@@ -1849,7 +1849,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
 
 /** Represents a single-precision 32-bit IEEE 754 floating point number. */
 public class Float private constructor() : Number(), Comparable<Float> {
-    companion object {
+    public companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
          */
@@ -2260,7 +2260,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
 
 /** Represents a double-precision 64-bit IEEE 754 floating point number. */
 public class Double private constructor() : Number(), Comparable<Double> {
-    companion object {
+    public companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.
          */

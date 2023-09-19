@@ -139,7 +139,7 @@ internal constructor(private val value: Int) : Comparable<Char> {
     public override fun hashCode(): Int =
         value
 
-    companion object {
+    public companion object {
         /**
          * The minimum value of a character code unit.
          */

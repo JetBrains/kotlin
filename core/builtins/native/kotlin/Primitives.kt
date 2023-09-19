@@ -13,7 +13,7 @@ package kotlin
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `byte`.
  */
 public class Byte private constructor() : Number(), Comparable<Byte> {
-    companion object {
+    public companion object {
         /**
          * A constant holding the minimum value an instance of Byte can have.
          */
@@ -383,7 +383,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `short`.
  */
 public class Short private constructor() : Number(), Comparable<Short> {
-    companion object {
+    public companion object {
         /**
          * A constant holding the minimum value an instance of Short can have.
          */
@@ -751,7 +751,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `int`.
  */
 public class Int private constructor() : Number(), Comparable<Int> {
-    companion object {
+    public companion object {
         /**
          * A constant holding the minimum value an instance of Int can have.
          */
@@ -1165,7 +1165,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `long`.
  */
 public class Long private constructor() : Number(), Comparable<Long> {
-    companion object {
+    public companion object {
         /**
          * A constant holding the minimum value an instance of Long can have.
          */
@@ -1582,7 +1582,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `float`.
  */
 public class Float private constructor() : Number(), Comparable<Float> {
-    companion object {
+    public companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
          */
@@ -1915,7 +1915,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `double`.
  */
 public class Double private constructor() : Number(), Comparable<Double> {
-    companion object {
+    public companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.
          */

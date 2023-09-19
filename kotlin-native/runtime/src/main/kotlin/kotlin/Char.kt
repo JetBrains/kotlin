@@ -137,7 +137,7 @@ public class Char private constructor() : Comparable<Char> {
         this == other
 
     @kotlin.native.internal.CanBePrecreated
-    companion object {
+    public companion object {
         /**
          * The minimum value of a character code unit.
          */

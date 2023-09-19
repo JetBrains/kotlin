@@ -14,7 +14,7 @@ package kotlin
  */
 public class Boolean private constructor() : Comparable<Boolean> {
     @SinceKotlin("1.3")
-    companion object {}
+    public companion object {}
 
     /** Returns the inverse of this boolean. */
     @kotlin.internal.IntrinsicConstEvaluation

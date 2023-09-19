@@ -446,7 +446,6 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     }
 
     override fun CompanionObjectBuilder.modifyGeneratedCompanionObject() {
-        isPublic = true
         property {
             appendDoc("The minimum value of a supplementary code point, `\\u0x10000`.")
             visibility = MethodVisibility.INTERNAL

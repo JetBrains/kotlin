@@ -188,7 +188,6 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
 }
 
 internal class CompanionObjectBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
-    var isPublic: Boolean = false
     private val properties: MutableList<PropertyBuilder> = mutableListOf()
 
     fun property(init: PropertyBuilder.() -> Unit): PropertyBuilder {
@@ -200,7 +199,7 @@ internal class CompanionObjectBuilder : AnnotatedAndDocumented(), PrimitiveBuild
     override fun build(): String {
         return buildString {
             printDocumentationAndAnnotations()
-            if (isPublic) append("public ")
+            append("public ")
             if (properties.isEmpty()) {
                 append("companion object {}")
             } else {
@@ -235,7 +234,7 @@ internal class PrimaryConstructorBuilder : AnnotatedAndDocumented(), PrimitiveBu
 }
 
 internal class SecondaryConstructorBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
-    var visibility: MethodVisibility? = MethodVisibility.PRIVATE
+    var visibility: MethodVisibility = MethodVisibility.PRIVATE
     private var parameters: MutableList<MethodParameterBuilder> = mutableListOf()
     private var argumentsToPrimaryContructor: MutableList<String> = mutableListOf()
 
@@ -253,7 +252,7 @@ internal class SecondaryConstructorBuilder : AnnotatedAndDocumented(), Primitive
         return buildString {
             printDocumentationAndAnnotations()
 
-            visibility?.let { append("${it.name.lowercase()} ") }
+            append("${visibility.name.lowercase()} ")
             append("constructor")
             append(parameters.joinToString(prefix = "(", postfix = ") : ") { it.build() })
             append(argumentsToPrimaryContructor.joinToString(prefix = "this(", postfix = ")"))

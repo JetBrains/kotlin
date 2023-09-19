@@ -199,10 +199,6 @@ class WasmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
         }
     }
 
-    override fun CompanionObjectBuilder.modifyGeneratedCompanionObject() {
-        isPublic = true
-    }
-
     override fun MethodBuilder.modifyGeneratedNot() {
         implementAsIntrinsic(PrimitiveType.BOOLEAN, methodName)
     }
