@@ -19,7 +19,8 @@ abstract class FirContractDescription : FirPureAbstractElement(), FirElement {
 
     abstract override val source: KtSourceElement?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitContractDescription(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitContractDescription(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

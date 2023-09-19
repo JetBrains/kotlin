@@ -47,7 +47,8 @@ abstract class FirErrorAnnotationCall : FirAnnotationCall(), FirDiagnosticHolder
 
     abstract override val argumentMapping: FirAnnotationArgumentMapping
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorAnnotationCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitErrorAnnotationCall(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

@@ -31,7 +31,8 @@ abstract class FirEnumEntryDeserializedAccessExpression : FirExpression() {
 
     abstract val enumEntryName: Name
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitEnumEntryDeserializedAccessExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitEnumEntryDeserializedAccessExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

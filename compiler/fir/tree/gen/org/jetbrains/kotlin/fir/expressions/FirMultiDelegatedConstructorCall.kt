@@ -38,7 +38,8 @@ abstract class FirMultiDelegatedConstructorCall : FirDelegatedConstructorCall() 
 
     abstract val delegatedConstructorCalls: List<FirDelegatedConstructorCall>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitMultiDelegatedConstructorCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitMultiDelegatedConstructorCall(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

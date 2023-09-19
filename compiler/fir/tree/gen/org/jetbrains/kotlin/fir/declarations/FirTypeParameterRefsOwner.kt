@@ -20,7 +20,8 @@ sealed interface FirTypeParameterRefsOwner : FirElement {
 
     val typeParameters: List<FirTypeParameterRef>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeParameterRefsOwner(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitTypeParameterRefsOwner(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

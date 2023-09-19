@@ -53,7 +53,8 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParamete
 
     abstract val scopeProvider: FirScopeProvider
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClass(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitClass(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

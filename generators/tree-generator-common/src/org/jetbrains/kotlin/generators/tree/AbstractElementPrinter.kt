@@ -41,7 +41,10 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
         }
         print("fun <R, D> accept(visitor: ${visitorType.simpleName}<R, D>, data: D): R")
         if (hasImplementation) {
-            print(" = visitor.visit${element.name}(this, data)")
+            println(" =")
+            withIndent {
+                print("visitor.visit${element.name}(this, data)")
+            }
         }
         println()
     }

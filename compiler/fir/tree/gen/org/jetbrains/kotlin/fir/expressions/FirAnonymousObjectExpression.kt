@@ -28,7 +28,8 @@ abstract class FirAnonymousObjectExpression : FirExpression() {
 
     abstract val anonymousObject: FirAnonymousObject
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousObjectExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitAnonymousObjectExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

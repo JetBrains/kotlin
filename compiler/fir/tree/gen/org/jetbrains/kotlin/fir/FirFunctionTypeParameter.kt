@@ -23,7 +23,8 @@ abstract class FirFunctionTypeParameter : FirPureAbstractElement(), FirElement {
 
     abstract val returnTypeRef: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunctionTypeParameter(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitFunctionTypeParameter(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

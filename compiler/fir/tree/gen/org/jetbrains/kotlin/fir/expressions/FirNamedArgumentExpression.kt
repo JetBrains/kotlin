@@ -32,7 +32,8 @@ abstract class FirNamedArgumentExpression : FirWrappedArgumentExpression() {
 
     abstract val name: Name
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitNamedArgumentExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitNamedArgumentExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

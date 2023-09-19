@@ -39,7 +39,8 @@ sealed class FirClassLikeDeclaration : FirMemberDeclaration(), FirStatement {
 
     abstract val deprecationsProvider: DeprecationsProvider
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClassLikeDeclaration(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitClassLikeDeclaration(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

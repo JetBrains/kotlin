@@ -21,7 +21,8 @@ abstract class FirImplicitTypeRef : FirTypeRef() {
 
     abstract override val annotations: List<FirAnnotation>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitImplicitTypeRef(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitImplicitTypeRef(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

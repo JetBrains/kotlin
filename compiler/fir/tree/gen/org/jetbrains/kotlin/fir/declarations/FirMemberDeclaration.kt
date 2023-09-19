@@ -36,7 +36,8 @@ sealed class FirMemberDeclaration : FirDeclaration(), FirTypeParameterRefsOwner 
 
     abstract val status: FirDeclarationStatus
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitMemberDeclaration(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitMemberDeclaration(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

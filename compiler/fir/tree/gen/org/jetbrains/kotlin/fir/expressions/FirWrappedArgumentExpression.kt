@@ -29,7 +29,8 @@ abstract class FirWrappedArgumentExpression : FirWrappedExpression() {
 
     abstract val isSpread: Boolean
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWrappedArgumentExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitWrappedArgumentExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =

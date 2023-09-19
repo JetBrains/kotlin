@@ -46,7 +46,8 @@ abstract class FirTypeParameter : FirDeclaration(), FirTypeParameterRef {
 
     abstract override val annotations: List<FirAnnotation>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeParameter(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitTypeParameter(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
