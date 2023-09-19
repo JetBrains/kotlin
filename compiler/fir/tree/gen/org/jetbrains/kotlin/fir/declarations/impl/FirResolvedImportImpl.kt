@@ -38,8 +38,7 @@ internal class FirResolvedImportImpl(
     override val importedName: Name?
         get() = importedFqName?.shortName()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-    }
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedImportImpl {
         return this

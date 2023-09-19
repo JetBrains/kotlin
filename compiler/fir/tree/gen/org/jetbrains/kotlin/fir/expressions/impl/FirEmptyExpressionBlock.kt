@@ -31,8 +31,7 @@ class FirEmptyExpressionBlock : FirBlock() {
     override val statements: List<FirStatement>
         get() = emptyList()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-    }
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEmptyExpressionBlock {
         transformOtherChildren(transformer, data)

@@ -54,13 +54,22 @@ class Element(
 
     var isLeaf = config.isForcedLeaf
     val childrenOrderOverride: List<String>? = config.childrenOrderOverride
-    var walkableChildren: List<Field> = emptyList()
-    val transformableChildren get() = walkableChildren.filter { it.transformable }
+    override var walkableChildren: List<Field> = emptyList()
+    override val transformableChildren get() = walkableChildren.filter { it.transformable }
 
     val visitFunName = "visit" + (config.visitorName ?: name).replaceFirstChar(Char::uppercaseChar)
     val visitorParam = config.visitorParam ?: config.category.defaultVisitorParam
-    var accept = config.accept
-    val transform = config.transform
+
+    override var hasAcceptMethod = config.accept
+
+    override val hasTransformMethod = config.transform
+
+    override val hasAcceptChildrenMethod: Boolean
+        get() = ownsChildren && (isRootElement || walkableChildren.isNotEmpty())
+
+    override val hasTransformChildrenMethod: Boolean
+        get() = ownsChildren && (isRootElement || transformableChildren.isNotEmpty())
+
     val transformByChildren = config.transformByChildren
     val ownsChildren = config.ownsChildren
     val generateIrFactoryMethod = config.generateIrFactoryMethod

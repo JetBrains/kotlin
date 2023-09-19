@@ -81,7 +81,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
             val isRootElement = element.isRootElement
             val acceptMethodName = "accept"
             val transformMethodName = "transform"
-            if (element.accept) {
+            if (element.hasAcceptMethod) {
                 addFunction(FunSpec.builder(acceptMethodName).apply {
                     addModifiers(if (isRootElement) KModifier.ABSTRACT else KModifier.OVERRIDE)
                     val r = TypeVariableName("R")
@@ -114,7 +114,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
                 }.build())
             }
 
-            if (element.transform) {
+            if (element.hasTransformMethod) {
                 addFunction(FunSpec.builder(transformMethodName).apply {
                     addModifiers(if (isRootElement) KModifier.ABSTRACT else KModifier.OVERRIDE)
                     val d = TypeVariableName("D")
@@ -145,7 +145,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
                 }.build())
             }
 
-            if (element.ownsChildren && (isRootElement || element.walkableChildren.isNotEmpty())) {
+            if (element.hasAcceptChildrenMethod) {
                 addFunction(FunSpec.builder("acceptChildren").apply {
                     addModifiers(if (isRootElement) KModifier.ABSTRACT else KModifier.OVERRIDE)
                     val d = TypeVariableName("D")
@@ -193,7 +193,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
                 }.build())
             }
 
-            if (element.ownsChildren && (isRootElement || element.transformableChildren.isNotEmpty())) {
+            if (element.hasTransformChildrenMethod) {
                 addFunction(FunSpec.builder("transformChildren").apply {
                     addModifiers(if (isRootElement) KModifier.ABSTRACT else KModifier.OVERRIDE)
                     val d = TypeVariableName("D")
@@ -233,7 +233,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
                             if (child is SingleField) {
                                 @Suppress("UNCHECKED_CAST")
                                 val elRef = child.typeRef as GenericElementRef<Element, Field>
-                                if (!elRef.element.transform) {
+                                if (!elRef.element.hasTransformMethod) {
                                     append(" as %T")
                                     if (child.nullable) append("?")
                                     args.add(elRef.toPoet())

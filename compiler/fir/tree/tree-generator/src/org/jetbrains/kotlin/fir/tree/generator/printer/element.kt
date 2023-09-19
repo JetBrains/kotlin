@@ -60,22 +60,26 @@ fun SmartPrinter.printElement(element: Element) {
                     }
                 }
             }
-            if (allFields.isNotEmpty()) {
+
+            if (hasAcceptMethod) {
+                if (allFields.isNotEmpty()) {
+                    println()
+                }
+                override()
+                println("fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =")
+                withIndent {
+                    println("visitor.visit${element.name}(this, data)")
+                }
+            }
+
+            if (hasTransformMethod) {
                 println()
-            }
-
-            override()
-            println("fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =")
-            withIndent {
-                println("visitor.visit${element.name}(this, data)")
-            }
-
-            println()
-            println("@Suppress(\"UNCHECKED_CAST\")")
-            override()
-            println("fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =")
-            withIndent {
-                println("transformer.transform$name(this, data) as E")
+                println("@Suppress(\"UNCHECKED_CAST\")")
+                override()
+                println("fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =")
+                withIndent {
+                    println("transformer.transform$name(this, data) as E")
+                }
             }
 
             fun Field.replaceDeclaration(override: Boolean, overridenType: TypeRef? = null, forceNullable: Boolean = false) {
@@ -121,12 +125,16 @@ fun SmartPrinter.printElement(element: Element) {
                 }
                 println()
                 println("fun accept(visitor: FirVisitorVoid) = accept(visitor, null)")
-                println()
-                println("fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)")
+                if (element.hasAcceptChildrenMethod) {
+                    println()
+                    println("fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)")
+                }
                 println()
                 println("fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)")
-                println()
-                println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement")
+                if (element.hasTransformChildrenMethod) {
+                    println()
+                    println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement")
+                }
             }
         }
         println("}")

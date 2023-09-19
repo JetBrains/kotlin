@@ -31,8 +31,7 @@ internal class FirLazyBlockImpl : FirLazyBlock() {
     override val statements: List<FirStatement>
         get() = error("FirLazyBlock should be calculated before accessing")
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-    }
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLazyBlockImpl {
         transformOtherChildren(transformer, data)

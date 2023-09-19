@@ -153,7 +153,7 @@ private fun markLeaves(elements: List<Element>) {
     for (el in leaves) {
         el.isLeaf = true
         if (el.visitorParent != null) {
-            el.accept = true
+            el.hasAcceptMethod = true
         }
     }
 }

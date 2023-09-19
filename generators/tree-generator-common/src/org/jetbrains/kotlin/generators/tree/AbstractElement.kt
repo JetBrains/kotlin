@@ -40,6 +40,10 @@ abstract class AbstractElement<Element, Field> : ElementOrRef<Element, Field>, F
 
     abstract override val allFields: List<Field>
 
+    abstract override val walkableChildren: List<Field>
+
+    abstract override val transformableChildren: List<Field>
+
     final override fun get(fieldName: String): Field? {
         return allFields.firstOrNull { it.name == fieldName }
     }
