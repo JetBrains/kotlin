@@ -57,7 +57,7 @@ private class CalculatorForNestedCall(
     private val typesToProcess: Queue<KotlinTypeMarker> = ArrayDeque()
 
     private val postponedAtoms: List<PostponedResolvedAtom> by lazy {
-        candidate.postponedAtoms.filterNot { it.analyzed }
+        ConstraintSystemCompleter.getOrderedNotAnalyzedPostponedArguments(candidate)
     }
 
     fun computeCompletionMode(): ConstraintSystemCompletionMode = with(context) {
