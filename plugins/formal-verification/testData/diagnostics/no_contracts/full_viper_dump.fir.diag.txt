@@ -1,4 +1,4 @@
-/full_viper_dump.kt:(4,5): info: Generated Viper text for f:
+/full_viper_dump.kt:(54,55): info: Generated Viper text for f:
 domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
@@ -90,6 +90,8 @@ domain dom$Type  {
 
   unique function dom$Type$Function(): dom$Type
 
+  unique function dom$Type$global$class_Foo(): dom$Type
+
   function dom$Type$special$Nullable(t: dom$Type): dom$Type
 
   function dom$Type$isSubtype(a: dom$Type, b: dom$Type): Bool
@@ -133,6 +135,12 @@ domain dom$Type  {
   }
 
   axiom {
+    (forall t: dom$Type ::
+      { dom$Type$special$Nullable(t) }
+      dom$Type$special$Nullable(t) != dom$Type$global$class_Foo())
+  }
+
+  axiom {
     !dom$Type$is_nullable_type(dom$Type$Int())
   }
 
@@ -154,6 +162,10 @@ domain dom$Type  {
 
   axiom {
     !dom$Type$is_nullable_type(dom$Type$Function())
+  }
+
+  axiom {
+    !dom$Type$is_nullable_type(dom$Type$global$class_Foo())
   }
 
   axiom {
@@ -184,6 +196,10 @@ domain dom$Type  {
 
   axiom {
     dom$Type$isSubtype(dom$Type$Function(), dom$Type$Any())
+  }
+
+  axiom {
+    dom$Type$isSubtype(dom$Type$global$class_Foo(), dom$Type$Any())
   }
 
   axiom {
@@ -232,6 +248,10 @@ domain dom$Type  {
       { dom$Type$isSubtype(dom$Type$Nothing(), t) }
       dom$Type$isSubtype(dom$Type$Nothing(), t))
   }
+
+  axiom {
+    dom$Type$isSubtype(dom$Type$global$class_Foo(), dom$Type$Any())
+  }
 }
 
 domain dom$Any  {
@@ -240,6 +260,8 @@ domain dom$Any  {
 }
 
 field special$function_object_call_counter: Int
+
+field class_scope_global$class_Foo$member_x: Int
 
 function special$duplicable(anonymous$0: Ref): Bool
 
@@ -251,7 +273,15 @@ method special$invoke_function_object(anonymous$0: Ref)
     anonymous$0.special$function_object_call_counter
 
 
-method pkg$$global$f$() returns (ret: dom$Unit)
+method global$fun_f$fun_take$$return$T_Unit() returns (ret: dom$Unit)
 {
+  var local1$foo: Ref
+  var anonymous$1: Ref
+  anonymous$1 := class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(0)
+  local1$foo := anonymous$1
   label label$ret
 }
+
+method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())

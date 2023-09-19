@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.formver.viper.MangledName
 
-/**
- * This file contains mangled names for constructs introduced during the conversion to Viper.
+/* This file contains mangled names for constructs introduced during the conversion to Viper.
  *
  * See the NameEmbeddings file for guidelines on good name choices.
  */

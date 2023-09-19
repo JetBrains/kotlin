@@ -1,5 +1,5 @@
 /calls_in_place.kt:(162,169): info: Generated Viper text for unknown:
-method pkg$$global$unknown$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
+method global$fun_unknown$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f: Ref)
   returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -16,7 +16,7 @@ method pkg$$global$unknown$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: R
 }
 
 /calls_in_place.kt:(309,321): info: Generated Viper text for at_most_once:
-method pkg$$global$at_most_once$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
+method global$fun_at_most_once$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f: Ref)
   returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -34,7 +34,7 @@ method pkg$$global$at_most_once$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local
 }
 
 /calls_in_place.kt:(466,478): info: Generated Viper text for exactly_once:
-method pkg$$global$exactly_once$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
+method global$fun_exactly_once$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f: Ref)
   returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -52,7 +52,7 @@ method pkg$$global$exactly_once$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local
 }
 
 /calls_in_place.kt:(623,636): info: Generated Viper text for at_least_once:
-method pkg$$global$at_least_once$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
+method global$fun_at_least_once$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f: Ref)
   returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -63,13 +63,13 @@ method pkg$$global$at_least_once$Tkotlin_Function1__kotlin_Int$kotlin_Int__(loca
 {
   var anonymous$1: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  anonymous$1 := pkg$$global$exactly_once$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f)
+  anonymous$1 := global$fun_exactly_once$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f)
   ret := anonymous$1
   goto label$ret
   label label$ret
 }
 
-method pkg$$global$exactly_once$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
+method global$fun_exactly_once$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f: Ref)
   returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -80,7 +80,7 @@ method pkg$$global$exactly_once$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local
 
 
 /calls_in_place.kt:(800,809): info: Generated Viper text for loopWhile:
-method pkg$$global$loopWhile$Tkotlin_Function0__kotlin_Boolean__(local$lambda: Ref)
+method global$fun_loopWhile$fun_take$fun_take$$return$T_Boolean$return$T_Unit(local$lambda: Ref)
   returns (ret: dom$Unit)
   requires acc(local$lambda.special$function_object_call_counter, write)
   ensures acc(local$lambda.special$function_object_call_counter, write)
@@ -111,7 +111,7 @@ method pkg$$global$loopWhile$Tkotlin_Function0__kotlin_Boolean__(local$lambda: R
 }
 
 /calls_in_place.kt:(990,999): info: Generated Viper text for loopUntil:
-method pkg$$global$loopUntil$Tkotlin_Function0__kotlin_Boolean__(local$lambda: Ref)
+method global$fun_loopUntil$fun_take$fun_take$$return$T_Boolean$return$T_Unit(local$lambda: Ref)
   returns (ret: dom$Unit)
   requires acc(local$lambda.special$function_object_call_counter, write)
   ensures acc(local$lambda.special$function_object_call_counter, write)
@@ -142,7 +142,7 @@ method pkg$$global$loopUntil$Tkotlin_Function0__kotlin_Boolean__(local$lambda: R
 }
 
 /calls_in_place.kt:(1178,1181): info: Generated Viper text for run:
-method pkg$$global$run$Tkotlin_Function0__R__(local$block: Ref)
+method global$fun_run$fun_take$fun_take$$return$NT_Any$return$NT_Any(local$block: Ref)
   returns (ret: dom$Nullable[dom$Any])
   requires acc(local$block.special$function_object_call_counter, write)
   ensures acc(local$block.special$function_object_call_counter, write)

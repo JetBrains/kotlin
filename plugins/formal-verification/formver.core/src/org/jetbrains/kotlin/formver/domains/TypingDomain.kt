@@ -144,7 +144,7 @@ class TypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(TYPE_DOMAIN_
         val isSubtype = createDomainFunc("isSubtype", listOf(Var("a", Type).decl(), Var("b", Type).decl()), Bool)
     }
 
-    val classTypes = classes.map { classTypeFunc(it.name) }
+    val classTypes = classes.map { classTypeFunc(it.className) }
 
     val nonNullableTypes = listOf(intType, booleanType, unitType, nothingType, anyType, functionType) + classTypes
     val types = nonNullableTypes + nullableTypeFunc
@@ -279,7 +279,7 @@ class TypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(TYPE_DOMAIN_
         classes.flatMap { cls ->
             cls.superTypes.map { superType ->
                 createAnonymousDomainAxiom(
-                    isSubtype(cls.kotlinType, superType.kotlinType)
+                    isSubtype(cls.runtimeType, superType.runtimeType)
                 )
             }
         }

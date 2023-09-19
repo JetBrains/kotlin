@@ -16,20 +16,8 @@ import org.jetbrains.kotlin.formver.viper.ast.Position
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
 import org.jetbrains.kotlin.formver.viper.ast.Trafos
 
-interface NamedFunctionSignature : CallableSignature {
+interface NamedFunctionSignature : FunctionSignature {
     val name: MangledName
-    val receiver: VariableEmbedding?
-    val params: List<VariableEmbedding>
-
-    val returnVar
-        get() = VariableEmbedding(ReturnVariableName, returnType)
-    val formalArgs: List<VariableEmbedding>
-        get() = listOfNotNull(receiver) + params
-
-    override val receiverType: TypeEmbedding?
-        get() = receiver?.type
-    override val paramTypes: List<TypeEmbedding>
-        get() = params.map { it.type }
 }
 
 fun NamedFunctionSignature.toMethodCall(

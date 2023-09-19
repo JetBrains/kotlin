@@ -1,36 +1,36 @@
 /arithmetic.kt:(4,12): info: Generated Viper text for addition:
-method pkg$$global$addition$Tkotlin_Int(local$x: Int)
+method global$fun_addition$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local$1$y: Int
-  local$1$y := local$x + local$x
+  var local1$y: Int
+  local1$y := local$x + local$x
   label label$ret
 }
 
 /arithmetic.kt:(47,58): info: Generated Viper text for subtraction:
-method pkg$$global$subtraction$Tkotlin_Int(local$x: Int)
+method global$fun_subtraction$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local$1$y: Int
-  local$1$y := local$x - local$x
+  var local1$y: Int
+  local1$y := local$x - local$x
   label label$ret
 }
 
 /arithmetic.kt:(93,107): info: Generated Viper text for multiplication:
-method pkg$$global$multiplication$Tkotlin_Int(local$x: Int)
+method global$fun_multiplication$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local$1$y: Int
-  local$1$y := local$x * local$x
+  var local1$y: Int
+  local1$y := local$x * local$x
   label label$ret
 }
 
 /arithmetic.kt:(142,150): info: Generated Viper text for division:
-method pkg$$global$division$Tkotlin_Int(local$x: Int)
+method global$fun_division$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local$1$y: Int
+  var local1$y: Int
   inhale local$x != 0
-  local$1$y := local$x / local$x
+  local1$y := local$x / local$x
   label label$ret
 }

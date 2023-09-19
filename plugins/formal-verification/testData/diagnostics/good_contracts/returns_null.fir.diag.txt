@@ -1,5 +1,5 @@
 /returns_null.kt:(121,140): info: Generated Viper text for simple_returns_null:
-method pkg$$global$simple_returns_null$NTkotlin_Int(local$x: dom$Nullable[Int])
+method global$fun_simple_returns_null$fun_take$NT_Int$return$NT_Int(local$x: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ensures ret == (dom$Nullable$null(): dom$Nullable[Int])
@@ -12,7 +12,7 @@ method pkg$$global$simple_returns_null$NTkotlin_Int(local$x: dom$Nullable[Int])
 }
 
 /returns_null.kt:(300,320): info: Generated Viper text for returns_null_implies:
-method pkg$$global$returns_null_implies$NTkotlin_Boolean(local$x: dom$Nullable[Bool])
+method global$fun_returns_null_implies$fun_take$NT_Boolean$return$NT_Boolean(local$x: dom$Nullable[Bool])
   returns (ret: dom$Nullable[Bool])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Boolean()))
   ensures ret == (dom$Nullable$null(): dom$Nullable[Bool]) ==>
@@ -27,7 +27,7 @@ method pkg$$global$returns_null_implies$NTkotlin_Boolean(local$x: dom$Nullable[B
 }
 
 /returns_null.kt:(511,531): info: Generated Viper text for returns_null_with_if:
-method pkg$$global$returns_null_with_if$NTkotlin_Int$NTkotlin_Int$NTkotlin_Int(local$x: dom$Nullable[Int],
+method global$fun_returns_null_with_if$fun_take$NT_Int$NT_Int$NT_Int$return$NT_Int(local$x: dom$Nullable[Int],
   local$y: dom$Nullable[Int], local$z: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
@@ -60,7 +60,7 @@ method pkg$$global$returns_null_with_if$NTkotlin_Int$NTkotlin_Int$NTkotlin_Int(l
 }
 
 /returns_null.kt:(833,862): info: Generated Viper text for non_nullable_returns_not_null:
-method pkg$$global$non_nullable_returns_not_null$Tkotlin_Int(local$x: Int)
+method global$fun_non_nullable_returns_not_null$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
   ensures true
 {
@@ -70,7 +70,7 @@ method pkg$$global$non_nullable_returns_not_null$Tkotlin_Int(local$x: Int)
 }
 
 /returns_null.kt:(981,1010): info: Generated Viper text for non_nullable_compared_to_null:
-method pkg$$global$non_nullable_compared_to_null$Tkotlin_Int$Tkotlin_Int(local$x: Int,
+method global$fun_non_nullable_compared_to_null$fun_take$T_Int$T_Int$return$T_Int(local$x: Int,
   local$y: Int)
   returns (ret: Int)
   ensures true ==> false || true

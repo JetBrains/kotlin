@@ -153,7 +153,7 @@ class ContractDescriptionConversionVisitor(
         data: Unit,
     ): Exp {
         val argVar = isInstancePredicate.arg.embeddedVar()
-        return TypeDomain.isSubtype(TypeOfDomain.typeOf(argVar.toViper()), ctx.embedType(isInstancePredicate.type).kotlinType)
+        return TypeDomain.isSubtype(TypeOfDomain.typeOf(argVar.toViper()), ctx.embedType(isInstancePredicate.type).runtimeType)
     }
 
     private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.embeddedVar(): VariableEmbedding =

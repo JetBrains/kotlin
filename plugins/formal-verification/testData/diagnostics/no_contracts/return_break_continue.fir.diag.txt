@@ -1,5 +1,5 @@
 /return_break_continue.kt:(4,15): info: Generated Viper text for test_return:
-method pkg$$global$test_return$() returns (ret: Int)
+method global$fun_test_return$fun_take$$return$T_Int() returns (ret: Int)
 {
   ret := 0
   goto label$ret
@@ -9,7 +9,8 @@ method pkg$$global$test_return$() returns (ret: Int)
 }
 
 /return_break_continue.kt:(58,74): info: Generated Viper text for return_from_loop:
-method pkg$$global$return_from_loop$() returns (ret: Int)
+method global$fun_return_from_loop$fun_take$$return$T_Int()
+  returns (ret: Int)
 {
   var anonymous$1: Bool
   label label$continue$1
@@ -26,44 +27,45 @@ method pkg$$global$return_from_loop$() returns (ret: Int)
 }
 
 /return_break_continue.kt:(146,157): info: Generated Viper text for while_break:
-method pkg$$global$while_break$Tkotlin_Boolean(local$b: Bool)
+method global$fun_while_break$fun_take$T_Boolean$return$T_Int(local$b: Bool)
   returns (ret: Int)
 {
-  var local$1$i: Int
+  var local1$i: Int
   var anonymous$1: Bool
-  local$1$i := 0
+  local1$i := 0
   label label$continue$1
   anonymous$1 := local$b
   while (anonymous$1) {
-    local$1$i := 1
+    local1$i := 1
     goto label$break$1
     anonymous$1 := local$b
   }
   label label$break$1
-  ret := local$1$i
+  ret := local1$i
   goto label$ret
   label label$ret
 }
 
 /return_break_continue.kt:(261,275): info: Generated Viper text for while_continue:
-method pkg$$global$while_continue$() returns (ret: dom$Unit)
+method global$fun_while_continue$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
-  var local$1$b: Bool
+  var local1$b: Bool
   var anonymous$1: Bool
-  local$1$b := true
+  local1$b := true
   label label$continue$1
-  anonymous$1 := local$1$b
+  anonymous$1 := local1$b
   while (anonymous$1) {
-    local$1$b := false
+    local1$b := false
     goto label$continue$1
-    anonymous$1 := local$1$b
+    anonymous$1 := local1$b
   }
   label label$break$1
   label label$ret
 }
 
 /return_break_continue.kt:(361,373): info: Generated Viper text for while_nested:
-method pkg$$global$while_nested$Tkotlin_Boolean(local$b: Bool)
+method global$fun_while_nested$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
   returns (ret: dom$Unit)
 {
   var anonymous$1: Bool

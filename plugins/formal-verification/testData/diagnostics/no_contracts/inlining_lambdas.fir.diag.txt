@@ -1,5 +1,5 @@
 /inlining_lambdas.kt:(11,17): info: Generated Viper text for invoke:
-method pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref)
+method global$fun_invoke$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f: Ref)
   returns (ret: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   requires special$duplicable(local$f)
@@ -16,7 +16,7 @@ method pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Re
 }
 
 /inlining_lambdas.kt:(65,77): info: Generated Viper text for explicit_arg:
-method pkg$$global$explicit_arg$() returns (ret: Int)
+method global$fun_explicit_arg$fun_take$$return$T_Int() returns (ret: Int)
 {
   var anonymous$1: Int
   if (true) {
@@ -36,7 +36,7 @@ method pkg$$global$explicit_arg$() returns (ret: Int)
 }
 
 /inlining_lambdas.kt:(127,139): info: Generated Viper text for implicit_arg:
-method pkg$$global$implicit_arg$() returns (ret: Int)
+method global$fun_implicit_arg$fun_take$$return$T_Int() returns (ret: Int)
 {
   var anonymous$1: Int
   if (true) {
@@ -56,7 +56,7 @@ method pkg$$global$implicit_arg$() returns (ret: Int)
 }
 
 /inlining_lambdas.kt:(185,194): info: Generated Viper text for lambda_if:
-method pkg$$global$lambda_if$() returns (ret: Int)
+method global$fun_lambda_if$fun_take$$return$T_Int() returns (ret: Int)
 {
   var anonymous$1: Int
   if (true) {
@@ -81,7 +81,8 @@ method pkg$$global$lambda_if$() returns (ret: Int)
 }
 
 /inlining_lambdas.kt:(325,346): info: Generated Viper text for return_value_not_used:
-method pkg$$global$return_value_not_used$() returns (ret: dom$Unit)
+method global$fun_return_value_not_used$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
   var anonymous$1: Int
   if (true) {
@@ -99,21 +100,21 @@ method pkg$$global$return_value_not_used$() returns (ret: dom$Unit)
 }
 
 /inlining_lambdas.kt:(382,391): info: Generated Viper text for shadowing:
-method pkg$$global$shadowing$() returns (ret: Int)
+method global$fun_shadowing$fun_take$$return$T_Int() returns (ret: Int)
 {
-  var local$1$x: Int
-  var local$1$y: Int
+  var local1$x: Int
+  var local1$y: Int
   var anonymous$1: Int
-  local$1$x := 1
-  local$1$y := 1
+  local1$x := 1
+  local1$y := 1
   if (true) {
     var anonymous$2: Int
     var anonymous$3: Int
     anonymous$3 := 0
     if (true) {
-      var local$3$y: Int
-      local$3$y := 0
-      anonymous$2 := anonymous$3 + local$3$y
+      var local3$y: Int
+      local3$y := 0
+      anonymous$2 := anonymous$3 + local3$y
     }
     anonymous$1 := anonymous$2
     goto inline_label$1$ret
@@ -125,11 +126,11 @@ method pkg$$global$shadowing$() returns (ret: Int)
 }
 
 /inlining_lambdas.kt:(537,540): info: Generated Viper text for foo:
-method pkg$$global$foo$() returns (ret: Int)
+method global$fun_foo$fun_take$$return$T_Int() returns (ret: Int)
 {
-  var local$1$x: Int
+  var local1$x: Int
   var anonymous$1: Int
-  local$1$x := 2
+  local1$x := 2
   if (true) {
     var anonymous$2: Int
     var anonymous$3: Int
@@ -147,15 +148,15 @@ method pkg$$global$foo$() returns (ret: Int)
 }
 
 /inlining_lambdas.kt:(604,610): info: Generated Viper text for nested:
-method pkg$$global$nested$() returns (ret: Int)
+method global$fun_nested$fun_take$$return$T_Int() returns (ret: Int)
 {
-  var local$1$x: Int
+  var local1$x: Int
   var anonymous$1: Int
-  local$1$x := 2
+  local1$x := 2
   if (true) {
-    var local$2$x: Int
+    var local2$x: Int
     var anonymous$2: Int
-    local$2$x := 2
+    local2$x := 2
     if (true) {
       var anonymous$3: Int
       var anonymous$4: Int

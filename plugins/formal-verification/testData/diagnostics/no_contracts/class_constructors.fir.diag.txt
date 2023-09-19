@@ -1,90 +1,93 @@
 /class_constructors.kt:(389,411): info: Generated Viper text for onlySecondConstructors:
-field pkg$$class_Foo$member_a: Int
+field class_scope_global$class_Foo$member_a: Int
 
-method pkg$$global$onlySecondConstructors$() returns (ret: dom$Unit)
+method global$fun_onlySecondConstructors$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
-  var local$1$f1: Ref
+  var local1$f1: Ref
   var anonymous$1: Ref
-  var local$1$shouldBeOne: Int
+  var local1$shouldBeOne: Int
   var anonymous$2: Int
-  var local$1$f2: Ref
+  var local1$f2: Ref
   var anonymous$3: Ref
-  var local$1$shouldBeAnswer: Int
+  var local1$shouldBeAnswer: Int
   var anonymous$4: Int
-  var local$1$f3: Ref
+  var local1$f3: Ref
   var anonymous$5: Ref
-  var local$1$test: Int
+  var local1$test: Int
   var anonymous$6: Int
-  anonymous$1 := pkg$$class_Foo$constructor$Tkotlin_Boolean(true)
-  local$1$f1 := anonymous$1
-  inhale acc(local$1$f1.pkg$$class_Foo$member_a, write)
-  anonymous$2 := local$1$f1.pkg$$class_Foo$member_a
-  exhale acc(local$1$f1.pkg$$class_Foo$member_a, write)
-  local$1$shouldBeOne := anonymous$2
-  anonymous$3 := pkg$$class_Foo$constructor$Tkotlin_Int(42)
-  local$1$f2 := anonymous$3
-  inhale acc(local$1$f2.pkg$$class_Foo$member_a, write)
-  anonymous$4 := local$1$f2.pkg$$class_Foo$member_a
-  exhale acc(local$1$f2.pkg$$class_Foo$member_a, write)
-  local$1$shouldBeAnswer := anonymous$4
-  anonymous$5 := pkg$$class_Foo$constructor$Tkotlin_Int$Tkotlin_Int(10, 32)
-  local$1$f3 := anonymous$5
-  inhale acc(local$1$f3.pkg$$class_Foo$member_a, write)
-  anonymous$6 := local$1$f3.pkg$$class_Foo$member_a
-  exhale acc(local$1$f3.pkg$$class_Foo$member_a, write)
-  local$1$test := anonymous$6
+  anonymous$1 := class_scope_global$class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(true)
+  local1$f1 := anonymous$1
+  inhale acc(local1$f1.class_scope_global$class_Foo$member_a, write)
+  anonymous$2 := local1$f1.class_scope_global$class_Foo$member_a
+  exhale acc(local1$f1.class_scope_global$class_Foo$member_a, write)
+  local1$shouldBeOne := anonymous$2
+  anonymous$3 := class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(42)
+  local1$f2 := anonymous$3
+  inhale acc(local1$f2.class_scope_global$class_Foo$member_a, write)
+  anonymous$4 := local1$f2.class_scope_global$class_Foo$member_a
+  exhale acc(local1$f2.class_scope_global$class_Foo$member_a, write)
+  local1$shouldBeAnswer := anonymous$4
+  anonymous$5 := class_scope_global$class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
+    32)
+  local1$f3 := anonymous$5
+  inhale acc(local1$f3.class_scope_global$class_Foo$member_a, write)
+  anonymous$6 := local1$f3.class_scope_global$class_Foo$member_a
+  exhale acc(local1$f3.class_scope_global$class_Foo$member_a, write)
+  local1$test := anonymous$6
   label label$ret
 }
 
-method pkg$$class_Foo$constructor$Tkotlin_Boolean(local$b: Bool)
+method class_scope_global$class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(local$b: Bool)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
 
 
-method pkg$$class_Foo$constructor$Tkotlin_Int(local$n: Int)
+method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$n: Int)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
 
 
-method pkg$$class_Foo$constructor$Tkotlin_Int$Tkotlin_Int(local$x1: Int, local$x2: Int)
+method class_scope_global$class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(local$x1: Int,
+  local$x2: Int)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
 
 
 /class_constructors.kt:(590,617): info: Generated Viper text for primaryAndSecondConstructor:
-field pkg$$class_Bar$member_a: Int
+field class_scope_global$class_Bar$member_a: Int
 
-method pkg$$global$primaryAndSecondConstructor$() returns (ret: dom$Unit)
+method global$fun_primaryAndSecondConstructor$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
-  var local$1$b1: Ref
+  var local1$b1: Ref
   var anonymous$1: Ref
-  var local$1$shouldBeZero: Int
+  var local1$shouldBeZero: Int
   var anonymous$2: Int
-  var local$1$b2: Ref
+  var local1$b2: Ref
   var anonymous$3: Ref
-  var local$1$shouldBeAnswer: Int
+  var local1$shouldBeAnswer: Int
   var anonymous$4: Int
-  anonymous$1 := pkg$$class_Bar$constructor$Tkotlin_Boolean(false)
-  local$1$b1 := anonymous$1
-  inhale acc(local$1$b1.pkg$$class_Bar$member_a, write)
-  anonymous$2 := local$1$b1.pkg$$class_Bar$member_a
-  exhale acc(local$1$b1.pkg$$class_Bar$member_a, write)
-  local$1$shouldBeZero := anonymous$2
-  anonymous$3 := pkg$$class_Bar$constructor$Tkotlin_Int(42)
-  local$1$b2 := anonymous$3
-  inhale acc(local$1$b2.pkg$$class_Bar$member_a, write)
-  anonymous$4 := local$1$b2.pkg$$class_Bar$member_a
-  exhale acc(local$1$b2.pkg$$class_Bar$member_a, write)
-  local$1$shouldBeAnswer := anonymous$4
+  anonymous$1 := class_scope_global$class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(false)
+  local1$b1 := anonymous$1
+  inhale acc(local1$b1.class_scope_global$class_Bar$member_a, write)
+  anonymous$2 := local1$b1.class_scope_global$class_Bar$member_a
+  exhale acc(local1$b1.class_scope_global$class_Bar$member_a, write)
+  local1$shouldBeZero := anonymous$2
+  anonymous$3 := class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(42)
+  local1$b2 := anonymous$3
+  inhale acc(local1$b2.class_scope_global$class_Bar$member_a, write)
+  anonymous$4 := local1$b2.class_scope_global$class_Bar$member_a
+  exhale acc(local1$b2.class_scope_global$class_Bar$member_a, write)
+  local1$shouldBeAnswer := anonymous$4
   label label$ret
 }
 
-method pkg$$class_Bar$constructor$Tkotlin_Boolean(local$b: Bool)
+method class_scope_global$class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(local$b: Bool)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
 
 
-method pkg$$class_Bar$constructor$Tkotlin_Int(local$a: Int)
+method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
-
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())

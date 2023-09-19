@@ -1,5 +1,5 @@
 /subtyping.kt:(4,14): info: Generated Viper text for smart_cast:
-method pkg$$global$smart_cast$NTkotlin_Int(local$x: dom$Nullable[Int])
+method global$fun_smart_cast$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
   returns (ret: Int)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
@@ -21,7 +21,8 @@ method pkg$$global$smart_cast$NTkotlin_Int(local$x: dom$Nullable[Int])
 }
 
 /subtyping.kt:(112,128): info: Generated Viper text for return_subtyping:
-method pkg$$global$return_subtyping$() returns (ret: dom$Nullable[Int])
+method global$fun_return_subtyping$fun_take$$return$NT_Int()
+  returns (ret: dom$Nullable[Int])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
   ret := (dom$Casting$cast(0, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
@@ -30,16 +31,17 @@ method pkg$$global$return_subtyping$() returns (ret: dom$Nullable[Int])
 }
 
 /subtyping.kt:(159,179): info: Generated Viper text for assignment_subtyping:
-method pkg$$global$assignment_subtyping$() returns (ret: dom$Unit)
+method global$fun_assignment_subtyping$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
-  var local$1$x: dom$Nullable[Bool]
-  local$1$x := (dom$Casting$cast(false, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
-  local$1$x := (dom$Casting$cast(true, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
+  var local1$x: dom$Nullable[Bool]
+  local1$x := (dom$Casting$cast(false, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
+  local1$x := (dom$Casting$cast(true, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
   label label$ret
 }
 
 /subtyping.kt:(232,250): info: Generated Viper text for nullable_parameter:
-method pkg$$global$nullable_parameter$NTkotlin_Boolean(local$b: dom$Nullable[Bool])
+method global$fun_nullable_parameter$fun_take$NT_Boolean$return$T_Unit(local$b: dom$Nullable[Bool])
   returns (ret: dom$Unit)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$b): dom$Type), dom$Type$special$Nullable(dom$Type$Boolean()))
@@ -47,14 +49,14 @@ method pkg$$global$nullable_parameter$NTkotlin_Boolean(local$b: dom$Nullable[Boo
 }
 
 /subtyping.kt:(272,300): info: Generated Viper text for function_parameter_subtyping:
-method pkg$$global$function_parameter_subtyping$() returns (ret: dom$Unit)
+method global$fun_function_parameter_subtyping$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
   var anonymous$1: dom$Unit
-  anonymous$1 := pkg$$global$nullable_parameter$NTkotlin_Boolean((dom$Casting$cast(false,
+  anonymous$1 := global$fun_nullable_parameter$fun_take$NT_Boolean$return$T_Unit((dom$Casting$cast(false,
     dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool]))
   label label$ret
 }
 
-method pkg$$global$nullable_parameter$NTkotlin_Boolean(local$b: dom$Nullable[Bool])
+method global$fun_nullable_parameter$fun_take$NT_Boolean$return$T_Unit(local$b: dom$Nullable[Bool])
   returns (ret: dom$Unit)
-

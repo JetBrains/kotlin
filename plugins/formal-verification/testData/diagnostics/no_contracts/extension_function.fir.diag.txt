@@ -1,5 +1,6 @@
 /extension_function.kt:(8,11): info: Generated Viper text for inc:
-method pkg$$global$inc$(this: Int) returns (ret: Int)
+method global$fun_inc$fun_take$T_Int$return$T_Int(this: Int)
+  returns (ret: Int)
 {
   ret := this + 1
   goto label$ret
@@ -7,12 +8,13 @@ method pkg$$global$inc$(this: Int) returns (ret: Int)
 }
 
 /extension_function.kt:(35,56): info: Generated Viper text for extension_method_call:
-method pkg$$global$extension_method_call$() returns (ret: dom$Unit)
+method global$fun_extension_method_call$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
   var anonymous$1: Int
-  anonymous$1 := pkg$kotlin$class_Int$fun_inc$(3)
+  anonymous$1 := pkg$kotlin$class_scope_pkg$kotlin$global$class_Int$fun_inc$fun_take$T_Int$return$T_Int(3)
   label label$ret
 }
 
-method pkg$kotlin$class_Int$fun_inc$(this: Int) returns (ret: Int)
-
+method pkg$kotlin$class_scope_pkg$kotlin$global$class_Int$fun_inc$fun_take$T_Int$return$T_Int(this: Int)
+  returns (ret: Int)

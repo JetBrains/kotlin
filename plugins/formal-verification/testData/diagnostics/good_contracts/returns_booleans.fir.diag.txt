@@ -1,5 +1,6 @@
 /returns_booleans.kt:(121,133): info: Generated Viper text for returns_true:
-method pkg$$global$returns_true$() returns (ret: Bool)
+method global$fun_returns_true$fun_take$$return$T_Boolean()
+  returns (ret: Bool)
   ensures true
   ensures ret == true
 {
@@ -9,7 +10,8 @@ method pkg$$global$returns_true$() returns (ret: Bool)
 }
 
 /returns_booleans.kt:(268,281): info: Generated Viper text for returns_false:
-method pkg$$global$returns_false$() returns (ret: Bool)
+method global$fun_returns_false$fun_take$$return$T_Boolean()
+  returns (ret: Bool)
   ensures true
   ensures ret == false
 {
@@ -19,7 +21,7 @@ method pkg$$global$returns_false$() returns (ret: Bool)
 }
 
 /returns_booleans.kt:(418,435): info: Generated Viper text for conditional_basic:
-method pkg$$global$conditional_basic$Tkotlin_Boolean(local$b: Bool)
+method global$fun_conditional_basic$fun_take$T_Boolean$return$T_Boolean(local$b: Bool)
   returns (ret: Bool)
   ensures ret == true ==> true
   ensures ret == false ==> local$b
@@ -30,7 +32,7 @@ method pkg$$global$conditional_basic$Tkotlin_Boolean(local$b: Bool)
 }
 
 /returns_booleans.kt:(612,636): info: Generated Viper text for binary_logic_expressions:
-method pkg$$global$binary_logic_expressions$Tkotlin_Boolean$Tkotlin_Boolean(local$a: Bool,
+method global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$a: Bool,
   local$b: Bool)
   returns (ret: Bool)
   ensures ret == false ==> local$b && false
@@ -42,7 +44,7 @@ method pkg$$global$binary_logic_expressions$Tkotlin_Boolean$Tkotlin_Boolean(loca
 }
 
 /returns_booleans.kt:(855,866): info: Generated Viper text for logical_not:
-method pkg$$global$logical_not$Tkotlin_Boolean(local$b: Bool)
+method global$fun_logical_not$fun_take$T_Boolean$return$T_Boolean(local$b: Bool)
   returns (ret: Bool)
   ensures ret == true ==> !local$b && local$b
   ensures ret == false ==> local$b || !local$b
@@ -53,21 +55,21 @@ method pkg$$global$logical_not$Tkotlin_Boolean(local$b: Bool)
 }
 
 /returns_booleans.kt:(1052,1075): info: Generated Viper text for call_fun_with_contracts:
-method pkg$$global$call_fun_with_contracts$Tkotlin_Boolean(local$b: Bool)
+method global$fun_call_fun_with_contracts$fun_take$T_Boolean$return$T_Boolean(local$b: Bool)
   returns (ret: Bool)
   ensures ret == true
 {
-  var local$1$a: Bool
+  var local1$a: Bool
   var anonymous$1: Bool
-  anonymous$1 := pkg$$global$binary_logic_expressions$Tkotlin_Boolean$Tkotlin_Boolean(local$b,
+  anonymous$1 := global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$b,
     local$b)
-  local$1$a := anonymous$1
-  ret := local$1$a
+  local1$a := anonymous$1
+  ret := local1$a
   goto label$ret
   label label$ret
 }
 
-method pkg$$global$binary_logic_expressions$Tkotlin_Boolean$Tkotlin_Boolean(local$a: Bool,
+method global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$a: Bool,
   local$b: Bool)
   returns (ret: Bool)
   ensures ret == false ==> local$b && false
@@ -75,25 +77,25 @@ method pkg$$global$binary_logic_expressions$Tkotlin_Boolean$Tkotlin_Boolean(loca
 
 
 /returns_booleans.kt:(1268,1281): info: Generated Viper text for isNullOrEmpty:
-method pkg$$global$isNullOrEmpty$(this: dom$Nullable[Ref])
+method global$fun_isNullOrEmpty$fun_take$NT_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean(this: dom$Nullable[Ref])
   returns (ret: Bool)
   ensures ret == false ==> this != (dom$Nullable$null(): dom$Nullable[Ref])
 {
   var anonymous$1: Bool
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$special$Nullable(dom$Type$pkg$kotlin$collections$class_Collection()))
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$special$Nullable(dom$Type$pkg$kotlin$collections$global$class_Collection()))
   if (this == (dom$Nullable$null(): dom$Nullable[Ref]) &&
   (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
   (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||
   this != (dom$Nullable$null(): dom$Nullable[Ref]) &&
   (dom$Nullable$null(): dom$Nullable[dom$Unit]) !=
   (dom$Nullable$null(): dom$Nullable[dom$Unit]) &&
-  (dom$Casting$cast(this, dom$Type$pkg$kotlin$collections$class_Collection()): Ref) ==
-  (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$pkg$kotlin$collections$class_Collection()): Ref)) {
+  (dom$Casting$cast(this, dom$Type$pkg$kotlin$collections$global$class_Collection()): Ref) ==
+  (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$pkg$kotlin$collections$global$class_Collection()): Ref)) {
     anonymous$1 := true
   } else {
     var anonymous$2: Bool
-    anonymous$2 := pkg$kotlin$collections$class_Collection$fun_isEmpty$((dom$Casting$cast(this,
-      dom$Type$pkg$kotlin$collections$class_Collection()): Ref))
+    anonymous$2 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Collection$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean((dom$Casting$cast(this,
+      dom$Type$pkg$kotlin$collections$global$class_Collection()): Ref))
     anonymous$1 := anonymous$2
   }
   ret := anonymous$1
@@ -101,6 +103,5 @@ method pkg$$global$isNullOrEmpty$(this: dom$Nullable[Ref])
   label label$ret
 }
 
-method pkg$kotlin$collections$class_Collection$fun_isEmpty$(this: Ref)
+method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Collection$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean(this: Ref)
   returns (ret: Bool)
-

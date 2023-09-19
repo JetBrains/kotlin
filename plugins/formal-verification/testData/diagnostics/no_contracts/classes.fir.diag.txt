@@ -1,48 +1,51 @@
 /classes.kt:(39,48): info: Generated Viper text for createFoo:
-field pkg$$class_Foo$member_a: Int
+field class_scope_global$class_Foo$member_a: Int
 
-field pkg$$class_Foo$member_b: Int
+field class_scope_global$class_Foo$member_b: Int
 
-method pkg$$global$createFoo$() returns (ret: dom$Unit)
+method global$fun_createFoo$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
-  var local$1$f: Ref
+  var local1$f: Ref
   var anonymous$1: Ref
-  var local$1$fa: Int
+  var local1$fa: Int
   var anonymous$2: Int
-  var local$1$fb: Int
+  var local1$fb: Int
   var anonymous$3: Int
-  anonymous$1 := pkg$$class_Foo$constructor$Tkotlin_Int$Tkotlin_Int(10, 20)
-  local$1$f := anonymous$1
-  inhale acc(local$1$f.pkg$$class_Foo$member_a, write)
-  anonymous$2 := local$1$f.pkg$$class_Foo$member_a
-  exhale acc(local$1$f.pkg$$class_Foo$member_a, write)
-  local$1$fa := anonymous$2
-  inhale acc(local$1$f.pkg$$class_Foo$member_b, write)
-  anonymous$3 := local$1$f.pkg$$class_Foo$member_b
-  exhale acc(local$1$f.pkg$$class_Foo$member_b, write)
-  local$1$fb := anonymous$3
+  anonymous$1 := class_scope_global$class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
+    20)
+  local1$f := anonymous$1
+  inhale acc(local1$f.class_scope_global$class_Foo$member_a, write)
+  anonymous$2 := local1$f.class_scope_global$class_Foo$member_a
+  exhale acc(local1$f.class_scope_global$class_Foo$member_a, write)
+  local1$fa := anonymous$2
+  inhale acc(local1$f.class_scope_global$class_Foo$member_b, write)
+  anonymous$3 := local1$f.class_scope_global$class_Foo$member_b
+  exhale acc(local1$f.class_scope_global$class_Foo$member_b, write)
+  local1$fb := anonymous$3
   label label$ret
 }
 
-method pkg$$class_Foo$constructor$Tkotlin_Int$Tkotlin_Int(local$a: Int, local$b: Int)
+method class_scope_global$class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(local$a: Int,
+  local$b: Int)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
 
 
 /classes.kt:(147,156): info: Generated Viper text for createBar:
-field pkg$$class_Bar$member_a: dom$Nullable[Ref]
+field class_scope_global$class_Bar$member_a: dom$Nullable[Ref]
 
-method pkg$$global$createBar$() returns (ret: dom$Unit)
+method global$fun_createBar$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
-  var local$1$b: Ref
+  var local1$b: Ref
   var anonymous$1: Ref
-  anonymous$1 := pkg$$class_Bar$constructor$NTBar((dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
-    dom$Type$special$Nullable(dom$Type$pkg$$class_Bar())): dom$Nullable[Ref]))
-  local$1$b := anonymous$1
+  anonymous$1 := class_scope_global$class_Bar$constructor$fun_take$NT_class_global$class_Bar$return$T_class_global$class_Bar((dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
+    dom$Type$special$Nullable(dom$Type$global$class_Bar())): dom$Nullable[Ref]))
+  local1$b := anonymous$1
   label label$ret
 }
 
-method pkg$$class_Bar$constructor$NTBar(local$a: dom$Nullable[Ref])
+method class_scope_global$class_Bar$constructor$fun_take$NT_class_global$class_Bar$return$T_class_global$class_Bar(local$a: dom$Nullable[Ref])
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
-
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())

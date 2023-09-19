@@ -23,6 +23,7 @@ interface ProgramConversionContext {
 
     fun embedFunction(symbol: FirFunctionSymbol<*>): FunctionEmbedding
     fun embedType(type: ConeKotlinType): TypeEmbedding
+    fun embedType(symbol: FirFunctionSymbol<*>): TypeEmbedding
     fun embedType(exp: FirExpression): TypeEmbedding = embedType(exp.resolvedType)
     fun getField(field: FirPropertySymbol): FieldEmbedding?
     fun newAnonName(): AnonymousName

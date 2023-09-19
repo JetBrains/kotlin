@@ -1,170 +1,178 @@
 /inheritance.kt:(74,78): info: Generated Viper text for getY:
-field pkg$$class_Foo$member_x: Int
+field class_scope_global$class_Foo$member_x: Int
 
-field pkg$$class_Foo$member_y: Int
+field class_scope_global$class_Foo$member_y: Int
 
-field pkg$$class_Foo$member_b: Bool
+field class_scope_global$class_Foo$member_b: Bool
 
-method pkg$$class_Foo$fun_getY$(this: Ref) returns (ret: Int)
+method class_scope_global$class_Foo$fun_getY$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
+  returns (ret: Int)
 {
   var anonymous$1: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
-  inhale acc(this.pkg$$class_Foo$member_y, write)
-  anonymous$1 := this.pkg$$class_Foo$member_y
-  exhale acc(this.pkg$$class_Foo$member_y, write)
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$global$class_Foo())
+  inhale acc(this.class_scope_global$class_Foo$member_y, write)
+  anonymous$1 := this.class_scope_global$class_Foo$member_y
+  exhale acc(this.class_scope_global$class_Foo$member_y, write)
   ret := anonymous$1
   goto label$ret
   label label$ret
 }
 
 /inheritance.kt:(171,174): info: Generated Viper text for sum:
-field pkg$$class_Foo$member_x: Int
+field class_scope_global$class_Foo$member_x: Int
 
-field pkg$$class_Foo$member_y: Int
+field class_scope_global$class_Foo$member_y: Int
 
-field pkg$$class_Foo$member_b: Bool
+field class_scope_global$class_Foo$member_b: Bool
 
-field pkg$$class_Bar$member_z: Int
+field class_scope_global$class_Bar$member_z: Int
 
-method pkg$$class_Bar$fun_sum$(this: Ref) returns (ret: Int)
+method class_scope_global$class_Bar$fun_sum$fun_take$T_class_global$class_Bar$return$T_Int(this: Ref)
+  returns (ret: Int)
 {
   var anonymous$1: Int
   var anonymous$2: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Bar())
-  inhale acc(this.pkg$$class_Foo$member_x, write)
-  anonymous$1 := this.pkg$$class_Foo$member_x
-  exhale acc(this.pkg$$class_Foo$member_x, write)
-  inhale acc(this.pkg$$class_Bar$member_z, write)
-  anonymous$2 := this.pkg$$class_Bar$member_z
-  exhale acc(this.pkg$$class_Bar$member_z, write)
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$global$class_Bar())
+  inhale acc(this.class_scope_global$class_Foo$member_x, write)
+  anonymous$1 := this.class_scope_global$class_Foo$member_x
+  exhale acc(this.class_scope_global$class_Foo$member_x, write)
+  inhale acc(this.class_scope_global$class_Bar$member_z, write)
+  anonymous$2 := this.class_scope_global$class_Bar$member_z
+  exhale acc(this.class_scope_global$class_Bar$member_z, write)
   ret := anonymous$1 + anonymous$2
   goto label$ret
   label label$ret
 }
 
 /inheritance.kt:(217,232): info: Generated Viper text for callSuperMethod:
-field pkg$$class_Foo$member_x: Int
+field class_scope_global$class_Foo$member_x: Int
 
-field pkg$$class_Foo$member_y: Int
+field class_scope_global$class_Foo$member_y: Int
 
-field pkg$$class_Foo$member_b: Bool
+field class_scope_global$class_Foo$member_b: Bool
 
-field pkg$$class_Bar$member_z: Int
+field class_scope_global$class_Bar$member_z: Int
 
-method pkg$$global$callSuperMethod$TBar(local$bar: Ref) returns (ret: Int)
+method global$fun_callSuperMethod$fun_take$T_class_global$class_Bar$return$T_Int(local$bar: Ref)
+  returns (ret: Int)
 {
   var anonymous$1: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
-  anonymous$1 := pkg$$class_Foo$fun_getY$((dom$Casting$cast(local$bar, dom$Type$pkg$$class_Foo()): Ref))
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$global$class_Bar())
+  anonymous$1 := class_scope_global$class_Foo$fun_getY$fun_take$T_class_global$class_Foo$return$T_Int((dom$Casting$cast(local$bar,
+    dom$Type$global$class_Foo()): Ref))
   ret := anonymous$1
   goto label$ret
   label label$ret
 }
 
-method pkg$$class_Foo$fun_getY$(this: Ref) returns (ret: Int)
+method class_scope_global$class_Foo$fun_getY$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
+  returns (ret: Int)
 
 
 /inheritance.kt:(279,295): info: Generated Viper text for accessSuperField:
-field pkg$$class_Foo$member_x: Int
+field class_scope_global$class_Foo$member_x: Int
 
-field pkg$$class_Foo$member_y: Int
+field class_scope_global$class_Foo$member_y: Int
 
-field pkg$$class_Foo$member_b: Bool
+field class_scope_global$class_Foo$member_b: Bool
 
-field pkg$$class_Bar$member_z: Int
+field class_scope_global$class_Bar$member_z: Int
 
-method pkg$$global$accessSuperField$TBar(local$bar: Ref)
+method global$fun_accessSuperField$fun_take$T_class_global$class_Bar$return$T_Boolean(local$bar: Ref)
   returns (ret: Bool)
 {
   var anonymous$1: Bool
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
-  inhale acc(local$bar.pkg$$class_Foo$member_b, write)
-  anonymous$1 := local$bar.pkg$$class_Foo$member_b
-  exhale acc(local$bar.pkg$$class_Foo$member_b, write)
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$global$class_Bar())
+  inhale acc(local$bar.class_scope_global$class_Foo$member_b, write)
+  anonymous$1 := local$bar.class_scope_global$class_Foo$member_b
+  exhale acc(local$bar.class_scope_global$class_Foo$member_b, write)
   ret := anonymous$1
   goto label$ret
   label label$ret
 }
 
 /inheritance.kt:(341,355): info: Generated Viper text for accessNewField:
-field pkg$$class_Foo$member_x: Int
+field class_scope_global$class_Foo$member_x: Int
 
-field pkg$$class_Foo$member_y: Int
+field class_scope_global$class_Foo$member_y: Int
 
-field pkg$$class_Foo$member_b: Bool
+field class_scope_global$class_Foo$member_b: Bool
 
-field pkg$$class_Bar$member_z: Int
+field class_scope_global$class_Bar$member_z: Int
 
-method pkg$$global$accessNewField$TBar(local$bar: Ref) returns (ret: Int)
+method global$fun_accessNewField$fun_take$T_class_global$class_Bar$return$T_Int(local$bar: Ref)
+  returns (ret: Int)
 {
   var anonymous$1: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
-  inhale acc(local$bar.pkg$$class_Bar$member_z, write)
-  anonymous$1 := local$bar.pkg$$class_Bar$member_z
-  exhale acc(local$bar.pkg$$class_Bar$member_z, write)
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$global$class_Bar())
+  inhale acc(local$bar.class_scope_global$class_Bar$member_z, write)
+  anonymous$1 := local$bar.class_scope_global$class_Bar$member_z
+  exhale acc(local$bar.class_scope_global$class_Bar$member_z, write)
   ret := anonymous$1
   goto label$ret
   label label$ret
 }
 
 /inheritance.kt:(397,410): info: Generated Viper text for callNewMethod:
-field pkg$$class_Foo$member_x: Int
+field class_scope_global$class_Foo$member_x: Int
 
-field pkg$$class_Foo$member_y: Int
+field class_scope_global$class_Foo$member_y: Int
 
-field pkg$$class_Foo$member_b: Bool
+field class_scope_global$class_Foo$member_b: Bool
 
-field pkg$$class_Bar$member_z: Int
+field class_scope_global$class_Bar$member_z: Int
 
-method pkg$$global$callNewMethod$TBar(local$bar: Ref) returns (ret: Int)
+method global$fun_callNewMethod$fun_take$T_class_global$class_Bar$return$T_Int(local$bar: Ref)
+  returns (ret: Int)
 {
   var anonymous$1: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
-  anonymous$1 := pkg$$class_Bar$fun_sum$(local$bar)
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$global$class_Bar())
+  anonymous$1 := class_scope_global$class_Bar$fun_sum$fun_take$T_class_global$class_Bar$return$T_Int(local$bar)
   ret := anonymous$1
   goto label$ret
   label label$ret
 }
 
-method pkg$$class_Bar$fun_sum$(this: Ref) returns (ret: Int)
+method class_scope_global$class_Bar$fun_sum$fun_take$T_class_global$class_Bar$return$T_Int(this: Ref)
+  returns (ret: Int)
 
 
 /inheritance.kt:(456,469): info: Generated Viper text for setSuperField:
-field pkg$$class_Foo$member_x: Int
+field class_scope_global$class_Foo$member_x: Int
 
-field pkg$$class_Foo$member_y: Int
+field class_scope_global$class_Foo$member_y: Int
 
-field pkg$$class_Foo$member_b: Bool
+field class_scope_global$class_Foo$member_b: Bool
 
-field pkg$$class_Bar$member_z: Int
+field class_scope_global$class_Bar$member_z: Int
 
-method pkg$$global$setSuperField$TBar(local$bar: Ref)
+method global$fun_setSuperField$fun_take$T_class_global$class_Bar$return$T_Unit(local$bar: Ref)
   returns (ret: dom$Unit)
 {
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$pkg$$class_Bar())
-  inhale acc(local$bar.pkg$$class_Foo$member_b, write)
-  local$bar.pkg$$class_Foo$member_b := true
-  exhale acc(local$bar.pkg$$class_Foo$member_b, write)
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$global$class_Bar())
+  inhale acc(local$bar.class_scope_global$class_Foo$member_b, write)
+  local$bar.class_scope_global$class_Foo$member_b := true
+  exhale acc(local$bar.class_scope_global$class_Foo$member_b, write)
   label label$ret
 }
 
 /inheritance.kt:(506,527): info: Generated Viper text for accessSuperSuperField:
-field pkg$$class_Foo$member_x: Int
+field class_scope_global$class_Foo$member_x: Int
 
-field pkg$$class_Foo$member_y: Int
+field class_scope_global$class_Foo$member_y: Int
 
-field pkg$$class_Foo$member_b: Bool
+field class_scope_global$class_Foo$member_b: Bool
 
-field pkg$$class_Bar$member_z: Int
+field class_scope_global$class_Bar$member_z: Int
 
-method pkg$$global$accessSuperSuperField$TBaz(local$baz: Ref)
+method global$fun_accessSuperSuperField$fun_take$T_class_global$class_Baz$return$T_Int(local$baz: Ref)
   returns (ret: Int)
 {
   var anonymous$1: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$baz): dom$Type), dom$Type$pkg$$class_Baz())
-  inhale acc(local$baz.pkg$$class_Foo$member_x, write)
-  anonymous$1 := local$baz.pkg$$class_Foo$member_x
-  exhale acc(local$baz.pkg$$class_Foo$member_x, write)
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$baz): dom$Type), dom$Type$global$class_Baz())
+  inhale acc(local$baz.class_scope_global$class_Foo$member_x, write)
+  anonymous$1 := local$baz.class_scope_global$class_Foo$member_x
+  exhale acc(local$baz.class_scope_global$class_Foo$member_x, write)
   ret := anonymous$1
   goto label$ret
   label label$ret

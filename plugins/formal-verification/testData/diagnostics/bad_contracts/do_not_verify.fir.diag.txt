@@ -1,5 +1,6 @@
 /do_not_verify.kt:(245,256): info: Generated Viper text for bad_returns:
-method pkg$$global$bad_returns$() returns (ret: Bool)
+method global$fun_bad_returns$fun_take$$return$T_Boolean()
+  returns (ret: Bool)
   ensures ret == true
 {
   ret := false

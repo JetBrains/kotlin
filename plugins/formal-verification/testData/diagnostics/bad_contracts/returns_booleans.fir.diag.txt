@@ -1,5 +1,6 @@
 /returns_booleans.kt:(121,146): info: Generated Viper text for incorrectly_returns_false:
-method pkg$$global$incorrectly_returns_false$() returns (ret: Bool)
+method global$fun_incorrectly_returns_false$fun_take$$return$T_Boolean()
+  returns (ret: Bool)
   ensures ret == true
 {
   ret := false
@@ -7,7 +8,7 @@ method pkg$$global$incorrectly_returns_false$() returns (ret: Bool)
   label label$ret
 }
 
-/returns_booleans.kt:(121,146): warning: Viper verification error: Postcondition of pkg$$global$incorrectly_returns_false$ might not hold. Assertion ret == true might not hold. (<no position>)
+/returns_booleans.kt:(121,146): warning: Viper verification error: Postcondition of global$fun_incorrectly_returns_false$fun_take$$return$T_Boolean might not hold. Assertion ret == true might not hold. (<no position>)
 
 
 /returns_booleans.kt:(121,146): warning: Function incorrectly_returns_false may not satisfy its contract.

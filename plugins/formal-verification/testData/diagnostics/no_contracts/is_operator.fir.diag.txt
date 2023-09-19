@@ -1,5 +1,5 @@
 /is_operator.kt:(4,19): info: Generated Viper text for is_non_nullable:
-method pkg$$global$is_non_nullable$NTkotlin_Int(local$x: dom$Nullable[Int])
+method global$fun_is_non_nullable$fun_take$NT_Int$return$T_Boolean(local$x: dom$Nullable[Int])
   returns (ret: Bool)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
@@ -9,7 +9,7 @@ method pkg$$global$is_non_nullable$NTkotlin_Int(local$x: dom$Nullable[Int])
 }
 
 /is_operator.kt:(67,82): info: Generated Viper text for not_is_nullable:
-method pkg$$global$not_is_nullable$NTkotlin_Int(local$x: dom$Nullable[Int])
+method global$fun_not_is_nullable$fun_take$NT_Int$return$T_Boolean(local$x: dom$Nullable[Int])
   returns (ret: Bool)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
@@ -19,7 +19,7 @@ method pkg$$global$not_is_nullable$NTkotlin_Int(local$x: dom$Nullable[Int])
 }
 
 /is_operator.kt:(135,145): info: Generated Viper text for smart_cast:
-method pkg$$global$smart_cast$NTkotlin_Any(local$x: dom$Nullable[dom$Any])
+method global$fun_smart_cast$fun_take$NT_Any$return$T_Int(local$x: dom$Nullable[dom$Any])
   returns (ret: Int)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))

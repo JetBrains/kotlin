@@ -1,5 +1,5 @@
 /inlining_captured.kt:(136,147): info: Generated Viper text for capture_arg:
-method pkg$$global$capture_arg$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$g: Ref)
+method global$fun_capture_arg$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$g: Ref)
   returns (ret: Int)
   requires acc(local$g.special$function_object_call_counter, write)
   requires special$duplicable(local$g)
@@ -28,17 +28,17 @@ method pkg$$global$capture_arg$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$
 }
 
 /inlining_captured.kt:(207,218): info: Generated Viper text for capture_var:
-method pkg$$global$capture_var$() returns (ret: Int)
+method global$fun_capture_var$fun_take$$return$T_Int() returns (ret: Int)
 {
-  var local$1$x: Int
+  var local1$x: Int
   var anonymous$1: Int
-  local$1$x := 1
+  local1$x := 1
   if (true) {
     var anonymous$2: Int
     var anonymous$3: Int
     anonymous$3 := 0
     if (true) {
-      anonymous$2 := anonymous$3 + local$1$x
+      anonymous$2 := anonymous$3 + local1$x
     }
     anonymous$1 := anonymous$2
     goto inline_label$1$ret
@@ -50,7 +50,7 @@ method pkg$$global$capture_var$() returns (ret: Int)
 }
 
 /inlining_captured.kt:(278,296): info: Generated Viper text for capture_and_shadow:
-method pkg$$global$capture_and_shadow$Tkotlin_Int(local$x: Int)
+method global$fun_capture_and_shadow$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
   var anonymous$1: Int
@@ -59,11 +59,11 @@ method pkg$$global$capture_and_shadow$Tkotlin_Int(local$x: Int)
     var anonymous$3: Int
     anonymous$3 := 0
     if (true) {
-      var local$3$y: Int
-      var local$3$x: Int
-      local$3$y := local$x
-      local$3$x := 1
-      anonymous$2 := anonymous$3 + local$3$x + local$3$y
+      var local3$y: Int
+      var local3$x: Int
+      local3$y := local$x
+      local3$x := 1
+      anonymous$2 := anonymous$3 + local3$x + local3$y
     }
     anonymous$1 := anonymous$2
     goto inline_label$1$ret
@@ -75,20 +75,20 @@ method pkg$$global$capture_and_shadow$Tkotlin_Int(local$x: Int)
 }
 
 /inlining_captured.kt:(499,516): info: Generated Viper text for capture_var_clash:
-method pkg$$global$capture_var_clash$Tkotlin_Int(local$x: Int)
+method global$fun_capture_var_clash$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
   var anonymous$1: Int
   if (true) {
-    var local$2$x: Int
+    var local2$x: Int
     var anonymous$2: Int
     var anonymous$3: Int
-    local$2$x := 1
+    local2$x := 1
     anonymous$3 := 0
     if (true) {
       anonymous$2 := anonymous$3 * local$x
     }
-    anonymous$1 := anonymous$2 + local$2$x
+    anonymous$1 := anonymous$2 + local2$x
     goto inline_label$1$ret
     label inline_label$1$ret
   }
@@ -98,24 +98,24 @@ method pkg$$global$capture_var_clash$Tkotlin_Int(local$x: Int)
 }
 
 /inlining_captured.kt:(574,598): info: Generated Viper text for capture_and_shadow_clash:
-method pkg$$global$capture_and_shadow_clash$Tkotlin_Int(local$x: Int)
+method global$fun_capture_and_shadow_clash$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
   var anonymous$1: Int
   if (true) {
-    var local$2$x: Int
+    var local2$x: Int
     var anonymous$2: Int
     var anonymous$3: Int
-    local$2$x := 1
+    local2$x := 1
     anonymous$3 := 0
     if (true) {
-      var local$3$y: Int
-      var local$3$x: Int
-      local$3$y := local$x
-      local$3$x := 2
-      anonymous$2 := local$3$x + local$3$y + anonymous$3
+      var local3$y: Int
+      var local3$x: Int
+      local3$y := local$x
+      local3$x := 2
+      anonymous$2 := local3$x + local3$y + anonymous$3
     }
-    anonymous$1 := anonymous$2 + local$2$x
+    anonymous$1 := anonymous$2 + local2$x
     goto inline_label$1$ret
     label inline_label$1$ret
   }
@@ -125,40 +125,40 @@ method pkg$$global$capture_and_shadow_clash$Tkotlin_Int(local$x: Int)
 }
 
 /inlining_captured.kt:(708,731): info: Generated Viper text for nested_lambda_shadowing:
-method pkg$$global$nested_lambda_shadowing$Tkotlin_Int(local$x: Int)
+method global$fun_nested_lambda_shadowing$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
   var anonymous$1: Int
   if (true) {
-    var local$2$x: Int
+    var local2$x: Int
     var anonymous$2: Int
     var anonymous$3: Int
-    local$2$x := 1
+    local2$x := 1
     anonymous$3 := 0
     if (true) {
       var anonymous$4: Int
-      var local$3$y: Int
-      var local$3$x: Int
+      var local3$y: Int
+      var local3$x: Int
       if (true) {
-        var local$4$x: Int
+        var local4$x: Int
         var anonymous$5: Int
         var anonymous$6: Int
-        local$4$x := 1
+        local4$x := 1
         anonymous$6 := 0
         if (true) {
-          var local$5$x: Int
-          local$5$x := 3
-          anonymous$5 := local$5$x + anonymous$6
+          var local5$x: Int
+          local5$x := 3
+          anonymous$5 := local5$x + anonymous$6
         }
-        anonymous$4 := anonymous$5 + local$4$x
+        anonymous$4 := anonymous$5 + local4$x
         goto inline_label$3$ret
         label inline_label$3$ret
       }
-      local$3$y := local$x
-      local$3$x := 4
-      anonymous$2 := local$3$x + local$3$y + anonymous$3
+      local3$y := local$x
+      local3$x := 4
+      anonymous$2 := local3$x + local3$y + anonymous$3
     }
-    anonymous$1 := anonymous$2 + local$2$x
+    anonymous$1 := anonymous$2 + local2$x
     goto inline_label$1$ret
     label inline_label$1$ret
   }
@@ -168,7 +168,7 @@ method pkg$$global$nested_lambda_shadowing$Tkotlin_Int(local$x: Int)
 }
 
 /inlining_captured.kt:(1006,1024): info: Generated Viper text for call_double_invoke:
-method pkg$$global$call_double_invoke$Tkotlin_Int(local$x: Int)
+method global$fun_call_double_invoke$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
   var anonymous$1: Int
@@ -179,15 +179,15 @@ method pkg$$global$call_double_invoke$Tkotlin_Int(local$x: Int)
     var anonymous$5: Int
     anonymous$3 := 0
     if (true) {
-      var local$3$x: Int
-      local$3$x := anonymous$3
-      anonymous$2 := local$3$x
+      var local3$x: Int
+      local3$x := anonymous$3
+      anonymous$2 := local3$x
     }
     anonymous$5 := 1
     if (true) {
-      var local$3$x: Int
-      local$3$x := anonymous$5
-      anonymous$4 := local$3$x
+      var local3$x: Int
+      local3$x := anonymous$5
+      anonymous$4 := local3$x
     }
     anonymous$1 := anonymous$4
     goto inline_label$1$ret

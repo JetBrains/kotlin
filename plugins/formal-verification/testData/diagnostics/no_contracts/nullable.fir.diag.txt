@@ -1,38 +1,38 @@
 /nullable.kt:(4,22): info: Generated Viper text for use_nullable_twice:
-method pkg$$global$use_nullable_twice$NTkotlin_Int(local$x: dom$Nullable[Int])
+method global$fun_use_nullable_twice$fun_take$NT_Int$return$NT_Int(local$x: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
-  var local$1$a: dom$Nullable[Int]
-  var local$1$b: dom$Nullable[Int]
+  var local1$a: dom$Nullable[Int]
+  var local1$b: dom$Nullable[Int]
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
-  local$1$a := local$x
-  local$1$b := local$x
-  ret := local$1$a
+  local1$a := local$x
+  local1$b := local$x
+  ret := local1$a
   goto label$ret
   label label$ret
 }
 
 /nullable.kt:(88,111): info: Generated Viper text for pass_nullable_parameter:
-method pkg$$global$pass_nullable_parameter$NTkotlin_Int(local$x: dom$Nullable[Int])
+method global$fun_pass_nullable_parameter$fun_take$NT_Int$return$NT_Int(local$x: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
   var anonymous$1: dom$Nullable[Int]
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
-  anonymous$1 := pkg$$global$use_nullable_twice$NTkotlin_Int(local$x)
+  anonymous$1 := global$fun_use_nullable_twice$fun_take$NT_Int$return$NT_Int(local$x)
   ret := local$x
   goto label$ret
   label label$ret
 }
 
-method pkg$$global$use_nullable_twice$NTkotlin_Int(local$x: dom$Nullable[Int])
+method global$fun_use_nullable_twice$fun_take$NT_Int$return$NT_Int(local$x: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 
 
 /nullable.kt:(175,203): info: Generated Viper text for nullable_nullable_comparison:
-method pkg$$global$nullable_nullable_comparison$NTkotlin_Int$NTkotlin_Int(local$x: dom$Nullable[Int],
+method global$fun_nullable_nullable_comparison$fun_take$NT_Int$NT_Int$return$T_Boolean(local$x: dom$Nullable[Int],
   local$y: dom$Nullable[Int])
   returns (ret: Bool)
 {
@@ -49,7 +49,7 @@ method pkg$$global$nullable_nullable_comparison$NTkotlin_Int$NTkotlin_Int(local$
 }
 
 /nullable.kt:(258,290): info: Generated Viper text for nullable_non_nullable_comparison:
-method pkg$$global$nullable_non_nullable_comparison$NTkotlin_Int$NTkotlin_Int(local$x: dom$Nullable[Int],
+method global$fun_nullable_non_nullable_comparison$fun_take$NT_Int$NT_Int$return$T_Boolean(local$x: dom$Nullable[Int],
   local$y: dom$Nullable[Int])
   returns (ret: Bool)
 {
@@ -62,7 +62,7 @@ method pkg$$global$nullable_non_nullable_comparison$NTkotlin_Int$NTkotlin_Int(lo
 }
 
 /nullable.kt:(345,360): info: Generated Viper text for null_comparison:
-method pkg$$global$null_comparison$NTkotlin_Int(local$x: dom$Nullable[Int])
+method global$fun_null_comparison$fun_take$NT_Int$return$T_Boolean(local$x: dom$Nullable[Int])
   returns (ret: Bool)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))

@@ -1,51 +1,56 @@
 /function_overloading.kt:(30,33): info: Generated Viper text for baz:
-method pkg$$class_Bar$fun_baz$TFoo(this: Ref, local$f: Ref)
+method class_scope_global$class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Foo$return$T_Unit(this: Ref,
+  local$f: Ref)
   returns (ret: dom$Unit)
 {
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Bar())
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$pkg$$class_Foo())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$global$class_Bar())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$global$class_Foo())
   label label$ret
 }
 
 /function_overloading.kt:(55,58): info: Generated Viper text for baz:
-method pkg$$class_Bar$fun_baz$TBar(this: Ref, local$b: Ref)
+method class_scope_global$class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Bar$return$T_Unit(this: Ref,
+  local$b: Ref)
   returns (ret: dom$Unit)
 {
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Bar())
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$b): dom$Type), dom$Type$pkg$$class_Bar())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$global$class_Bar())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$b): dom$Type), dom$Type$global$class_Bar())
   label label$ret
 }
 
 /function_overloading.kt:(79,88): info: Generated Viper text for fakePrint:
-method pkg$$global$fakePrint$TBar(local$b: Ref) returns (ret: dom$Unit)
+method global$fun_fakePrint$fun_take$T_class_global$class_Bar$return$T_Unit(local$b: Ref)
+  returns (ret: dom$Unit)
 {
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$b): dom$Type), dom$Type$pkg$$class_Bar())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$b): dom$Type), dom$Type$global$class_Bar())
   label label$ret
 }
 
 /function_overloading.kt:(106,115): info: Generated Viper text for fakePrint:
-method pkg$$global$fakePrint$TFoo(local$f: Ref) returns (ret: dom$Unit)
+method global$fun_fakePrint$fun_take$T_class_global$class_Foo$return$T_Unit(local$f: Ref)
+  returns (ret: dom$Unit)
 {
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$pkg$$class_Foo())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$global$class_Foo())
   label label$ret
 }
 
 /function_overloading.kt:(133,142): info: Generated Viper text for fakePrint:
-method pkg$$global$fakePrint$Tkotlin_Int(local$value: Int)
+method global$fun_fakePrint$fun_take$T_Int$return$T_Unit(local$value: Int)
   returns (ret: dom$Unit)
 {
   label label$ret
 }
 
 /function_overloading.kt:(164,173): info: Generated Viper text for fakePrint:
-method pkg$$global$fakePrint$Tkotlin_Boolean(local$truth: Bool)
+method global$fun_fakePrint$fun_take$T_Boolean$return$T_Unit(local$truth: Bool)
   returns (ret: dom$Unit)
 {
   label label$ret
 }
 
 /function_overloading.kt:(200,226): info: Generated Viper text for testGlobalScopeOverloading:
-method pkg$$global$testGlobalScopeOverloading$() returns (ret: dom$Unit)
+method global$fun_testGlobalScopeOverloading$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
   var anonymous$1: dom$Unit
   var anonymous$2: dom$Unit
@@ -53,67 +58,77 @@ method pkg$$global$testGlobalScopeOverloading$() returns (ret: dom$Unit)
   var anonymous$4: dom$Unit
   var anonymous$5: Ref
   var anonymous$6: dom$Unit
-  anonymous$1 := pkg$$global$fakePrint$Tkotlin_Int(42)
-  anonymous$2 := pkg$$global$fakePrint$Tkotlin_Boolean(true)
-  anonymous$3 := pkg$$class_Foo$constructor$()
-  anonymous$4 := pkg$$global$fakePrint$TFoo(anonymous$3)
-  anonymous$5 := pkg$$class_Bar$constructor$()
-  anonymous$6 := pkg$$global$fakePrint$TBar(anonymous$5)
+  anonymous$1 := global$fun_fakePrint$fun_take$T_Int$return$T_Unit(42)
+  anonymous$2 := global$fun_fakePrint$fun_take$T_Boolean$return$T_Unit(true)
+  anonymous$3 := class_scope_global$class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
+  anonymous$4 := global$fun_fakePrint$fun_take$T_class_global$class_Foo$return$T_Unit(anonymous$3)
+  anonymous$5 := class_scope_global$class_Bar$constructor$fun_take$$return$T_class_global$class_Bar()
+  anonymous$6 := global$fun_fakePrint$fun_take$T_class_global$class_Bar$return$T_Unit(anonymous$5)
   label label$ret
 }
 
-method pkg$$global$fakePrint$Tkotlin_Int(local$value: Int)
+method global$fun_fakePrint$fun_take$T_Int$return$T_Unit(local$value: Int)
   returns (ret: dom$Unit)
 
 
-method pkg$$global$fakePrint$Tkotlin_Boolean(local$truth: Bool)
+method global$fun_fakePrint$fun_take$T_Boolean$return$T_Unit(local$truth: Bool)
   returns (ret: dom$Unit)
 
 
-method pkg$$global$fakePrint$TFoo(local$f: Ref) returns (ret: dom$Unit)
+method global$fun_fakePrint$fun_take$T_class_global$class_Foo$return$T_Unit(local$f: Ref)
+  returns (ret: dom$Unit)
 
 
-method pkg$$class_Foo$constructor$() returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+method class_scope_global$class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
 
 
-method pkg$$global$fakePrint$TBar(local$b: Ref) returns (ret: dom$Unit)
+method global$fun_fakePrint$fun_take$T_class_global$class_Bar$return$T_Unit(local$b: Ref)
+  returns (ret: dom$Unit)
 
 
-method pkg$$class_Bar$constructor$() returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
+method class_scope_global$class_Bar$constructor$fun_take$$return$T_class_global$class_Bar()
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
 
 
 /function_overloading.kt:(318,346): info: Generated Viper text for testClassFunctionOverloading:
-method pkg$$global$testClassFunctionOverloading$() returns (ret: dom$Unit)
+method global$fun_testClassFunctionOverloading$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
-  var local$1$b: Ref
+  var local1$b: Ref
   var anonymous$1: Ref
   var anonymous$2: Ref
   var anonymous$3: dom$Unit
   var anonymous$4: Ref
   var anonymous$5: dom$Unit
-  anonymous$1 := pkg$$class_Bar$constructor$()
-  local$1$b := anonymous$1
-  anonymous$2 := pkg$$class_Foo$constructor$()
-  anonymous$3 := pkg$$class_Bar$fun_baz$TFoo(local$1$b, anonymous$2)
-  anonymous$4 := pkg$$class_Bar$constructor$()
-  anonymous$5 := pkg$$class_Bar$fun_baz$TBar(local$1$b, anonymous$4)
+  anonymous$1 := class_scope_global$class_Bar$constructor$fun_take$$return$T_class_global$class_Bar()
+  local1$b := anonymous$1
+  anonymous$2 := class_scope_global$class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
+  anonymous$3 := class_scope_global$class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Foo$return$T_Unit(local1$b,
+    anonymous$2)
+  anonymous$4 := class_scope_global$class_Bar$constructor$fun_take$$return$T_class_global$class_Bar()
+  anonymous$5 := class_scope_global$class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Bar$return$T_Unit(local1$b,
+    anonymous$4)
   label label$ret
 }
 
-method pkg$$class_Bar$constructor$() returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
+method class_scope_global$class_Bar$constructor$fun_take$$return$T_class_global$class_Bar()
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
 
 
-method pkg$$class_Bar$fun_baz$TFoo(this: Ref, local$f: Ref)
+method class_scope_global$class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Foo$return$T_Unit(this: Ref,
+  local$f: Ref)
   returns (ret: dom$Unit)
 
 
-method pkg$$class_Foo$constructor$() returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+method class_scope_global$class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
 
 
-method pkg$$class_Bar$fun_baz$TBar(this: Ref, local$b: Ref)
+method class_scope_global$class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Bar$return$T_Unit(this: Ref,
+  local$b: Ref)
   returns (ret: dom$Unit)
-

@@ -1,5 +1,5 @@
 /when.kt:(4,15): info: Generated Viper text for return_when:
-method pkg$$global$return_when$Tkotlin_Boolean$Tkotlin_Boolean$Tkotlin_Boolean(local$a: Bool,
+method global$fun_return_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Bool,
   local$b: Bool, local$c: Bool)
   returns (ret: Int)
 {
@@ -18,7 +18,7 @@ method pkg$$global$return_when$Tkotlin_Boolean$Tkotlin_Boolean$Tkotlin_Boolean(l
 }
 
 /when.kt:(153,164): info: Generated Viper text for when_return:
-method pkg$$global$when_return$Tkotlin_Boolean$Tkotlin_Boolean$Tkotlin_Boolean(local$a: Bool,
+method global$fun_when_return$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Bool,
   local$b: Bool, local$c: Bool)
   returns (ret: Int)
 {
@@ -39,40 +39,40 @@ method pkg$$global$when_return$Tkotlin_Boolean$Tkotlin_Boolean$Tkotlin_Boolean(l
 }
 
 /when.kt:(323,341): info: Generated Viper text for single_branch_when:
-method pkg$$global$single_branch_when$Tkotlin_Boolean(local$a: Bool)
+method global$fun_single_branch_when$fun_take$T_Boolean$return$T_Int(local$a: Bool)
   returns (ret: Int)
 {
-  var local$1$x: Int
-  local$1$x := 1
+  var local1$x: Int
+  local1$x := 1
   if (local$a) {
-    local$1$x := 2
+    local1$x := 2
   }
-  ret := local$1$x
+  ret := local1$x
   goto label$ret
   label label$ret
 }
 
 /when.kt:(431,443): info: Generated Viper text for no_else_when:
-method pkg$$global$no_else_when$Tkotlin_Boolean$Tkotlin_Boolean$Tkotlin_Boolean(local$a: Bool,
+method global$fun_no_else_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Bool,
   local$b: Bool, local$c: Bool)
   returns (ret: Int)
 {
-  var local$1$y: Int
-  local$1$y := 0
+  var local1$y: Int
+  local1$y := 0
   if (local$a) {
-    local$1$y := 1
+    local1$y := 1
   } elseif (local$b) {
-    local$1$y := 2
+    local1$y := 2
   } elseif (local$c) {
-    local$1$y := 3
+    local1$y := 3
   }
-  ret := local$1$y
+  ret := local1$y
   goto label$ret
   label label$ret
 }
 
 /when.kt:(595,616): info: Generated Viper text for when_with_subject_var:
-method pkg$$global$when_with_subject_var$Tkotlin_Int(local$x: Int)
+method global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
   var anonymous$1: Int
@@ -88,12 +88,12 @@ method pkg$$global$when_with_subject_var$Tkotlin_Int(local$x: Int)
 }
 
 /when.kt:(716,738): info: Generated Viper text for when_with_subject_call:
-method pkg$$global$when_with_subject_call$Tkotlin_Int(local$x: Int)
+method global$fun_when_with_subject_call$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
   var anonymous$1: Int
   var anonymous$2: Int
-  anonymous$1 := pkg$$global$when_with_subject_var$Tkotlin_Int(local$x)
+  anonymous$1 := global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(local$x)
   if (anonymous$1 == 1) {
     anonymous$2 := 2
   } elseif (anonymous$1 == 2) {
@@ -101,7 +101,7 @@ method pkg$$global$when_with_subject_call$Tkotlin_Int(local$x: Int)
   } else {
     var anonymous$3: Int
     var anonymous$4: Int
-    anonymous$3 := pkg$$global$when_with_subject_var$Tkotlin_Int(0)
+    anonymous$3 := global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(0)
     if (anonymous$3 == 3) {
       anonymous$4 := 4
     } elseif (anonymous$3 == 4) {
@@ -115,12 +115,12 @@ method pkg$$global$when_with_subject_call$Tkotlin_Int(local$x: Int)
   label label$ret
 }
 
-method pkg$$global$when_with_subject_var$Tkotlin_Int(local$x: Int)
+method global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 
 
 /when.kt:(962,972): info: Generated Viper text for empty_when:
-method pkg$$global$empty_when$() returns (ret: Int)
+method global$fun_empty_when$fun_take$$return$T_Int() returns (ret: Int)
 {
   ret := 1
   goto label$ret
@@ -128,25 +128,26 @@ method pkg$$global$empty_when$() returns (ret: Int)
 }
 
 /when.kt:(1015,1028): info: Generated Viper text for unused_result:
-method pkg$$global$unused_result$() returns (ret: Int)
+method global$fun_unused_result$fun_take$$return$T_Int() returns (ret: Int)
 {
-  var local$1$x: Int
+  var local1$x: Int
   var anonymous$1: Int
   var anonymous$2: Int
   anonymous$2 := 5
   anonymous$1 := 0
-  local$1$x := anonymous$1
-  ret := local$1$x
+  local1$x := anonymous$1
+  ret := local1$x
   goto label$ret
   label label$ret
 }
 
 /when.kt:(1222,1229): info: Generated Viper text for when_is:
-method pkg$$global$when_is$TFoo(local$x: Ref) returns (ret: Bool)
+method global$fun_when_is$fun_take$T_class_global$class_Foo$return$T_Boolean(local$x: Ref)
+  returns (ret: Bool)
 {
   var anonymous$1: Bool
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg$$class_Foo())
-  if (dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg$$class_Bar())) {
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$global$class_Foo())
+  if (dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$global$class_Bar())) {
     anonymous$1 := true
   } else {
     anonymous$1 := false}

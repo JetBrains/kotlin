@@ -1,5 +1,5 @@
 /boolean_logic.kt:(4,12): info: Generated Viper text for negation:
-method pkg$$global$negation$Tkotlin_Boolean(local$x: Bool)
+method global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x: Bool)
   returns (ret: Bool)
 {
   ret := !local$x
@@ -8,7 +8,7 @@ method pkg$$global$negation$Tkotlin_Boolean(local$x: Bool)
 }
 
 /boolean_logic.kt:(56,67): info: Generated Viper text for conjunction:
-method pkg$$global$conjunction$Tkotlin_Boolean$Tkotlin_Boolean(local$x: Bool,
+method global$fun_conjunction$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Bool,
   local$y: Bool)
   returns (ret: Bool)
 {
@@ -23,16 +23,16 @@ method pkg$$global$conjunction$Tkotlin_Boolean$Tkotlin_Boolean(local$x: Bool,
 }
 
 /boolean_logic.kt:(127,151): info: Generated Viper text for conjunction_side_effects:
-method pkg$$global$conjunction_side_effects$Tkotlin_Boolean$Tkotlin_Boolean(local$x: Bool,
+method global$fun_conjunction_side_effects$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Bool,
   local$y: Bool)
   returns (ret: Bool)
 {
   var anonymous$1: Bool
   var anonymous$2: Bool
-  anonymous$1 := pkg$$global$negation$Tkotlin_Boolean(local$x)
+  anonymous$1 := global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x)
   if (anonymous$1) {
     var anonymous$3: Bool
-    anonymous$3 := pkg$$global$negation$Tkotlin_Boolean(local$y)
+    anonymous$3 := global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$y)
     anonymous$2 := anonymous$3
   } else {
     anonymous$2 := false}
@@ -41,12 +41,12 @@ method pkg$$global$conjunction_side_effects$Tkotlin_Boolean$Tkotlin_Boolean(loca
   label label$ret
 }
 
-method pkg$$global$negation$Tkotlin_Boolean(local$x: Bool)
+method global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x: Bool)
   returns (ret: Bool)
 
 
 /boolean_logic.kt:(324,335): info: Generated Viper text for disjunction:
-method pkg$$global$disjunction$Tkotlin_Boolean$Tkotlin_Boolean(local$x: Bool,
+method global$fun_disjunction$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Bool,
   local$y: Bool)
   returns (ret: Bool)
 {

@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.formver.embeddings.callables
 
 import org.jetbrains.kotlin.formver.conversion.AnonymousName
 import org.jetbrains.kotlin.formver.conversion.SpecialName
-import org.jetbrains.kotlin.formver.embeddings.FunctionTypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.LegacyUnspecifiedFunctionTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.viper.ast.BuiltinFunction
 import org.jetbrains.kotlin.formver.viper.ast.Declaration
 import org.jetbrains.kotlin.formver.viper.ast.Type
 
 object DuplicableFunction : BuiltinFunction(SpecialName("duplicable")) {
-    private val thisArg = VariableEmbedding(AnonymousName(0), FunctionTypeEmbedding)
+    private val thisArg = VariableEmbedding(AnonymousName(0), LegacyUnspecifiedFunctionTypeEmbedding)
 
     override val formalArgs: List<Declaration.LocalVarDecl> = listOf(thisArg.toLocalVarDecl())
     override val retType: Type = Type.Bool

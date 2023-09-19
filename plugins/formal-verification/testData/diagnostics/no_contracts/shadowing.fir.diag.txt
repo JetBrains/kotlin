@@ -1,63 +1,64 @@
 /shadowing.kt:(4,16): info: Generated Viper text for shadow_local:
-method pkg$$global$shadow_local$() returns (ret: dom$Unit)
+method global$fun_shadow_local$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
-  var local$1$foo: Int
-  var local$1$x: Int
-  local$1$x := 0
-  if (local$1$x == 0) {
-    var local$2$x: Int
-    local$1$foo := local$1$x
-    local$2$x := 1
-    local$1$foo := local$2$x
+  var local1$foo: Int
+  var local1$x: Int
+  local1$x := 0
+  if (local1$x == 0) {
+    var local2$x: Int
+    local1$foo := local1$x
+    local2$x := 1
+    local1$foo := local2$x
   } else {
-    var local$2$x: Int
-    local$1$foo := local$1$x
-    local$2$x := 2
-    local$1$foo := local$2$x
+    var local2$x: Int
+    local1$foo := local1$x
+    local2$x := 2
+    local1$foo := local2$x
   }
-  local$1$foo := local$1$x
+  local1$foo := local1$x
   label label$ret
 }
 
 /shadowing.kt:(214,226): info: Generated Viper text for shadow_param:
-method pkg$$global$shadow_param$Tkotlin_Int(local$x: Int)
+method global$fun_shadow_param$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local$1$foo: Int
-  var local$1$x: Int
-  local$1$foo := local$x
-  local$1$x := 0
-  local$1$foo := local$1$x
+  var local1$foo: Int
+  var local1$x: Int
+  local1$foo := local$x
+  local1$x := 0
+  local1$foo := local1$x
   label label$ret
 }
 
 /shadowing.kt:(305,318): info: Generated Viper text for shadow_nested:
-method pkg$$global$shadow_nested$Tkotlin_Int(local$x: Int)
+method global$fun_shadow_nested$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local$1$foo: Int
-  var local$1$x: Int
-  local$1$foo := local$x
-  local$1$x := 0
-  local$1$foo := local$1$x
+  var local1$foo: Int
+  var local1$x: Int
+  local1$foo := local$x
+  local1$x := 0
+  local1$foo := local1$x
   if (true) {
-    var local$2$x: Int
+    var local2$x: Int
     var anonymous$1: Bool
-    local$1$foo := local$1$x
-    local$2$x := 1
-    local$1$foo := local$2$x
+    local1$foo := local1$x
+    local2$x := 1
+    local1$foo := local2$x
     label label$continue$1
     anonymous$1 := true
     while (anonymous$1) {
-      var local$3$x: Int
-      local$1$foo := local$2$x
-      local$3$x := 2
-      local$1$foo := local$3$x
+      var local3$x: Int
+      local1$foo := local2$x
+      local3$x := 2
+      local1$foo := local3$x
       anonymous$1 := true
     }
     label label$break$1
-    local$1$foo := local$2$x
+    local1$foo := local2$x
   }
-  local$1$foo := local$1$x
+  local1$foo := local1$x
   label label$ret
 }

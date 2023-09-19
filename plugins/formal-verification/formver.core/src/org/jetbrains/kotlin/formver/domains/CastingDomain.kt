@@ -45,7 +45,7 @@ object CastingDomain : BuiltinDomain("Casting") {
     // Prefer this cast method if you have access to a `TypeEmbedding`.
     // An example of where this is not the case is when defining generic domain axioms.
     fun cast(exp: Exp, newType: TypeEmbedding) =
-        cast(exp, newType.kotlinType, newType.viperType)
+        cast(exp, newType.runtimeType, newType.viperType)
 
     override val functions: List<DomainFunc> = listOf(castFunc)
 

@@ -1,112 +1,117 @@
 /classes_getters.kt:(195,205): info: Generated Viper text for testGetter:
-field pkg$$class_IntWrapper$member_n: Int
+field class_scope_global$class_IntWrapper$member_n: Int
 
-method pkg$$global$testGetter$() returns (ret: dom$Unit)
+method global$fun_testGetter$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
-  var local$1$wrapper: Ref
+  var local1$wrapper: Ref
   var anonymous$1: Ref
-  var local$1$succ: Int
+  var local1$succ: Int
   var anonymous$2: Int
-  anonymous$1 := pkg$$class_IntWrapper$constructor$Tkotlin_Int(42)
-  local$1$wrapper := anonymous$1
-  anonymous$2 := pkg$$class_IntWrapper$getter_succ(local$1$wrapper)
-  local$1$succ := anonymous$2
+  anonymous$1 := class_scope_global$class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(42)
+  local1$wrapper := anonymous$1
+  anonymous$2 := pkg$special$global$getter_accessor(local1$wrapper)
+  local1$succ := anonymous$2
   label label$ret
 }
 
-method pkg$$class_IntWrapper$constructor$Tkotlin_Int(local$n: Int)
+method class_scope_global$class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(local$n: Int)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_IntWrapper())
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_IntWrapper())
 
 
-method pkg$$class_IntWrapper$getter_succ(this: Ref) returns (ret: Int)
+method pkg$special$global$getter_accessor(this: Ref) returns (ret: Int)
 
 
 /classes_getters.kt:(278,295): info: Generated Viper text for testCascadeGetter:
-field pkg$$class_Foo$member_a: Int
+field class_scope_global$class_Foo$member_a: Int
 
-field pkg$$class_Foo$member_b: Int
+field class_scope_global$class_Foo$member_b: Int
 
-field pkg$$class_Bar$member_f: Ref
+field class_scope_global$class_Bar$member_f: Ref
 
-method pkg$$global$testCascadeGetter$() returns (ret: dom$Unit)
+method global$fun_testCascadeGetter$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
-  var local$1$foo: Ref
+  var local1$foo: Ref
   var anonymous$1: Ref
-  var local$1$bar: Ref
+  var local1$bar: Ref
   var anonymous$2: Ref
-  var local$1$bfa: Int
+  var local1$bfa: Int
   var anonymous$3: Ref
   var anonymous$4: Int
-  var local$1$bfb: Int
+  var local1$bfb: Int
   var anonymous$5: Ref
   var anonymous$6: Int
-  anonymous$1 := pkg$$class_Foo$constructor$Tkotlin_Int$Tkotlin_Int(10, 20)
-  local$1$foo := anonymous$1
-  anonymous$2 := pkg$$class_Bar$constructor$TFoo(local$1$foo)
-  local$1$bar := anonymous$2
-  inhale acc(local$1$bar.pkg$$class_Bar$member_f, write)
-  anonymous$3 := local$1$bar.pkg$$class_Bar$member_f
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$3): dom$Type), dom$Type$pkg$$class_Foo())
-  exhale acc(local$1$bar.pkg$$class_Bar$member_f, write)
-  inhale acc(anonymous$3.pkg$$class_Foo$member_a, write)
-  anonymous$4 := anonymous$3.pkg$$class_Foo$member_a
-  exhale acc(anonymous$3.pkg$$class_Foo$member_a, write)
-  local$1$bfa := anonymous$4
-  inhale acc(local$1$bar.pkg$$class_Bar$member_f, write)
-  anonymous$5 := local$1$bar.pkg$$class_Bar$member_f
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$5): dom$Type), dom$Type$pkg$$class_Foo())
-  exhale acc(local$1$bar.pkg$$class_Bar$member_f, write)
-  inhale acc(anonymous$5.pkg$$class_Foo$member_b, write)
-  anonymous$6 := anonymous$5.pkg$$class_Foo$member_b
-  exhale acc(anonymous$5.pkg$$class_Foo$member_b, write)
-  local$1$bfb := anonymous$6
+  anonymous$1 := class_scope_global$class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
+    20)
+  local1$foo := anonymous$1
+  anonymous$2 := class_scope_global$class_Bar$constructor$fun_take$T_class_global$class_Foo$return$T_class_global$class_Bar(local1$foo)
+  local1$bar := anonymous$2
+  inhale acc(local1$bar.class_scope_global$class_Bar$member_f, write)
+  anonymous$3 := local1$bar.class_scope_global$class_Bar$member_f
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$3): dom$Type), dom$Type$global$class_Foo())
+  exhale acc(local1$bar.class_scope_global$class_Bar$member_f, write)
+  inhale acc(anonymous$3.class_scope_global$class_Foo$member_a, write)
+  anonymous$4 := anonymous$3.class_scope_global$class_Foo$member_a
+  exhale acc(anonymous$3.class_scope_global$class_Foo$member_a, write)
+  local1$bfa := anonymous$4
+  inhale acc(local1$bar.class_scope_global$class_Bar$member_f, write)
+  anonymous$5 := local1$bar.class_scope_global$class_Bar$member_f
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$5): dom$Type), dom$Type$global$class_Foo())
+  exhale acc(local1$bar.class_scope_global$class_Bar$member_f, write)
+  inhale acc(anonymous$5.class_scope_global$class_Foo$member_b, write)
+  anonymous$6 := anonymous$5.class_scope_global$class_Foo$member_b
+  exhale acc(anonymous$5.class_scope_global$class_Foo$member_b, write)
+  local1$bfb := anonymous$6
   label label$ret
 }
 
-method pkg$$class_Foo$constructor$Tkotlin_Int$Tkotlin_Int(local$a: Int, local$b: Int)
+method class_scope_global$class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(local$a: Int,
+  local$b: Int)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
 
 
-method pkg$$class_Bar$constructor$TFoo(local$f: Ref) returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Bar())
+method class_scope_global$class_Bar$constructor$fun_take$T_class_global$class_Foo$return$T_class_global$class_Bar(local$f: Ref)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
 
 
 /classes_getters.kt:(401,425): info: Generated Viper text for testCascadeCustomGetters:
-field pkg$$class_IntWrapper$member_n: Int
+field class_scope_global$class_IntWrapper$member_n: Int
 
-field pkg$$class_IntWrapperContainer$member_i: Ref
+field class_scope_global$class_IntWrapperContainer$member_i: Ref
 
-method pkg$$global$testCascadeCustomGetters$() returns (ret: dom$Unit)
+method global$fun_testCascadeCustomGetters$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
-  var local$1$wrapper: Ref
+  var local1$wrapper: Ref
   var anonymous$1: Ref
   var anonymous$2: Ref
-  var local$1$succ: Int
+  var local1$succ: Int
   var anonymous$3: Ref
   var anonymous$4: Int
-  anonymous$1 := pkg$$class_IntWrapper$constructor$Tkotlin_Int(42)
-  anonymous$2 := pkg$$class_IntWrapperContainer$constructor$TIntWrapper(anonymous$1)
-  local$1$wrapper := anonymous$2
-  inhale acc(local$1$wrapper.pkg$$class_IntWrapperContainer$member_i, write)
-  anonymous$3 := local$1$wrapper.pkg$$class_IntWrapperContainer$member_i
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$3): dom$Type), dom$Type$pkg$$class_IntWrapper())
-  exhale acc(local$1$wrapper.pkg$$class_IntWrapperContainer$member_i, write)
-  anonymous$4 := pkg$$class_IntWrapper$getter_succ(anonymous$3)
-  local$1$succ := anonymous$4
+  anonymous$1 := class_scope_global$class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(42)
+  anonymous$2 := class_scope_global$class_IntWrapperContainer$constructor$fun_take$T_class_global$class_IntWrapper$return$T_class_global$class_IntWrapperContainer(anonymous$1)
+  local1$wrapper := anonymous$2
+  inhale acc(local1$wrapper.class_scope_global$class_IntWrapperContainer$member_i, write)
+  anonymous$3 := local1$wrapper.class_scope_global$class_IntWrapperContainer$member_i
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$3): dom$Type), dom$Type$global$class_IntWrapper())
+  exhale acc(local1$wrapper.class_scope_global$class_IntWrapperContainer$member_i, write)
+  anonymous$4 := pkg$special$global$getter_accessor(anonymous$3)
+  local1$succ := anonymous$4
   label label$ret
 }
 
-method pkg$$class_IntWrapperContainer$constructor$TIntWrapper(local$i: Ref)
+method class_scope_global$class_IntWrapperContainer$constructor$fun_take$T_class_global$class_IntWrapper$return$T_class_global$class_IntWrapperContainer(local$i: Ref)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_IntWrapperContainer())
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_IntWrapperContainer())
 
 
-method pkg$$class_IntWrapper$constructor$Tkotlin_Int(local$n: Int)
+method class_scope_global$class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(local$n: Int)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_IntWrapper())
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_IntWrapper())
 
 
-method pkg$$class_IntWrapper$getter_succ(this: Ref) returns (ret: Int)
-
+method pkg$special$global$getter_accessor(this: Ref) returns (ret: Int)

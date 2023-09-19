@@ -1,11 +1,12 @@
 /basic.kt:(4,15): info: Generated Viper text for return_unit:
-method pkg$$global$return_unit$() returns (ret: dom$Unit)
+method global$fun_return_unit$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
   label label$ret
 }
 
 /basic.kt:(25,35): info: Generated Viper text for return_int:
-method pkg$$global$return_int$() returns (ret: Int)
+method global$fun_return_int$fun_take$$return$T_Int() returns (ret: Int)
 {
   ret := 0
   goto label$ret
@@ -13,14 +14,14 @@ method pkg$$global$return_int$() returns (ret: Int)
 }
 
 /basic.kt:(60,80): info: Generated Viper text for take_int_return_unit:
-method pkg$$global$take_int_return_unit$Tkotlin_Int(local$x: Int)
+method global$fun_take_int_return_unit$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 {
   label label$ret
 }
 
 /basic.kt:(126,145): info: Generated Viper text for take_int_return_int:
-method pkg$$global$take_int_return_int$Tkotlin_Int(local$x: Int)
+method global$fun_take_int_return_int$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
   ret := local$x
@@ -29,7 +30,7 @@ method pkg$$global$take_int_return_int$Tkotlin_Int(local$x: Int)
 }
 
 /basic.kt:(176,200): info: Generated Viper text for take_int_return_int_expr:
-method pkg$$global$take_int_return_int_expr$Tkotlin_Int(local$x: Int)
+method global$fun_take_int_return_int_expr$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
   ret := local$x
@@ -38,20 +39,22 @@ method pkg$$global$take_int_return_int_expr$Tkotlin_Int(local$x: Int)
 }
 
 /basic.kt:(222,242): info: Generated Viper text for with_int_declaration:
-method pkg$$global$with_int_declaration$() returns (ret: Int)
+method global$fun_with_int_declaration$fun_take$$return$T_Int()
+  returns (ret: Int)
 {
-  var local$1$x: Int
-  local$1$x := 0
-  ret := local$1$x
+  var local1$x: Int
+  local1$x := 0
+  ret := local1$x
   goto label$ret
   label label$ret
 }
 
 /basic.kt:(285,299): info: Generated Viper text for int_assignment:
-method pkg$$global$int_assignment$() returns (ret: dom$Unit)
+method global$fun_int_assignment$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
-  var local$1$x: Int
-  local$1$x := 0
-  local$1$x := 1
+  var local1$x: Int
+  local1$x := 0
+  local1$x := 1
   label label$ret
 }

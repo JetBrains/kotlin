@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 class ProgramConverter(val session: FirSession, override val config: PluginConfiguration, override val errorCollector: ErrorCollector) :
     ProgramConversionContext {
     private val methods: MutableMap<MangledName, FunctionEmbedding> = mutableMapOf()
-    private val classes: MutableMap<ClassName, ClassTypeEmbedding> = mutableMapOf()
+    private val classes: MutableMap<MangledName, ClassTypeEmbedding> = mutableMapOf()
     private val fields: MutableMap<MangledName, FieldEmbedding> = mutableMapOf()
 
     val program: Program
@@ -48,7 +48,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         )
 
     fun registerForVerification(declaration: FirSimpleFunction) {
-        val signature = embedSignature(declaration.symbol)
+        val signature = embedFullSignature(declaration.symbol)
         // Note: it is important that `viperMethod` is only set later, as we need to
         // place the embedding in the map before processing the body.
         val embedding = embedUserFunction(declaration.symbol, signature)
@@ -63,8 +63,8 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     }
 
     override fun embedFunction(symbol: FirFunctionSymbol<*>): FunctionEmbedding =
-        methods.getOrPut(symbol.embedName()) {
-            val signature = embedSignature(symbol)
+        methods.getOrPut(symbol.embedName(this)) {
+            val signature = embedFullSignature(symbol)
             val embedding = UserFunctionEmbedding(processCallable(symbol, signature))
             embedding.viperMethod = convertMethodWithoutBody(symbol, signature)
             embedding
@@ -91,7 +91,13 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         type.isInt -> IntTypeEmbedding
         type.isBoolean -> BooleanTypeEmbedding
         type.isNothing -> NothingTypeEmbedding
-        type.isSomeFunctionType(session) -> FunctionTypeEmbedding
+        type.isSomeFunctionType(session) -> {
+            val receiverType: TypeEmbedding? = type.receiverType(session)?.let { embedType(it) }
+            val paramTypes: List<TypeEmbedding> = type.valueParameterTypesWithoutReceivers(session).map(::embedType)
+            val returnType: TypeEmbedding = embedType(type.returnType(session))
+            val signature = CallableSignatureData(receiverType, paramTypes, returnType)
+            FunctionTypeEmbedding(signature)
+        }
         type.isNullable -> NullableTypeEmbedding(embedType(type.withNullability(ConeNullability.NOT_NULL, session.typeContext)))
         type.isAny -> AnyTypeEmbedding
         type is ConeClassLikeType -> {
@@ -105,7 +111,10 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         else -> unimplementedTypeEmbedding(type)
     }
 
-    override fun getField(field: FirPropertySymbol): FieldEmbedding? = fields[field.callableId.embedClassMemberName()]
+    // Note: keep in mind that this function is necessary to resolve the name of the function!
+    override fun embedType(symbol: FirFunctionSymbol<*>): TypeEmbedding = FunctionTypeEmbedding(embedFunctionSignature(symbol).asData)
+
+    override fun getField(field: FirPropertySymbol): FieldEmbedding? = fields[field.callableId.embedMemberPropertyName()]
 
     private var nextAnonVarNumber = 0
     override fun newAnonName(): AnonymousName = AnonymousName(++nextAnonVarNumber)
@@ -113,18 +122,21 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     private var nextWhileIndex = 0
     override fun newWhileIndex() = ++nextWhileIndex
 
-    private fun embedSignature(symbol: FirFunctionSymbol<*>): FullNamedFunctionSignature {
+    private fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature {
         val retType = symbol.resolvedReturnTypeRef.type
-        val params = symbol.valueParameterSymbols.map {
-            VariableEmbedding(it.embedName(), embedType(it.resolvedReturnType))
-        }
         val receiverType = symbol.receiverType
-        val receiver = receiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it)) }
-        val subSignature = object : NamedFunctionSignature {
-            override val name = symbol.embedName()
-            override val receiver = receiver
-            override val params = params
+        return object : FunctionSignature {
+            override val receiver = receiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it)) }
+            override val params = symbol.valueParameterSymbols.map {
+                VariableEmbedding(it.embedName(), embedType(it.resolvedReturnType))
+            }
             override val returnType = embedType(retType)
+        }
+    }
+
+    private fun embedFullSignature(symbol: FirFunctionSymbol<*>): FullNamedFunctionSignature {
+        val subSignature = object : NamedFunctionSignature, FunctionSignature by embedFunctionSignature(symbol) {
+            override val name = symbol.embedName(this@ProgramConverter)
         }
         val contractVisitor = ContractDescriptionConversionVisitor(this@ProgramConverter, subSignature)
 
@@ -152,8 +164,8 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             .filterIsInstance<FirPropertySymbol>()
             .filter { it.hasBackingField }
             .forEach {
-                val fieldName = it.callableId.embedClassMemberName()
-                fields[fieldName] = FieldEmbedding(it.callableId.embedClassMemberName(), embedType(it.resolvedReturnType))
+                val fieldName = it.callableId.embedMemberPropertyName()
+                fields[fieldName] = FieldEmbedding(it.callableId.embedMemberPropertyName(), embedType(it.resolvedReturnType))
             }
     }
 

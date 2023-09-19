@@ -1,5 +1,5 @@
 /loop_invariants.kt:(128,152): info: Generated Viper text for dynamic_lambda_invariant:
-method pkg$$global$dynamic_lambda_invariant$Tkotlin_Function0__kotlin_Int__(local$f: Ref)
+method global$fun_dynamic_lambda_invariant$fun_take$fun_take$$return$T_Int$return$T_Unit(local$f: Ref)
   returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
   requires special$duplicable(local$f)
@@ -11,7 +11,7 @@ method pkg$$global$dynamic_lambda_invariant$Tkotlin_Function0__kotlin_Int__(loca
   var anonymous$2: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   label label$continue$1
-  anonymous$2 := pkg$$global$returns_boolean$()
+  anonymous$2 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
   anonymous$1 := anonymous$2
   while (anonymous$1)
     invariant acc(local$f.special$function_object_call_counter, write)
@@ -21,18 +21,19 @@ method pkg$$global$dynamic_lambda_invariant$Tkotlin_Function0__kotlin_Int__(loca
     var anonymous$3: Int
     var anonymous$4: Bool
     special$invoke_function_object(local$f)
-    anonymous$4 := pkg$$global$returns_boolean$()
+    anonymous$4 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
     anonymous$1 := anonymous$4
   }
   label label$break$1
   label label$ret
 }
 
-method pkg$$global$returns_boolean$() returns (ret: Bool)
+method global$fun_returns_boolean$fun_take$$return$T_Boolean()
+  returns (ret: Bool)
 
 
 /loop_invariants.kt:(226,245): info: Generated Viper text for function_assignment:
-method pkg$$global$function_assignment$Tkotlin_Function0__kotlin_Int__(local$f: Ref)
+method global$fun_function_assignment$fun_take$fun_take$$return$T_Int$return$T_Unit(local$f: Ref)
   returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
   requires special$duplicable(local$f)
@@ -40,13 +41,13 @@ method pkg$$global$function_assignment$Tkotlin_Function0__kotlin_Int__(local$f: 
   ensures old(local$f.special$function_object_call_counter) <=
     local$f.special$function_object_call_counter
 {
-  var local$1$g: Ref
+  var local1$g: Ref
   var anonymous$1: Bool
   var anonymous$2: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  local$1$g := local$f
+  local1$g := local$f
   label label$continue$1
-  anonymous$2 := pkg$$global$returns_boolean$()
+  anonymous$2 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
   anonymous$1 := anonymous$2
   while (anonymous$1)
     invariant acc(local$f.special$function_object_call_counter, write)
@@ -55,19 +56,20 @@ method pkg$$global$function_assignment$Tkotlin_Function0__kotlin_Int__(local$f: 
   {
     var anonymous$3: Int
     var anonymous$4: Bool
-    special$invoke_function_object(local$1$g)
-    anonymous$4 := pkg$$global$returns_boolean$()
+    special$invoke_function_object(local1$g)
+    anonymous$4 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
     anonymous$1 := anonymous$4
   }
   label label$break$1
   label label$ret
 }
 
-method pkg$$global$returns_boolean$() returns (ret: Bool)
+method global$fun_returns_boolean$fun_take$$return$T_Boolean()
+  returns (ret: Bool)
 
 
 /loop_invariants.kt:(333,364): info: Generated Viper text for conditional_function_assignment:
-method pkg$$global$conditional_function_assignment$Tkotlin_Boolean$Tkotlin_Function0__kotlin_Int__$Tkotlin_Function0__kotlin_Int__(local$b: Bool,
+method global$fun_conditional_function_assignment$fun_take$T_Boolean$fun_take$$return$T_Int$fun_take$$return$T_Int$return$T_Unit(local$b: Bool,
   local$f: Ref, local$h: Ref)
   returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
@@ -81,7 +83,7 @@ method pkg$$global$conditional_function_assignment$Tkotlin_Boolean$Tkotlin_Funct
   ensures old(local$h.special$function_object_call_counter) <=
     local$h.special$function_object_call_counter
 {
-  var local$1$g: Ref
+  var local1$g: Ref
   var anonymous$1: Ref
   var anonymous$2: Bool
   var anonymous$3: Bool
@@ -91,9 +93,9 @@ method pkg$$global$conditional_function_assignment$Tkotlin_Boolean$Tkotlin_Funct
     anonymous$1 := local$f
   } else {
     anonymous$1 := local$h}
-  local$1$g := anonymous$1
+  local1$g := anonymous$1
   label label$continue$1
-  anonymous$3 := pkg$$global$returns_boolean$()
+  anonymous$3 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
   anonymous$2 := anonymous$3
   while (anonymous$2)
     invariant acc(local$f.special$function_object_call_counter, write)
@@ -105,13 +107,13 @@ method pkg$$global$conditional_function_assignment$Tkotlin_Boolean$Tkotlin_Funct
   {
     var anonymous$4: Int
     var anonymous$5: Bool
-    special$invoke_function_object(local$1$g)
-    anonymous$5 := pkg$$global$returns_boolean$()
+    special$invoke_function_object(local1$g)
+    anonymous$5 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
     anonymous$2 := anonymous$5
   }
   label label$break$1
   label label$ret
 }
 
-method pkg$$global$returns_boolean$() returns (ret: Bool)
-
+method global$fun_returns_boolean$fun_take$$return$T_Boolean()
+  returns (ret: Bool)

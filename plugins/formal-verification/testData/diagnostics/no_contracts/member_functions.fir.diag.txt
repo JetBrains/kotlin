@@ -1,67 +1,72 @@
 /member_functions.kt:(32,42): info: Generated Viper text for member_fun:
-field pkg$$class_Foo$member_x: Int
+field class_scope_global$class_Foo$member_x: Int
 
-method pkg$$class_Foo$fun_member_fun$(this: Ref) returns (ret: Int)
+method class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
+  returns (ret: Int)
 {
   var anonymous$1: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
-  inhale acc(this.pkg$$class_Foo$member_x, write)
-  anonymous$1 := this.pkg$$class_Foo$member_x
-  exhale acc(this.pkg$$class_Foo$member_x, write)
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$global$class_Foo())
+  inhale acc(this.class_scope_global$class_Foo$member_x, write)
+  anonymous$1 := this.class_scope_global$class_Foo$member_x
+  exhale acc(this.class_scope_global$class_Foo$member_x, write)
   ret := anonymous$1
   goto label$ret
   label label$ret
 }
 
 /member_functions.kt:(84,99): info: Generated Viper text for call_member_fun:
-field pkg$$class_Foo$member_x: Int
+field class_scope_global$class_Foo$member_x: Int
 
-method pkg$$class_Foo$fun_call_member_fun$(this: Ref)
+method class_scope_global$class_Foo$fun_call_member_fun$fun_take$T_class_global$class_Foo$return$T_Unit(this: Ref)
   returns (ret: dom$Unit)
 {
   var anonymous$1: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
-  anonymous$1 := pkg$$class_Foo$fun_member_fun$(this)
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$global$class_Foo())
+  anonymous$1 := class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this)
   label label$ret
 }
 
-method pkg$$class_Foo$fun_member_fun$(this: Ref) returns (ret: Int)
+method class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
+  returns (ret: Int)
 
 
 /member_functions.kt:(140,152): info: Generated Viper text for sibling_call:
-field pkg$$class_Foo$member_x: Int
+field class_scope_global$class_Foo$member_x: Int
 
-method pkg$$class_Foo$fun_sibling_call$TFoo(this: Ref, local$other: Ref)
+method class_scope_global$class_Foo$fun_sibling_call$fun_take$T_class_global$class_Foo$T_class_global$class_Foo$return$T_Unit(this: Ref,
+  local$other: Ref)
   returns (ret: dom$Unit)
 {
   var anonymous$1: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$$class_Foo())
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$other): dom$Type), dom$Type$pkg$$class_Foo())
-  anonymous$1 := pkg$$class_Foo$fun_member_fun$(local$other)
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$global$class_Foo())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$other): dom$Type), dom$Type$global$class_Foo())
+  anonymous$1 := class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(local$other)
   label label$ret
 }
 
-method pkg$$class_Foo$fun_member_fun$(this: Ref) returns (ret: Int)
+method class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
+  returns (ret: Int)
 
 
 /member_functions.kt:(207,228): info: Generated Viper text for outer_member_fun_call:
-field pkg$$class_Foo$member_x: Int
+field class_scope_global$class_Foo$member_x: Int
 
-method pkg$$global$outer_member_fun_call$() returns (ret: dom$Unit)
+method global$fun_outer_member_fun_call$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
-  var local$1$f: Ref
+  var local1$f: Ref
   var anonymous$1: Ref
   var anonymous$2: Int
-  anonymous$1 := pkg$$class_Foo$constructor$Tkotlin_Int(3)
-  local$1$f := anonymous$1
-  anonymous$2 := pkg$$class_Foo$fun_member_fun$(local$1$f)
+  anonymous$1 := class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(3)
+  local1$f := anonymous$1
+  anonymous$2 := class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(local1$f)
   label label$ret
 }
 
-method pkg$$class_Foo$constructor$Tkotlin_Int(local$x: Int)
+method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$$class_Foo())
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
 
 
-method pkg$$class_Foo$fun_member_fun$(this: Ref) returns (ret: Int)
-
+method class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
+  returns (ret: Int)

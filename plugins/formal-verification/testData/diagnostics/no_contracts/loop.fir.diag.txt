@@ -1,15 +1,15 @@
 /loop.kt:(4,14): info: Generated Viper text for while_loop:
-method pkg$$global$while_loop$Tkotlin_Boolean(local$b: Bool)
+method global$fun_while_loop$fun_take$T_Boolean$return$T_Boolean(local$b: Bool)
   returns (ret: Bool)
 {
   var anonymous$1: Bool
   label label$continue$1
   anonymous$1 := local$b
   while (anonymous$1) {
-    var local$2$a: Int
-    var local$2$c: Int
-    local$2$a := 1
-    local$2$c := 2
+    var local2$a: Int
+    var local2$c: Int
+    local2$a := 1
+    local2$c := 2
     anonymous$1 := local$b
   }
   label label$break$1
@@ -19,22 +19,22 @@ method pkg$$global$while_loop$Tkotlin_Boolean(local$b: Bool)
 }
 
 /loop.kt:(120,144): info: Generated Viper text for while_function_condition:
-method pkg$$global$while_function_condition$() returns (ret: dom$Unit)
+method global$fun_while_function_condition$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
 {
   var anonymous$1: Bool
   var anonymous$2: Bool
   label label$continue$1
-  anonymous$2 := pkg$$global$while_loop$Tkotlin_Boolean(true)
+  anonymous$2 := global$fun_while_loop$fun_take$T_Boolean$return$T_Boolean(true)
   anonymous$1 := anonymous$2
   while (anonymous$1) {
     var anonymous$3: Bool
-    anonymous$3 := pkg$$global$while_loop$Tkotlin_Boolean(true)
+    anonymous$3 := global$fun_while_loop$fun_take$T_Boolean$return$T_Boolean(true)
     anonymous$1 := anonymous$3
   }
   label label$break$1
   label label$ret
 }
 
-method pkg$$global$while_loop$Tkotlin_Boolean(local$b: Bool)
+method global$fun_while_loop$fun_take$T_Boolean$return$T_Boolean(local$b: Bool)
   returns (ret: Bool)
-
