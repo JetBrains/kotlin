@@ -65,8 +65,17 @@ class Element(
 
     val visitFunName = "visit" + (config.visitorName ?: name).replaceFirstChar(Char::uppercaseChar)
     val visitorParam = config.visitorParam ?: config.category.defaultVisitorParam
-    var accept = config.accept
-    val transform = config.transform
+
+    override var hasAcceptMethod = config.accept
+
+    override val hasTransformMethod = config.transform
+
+    override val hasAcceptChildrenMethod: Boolean
+        get() = ownsChildren && (isRootElement || walkableChildren.isNotEmpty())
+
+    override val hasTransformChildrenMethod: Boolean
+        get() = ownsChildren && (isRootElement || transformableChildren.isNotEmpty())
+
     val transformByChildren = config.transformByChildren
     val ownsChildren = config.ownsChildren
     val generateIrFactoryMethod = config.generateIrFactoryMethod
