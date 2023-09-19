@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaLibraryPlugin
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonTest
@@ -147,6 +148,26 @@ class IdeJvmAndAndroidDependencyResolutionTest {
                 dependsOnDependency(":consumer/commonMain"),
                 projectArtifactDependency(IdeaKotlinSourceDependency.Type.Regular, ":producer", FilePathRegex(".*producer.jar"))
             )
+    }
+
+    @Test
+    fun `test - project to jvm (java only) project dependency`() {
+        val root = buildProject()
+
+        val producer = buildProject({ withParent(root).withName("producer") }) { plugins.apply(JavaLibraryPlugin::class.java) }
+        val consumer = buildProject({ withParent(root).withName("consumer") }) { configureAndroidAndMultiplatform() }
+
+        consumer.multiplatformExtension.sourceSets.commonMain.dependencies {
+            implementation(producer)
+        }
+
+        root.evaluate()
+        producer.evaluate()
+        consumer.evaluate()
+
+        consumer.kotlinIdeMultiplatformImport.resolveDependencies("commonMain")
+            .filter { it !is IdeaKotlinBinaryDependency }
+            .assertMatches(projectArtifactDependency(IdeaKotlinSourceDependency.Type.Regular, ":producer", FilePathRegex(".*producer.jar")))
     }
 
 
