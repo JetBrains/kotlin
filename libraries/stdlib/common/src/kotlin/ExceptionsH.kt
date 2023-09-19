@@ -7,107 +7,107 @@ package kotlin
 
 
 public expect open class Error : Throwable {
-    constructor()
-    constructor(message: String?)
-    constructor(message: String?, cause: Throwable?)
-    constructor(cause: Throwable?)
+    public constructor()
+    public constructor(message: String?)
+    public constructor(message: String?, cause: Throwable?)
+    public constructor(cause: Throwable?)
 }
 
 public expect open class Exception : Throwable {
-    constructor()
-    constructor(message: String?)
-    constructor(message: String?, cause: Throwable?)
-    constructor(cause: Throwable?)
+    public constructor()
+    public constructor(message: String?)
+    public constructor(message: String?, cause: Throwable?)
+    public constructor(cause: Throwable?)
 }
 
 public expect open class RuntimeException : Exception {
-    constructor()
-    constructor(message: String?)
-    constructor(message: String?, cause: Throwable?)
-    constructor(cause: Throwable?)
+    public constructor()
+    public constructor(message: String?)
+    public constructor(message: String?, cause: Throwable?)
+    public constructor(cause: Throwable?)
 }
 
 public expect open class IllegalArgumentException : RuntimeException {
-    constructor()
-    constructor(message: String?)
-    constructor(message: String?, cause: Throwable?)
-    constructor(cause: Throwable?)
+    public constructor()
+    public constructor(message: String?)
+    public constructor(message: String?, cause: Throwable?)
+    public constructor(cause: Throwable?)
 }
 
 public expect open class IllegalStateException : RuntimeException {
-    constructor()
-    constructor(message: String?)
-    constructor(message: String?, cause: Throwable?)
-    constructor(cause: Throwable?)
+    public constructor()
+    public constructor(message: String?)
+    public constructor(message: String?, cause: Throwable?)
+    public constructor(cause: Throwable?)
 }
 
 public expect open class IndexOutOfBoundsException : RuntimeException {
-    constructor()
-    constructor(message: String?)
+    public constructor()
+    public constructor(message: String?)
 }
 
 public expect open class ConcurrentModificationException : RuntimeException {
-    constructor()
-    constructor(message: String?)
-    constructor(message: String?, cause: Throwable?)
-    constructor(cause: Throwable?)
+    public constructor()
+    public constructor(message: String?)
+    public constructor(message: String?, cause: Throwable?)
+    public constructor(cause: Throwable?)
 }
 
 public expect open class UnsupportedOperationException : RuntimeException {
-    constructor()
-    constructor(message: String?)
-    constructor(message: String?, cause: Throwable?)
-    constructor(cause: Throwable?)
+    public constructor()
+    public constructor(message: String?)
+    public constructor(message: String?, cause: Throwable?)
+    public constructor(cause: Throwable?)
 }
 
 public expect open class NumberFormatException : IllegalArgumentException {
-    constructor()
-    constructor(message: String?)
+    public constructor()
+    public constructor(message: String?)
 }
 
 public expect open class NullPointerException : RuntimeException {
-    constructor()
-    constructor(message: String?)
+    public constructor()
+    public constructor(message: String?)
 }
 
 public expect open class ClassCastException : RuntimeException {
-    constructor()
-    constructor(message: String?)
+    public constructor()
+    public constructor(message: String?)
 }
 
 public expect open class AssertionError : Error {
-    constructor()
-    constructor(message: Any?)
+    public constructor()
+    public constructor(message: Any?)
 
     @SinceKotlin("1.9")
-    constructor(message: String?, cause: Throwable?)
+    public constructor(message: String?, cause: Throwable?)
 }
 
 public expect open class NoSuchElementException : RuntimeException {
-    constructor()
-    constructor(message: String?)
+    public constructor()
+    public constructor(message: String?)
 }
 
 @SinceKotlin("1.3")
 public expect open class ArithmeticException : RuntimeException {
-    constructor()
-    constructor(message: String?)
+    public constructor()
+    public constructor(message: String?)
 }
 
 @Deprecated("This exception type is not supposed to be thrown or caught in common code and will be removed from kotlin-stdlib-common soon.", level = DeprecationLevel.ERROR)
 public expect open class NoWhenBranchMatchedException : RuntimeException {
-    constructor()
-    constructor(message: String?)
-    constructor(message: String?, cause: Throwable?)
-    constructor(cause: Throwable?)
+    public constructor()
+    public constructor(message: String?)
+    public constructor(message: String?, cause: Throwable?)
+    public constructor(cause: Throwable?)
 }
 
 @Deprecated("This exception type is not supposed to be thrown or caught in common code and will be removed from kotlin-stdlib-common soon.", level = DeprecationLevel.ERROR)
 public expect class UninitializedPropertyAccessException : RuntimeException {
-    constructor()
-    constructor(message: String?)
-    constructor(message: String?, cause: Throwable?)
-    constructor(cause: Throwable?)
+    public constructor()
+    public constructor(message: String?)
+    public constructor(message: String?, cause: Throwable?)
+    public constructor(cause: Throwable?)
 }
 
 /**
@@ -116,10 +116,10 @@ public expect class UninitializedPropertyAccessException : RuntimeException {
 @SinceKotlin("1.4")
 @PublishedApi
 internal class KotlinNothingValueException : RuntimeException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+    public constructor() : super()
+    public constructor(message: String?) : super(message)
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public constructor(cause: Throwable?) : super(cause)
 }
 
 

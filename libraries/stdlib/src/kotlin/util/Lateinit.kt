@@ -19,5 +19,5 @@ import kotlin.reflect.KProperty0
  */
 @SinceKotlin("1.2")
 @InlineOnly
-inline val @receiver:AccessibleLateinitPropertyLiteral KProperty0<*>.isInitialized: Boolean
+public inline val @receiver:AccessibleLateinitPropertyLiteral KProperty0<*>.isInitialized: Boolean
     get() = throw NotImplementedError("Implementation is intrinsic")

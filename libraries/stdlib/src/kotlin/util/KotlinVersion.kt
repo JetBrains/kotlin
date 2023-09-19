@@ -14,7 +14,7 @@ package kotlin
  * @constructor Creates a version from all three components.
  */
 @SinceKotlin("1.1")
-public class KotlinVersion(val major: Int, val minor: Int, val patch: Int) : Comparable<KotlinVersion> {
+public class KotlinVersion(public val major: Int, public val minor: Int, public val patch: Int) : Comparable<KotlinVersion> {
     /**
      * Creates a version from [major] and [minor] components, leaving [patch] component zero.
      */
@@ -61,12 +61,12 @@ public class KotlinVersion(val major: Int, val minor: Int, val patch: Int) : Com
                 (this.minor > minor || this.minor == minor &&
                         this.patch >= patch))
 
-    companion object {
+    public companion object {
         /**
          * Maximum value a version component can have, a constant value 255.
          */
         // NOTE: Must be placed before CURRENT because its initialization requires this field being initialized in JS
-        public const val MAX_COMPONENT_VALUE = 255
+        public const val MAX_COMPONENT_VALUE: Int = 255
 
         /**
          * Returns the current version of the Kotlin standard library.

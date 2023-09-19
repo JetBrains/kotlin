@@ -5,16 +5,38 @@
 
 package kotlin.text
 
-expect class Regex {
-    constructor(pattern: String)
-    constructor(pattern: String, option: RegexOption)
-    constructor(pattern: String, options: Set<RegexOption>)
+/**
+ * Represents a compiled regular expression.
+ * Provides functions to match strings in text with a pattern, replace the found occurrences and split text around matches.
+ *
+ * Note that the [pattern] syntax and the option set has differences on each platform.
+ * See the docs of `Regex` for the specific platform for details.
+ */
+public expect class Regex {
+    /** Creates a regular expression from the specified [pattern] string and the default options.  */
+    public constructor(pattern: String)
 
-    val pattern: String
-    val options: Set<RegexOption>
+    /** Creates a regular expression from the specified [pattern] string and the specified single [option].  */
+    public constructor(pattern: String, option: RegexOption)
 
-    fun matchEntire(input: CharSequence): MatchResult?
-    infix fun matches(input: CharSequence): Boolean
+    /** Creates a regular expression from the specified [pattern] string and the specified set of [options].  */
+    public constructor(pattern: String, options: Set<RegexOption>)
+
+    /** The pattern string of this regular expression. */
+    public val pattern: String
+
+    /** The set of options that were used to create this regular expression. */
+    public val options: Set<RegexOption>
+
+    /**
+     * Attempts to match the entire [input] CharSequence against the pattern.
+     *
+     * @return An instance of [MatchResult] if the entire input matches or `null` otherwise.
+     */
+    public fun matchEntire(input: CharSequence): MatchResult?
+
+    /** Indicates whether the regular expression matches the entire [input]. */
+    public infix fun matches(input: CharSequence): Boolean
 
     /**
      * Attempts to match a regular expression exactly at the specified [index] in the [input] char sequence.
@@ -27,7 +49,7 @@ expect class Regex {
      */
     @SinceKotlin("1.7")
     @WasExperimental(ExperimentalStdlibApi::class)
-    fun matchAt(input: CharSequence, index: Int): MatchResult?
+    public fun matchAt(input: CharSequence, index: Int): MatchResult?
 
     /**
      * Checks if a regular expression matches a part of the specified [input] char sequence
@@ -40,12 +62,59 @@ expect class Regex {
      */
     @SinceKotlin("1.7")
     @WasExperimental(ExperimentalStdlibApi::class)
-    fun matchesAt(input: CharSequence, index: Int): Boolean
+    public fun matchesAt(input: CharSequence, index: Int): Boolean
 
-    fun containsMatchIn(input: CharSequence): Boolean
-    fun replace(input: CharSequence, replacement: String): String
-    fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String
-    fun replaceFirst(input: CharSequence, replacement: String): String
+    /** Indicates whether the regular expression can find at least one match in the specified [input]. */
+    public fun containsMatchIn(input: CharSequence): Boolean
+
+    /**
+     * Replaces all occurrences of this regular expression in the specified [input] string with specified [replacement] expression.
+     *
+     * The replacement string may contain references to the captured groups during a match. Occurrences of `${name}` or `$index`
+     * in the replacement string will be substituted with the subsequences corresponding to the captured groups with the specified name or index.
+     * In case of `$index`, the first digit after '$' is always treated as a part of group reference. Subsequent digits are incorporated
+     * into `index` only if they would form a valid group reference. Only the digits '0'..'9' are considered as potential components
+     * of the group reference. Note that indexes of captured groups start from 1, and the group with index 0 is the whole match.
+     * In case of `${name}`, the `name` can consist of latin letters 'a'..'z' and 'A'..'Z', or digits '0'..'9'. The first character must be
+     * a letter.
+     *
+     * Backslash character '\' can be used to include the succeeding character as a literal in the replacement string, e.g, `\$` or `\\`.
+     * [Regex.escapeReplacement] can be used if [replacement] have to be treated as a literal string.
+     *
+     * @param input the char sequence to find matches of this regular expression in
+     * @param replacement the expression to replace found matches with
+     * @return the result of replacing each occurrence of this regular expression in [input] with the result of evaluating the [replacement] expression
+     * @throws RuntimeException if [replacement] expression is malformed, or capturing group with specified `name` or `index` does not exist
+     */
+    public fun replace(input: CharSequence, replacement: String): String
+
+    /**
+     * Replaces all occurrences of this regular expression in the specified [input] string with the result of
+     * the given function [transform] that takes [MatchResult] and returns a string to be used as a
+     * replacement for that match.
+     */
+    public fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String
+
+    /**
+     * Replaces the first occurrence of this regular expression in the specified [input] string with specified [replacement] expression.
+     *
+     * The replacement string may contain references to the captured groups during a match. Occurrences of `${name}` or `$index`
+     * in the replacement string will be substituted with the subsequences corresponding to the captured groups with the specified name or index.
+     * In case of `$index`, the first digit after '$' is always treated as a part of group reference. Subsequent digits are incorporated
+     * into `index` only if they would form a valid group reference. Only the digits '0'..'9' are considered as potential components
+     * of the group reference. Note that indexes of captured groups start from 1, and the group with index 0 is the whole match.
+     * In case of `${name}`, the `name` can consist of latin letters 'a'..'z' and 'A'..'Z', or digits '0'..'9'. The first character must be
+     * a letter.
+     *
+     * Backslash character '\' can be used to include the succeeding character as a literal in the replacement string, e.g, `\$` or `\\`.
+     * [Regex.escapeReplacement] can be used if [replacement] have to be treated as a literal string.
+     *
+     * @param input the char sequence to find a match of this regular expression in
+     * @param replacement the expression to replace the found match with
+     * @return the result of replacing the first occurrence of this regular expression in [input] with the result of evaluating the [replacement] expression
+     * @throws RuntimeException if [replacement] expression is malformed, or capturing group with specified `name` or `index` does not exist
+     */
+    public fun replaceFirst(input: CharSequence, replacement: String): String
 
     /**
      * Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
@@ -55,7 +124,7 @@ expect class Regex {
      * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of the [input] char sequence.
      * @sample samples.text.Regexps.find
      */
-    fun find(input: CharSequence, startIndex: Int = 0): MatchResult?
+    public fun find(input: CharSequence, startIndex: Int = 0): MatchResult?
 
     /**
      * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
@@ -64,7 +133,7 @@ expect class Regex {
      *
      * @sample samples.text.Regexps.findAll
      */
-    fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult>
+    public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult>
 
     /**
      * Splits the [input] CharSequence to a list of strings around matches of this regular expression.
@@ -72,7 +141,7 @@ expect class Regex {
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
      */
-    fun split(input: CharSequence, limit: Int = 0): List<String>
+    public fun split(input: CharSequence, limit: Int = 0): List<String>
 
     /**
      * Splits the [input] CharSequence to a sequence of strings around matches of this regular expression.
@@ -85,30 +154,74 @@ expect class Regex {
     @WasExperimental(ExperimentalStdlibApi::class)
     public fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String>
 
-    companion object {
-        fun fromLiteral(literal: String): Regex
-        fun escape(literal: String): String
-        fun escapeReplacement(literal: String): String
+    public companion object {
+        /**
+         * Returns a regular expression that matches the specified [literal] string literally.
+         * No characters of that string will have special meaning when searching for an occurrence of the regular expression.
+         */
+        public fun fromLiteral(literal: String): Regex
+
+        /**
+         * Returns a regular expression pattern string that matches the specified [literal] string literally.
+         * No characters of that string will have special meaning when searching for an occurrence of the regular expression.
+         */
+        public fun escape(literal: String): String
+
+        /**
+         * Returns a literal replacement expression for the specified [literal] string.
+         * No characters of that string will have special meaning when it is used as a replacement string in [Regex.replace] function.
+         */
+        public fun escapeReplacement(literal: String): String
     }
 }
 
-expect class MatchGroup {
-    val value: String
+/**
+ * Represents the results from a single capturing group within a [MatchResult] of [Regex].
+ *
+ * Note `MatchGroup` on particular platforms can also provide the `range` in the input
+ * where the group match has happened.
+ * See the docs of `MatchGroup` for the specific platform for details.
+ *
+ * @property value The value of captured group.
+ */
+public expect class MatchGroup {
+    public val value: String
 }
 
-expect enum class RegexOption {
+/**
+ * Provides enumeration values to use to set regular expression options.
+ *
+ * Note that the enum has different set of possible options on different platforms and
+ * can be extended later. Avoid exclusive `when` matches on this enum values.
+ * See the docs of `RegexOption` for the specific platform for details.
+ *
+ */
+public expect enum class RegexOption {
+    /** Enables case-insensitive matching. Case comparison is Unicode-aware. */
     IGNORE_CASE,
+
+    /** Enables multiline mode.
+     *
+     * In multiline mode the expressions `^` and `$` match just after or just before,
+     * respectively, a line terminator or the end of the input sequence. */
     MULTILINE
 }
 
 
 // From char.kt
 
-expect fun Char.isHighSurrogate(): Boolean
-expect fun Char.isLowSurrogate(): Boolean
+/**
+ * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).
+ */
+public expect fun Char.isHighSurrogate(): Boolean
+
+/**
+ * Returns `true` if this character is a Unicode low-surrogate code unit (also known as trailing-surrogate code unit).
+ */
+public expect fun Char.isLowSurrogate(): Boolean
+
 
 // From string.kt
-
 
 /**
  * Converts the characters in the specified array to a string.
@@ -259,7 +372,7 @@ public expect fun CharSequence.repeat(n: Int): String
  * 
  * @sample samples.text.Strings.replace
  */
-expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
+public expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
 
 /**
  * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
@@ -267,18 +380,18 @@ expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = fa
  *
  * @sample samples.text.Strings.replace
  */
-expect fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
+public expect fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
 
 /**
  * Returns a new string with the first occurrence of [oldChar] replaced with [newChar].
  */
-expect fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
+public expect fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
 
 /**
  * Returns a new string obtained by replacing the first occurrence of the [oldValue] substring in this string
  * with the specified [newValue] string.
  */
-expect fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
+public expect fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
 
 /**
  * Returns `true` if this string is equal to [other], optionally ignoring character case.
@@ -288,7 +401,7 @@ expect fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: B
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
-expect fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean
+public expect fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean
 
 /**
  * Compares two strings lexicographically, optionally ignoring case differences.
@@ -296,7 +409,7 @@ expect fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean
  * If [ignoreCase] is true, the result of `Char.uppercaseChar().lowercaseChar()` on each character is compared.
  */
 @SinceKotlin("1.2")
-expect fun String.compareTo(other: String, ignoreCase: Boolean = false): Int
+public expect fun String.compareTo(other: String, ignoreCase: Boolean = false): Int
 
 
 public expect fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean
@@ -308,7 +421,7 @@ public expect fun String.endsWith(suffix: String, ignoreCase: Boolean = false): 
 internal expect fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
 internal expect fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
 
-expect fun CharSequence.isBlank(): Boolean
+public expect fun CharSequence.isBlank(): Boolean
 /**
  * Returns `true` if the specified range in this char sequence is equal to the specified range in another char sequence.
  * @param thisOffset the start offset in this char sequence of the substring to compare.
@@ -316,7 +429,7 @@ expect fun CharSequence.isBlank(): Boolean
  * @param otherOffset the start offset in the other char sequence of the substring to compare.
  * @param length the length of the substring to compare.
  */
-expect fun CharSequence.regionMatches(
+public expect fun CharSequence.regionMatches(
     thisOffset: Int,
     other: CharSequence,
     otherOffset: Int,
@@ -362,78 +475,78 @@ public expect fun String?.toBoolean(): Boolean
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-expect fun String.toByte(): Byte
+public expect fun String.toByte(): Byte
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
-expect fun String.toByte(radix: Int): Byte
+public expect fun String.toByte(radix: Int): Byte
 
 
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-expect fun String.toShort(): Short
+public expect fun String.toShort(): Short
 
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
-expect fun String.toShort(radix: Int): Short
+public expect fun String.toShort(radix: Int): Short
 
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-expect fun String.toInt(): Int
+public expect fun String.toInt(): Int
 
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
-expect fun String.toInt(radix: Int): Int
+public expect fun String.toInt(radix: Int): Int
 
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-expect fun String.toLong(): Long
+public expect fun String.toLong(): Long
 
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
-expect fun String.toLong(radix: Int): Long
+public expect fun String.toLong(radix: Int): Long
 
 /**
  * Parses the string as a [Double] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-expect fun String.toDouble(): Double
+public expect fun String.toDouble(): Double
 
 /**
  * Parses the string as a [Float] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-expect fun String.toFloat(): Float
+public expect fun String.toFloat(): Float
 
 /**
  * Parses the string as a [Double] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-expect fun String.toDoubleOrNull(): Double?
+public expect fun String.toDoubleOrNull(): Double?
 
 /**
  * Parses the string as a [Float] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-expect fun String.toFloatOrNull(): Float?
+public expect fun String.toFloatOrNull(): Float?
 
 /**
  * Returns a string representation of this [Byte] value in the specified [radix].
@@ -441,7 +554,7 @@ expect fun String.toFloatOrNull(): Float?
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-expect fun Byte.toString(radix: Int): String
+public expect fun Byte.toString(radix: Int): String
 
 /**
  * Returns a string representation of this [Short] value in the specified [radix].
@@ -449,7 +562,7 @@ expect fun Byte.toString(radix: Int): String
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-expect fun Short.toString(radix: Int): String
+public expect fun Short.toString(radix: Int): String
 
 /**
  * Returns a string representation of this [Int] value in the specified [radix].
@@ -457,7 +570,7 @@ expect fun Short.toString(radix: Int): String
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-expect fun Int.toString(radix: Int): String
+public expect fun Int.toString(radix: Int): String
 
 /**
  * Returns a string representation of this [Long] value in the specified [radix].
@@ -465,7 +578,7 @@ expect fun Int.toString(radix: Int): String
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-expect fun Long.toString(radix: Int): String
+public expect fun Long.toString(radix: Int): String
 
 @PublishedApi
 internal expect fun checkRadix(radix: Int): Int
