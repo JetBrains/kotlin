@@ -7,13 +7,18 @@ package org.jetbrains.kotlin.fir.java.deserialization
 
 import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.createConstantOrError
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.scopes.getProperties
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -130,6 +135,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
 
         return object : AnnotationsLoaderVisitorImpl(enumEntryReferenceCreator) {
             private val argumentMap = mutableMapOf<Name, FirExpression>()
+            private val scopeSession: ScopeSession = ScopeSession()
 
             override fun visitExpression(name: Name?, expr: FirExpression) {
                 if (name != null) argumentMap[name] = expr
@@ -143,7 +149,15 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 if (name == null) return null
                 // Note: generally we are not allowed to resolve anything, as this is might lead to recursive resolve problems
                 // However, K1 deserializer did exactly the same and no issues were reported.
-                val propS = session.symbolProvider.getClassDeclaredPropertySymbols(annotationClassId, name).firstOrNull()
+                val classSymbol = session.symbolProvider.getRegularClassSymbolByClassId(annotationClassId) ?: return null
+                // We need to enhance java classes, but we can't call unsubstitutedScope unconditionally because
+                // for Kotlin types, it will resolve the class to the SUPER_TYPES phase which can lead to a contract violation.
+                val scope = if (classSymbol.isJavaOrEnhancement) {
+                    classSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
+                } else {
+                    classSymbol.declaredMemberScope(session, memberRequiredPhase = null)
+                }
+                val propS = scope.getProperties(name).firstOrNull()
                 return propS?.resolvedReturnTypeRef
             }
 
