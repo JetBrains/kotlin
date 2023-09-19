@@ -41,7 +41,7 @@ public actual inline fun <T : java.lang.AutoCloseable?, R> T.use(block: (T) -> R
 
 @SinceKotlin("1.2")
 @PublishedApi
-internal fun java.lang.AutoCloseable?.closeFinally(cause: Throwable?) = when {
+internal fun java.lang.AutoCloseable?.closeFinally(cause: Throwable?): Unit = when {
     this == null -> {}
     cause == null -> close()
     else ->

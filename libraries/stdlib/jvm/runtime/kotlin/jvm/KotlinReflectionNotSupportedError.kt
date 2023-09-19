@@ -8,11 +8,11 @@ package kotlin.jvm
 import java.lang.Error
 
 public open class KotlinReflectionNotSupportedError : Error {
-    constructor() : super("Kotlin reflection implementation is not found at runtime. Make sure you have kotlin-reflect.jar in the classpath")
+    public constructor() : super("Kotlin reflection implementation is not found at runtime. Make sure you have kotlin-reflect.jar in the classpath")
 
-    constructor(message: String?) : super(message)
+    public constructor(message: String?) : super(message)
 
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
 
-    constructor(cause: Throwable?) : super(cause)
+    public constructor(cause: Throwable?) : super(cause)
 }

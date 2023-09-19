@@ -18,7 +18,7 @@ private const val MAX_SIZE = Int.MAX_VALUE - 2 // empirically maximal array size
 @Deprecated("This function will be made internal in a future release")
 @DeprecatedSinceKotlin(warningSince = "1.9")
 @JvmName("toArray")
-fun collectionToArray(collection: Collection<*>): Array<Any?> =
+public fun collectionToArray(collection: Collection<*>): Array<Any?> =
     toArrayImpl(
         collection,
         empty = { EMPTY },
@@ -31,7 +31,7 @@ fun collectionToArray(collection: Collection<*>): Array<Any?> =
 @Deprecated("This function will be made internal in a future release")
 @DeprecatedSinceKotlin(warningSince = "1.9")
 @JvmName("toArray")
-fun collectionToArray(collection: Collection<*>, a: Array<Any?>?): Array<Any?> {
+public fun collectionToArray(collection: Collection<*>, a: Array<Any?>?): Array<Any?> {
     // Collection.toArray contract requires that NullPointerException is thrown when array is null
     if (a == null) throw JavaNPE()
     return toArrayImpl(

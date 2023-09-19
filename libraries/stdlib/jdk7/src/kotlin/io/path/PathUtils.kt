@@ -482,7 +482,7 @@ public inline fun Path.deleteExisting() {
 @WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
-public inline fun Path.deleteIfExists() =
+public inline fun Path.deleteIfExists(): Boolean =
     Files.deleteIfExists(this)
 
 /**

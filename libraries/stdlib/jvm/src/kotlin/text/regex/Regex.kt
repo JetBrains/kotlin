@@ -313,7 +313,7 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
         private fun readResolve(): Any = Regex(Pattern.compile(pattern, flags))
     }
 
-    actual companion object {
+    public actual companion object {
         /**
          * Returns a regular expression that matches the specified [literal] string literally.
          * No characters of that string will have special meaning when searching for an occurrence of the regular expression.
