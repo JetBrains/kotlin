@@ -1223,9 +1223,10 @@ private class ObjCBlockPointerValuePassing(
             +irReturn(callBlock(blockPointer, arguments))
         }
 
+        stubs.addKotlin(irClass)
+        // we need to add class to stubs first, because it will implicitly initialize class parent.
         irClass.addFakeOverrides(stubs.typeSystem)
 
-        stubs.addKotlin(irClass)
         return constructor
     }
 
