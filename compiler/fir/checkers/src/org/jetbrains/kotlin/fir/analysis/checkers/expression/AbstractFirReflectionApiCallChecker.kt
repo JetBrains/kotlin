@@ -84,7 +84,7 @@ abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker()
 
         private val ALLOWED_CLASSES: Set<ClassId> =
             listOf("KType", "KTypeParameter", "KTypeProjection", "KTypeProjection.Companion", "KVariance").mapTo(HashSet()) {
-                ClassId(StandardNames.KOTLIN_REFLECT_FQ_NAME, FqName(it), false)
+                ClassId(StandardNames.KOTLIN_REFLECT_FQ_NAME, FqName(it), isLocal = false)
             }
     }
 }

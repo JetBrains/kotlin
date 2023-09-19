@@ -215,7 +215,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
     private fun assertCanFind(manager: KotlinCliJavaFileManagerImpl, packageFQName: String, classFqName: String) {
         val allScope = GlobalSearchScope.allScope(project)
 
-        val classId = ClassId(FqName(packageFQName), FqName(classFqName), false)
+        val classId = ClassId(FqName(packageFQName), FqName(classFqName), isLocal = false)
         val stringRequest = classId.asSingleFqName().asString()
 
         val foundByClassId = (manager.findClass(classId, allScope) as JavaClassImpl).psi
@@ -230,7 +230,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
     }
 
     private fun assertCannotFind(manager: KotlinCliJavaFileManagerImpl, packageFQName: String, classFqName: String) {
-        val classId = ClassId(FqName(packageFQName), FqName(classFqName), false)
+        val classId = ClassId(FqName(packageFQName), FqName(classFqName), isLocal = false)
         val foundClass = manager.findClass(classId, GlobalSearchScope.allScope(project))
         TestCase.assertNull("Found, but shouldn't have: $classId", foundClass)
     }

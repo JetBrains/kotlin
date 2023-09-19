@@ -17,5 +17,5 @@ public val PsiClass.classIdIfNonLocal: ClassId?
         val relatedClassName = qualifiedName.removePrefix("$packageName.")
         if (relatedClassName.isEmpty()) return null
 
-        return ClassId(FqName(packageName), FqName(relatedClassName), false)
+        return ClassId(FqName(packageName), FqName(relatedClassName), isLocal = false)
     }

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * the second one being the class' short name.
  */
 class ClassId(val packageFqName: FqName, val relativeClassName: FqName, val isLocal: Boolean) {
-    constructor(packageFqName: FqName, topLevelName: Name) : this(packageFqName, FqName.topLevel(topLevelName), false)
+    constructor(packageFqName: FqName, topLevelName: Name) : this(packageFqName, FqName.topLevel(topLevelName), isLocal = false)
 
     init {
         assert(!relativeClassName.isRoot) { "Class name must not be root: " + packageFqName + if (isLocal) " (local)" else "" }
@@ -53,7 +53,7 @@ class ClassId(val packageFqName: FqName, val relativeClassName: FqName, val isLo
             while (!name.parent().isRoot) {
                 name = name.parent()
             }
-            return ClassId(packageFqName, name, false)
+            return ClassId(packageFqName, name, isLocal = false)
         }
 
     val isNestedClass: Boolean

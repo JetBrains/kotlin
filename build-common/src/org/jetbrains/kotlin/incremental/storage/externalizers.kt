@@ -111,9 +111,9 @@ object ClassIdExternalizer : DataExternalizer<ClassId> {
 
     override fun read(input: DataInput): ClassId {
         return ClassId(
-            /* packageFqName */ FqNameExternalizer.read(input),
-            /* relativeClassName */ FqNameExternalizer.read(input),
-            /* isLocal */ input.readBoolean()
+            packageFqName = FqNameExternalizer.read(input),
+            relativeClassName = FqNameExternalizer.read(input),
+            isLocal = input.readBoolean()
         )
     }
 }

@@ -30,7 +30,7 @@ class KtFe10DescFunctionLikeSymbolPointer<T : KtFunctionLikeSymbol>(
 
         val className = callableId.className
         val memberScope = if (className != null) {
-            val outerClassId = ClassId(callableId.packageName, className, false)
+            val outerClassId = ClassId(callableId.packageName, className, isLocal = false)
             analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(outerClassId)
                 ?.unsubstitutedMemberScope
                 ?: MemberScope.Empty

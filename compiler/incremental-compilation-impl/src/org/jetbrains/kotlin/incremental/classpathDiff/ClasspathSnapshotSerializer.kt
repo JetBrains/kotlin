@@ -264,9 +264,9 @@ private object ClassIdExternalizerWithInterning : DataExternalizer<ClassId> by C
         return ClassId(
             // To reduce memory usage, apply object interning to package name as they are commonly shared.
             // (Don't apply object interning to relative class name as they are not commonly shared.)
-            /* packageFqName */ FqNameExternalizerWithInterning.read(input),
-            /* relativeClassName */ FqNameExternalizer.read(input),
-            /* isLocal */ input.readBoolean()
+            packageFqName = FqNameExternalizerWithInterning.read(input),
+            relativeClassName = FqNameExternalizer.read(input),
+            isLocal = input.readBoolean()
         )
     }
 }

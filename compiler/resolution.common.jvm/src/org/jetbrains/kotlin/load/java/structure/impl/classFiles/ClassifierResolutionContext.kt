@@ -92,7 +92,7 @@ class ClassifierResolutionContext private constructor(
         val packageFqName = outerFqName.parent()
         val relativeName = FqName(outerFqName.shortName().asString() + "." + substrings.subList(1, substrings.size).joinToString("."))
 
-        return ClassId(packageFqName, relativeName, false)
+        return ClassId(packageFqName, relativeName, isLocal = false)
     }
 
     internal fun resolveByInternalName(internalName: String): Result {

@@ -174,7 +174,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             classId = ClassId(
                 packageFqName.parent(),
                 FqName(packageFqName.shortName().asString() + "." + classId.relativeClassName.asString()),
-                false
+                isLocal = false
             )
         }
     }

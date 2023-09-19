@@ -181,7 +181,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         val packageStatement = psiFile.children.filterIsInstance<PsiPackageStatement>().firstOrNull()
         val packageName = packageStatement?.packageName
         val fqName = parentFqName.child(Name.identifier(this.name!!))
-        return ClassId(packageName?.let { FqName(it) } ?: FqName.ROOT, fqName, false)
+        return ClassId(packageName?.let { FqName(it) } ?: FqName.ROOT, fqName, isLocal = false)
     }
 
     companion object {

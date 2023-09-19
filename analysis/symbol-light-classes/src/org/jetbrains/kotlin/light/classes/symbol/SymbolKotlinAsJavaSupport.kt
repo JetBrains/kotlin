@@ -76,7 +76,7 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
 
         return sequence {
             while (true) {
-                yield(ClassId(currentParent, FqName(currentRelativeName), false))
+                yield(ClassId(currentParent, FqName(currentRelativeName), isLocal = false))
                 currentName = currentParent.shortNameOrSpecial()
                 if (currentName.isSpecial) break
                 currentParent = currentParent.parentOrNull() ?: break

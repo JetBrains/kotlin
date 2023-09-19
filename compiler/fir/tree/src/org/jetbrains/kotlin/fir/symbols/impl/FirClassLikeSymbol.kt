@@ -84,7 +84,7 @@ class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(
 }
 
 class FirAnonymousObjectSymbol(packageFqName: FqName) : FirClassSymbol<FirAnonymousObject>(
-    ClassId(packageFqName, SpecialNames.ANONYMOUS_FQ_NAME, true)
+    ClassId(packageFqName, SpecialNames.ANONYMOUS_FQ_NAME, isLocal = true)
 )
 
 class FirTypeAliasSymbol(classId: ClassId) : FirClassLikeSymbol<FirTypeAlias>(classId), TypeAliasSymbolMarker {

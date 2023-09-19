@@ -296,7 +296,7 @@ private sealed class FqNameInterpretation {
 
             return when {
                 classParts.isEmpty() && callable == null -> FqNameInterpretationAsPackage(packageName)
-                callable == null -> FqNameInterpretationAsClassId(ClassId(packageName, relativeClassName, false))
+                callable == null -> FqNameInterpretationAsClassId(ClassId(packageName, relativeClassName, isLocal = false))
                 else -> FqNameInterpretationAsCallableId(CallableId(packageName, relativeClassName.takeUnless { it.isRoot }, callable))
             }
         }

@@ -30,7 +30,7 @@ internal class FirResolvedImportImpl(
     override val isAllUnder: Boolean get() = delegate.isAllUnder
     override val aliasName: Name? get() = delegate.aliasName
     override val aliasSource: KtSourceElement? get() = delegate.aliasSource
-    override val resolvedParentClassId: ClassId? get() = relativeParentClassName?.let { ClassId(packageFqName, it, false) }
+    override val resolvedParentClassId: ClassId? get() = relativeParentClassName?.let { ClassId(packageFqName, it, isLocal = false) }
     override val importedName: Name? get() = importedFqName?.shortName()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

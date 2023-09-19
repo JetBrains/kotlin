@@ -205,7 +205,7 @@ object FirImportsChecker : FirFileChecker() {
             val parentClass = resolvedParentClassId!!
             val relativeClassName = this.relativeParentClassName ?: return false
             val importedName = this.importedName ?: return false
-            val innerClassId = ClassId(parentClass.packageFqName, relativeClassName.child(importedName), false)
+            val innerClassId = ClassId(parentClass.packageFqName, relativeClassName.child(importedName), isLocal = false)
             return innerClassId.resolveToClass(context) != null
         } else {
             val importedFqName = importedFqName ?: return false

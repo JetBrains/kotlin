@@ -28,7 +28,7 @@ data class CallableId(
     var classId: ClassId? = null
         get() {
             if (field == null && className != null) {
-                field = ClassId(packageName, className, packageName == PACKAGE_FQ_NAME_FOR_LOCAL)
+                field = ClassId(packageName, className, isLocal = packageName == PACKAGE_FQ_NAME_FOR_LOCAL)
             }
             return field
         }

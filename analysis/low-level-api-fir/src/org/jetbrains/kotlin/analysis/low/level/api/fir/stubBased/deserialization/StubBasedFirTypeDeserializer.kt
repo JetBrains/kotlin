@@ -308,6 +308,6 @@ internal fun KtUserType.classId(): ClassId {
     return ClassId(
         FqName.fromSegments(packageFragments),
         FqName.fromSegments(classFragments),
-        /* local = */ false
+        isLocal = false
     )
 }

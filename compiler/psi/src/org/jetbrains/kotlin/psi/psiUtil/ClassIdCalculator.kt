@@ -44,6 +44,6 @@ internal object ClassIdCalculator {
             }
         )
 
-        return ClassId(ktFile.packageFqName, relativeClassName, /*local=*/false)
+        return ClassId(ktFile.packageFqName, relativeClassName, isLocal = false)
     }
 }

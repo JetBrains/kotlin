@@ -567,7 +567,7 @@ internal val ClassifierDescriptor.classId: ClassId?
     }
 
 internal val ClassifierDescriptor.maybeLocalClassId: ClassId
-    get() = classId ?: ClassId(containingPackage() ?: FqName.ROOT, FqName.topLevel(this.name), true)
+    get() = classId ?: ClassId(containingPackage() ?: FqName.ROOT, FqName.topLevel(this.name), isLocal = true)
 
 internal fun ClassDescriptor.getSupertypesWithAny(): Collection<KotlinType> {
     val supertypes = typeConstructor.supertypes

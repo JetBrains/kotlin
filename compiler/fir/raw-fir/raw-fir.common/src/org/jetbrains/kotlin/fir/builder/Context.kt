@@ -26,8 +26,8 @@ class Context<T> {
     var inLocalContext: Boolean = false
     val currentClassId
         get() = when {
-            inLocalContext -> ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, className, /*local =*/ true)
-            else -> ClassId(packageFqName, className, /*local =*/ false)
+            inLocalContext -> ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, className, isLocal = true)
+            else -> ClassId(packageFqName, className, isLocal = false)
         }
 
     var classNameBeforeLocalContext: FqName = FqName.ROOT

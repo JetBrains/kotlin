@@ -43,7 +43,7 @@ internal class FirErrorResolvedQualifierImpl(
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorResolvedQualifier() {
     override val classId: ClassId? get() = relativeClassFqName?.let {
-    ClassId(packageFqName, it, false)
+    ClassId(packageFqName, it, isLocal = false)
 }
     override val resolvedToCompanionObject: Boolean get() = false
 

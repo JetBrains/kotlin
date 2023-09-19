@@ -43,7 +43,7 @@ internal class FirResolvedQualifierImpl(
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
 ) : FirResolvedQualifier() {
     override val classId: ClassId? get() = relativeClassFqName?.let {
-    ClassId(packageFqName, it, false)
+    ClassId(packageFqName, it, isLocal = false)
 }
     override var resolvedToCompanionObject: Boolean = (symbol?.fir as? FirRegularClass)?.companionObjectSymbol != null
 

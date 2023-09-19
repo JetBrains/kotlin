@@ -178,7 +178,7 @@ fun FirClassSymbol<*>.getContainingDeclarationSymbol(session: FirSession): FirCl
     } else {
         val parentId = classId.relativeClassName.parent()
         if (!parentId.isRoot) {
-            val containingDeclarationId = ClassId(classId.packageFqName, parentId, false)
+            val containingDeclarationId = ClassId(classId.packageFqName, parentId, isLocal = false)
             return session.symbolProvider.getClassLikeSymbolByClassId(containingDeclarationId)
         }
     }

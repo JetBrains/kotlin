@@ -30,7 +30,7 @@ class FirJvmElementAwareStringTable(
             is IrClass -> parent.getLocalClassIdReplacement().createNestedClassId(name)
             else -> {
                 val fqName = FqName(typeMapper.mapClass(this).internalName.replace('/', '.'))
-                ClassId(fqName.parent(), FqName.topLevel(fqName.shortName()), true)
+                ClassId(fqName.parent(), FqName.topLevel(fqName.shortName()), isLocal = true)
             }
         }
 }

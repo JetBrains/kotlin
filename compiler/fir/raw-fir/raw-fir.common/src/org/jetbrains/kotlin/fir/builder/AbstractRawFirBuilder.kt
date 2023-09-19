@@ -153,7 +153,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     fun callableIdForName(name: Name) =
         when {
             context.className.shortNameOrSpecial() == SpecialNames.ANONYMOUS -> CallableId(
-                ClassId(context.packageFqName, SpecialNames.ANONYMOUS_FQ_NAME, true), name
+                ClassId(context.packageFqName, SpecialNames.ANONYMOUS_FQ_NAME, isLocal = true), name
             )
             context.className.isRoot && !context.inLocalContext -> CallableId(context.packageFqName, name)
             context.inLocalContext -> {
@@ -162,7 +162,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                         if (context.classNameBeforeLocalContext.isRoot) {
                             context.packageFqName
                         } else {
-                            ClassId(context.packageFqName, context.classNameBeforeLocalContext, false).asSingleFqName()
+                            ClassId(context.packageFqName, context.classNameBeforeLocalContext, isLocal = false).asSingleFqName()
                         }
                     ) { result, firFunctionTarget ->
                         if (firFunctionTarget.isLambda || firFunctionTarget.labelName == null)
@@ -960,7 +960,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         private fun generateCopyFunction() {
             classBuilder.addDeclaration(
                 classBuilder.createDataClassCopyFunction(
-                    ClassId(packageFqName, classFqName, false),
+                    ClassId(packageFqName, classFqName, isLocal = false),
                     source,
                     currentDispatchReceiverType(),
                     zippedParameters,
