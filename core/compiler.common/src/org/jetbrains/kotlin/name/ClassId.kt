@@ -15,6 +15,8 @@
  */
 package org.jetbrains.kotlin.name
 
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
+
 /**
  * A class name which is used to uniquely identify a Kotlin class.
  *
@@ -24,44 +26,42 @@ package org.jetbrains.kotlin.name
  * the package, separated by dollar signs. If a class is an inner of local, relativeClassName would consist of two names,
  * the second one being the class' short name.
  */
-class ClassId(val packageFqName: FqName, relativeClassName: FqName, local: Boolean) {
-    val relativeClassName: FqName
-    val isLocal: Boolean
-
-    init {
-        assert(!relativeClassName.isRoot) { "Class name must not be root: " + packageFqName + if (local) " (local)" else "" }
-        this.relativeClassName = relativeClassName
-        isLocal = local
-    }
-
+class ClassId(val packageFqName: FqName, val relativeClassName: FqName, val isLocal: Boolean) {
     constructor(packageFqName: FqName, topLevelName: Name) : this(packageFqName, FqName.topLevel(topLevelName), false)
 
+    init {
+        assert(!relativeClassName.isRoot) { "Class name must not be root: " + packageFqName + if (isLocal) " (local)" else "" }
+    }
+
     val parentClassId: ClassId?
-        get() = if (!isNestedClass) null else ClassId(
-            packageFqName,
-            relativeClassName.parent(),
-            isLocal
-        )
+        get() = runIf(isNestedClass) {
+            ClassId(packageFqName, relativeClassName.parent(), isLocal)
+        }
+
     val shortClassName: Name
         get() = relativeClassName.shortName()
-
-    fun createNestedClassId(name: Name): ClassId {
-        return ClassId(packageFqName, relativeClassName.child(name), isLocal)
-    }
 
     val outerClassId: ClassId?
         get() {
             val parent = relativeClassName.parent()
-            return if (parent.isRoot) null else ClassId(packageFqName, parent, isLocal)
+            return runIf(!parent.isRoot) { ClassId(packageFqName, parent, isLocal) }
         }
+
     val outermostClassId: ClassId
         get() {
             var name = relativeClassName
-            while (!name.parent().isRoot) name = name.parent()
+            while (!name.parent().isRoot) {
+                name = name.parent()
+            }
             return ClassId(packageFqName, name, false)
         }
+
     val isNestedClass: Boolean
         get() = !relativeClassName.parent().isRoot
+
+    fun createNestedClassId(name: Name): ClassId {
+        return ClassId(packageFqName, relativeClassName.child(name), isLocal)
+    }
 
     fun asSingleFqName(): FqName {
         return if (packageFqName.isRoot) relativeClassName else FqName(packageFqName.asString() + "." + relativeClassName.asString())
@@ -75,18 +75,33 @@ class ClassId(val packageFqName: FqName, relativeClassName: FqName, local: Boole
      * @return a string where packages are delimited by '/' and classes by '.', e.g. "kotlin/Map.Entry"
      */
     fun asString(): String {
-        return if (packageFqName.isRoot) relativeClassName.asString() else packageFqName.asString()
-            .replace('.', '/') + "/" + relativeClassName.asString()
+        return if (packageFqName.isRoot) {
+            relativeClassName.asString()
+        } else {
+            buildString {
+                append(packageFqName.asString().replace('.', '/'))
+                append("/")
+                append(relativeClassName.asString())
+            }
+        }
     }
 
     fun asFqNameString(): String {
-        return if (packageFqName.isRoot) relativeClassName.asString() else packageFqName.asString() + "." + relativeClassName.asString()
+        return if (packageFqName.isRoot) {
+            relativeClassName.asString()
+        } else {
+            buildString {
+                append(packageFqName.asString())
+                append(".")
+                append(relativeClassName.asString())
+            }
+        }
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-        val id = o as ClassId
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+        val id = other as ClassId
         return packageFqName == id.packageFqName && relativeClassName == id.relativeClassName && isLocal == id.isLocal
     }
 
