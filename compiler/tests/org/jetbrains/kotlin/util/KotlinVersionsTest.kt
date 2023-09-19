@@ -73,13 +73,21 @@ class KotlinVersionsTest : KtUsefulTestCase() {
                 ?: error("No version in libraries/pom.xml")
         )
 
-        versions.add(
-            LanguageVersion.LATEST_STABLE.versionString.toVersion("LanguageVersion.LATEST_STABLE")
-        )
+        val latestStableVersion = LanguageVersion.LATEST_STABLE.versionString.toVersion("LanguageVersion.LATEST_STABLE")
+        // TODO: uncomment this addition after bootstrapping in KT-61951
+        //versions.add(latestStableVersion)
 
         if (versions.any { v1 -> versions.any { v2 -> !v1.isConsistentWith(v2) } }) {
             Assert.fail(
                 "Some versions are inconsistent. Please change the versions so that they are consistent:\n\n" +
+                        versions.joinToString(separator = "\n") { with(it) { "$versionString ($source)" } }
+            )
+        }
+
+        // TODO: remove/comment this check after bootstrapping in KT-61951
+        if (versions.any { it.isConsistentWith(latestStableVersion) }) {
+            Assert.fail(
+                "Some versions are consistent with LATEST_STABLE ${latestStableVersion.versionString}. Please edit KotlinVersionsTest accordingly:\n\n" +
                         versions.joinToString(separator = "\n") { with(it) { "$versionString ($source)" } }
             )
         }
