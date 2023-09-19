@@ -90,9 +90,6 @@ class LambdaWithTypeVariableAsExpectedTypeAtom(
     private val initialExpectedTypeType: ConeKotlinType,
     val candidateOfOuterCall: Candidate,
 ) : PostponedResolvedAtom(), LambdaWithTypeVariableAsExpectedTypeMarker {
-    init {
-        candidateOfOuterCall.postponedAtoms += this
-    }
 
     override var parameterTypesFromDeclaration: List<ConeKotlinType?>? = null
         private set
