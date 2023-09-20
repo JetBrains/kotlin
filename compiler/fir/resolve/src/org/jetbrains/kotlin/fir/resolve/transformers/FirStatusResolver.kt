@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.types.EnrichedProjectionKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
@@ -358,16 +358,21 @@ class FirStatusResolver(
         if (type is ConeTypeParameterType) {
             return !type.lookupTag.typeParameterSymbol.fir.variance.allowsPosition(requiredVariance)
         }
+        // TODO: handle other types (like flexible, DNN, captured, ...) KT-62134
         if (type is ConeClassLikeType) {
             val classLike = type.lookupTag.toSymbol(session)?.fir
             for ((index, argument) in type.typeArguments.withIndex()) {
-                if (classLike?.typeParameters?.getOrNull(index) is FirOuterClassTypeParameterRef) continue
-                val (argType, requiredVarianceForArgument) = when (argument) {
-                    is ConeKotlinTypeProjectionOut -> argument.type to requiredVariance
-                    is ConeKotlinTypeProjectionIn -> argument.type to requiredVariance.opposite()
-                    is ConeKotlinTypeProjection -> argument.type to Variance.INVARIANT
-                    is ConeStarProjection -> continue
+                val typeParameterRef = classLike?.typeParameters?.getOrNull(index)
+                if (typeParameterRef !is FirTypeParameter) continue
+                val requiredVarianceForArgument = when (
+                    EnrichedProjectionKind.getEffectiveProjectionKind(typeParameterRef.variance, argument.variance)
+                ) {
+                    EnrichedProjectionKind.OUT -> requiredVariance
+                    EnrichedProjectionKind.IN -> requiredVariance.opposite()
+                    EnrichedProjectionKind.INV -> Variance.INVARIANT
+                    EnrichedProjectionKind.STAR -> continue // CONFLICTING_PROJECTION error was reported
                 }
+                val argType = argument.type ?: continue
                 if (contradictsWith(argType, requiredVarianceForArgument)) {
                     return true
                 }
@@ -375,6 +380,14 @@ class FirStatusResolver(
         }
         return false
     }
+
+    private val ConeTypeProjection.variance: Variance
+        get() = when (this.kind) {
+            ProjectionKind.STAR -> Variance.OUT_VARIANCE
+            ProjectionKind.IN -> Variance.IN_VARIANCE
+            ProjectionKind.OUT -> Variance.OUT_VARIANCE
+            ProjectionKind.INVARIANT -> Variance.INVARIANT
+        }
 
     private fun resolveVisibility(
         declaration: FirDeclaration,
