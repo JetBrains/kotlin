@@ -22,6 +22,9 @@ fun <K, V> Iterable<K>.keysToMap(value: (K) -> V): Map<K, V> {
     return associateBy({ it }, value)
 }
 
+infix fun <A, B> Collection<A>.zipIfSizesAreEqual(other: Collection<B>): List<Pair<A, B>>? =
+    if (size == other.size) zip(other) else null
+
 fun <K, V : Any> Iterable<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K, V> {
     val map = LinkedHashMap<K, V>()
     for (k in this) {
