@@ -8,8 +8,8 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] jvmFieldAnnotationOnConstructorProperty.kt
     public final [ResolvedTo(STATUS)] class MyClass : R|A| {
-        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/MyClass.addCommaWarning] addCommaWarning: R|kotlin/Boolean| = Boolean(false)): R|MyClass| {
-            super<R|A|>()
+        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/MyClass.addCommaWarning] addCommaWarning: R|kotlin/Boolean| = LAZY_EXPRESSION): R|MyClass| {
+            LAZY_super<R|A|>
         }
 
         field:@R|kotlin/jvm/JvmField|[Types]() public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [IsFromPrimaryConstructor=true] var addCommaWarning: R|kotlin/Boolean| = R|<local>/addCommaWarning|

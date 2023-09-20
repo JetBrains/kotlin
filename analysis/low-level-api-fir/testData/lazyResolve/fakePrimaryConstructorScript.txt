@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 
         public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
@@ -166,7 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 
         public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Problem] constructor(): R|Problem| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
@@ -182,7 +182,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 
         public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Problem] constructor(): R|Problem| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
@@ -221,3 +221,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fakePrimaryConstructorScript.kts
             }
 
         }
+

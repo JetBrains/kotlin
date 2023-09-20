@@ -149,8 +149,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] constructor([ResolvedTo(CONTRACTS)] a: R|kotlin/Boolean|, [ResolvedTo(CONTRACTS)] param: R|kotlin/Int| = IntegerLiteral(1), [ResolvedTo(CONTRACTS)] c: R|kotlin/Long|): R|A| {
-                super<R|kotlin/Any|>()
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] constructor([ResolvedTo(CONTRACTS)] a: R|kotlin/Boolean|, [ResolvedTo(CONTRACTS)] param: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(CONTRACTS)] c: R|kotlin/Long|): R|A| {
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -165,8 +165,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] a: R|kotlin/Boolean|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: R|kotlin/Int| = IntegerLiteral(1), [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] c: R|kotlin/Long|): R|A| {
-                super<R|kotlin/Any|>()
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] a: R|kotlin/Boolean|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] c: R|kotlin/Long|): R|A| {
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -181,8 +181,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] a: R|kotlin/Boolean|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] param: R|kotlin/Int| = IntegerLiteral(1), [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] c: R|kotlin/Long|): R|A| {
-                super<R|kotlin/Any|>()
+            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] a: R|kotlin/Boolean|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] param: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] c: R|kotlin/Long|): R|A| {
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -222,3 +222,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] primaryConstructorParameterScript.kts
             }
 
         }
+

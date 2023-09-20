@@ -9,7 +9,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationOnConstructorProperty.kt
     public final [ResolvedTo(STATUS)] class Abc : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Abc] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/Abc.i] @<ERROR TYPE REF: Symbol not found for Anno>[Types]() i: R|kotlin/Int|): R|Abc| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var i: R|kotlin/Int| = R|<local>/i|

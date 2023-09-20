@@ -12,8 +12,8 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnConstructorPropertyScript.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class ResolveMe : R|A| {
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/ResolveMe.addCommaWarning] addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = Boolean(false)): R|ResolveMe| {
-                super<R|A|>()
+            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/ResolveMe.addCommaWarning] addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = LAZY_EXPRESSION): R|ResolveMe| {
+                LAZY_super<R|A|>
             }
 
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = R|<local>/addCommaWarning|

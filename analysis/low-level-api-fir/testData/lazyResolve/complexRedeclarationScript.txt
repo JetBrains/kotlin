@@ -1038,7 +1038,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
             public final [ResolvedTo(STATUS)] class I : R|P| {
                 public [ResolvedTo(CONTRACTS)] [ContainingClassKey=I] constructor(): R|B.I| {
-                    super<R|P|>()
+                    LAZY_super<R|P|>
                 }
 
             }
@@ -1143,7 +1143,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
             public final [ResolvedTo(STATUS)] class I : R|P| {
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=I] constructor(): R|B.I| {
-                    super<R|P|>()
+                    LAZY_super<R|P|>
                 }
 
             }
@@ -1248,7 +1248,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
             public final [ResolvedTo(STATUS)] class I : R|P| {
                 public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=I] constructor(): R|B.I| {
-                    super<R|P|>()
+                    LAZY_super<R|P|>
                 }
 
             }
@@ -1493,3 +1493,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] complexRedeclarationScript.kts
             }
 
         }
+

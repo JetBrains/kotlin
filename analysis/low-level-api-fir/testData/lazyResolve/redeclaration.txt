@@ -143,7 +143,7 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
     }
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -158,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
     }
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -173,7 +173,7 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
     }
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
