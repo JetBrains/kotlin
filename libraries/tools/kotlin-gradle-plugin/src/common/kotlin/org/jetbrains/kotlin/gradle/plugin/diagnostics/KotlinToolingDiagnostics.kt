@@ -503,6 +503,16 @@ object KotlinToolingDiagnostics {
                       /* ... */
                   }
                 
+                After that, replace `by getting` with static accessors:
+                
+                  sourceSets {
+                      commonMain { ... }
+                      
+                      ${trace.shortcut}Main {
+                          dependencies { ... }
+                      }
+                  }
+                
                 To suppress the 'Default Hierarchy Template' add
                     '$KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE=false'
                 to your gradle.properties

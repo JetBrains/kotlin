@@ -14,6 +14,16 @@ Please declare the required targets explicitly:
       /* ... */
   }
 
+After that, replace `by getting` with a static accessor:
+
+  sourceSets {
+      commonMain { ... }
+
+      watchosMain {
+          dependencies { ... }
+      }
+  }
+
 To suppress the 'Default Hierarchy Template' add
     'kotlin.mpp.applyDefaultHierarchyTemplate=false'
 to your gradle.properties
