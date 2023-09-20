@@ -44,9 +44,8 @@ object FirExpectActualResolver {
                                 ?.fullyExpandedClass(useSiteSession)
 
                             val expectTypeParameters = expectContainingClass?.typeParameterSymbols.orEmpty()
-                            val actualTypeParameters = actualContainingClass
-                                ?.typeParameterSymbols
-                                .orEmpty()
+                            val actualTypeParameters = actualContainingClass?.typeParameterSymbols.orEmpty()
+                            if (expectTypeParameters.size != actualTypeParameters.size) return null
 
                             parentSubstitutor = createExpectActualTypeParameterSubstitutor(
                                 expectTypeParameters,
