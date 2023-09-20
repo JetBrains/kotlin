@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // !LANGUAGE: +MultiPlatformProjects
+// !LANGUAGE: -ProhibitDifferentMemberScopesInOpenExpect
 
 // MODULE: common
 // TARGET_PLATFORM: Common

@@ -1,3 +1,4 @@
+// LANGUAGE: -ProhibitDifferentMemberScopesInOpenExpect
 // FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: m1-common

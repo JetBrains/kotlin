@@ -1,3 +1,4 @@
+// LANGUAGE: -ProhibitDifferentMemberScopesInOpenExpect
 // MODULE: m1-common
 // FILE: common.kt
 interface Base {

@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// LANGUAGE: -ProhibitDifferentMemberScopesInOpenExpect
 
 // MODULE: common
 // TARGET_PLATFORM: Common

@@ -307,6 +307,7 @@ enum class LanguageFeature(
     MangleCallsToJavaMethodsWithValueClasses(KOTLIN_2_0, kind = OTHER), // KT-55945
     ForbidInferringTypeVariablesIntoEmptyIntersection(KOTLIN_2_0, kind = BUG_FIX), // KT-51221
     ProhibitDefaultDefaultArgumentsInExpectActualizedByFakeOverride(KOTLIN_2_0, kind = BUG_FIX), // KT-62036
+    ProhibitDifferentMemberScopesInOpenExpect(KOTLIN_2_0, kind = BUG_FIX), // KT-22841
 
     // 2.1
 
