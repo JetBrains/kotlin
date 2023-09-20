@@ -17,8 +17,7 @@ data class ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember
                     "This error happens because the expect class ''{1}'' is non-final"
         ),
         ReturnTypeChangedInOverride(
-            "{0}: the return type of this member must be the same in the expect class and the actual class. " +
-                    "This error happens because the expect class ''{1}'' is non-final"
+            "{0}: the return type of this member must be the same in the expect class and the actual class. "
         ),
         ModalityChangedInOverride(
             "{0}: the modality of this member must be the same in the expect class and the actual class. " +
@@ -33,20 +32,16 @@ data class ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember
                     "This error happens because the expect class ''{1}'' is non-final"
         ),
         ParameterNameChangedInOverride(
-            "{0}: the parameter names of this member must be the same in the expect class and the actual class. " +
-                    "This error happens because the expect class ''{1}'' is non-final"
+            "{0}: the parameter names of this member must be the same in the expect class and the actual class. "
         ),
         PropertyKindChangedInOverride(
-            "{0}: the property kind (val vs var) of this member must be the same in the expect class and the actual class. " +
-                    "This error happens because the expect class ''{1}'' is non-final"
+            "{0}: the property kind (val vs var) of this member must be the same in the expect class and the actual class. "
         ),
         LateinitChangedInOverride(
-            "{0}: the property modifiers (lateinit) of this member must be the same in the expect class and the actual class. " +
-                    "This error happens because the expect class ''{1}'' is non-final"
+            "{0}: the property modifiers (lateinit) of this member must be the same in the expect class and the actual class. "
         ),
         TypeParameterNamesChangedInOverride(
-            "{0}: the type parameter names of this member must be the same in the expect class and the actual class. " +
-                    "This error happens because the expect class ''{1}'' is non-final"
+            "{0}: the type parameter names of this member must be the same in the expect class and the actual class. "
         ),
     }
 }
