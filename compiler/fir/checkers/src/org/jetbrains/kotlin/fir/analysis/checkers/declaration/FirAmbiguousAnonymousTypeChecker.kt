@@ -67,12 +67,6 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker() {
                 context
             )
         }
-        for (typeArgument in type.typeArguments) {
-            checkTypeAndArguments(
-                typeArgument.type ?: continue,
-                context, reporter, reportOn
-            )
-        }
     }
 
     private val FirBlock.singleExpressionType
