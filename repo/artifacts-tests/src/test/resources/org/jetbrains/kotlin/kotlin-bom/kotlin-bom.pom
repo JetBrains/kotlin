@@ -73,6 +73,7 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>kotlin-stdlib-js</artifactId>
+                <type>klib</type>
                 <version>${kotlin.version}</version>
             </dependency>
             <dependency>
@@ -116,6 +117,7 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>kotlin-test-js</artifactId>
+                <type>klib</type>
                 <version>${kotlin.version}</version>
             </dependency>
             <dependency>
