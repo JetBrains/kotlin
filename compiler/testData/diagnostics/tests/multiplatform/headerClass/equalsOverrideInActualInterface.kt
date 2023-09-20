@@ -1,3 +1,4 @@
+// LANGUAGE: -ProhibitDifferentMemberScopesInOpenExpect
 // MODULE: m1-common
 expect interface Base
 

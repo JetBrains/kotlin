@@ -3742,8 +3742,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER) { firDiagnostic ->
-        ActualClassifierMustHaveTheSameMembersAsNonFinalExpectClassifierImpl(
+    add(FirErrors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER.errorFactory) { firDiagnostic ->
+        ActualClassifierMustHaveTheSameMembersAsNonFinalExpectClassifierErrorImpl(
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
             firDiagnostic.b.map { expectActualMemberDiff ->
                 expectActualMemberDiff
@@ -3753,71 +3753,156 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION) { firDiagnostic ->
-        NonActualMemberDeclaredInExpectNonFinalClassifierActualizationImpl(
+    add(FirErrors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER.warningFactory) { firDiagnostic ->
+        ActualClassifierMustHaveTheSameMembersAsNonFinalExpectClassifierWarningImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firDiagnostic.b.map { expectActualMemberDiff ->
+                expectActualMemberDiff
+            },
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.c),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION.errorFactory) { firDiagnostic ->
+        NonActualMemberDeclaredInExpectNonFinalClassifierActualizationErrorImpl(
             firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION) { firDiagnostic ->
-        ReturnTypeChangedInNonFinalExpectClassifierActualizationImpl(
+    add(FirErrors.NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION.warningFactory) { firDiagnostic ->
+        NonActualMemberDeclaredInExpectNonFinalClassifierActualizationWarningImpl(
             firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION) { firDiagnostic ->
-        ModalityChangedInNonFinalExpectClassifierActualizationImpl(
+    add(FirErrors.RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.errorFactory) { firDiagnostic ->
+        ReturnTypeChangedInNonFinalExpectClassifierActualizationErrorImpl(
             firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION) { firDiagnostic ->
-        VisibilityChangedInNonFinalExpectClassifierActualizationImpl(
+    add(FirErrors.RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.warningFactory) { firDiagnostic ->
+        ReturnTypeChangedInNonFinalExpectClassifierActualizationWarningImpl(
             firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.SETTER_VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION) { firDiagnostic ->
-        SetterVisibilityChangedInNonFinalExpectClassifierActualizationImpl(
+    add(FirErrors.MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.errorFactory) { firDiagnostic ->
+        ModalityChangedInNonFinalExpectClassifierActualizationErrorImpl(
             firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION) { firDiagnostic ->
-        ParameterNameChangedInNonFinalExpectClassifierActualizationImpl(
+    add(FirErrors.MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.warningFactory) { firDiagnostic ->
+        ModalityChangedInNonFinalExpectClassifierActualizationWarningImpl(
             firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.PROPERTY_KIND_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION) { firDiagnostic ->
-        PropertyKindChangedInNonFinalExpectClassifierActualizationImpl(
+    add(FirErrors.VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.errorFactory) { firDiagnostic ->
+        VisibilityChangedInNonFinalExpectClassifierActualizationErrorImpl(
             firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION) { firDiagnostic ->
-        LateinitChangedInNonFinalExpectClassifierActualizationImpl(
+    add(FirErrors.VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.warningFactory) { firDiagnostic ->
+        VisibilityChangedInNonFinalExpectClassifierActualizationWarningImpl(
             firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION) { firDiagnostic ->
-        TypeParameterNamesChangedInNonFinalExpectClassifierActualizationImpl(
+    add(FirErrors.SETTER_VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.errorFactory) { firDiagnostic ->
+        SetterVisibilityChangedInNonFinalExpectClassifierActualizationErrorImpl(
             firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER) { firDiagnostic ->
-        ActualClassifierMustHaveTheSameSupertypesAsNonFinalExpectClassifierImpl(
+    add(FirErrors.SETTER_VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.warningFactory) { firDiagnostic ->
+        SetterVisibilityChangedInNonFinalExpectClassifierActualizationWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.errorFactory) { firDiagnostic ->
+        ParameterNameChangedInNonFinalExpectClassifierActualizationErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.warningFactory) { firDiagnostic ->
+        ParameterNameChangedInNonFinalExpectClassifierActualizationWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PROPERTY_KIND_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.errorFactory) { firDiagnostic ->
+        PropertyKindChangedInNonFinalExpectClassifierActualizationErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PROPERTY_KIND_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.warningFactory) { firDiagnostic ->
+        PropertyKindChangedInNonFinalExpectClassifierActualizationWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.errorFactory) { firDiagnostic ->
+        LateinitChangedInNonFinalExpectClassifierActualizationErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.warningFactory) { firDiagnostic ->
+        LateinitChangedInNonFinalExpectClassifierActualizationWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.errorFactory) { firDiagnostic ->
+        TypeParameterNamesChangedInNonFinalExpectClassifierActualizationErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.warningFactory) { firDiagnostic ->
+        TypeParameterNamesChangedInNonFinalExpectClassifierActualizationWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER.errorFactory) { firDiagnostic ->
+        ActualClassifierMustHaveTheSameSupertypesAsNonFinalExpectClassifierErrorImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firDiagnostic.b.map { name ->
+                name
+            },
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.c),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER.warningFactory) { firDiagnostic ->
+        ActualClassifierMustHaveTheSameSupertypesAsNonFinalExpectClassifierWarningImpl(
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
             firDiagnostic.b.map { name ->
                 name

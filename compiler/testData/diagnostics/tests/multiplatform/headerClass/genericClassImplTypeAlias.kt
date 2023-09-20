@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -ACTUAL_WITHOUT_EXPECT
+// LANGUAGE: -ProhibitDifferentMemberScopesInOpenExpect
 // MODULE: m1-common
 // FILE: common.kt
 
