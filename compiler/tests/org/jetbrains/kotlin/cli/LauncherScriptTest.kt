@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli
 
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.CompilerTestUtil
@@ -146,7 +145,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "$testDataDirectory/emptyMain.kt",
             "-nowarn",
             "-libraries",
-            PathUtil.kotlinPathsForCompiler.jsStdLibJarPath.absolutePath,
+            PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath.absolutePath,
             "-Xir-produce-klib-dir",
             "-Xir-only",
             "-ir-output-dir",

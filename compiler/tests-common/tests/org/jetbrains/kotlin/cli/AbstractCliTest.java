@@ -299,7 +299,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                         KtTestUtil.getJdk17Home().getPath()
                 ).replace(
                         "$STDLIB_JS$",
-                        PathUtil.getKotlinPathsForCompiler().getJsStdLibJarPath().getAbsolutePath()
+                        PathUtil.getKotlinPathsForCompiler().getJsStdLibKlibPath().getAbsolutePath()
                 );
     }
 

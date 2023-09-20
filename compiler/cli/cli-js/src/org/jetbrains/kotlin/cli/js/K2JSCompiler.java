@@ -512,7 +512,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         List<String> libraries = new SmartList<>();
         if (!arguments.getNoStdlib()) {
             File stdlibJar = getLibraryFromHome(
-                    paths, KotlinPaths::getJsStdLibJarPath, PathUtil.JS_LIB_JAR_NAME, messageCollector, "'-no-stdlib'");
+                    paths, KotlinPaths::getJsStdLibKlibPath, PathUtil.JS_LIB_JAR_NAME, messageCollector, "'-no-stdlib'");
             if (stdlibJar != null) {
                 libraries.add(stdlibJar.getAbsolutePath());
             }

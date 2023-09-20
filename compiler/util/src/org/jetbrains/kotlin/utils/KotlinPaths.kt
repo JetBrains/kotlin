@@ -47,16 +47,16 @@ interface KotlinPaths {
         get() = sourcesJar(Jar.StdLib)!!
 
 //    @Deprecated("Obsolete API", ReplaceWith("jar(KotlinPaths.Jars.jsStdLib)"))
-    val jsStdLibJarPath: File
-        get() = jar(Jar.JsStdLib)
+    val jsStdLibKlibPath: File
+        get() = klib(Jar.JsStdLib)
 
 //    @Deprecated("Obsolete API", ReplaceWith("sourcesJar(KotlinPaths.Jars.JsStdLib)!!"))
     val jsStdLibSrcJarPath: File
         get() = sourcesJar(Jar.JsStdLib)!!
 
 //    @Deprecated("Obsolete API", ReplaceWith("jar(KotlinPaths.Jars.jsKotlinTest)"))
-    val jsKotlinTestJarPath: File
-        get() = jar(Jar.JsKotlinTest)
+    val jsKotlinTestKlibPath: File
+        get() = klib(Jar.JsKotlinTest)
 
 //    @Deprecated("Obsolete API", ReplaceWith("jar(KotlinPaths.Jars.allOpenPlugin)"))
     val allOpenPluginJarPath: File
@@ -132,6 +132,8 @@ interface KotlinPaths {
 
     fun jar(jar: Jar): File
 
+    fun klib(jar: Jar): File
+
     fun sourcesJar(jar: Jar): File?
 
     fun classPath(jars: Sequence<Jar>): List<File> = jars.map(this::jar).toList()
@@ -152,6 +154,8 @@ open class KotlinPathsFromBaseDirectory(val basePath: File) : KotlinPaths {
         get() = basePath
 
     override fun jar(jar: KotlinPaths.Jar): File = basePath.resolve(jar.baseName + ".jar")
+
+    override fun klib(jar: KotlinPaths.Jar): File = basePath.resolve(jar.baseName + ".klib")
 
     override fun sourcesJar(jar: KotlinPaths.Jar): File? = basePath.resolve(jar.baseName + "-sources.jar")
 }

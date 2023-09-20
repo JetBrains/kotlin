@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.multiplatform
 
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
@@ -74,7 +73,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
                         "-Xir-produce-klib-dir",
                         "-Xir-only",
                         "-libraries",
-                        PathUtil.kotlinPathsForCompiler.jsStdLibJarPath.absolutePath,
+                        PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath.absolutePath,
                         "-ir-output-dir",
                         jsDest!!,
                         "-ir-output-name",

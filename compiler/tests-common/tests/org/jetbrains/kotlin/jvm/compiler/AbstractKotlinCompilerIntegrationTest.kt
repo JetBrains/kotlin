@@ -20,7 +20,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -166,7 +165,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
         if (compiler is K2JSCompiler) {
             args.add("-libraries")
-            args.add((classpath + PathUtil.kotlinPathsForCompiler.jsStdLibJarPath).joinToString(File.pathSeparator))
+            args.add((classpath + PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath).joinToString(File.pathSeparator))
             args.add("-Xir-produce-klib-dir")
             args.add("-Xir-only")
             args.add("-ir-output-dir")
