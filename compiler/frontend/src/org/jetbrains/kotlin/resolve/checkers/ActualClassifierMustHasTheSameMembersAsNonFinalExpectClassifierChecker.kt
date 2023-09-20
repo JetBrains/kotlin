@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -137,14 +138,9 @@ private fun calculateExpectActualScopeDiff(
     actual: ClassDescriptor,
 ): Set<ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>> {
     val matchingContext = ClassicExpectActualMatchingContext(actual.module)
-    // It's responsibility of AbstractExpectActualCompatibilityChecker to report that. Most probably this check is redundant,
-    // because we can't reach this line if expect and actual don't match, but let's have it for safety
-    if (expect.declaredTypeParameters.size != actual.declaredTypeParameters.size) return emptySet()
-    val classTypeSubstitutor = matchingContext.createExpectActualTypeParameterSubstitutor(
-        expect.declaredTypeParameters,
-        actual.declaredTypeParameters,
-        parentSubstitutor = null
-    )
+    val classTypeSubstitutor = (expect.declaredTypeParameters zipIfSizesAreEqual actual.declaredTypeParameters)
+        .let { it ?: return emptySet() } // It's responsibility of AbstractExpectActualCompatibilityChecker to report that
+        .let { matchingContext.createExpectActualTypeParameterSubstitutor(it, parentSubstitutor = null) }
 
     val expectClassCallables = expect.unsubstitutedMemberScope.extractNonPrivateCallables()
     val actualClassCallables = actual.unsubstitutedMemberScope.extractNonPrivateCallables()

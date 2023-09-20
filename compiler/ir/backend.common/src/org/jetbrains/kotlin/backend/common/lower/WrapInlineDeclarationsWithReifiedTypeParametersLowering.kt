@@ -55,11 +55,7 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                     .map { (key, value) ->
                         key to (value as IrTypeArgument)
                     }
-                val typeSubstitutor = IrTypeSubstitutor(
-                    substitutionMap.map { it.first },
-                    substitutionMap.map { it.second },
-                    context.irBuiltIns
-                )
+                val typeSubstitutor = IrTypeSubstitutor(substitutionMap, context.irBuiltIns)
 
                 val function = irFactory.buildFun {
                     name = Name.identifier("${owner.name}${"$"}wrap")

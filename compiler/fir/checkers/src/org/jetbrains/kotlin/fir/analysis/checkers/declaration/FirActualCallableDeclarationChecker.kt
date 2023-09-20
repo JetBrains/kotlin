@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.areCompatibleExpectActualTypes
 import org.jetbrains.kotlin.fir.types.createExpectActualTypeParameterSubstitutor
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
 object FirActualCallableDeclarationChecker : FirCallableDeclarationChecker() {
     override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -34,12 +35,16 @@ object FirActualCallableDeclarationChecker : FirCallableDeclarationChecker() {
         val expectTypeParameters = expectFunctionSymbol.getContainingClassSymbol(expectFunctionSymbol.moduleData.session)
             ?.typeParameterSymbols.orEmpty()
         val actualClassTypeParameters = actualFunctionSymbol.getContainingClassSymbol(context.session)?.typeParameterSymbols.orEmpty()
-        val parentSubstitutor =
-            createExpectActualTypeParameterSubstitutor(expectTypeParameters, actualClassTypeParameters, context.session)
+
+        val parentSubstitutor = createExpectActualTypeParameterSubstitutor(
+            // It's responsibility of AbstractExpectActualCompatibilityChecker to report that
+            (expectTypeParameters zipIfSizesAreEqual actualClassTypeParameters) ?: return,
+            context.session
+        )
 
         val substitutor = createExpectActualTypeParameterSubstitutor(
-            expectFunctionSymbol.typeParameterSymbols,
-            actualFunctionSymbol.typeParameterSymbols,
+            // It's responsibility of AbstractExpectActualCompatibilityChecker to check that
+            (expectFunctionSymbol.typeParameterSymbols zipIfSizesAreEqual actualFunctionSymbol.typeParameterSymbols) ?: return,
             context.session,
             parentSubstitutor
         )
