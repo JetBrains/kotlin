@@ -95,6 +95,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
     }
 
     @Test
+    @TestMetadata("innerClass.kt")
+    public void testInnerClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/innerClass.kt");
+    }
+
+    @Test
     @TestMetadata("javaClass.kt")
     public void testJavaClass() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/javaClass.kt");
