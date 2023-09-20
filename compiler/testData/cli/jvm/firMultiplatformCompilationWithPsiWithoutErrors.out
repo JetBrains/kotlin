@@ -8,10 +8,14 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-compiler/testData/cli/jvm/firMultiplatformCompilationWithoutErrors/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect interface A {
-^
-compiler/testData/cli/jvm/firMultiplatformCompilationWithoutErrors/jvm.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+compiler/testData/cli/jvm/firMultiplatformCompilationWithoutErrors/jvm.kt:1:1: error: actual interface A : Any: actual class and its non-final expect class must declare exactly the same non-private members. The following non-private members in actual class are mismatched:
+
+fun bar(): String: non-private member must be declared in both the actual class and the expect class. This error happens because the expect class 'expect interface A : Any' is non-final
+
+This error happens because the expect class 'expect interface A : Any' is non-final. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details
 actual interface A {
 ^
-OK
+compiler/testData/cli/jvm/firMultiplatformCompilationWithoutErrors/jvm.kt:3:9: error: fun bar(): String: non-private member must be declared in both the actual class and the expect class. This error happens because the expect class 'expect interface A : Any' is non-final. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details
+    fun bar(): String
+        ^
+COMPILATION_ERROR

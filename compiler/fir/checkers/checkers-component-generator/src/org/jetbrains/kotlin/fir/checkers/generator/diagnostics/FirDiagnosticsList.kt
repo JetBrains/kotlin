@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -40,6 +43,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompa
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.PrivateForInline
 import java.util.Optional
@@ -1256,6 +1260,47 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val ACTUAL_MISSING by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME)
+
+        val ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER by error<KtClassLikeDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirClassLikeSymbol<*>>("actualClassOrTypealias")
+            parameter<Set<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>>("scopeDiff")
+            parameter<FirClassSymbol<*>>("expectClass")
+        }
+        val NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION by error<KtCallableDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>("diff")
+        }
+        val RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION by error<KtCallableDeclaration>(PositioningStrategy.DECLARATION_RETURN_TYPE) {
+            parameter<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>("diff")
+        }
+        val MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION by error<KtCallableDeclaration>(PositioningStrategy.MODALITY_MODIFIER) {
+            parameter<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>("diff")
+        }
+        val VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION by error<KtCallableDeclaration>(PositioningStrategy.VISIBILITY_MODIFIER) {
+            parameter<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>("diff")
+        }
+        val SETTER_VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION by error<KtPropertyAccessor>(PositioningStrategy.VISIBILITY_MODIFIER) {
+            parameter<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>("diff")
+        }
+        val PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION by error<KtCallableDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>("diff")
+        }
+        val PROPERTY_KIND_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION by error<KtCallableDeclaration>(PositioningStrategy.VAL_OR_VAR_NODE) {
+            parameter<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>("diff")
+        }
+        val LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION by error<KtCallableDeclaration>(PositioningStrategy.LATEINIT_MODIFIER) {
+            parameter<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>("diff")
+        }
+        val TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION by error<KtCallableDeclaration>(PositioningStrategy.TYPE_PARAMETERS_LIST) {
+            parameter<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>("diff")
+        }
+
+        val ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER by error<KtClassLikeDeclaration>(
+            PositioningStrategy.DECLARATION_NAME
+        ) {
+            parameter<FirClassLikeSymbol<*>>("actualClassOrTypealias")
+            parameter<List<Name>>("supertypes")
+            parameter<FirClassSymbol<*>>("expectClass")
+        }
 
         val EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING by warning<KtClassLikeDeclaration>(PositioningStrategy.EXPECT_ACTUAL_MODIFIER)
 

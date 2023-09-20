@@ -25,5 +25,7 @@ actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_C
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
 
+    // K1 and K2 see the world differently (K1 sees actuals when it resolves expect supertypes) => they compare the scopes differently.
+    // It's ok because using AllowDifferentMembersInActual is undefined behavior
     override fun injected(): <!RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION!>String<!> = "" // covariant override
 }

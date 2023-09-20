@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
@@ -27,5 +28,6 @@ actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_C
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
 
+    // TODO create YT ticket that K2 jumps from common to platform module
     override fun injected(param: String): <!RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION!>String<!> = "" // covariant override
 }

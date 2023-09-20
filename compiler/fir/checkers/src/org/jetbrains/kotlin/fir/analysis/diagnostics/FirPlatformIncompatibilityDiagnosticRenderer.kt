@@ -18,8 +18,13 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.ContextIndependentParameterRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
+import java.text.MessageFormat
 
 class FirPlatformIncompatibilityDiagnosticRenderer(
     private val mode: MultiplatformDiagnosticRenderingMode
@@ -59,6 +64,42 @@ class FirIncompatibleExpectedActualClassScopesRenderer(
         @JvmField
         val TEXT = FirIncompatibleExpectedActualClassScopesRenderer(MultiplatformDiagnosticRenderingMode())
     }
+}
+
+class FirExpectActualScopeDiffsRenderer(
+    private val mode: MultiplatformDiagnosticRenderingMode,
+) : ContextIndependentParameterRenderer<Set<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>> {
+    override fun render(obj: Set<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>): String {
+        check(obj.isNotEmpty())
+        return buildString {
+            mode.renderList(this, obj.toList().map { diff ->
+                {
+                    appendLine()
+                    appendLine(FirExpectActualScopeDiffRenderer.render(diff))
+                }
+            })
+        }
+    }
+
+    companion object {
+        @JvmField
+        val TEXT = FirExpectActualScopeDiffsRenderer(MultiplatformDiagnosticRenderingMode())
+    }
+}
+
+object FirExpectActualScopeDiffRenderer : ContextIndependentParameterRenderer<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>> {
+    override fun render(obj: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>): String = MessageFormat.format(
+        obj.kind.rawMessage,
+        FirDiagnosticRenderers.SYMBOL.render(obj.actualMember),
+        FirDiagnosticRenderers.SYMBOL.render(obj.expectClass)
+    )
+}
+
+class FirListRenderer<T>(
+    private val elementRenderer: ContextIndependentParameterRenderer<T>,
+    private val elemProcessor: (String) -> String = { it },
+) : ContextIndependentParameterRenderer<List<T>> {
+    override fun render(obj: List<T>): String = obj.joinToString { elemProcessor(elementRenderer.render(it)) }
 }
 
 open class MultiplatformDiagnosticRenderingMode {

@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement.Version
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.psi.KtBackingField
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -86,6 +89,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.types.Variance
 
@@ -2578,6 +2582,65 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface ActualMissing : KtFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ActualMissing::class
+    }
+
+    interface ActualClassifierMustHaveTheSameMembersAsNonFinalExpectClassifier : KtFirDiagnostic<KtClassLikeDeclaration> {
+        override val diagnosticClass get() = ActualClassifierMustHaveTheSameMembersAsNonFinalExpectClassifier::class
+        val actualClassOrTypealias: KtClassLikeSymbol
+        val scopeDiff: List<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>
+        val expectClass: KtClassLikeSymbol
+    }
+
+    interface NonActualMemberDeclaredInExpectNonFinalClassifierActualization : KtFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = NonActualMemberDeclaredInExpectNonFinalClassifierActualization::class
+        val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>
+    }
+
+    interface ReturnTypeChangedInNonFinalExpectClassifierActualization : KtFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = ReturnTypeChangedInNonFinalExpectClassifierActualization::class
+        val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>
+    }
+
+    interface ModalityChangedInNonFinalExpectClassifierActualization : KtFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = ModalityChangedInNonFinalExpectClassifierActualization::class
+        val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>
+    }
+
+    interface VisibilityChangedInNonFinalExpectClassifierActualization : KtFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = VisibilityChangedInNonFinalExpectClassifierActualization::class
+        val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>
+    }
+
+    interface SetterVisibilityChangedInNonFinalExpectClassifierActualization : KtFirDiagnostic<KtPropertyAccessor> {
+        override val diagnosticClass get() = SetterVisibilityChangedInNonFinalExpectClassifierActualization::class
+        val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>
+    }
+
+    interface ParameterNameChangedInNonFinalExpectClassifierActualization : KtFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = ParameterNameChangedInNonFinalExpectClassifierActualization::class
+        val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>
+    }
+
+    interface PropertyKindChangedInNonFinalExpectClassifierActualization : KtFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = PropertyKindChangedInNonFinalExpectClassifierActualization::class
+        val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>
+    }
+
+    interface LateinitChangedInNonFinalExpectClassifierActualization : KtFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = LateinitChangedInNonFinalExpectClassifierActualization::class
+        val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>
+    }
+
+    interface TypeParameterNamesChangedInNonFinalExpectClassifierActualization : KtFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = TypeParameterNamesChangedInNonFinalExpectClassifierActualization::class
+        val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>
+    }
+
+    interface ActualClassifierMustHaveTheSameSupertypesAsNonFinalExpectClassifier : KtFirDiagnostic<KtClassLikeDeclaration> {
+        override val diagnosticClass get() = ActualClassifierMustHaveTheSameSupertypesAsNonFinalExpectClassifier::class
+        val actualClassOrTypealias: KtClassLikeSymbol
+        val supertypes: List<Name>
+        val expectClass: KtClassLikeSymbol
     }
 
     interface ExpectActualClassifiersAreInBetaWarning : KtFirDiagnostic<KtClassLikeDeclaration> {

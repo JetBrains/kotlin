@@ -58,6 +58,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_SUPER_CA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION
@@ -346,6 +348,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_AMBIGUIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_ON_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_FIELD_IN_VAL_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY
@@ -373,6 +376,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_STDLIB_CL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MIXING_FUNCTIONAL_KINDS_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER
@@ -403,6 +407,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_EXHAUSTIVE_WHEN_STATEMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_FINAL_CLASS
@@ -483,6 +488,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_MEMBER_BY_DELEGATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_CANNOT_BE_IMPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLUGIN_ANNOTATION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRE_RELEASE_CLASS
@@ -500,6 +506,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_FIELD_DE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_KIND_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_MUST_HAVE_GETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_MUST_HAVE_SETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_TYPE_MISMATCH_BY_DELEGATION
@@ -549,6 +556,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESULT_TYPE_MISMA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_FOR_BUILT_IN_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_NOT_ALLOWED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_BY_DELEGATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_ON_INHERITANCE
@@ -563,6 +571,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SECONDARY_CONSTRU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SENSELESS_COMPARISON
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SENSELESS_NULL_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SETTER_PROJECTED_OUT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SETTER_VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SINGLETON_IN_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSIBLE
@@ -605,6 +614,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_VARIANCE_CONFLICT_ERROR
@@ -678,6 +688,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_OVERRIDDEN_BY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VIRTUAL_MEMBER_HIDDEN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET
@@ -1990,12 +2001,80 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FirIncompatibleExpectedActualClassScopesRenderer.TEXT
         )
         map.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'.")
+
+        map.put(
+            ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER,
+            "{0}: actual class and its non-final expect class must declare exactly the same non-private members. " +
+                    "The following non-private members in actual class are mismatched:{1}\n" +
+                    "This error happens because the expect class ''{2}'' is non-final. " +
+                    "Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+            SYMBOL,
+            FirExpectActualScopeDiffsRenderer.TEXT,
+            SYMBOL,
+        )
+        map.put(
+            NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION,
+            "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+            FirExpectActualScopeDiffRenderer
+        )
+        map.put(
+            RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
+            "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+            FirExpectActualScopeDiffRenderer
+        )
+        map.put(
+            MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
+            "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+            FirExpectActualScopeDiffRenderer
+        )
+        map.put(
+            VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
+            "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+            FirExpectActualScopeDiffRenderer
+        )
+        map.put(
+            SETTER_VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
+            "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+            FirExpectActualScopeDiffRenderer
+        )
+        map.put(
+            PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
+            "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+            FirExpectActualScopeDiffRenderer
+        )
+        map.put(
+            PROPERTY_KIND_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
+            "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+            FirExpectActualScopeDiffRenderer
+        )
+        map.put(
+            LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
+            "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+            FirExpectActualScopeDiffRenderer
+        )
+        map.put(
+            TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
+            "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+            FirExpectActualScopeDiffRenderer
+        )
+        map.put(
+            ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER,
+            "{0}: actual class and its non-final expect class must declare exactly the same supertypes. " +
+                    "Actual class declares the following supertypes that are not presented in expect class: {1}." +
+                    "This error happens because the expect class ''{2}'' is non-final. " +
+                    "Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+            SYMBOL,
+            FirListRenderer(TO_STRING) { "'$it'" },
+            SYMBOL,
+        )
+
         map.put(
             EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING,
             "'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. " +
                     "You can use -Xexpect-actual-classes flag to suppress this warning. " +
                     "Also see: https://youtrack.jetbrains.com/issue/KT-61573"
         )
+
         map.put(NOT_A_MULTIPLATFORM_COMPILATION, "'expect' and 'actual' declarations can be used only in multiplatform projects. Learn more about Kotlin Multiplatform: https://kotl.in/multiplatform-setup")
         map.put(EXPECT_ACTUAL_OPT_IN_ANNOTATION, "Opt-in annotations are prohibited to be 'expect' or 'actual'. Instead, declare annotation once in common sources.")
         map.put(
