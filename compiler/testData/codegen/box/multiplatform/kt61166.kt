@@ -17,6 +17,8 @@ actual object A : B() {
     override val x: String get() = "OK"
 }
 
+@OptIn(ExperimentalMultiplatform::class)
+@AllowDifferentMembersInActual
 actual abstract class C {
     abstract val x: String
 }
