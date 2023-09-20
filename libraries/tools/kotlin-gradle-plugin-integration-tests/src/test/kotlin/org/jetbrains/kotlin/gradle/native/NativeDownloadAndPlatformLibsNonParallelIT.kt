@@ -10,10 +10,17 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import java.nio.file.Paths
 import kotlin.io.path.appendText
 import kotlin.io.path.deleteRecursively
 
+@OsCondition(
+    // This test is disabled for Windows, because there is an issue with
+    // KotlinToolRunner.getIsolatedClassLoader does not release konan jars properly. See KT-62093 for more details.
+    supportedOn = [OS.LINUX, OS.MAC],
+    enabledOnCI = [OS.LINUX, OS.MAC]
+)
 class NativeDownloadAndPlatformLibsNonParallelIT : KGPDaemonsBaseTest() {
 
     private val platformName: String = HostManager.platformName()
