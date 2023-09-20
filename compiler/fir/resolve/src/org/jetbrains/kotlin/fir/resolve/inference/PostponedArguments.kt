@@ -145,7 +145,8 @@ private fun extractLambdaInfo(
         parameters,
         returnType,
         typeVariable.takeIf { newTypeVariableUsed },
-        candidate,
         coerceFirstParameterToExtensionReceiver = false
-    )
+    ).also {
+        candidate?.postponedAtoms?.add(it)
+    }
 }

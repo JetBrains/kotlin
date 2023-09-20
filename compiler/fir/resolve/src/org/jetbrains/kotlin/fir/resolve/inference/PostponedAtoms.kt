@@ -46,14 +46,8 @@ class ResolvedLambdaAtom(
     val parameters: List<ConeKotlinType>,
     var returnType: ConeKotlinType,
     typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,
-    candidateOfOuterCall: Candidate?,
     val coerceFirstParameterToExtensionReceiver: Boolean
 ) : PostponedResolvedAtom() {
-    init {
-        candidateOfOuterCall?.let {
-            it.postponedAtoms += this
-        }
-    }
 
     var typeVariableForLambdaReturnType = typeVariableForLambdaReturnType
         private set

@@ -117,7 +117,8 @@ fun extractLambdaInfoFromFunctionType(
         parameters,
         returnType,
         typeVariableForLambdaReturnType = returnTypeVariable,
-        candidate,
         coerceFirstParameterToExtensionReceiver
-    )
+    ).also {
+        candidate?.postponedAtoms?.add(it)
+    }
 }
