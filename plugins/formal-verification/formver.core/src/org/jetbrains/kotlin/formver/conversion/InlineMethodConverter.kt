@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.name.Name
@@ -20,25 +18,10 @@ sealed interface SubstitutionItem {
 
 data class SubstitutionName(override val name: MangledName) : SubstitutionItem
 
-data class SubstitutionLambda(val body: FirBlock, val args: List<Name>) : SubstitutionItem {
+data class SubstitutionLambda(val body: FirBlock, val args: List<Name>, val scopedNames: Map<Name, Int>) : SubstitutionItem {
     override val name = null
     override fun lambdaBody(): FirBlock = body
     override fun lambdaArgs(): List<Name> = args
-}
-
-class InlineNameMangler(
-    val discriminator: MangledName,
-    override val mangledReturnValueName: MangledName,
-    val substitutionParams: Map<Name, SubstitutionItem>,
-) :
-    NameMangler {
-    override fun mangleParameterName(parameter: FirValueParameterSymbol, scopeDepth: Int): MangledName =
-        substitutionParams[parameter.name]?.name ?: throw Exception("Unnamed parameter used in a way that requires a name.")
-
-    override fun mangleLocalPropertyName(property: FirPropertySymbol, scopeDepth: Int): MangledName =
-        InlineName(discriminator, NoopNameMangler.mangleLocalPropertyName(property, scopeDepth))
-
-    override val mangledReturnLabelName: MangledName = InlineName(discriminator, NoopNameMangler.mangledReturnLabelName)
 }
 
 class InlineMethodConverter(
@@ -46,8 +29,9 @@ class InlineMethodConverter(
     override val signature: FullNamedFunctionSignature,
     returnVarName: MangledName,
     private val substitutionParams: Map<Name, SubstitutionItem>,
+    scopeDepth: Int
 ) : MethodConversionContext, ProgramConversionContext by programCtx {
-    override val nameMangler = InlineNameMangler(signature.name, returnVarName, substitutionParams)
+    override val nameMangler = NameMangler(returnVarName, substitutionParams, scopeDepth)
 
     override fun getLambdaOrNull(name: Name): SubstitutionLambda? = substitutionParams[name] as? SubstitutionLambda
 }

@@ -23,10 +23,12 @@ method pkg$$global$explicit_arg$() returns (ret: Int)
     var anonymous$2: Int
     var anonymous$3: Int
     anonymous$3 := 0
-    anonymous$2 := anonymous$3 + anonymous$3
+    if (true) {
+      anonymous$2 := anonymous$3 + anonymous$3
+    }
     anonymous$1 := anonymous$2
-    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
-    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -41,10 +43,12 @@ method pkg$$global$implicit_arg$() returns (ret: Int)
     var anonymous$2: Int
     var anonymous$3: Int
     anonymous$3 := 0
-    anonymous$2 := anonymous$3 * 2
+    if (true) {
+      anonymous$2 := anonymous$3 * 2
+    }
     anonymous$1 := anonymous$2
-    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
-    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -58,16 +62,18 @@ method pkg$$global$lambda_if$() returns (ret: Int)
   if (true) {
     var anonymous$2: Int
     var anonymous$3: Int
-    var anonymous$4: Int
     anonymous$3 := 0
-    if (anonymous$3 == 0) {
-      anonymous$4 := anonymous$3 + 1
-    } else {
-      anonymous$4 := anonymous$3 + 2}
-    anonymous$2 := anonymous$4
+    if (true) {
+      var anonymous$4: Int
+      if (anonymous$3 == 0) {
+        anonymous$4 := anonymous$3 + 1
+      } else {
+        anonymous$4 := anonymous$3 + 2}
+      anonymous$2 := anonymous$4
+    }
     anonymous$1 := anonymous$2
-    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
-    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -82,10 +88,12 @@ method pkg$$global$return_value_not_used$() returns (ret: dom$Unit)
     var anonymous$2: Int
     var anonymous$3: Int
     anonymous$3 := 0
-    anonymous$2 := anonymous$3
+    if (true) {
+      anonymous$2 := anonymous$3
+    }
     anonymous$1 := anonymous$2
-    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
-    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   label label$ret
 }
@@ -101,14 +109,15 @@ method pkg$$global$shadowing$() returns (ret: Int)
   if (true) {
     var anonymous$2: Int
     var anonymous$3: Int
-    var inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$3$y: Int
     anonymous$3 := 0
-    inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$3$y := 0
-    anonymous$2 := anonymous$3 +
-      inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$3$y
+    if (true) {
+      var local$3$y: Int
+      local$3$y := 0
+      anonymous$2 := anonymous$3 + local$3$y
+    }
     anonymous$1 := anonymous$2
-    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
-    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -125,10 +134,12 @@ method pkg$$global$foo$() returns (ret: Int)
     var anonymous$2: Int
     var anonymous$3: Int
     anonymous$3 := 0
-    anonymous$2 := anonymous$3 + 1
+    if (true) {
+      anonymous$2 := anonymous$3 + 1
+    }
     anonymous$1 := anonymous$2
-    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
-    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   ret := anonymous$1
   goto label$ret
@@ -142,21 +153,23 @@ method pkg$$global$nested$() returns (ret: Int)
   var anonymous$1: Int
   local$1$x := 2
   if (true) {
-    var inline$pkg$$global$foo$$local$2$x: Int
+    var local$2$x: Int
     var anonymous$2: Int
-    inline$pkg$$global$foo$$local$2$x := 2
+    local$2$x := 2
     if (true) {
       var anonymous$3: Int
       var anonymous$4: Int
       anonymous$4 := 0
-      anonymous$3 := anonymous$4 + 1
+      if (true) {
+        anonymous$3 := anonymous$4 + 1
+      }
       anonymous$2 := anonymous$3
-      goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
-      label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+      goto inline_label$2$ret
+      label inline_label$2$ret
     }
     anonymous$1 := anonymous$2
-    goto inline$pkg$$global$foo$$label$ret
-    label inline$pkg$$global$foo$$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   ret := anonymous$1
   goto label$ret

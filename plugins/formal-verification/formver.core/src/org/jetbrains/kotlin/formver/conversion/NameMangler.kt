@@ -7,11 +7,17 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.formver.embeddings.embedName
 import org.jetbrains.kotlin.formver.viper.MangledName
+import org.jetbrains.kotlin.name.Name
 
-interface NameMangler {
-    fun mangleParameterName(parameter: FirValueParameterSymbol, scopeDepth: Int): MangledName
-    fun mangleLocalPropertyName(property: FirPropertySymbol, scopeDepth: Int): MangledName
-    val mangledReturnValueName: MangledName
-    val mangledReturnLabelName: MangledName
+class NameMangler(
+    val mangledReturnValueName: MangledName = ReturnVariableName,
+    private val substitutionParams: Map<Name, SubstitutionItem> = mapOf(),
+    returnLabelIndex: Int? = null
+) {
+    fun mangleParameterName(parameter: FirValueParameterSymbol) = substitutionParams[parameter.name]?.name ?: parameter.embedName()
+    fun mangleLocalPropertyName(property: FirPropertySymbol, scopeDepth: Int) = property.callableId.embedName(scopeDepth)
+
+    val mangledReturnLabelName: MangledName = ReturnLabelName(returnLabelIndex)
 }

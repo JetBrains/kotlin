@@ -39,6 +39,13 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
         substitutionParams: Map<Name, SubstitutionItem>,
     ): StmtConversionContext<RTC>
 
+    fun withLambdaContext(
+        inlineSignature: FullNamedFunctionSignature,
+        returnVarName: MangledName,
+        substitutionParams: Map<Name, SubstitutionItem>,
+        scopedNames: Map<Name, Int>,
+    ): StmtConversionContext<RTC>
+
     fun withResult(type: TypeEmbedding, action: StmtConversionContext<VarResultTrackingContext>.() -> Unit): VariableEmbedding {
         val ctx = withResult(type)
         ctx.action()
@@ -49,6 +56,7 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
     fun inNewScope(action: (StmtConversionContext<RTC>) -> ExpEmbedding): ExpEmbedding
     fun addScopedName(name: Name)
     fun getScopeDepth(name: Name): Int
+    fun getScopedNames(): Map<Name, Int>
 }
 
 fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedPropertyAccess(symbol: FirPropertyAccessExpression): PropertyAccessEmbedding =
@@ -88,7 +96,7 @@ fun StmtConversionContext<ResultTrackingContext>.getFunctionCallSubstitutionItem
             if (anonExpr is FirAnonymousFunctionExpression) {
                 val lambdaBody = anonExpr.anonymousFunction.body!!
                 val lambdaArs = anonExpr.anonymousFunction.valueParameters.map { it.name }
-                SubstitutionLambda(lambdaBody, lambdaArs)
+                SubstitutionLambda(lambdaBody, lambdaArs, getScopedNames())
             } else {
                 TODO("are there any other cases?")
             }

@@ -52,6 +52,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("inlining_captured.kt")
+        public void testInlining_captured() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/inlining_captured.kt");
+        }
+
+        @Test
         @TestMetadata("is_type_contract.kt")
         public void testIs_type_contract() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/is_type_contract.kt");
@@ -89,6 +95,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         @TestMetadata("inlining.kt")
         public void testInlining() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/good_contracts/inlining.kt");
+        }
+
+        @Test
+        @TestMetadata("inlining_captured.kt")
+        public void testInlining_captured() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/good_contracts/inlining_captured.kt");
         }
 
         @Test
@@ -231,6 +243,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         @TestMetadata("inline.kt")
         public void testInline() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inline.kt");
+        }
+
+        @Test
+        @TestMetadata("inlining_captured.kt")
+        public void testInlining_captured() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inlining_captured.kt");
         }
 
         @Test

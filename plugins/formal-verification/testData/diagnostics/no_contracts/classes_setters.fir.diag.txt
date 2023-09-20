@@ -122,7 +122,7 @@ method pkg$$global$testSetterLambda$() returns (ret: dom$Unit)
     inhale acc(anonymous$2.pkg$$class_Bar$member_a, write)
     anonymous$2.pkg$$class_Bar$member_a := 42
     exhale acc(anonymous$2.pkg$$class_Bar$member_a, write)
-    label inline$pkg$$global$mockInline$TBar$label$ret
+    label inline_label$1$ret
   }
   label label$ret
 }

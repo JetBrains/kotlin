@@ -21,7 +21,7 @@ interface MethodConversionContext : ProgramConversionContext {
 fun MethodConversionContext.embedValueParameter(symbol: FirValueParameterSymbol): VariableEmbedding =
     VariableEmbedding(
         // Parameters always have scope depth equal to zero
-        nameMangler.mangleParameterName(symbol, 0),
+        nameMangler.mangleParameterName(symbol),
         embedType(symbol.resolvedReturnType)
     )
 

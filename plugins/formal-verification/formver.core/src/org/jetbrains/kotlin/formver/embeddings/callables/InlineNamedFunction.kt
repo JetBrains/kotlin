@@ -38,7 +38,7 @@ class InlineNamedFunction(
             // TODO: add these labels automatically.
             inlineCtx.addDeclaration(inlineCtx.returnLabel.toDecl())
             inlineCtx.addStatement(inlineCtx.returnLabel.toStmt())
-            // Note: Putting the block inside the then branch of an if-true statement is a little a hack to make Viper respect the scoping
+            // Note: Putting the block inside the then branch of an if-true statement is a little hack to make Viper respect the scoping
             addStatement(Stmt.If(Exp.BoolLit(true), inlineCtx.block, Stmt.Seqn(listOf(), listOf())))
         }
 

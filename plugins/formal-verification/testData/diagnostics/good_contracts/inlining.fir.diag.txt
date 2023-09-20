@@ -13,27 +13,27 @@ method pkg$$global$call_invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$
   var anonymous$4: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   if (true) {
-    var inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$2$x: Int
+    var local$2$x: Int
     var anonymous$2: Int
     var anonymous$3: Int
     special$invoke_function_object(local$g)
-    inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$2$x := anonymous$2
+    local$2$x := anonymous$2
     special$invoke_function_object(local$g)
     anonymous$1 := anonymous$3
-    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
-    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   local$1$z := anonymous$1
   if (true) {
-    var inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$2$x: Int
+    var local$2$x: Int
     var anonymous$5: Int
     var anonymous$6: Int
     special$invoke_function_object(local$g)
-    inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$2$x := anonymous$5
+    local$2$x := anonymous$5
     special$invoke_function_object(local$g)
     anonymous$4 := anonymous$6
-    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
-    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   ret := anonymous$4
   goto label$ret
@@ -56,28 +56,26 @@ method pkg$$global$call_invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   if (true) {
     var anonymous$2: Int
-    var inline$pkg$$global$invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Int$local$2$x: Int
+    var local$2$x: Int
     var anonymous$3: Int
     anonymous$2 := 1
-    inline$pkg$$global$invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Int$local$2$x := anonymous$2 +
-      anonymous$2
+    local$2$x := anonymous$2 + anonymous$2
     special$invoke_function_object(local$g)
     anonymous$1 := anonymous$3
-    goto inline$pkg$$global$invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Int$label$ret
-    label inline$pkg$$global$invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Int$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   local$1$z := anonymous$1
   if (true) {
     var anonymous$5: Int
-    var inline$pkg$$global$invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Int$local$2$x: Int
+    var local$2$x: Int
     var anonymous$6: Int
     special$invoke_function_object(local$g)
-    inline$pkg$$global$invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Int$local$2$x := anonymous$5 +
-      anonymous$5
+    local$2$x := anonymous$5 + anonymous$5
     special$invoke_function_object(local$g)
     anonymous$4 := anonymous$6
-    goto inline$pkg$$global$invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Int$label$ret
-    label inline$pkg$$global$invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Int$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   ret := anonymous$4
   goto label$ret
@@ -99,26 +97,25 @@ method pkg$$global$name_clashes$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local
   var anonymous$4: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   if (true) {
-    var inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$2$x: Int
+    var local$2$x: Int
     var anonymous$2: Int
     var anonymous$3: Int
     special$invoke_function_object(local$f)
-    inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$2$x := anonymous$2
+    local$2$x := anonymous$2
     special$invoke_function_object(local$f)
     anonymous$1 := anonymous$3
-    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
-    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   local$1$x := anonymous$1
   if (true) {
-    var inline$pkg$$global$invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Int$local$2$x: Int
+    var local$2$x: Int
     var anonymous$5: Int
-    inline$pkg$$global$invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Int$local$2$x := local$1$x +
-      local$1$x
+    local$2$x := local$1$x + local$1$x
     special$invoke_function_object(local$f)
     anonymous$4 := anonymous$5
-    goto inline$pkg$$global$invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Int$label$ret
-    label inline$pkg$$global$invoke_with_int$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Int$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   ret := anonymous$4
   goto label$ret
@@ -140,27 +137,27 @@ method pkg$$global$different_return_type$Tkotlin_Function1__kotlin_Int$kotlin_In
   var anonymous$4: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   if (true) {
-    var inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$2$x: Int
+    var local$2$x: Int
     var anonymous$2: Int
     var anonymous$3: Int
     special$invoke_function_object(local$f)
-    inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$2$x := anonymous$2
+    local$2$x := anonymous$2
     special$invoke_function_object(local$f)
     anonymous$1 := anonymous$3
-    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
-    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   local$1$x := anonymous$1
   if (true) {
-    var inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$2$x: Int
+    var local$2$x: Int
     var anonymous$5: Int
     var anonymous$6: Int
     special$invoke_function_object(local$f)
-    inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$local$2$x := anonymous$5
+    local$2$x := anonymous$5
     special$invoke_function_object(local$f)
     anonymous$4 := anonymous$6
-    goto inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
-    label inline$pkg$$global$invoke$Tkotlin_Function1__kotlin_Int$kotlin_Int__$label$ret
+    goto inline_label$1$ret
+    label inline_label$1$ret
   }
   ret := local$1$x == anonymous$4
   goto label$ret

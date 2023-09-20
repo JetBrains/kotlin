@@ -190,12 +190,12 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
                 lambdaArgs.forEach { data.addScopedName(it) }
                 val callArgs = data.getFunctionCallSubstitutionItems(implicitInvokeCall.argumentList.arguments)
                 val subs = lambdaArgs.zip(callArgs).toMap()
-                val lambdaCtx = this.newBlock().withInlineContext(this.signature, this.resultCtx.resultVar.name, subs)
+                val lambdaCtx = this.newBlock().withLambdaContext(this.signature, this.resultCtx.resultVar.name, subs, lambda.scopedNames)
                 lambdaCtx.convert(lambda.lambdaBody())
                 // NOTE: It is necessary to drop the last stmt because is a wrong goto
                 val sqn = lambdaCtx.block.copy(stmts = lambdaCtx.block.stmts.dropLast(1))
-                sqn.scopedStmtsDeclaration.forEach(data::addDeclaration)
-                sqn.stmts.forEach(data::addStatement)
+                // NOTE: Putting the block inside the then branch of an if-true statement is a little hack to make Viper respect the scoping
+                data.addStatement(Stmt.If(Exp.BoolLit(true), sqn, Stmt.Seqn(listOf(), listOf())))
             }
         }
 

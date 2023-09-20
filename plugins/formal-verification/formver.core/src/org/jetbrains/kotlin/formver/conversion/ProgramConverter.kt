@@ -168,7 +168,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         val body = declaration.body?.let {
             val methodCtx = object : MethodConversionContext, ProgramConversionContext by this {
                 override val signature: FullNamedFunctionSignature = signature
-                override val nameMangler = NoopNameMangler
+                override val nameMangler = NameMangler()
                 override fun getLambdaOrNull(name: Name): SubstitutionLambda? = null
             }
 

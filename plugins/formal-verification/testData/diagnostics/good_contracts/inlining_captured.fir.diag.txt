@@ -1,0 +1,109 @@
+/inlining_captured.kt:(354,365): info: Generated Viper text for single_call:
+method pkg$$global$single_call$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$g: Ref)
+  returns (ret: Int)
+  requires acc(local$g.special$function_object_call_counter, write)
+  ensures acc(local$g.special$function_object_call_counter, write)
+  ensures old(local$g.special$function_object_call_counter) <=
+    local$g.special$function_object_call_counter
+  ensures local$g.special$function_object_call_counter ==
+    old(local$g.special$function_object_call_counter) + 1
+{
+  var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
+  if (true) {
+    var anonymous$2: Int
+    var anonymous$3: Int
+    anonymous$3 := 0
+    if (true) {
+      var anonymous$4: Int
+      special$invoke_function_object(local$g)
+      anonymous$2 := anonymous$4
+    }
+    anonymous$1 := anonymous$2
+    goto inline_label$1$ret
+    label inline_label$1$ret
+  }
+  ret := anonymous$1
+  goto label$ret
+  label label$ret
+}
+
+/inlining_captured.kt:(582,593): info: Generated Viper text for double_call:
+method pkg$$global$double_call$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref,
+  local$g: Ref)
+  returns (ret: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  requires acc(local$g.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$g.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures old(local$g.special$function_object_call_counter) <=
+    local$g.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter ==
+    old(local$f.special$function_object_call_counter) + 1
+  ensures local$g.special$function_object_call_counter ==
+    old(local$g.special$function_object_call_counter) + 1
+{
+  var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
+  if (true) {
+    var anonymous$2: Int
+    var anonymous$3: Int
+    anonymous$3 := 0
+    if (true) {
+      var anonymous$4: Int
+      var anonymous$5: Int
+      special$invoke_function_object(local$g)
+      special$invoke_function_object(local$f)
+      anonymous$2 := anonymous$5
+    }
+    anonymous$1 := anonymous$2
+    goto inline_label$1$ret
+    label inline_label$1$ret
+  }
+  ret := anonymous$1
+  goto label$ret
+  label label$ret
+}
+
+/inlining_captured.kt:(872,883): info: Generated Viper text for nested_call:
+method pkg$$global$nested_call$Tkotlin_Function1__kotlin_Int$kotlin_Int__$Tkotlin_Function1__kotlin_Int$kotlin_Int__(local$f: Ref,
+  local$g: Ref)
+  returns (ret: Int)
+  requires acc(local$f.special$function_object_call_counter, write)
+  requires acc(local$g.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$g.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures old(local$g.special$function_object_call_counter) <=
+    local$g.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter ==
+    old(local$f.special$function_object_call_counter) + 1
+  ensures local$g.special$function_object_call_counter ==
+    old(local$g.special$function_object_call_counter) + 1
+{
+  var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
+  if (true) {
+    var anonymous$2: Int
+    var anonymous$3: Int
+    anonymous$3 := 0
+    if (true) {
+      var anonymous$4: Int
+      var anonymous$5: Int
+      special$invoke_function_object(local$g)
+      special$invoke_function_object(local$f)
+      anonymous$2 := anonymous$5
+    }
+    anonymous$1 := anonymous$2
+    goto inline_label$1$ret
+    label inline_label$1$ret
+  }
+  ret := anonymous$1
+  goto label$ret
+  label label$ret
+}
