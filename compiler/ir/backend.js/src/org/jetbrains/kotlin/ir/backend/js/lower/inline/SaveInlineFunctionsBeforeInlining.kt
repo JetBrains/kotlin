@@ -36,6 +36,7 @@ internal class JsInlineFunctionResolver(context: JsIrBackendContext) : DefaultIn
     private val inlineFunctionsBeforeInliningSymbols = hashMapOf<IrFunction, IrFunctionSymbol>()
 
     override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
+        // TODO: After the expect fun enumEntriesIntrinsic become non-inline function, the code will be removed
         return symbol == enumEntriesIntrinsic || super.shouldExcludeFunctionFromInlining(symbol)
     }
 

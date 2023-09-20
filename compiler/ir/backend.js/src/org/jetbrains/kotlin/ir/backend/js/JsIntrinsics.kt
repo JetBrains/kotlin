@@ -194,6 +194,13 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val startCoroutineUninterceptedOrReturnGeneratorVersion =
         getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturnGeneratorVersion")
 
+    val startCoroutineUninterceptedOrReturnGeneratorVersion1 by context.lazy2 {
+        startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.valueParameters.size == 1 }
+    }
+    val startCoroutineUninterceptedOrReturnGeneratorVersion2 by context.lazy2 {
+        startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.valueParameters.size == 2 }
+    }
+
     val suspendOrReturnFunctionSymbol = getInternalWithoutPackage("kotlin.coroutines.intrinsics.suspendOrReturn")
 
     val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")

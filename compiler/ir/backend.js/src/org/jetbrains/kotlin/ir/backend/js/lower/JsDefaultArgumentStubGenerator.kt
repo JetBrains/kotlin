@@ -116,7 +116,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
                     context.additionalExportedDeclarations.add(defaultFunStub)
 
                     if (!originalFun.hasAnnotation(JsAnnotations.jsNameFqn)) {
-                        annotations = annotations memoryOptimizedPlus originalFun.generateJsNameAnnotationCall()
+                        originalFun.annotations = originalFun.annotations memoryOptimizedPlus originalFun.generateJsNameAnnotationCall()
                     }
                 }
             }
