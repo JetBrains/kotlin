@@ -525,7 +525,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
 
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
 
-        public final [ResolvedTo(CONTRACTS)] val valueWithExplicitType: R|kotlin/Int|by delegate#
+        public final [ResolvedTo(CONTRACTS)] val valueWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| {
                 ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
             }
@@ -535,7 +535,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
                 ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
             }
 
-        public final [ResolvedTo(CONTRACTS)] var variableWithExplicitType: R|kotlin/Int|by delegate#
+        public final [ResolvedTo(CONTRACTS)] var variableWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| {
                 ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
             }
@@ -609,3 +609,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatesScript.kts
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
+

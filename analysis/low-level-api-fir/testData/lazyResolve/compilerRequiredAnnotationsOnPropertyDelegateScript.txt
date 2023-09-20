@@ -212,10 +212,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.
 
         }
 
-        field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](String(delegate)) public final [ResolvedTo(CONTRACTS)] val memberProperty: <implicit>by lazy#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            String(42)
-        }
-        )
+        field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](String(delegate)) public final [ResolvedTo(CONTRACTS)] val memberProperty: <implicit>by LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] get(): <implicit> {
                 ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
             }
@@ -319,3 +316,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationsOnPropertyDelegateSc
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
                 ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
             }
+

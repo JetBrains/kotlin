@@ -63,7 +63,12 @@ private class LLFirContractsTargetResolver(
             }
 
             is FirConstructor -> resolve(target, ContractStateKeepers.CONSTRUCTOR)
-            is FirProperty -> resolve(target, ContractStateKeepers.PROPERTY)
+            is FirProperty -> {
+                // Property with delegate can't have any contracts
+                if (target.delegate == null) {
+                    resolve(target, ContractStateKeepers.PROPERTY)
+                }
+            }
             is FirRegularClass,
             is FirTypeAlias,
             is FirVariable,

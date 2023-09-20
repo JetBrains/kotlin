@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public final [ResolvedTo(CONTRACTS)] val one: R|kotlin/Int|by Prp#()
+    public final [ResolvedTo(CONTRACTS)] val one: R|kotlin/Int|by LAZY_EXPRESSION
         @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| {
             ^ D|/one|.getValue#(Null(null), ::R|/one|)
         }
@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val one: R|kotlin/Int|by Prp#()
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val one: R|kotlin/Int|by LAZY_EXPRESSION
         @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ D|/one|.getValue#(Null(null), ::R|/one|)
         }
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val one: R|kotlin/Int|by Prp#()
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val one: R|kotlin/Int|by LAZY_EXPRESSION
         @R|kotlin/Deprecated|[Types](message = String(reason)) public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Int| {
             ^ D|/one|.getValue#(Null(null), ::R|/one|)
         }
