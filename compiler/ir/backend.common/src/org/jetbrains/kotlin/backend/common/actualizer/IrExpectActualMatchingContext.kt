@@ -37,8 +37,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
-import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
-import org.jetbrains.kotlin.utils.addToStdlib.castAll
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 internal abstract class IrExpectActualMatchingContext(
@@ -238,16 +236,14 @@ internal abstract class IrExpectActualMatchingContext(
     override val PropertySymbolMarker.setter: FunctionSymbolMarker?
         get() = asIr().setter?.symbol
 
-    @OptIn(UnsafeCastFunction::class)
     override fun createExpectActualTypeParameterSubstitutor(
-        expectTypeParameters: List<TypeParameterSymbolMarker>,
-        actualTypeParameters: List<TypeParameterSymbolMarker>,
+        expectActualTypeParameters: List<Pair<TypeParameterSymbolMarker, TypeParameterSymbolMarker>>,
         parentSubstitutor: TypeSubstitutorMarker?,
     ): TypeSubstitutorMarker {
-        val expectParameters = expectTypeParameters.castAll<IrTypeParameterSymbol>()
-        val actualParameters = actualTypeParameters.castAll<IrTypeParameterSymbol>()
-        val actualTypes = actualParameters.map { it.owner.defaultType }
-        val substitutor = IrTypeSubstitutor(expectParameters, actualTypes, allowEmptySubstitution = true)
+        val typeParametersToArguments = expectActualTypeParameters.associate { (expect, actual) ->
+            (expect as IrTypeParameterSymbol) to (actual as IrTypeParameterSymbol).owner.defaultType
+        }
+        val substitutor = IrTypeSubstitutor(typeParametersToArguments, allowEmptySubstitution = true)
         return when (parentSubstitutor) {
             null -> substitutor
             is AbstractIrTypeSubstitutor -> IrChainedSubstitutor(parentSubstitutor, substitutor)

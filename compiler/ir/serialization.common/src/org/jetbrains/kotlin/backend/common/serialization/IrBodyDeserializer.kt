@@ -208,8 +208,6 @@ class IrBodyDeserializer(
                 return IrSimpleTypeBuilder().apply { classifier = klass.symbol }.buildSimpleType()
             }
 
-            val typeArguments = ArrayList<IrTypeArgument>(typeParameters.size)
-            val typeParameterSymbols = ArrayList<IrTypeParameterSymbol>(typeParameters.size)
             val rawType = with(IrSimpleTypeBuilder()) {
                 arguments = typeParameters.memoryOptimizedMap {
                     classifier = it.symbol
@@ -219,15 +217,15 @@ class IrBodyDeserializer(
                 buildSimpleType()
             }
 
+            val typeParametersToArguments = HashMap<IrTypeParameterSymbol, IrTypeArgument>(typeParameters.size)
             for (i in typeParameters.indices) {
                 val typeParameter = typeParameters[i]
                 val callTypeArgument = constructorCall.getTypeArgument(i) ?: error("No type argument for id $i")
                 val typeArgument = makeTypeProjection(callTypeArgument, typeParameter.variance)
-                typeArguments.add(typeArgument)
-                typeParameterSymbols.add(typeParameter.symbol)
+                typeParametersToArguments[typeParameter.symbol] = typeArgument
             }
 
-            val substitutor = IrTypeSubstitutor(typeParameterSymbols, typeArguments)
+            val substitutor = IrTypeSubstitutor(typeParametersToArguments)
             return substitutor.substitute(rawType) as IrSimpleType
         }
     }

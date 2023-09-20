@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
 object FirExpectActualResolver {
     fun findExpectForActual(
@@ -46,14 +47,8 @@ object FirExpectActualResolver {
                             val expectTypeParameters = expectContainingClass?.typeParameterSymbols.orEmpty()
                             val actualTypeParameters = actualContainingClass?.typeParameterSymbols.orEmpty()
 
-                            parentSubstitutor = when (expectTypeParameters.size == actualTypeParameters.size) {
-                                true -> createExpectActualTypeParameterSubstitutor(
-                                    expectTypeParameters,
-                                    actualTypeParameters,
-                                    useSiteSession,
-                                )
-                                false -> null
-                            }
+                            parentSubstitutor = (expectTypeParameters zipIfSizesAreEqual actualTypeParameters)
+                                ?.let { createExpectActualTypeParameterSubstitutor(it, useSiteSession) }
 
                             when (actualSymbol) {
                                 is FirConstructorSymbol -> expectContainingClass?.getConstructors(scopeSession)

@@ -595,17 +595,12 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 
     override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
-        val typeParameters = mutableListOf<IrTypeParameterSymbol>()
-        val typeArguments = mutableListOf<IrTypeArgument>()
-        for ((key, value) in map) {
-            typeParameters += key as IrTypeParameterSymbol
-            typeArguments += value as IrTypeArgument
-        }
-        return IrTypeSubstitutor(typeParameters, typeArguments)
+        @Suppress("UNCHECKED_CAST")
+        return IrTypeSubstitutor(map as Map<IrTypeParameterSymbol, IrTypeArgument>)
     }
 
     override fun createEmptySubstitutor(): TypeSubstitutorMarker {
-        return IrTypeSubstitutor(emptyList(), emptyList())
+        return IrTypeSubstitutor(emptyMap())
     }
 
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {

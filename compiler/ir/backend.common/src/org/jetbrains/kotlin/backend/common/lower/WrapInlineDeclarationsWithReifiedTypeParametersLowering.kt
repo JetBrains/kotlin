@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeSubstitutor
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
@@ -50,11 +51,8 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                 if (!owner.isInlineFunWithReifiedParameter()) {
                     return expression
                 }
-                val substitutionMap = expression.typeSubstitutionMap.entries
-                val typeSubstitutor = IrTypeSubstitutor(
-                    substitutionMap.map { it.key },
-                    substitutionMap.map { it.value as IrTypeArgument },
-                )
+                @Suppress("UNCHECKED_CAST")
+                val typeSubstitutor = IrTypeSubstitutor(expression.typeSubstitutionMap as Map<IrTypeParameterSymbol, IrTypeArgument>)
 
                 val function = irFactory.buildFun {
                     name = Name.identifier("${owner.name}${"$"}wrap")
