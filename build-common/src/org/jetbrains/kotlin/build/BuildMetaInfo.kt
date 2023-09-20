@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.build
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.PluginClasspaths
-import org.jetbrains.kotlin.config.PluginClasspathsComparator
+import org.jetbrains.kotlin.config.*
 
 abstract class BuildMetaInfo {
     enum class CustomKeys {
@@ -74,7 +71,7 @@ abstract class BuildMetaInfo {
         val languageVersionSting = languageVersion.versionString
         resultMap[CustomKeys.LANGUAGE_VERSION_STRING.name] = languageVersionSting
 
-        val isEAP = !languageVersion.isStable
+        val isEAP = languageVersion.isPreRelease()
         resultMap[CustomKeys.IS_EAP.name] = isEAP.toString()
 
         val apiVersionString = args.apiVersion ?: languageVersionSting

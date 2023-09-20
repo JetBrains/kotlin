@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
+import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
@@ -16,6 +17,8 @@ import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.cli.transformMetadataInClassFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -25,6 +28,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.toMetadataVersion
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -127,6 +131,14 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
         compileKotlin("source.kt", usageDestination, listOf(result), compiler, additionalOptions.toList())
     }
+
+    private fun <T> withPreRelease(block: () -> T): T =
+        try {
+            System.setProperty(KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, "true")
+            block()
+        } finally {
+            System.clearProperty(KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY)
+        }
 
     // ------------------------------------------------------------------------------
 
@@ -263,6 +275,31 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipMetadataVersionCheck() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-metadata-version-check")
+    }
+
+    fun testPreReleaseCompilerAgainstPreReleaseLibraryStableLanguageVersion() {
+        withPreRelease {
+            val library = compileLibrary("library")
+            val someStableReleasedVersion = LanguageVersion.entries.first { it.isStable && it >= LanguageVersion.FIRST_NON_DEPRECATED }
+            compileKotlin(
+                "source.kt", tmpdir, listOf(library), K2JVMCompiler(),
+                listOf("-language-version", someStableReleasedVersion.versionString)
+            )
+
+            checkPreReleaseness(File(tmpdir, "usage/SourceKt.class"), shouldBePreRelease = false)
+        }
+    }
+
+    fun testPreReleaseCompilerAgainstPreReleaseLibraryLatestStable() {
+        withPreRelease {
+            val library = compileLibrary("library")
+            compileKotlin(
+                "source.kt", tmpdir, listOf(library), K2JVMCompiler(),
+                listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString)
+            )
+
+            checkPreReleaseness(File(tmpdir, "usage/SourceKt.class"), shouldBePreRelease = true)
+        }
     }
 
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheckAllowUnstableDependencies() {
@@ -671,6 +708,25 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         assertEquals("Output:\n$output", ExitCode.COMPILATION_ERROR, exitCode)
     }
 
+    // If this test fails, then bootstrap compiler most likely should be advanced
+    fun testPreReleaseFlagIsConsistentBetweenBootstrapAndCurrentCompiler() {
+        val bootstrapCompiler = JarFile(PathUtil.kotlinPathsForCompiler.compilerPath)
+        val classFromBootstrapCompiler = bootstrapCompiler.getEntry(LanguageFeature::class.java.name.replace(".", "/") + ".class")
+        checkPreReleaseness(
+            bootstrapCompiler.getInputStream(classFromBootstrapCompiler).readBytes(),
+            KotlinCompilerVersion.isPreRelease()
+        )
+    }
+
+    fun testPreReleaseFlagIsConsistentBetweenStdlibAndCurrentCompiler() {
+        val stdlib = JarFile(PathUtil.kotlinPathsForCompiler.stdlibPath)
+        val classFromStdlib = stdlib.getEntry(KotlinVersion::class.java.name.replace(".", "/") + ".class")
+        checkPreReleaseness(
+            stdlib.getInputStream(classFromStdlib).readBytes(),
+            KotlinCompilerVersion.isPreRelease()
+        )
+    }
+
     fun testAnonymousObjectTypeMetadata() {
         val library = compileCommonLibrary(
             libraryName = "library",
@@ -696,7 +752,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
             listOf("-Xmetadata-klib")
         )
     }
-    
+
     companion object {
         @JvmStatic
         protected fun copyJarFileWithoutEntry(jarPath: File, vararg entriesToDelete: String): File =
@@ -728,5 +784,30 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
             return outputFile
         }
+    }
+
+    private fun checkPreReleaseness(classFileBytes: ByteArray, shouldBePreRelease: Boolean) {
+        // If there's no "xi" field in the Metadata annotation, it's value is assumed to be 0, i.e. _not_ pre-release
+        var isPreRelease = false
+
+        ClassReader(classFileBytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
+            override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
+                if (desc != JvmAnnotationNames.METADATA_DESC) return null
+
+                return object : AnnotationVisitor(Opcodes.API_VERSION) {
+                    override fun visit(name: String, value: Any) {
+                        if (name != JvmAnnotationNames.METADATA_EXTRA_INT_FIELD_NAME) return
+
+                        isPreRelease = (value as Int and JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG) != 0
+                    }
+                }
+            }
+        }, 0)
+
+        TestCase.assertEquals("Pre-release flag of the class file has incorrect value", shouldBePreRelease, isPreRelease)
+    }
+
+    private fun checkPreReleaseness(file: File, shouldBePreRelease: Boolean) {
+        checkPreReleaseness(file.readBytes(), shouldBePreRelease)
     }
 }

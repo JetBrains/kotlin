@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java.deserialization
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
@@ -60,8 +61,9 @@ class JvmClassFileBasedSymbolProvider(
     private val annotationsLoader = AnnotationsLoader(session, kotlinClassFinder)
     private val ownMetadataVersion: JvmMetadataVersion = session.languageVersionSettings.languageVersion.toMetadataVersion()
 
-    private val reportErrorsOnPreReleaseDependencies =
-        !session.languageVersionSettings.getFlag(AnalysisFlags.skipPrereleaseCheck) && !session.languageVersionSettings.isPreRelease()
+    private val reportErrorsOnPreReleaseDependencies = with(session.languageVersionSettings) {
+        !getFlag(AnalysisFlags.skipPrereleaseCheck) && !isPreRelease() && !KotlinCompilerVersion.isPreRelease()
+    }
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> =
         packagePartProvider.findPackageParts(packageFqName.asString()).mapNotNull { partName ->
