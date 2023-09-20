@@ -1,5 +1,5 @@
 @R|spr/NonNullApi|() public open class A : R|kotlin/Any| {
-    public open fun foo(x: R|kotlin/String!|, @R|spr/Nullable|() y: R|kotlin/CharSequence!|): R|kotlin/String!|
+    public open fun foo(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|, @R|spr/Nullable|() y: R|Enhanced for warning(kotlin/CharSequence?) kotlin/CharSequence!|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
     @R|spr/ForceFlexibility|() public open fun bar(x: R|kotlin/String!|, @R|javax/annotation/Nonnull|() y: R|@EnhancedNullability kotlin/CharSequence|): R|kotlin/String!|
 

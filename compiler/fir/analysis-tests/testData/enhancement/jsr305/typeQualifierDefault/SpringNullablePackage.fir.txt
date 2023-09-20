@@ -1,11 +1,11 @@
 public open class A : R|kotlin/Any| {
     public open field field: R|kotlin/String!|
 
-    public open fun foo(x: R|kotlin/String!|, @R|spr/Nullable|() y: R|kotlin/CharSequence!|): R|kotlin/String!|
+    public open fun foo(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|, @R|spr/Nullable|() y: R|Enhanced for warning(kotlin/CharSequence?) kotlin/CharSequence!|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
-    public open fun bar(): R|kotlin/String!|
+    public open fun bar(): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
-    @R|spr/Nullable|() public open fun baz(): R|ft<kotlin/collections/MutableList<kotlin/String!>, kotlin/collections/List<kotlin/String!>?>|
+    @R|spr/Nullable|() public open fun baz(): R|ft<Enhanced for warning(kotlin/collections/MutableList<kotlin/String!>?) kotlin/collections/MutableList<kotlin/String!>, kotlin/collections/List<kotlin/String!>?>|
 
     public constructor(): R|test/A|
 

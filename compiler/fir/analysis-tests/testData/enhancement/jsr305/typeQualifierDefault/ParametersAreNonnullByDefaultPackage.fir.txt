@@ -1,7 +1,7 @@
 public open class A : R|kotlin/Any| {
     @R|javax/annotation/Nullable|() public open field field: R|kotlin/String?|
 
-    public open fun foo(q: R|kotlin/String!|, @R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence?|): R|kotlin/String!|
+    public open fun foo(q: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|, @R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence?|): R|kotlin/String!|
 
     @R|javax/annotation/Nonnull|() public open fun bar(): R|@EnhancedNullability kotlin/String|
 

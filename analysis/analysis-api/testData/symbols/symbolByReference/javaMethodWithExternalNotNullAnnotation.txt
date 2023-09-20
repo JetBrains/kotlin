@@ -24,7 +24,7 @@ KtFunctionSymbol:
   receiverParameter: null
   returnType: KtFlexibleType:
     annotationsList: []
-    type: kotlin/String!
+    type: Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []

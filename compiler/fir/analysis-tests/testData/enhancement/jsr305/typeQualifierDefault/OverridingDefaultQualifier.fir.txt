@@ -1,24 +1,24 @@
 @R|NonNullApi|() public open class A : R|kotlin/Any| {
-    public open field field: R|kotlin/String!|
+    public open field field: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
-    public open fun foo(x: R|kotlin/String!|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence?|): R|kotlin/String!|
+    public open fun foo(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence?|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
-    @R|NullableApi|() public open fun foobar(x: R|kotlin/String!|, @R|NonNullApi|() y: R|kotlin/CharSequence!|): R|kotlin/String!|
+    @R|NullableApi|() public open fun foobar(x: R|Enhanced for warning(kotlin/String?) kotlin/String!|, @R|NonNullApi|() y: R|Enhanced for warning(@EnhancedNullability kotlin/CharSequence) kotlin/CharSequence!|): R|Enhanced for warning(kotlin/String?) kotlin/String!|
 
-    public open fun bar(): R|kotlin/String!|
+    public open fun bar(): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
     @R|javax/annotation/Nullable|() public open fun baz(): R|ft<kotlin/collections/MutableList<kotlin/String!>?, kotlin/collections/List<kotlin/String!>?>|
 
     public constructor(): R|A|
 
     @R|NullableApi|() public open inner class B : R|kotlin/Any| {
-        public open field field: R|kotlin/String!|
+        public open field field: R|Enhanced for warning(kotlin/String?) kotlin/String!|
 
-        public open fun foo(x: R|kotlin/String!|, @R|javax/annotation/Nonnull|() y: R|@EnhancedNullability kotlin/CharSequence|): R|kotlin/String!|
+        public open fun foo(x: R|Enhanced for warning(kotlin/String?) kotlin/String!|, @R|javax/annotation/Nonnull|() y: R|@EnhancedNullability kotlin/CharSequence|): R|Enhanced for warning(kotlin/String?) kotlin/String!|
 
-        @R|NonNullApi|() public open fun foobar(x: R|kotlin/String!|, @R|NullableApi|() y: R|kotlin/CharSequence!|): R|kotlin/String!|
+        @R|NonNullApi|() public open fun foobar(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|, @R|NullableApi|() y: R|Enhanced for warning(kotlin/CharSequence?) kotlin/CharSequence!|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
-        public open fun bar(): R|kotlin/String!|
+        public open fun bar(): R|Enhanced for warning(kotlin/String?) kotlin/String!|
 
         @R|javax/annotation/Nullable|() public open fun baz(): R|ft<kotlin/collections/MutableList<kotlin/String!>?, kotlin/collections/List<kotlin/String!>?>|
 
@@ -26,13 +26,13 @@
 
     }
     @R|FieldsAreNullable|() public open inner class C : R|kotlin/Any| {
-        public open field field: R|kotlin/String!|
+        public open field field: R|Enhanced for warning(kotlin/String?) kotlin/String!|
 
-        public open fun foo(x: R|kotlin/String!|, @R|javax/annotation/Nullable|() y: R|kotlin/CharSequence?|): R|kotlin/String!|
+        public open fun foo(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|, @R|javax/annotation/Nullable|() y: R|kotlin/CharSequence?|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
-        @R|NullableApi|() public open fun foobar(x: R|kotlin/String!|, @R|javax/annotation/Nullable|() y: R|kotlin/CharSequence?|): R|kotlin/String!|
+        @R|NullableApi|() public open fun foobar(x: R|Enhanced for warning(kotlin/String?) kotlin/String!|, @R|javax/annotation/Nullable|() y: R|kotlin/CharSequence?|): R|Enhanced for warning(kotlin/String?) kotlin/String!|
 
-        public open fun bar(): R|kotlin/String!|
+        public open fun bar(): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
         @R|javax/annotation/Nullable|() public open fun baz(): R|ft<kotlin/collections/MutableList<kotlin/String!>?, kotlin/collections/List<kotlin/String!>?>|
 

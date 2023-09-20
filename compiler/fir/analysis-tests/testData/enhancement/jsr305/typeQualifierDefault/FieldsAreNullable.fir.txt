@@ -1,5 +1,5 @@
 @R|FieldsAreNullable|() public open class A : R|kotlin/Any| {
-    public open field field: R|kotlin/String!|
+    public open field field: R|Enhanced for warning(kotlin/String?) kotlin/String!|
 
     @R|javax/annotation/Nonnull|() public open field nonNullField: R|@EnhancedNullability kotlin/String|
 

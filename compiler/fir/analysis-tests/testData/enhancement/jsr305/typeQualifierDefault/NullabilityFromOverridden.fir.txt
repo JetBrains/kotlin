@@ -1,55 +1,55 @@
 @R|NonNullApi|() public open class A : R|kotlin/Any| {
-    public open fun foo1(x: R|kotlin/String!|): R|kotlin/String!|
+    public open fun foo1(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
-    public open fun foo2(x: R|kotlin/String!|): R|kotlin/String!|
+    public open fun foo2(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
-    public open fun foo3(x: R|kotlin/String!|): R|kotlin/String!|
+    public open fun foo3(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
     @R|javax/annotation/Nullable|() public open fun bar1(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/String?|
 
     @R|javax/annotation/Nullable|() public open fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/String?|
 
-    public open fun baz(@R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|): R|kotlin/String!|
+    public open fun baz(@R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
     public constructor(): R|A|
 
 }
 @R|NonNullApi|() public abstract interface AInt : R|kotlin/Any| {
-    public abstract fun foo1(x: R|kotlin/String!|): R|kotlin/CharSequence!|
+    public abstract fun foo1(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|): R|Enhanced for warning(@EnhancedNullability kotlin/CharSequence) kotlin/CharSequence!|
 
-    public abstract fun foo2(x: R|kotlin/String!|): R|kotlin/CharSequence!|
+    public abstract fun foo2(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|): R|Enhanced for warning(@EnhancedNullability kotlin/CharSequence) kotlin/CharSequence!|
 
-    public abstract fun foo3(x: R|kotlin/String!|): R|kotlin/CharSequence!|
+    public abstract fun foo3(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|): R|Enhanced for warning(@EnhancedNullability kotlin/CharSequence) kotlin/CharSequence!|
 
     @R|javax/annotation/Nullable|() public abstract fun bar1(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/CharSequence?|
 
     @R|javax/annotation/Nullable|() public abstract fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/CharSequence?|
 
-    public abstract fun baz(@R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|): R|kotlin/CharSequence!|
+    public abstract fun baz(@R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|): R|Enhanced for warning(@EnhancedNullability kotlin/CharSequence) kotlin/CharSequence!|
 
 }
 @R|NullableApi|() public open class B : R|A|, R|AInt| {
-    public open fun foo1(x: R|kotlin/String!|): R|kotlin/String!|
+    public open fun foo1(x: R|Enhanced for warning(kotlin/String?) kotlin/String!|): R|Enhanced for warning(kotlin/String?) kotlin/String!|
 
     @R|javax/annotation/Nonnull|() public open fun foo2(@R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|): R|@EnhancedNullability kotlin/String|
 
     public open fun bar1(x: R|kotlin/String?|): R|kotlin/String?|
 
-    public open fun baz(x: R|@EnhancedNullability kotlin/String|): R|kotlin/String!|
+    public open fun baz(x: R|@EnhancedNullability kotlin/String|): R|Enhanced for warning(kotlin/String?) kotlin/String!|
 
     public constructor(): R|B|
 
 }
 @R|NonNullApi|() public open class C : R|A|, R|AInt| {
-    public open fun foo1(x: R|kotlin/String!|): R|kotlin/String!|
+    public open fun foo1(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
-    public open fun foo2(@R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|): R|kotlin/String!|
+    public open fun foo2(@R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
     public open fun bar1(x: R|kotlin/String?|): R|kotlin/String?|
 
     @R|javax/annotation/Nullable|() public open fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/String?|
 
-    public open fun baz(x: R|@EnhancedNullability kotlin/String|): R|kotlin/String!|
+    public open fun baz(x: R|@EnhancedNullability kotlin/String|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
     public constructor(): R|C|
 

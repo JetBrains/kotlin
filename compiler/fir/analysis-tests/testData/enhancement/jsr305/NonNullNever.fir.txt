@@ -5,7 +5,7 @@
 public open class NonNullNever : R|kotlin/Any| {
     @R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.NEVER|) public open field field: R|kotlin/String?|
 
-    @R|MyNullable|() public open fun foo(@R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.NEVER|) x: R|kotlin/String?|, @R|MyNullable|() y: R|kotlin/CharSequence!|): R|kotlin/String!|
+    @R|MyNullable|() public open fun foo(@R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.NEVER|) x: R|kotlin/String?|, @R|MyNullable|() y: R|Enhanced for warning(kotlin/CharSequence?) kotlin/CharSequence!|): R|Enhanced for warning(kotlin/String?) kotlin/String!|
 
     public constructor(): R|NonNullNever|
 
