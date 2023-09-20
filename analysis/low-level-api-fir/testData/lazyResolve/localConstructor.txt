@@ -114,28 +114,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] E, [ResolvedTo(CONTRACTS)] F> foo(): <implicit> {
-            ^foo [ResolvedTo(RAW_FIR)] fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                local final? [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(CONTRACTS)] Outer(E), [ResolvedTo(CONTRACTS)] Outer(F)> : R|kotlin/Any| {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|<local>/C<G, E, F>| {
-                        super<R|kotlin/Any|>()
-                    }
-
-                    public? final? [ResolvedTo(RAW_FIR)] val e: E = magic#()
-                        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): E
-
-                    public? final? [ResolvedTo(RAW_FIR)] val f: F = magic#()
-                        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): F
-
-                    public? final? [ResolvedTo(RAW_FIR)] val g: G = magic#()
-                        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): G
-
-                }
-
-                C#<F>()
-            }
-
-        }
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] E, [ResolvedTo(CONTRACTS)] F> foo(): <implicit> { LAZY_BLOCK }
 
     }
 

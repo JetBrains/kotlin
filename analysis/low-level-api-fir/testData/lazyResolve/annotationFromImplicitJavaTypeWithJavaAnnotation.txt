@@ -36,9 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final [ResolvedTo(CONTRACTS)] fun resolveMe([ResolvedTo(CONTRACTS)] i: R|JavaInterface|): <implicit> {
-        ^resolveMe i#.id#
-    }
+    public final [ResolvedTo(CONTRACTS)] fun resolveMe([ResolvedTo(CONTRACTS)] i: R|JavaInterface|): <implicit> { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] main.kt

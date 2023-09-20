@@ -115,9 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithParameterScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun resolveMe([ResolvedTo(CONTRACTS)] param: R|I|): <implicit> {
-            ^resolveMe Unit#
-        }
+        public final [ResolvedTo(CONTRACTS)] fun resolveMe([ResolvedTo(CONTRACTS)] param: R|I|): <implicit> { LAZY_BLOCK }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -174,3 +172,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionWithParameterScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] param: R|I|): R|kotlin/Unit| {
             ^resolveMe Q|kotlin/Unit|
         }
+

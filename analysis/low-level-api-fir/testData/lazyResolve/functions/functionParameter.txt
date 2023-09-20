@@ -36,9 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
-    public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] param: R|kotlin/Int|): <implicit> {
-        ^foo String(boo)
-    }
+    public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] param: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionParameter.kt

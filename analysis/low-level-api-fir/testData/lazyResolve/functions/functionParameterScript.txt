@@ -85,9 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-functionParameterScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] param: R|kotlin/Int|): <implicit> {
-            ^foo String(boo)
-        }
+        public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] param: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -132,3 +130,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionParameterScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int|): R|kotlin/String| {
             ^foo String(boo)
         }
+
