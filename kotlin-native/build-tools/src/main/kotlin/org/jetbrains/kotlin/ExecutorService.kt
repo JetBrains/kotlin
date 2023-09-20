@@ -136,7 +136,7 @@ fun runProcess(executor: (Action<in ExecSpec>) -> ExecResult?,
         this.standardOutput = outStream
         this.errorOutput = errStream
         this.isIgnoreExitValue = true
-        this.environment(env)
+//        this.environment(env)
     })
 
     checkNotNull(execResult)
