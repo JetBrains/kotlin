@@ -6,7 +6,9 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
+    maven {
+        url = uri("https://packages.jetbrains.team/maven/p/kotlin-formver/maven")
+    }
 }
 
 dependencies {

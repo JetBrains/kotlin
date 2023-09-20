@@ -4,11 +4,13 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
+    maven {
+        url = uri("https://packages.jetbrains.team/maven/p/kotlin-formver/maven")
+    }
 }
 
 dependencies {
-    implementation("viper:silicon:1.1-SNAPSHOT")
+    implementation("viper:silicon_2.13:1.2-SNAPSHOT")
     compileOnly(kotlinStdlib())
 }
 
