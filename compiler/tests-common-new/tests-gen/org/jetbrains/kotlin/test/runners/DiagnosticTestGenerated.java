@@ -30058,6 +30058,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("privateInvokeOwner.kt")
+                public void testPrivateInvokeOwner() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/invoke/privateInvokeOwner.kt");
+                }
+
+                @Test
                 @TestMetadata("reportFunctionExpectedOnSimpleUnresolved.kt")
                 public void testReportFunctionExpectedOnSimpleUnresolved() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/invoke/reportFunctionExpectedOnSimpleUnresolved.kt");
