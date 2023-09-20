@@ -14,7 +14,7 @@ val b = run {
 
 // Unit
 val c = run {
-    if (flag) <!RETURN_TYPE_MISMATCH!>return@run<!>
+    if (flag) return@run
 
     return@run 4
 }

@@ -9,19 +9,20 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.cfa.util.previousCfgNodes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeForTypeMismatch
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULL_FOR_NONNULL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSIBLE
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.isExhaustive
-import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.types.*
 
 object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
@@ -30,7 +31,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
         if (expression.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor) return
 
         val targetElement = expression.target.labeledElement
-        if (targetElement is FirErrorFunction) {
+        if (targetElement is FirErrorFunction || targetElement is FirAnonymousFunction && targetElement.isLambda) {
             return
         }
 
@@ -90,21 +91,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
                     )
                 }
             }
-        } else if (resultExpression.source?.kind is KtFakeSourceElementKind.ImplicitUnit &&
-            !functionReturnType.isUnit &&
-            shouldCheckMismatchForAnonymousFunction(targetElement, expression)
-        ) {
-            // Disallow cases like
-            //     fun foo(): Any { return }
-            // Allow cases like
-            //     fun foo(): Unit { return }
-            //     fun foo() { return Unit }
-            // But ignore anonymous functions without explicit returns, the following code is valid (where type of parameter R is being inferenced):
-            //     run {
-            //        if (flag) return@run
-            //        "str"
-            //     }
-            // If type parameter is specified explicitly, checking is performed in the branch above and RETURN_TYPE_MISMATCH is reported
+        } else if (resultExpression.source?.kind is KtFakeSourceElementKind.ImplicitUnit && !functionReturnType.isUnit) {
             reporter.reportOn(
                 resultExpression.source,
                 RETURN_TYPE_MISMATCH,
@@ -116,12 +103,4 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
             )
         }
     }
-
-    private fun shouldCheckMismatchForAnonymousFunction(targetElement: FirFunction, expression: FirReturnExpression): Boolean {
-        if (targetElement !is FirAnonymousFunction || !targetElement.isLambda) return true
-        val cfgNodes = targetElement.controlFlowGraphReference?.controlFlowGraph?.exitNode?.previousCfgNodes ?: return true
-        // Check if any return expression other than the current is explicit
-        return cfgNodes.any { if (it.fir === expression) false else it.fir is FirReturnExpression }
-    }
 }
-
