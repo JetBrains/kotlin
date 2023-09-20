@@ -243,7 +243,7 @@ class BodyResolveContext(
                 holder.scopeSession
             )
             addReceiver(labelName, receiver, additionalLabelName)
-            (inferenceSession as? FirBuilderInferenceSession)?.addLambdaImplicitReceiver(receiver)
+           // (inferenceSession as? FirBuilderInferenceSession)?.addLambdaImplicitReceiver(receiver)
         }
 
         f()
