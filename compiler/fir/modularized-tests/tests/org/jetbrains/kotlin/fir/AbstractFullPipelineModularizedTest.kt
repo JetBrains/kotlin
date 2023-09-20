@@ -153,6 +153,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
                 substituteCompilerPluginPathForKnownPlugins(it)?.absolutePath
             }?.toTypedArray()
             args.contextReceivers = originalArguments.contextReceivers
+            args.skipPrereleaseCheck = originalArguments.skipPrereleaseCheck
 
         } else {
             args.jvmTarget = JVM_TARGET
@@ -161,7 +162,6 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         args.reportPerf = true
         args.jdkHome = moduleData.jdkHome?.absolutePath ?: originalArguments?.jdkHome?.fixPath()?.absolutePath
         args.renderInternalDiagnosticNames = true
-        args.skipPrereleaseCheck = true
         configureArgsUsingBuildFile(args, moduleData, tmp)
     }
 
