@@ -28,6 +28,7 @@ interface FirExpectActualMatchingContextFactory : FirSessionComponent {
         session: FirSession,
         scopeSession: ScopeSession,
         allowedWritingMemberExpectForActualMapping: Boolean = false,
+        shouldCheckReturnTypesOfCallables: Boolean = false,
     ): FirExpectActualMatchingContext
 }
 

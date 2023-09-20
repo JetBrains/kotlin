@@ -14,11 +14,10 @@ expect open class Base {
 
 actual typealias Base = BaseJava
 
-actual open class Foo : Base() {
-    // K1 doesn't report a diagnostic here because when it compares scopes it sees flexible type
-    // K2 will likely report a diagnostic here
-    // I don't think we can fix this 'K1 green -> K2 red'. It must be a rare case anyway.
-    override fun foo(): List<String> {
+actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER!>class Foo<!> : Base() {
+    // K1 doesn't report RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION a diagnostic here because when it compares scopes it sees flexible type
+    // K2 behavior is correct
+    override fun foo(): <!RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION!>List<String><!> {
         return super.foo()
     }
 }
