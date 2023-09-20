@@ -97,7 +97,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
                         .also(::addParameter)
                     returns(r)
                     if (!isRootElement) {
-                        addStatement("return %N.%N(this, %N)", visitorParam, element.visitFunName, dataParam)
+                        addStatement("return %N.%N(this, %N)", visitorParam, element.visitFunctionName, dataParam)
                     }
                     if (isRootElement) {
                         addKdoc(

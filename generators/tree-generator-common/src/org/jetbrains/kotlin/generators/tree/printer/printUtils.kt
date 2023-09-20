@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.generators.tree.printer
 
-import org.jetbrains.kotlin.generators.tree.AbstractElement
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.generators.tree.ImportCollector
 import org.jetbrains.kotlin.generators.tree.render
-import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
+import org.jetbrains.kotlin.utils.withIndent
 
 /**
- * The angle bracket-delimited list of type parameters to print, or empty string if the element has no type parameters.
+ * The angle bracket-delimited list of type parameters to print, or empty string if the list is empty.
  *
  * For type parameters that have a single upper bound, also prints that upper bound. If at least one type parameter has multiple upper
  * bounds, doesn't print any upper bounds at all. They are expected to be printed in the `where` clause (see [multipleUpperBoundsList]).
@@ -20,10 +23,21 @@ import org.jetbrains.kotlin.utils.SmartPrinter
  * @param end The string to add after the closing angle bracket of the type parameter list
  */
 context(ImportCollector)
-fun AbstractElement<*, *>.typeParameters(end: String = ""): String = params.takeIf { it.isNotEmpty() }
-    ?.joinToString(", ", "<", ">$end") { param ->
-        param.name + (param.bounds.singleOrNull()?.let { " : ${it.render()}" } ?: "")
-    } ?: ""
+fun List<TypeVariable>.typeParameters(end: String = ""): String = buildString {
+    if (this@typeParameters.isEmpty()) return@buildString
+    joinToWithBuffer(this, prefix = "<", postfix = ">") { param ->
+        if (param.variance != Variance.INVARIANT) {
+            append(param.variance.label)
+            append(" ")
+        }
+        append(param.name)
+        param.bounds.singleOrNull()?.let {
+            append(" : ")
+            it.renderTo(this)
+        }
+    }
+    append(end)
+}
 
 /**
  * The `where` clause to print after the class or function declaration if at least one of the element's tye parameters has multiple upper
@@ -32,14 +46,17 @@ fun AbstractElement<*, *>.typeParameters(end: String = ""): String = params.take
  * Otherwise, an empty string.
  */
 context(ImportCollector)
-fun AbstractElement<*, *>.multipleUpperBoundsList(): String {
-    val paramsWithMultipleUpperBounds = params.filter { it.bounds.size > 1 }.takeIf { it.isNotEmpty() } ?: return ""
+fun List<TypeVariable>.multipleUpperBoundsList(): String {
+    val paramsWithMultipleUpperBounds = filter { it.bounds.size > 1 }.takeIf { it.isNotEmpty() } ?: return ""
     return buildString {
         append(" where ")
-        paramsWithMultipleUpperBounds.joinTo(this, separator = ", ") { param ->
-            param.bounds.joinToString(", ") { bound -> "$param : ${bound.render()}" }
+        paramsWithMultipleUpperBounds.joinToWithBuffer(this, separator = ", ") { param ->
+            param.bounds.joinToWithBuffer(this) { bound ->
+                append(param.name)
+                append(" : ")
+                bound.renderTo(this)
+            }
         }
-        append("")
     }
 }
 
@@ -74,4 +91,59 @@ fun AbstractElement<*, *>.extendedKDoc(defaultKDoc: String? = null): String = bu
         appendLine()
     }
     append("Generated from: [${element.propertyName}]")
+}
+
+data class FunctionParameter(val name: String, val type: TypeRef, val defaultValue: String? = null) {
+
+    context(ImportCollector)
+    fun render(): String = buildString {
+        append(name, ": ", type.render())
+        defaultValue?.let {
+            append(" = ", it)
+        }
+    }
+}
+
+context(ImportCollector)
+fun SmartPrinter.printFunctionDeclaration(
+    name: String,
+    parameters: List<FunctionParameter>,
+    returnType: TypeRef,
+    typeParameters: List<TypeVariable> = emptyList(),
+    modality: Modality? = null,
+    override: Boolean = false,
+    allParametersOnSeparateLines: Boolean = false,
+) {
+    when (modality) {
+        null -> {}
+        Modality.FINAL -> print("final ")
+        Modality.OPEN -> print("open ")
+        Modality.ABSTRACT -> print("abstract ")
+        Modality.SEALED -> error("Function cannot be sealed")
+    }
+    if (override) {
+        print("override ")
+    }
+    print("fun ")
+    print(typeParameters.typeParameters(end = " "))
+    print(name, "(")
+
+    if (allParametersOnSeparateLines) {
+        if (parameters.isNotEmpty()) {
+            println()
+            withIndent {
+                for (parameter in parameters) {
+                    print(parameter.render())
+                    println(",")
+                }
+            }
+        }
+    } else {
+        print(parameters.joinToString { it.render() })
+    }
+    print(")")
+    if (returnType != StandardTypes.unit) {
+        print(": ", returnType.render())
+    }
+    print(typeParameters.multipleUpperBoundsList())
 }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.tree.generator.context.generatedType
 import org.jetbrains.kotlin.fir.tree.generator.context.type
+import org.jetbrains.kotlin.fir.tree.generator.printer.VISITOR_PACKAGE
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -116,11 +117,11 @@ val annotationResolvePhaseType = generatedType("expressions", "FirAnnotationReso
 
 val typeRefMarkerType = type("mpp", "TypeRefMarker")
 
-val firVisitorType = type("fir.visitors", "FirVisitor", kind = TypeKind.Class)
-val firVisitorVoidType = type("fir.visitors", "FirVisitorVoid", kind = TypeKind.Class)
-val firDefaultVisitorType = type("fir.visitors", "FirDefaultVisitor", kind = TypeKind.Class)
-val firDefaultVisitorVoidType = type("fir.visitors", "FirDefaultVisitorVoid", kind = TypeKind.Class)
-val firTransformerType = type("fir.visitors", "FirTransformer", kind = TypeKind.Class)
+val firVisitorType = generatedType("visitors", "FirVisitor")
+val firVisitorVoidType = generatedType("visitors", "FirVisitorVoid")
+val firDefaultVisitorType = generatedType("visitors", "FirDefaultVisitor")
+val firDefaultVisitorVoidType = generatedType("visitors", "FirDefaultVisitorVoid")
+val firTransformerType = generatedType("visitors", "FirTransformer")
 
 val resolveStateAccessAnnotation = type("fir.declarations", "ResolveStateAccess", kind = TypeKind.Class)
 val unresolvedExpressionTypeAccessAnnotation = type("fir.expressions", "UnresolvedExpressionTypeAccess", kind = TypeKind.Class)

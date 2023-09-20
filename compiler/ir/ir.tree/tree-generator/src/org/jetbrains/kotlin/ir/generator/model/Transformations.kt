@@ -123,7 +123,7 @@ private fun replaceElementRefs(config: Config, mapping: Map<ElementConfig, Eleme
             .partitionIsInstance<TypeRef, ElementRef>()
         el.elementParents = elParents.takeIf { it.isNotEmpty() || el == rootEl.element } ?: listOf(rootEl)
         el.otherParents = otherParents.castAll<ClassRef<*>>().toMutableList()
-        el.visitorParent = ec.visitorParent?.let(::transform) as GenericElementRef<Element, Field>?
+        el.parentInVisitor = (ec.visitorParent?.let(::transform) as GenericElementRef<Element, Field>?)?.element
         el.transformerReturnType = (ec.transformerReturnType?.let(::transform) as GenericElementRef<Element, Field>?)?.element
 
         for (field in el.fields) {
@@ -154,7 +154,7 @@ private fun markLeaves(elements: List<Element>) {
 
     for (el in leaves) {
         el.isLeaf = true
-        if (el.visitorParent != null) {
+        if (el.parentInVisitor != null) {
             el.hasAcceptMethod = true
         }
     }

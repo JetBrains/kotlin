@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.*
 
 abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
+
     override fun visitTypeRef(typeRef: FirTypeRef, data: D): R = visitAnnotationContainer(typeRef, data)
 
     override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): R = visitDeclarationStatus(resolvedDeclarationStatus, data)
@@ -188,5 +189,4 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitRawContractDescription(rawContractDescription: FirRawContractDescription, data: D): R = visitContractDescription(rawContractDescription, data)
 
     override fun visitResolvedContractDescription(resolvedContractDescription: FirResolvedContractDescription, data: D): R = visitContractDescription(resolvedContractDescription, data)
-
 }

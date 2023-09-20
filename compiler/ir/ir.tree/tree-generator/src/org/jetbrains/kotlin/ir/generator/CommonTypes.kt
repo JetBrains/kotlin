@@ -27,7 +27,9 @@ object Packages {
 val elementBaseType = type(tree, "IrElementBase", TypeKind.Class)
 val statementOriginType = type(exprs, "IrStatementOrigin")
 val elementVisitorType = type(visitors, "IrElementVisitor")
+val elementVisitorVoidType = type(visitors, "IrElementVisitorVoid")
 val elementTransformerType = type(visitors, "IrElementTransformer")
+val typeTransformerType = type(visitors, "IrTypeTransformer")
 val mutableAnnotationContainerType = type(declarations, "IrMutableAnnotationContainer")
 val irTypeType = type(types, "IrType")
 

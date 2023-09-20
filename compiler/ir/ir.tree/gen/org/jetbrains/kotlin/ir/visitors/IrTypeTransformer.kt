@@ -10,34 +10,15 @@ package org.jetbrains.kotlin.ir.visitors
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
-import org.jetbrains.kotlin.ir.declarations.IrScript
-import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrConstantObject
-import org.jetbrains.kotlin.ir.expressions.IrConstantValue
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
-import org.jetbrains.kotlin.ir.expressions.IrVararg
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 
 interface IrTypeTransformer<in D> : IrElementTransformer<D> {
-    fun <Type : IrType?> transformType(
-        container: IrElement,
-        type: Type,
-        data: D,
-    ): Type
+    fun <Type : IrType?> transformType(container: IrElement, type: Type, data: D): Type
 
     override fun visitValueParameter(declaration: IrValueParameter, data: D): IrStatement {
-        declaration.varargElementType = transformType(declaration, declaration.varargElementType,
-                data)
+        declaration.varargElementType = transformType(declaration, declaration.varargElementType, data)
         declaration.type = transformType(declaration, declaration.type, data)
         return super.visitValueParameter(declaration, data)
     }
@@ -65,8 +46,7 @@ interface IrTypeTransformer<in D> : IrElementTransformer<D> {
         return super.visitField(declaration, data)
     }
 
-    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty,
-            data: D): IrStatement {
+    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: D): IrStatement {
         declaration.type = transformType(declaration, declaration.type, data)
         return super.visitLocalDelegatedProperty(declaration, data)
     }
@@ -91,8 +71,7 @@ interface IrTypeTransformer<in D> : IrElementTransformer<D> {
         return super.visitExpression(expression, data)
     }
 
-    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: D):
-            IrElement {
+    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: D): IrElement {
         (0 until expression.typeArgumentsCount).forEach {
             expression.getTypeArgument(it)?.let { type ->
                 expression.putTypeArgument(it, transformType(expression, type, data))
@@ -106,11 +85,9 @@ interface IrTypeTransformer<in D> : IrElementTransformer<D> {
         return super.visitClassReference(expression, data)
     }
 
-    override fun visitConstantObject(expression: IrConstantObject, data: D):
-            IrConstantValue {
+    override fun visitConstantObject(expression: IrConstantObject, data: D): IrConstantValue {
         for (i in 0 until expression.typeArguments.size) {
-            expression.typeArguments[i] = transformType(expression, expression.typeArguments[i],
-                    data)
+            expression.typeArguments[i] = transformType(expression, expression.typeArguments[i], data)
         }
         return super.visitConstantObject(expression, data)
     }

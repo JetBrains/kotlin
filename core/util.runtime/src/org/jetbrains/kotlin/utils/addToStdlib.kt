@@ -349,3 +349,33 @@ fun <T, R> Iterable<T>.zipWithNulls(other: Iterable<R>): List<Pair<T?, R?>> {
 fun unreachableBranch(argument: Any?): Nothing {
     error("This argument should've been processed by previous when branches but it wasn't: $argument")
 }
+
+/**
+ * Calls [appendElement] on [buffer] for all the elements, also appending [separator] between them and using the given [prefix]
+ * and [postfix] if supplied.
+ *
+ * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ */
+fun <T, A : Appendable> Iterable<T>.joinToWithBuffer(
+    buffer: A,
+    separator: CharSequence = ", ",
+    prefix: CharSequence = "",
+    postfix: CharSequence = "",
+    limit: Int = -1,
+    truncated: CharSequence = "...",
+    appendElement: A.(T) -> Unit,
+): A {
+    buffer.append(prefix)
+    var count = 0
+    for (element in this) {
+        if (++count > 1) buffer.append(separator)
+        if (limit < 0 || count <= limit) {
+            buffer.appendElement(element)
+        } else break
+    }
+    if (limit in 0..<count) buffer.append(truncated)
+    buffer.append(postfix)
+    return buffer
+}
+

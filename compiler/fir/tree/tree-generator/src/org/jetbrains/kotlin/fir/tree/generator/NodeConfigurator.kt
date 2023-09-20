@@ -734,6 +734,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("partiallyResolvedTypeRef", typeRef, nullable = true).withTransform()
         }
 
+        resolvedErrorReference.configure {
+            element.customParentInVisitor = resolvedNamedReference
+        }
+
         intersectionTypeRef.configure {
             +field("leftType", typeRef)
             +field("rightType", typeRef)

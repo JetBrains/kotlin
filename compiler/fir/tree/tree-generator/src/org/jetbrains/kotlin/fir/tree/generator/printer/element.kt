@@ -40,7 +40,7 @@ fun SmartPrinter.printElement(element: Element) {
 
         printKDoc(element.extendedKDoc())
         print("${kind!!.title} $typeName")
-        print(typeParameters())
+        print(params.typeParameters())
         val parentRefs = element.parentRefs
         if (parentRefs.isNotEmpty()) {
             print(
@@ -49,7 +49,7 @@ fun SmartPrinter.printElement(element: Element) {
                 }
             )
         }
-        print(multipleUpperBoundsList())
+        print(params.multipleUpperBoundsList())
         println(" {")
         withIndent {
             allFields.forEach { field ->

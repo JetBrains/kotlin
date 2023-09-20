@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.*
 
 abstract class FirVisitor<out R, in D> {
+
     abstract fun visitElement(element: FirElement, data: D): R
 
     open fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: D): R = visitElement(annotationContainer, data)
@@ -328,5 +329,4 @@ abstract class FirVisitor<out R, in D> {
     open fun visitRawContractDescription(rawContractDescription: FirRawContractDescription, data: D): R = visitElement(rawContractDescription, data)
 
     open fun visitResolvedContractDescription(resolvedContractDescription: FirResolvedContractDescription, data: D): R = visitElement(resolvedContractDescription, data)
-
 }

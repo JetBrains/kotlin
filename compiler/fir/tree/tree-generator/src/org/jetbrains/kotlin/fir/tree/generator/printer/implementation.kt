@@ -67,7 +67,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             print("internal ")
         }
         print("${kind!!.title} ${this.typeName}")
-        print(element.typeParameters(end = " "))
+        print(element.params.typeParameters(end = " "))
 
         val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
         val isAbstract = kind == ImplementationKind.AbstractClass || kind == ImplementationKind.SealedClass

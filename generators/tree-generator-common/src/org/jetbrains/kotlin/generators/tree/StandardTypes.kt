@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.generators.tree
 
 object StandardTypes {
+    val unit = type<Unit>()
+    val nothing = type("kotlin", "Nothing")
     val boolean = type<Boolean>()
     val string = type<String>()
     val int = type<Int>()

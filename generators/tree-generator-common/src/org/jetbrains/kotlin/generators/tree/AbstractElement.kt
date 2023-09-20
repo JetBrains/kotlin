@@ -38,6 +38,21 @@ abstract class AbstractElement<Element, Field> : ElementOrRef<Element, Field>, F
     open val isSealed: Boolean
         get() = false
 
+    /**
+     * The name of the method in visitors used to visit this element.
+     */
+    abstract val visitFunctionName: String
+
+    /**
+     * The name of the parameter representing this element in the visitor method used to visit this element.
+     */
+    abstract val visitorParameterName: String
+
+    /**
+     * The default element to visit if the method for visiting this element is not overridden.
+     */
+    abstract val parentInVisitor: Element?
+
     override val allParents: List<Element>
         get() = elementParents.map { it.element }
 

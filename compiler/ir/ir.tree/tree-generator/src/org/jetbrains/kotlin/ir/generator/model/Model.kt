@@ -37,7 +37,7 @@ class Element(
     override val args: Map<NamedTypeParameterRef, TypeRef>
         get() = emptyMap()
 
-    var visitorParent: ElementRef? = null
+    override var parentInVisitor: Element? = null
     var transformerReturnType: Element? = null
 
     override var kind: ImplementationKind? = when (config.typeKind) {
@@ -54,8 +54,8 @@ class Element(
     override var walkableChildren: List<Field> = emptyList()
     override val transformableChildren get() = walkableChildren.filter { it.transformable }
 
-    val visitFunName = "visit" + (config.visitorName ?: name).replaceFirstChar(Char::uppercaseChar)
-    val visitorParam = config.visitorParam ?: config.category.defaultVisitorParam
+    override val visitFunctionName = "visit" + (config.visitorName ?: name).replaceFirstChar(Char::uppercaseChar)
+    override val visitorParameterName = config.visitorParam ?: config.category.defaultVisitorParam
 
     override var hasAcceptMethod = config.accept
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
+import org.jetbrains.kotlin.fir.tree.generator.printer.safeDecapitalizedName
 import org.jetbrains.kotlin.fir.tree.generator.util.set
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
@@ -77,6 +78,17 @@ class Element(override val name: String, override val propertyName: String, kind
 
     var baseTransformerType: Element? = null
     val transformerType: Element get() = baseTransformerType ?: this
+
+    override val visitFunctionName: String
+        get() = "visit$name"
+
+    override val visitorParameterName: String
+        get() = safeDecapitalizedName
+
+    var customParentInVisitor: Element? = null
+
+    override val parentInVisitor: Element?
+        get() = customParentInVisitor ?: elementParents.singleOrNull()?.element?.takeIf { !it.isRootElement }
 
     var doesNotNeedImplementation: Boolean = false
 
