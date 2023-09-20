@@ -1,3 +1,54 @@
+## 1.9.20-Beta2
+
+### Backend. Wasm
+
+- [`KT-59720`](https://youtrack.jetbrains.com/issue/KT-59720) K/Wasm: update to final opcodes
+
+### Compiler
+
+- [`KT-62027`](https://youtrack.jetbrains.com/issue/KT-62027) "java.lang.IndexOutOfBoundsException: Empty list doesn't contain element at index 0" caused by ClassicExpectActualMatchingContext.kt when annotation `@AllowDifferentMembersInActual` used
+- [`KT-61668`](https://youtrack.jetbrains.com/issue/KT-61668) Put expect/actual diagnostics introduced in 1.9.20 release under 1.9 Language Version
+- [`KT-61645`](https://youtrack.jetbrains.com/issue/KT-61645) K2/KMP: Set stdlib-native before stdlib-commonMain in dependencies for shared native metadata compilation
+- [`KT-61924`](https://youtrack.jetbrains.com/issue/KT-61924) Native: problem with abstract fake override from Any
+- [`KT-61725`](https://youtrack.jetbrains.com/issue/KT-61725) KMP: Annotation matching requirement for expect/actual leads to errors for annotations with `@OptionalExpectation`
+- [`KT-61784`](https://youtrack.jetbrains.com/issue/KT-61784) KMP: [DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS] checker missed for companion functions
+- [`KT-61167`](https://youtrack.jetbrains.com/issue/KT-61167) Runtime failure: ReferenceError: MyPromise is not defined
+- [`KT-59094`](https://youtrack.jetbrains.com/issue/KT-59094) K2: Fix Scripting K2 tests
+
+### IDE. Navigation
+
+- [`KT-61894`](https://youtrack.jetbrains.com/issue/KT-61894) Navigation from java sources leads to Kotlin decompiled code in case of suspend function
+
+### Native. C and ObjC Import
+
+- [`KT-56369`](https://youtrack.jetbrains.com/issue/KT-56369) Hint about "-fmodules" is not shown
+
+### Tools. Compiler Plugin API
+
+- [`KT-61872`](https://youtrack.jetbrains.com/issue/KT-61872) K2: Adding annotations to metadata from backend plugin doesn't work in the presence of comments on annotated declaration
+- [`KT-61833`](https://youtrack.jetbrains.com/issue/KT-61833) K2: annotations added via `addMetadataVisibleAnnotationsToElement` to declarations from common sourceset in MPP project are invisible
+
+### Tools. Gradle
+
+- [`KT-61401`](https://youtrack.jetbrains.com/issue/KT-61401) The reported language version value for KotlinNativeLink tasks in build reports and build scans is inaccurate
+- [`KT-61950`](https://youtrack.jetbrains.com/issue/KT-61950) K/Wasm: Add warning about changed sourceSets
+- [`KT-61895`](https://youtrack.jetbrains.com/issue/KT-61895) KotlinTopLevelExtension.useCompilerVersion is not marked as experimental
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-59042`](https://youtrack.jetbrains.com/issue/KT-59042) "Cannot build 'KotlinProjectStructureMetadata' during project configuration phase" when configuration cache enabled
+- [`KT-61652`](https://youtrack.jetbrains.com/issue/KT-61652) MPP ConcurrentModificationException on transformCommonMainDependenciesMetadata
+- [`KT-61622`](https://youtrack.jetbrains.com/issue/KT-61622) Upgrading to Kotlin 1.9 prevents commonMain sourceset classes from being processed by kapt/ksp (dagger/Hilt)
+
+### Tools. Gradle. Native
+
+- [`KT-61700`](https://youtrack.jetbrains.com/issue/KT-61700) Native: linkDebugExecutableNative has duplicated freeCompilerArgs
+
+### Tools. Wasm
+
+- [`KT-61971`](https://youtrack.jetbrains.com/issue/KT-61971) K/Wasm: wasmWasiTest should depends on kotlinNodeJsSetup
+
+
 ## 1.9.20-Beta
 
 ### Analysis API
