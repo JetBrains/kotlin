@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.BitcodeCompiler
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import java.io.File
