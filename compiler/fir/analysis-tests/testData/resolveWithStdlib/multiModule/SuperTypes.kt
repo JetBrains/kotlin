@@ -19,7 +19,7 @@ interface Y {
     fun baz() {}
 }
 
-actual open class A : X(), Y {
+actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER!>class A<!> : X(), Y {
     actual fun foo() {}
 }
 

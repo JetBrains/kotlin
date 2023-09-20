@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
-// This class will be later used by K2. That's why it's placed in compiler.common module
 data class ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember: M, val expectClass: C) {
     /**
      * Diff kinds that are legal for fake-overrides in final `expect class`, but illegal for non-final `expect class`

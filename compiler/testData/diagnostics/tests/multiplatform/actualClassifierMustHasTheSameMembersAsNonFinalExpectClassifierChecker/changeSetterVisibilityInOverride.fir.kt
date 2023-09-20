@@ -11,6 +11,7 @@ open class Base {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
+// K2 false negative: KT-61798
 actual open class Foo : Base() {
     override var foo: String = ""
         public set
