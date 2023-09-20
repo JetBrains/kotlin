@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
@@ -127,6 +128,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
 
     fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction, ignoreVisibility: Boolean): Boolean {
         if (overrideCandidate.valueParameters.size != baseDeclaration.valueParameters.size) return false
+        if (overrideCandidate.isSuspend != baseDeclaration.isSuspend) return false
 
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
 
