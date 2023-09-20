@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
-import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
-import org.jetbrains.kotlin.utils.addToStdlib.castAll
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-import org.jetbrains.kotlin.utils.keysToMap
 
 class ClassicExpectActualMatchingContext(
     val platformModule: ModuleDescriptor,
@@ -144,18 +141,16 @@ class ClassicExpectActualMatchingContext(
     override val PropertySymbolMarker.setter: FunctionSymbolMarker?
         get() = asDescriptor().setter
 
-    @OptIn(UnsafeCastFunction::class)
     override fun createExpectActualTypeParameterSubstitutor(
-        expectTypeParameters: List<TypeParameterSymbolMarker>,
-        actualTypeParameters: List<TypeParameterSymbolMarker>,
+        expectActualTypeParameters: List<Pair<TypeParameterSymbolMarker, TypeParameterSymbolMarker>>,
         parentSubstitutor: TypeSubstitutorMarker?,
     ): TypeSubstitutorMarker {
-        val expectParameters = expectTypeParameters.castAll<TypeParameterDescriptor>()
-        val actualParameters = actualTypeParameters.castAll<TypeParameterDescriptor>()
         val substitutor = TypeSubstitutor.create(
-            TypeConstructorSubstitution.createByParametersMap(expectParameters.keysToMap {
-                actualParameters[it.index].defaultType.asTypeProjection()
-            })
+            TypeConstructorSubstitution.createByParametersMap(
+                expectActualTypeParameters.associate { (expect, actual) ->
+                    (expect as TypeParameterDescriptor) to (actual as TypeParameterDescriptor).defaultType.asTypeProjection()
+                }
+            )
         )
         return when (parentSubstitutor) {
             null -> substitutor

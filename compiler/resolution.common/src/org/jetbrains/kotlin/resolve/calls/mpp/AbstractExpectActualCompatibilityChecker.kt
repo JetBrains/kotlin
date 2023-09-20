@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.enumMapOf
 import org.jetbrains.kotlin.utils.addToStdlib.enumSetOf
 import org.jetbrains.kotlin.utils.keysToMap
+import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 import java.util.*
 
 object AbstractExpectActualCompatibilityChecker {
@@ -124,8 +125,8 @@ object AbstractExpectActualCompatibilityChecker {
         }
 
         val substitutor = createExpectActualTypeParameterSubstitutor(
-            expectTypeParameterSymbols,
-            actualTypeParameterSymbols,
+            (expectTypeParameterSymbols zipIfSizesAreEqual actualTypeParameterSymbols)
+                ?: error("expect/actual type parameters sizes are checked above"),
             parentSubstitutor
         )
 
@@ -348,8 +349,8 @@ object AbstractExpectActualCompatibilityChecker {
         }
 
         val substitutor = createExpectActualTypeParameterSubstitutor(
-            expectedTypeParameters,
-            actualTypeParameters,
+            (expectedTypeParameters zipIfSizesAreEqual actualTypeParameters)
+                ?: error("expect/actual type parameters sizes are checked above"),
             parentSubstitutor
         )
 
