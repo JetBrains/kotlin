@@ -13440,6 +13440,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("LocalReturnWithFlexibleUnitType.kt")
+                public void testLocalReturnWithFlexibleUnitType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnWithFlexibleUnitType.kt");
+                }
+
+                @Test
                 @TestMetadata("LocalReturnsWithExplicitReturnType.kt")
                 public void testLocalReturnsWithExplicitReturnType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnsWithExplicitReturnType.kt");
@@ -13449,6 +13455,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("MixedReturnsFromLambda.kt")
                 public void testMixedReturnsFromLambda() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/functionLiterals/return/MixedReturnsFromLambda.kt");
+                }
+
+                @Test
+                @TestMetadata("MultipleLocalUnitReturns.kt")
+                public void testMultipleLocalUnitReturns() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/functionLiterals/return/MultipleLocalUnitReturns.kt");
                 }
 
                 @Test

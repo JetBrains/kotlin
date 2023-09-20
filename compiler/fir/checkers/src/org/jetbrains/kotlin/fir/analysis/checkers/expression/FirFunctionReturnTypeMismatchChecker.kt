@@ -91,7 +91,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
                 }
             }
         } else if (resultExpression.source?.kind is KtFakeSourceElementKind.ImplicitUnit &&
-            !functionReturnType.isUnit &&
+            !functionReturnType.lowerBoundIfFlexible().isUnit &&
             shouldCheckMismatchForAnonymousFunction(targetElement, expression)
         ) {
             // Disallow cases like
@@ -120,8 +120,11 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
     private fun shouldCheckMismatchForAnonymousFunction(targetElement: FirFunction, expression: FirReturnExpression): Boolean {
         if (targetElement !is FirAnonymousFunction || !targetElement.isLambda) return true
         val cfgNodes = targetElement.controlFlowGraphReference?.controlFlowGraph?.exitNode?.previousCfgNodes ?: return true
-        // Check if any return expression other than the current is explicit
-        return cfgNodes.any { if (it.fir === expression) false else it.fir is FirReturnExpression }
+        // Check if any return expression other than the current is explicit and not Unit
+        return cfgNodes.any {
+            val fir = it.fir
+            if (fir === expression) false else fir is FirReturnExpression && !fir.result.resolvedType.isUnit
+        }
     }
 }
 
