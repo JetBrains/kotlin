@@ -149,14 +149,6 @@ abstract class AbstractElementPrinter<Element : AbstractElement<*, Field>, Field
     }
 }
 
-private fun ClassOrElementRef.inheritanceClauseParenthesis(): String = when (this) {
-    is ElementOrRef<*, *> -> element.kind.braces()
-    is ClassRef<*> -> when (kind) {
-        TypeKind.Class -> "()"
-        TypeKind.Interface -> ""
-    }
-}
-
 fun AbstractElement<*, *>.multipleUpperBoundsList(): String {
     val paramsWithMultipleUpperBounds = params.filter { it.bounds.size > 1 }.takeIf { it.isNotEmpty() } ?: return ""
     return buildString {

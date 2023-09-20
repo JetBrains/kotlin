@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
+import org.jetbrains.kotlin.fir.tree.generator.firVisitorType
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.util.get
@@ -19,7 +20,7 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
     override val fieldPrinter = FieldPrinter(printer)
 
     override val visitorType: ClassRef<*>
-        get() = type(VISITOR_PACKAGE, "FirVisitor", TypeKind.Class)
+        get() = firVisitorType
 
     override val transformerType: ClassRef<*>
         get() = type(VISITOR_PACKAGE, "FirTransformer", TypeKind.Class)

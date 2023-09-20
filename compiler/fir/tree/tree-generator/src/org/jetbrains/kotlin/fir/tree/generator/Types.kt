@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.tree.generator.context.generatedType
 import org.jetbrains.kotlin.fir.tree.generator.context.type
+import org.jetbrains.kotlin.fir.tree.generator.printer.VISITOR_PACKAGE
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -108,3 +109,9 @@ val firPropertySymbolType = type("fir.symbols.impl", "FirPropertySymbol")
 val errorTypeRefImplType = type("fir.types.impl", "FirErrorTypeRefImpl")
 
 val annotationResolvePhaseType = generatedType("expressions", "FirAnnotationResolvePhase")
+
+val firVisitorType = generatedType("visitors", "FirVisitor")
+val firVisitorVoidType = generatedType("visitors", "FirVisitorVoid")
+val firDefaultVisitorType = generatedType("visitors", "FirDefaultVisitor")
+val firDefaultVisitorVoidType = generatedType("visitors", "FirDefaultVisitorVoid")
+val firTransformerType = generatedType("visitors", "FirTransformer")

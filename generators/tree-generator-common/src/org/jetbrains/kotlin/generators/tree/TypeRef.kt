@@ -64,7 +64,7 @@ class ClassRef<P : TypeParameterRef> private constructor(
     override val fullQualifiedName: String
         get() = canonicalName
 
-    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
+    override fun getTypeWithArguments(notNull: Boolean): String = type + generics + (if (nullable) "?" else "")
 
     /**
      * The enclosing classes, outermost first, followed by the simple name. This is `["Map", "Entry"]`
@@ -74,6 +74,13 @@ class ClassRef<P : TypeParameterRef> private constructor(
 
     override fun copy(args: Map<P, TypeRef>) = ClassRef(kind, names, args, nullable)
     override fun copy(nullable: Boolean) = ClassRef(kind, names, args, nullable)
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is ClassRef<*>) return false
+        return names == other.names && args == other.args && nullable == other.nullable
+    }
+
+    override fun hashCode(): Int = Objects.hash(names, args, nullable)
 
     override fun toString() = canonicalName
 }
@@ -169,7 +176,23 @@ class TypeVariable(
     name: String,
     val bounds: List<TypeRef>,
     val variance: Variance,
-) : NamedTypeParameterRef(name)
+) : NamedTypeParameterRef(name) {
+
+    override fun toString(): String = buildString {
+        if (variance != Variance.INVARIANT) {
+            append(variance)
+            append(" ")
+        }
+        append(name)
+        bounds.singleOrNull()?.let {
+            append(" : ")
+            append(it.typeWithArguments)
+        }
+    }
+}
+
+val List<TypeVariable>.generics: String
+    get() = if (isNotEmpty()) joinToString(prefix = "<", postfix = ">") else ""
 
 fun <P : TypeParameterRef> KClass<*>.asRef(): ClassRef<P> {
     val qualifiedName = this.qualifiedName ?: error("$this doesn't have qualified name and thus cannot be converted to ClassRef")
@@ -194,3 +217,11 @@ val ClassOrElementRef.typeKind: TypeKind
         is ElementOrRef<*, *> -> element.kind!!.typeKind
         is ClassRef<*> -> kind
     }
+
+internal fun ClassOrElementRef.inheritanceClauseParenthesis(): String = when (this) {
+    is ElementOrRef<*, *> -> element.kind.braces()
+    is ClassRef<*> -> when (kind) {
+        TypeKind.Class -> "()"
+        TypeKind.Interface -> ""
+    }
+}

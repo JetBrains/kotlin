@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tree
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.utils.SmartPrinter
 import java.io.File
 
@@ -35,4 +36,41 @@ fun SmartPrinter.printKDoc(kDoc: String?) {
         }
     }
     println(" */")
+}
+
+fun SmartPrinter.printFunctionDeclaration(
+    name: String,
+    parameters: List<Pair<String, TypeRef>>,
+    returnType: TypeRef,
+    typeParameters: List<TypeVariable> = emptyList(),
+    modality: Modality = Modality.FINAL,
+    override: Boolean = false,
+) {
+    when (modality) {
+        Modality.FINAL -> if (override) {
+            print("final ")
+        }
+        Modality.OPEN -> if (!override) {
+            print("open ")
+        }
+        Modality.ABSTRACT -> print("abstract ")
+        Modality.SEALED -> error("Function cannot be sealed")
+    }
+    if (override) {
+        print("override ")
+    }
+    print("fun ")
+    if (typeParameters.isNotEmpty()) {
+        print(typeParameters.generics)
+        print(" ")
+    }
+    print(name)
+    print(
+        parameters.joinToString(prefix = "(", postfix = ")") { (name, type) ->
+            "$name: ${type.typeWithArguments}"
+        }
+    )
+    if (returnType != StandardTypes.unit) {
+        print(": ", returnType.typeWithArguments)
+    }
 }

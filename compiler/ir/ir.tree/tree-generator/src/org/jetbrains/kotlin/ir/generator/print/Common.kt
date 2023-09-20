@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.generator.util.Import
 import java.io.File
 
 private val COPYRIGHT by lazy { File("license/COPYRIGHT_HEADER.txt").readText() }
-private val GENERATED_MESSAGE = """
+internal val GENERATED_MESSAGE = """
      // This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
      // DO NOT MODIFY IT MANUALLY.
      """.trimIndent()

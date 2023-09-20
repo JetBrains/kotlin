@@ -36,7 +36,7 @@ dependencies {
 
 val generationRoot = projectDir.resolve("gen")
 
-val generateTree by tasks.registering(NoDebugJavaExec::class) {
+val generateTree by tasks.registering(JavaExec::class) {
 
     val generatorRoot = "$projectDir/tree-generator/src/"
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
+import org.jetbrains.kotlin.fir.tree.generator.printer.safeDecapitalizedName
 import org.jetbrains.kotlin.fir.tree.generator.util.set
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
@@ -38,7 +39,7 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
 
     override val fields = mutableSetOf<Field>()
     override val type: String = "Fir$name"
-    override val packageName: String = BASE_PACKAGE + kind.packageName.let { if (it.isBlank()) it else "." + it }
+    override val packageName: String = kind.fullPackageName
     override val fullQualifiedName: String get() = super.fullQualifiedName!!
 
     override val elementParents = mutableListOf<ElementRef>()
@@ -81,6 +82,17 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
 
     var baseTransformerType: Element? = null
     val transformerType: Element get() = baseTransformerType ?: this
+
+    override val visitFunctionName: String
+        get() = "visit$name"
+
+    override val visitorParameterName: String
+        get() = safeDecapitalizedName
+
+    var customParentInVisitor: Element? = null
+
+    override val parentInVisitor: Element?
+        get() = customParentInVisitor ?: elementParents.singleOrNull()?.element?.takeIf { !it.isRootElement }
 
     var doesNotNeedImplementation: Boolean = false
 
@@ -178,7 +190,16 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
         TypeRef("types"),
         Contracts("contracts"),
         Diagnostics("diagnostics"),
-        Other("")
+        Other("");
+
+        val fullPackageName: String
+            get() = buildString {
+                append(BASE_PACKAGE)
+                if (packageName.isNotBlank()) {
+                    append(".")
+                    append(packageName)
+                }
+            }
     }
 }
 

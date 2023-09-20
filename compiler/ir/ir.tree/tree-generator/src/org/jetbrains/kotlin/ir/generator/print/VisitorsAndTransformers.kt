@@ -7,78 +7,81 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import org.jetbrains.kotlin.generators.tree.GeneratedFile
-import org.jetbrains.kotlin.ir.generator.IrTree
-import org.jetbrains.kotlin.ir.generator.VISITOR_PACKAGE
-import org.jetbrains.kotlin.ir.generator.irTypeType
+import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.ir.generator.*
 import org.jetbrains.kotlin.ir.generator.model.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.utils.SmartPrinter
 import java.io.File
 
 private val visitorTypeName = ClassName(VISITOR_PACKAGE, "IrElementVisitor")
-private val visitorVoidTypeName = ClassName(VISITOR_PACKAGE, "IrElementVisitorVoid")
 private val transformerTypeName = ClassName(VISITOR_PACKAGE, "IrElementTransformer")
 private val typeTransformerTypeName = ClassName(VISITOR_PACKAGE, "IrTypeTransformer")
 
-fun printVisitor(generationPath: File, model: Model): GeneratedFile {
-    val visitorType = TypeSpec.interfaceBuilder(visitorTypeName).apply {
-        val r = TypeVariableName("R", KModifier.OUT)
-        val d = TypeVariableName("D", KModifier.IN)
-        addTypeVariable(r)
-        addTypeVariable(d)
-
-        fun buildVisitFun(element: Element) = FunSpec.builder(element.visitFunName).apply {
-            addParameter(element.visitorParam, element.toPoetStarParameterized())
-            addParameter("data", d)
-            returns(r)
-        }
-
-        addFunction(buildVisitFun(model.rootElement).addModifiers(KModifier.ABSTRACT).build())
-
-        for (element in model.elements) {
-            element.visitorParent?.let { parent ->
-                addFunction(buildVisitFun(element).apply {
-                    addStatement("return ${parent.element.visitFunName}(${element.visitorParam}, data)")
-                }.build())
-            }
-        }
-    }.build()
-
-    return printTypeCommon(generationPath, visitorTypeName.packageName, visitorType)
+private fun printVisitorCommon(
+    generationPath: File,
+    model: Model,
+    printerCreator: (SmartPrinter) -> AbstractVisitorPrinter<Element, Field>,
+): GeneratedFile {
+    val elements = model.elements
+    val stringBuilder = StringBuilder()
+    val smartPrinter = SmartPrinter(stringBuilder)
+    val printer = printerCreator(smartPrinter)
+    val dir = File(generationPath, printer.visitorType.packageName.replace(".", "/"))
+    val file = File(dir, "${printer.visitorType.simpleName}.kt")
+    smartPrinter.run {
+        printCopyright()
+        println(GENERATED_MESSAGE)
+        println()
+        println("package $VISITOR_PACKAGE")
+        println()
+        println("import ", Packages.tree, ".*")
+        println("import ", Packages.declarations, ".*")
+        println("import ", Packages.exprs, ".*")
+        println()
+        printer.printVisitor(elements)
+    }
+    return GeneratedFile(file, stringBuilder.toString())
 }
 
-fun printVisitorVoid(generationPath: File, model: Model): GeneratedFile {
-    val dataType = NOTHING.copy(nullable = true)
+private open class VisitorPrinter(printer: SmartPrinter) :
+    AbstractVisitorPrinter<Element, Field>(printer, visitSuperTypeByDefault = false) {
 
-    val visitorType = TypeSpec.interfaceBuilder(visitorVoidTypeName).apply {
-        addSuperinterface(visitorTypeName.parameterizedBy(UNIT, dataType))
+    override val visitorType: ClassRef<*>
+        get() = elementVisitorType
 
-        fun buildVisitFun(element: Element) = FunSpec.builder(element.visitFunName).apply {
-            addModifiers(KModifier.OVERRIDE)
-            addParameter(element.visitorParam, element.toPoetStarParameterized())
-            addParameter("data", dataType)
-            addStatement("return ${element.visitFunName}(${element.visitorParam})")
-        }
+    override val visitorTypeParameters: List<TypeVariable>
+        get() = listOf(resultTypeVariable, dataTypeVariable)
 
-        fun buildVisitVoidFun(element: Element) = FunSpec.builder(element.visitFunName).apply {
-            addParameter(element.visitorParam, element.toPoetStarParameterized())
-        }
+    override val visitorSuperType: ClassRef<PositionTypeParameterRef>?
+        get() = null
 
-        addFunction(buildVisitFun(model.rootElement).build())
-        addFunction(buildVisitVoidFun(model.rootElement).build())
-
-        for (element in model.elements) {
-            element.visitorParent?.let { parent ->
-                addFunction(buildVisitFun(element).build())
-                addFunction(buildVisitVoidFun(element).apply {
-                    addStatement("return ${parent.element.visitFunName}(${element.visitorParam})")
-                }.build())
-            }
-        }
-    }.build()
-
-    return printTypeCommon(generationPath, visitorVoidTypeName.packageName, visitorType)
+    override val allowTypeParametersInVisitorMethods: Boolean
+        get() = false
 }
+
+fun printVisitor(generationPath: File, model: Model) = printVisitorCommon(generationPath, model, ::VisitorPrinter)
+
+private class VisitorVoidPrinter(
+    printer: SmartPrinter,
+) : AbstractVisitorVoidPrinter<Element, Field>(printer, visitSuperTypeByDefault = false) {
+    override val visitorType: ClassRef<*>
+        get() = elementVisitorVoidType
+
+    override val visitorSuperClass: ClassRef<PositionTypeParameterRef>
+        get() = elementVisitorType
+
+    override val allowTypeParametersInVisitorMethods: Boolean
+        get() = false
+
+    override val useAbstractMethodForRootElement: Boolean
+        get() = false
+
+    override val overriddenVisitMethodsAreFinal: Boolean
+        get() = false
+}
+
+fun printVisitorVoid(generationPath: File, model: Model) = printVisitorCommon(generationPath, model, ::VisitorVoidPrinter)
 
 fun printTransformer(generationPath: File, model: Model): GeneratedFile {
     val visitorType = TypeSpec.interfaceBuilder(transformerTypeName).apply {
@@ -87,9 +90,9 @@ fun printTransformer(generationPath: File, model: Model): GeneratedFile {
 
         addSuperinterface(visitorTypeName.parameterizedBy(model.rootElement.toPoetStarParameterized(), d))
 
-        fun buildVisitFun(element: Element) = FunSpec.builder(element.visitFunName).apply {
+        fun buildVisitFun(element: Element) = FunSpec.builder(element.visitFunctionName).apply {
             addModifiers(KModifier.OVERRIDE)
-            addParameter(element.visitorParam, element.toPoetStarParameterized())
+            addParameter(element.visitorParameterName, element.toPoetStarParameterized())
             addParameter("data", d)
         }
 
@@ -97,14 +100,14 @@ fun printTransformer(generationPath: File, model: Model): GeneratedFile {
             val returnType = element.getTransformExplicitType()
             if (element.transformByChildren) {
                 addFunction(buildVisitFun(element).apply {
-                    addStatement("${element.visitorParam}.transformChildren(this, data)")
-                    addStatement("return ${element.visitorParam}")
+                    addStatement("${element.visitorParameterName}.transformChildren(this, data)")
+                    addStatement("return ${element.visitorParameterName}")
                     returns(returnType.toPoetStarParameterized())
                 }.build())
             } else {
-                element.visitorParent?.let { parent ->
+                element.parentInVisitor?.let { parent ->
                     addFunction(buildVisitFun(element).apply {
-                        addStatement("return ${parent.element.visitFunName}(${element.visitorParam}, data)")
+                        addStatement("return ${parent.element.visitFunctionName}(${element.visitorParameterName}, data)")
                         returns(returnType.toPoetStarParameterized())
                     }.build())
                 }
@@ -119,7 +122,7 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
     val transformTypeFunName = "transformType"
 
     fun FunSpec.Builder.addVisitTypeStatement(element: Element, field: Field) {
-        val visitorParam = element.visitorParam
+        val visitorParam = element.visitorParameterName
         val access = "$visitorParam.${field.name}"
         when (field) {
             is SingleField -> addStatement("$access = $transformTypeFunName($visitorParam, $access, data)")
@@ -137,7 +140,7 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
 
     fun Element.getFieldsWithIrTypeType(insideParent: Boolean = false): List<Field> {
         val parentsFields = elementParents.flatMap { it.element.getFieldsWithIrTypeType(insideParent = true) }
-        if (insideParent && this.visitorParent != null) {
+        if (insideParent && this.parentInVisitor != null) {
             return parentsFields
         }
 
@@ -169,9 +172,9 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
         }
         addFunction(abstractVisitFun.addModifiers(KModifier.ABSTRACT).build())
 
-        fun buildVisitFun(element: Element) = FunSpec.builder(element.visitFunName).apply {
+        fun buildVisitFun(element: Element) = FunSpec.builder(element.visitFunctionName).apply {
             addModifiers(KModifier.OVERRIDE)
-            addParameter(element.visitorParam, element.toPoetStarParameterized())
+            addParameter(element.visitorParameterName, element.toPoetStarParameterized())
             addParameter("data", d)
         }
 
@@ -180,11 +183,11 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
             if (irTypeFields.isEmpty()) continue
 
             val returnType = element.getTransformExplicitType()
-            element.visitorParent?.let { _ ->
+            element.parentInVisitor?.let { _ ->
                 addFunction(buildVisitFun(element).apply {
                     returns(returnType.toPoetStarParameterized())
 
-                    val visitorParam = element.visitorParam
+                    val visitorParam = element.visitorParameterName
                     when (element.name) {
                         IrTree.memberAccessExpression.name -> {
                             if (irTypeFields.singleOrNull()?.name != "typeArguments") {
@@ -207,7 +210,7 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
                         }
                         else -> irTypeFields.forEach { addVisitTypeStatement(element, it) }
                     }
-                    addStatement("return super.${element.visitFunName}($visitorParam, data)")
+                    addStatement("return super.${element.visitFunctionName}($visitorParam, data)")
                 }.build())
             }
         }
@@ -217,7 +220,7 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
 }
 
 private fun Element.getTransformExplicitType(): Element {
-    return generateSequence(this) { it.visitorParent?.element }
+    return generateSequence(this) { it.parentInVisitor?.element }
         .firstNotNullOfOrNull {
             when {
                 it.transformByChildren -> it.transformerReturnType ?: it
