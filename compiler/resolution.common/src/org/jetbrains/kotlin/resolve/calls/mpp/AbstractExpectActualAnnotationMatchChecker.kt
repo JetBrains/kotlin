@@ -232,7 +232,10 @@ object AbstractExpectActualAnnotationMatchChecker {
 
         var firstIncompatibility: Incompatibility? = null
 
-        checkAnnotationsOnTypeRefAndArguments(expectTypeRef, actualTypeRef) { expectAnnotations, actualAnnotations, actualTypeRefSource ->
+        checkAnnotationsOnTypeRefAndArguments(
+            expectDeclarationSymbol, actualDeclarationSymbol,
+            expectTypeRef, actualTypeRef
+        ) { expectAnnotations, actualAnnotations, actualTypeRefSource ->
             if (firstIncompatibility == null) {
                 firstIncompatibility = areAnnotationListsCompatible(expectAnnotations, actualAnnotations, actualDeclarationSymbol)
                     ?.let { Incompatibility(expectDeclarationSymbol, actualDeclarationSymbol, actualTypeRefSource, type = it) }

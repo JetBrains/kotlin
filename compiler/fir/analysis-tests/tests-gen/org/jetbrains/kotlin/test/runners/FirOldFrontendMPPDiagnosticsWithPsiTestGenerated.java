@@ -1653,6 +1653,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
                 }
 
                 @Test
+                @TestMetadata("typealiasToJavaWithAnnotationArgument.kt")
+                public void testTypealiasToJavaWithAnnotationArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/typealiasToJavaWithAnnotationArgument.kt");
+                }
+
+                @Test
                 @TestMetadata("typealiasedAnnotation.kt")
                 public void testTypealiasedAnnotation() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/typealiasedAnnotation.kt");

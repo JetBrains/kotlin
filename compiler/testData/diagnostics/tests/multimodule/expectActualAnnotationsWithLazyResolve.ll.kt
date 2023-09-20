@@ -1,5 +1,7 @@
 // LL_FIR_DIVERGENCE
-// The reason is bug, which will be fixed in next commit
+// Difference to FIR is false-positive report of MISSING_DEPENDENCY_SUPERCLASS.
+// This is because JVM Enum with `java.io.Serializable` superclass resolved instead of common builtin Enum.
+// Must be fixed with KT-61757.
 // LL_FIR_DIVERGENCE
 
 // Test for ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT diagnostic when annotations arguments are lazily resolved.
@@ -25,7 +27,7 @@ expect fun withEmptyArguments_positive()
 
 // MODULE: main()()(common)
 // TARGET_PLATFORM: JVM
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onType_negative<!>(): @Ann("") Any = Any()
+actual fun onType_negative(): @Ann("") Any = Any()
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onType_positive<!>(): @Ann("incorrect") Any = Any()
 
 @Ann("")

@@ -544,6 +544,8 @@ internal abstract class IrExpectActualMatchingContext(
     override fun TypeRefMarker.getClassId(): ClassId? = (this as IrType).getClass()?.classId
 
     override fun checkAnnotationsOnTypeRefAndArguments(
+        expectContainingSymbol: DeclarationSymbolMarker,
+        actualContainingSymbol: DeclarationSymbolMarker,
         expectTypeRef: TypeRefMarker,
         actualTypeRef: TypeRefMarker,
         checker: ExpectActualMatchingContext.AnnotationsCheckerCallback
@@ -560,7 +562,7 @@ internal abstract class IrExpectActualMatchingContext(
         for ((expectArg, actualArg) in expectTypeRef.arguments.zip(actualTypeRef.arguments)) {
             val expectArgType = expectArg.typeOrNull ?: continue
             val actualArgType = actualArg.typeOrNull ?: continue
-            checkAnnotationsOnTypeRefAndArguments(expectArgType, actualArgType, checker)
+            checkAnnotationsOnTypeRefAndArguments(expectContainingSymbol, actualContainingSymbol, expectArgType, actualArgType, checker)
         }
     }
 }

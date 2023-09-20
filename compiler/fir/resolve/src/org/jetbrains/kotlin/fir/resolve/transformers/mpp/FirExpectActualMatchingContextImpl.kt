@@ -11,14 +11,13 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithArguments
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
@@ -364,6 +363,13 @@ class FirExpectActualMatchingContextImpl private constructor(
     }
 
     private fun areFirAnnotationsEqual(annotation1: FirAnnotation, annotation2: FirAnnotation): Boolean {
+        fun FirAnnotation.hasResolvedArguments(): Boolean {
+            return resolved || (this is FirAnnotationCall && arguments.isEmpty())
+        }
+
+        check(annotation1.hasResolvedArguments() && annotation2.hasResolvedArguments()) {
+            "By this time compared annotations are expected to have resolved arguments"
+        }
         if (!areCompatibleExpectActualTypes(annotation1.resolvedType, annotation2.resolvedType)) {
             return false
         }
@@ -503,25 +509,37 @@ class FirExpectActualMatchingContextImpl private constructor(
     override fun TypeRefMarker.getClassId(): ClassId? = (this as FirResolvedTypeRef).type.fullyExpandedType(actualSession).classId
 
     override fun checkAnnotationsOnTypeRefAndArguments(
+        expectContainingSymbol: DeclarationSymbolMarker,
+        actualContainingSymbol: DeclarationSymbolMarker,
         expectTypeRef: TypeRefMarker,
         actualTypeRef: TypeRefMarker,
         checker: ExpectActualMatchingContext.AnnotationsCheckerCallback,
     ) {
         check(expectTypeRef is FirResolvedTypeRef && actualTypeRef is FirResolvedTypeRef)
-        checkAnnotationsOnTypeRefAndArgumentsImpl(expectTypeRef, actualTypeRef, checker)
+        checkAnnotationsOnTypeRefAndArgumentsImpl(
+            expectContainingSymbol.asSymbol(), actualContainingSymbol.asSymbol(),
+            expectTypeRef, actualTypeRef, checker
+        )
     }
 
     private fun checkAnnotationsOnTypeRefAndArgumentsImpl(
+        expectContainingSymbol: FirBasedSymbol<*>,
+        actualContainingSymbol: FirBasedSymbol<*>,
         expectTypeRef: FirTypeRef?,
         actualTypeRef: FirTypeRef?,
         checker: ExpectActualMatchingContext.AnnotationsCheckerCallback,
     ) {
-        fun FirAnnotationContainer.getAnnotations() = annotations.map(::AnnotationCallInfoImpl)
+        fun FirAnnotationContainer.getAnnotations(anchor: FirBasedSymbol<*>): List<AnnotationCallInfoImpl> {
+            return resolvedAnnotationsWithArguments(anchor).map(::AnnotationCallInfoImpl)
+        }
 
         if (expectTypeRef == null || actualTypeRef == null) return
         if (expectTypeRef is FirErrorTypeRef || actualTypeRef is FirErrorTypeRef) return
 
-        checker.check(expectTypeRef.getAnnotations(), actualTypeRef.getAnnotations(), FirSourceElement(actualTypeRef.source))
+        checker.check(
+            expectTypeRef.getAnnotations(expectContainingSymbol), actualTypeRef.getAnnotations(actualContainingSymbol),
+            FirSourceElement(actualTypeRef.source)
+        )
 
         val expectDelegatedTypeRef = (expectTypeRef as? FirResolvedTypeRef)?.delegatedTypeRef ?: return
         val actualDelegatedTypeRef = (actualTypeRef as? FirResolvedTypeRef?)?.delegatedTypeRef ?: return
@@ -538,22 +556,30 @@ class FirExpectActualMatchingContextImpl private constructor(
                         if (expectTypeArgument !is FirTypeProjectionWithVariance || actualTypeArgument !is FirTypeProjectionWithVariance) {
                             continue
                         }
-                        checkAnnotationsOnTypeRefAndArgumentsImpl(expectTypeArgument.typeRef, actualTypeArgument.typeRef, checker)
+                        checkAnnotationsOnTypeRefAndArgumentsImpl(
+                            expectContainingSymbol, actualContainingSymbol,
+                            expectTypeArgument.typeRef, actualTypeArgument.typeRef, checker
+                        )
                     }
                 }
             }
             expectDelegatedTypeRef is FirFunctionTypeRef && actualDelegatedTypeRef is FirFunctionTypeRef -> {
                 checkAnnotationsOnTypeRefAndArgumentsImpl(
+                    expectContainingSymbol, actualContainingSymbol,
                     expectDelegatedTypeRef.receiverTypeRef, actualDelegatedTypeRef.receiverTypeRef, checker,
                 )
                 checkAnnotationsOnTypeRefAndArgumentsImpl(
+                    expectContainingSymbol, actualContainingSymbol,
                     expectDelegatedTypeRef.returnTypeRef, actualDelegatedTypeRef.returnTypeRef, checker,
                 )
 
                 val expectParams = expectDelegatedTypeRef.parameters
                 val actualParams = actualDelegatedTypeRef.parameters
                 for ((expectParam, actualParam) in expectParams.zipIfSizesAreEqual(actualParams).orEmpty()) {
-                    checkAnnotationsOnTypeRefAndArgumentsImpl(expectParam.returnTypeRef, actualParam.returnTypeRef, checker)
+                    checkAnnotationsOnTypeRefAndArgumentsImpl(
+                        expectContainingSymbol, actualContainingSymbol,
+                        expectParam.returnTypeRef, actualParam.returnTypeRef, checker
+                    )
                 }
             }
         }

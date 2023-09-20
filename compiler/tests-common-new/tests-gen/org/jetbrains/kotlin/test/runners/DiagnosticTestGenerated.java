@@ -24834,6 +24834,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                         }
 
                         @Test
+                        @TestMetadata("typealiasToJavaWithAnnotationArgument.kt")
+                        public void testTypealiasToJavaWithAnnotationArgument() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/typealiasToJavaWithAnnotationArgument.kt");
+                        }
+
+                        @Test
                         @TestMetadata("typealiasedAnnotation.kt")
                         public void testTypealiasedAnnotation() throws Exception {
                             runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/typealiasedAnnotation.kt");

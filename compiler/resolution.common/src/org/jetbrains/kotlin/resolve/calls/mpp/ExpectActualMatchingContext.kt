@@ -248,6 +248,10 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
      * **Example**: for type `@Ann1 List<@Ann2 Map<@Ann3 Int, @Ann4 String>>`, there are 4 types to check in [checker].
      */
     fun checkAnnotationsOnTypeRefAndArguments(
-        expectTypeRef: TypeRefMarker, actualTypeRef: TypeRefMarker, checker: AnnotationsCheckerCallback,
+        expectContainingSymbol: DeclarationSymbolMarker,
+        actualContainingSymbol: DeclarationSymbolMarker,
+        expectTypeRef: TypeRefMarker,
+        actualTypeRef: TypeRefMarker,
+        checker: AnnotationsCheckerCallback,
     )
 }
