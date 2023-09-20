@@ -165,10 +165,7 @@ fun ConeKotlinType.scopeForSupertype(
 
     val symbol = lookupTag.toSymbol(useSiteSession) as? FirRegularClassSymbol ?: return null
 
-    val substitutor = when {
-        this.type.attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)
-        else -> substitutor(symbol, this, useSiteSession)
-    }
+    val substitutor = substitutorForSuperType(useSiteSession, symbol)
 
     return symbol.fir.scopeForClassImpl(
         substitutor,
@@ -180,6 +177,13 @@ fun ConeKotlinType.scopeForSupertype(
         memberOwnerLookupTag = derivedClass.symbol.toLookupTag(),
         memberRequiredPhase = memberRequiredPhase,
     )
+}
+
+fun ConeClassLikeType.substitutorForSuperType(useSiteSession: FirSession, classTypeSymbol: FirRegularClassSymbol): ConeSubstitutor {
+    return when {
+        this.type.attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)
+        else -> substitutor(classTypeSymbol, this, useSiteSession)
+    }
 }
 
 private fun substitutor(symbol: FirRegularClassSymbol, type: ConeClassLikeType, useSiteSession: FirSession): ConeSubstitutor {
