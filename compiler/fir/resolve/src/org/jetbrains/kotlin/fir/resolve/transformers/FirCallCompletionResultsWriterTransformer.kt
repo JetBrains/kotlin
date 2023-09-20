@@ -149,8 +149,8 @@ class FirCallCompletionResultsWriterTransformer(
 
         if (subCandidate.usedOuterCs) {
             val updaterForThisReferences = TypeUpdaterForThisReferences()
-            dispatchReceiver = dispatchReceiver.transformSingle(updaterForThisReferences, null)
-            extensionReceiver = extensionReceiver.transformSingle(updaterForThisReferences, null)
+            dispatchReceiver = dispatchReceiver?.transformSingle(updaterForThisReferences, null)
+            extensionReceiver = extensionReceiver?.transformSingle(updaterForThisReferences, null)
         }
 
         (qualifiedAccessExpression as? FirQualifiedAccessExpression)?.apply {
@@ -512,8 +512,8 @@ class FirCallCompletionResultsWriterTransformer(
 
         if (subCandidate.usedOuterCs) {
             val updaterForThisReferences = TypeUpdaterForThisReferences()
-            dispatchReceiver = dispatchReceiver.transformSingle(updaterForThisReferences, null)
-            extensionReceiver = extensionReceiver.transformSingle(updaterForThisReferences, null)
+            dispatchReceiver = dispatchReceiver?.transformSingle(updaterForThisReferences, null)
+            extensionReceiver = extensionReceiver?.transformSingle(updaterForThisReferences, null)
         }
 
         return callableReferenceAccess.apply {
