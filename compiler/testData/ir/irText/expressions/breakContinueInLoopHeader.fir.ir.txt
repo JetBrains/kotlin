@@ -18,7 +18,6 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: GET_VAR 'val tmp_0: kotlin.Boolean? declared in <root>.test1' type=kotlin.Boolean? origin=null
-            body: BLOCK type=kotlin.Unit origin=null
   FUN name:test2 visibility:public modality:FINAL <> (c:kotlin.Boolean?) returnType:kotlin.Unit
     VALUE_PARAMETER name:c index:0 type:kotlin.Boolean?
     BLOCK_BODY
@@ -38,7 +37,6 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: GET_VAR 'val tmp_1: kotlin.Boolean? declared in <root>.test2' type=kotlin.Boolean? origin=null
-            body: BLOCK type=kotlin.Unit origin=null
   FUN name:test3 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>?) returnType:kotlin.Unit
     VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>?
     BLOCK_BODY

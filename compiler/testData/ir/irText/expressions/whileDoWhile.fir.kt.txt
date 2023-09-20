@@ -1,7 +1,6 @@
 fun test() {
   var x: Int = 0
-  while (less(arg0 = x, arg1 = 0)) { // BLOCK
-  }
+  while (less(arg0 = x, arg1 = 0))
   while (less(arg0 = x, arg1 = 5)) { // BLOCK
     val <unary>: Int = x
     x = <unary>.inc()
@@ -15,8 +14,11 @@ fun test() {
     }
   }
   { // BLOCK
+    do    while (less(arg0 = x, arg1 = 0))
+  }
+  { // BLOCK
     do// COMPOSITE {
-    // }    while (less(arg0 = x, arg1 = 0))
+    // }    while (less(arg0 = x, arg1 = 7))
   }
   { // BLOCK
     do{ // BLOCK

@@ -1303,7 +1303,9 @@ class Fir2IrVisitor(
             ).apply {
                 loopMap[doWhileLoop] = this
                 label = doWhileLoop.label?.name
-                body = doWhileLoop.block.convertToIrExpressionOrBlock(origin)
+                body = runUnless(doWhileLoop.block is FirEmptyExpressionBlock) {
+                    doWhileLoop.block.convertToIrExpressionOrBlock(origin)
+                }
                 condition = convertToIrExpression(doWhileLoop.condition)
                 loopMap.remove(doWhileLoop)
             }
@@ -1324,49 +1326,51 @@ class Fir2IrVisitor(
                 loopMap[whileLoop] = this
                 label = whileLoop.label?.name
                 condition = convertToIrExpression(whileLoop.condition)
-                body = if (isForLoop) {
-                    /*
-                     * for loops in IR must have their body in the exact following form
-                     * because some of the lowerings (e.g. `ForLoopLowering`) expect it:
-                     *
-                     * for (x in list) { ...body...}
-                     *
-                     * IR (loop body):
-                     *   IrBlock:
-                     *     x = <iterator>.next()
-                     *     ... possible destructured loop variables, in case iterator is a tuple: `for ((a,b,c) in list) { ...body...}` ...
-                     *     IrBlock:
-                     *         ...body...
-                     */
-                    firLoopBody.convertWithOffsets { innerStartOffset, innerEndOffset ->
-                        val loopBodyStatements = firLoopBody.statements
-                        val firLoopVarStmt = loopBodyStatements.firstOrNull()
-                            ?: error("Unexpected shape of for loop body: missing body statements")
+                body = runUnless(firLoopBody is FirEmptyExpressionBlock) {
+                    if (isForLoop) {
+                        /*
+                         * for loops in IR must have their body in the exact following form
+                         * because some of the lowerings (e.g. `ForLoopLowering`) expect it:
+                         *
+                         * for (x in list) { ...body...}
+                         *
+                         * IR (loop body):
+                         *   IrBlock:
+                         *     x = <iterator>.next()
+                         *     ... possible destructured loop variables, in case iterator is a tuple: `for ((a,b,c) in list) { ...body...}` ...
+                         *     IrBlock:
+                         *         ...body...
+                         */
+                        firLoopBody.convertWithOffsets { innerStartOffset, innerEndOffset ->
+                            val loopBodyStatements = firLoopBody.statements
+                            val firLoopVarStmt = loopBodyStatements.firstOrNull()
+                                ?: error("Unexpected shape of for loop body: missing body statements")
 
-                        val (destructuredLoopVariables, realStatements) = loopBodyStatements.drop(1).partition {
-                            it is FirProperty && it.initializer is FirComponentCall
-                        }
-                        val firExpression = realStatements.singleOrNull() as? FirExpression
-                            ?: error("Unexpected shape of for loop body: must be single real loop statement, but got ${realStatements.size}")
-
-                        val irStatements = buildList {
-                            addIfNotNull(firLoopVarStmt.toIrStatement())
-                            destructuredLoopVariables.forEach { addIfNotNull(it.toIrStatement()) }
-                            if (firExpression !is FirEmptyExpressionBlock) {
-                                add(convertToIrExpression(firExpression))
+                            val (destructuredLoopVariables, realStatements) = loopBodyStatements.drop(1).partition {
+                                it is FirProperty && it.initializer is FirComponentCall
                             }
-                        }
+                            val firExpression = realStatements.singleOrNull() as? FirExpression
+                                ?: error("Unexpected shape of for loop body: must be single real loop statement, but got ${realStatements.size}")
 
-                        IrBlockImpl(
-                            innerStartOffset,
-                            innerEndOffset,
-                            irBuiltIns.unitType,
-                            origin,
-                            irStatements,
-                        )
+                            val irStatements = buildList {
+                                addIfNotNull(firLoopVarStmt.toIrStatement())
+                                destructuredLoopVariables.forEach { addIfNotNull(it.toIrStatement()) }
+                                if (firExpression !is FirEmptyExpressionBlock) {
+                                    add(convertToIrExpression(firExpression))
+                                }
+                            }
+
+                            IrBlockImpl(
+                                innerStartOffset,
+                                innerEndOffset,
+                                irBuiltIns.unitType,
+                                origin,
+                                irStatements,
+                            )
+                        }
+                    } else {
+                        firLoopBody.convertToIrExpressionOrBlock(origin)
                     }
-                } else {
-                    firLoopBody.convertToIrExpressionOrBlock(origin)
                 }
                 loopMap.remove(whileLoop)
             }

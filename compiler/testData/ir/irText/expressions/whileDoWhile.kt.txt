@@ -17,6 +17,10 @@ fun test() {
     do    while (less(arg0 = x, arg1 = 0))
   }
   { // BLOCK
+    do// COMPOSITE {
+    // }    while (less(arg0 = x, arg1 = 7))
+  }
+  { // BLOCK
     do{ // BLOCK
       val tmp2: Int = x
       x = tmp2.inc()
