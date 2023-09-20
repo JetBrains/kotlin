@@ -248,7 +248,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
     }
 
     fun Map<out ExpectActualCompatibility<*>, *>.allStrongIncompatibilities(): Boolean {
-        return keys.all { it is Incompatible.StrongIncompatible }
+        return keys.all { it is Incompatible.ExpectActualMatchingIncompatible }
     }
 
     // we don't require `actual` modifier on
