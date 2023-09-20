@@ -29,7 +29,7 @@ class PropertyCommonizer(
         val constCompileTimeInitializer = (constCommonizationState as? ConstSameValue)?.compileTimeInitializer
 
         return CirProperty(
-            annotations = functionOrPropertyBase.additionalAnnotations,
+            annotations = functionOrPropertyBase.annotations,
             name = functionOrPropertyBase.name,
             typeParameters = functionOrPropertyBase.typeParameters,
             visibility = functionOrPropertyBase.visibility,
