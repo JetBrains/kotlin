@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityC
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
 import org.jetbrains.kotlin.resolve.multiplatform.toMemberDiffKind
+import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -148,11 +149,9 @@ private fun calculateExpectActualScopeDiff(
     actual: FirRegularClassSymbol,
     context: CheckerContext,
 ): Set<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>> {
-    if (expect.typeParameterSymbols.size != actual.typeParameterSymbols.size) return emptySet()
     val classTypeSubstitutor = createExpectActualTypeParameterSubstitutor(
         // It's responsibility of AbstractExpectActualCompatibilityChecker to report that
-        expect.typeParameterSymbols,
-        actual.typeParameterSymbols,
+        (expect.typeParameterSymbols zipIfSizesAreEqual actual.typeParameterSymbols) ?: return emptySet(),
         context.session
     )
 
