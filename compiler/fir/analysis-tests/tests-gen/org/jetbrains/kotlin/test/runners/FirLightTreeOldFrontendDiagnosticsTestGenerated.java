@@ -15277,6 +15277,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("assertThatInNumerousIf.kt")
+            public void testAssertThatInNumerousIf() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/assertThatInNumerousIf.kt");
+            }
+
+            @Test
             @TestMetadata("cannotCompleteResolveAmbiguity.kt")
             public void testCannotCompleteResolveAmbiguity() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/cannotCompleteResolveAmbiguity.kt");
