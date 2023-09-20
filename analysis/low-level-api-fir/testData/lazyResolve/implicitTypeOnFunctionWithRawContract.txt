@@ -1,0 +1,126 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] implicitTypeOnFunctionWithRawContract.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] bool: Boolean): <implicit>
+        [Contract description] <
+            LAZY_EXPRESSION
+        >
+     { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] bool: Boolean): <implicit>
+        [Contract description] <
+            LAZY_EXPRESSION
+        >
+     { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] bool: Boolean): <implicit>
+        [Contract description] <
+            LAZY_EXPRESSION
+        >
+     { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo([ResolvedTo(COMPANION_GENERATION)] bool: Boolean): <implicit>
+        [Contract description] <
+            LAZY_EXPRESSION
+        >
+     { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
+    public? final? [ResolvedTo(SUPER_TYPES)] fun foo([ResolvedTo(SUPER_TYPES)] bool: Boolean): <implicit>
+        [Contract description] <
+            LAZY_EXPRESSION
+        >
+     { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
+    public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] bool: R|kotlin/Boolean|): <implicit>
+        [Contract description] <
+            LAZY_EXPRESSION
+        >
+     { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
+    public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] bool: R|kotlin/Boolean|): <implicit>
+        [Contract description] <
+            LAZY_EXPRESSION
+        >
+     { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] bool: R|kotlin/Boolean|): <implicit>
+        [Contract description] <
+            LAZY_EXPRESSION
+        >
+     { LAZY_BLOCK }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun foo([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] bool: R|kotlin/Boolean|): <implicit>
+        [Contract description] <
+            LAZY_EXPRESSION
+        >
+     { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
+    public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] bool: R|kotlin/Boolean|): <implicit>
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> bool
+        >
+     {
+        ^foo bool#
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> bool
+        >
+     {
+        ^foo R|<local>/bool|
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> bool
+        >
+     {
+        ^foo R|<local>/bool|
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> bool
+        >
+     {
+        ^foo R|<local>/bool|
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeOnFunctionWithRawContract.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> bool
+        >
+     {
+        ^foo R|<local>/bool|
+    }

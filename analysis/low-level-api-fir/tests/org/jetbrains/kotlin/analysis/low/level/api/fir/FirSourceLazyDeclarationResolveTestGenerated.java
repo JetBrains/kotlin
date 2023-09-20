@@ -277,6 +277,24 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("implicitTypeOnFunctionWithRawContract.kt")
+    public void testImplicitTypeOnFunctionWithRawContract() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/implicitTypeOnFunctionWithRawContract.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitTypeOnFunctionWithUnresolvedRawContract.kt")
+    public void testImplicitTypeOnFunctionWithUnresolvedRawContract() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/implicitTypeOnFunctionWithUnresolvedRawContract.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitTypeOnFunctionWithWrongRawContract.kt")
+    public void testImplicitTypeOnFunctionWithWrongRawContract() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/implicitTypeOnFunctionWithWrongRawContract.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaAsSAMInterface.kt")
     public void testLambdaAsSAMInterface() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/lambdaAsSAMInterface.kt");
