@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * the package, separated by dollar signs. If a class is an inner of local, relativeClassName would consist of two names,
  * the second one being the class' short name.
  */
-class ClassId(val packageFqName: FqName, val relativeClassName: FqName, val isLocal: Boolean) {
+data class ClassId(val packageFqName: FqName, val relativeClassName: FqName, val isLocal: Boolean) {
     constructor(packageFqName: FqName, topLevelName: Name) : this(packageFqName, FqName.topLevel(topLevelName), isLocal = false)
 
     init {
@@ -96,20 +96,6 @@ class ClassId(val packageFqName: FqName, val relativeClassName: FqName, val isLo
                 append(relativeClassName.asString())
             }
         }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || javaClass != other.javaClass) return false
-        val id = other as ClassId
-        return packageFqName == id.packageFqName && relativeClassName == id.relativeClassName && isLocal == id.isLocal
-    }
-
-    override fun hashCode(): Int {
-        var result = packageFqName.hashCode()
-        result = 31 * result + relativeClassName.hashCode()
-        result = 31 * result + isLocal.hashCode()
-        return result
     }
 
     override fun toString(): String {
