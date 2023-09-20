@@ -9,22 +9,23 @@ val compilerModules = listOf(
     ":compiler:cli", // for MessageRenderer, related to MessageCollector usage
     ":compiler:cli-base", // for kotlinx-benchmark
     ":compiler:cli-common", // for compiler arguments setup, for logging via MessageCollector, CompilerSystemProperties, ExitCode
-    ":compiler:config.jvm", // for K2JVMCompilerArguments initialization
+    ":compiler:compiler.version", // for user projects buildscripts
     ":compiler:config", // for kotlinx-benchmark
+    ":compiler:config.jvm", // for K2JVMCompilerArguments initialization
     ":compiler:frontend", // for kotlinx-benchmark
+    ":compiler:ir.serialization.common", // for kotlinx-benchmark
     ":compiler:ir.tree", // for PartialLinkageMode (K/N)
     ":compiler:util", // for CommonCompilerArguments initialization, K/N
-    ":compiler:compiler.version", // for user projects buildscripts
     ":core:compiler.common", // for kotlinx-benchmark
     ":core:compiler.common.jvm", // for FUS statistics parsing all the compiler arguments, otherwise it fails silently
     ":core:compiler.common.native", // for kotlinx-benchmark
     ":core:descriptors", // for kotlinx-benchmark
-    ":core:deserialization.common", // for kotlinx-benchmark
     ":core:deserialization", // for kotlinx-benchmark
+    ":core:deserialization.common", // for kotlinx-benchmark
     ":core:metadata", // for kotlinx-benchmark
     ":core:util.runtime", // for stdlib extensions
-    ":kotlin-build-common", // for incremental compilation setup
     ":js:js.config", // for k/js task
+    ":kotlin-build-common", // for incremental compilation setup
 )
 
 dependencies {

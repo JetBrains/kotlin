@@ -1,4 +1,3 @@
-import org.gradle.internal.deprecation.DeprecatableConfiguration
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 
@@ -168,6 +167,7 @@ fun Project.configureKotlinCompilationOptions() {
             ":compiler:config",
             ":compiler:config.jvm",
             ":compiler:frontend",
+            ":compiler:ir.serialization.common",
             ":compiler:ir.tree",
             ":compiler:util",
             ":core:compiler.common",
