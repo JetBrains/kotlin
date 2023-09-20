@@ -1,3 +1,4 @@
+// LANGUAGE: -ProhibitDifferentMemberScopesInOpenExpect
 // FIR_IDENTICAL
 // LANGUAGE: -MultiplatformRestrictions
 // MODULE: m1-common

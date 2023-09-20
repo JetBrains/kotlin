@@ -3148,75 +3148,145 @@ internal class ActualMissingImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.ActualMissing
 
-internal class ActualClassifierMustHaveTheSameMembersAsNonFinalExpectClassifierImpl(
+internal class ActualClassifierMustHaveTheSameMembersAsNonFinalExpectClassifierErrorImpl(
     override val actualClassOrTypealias: KtClassLikeSymbol,
     override val scopeDiff: List<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>,
     override val expectClass: KtClassLikeSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtClassLikeDeclaration>(firDiagnostic, token), KtFirDiagnostic.ActualClassifierMustHaveTheSameMembersAsNonFinalExpectClassifier
+) : KtAbstractFirDiagnostic<KtClassLikeDeclaration>(firDiagnostic, token), KtFirDiagnostic.ActualClassifierMustHaveTheSameMembersAsNonFinalExpectClassifierError
 
-internal class NonActualMemberDeclaredInExpectNonFinalClassifierActualizationImpl(
+internal class ActualClassifierMustHaveTheSameMembersAsNonFinalExpectClassifierWarningImpl(
+    override val actualClassOrTypealias: KtClassLikeSymbol,
+    override val scopeDiff: List<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>>,
+    override val expectClass: KtClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtClassLikeDeclaration>(firDiagnostic, token), KtFirDiagnostic.ActualClassifierMustHaveTheSameMembersAsNonFinalExpectClassifierWarning
+
+internal class NonActualMemberDeclaredInExpectNonFinalClassifierActualizationErrorImpl(
     override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.NonActualMemberDeclaredInExpectNonFinalClassifierActualization
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.NonActualMemberDeclaredInExpectNonFinalClassifierActualizationError
 
-internal class ReturnTypeChangedInNonFinalExpectClassifierActualizationImpl(
+internal class NonActualMemberDeclaredInExpectNonFinalClassifierActualizationWarningImpl(
     override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.ReturnTypeChangedInNonFinalExpectClassifierActualization
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.NonActualMemberDeclaredInExpectNonFinalClassifierActualizationWarning
 
-internal class ModalityChangedInNonFinalExpectClassifierActualizationImpl(
+internal class ReturnTypeChangedInNonFinalExpectClassifierActualizationErrorImpl(
     override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.ModalityChangedInNonFinalExpectClassifierActualization
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.ReturnTypeChangedInNonFinalExpectClassifierActualizationError
 
-internal class VisibilityChangedInNonFinalExpectClassifierActualizationImpl(
+internal class ReturnTypeChangedInNonFinalExpectClassifierActualizationWarningImpl(
     override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.VisibilityChangedInNonFinalExpectClassifierActualization
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.ReturnTypeChangedInNonFinalExpectClassifierActualizationWarning
 
-internal class SetterVisibilityChangedInNonFinalExpectClassifierActualizationImpl(
+internal class ModalityChangedInNonFinalExpectClassifierActualizationErrorImpl(
     override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtPropertyAccessor>(firDiagnostic, token), KtFirDiagnostic.SetterVisibilityChangedInNonFinalExpectClassifierActualization
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.ModalityChangedInNonFinalExpectClassifierActualizationError
 
-internal class ParameterNameChangedInNonFinalExpectClassifierActualizationImpl(
+internal class ModalityChangedInNonFinalExpectClassifierActualizationWarningImpl(
     override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.ParameterNameChangedInNonFinalExpectClassifierActualization
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.ModalityChangedInNonFinalExpectClassifierActualizationWarning
 
-internal class PropertyKindChangedInNonFinalExpectClassifierActualizationImpl(
+internal class VisibilityChangedInNonFinalExpectClassifierActualizationErrorImpl(
     override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.PropertyKindChangedInNonFinalExpectClassifierActualization
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.VisibilityChangedInNonFinalExpectClassifierActualizationError
 
-internal class LateinitChangedInNonFinalExpectClassifierActualizationImpl(
+internal class VisibilityChangedInNonFinalExpectClassifierActualizationWarningImpl(
     override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.LateinitChangedInNonFinalExpectClassifierActualization
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.VisibilityChangedInNonFinalExpectClassifierActualizationWarning
 
-internal class TypeParameterNamesChangedInNonFinalExpectClassifierActualizationImpl(
+internal class SetterVisibilityChangedInNonFinalExpectClassifierActualizationErrorImpl(
     override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.TypeParameterNamesChangedInNonFinalExpectClassifierActualization
+) : KtAbstractFirDiagnostic<KtPropertyAccessor>(firDiagnostic, token), KtFirDiagnostic.SetterVisibilityChangedInNonFinalExpectClassifierActualizationError
 
-internal class ActualClassifierMustHaveTheSameSupertypesAsNonFinalExpectClassifierImpl(
+internal class SetterVisibilityChangedInNonFinalExpectClassifierActualizationWarningImpl(
+    override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtPropertyAccessor>(firDiagnostic, token), KtFirDiagnostic.SetterVisibilityChangedInNonFinalExpectClassifierActualizationWarning
+
+internal class ParameterNameChangedInNonFinalExpectClassifierActualizationErrorImpl(
+    override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.ParameterNameChangedInNonFinalExpectClassifierActualizationError
+
+internal class ParameterNameChangedInNonFinalExpectClassifierActualizationWarningImpl(
+    override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.ParameterNameChangedInNonFinalExpectClassifierActualizationWarning
+
+internal class PropertyKindChangedInNonFinalExpectClassifierActualizationErrorImpl(
+    override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.PropertyKindChangedInNonFinalExpectClassifierActualizationError
+
+internal class PropertyKindChangedInNonFinalExpectClassifierActualizationWarningImpl(
+    override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.PropertyKindChangedInNonFinalExpectClassifierActualizationWarning
+
+internal class LateinitChangedInNonFinalExpectClassifierActualizationErrorImpl(
+    override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.LateinitChangedInNonFinalExpectClassifierActualizationError
+
+internal class LateinitChangedInNonFinalExpectClassifierActualizationWarningImpl(
+    override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.LateinitChangedInNonFinalExpectClassifierActualizationWarning
+
+internal class TypeParameterNamesChangedInNonFinalExpectClassifierActualizationErrorImpl(
+    override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.TypeParameterNamesChangedInNonFinalExpectClassifierActualizationError
+
+internal class TypeParameterNamesChangedInNonFinalExpectClassifierActualizationWarningImpl(
+    override val diff: ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KtFirDiagnostic.TypeParameterNamesChangedInNonFinalExpectClassifierActualizationWarning
+
+internal class ActualClassifierMustHaveTheSameSupertypesAsNonFinalExpectClassifierErrorImpl(
     override val actualClassOrTypealias: KtClassLikeSymbol,
     override val supertypes: List<Name>,
     override val expectClass: KtClassLikeSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtClassLikeDeclaration>(firDiagnostic, token), KtFirDiagnostic.ActualClassifierMustHaveTheSameSupertypesAsNonFinalExpectClassifier
+) : KtAbstractFirDiagnostic<KtClassLikeDeclaration>(firDiagnostic, token), KtFirDiagnostic.ActualClassifierMustHaveTheSameSupertypesAsNonFinalExpectClassifierError
+
+internal class ActualClassifierMustHaveTheSameSupertypesAsNonFinalExpectClassifierWarningImpl(
+    override val actualClassOrTypealias: KtClassLikeSymbol,
+    override val supertypes: List<Name>,
+    override val expectClass: KtClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtClassLikeDeclaration>(firDiagnostic, token), KtFirDiagnostic.ActualClassifierMustHaveTheSameSupertypesAsNonFinalExpectClassifierWarning
 
 internal class ExpectActualClassifiersAreInBetaWarningImpl(
     firDiagnostic: KtPsiDiagnostic,
