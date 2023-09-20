@@ -78,9 +78,7 @@ class ElementConfig(
     override val type: String
         get() = Element.elementName2typeName(name)
 
-    override fun getTypeWithArguments(notNull: Boolean): String {
-        TODO("Not yet implemented")
-    }
+    override fun getTypeWithArguments(notNull: Boolean): String = type
 
     enum class Category(private val packageDir: String, val defaultVisitorParam: String) {
         Expression("expressions", "expression"),
@@ -111,9 +109,7 @@ class ElementConfigRef(
     override val packageName: String
         get() = element.packageName
 
-    override fun getTypeWithArguments(notNull: Boolean): String {
-        TODO("Not yet implemented")
-    }
+    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
 }
 
 sealed class UseFieldAsParameterInIrFactoryStrategy {

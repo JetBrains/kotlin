@@ -94,9 +94,7 @@ data class ElementRef(
     override val packageName: String
         get() = element.packageName
 
-    override fun getTypeWithArguments(notNull: Boolean): String {
-        TODO("Not yet implemented")
-    }
+    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
 }
 
 sealed class Field(

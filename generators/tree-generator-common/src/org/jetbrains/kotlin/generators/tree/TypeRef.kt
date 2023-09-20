@@ -64,8 +64,7 @@ class ClassRef<P : TypeParameterRef> private constructor(
     override val fullQualifiedName: String
         get() = canonicalName
 
-    override fun getTypeWithArguments(notNull: Boolean): String =
-        type + (args.values.takeIf { it.isNotEmpty() }?.joinToString(",", "<", ">") ?: "")
+    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
 
     /**
      * The enclosing classes, outermost first, followed by the simple name. This is `["Map", "Entry"]`
@@ -128,6 +127,9 @@ interface ParametrizedTypeRef<Self, P : TypeParameterRef> : TypeRef {
 
     fun copy(args: Map<P, TypeRef>): Self
 }
+
+val ParametrizedTypeRef<*, *>.generics: String
+    get() = if (args.isEmpty()) "" else args.values.joinToString(prefix = "<", postfix = ">") { it.typeWithArguments }
 
 fun <T> ParametrizedTypeRef<T, NamedTypeParameterRef>.withArgs(vararg args: Pair<String, TypeRef>) =
     copy(args.associate { (k, v) -> NamedTypeParameterRef(k) to v })
