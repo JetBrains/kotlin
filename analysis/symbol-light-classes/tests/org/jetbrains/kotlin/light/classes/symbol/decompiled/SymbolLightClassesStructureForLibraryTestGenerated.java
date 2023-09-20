@@ -55,6 +55,12 @@ public class SymbolLightClassesStructureForLibraryTestGenerated extends Abstract
     }
 
     @Test
+    @TestMetadata("NestedClasses.kt")
+    public void testNestedClasses() throws Exception {
+        runTest("analysis/symbol-light-classes/testData/structure/NestedClasses.kt");
+    }
+
+    @Test
     @TestMetadata("Objects.kt")
     public void testObjects() throws Exception {
         runTest("analysis/symbol-light-classes/testData/structure/Objects.kt");
