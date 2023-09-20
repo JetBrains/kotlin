@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.resolveMetadat
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.util.assertDoesNotThrow
-import org.jetbrains.kotlin.util.assertThrows
 import kotlin.test.Test
+import kotlin.test.fail
 
 class StdlibJsExplicitDependencyResolutionTest {
 
@@ -26,10 +26,10 @@ class StdlibJsExplicitDependencyResolutionTest {
             configurationsThatMustFail = listOf(
                 // jvm must not resolve, so that stdlib-js doesn't get onto jvm compile classpath
                 "jvmCompileClasspath",
-            ) + unresolvableMetadataConfigurations,
+            ),
             configurationsThatMustResolve = listOf(
                 "jsCompileClasspath"
-            ),
+            ) + resolvableMetadataConfigurations,
             sourceSetWithStdlibJs = "commonMain"
         ) {
             jvm()
@@ -40,11 +40,10 @@ class StdlibJsExplicitDependencyResolutionTest {
     @Test
     fun `project with jvm and js targets - with stdlib-js dependency in jsMain - resolves js and jvm compile classpaths`() {
         checkKmpProjectResolvesAllMetadataConfigurationsAnd(
-            configurationsThatMustFail = unresolvableMetadataConfigurations,
             configurationsThatMustResolve = listOf(
                 "jsCompileClasspath",
                 "jvmCompileClasspath",
-            ),
+            ) + resolvableMetadataConfigurations,
             sourceSetWithStdlibJs = "jsMain",
         ) {
             jvm()
@@ -55,8 +54,7 @@ class StdlibJsExplicitDependencyResolutionTest {
     @Test
     fun `project js target - with stdlib-js dependency in jsMain - resolves js compile classpath`() {
         checkKmpProjectResolvesAllMetadataConfigurationsAnd(
-            configurationsThatMustFail = unresolvableMetadataConfigurations,
-            configurationsThatMustResolve = listOf("jsCompileClasspath"),
+            configurationsThatMustResolve = listOf("jsCompileClasspath") + resolvableMetadataConfigurations,
             sourceSetWithStdlibJs = "jsMain",
         ) {
             js()
@@ -66,8 +64,7 @@ class StdlibJsExplicitDependencyResolutionTest {
     @Test
     fun `project with js target - with stdlib-js dependency in commonMain - resolves js compile classpath`() {
         checkKmpProjectResolvesAllMetadataConfigurationsAnd(
-            configurationsThatMustFail = unresolvableMetadataConfigurations,
-            configurationsThatMustResolve = listOf("jsCompileClasspath"),
+            configurationsThatMustResolve = listOf("jsCompileClasspath") + resolvableMetadataConfigurations,
             sourceSetWithStdlibJs = "commonMain",
         ) {
             js()
@@ -75,7 +72,7 @@ class StdlibJsExplicitDependencyResolutionTest {
     }
 
     private fun checkKmpProjectResolvesAllMetadataConfigurationsAnd(
-        configurationsThatMustFail: List<String>,
+        configurationsThatMustFail: List<String> = emptyList(),
         configurationsThatMustResolve: List<String>,
         sourceSetWithStdlibJs: String,
         configure: KotlinMultiplatformExtension.() -> Unit,
@@ -104,11 +101,19 @@ class StdlibJsExplicitDependencyResolutionTest {
             }
         }
 
-        configurationsThatMustFail.forEach {
-            assertThrows<ResolveException> {
+        configurationsThatMustFail.map {
+            it to runCatching {
                 project.configurations.getByName(it).resolve()
-            }
+            }.exceptionOrNull()
         }
+            .filterNot { (_, e) -> e is ResolveException }
+            .takeIf { it.isNotEmpty() }
+            ?.let { results ->
+                fail(
+                    "Expected configurations resolve to fail with ResolveException, but was\n" +
+                            results.joinToString("\n") { (name, e) -> "  $name: ${e ?: "successful"}" }
+                )
+            }
 
         configurationsThatMustResolve.forEach {
             assertDoesNotThrow {
@@ -117,8 +122,8 @@ class StdlibJsExplicitDependencyResolutionTest {
         }
     }
 
-    // See KT-61126 for the reason these configurations are unresolvable
-    private val unresolvableMetadataConfigurations = listOf(
+    // These configurations were unresolvable due to KT-61126, but now they are resolvable
+    private val resolvableMetadataConfigurations = listOf(
         "jsMainResolvableDependenciesMetadata",
         "jsTestResolvableDependenciesMetadata",
         "allSourceSetsCompileDependenciesMetadata",
