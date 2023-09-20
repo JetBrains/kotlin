@@ -21,3 +21,15 @@ interface KtMapBackedSubstitutor : KtSubstitutor {
      */
     fun getAsMap(): Map<KtTypeParameterSymbol, KtType>
 }
+
+
+/**
+ * A [KtSubstitutor] which substitution logic can be represented as subsequent invocation of two substitutors [first] and [second]
+ * This is an implementation detail,
+ * and Analysis API clients should not depend on the fact if some [KtSubstitutor] is [KtChainedSubstitutor] or not.
+ */
+@KtAnalysisApiInternals
+interface KtChainedSubstitutor : KtSubstitutor {
+    val first: KtSubstitutor
+    val second: KtSubstitutor
+}

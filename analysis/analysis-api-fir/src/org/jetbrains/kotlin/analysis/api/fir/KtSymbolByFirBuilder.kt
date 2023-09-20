@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -505,6 +506,7 @@ internal class KtSymbolByFirBuilder constructor(
             if (substitutor == ConeSubstitutor.Empty) return KtSubstitutor.Empty(token)
             return when (substitutor) {
                 is ConeSubstitutorByMap -> KtFirMapBackedSubstitutor(substitutor, this@KtSymbolByFirBuilder)
+                is ChainedSubstitutor -> KtFirChainedSubstitutor(substitutor, this@KtSymbolByFirBuilder)
                 else -> KtFirGenericSubstitutor(substitutor, this@KtSymbolByFirBuilder)
             }
         }

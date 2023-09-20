@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.analysis.api.fir.types
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.impl.base.KtChainedSubstitutor
 import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 
@@ -49,4 +51,20 @@ internal class KtFirMapBackedSubstitutor(
 
         return result
     }
+}
+
+@OptIn(KtAnalysisApiInternals::class)
+internal class KtFirChainedSubstitutor(
+    substitutor: ChainedSubstitutor,
+    builder: KtSymbolByFirBuilder,
+) : AbstractKtFirSubstitutor<ChainedSubstitutor>(substitutor, builder), KtChainedSubstitutor {
+    override val first
+        get(): KtSubstitutor {
+            return builder.typeBuilder.buildSubstitutor(substitutor.first)
+        }
+
+    override val second
+        get(): KtSubstitutor {
+            return builder.typeBuilder.buildSubstitutor(substitutor.second)
+        }
 }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.calls.KtCall
 import org.jetbrains.kotlin.analysis.api.calls.KtCallableMemberCall
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.analysis.api.impl.base.KtChainedSubstitutor
 import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KtRendererKeywordFilter
@@ -31,9 +32,10 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
 
 @OptIn(KtAnalysisApiInternals::class)
-internal fun KtAnalysisSession.stringRepresentation(any: Any): String = with(any) {
+internal fun KtAnalysisSession.stringRepresentation(any: Any?): String = with(any) {
     fun KtType.render() = asStringForDebugging().replace('/', '.')
     return when (this) {
+        null -> "null"
         is KtFunctionLikeSymbol -> buildString {
             append(
                 when (this@with) {
@@ -84,6 +86,7 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any): String = with(any
                 .joinToString(prefix = "{", postfix = "}") { (k, v) -> stringRepresentation(k) + " = " + v.asStringForDebugging() }
             "<map substitutor: $mappingText>"
         }
+        is KtChainedSubstitutor -> "${stringRepresentation(first)} then ${stringRepresentation(second)}"
         is KtSubstitutor -> "<complex substitutor>"
         is KtDiagnostic -> "$severity<$factoryName: $defaultMessage>"
         is KtType -> render()
