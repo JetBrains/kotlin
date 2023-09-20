@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirContainingNamesAwareScope : FirScope() {
@@ -32,6 +30,56 @@ fun FirContainingNamesAwareScope.processAllCallables(processor: (FirCallableSymb
     for (name in getCallableNames()) {
         processFunctionsByName(name, processor)
         processPropertiesByName(name, processor)
+    }
+}
+
+fun FirContainingNamesAwareScope.processAllClassifiers(processor: (FirClassifierSymbol<*>) -> Unit) {
+    for (name in getClassifierNames()) {
+        processClassifiersByName(name, processor)
+    }
+}
+
+inline fun <reified T : FirCallableSymbol<*>> collectLeafCallablesByName(
+    name: Name,
+    processCallablesByName: (Name, (T) -> Unit) -> Unit,
+    crossinline processDirectlyOverriddenCallables: (T, (T) -> ProcessorAction) -> Unit,
+): List<T> {
+    val collected = mutableSetOf<T>()
+    val bases = mutableSetOf<T>()
+
+    processCallablesByName(name) { function ->
+        processDirectlyOverriddenCallables(function) {
+            bases.add(it)
+            ProcessorAction.NEXT
+        }
+
+        if (function !in bases) {
+            collected.add(function)
+        }
+    }
+
+    return collected.filter { it !in bases }
+}
+
+fun FirTypeScope.collectLeafFunctionsByName(name: Name): List<FirNamedFunctionSymbol> =
+    collectLeafCallablesByName(name, ::processFunctionsByName, ::processDirectlyOverriddenFunctions)
+
+fun FirTypeScope.collectLeafPropertiesByName(name: Name): List<FirVariableSymbol<*>> =
+    collectLeafCallablesByName(name, ::processPropertiesByName) { variable, process ->
+        if (variable is FirPropertySymbol) {
+            processDirectlyOverriddenProperties(variable, process)
+        }
+    }
+
+fun FirTypeScope.collectLeafFunctions(): List<FirNamedFunctionSymbol> = buildList {
+    for (name in getCallableNames()) {
+        this += collectLeafFunctionsByName(name)
+    }
+}
+
+fun FirTypeScope.collectLeafProperties(): List<FirVariableSymbol<*>> = buildList {
+    for (name in getCallableNames()) {
+        this += collectLeafPropertiesByName(name)
     }
 }
 

@@ -39,6 +39,11 @@ public class ClashTest extends SuperClass {
         return human;
     }
 
+    private int score;
+
+    public void setScore(int score, int times) {
+
+    }
 
     static void test() {
         val obj = new ClashTest();
@@ -87,6 +92,9 @@ fun test() {
     obj.setAge(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>41<!>)
     <!VAL_REASSIGNMENT!>obj.age<!> = 12
     val age = obj.age
+
+    obj.setScore(41)
+    obj.score = 12
 
 
     obj.getName()
