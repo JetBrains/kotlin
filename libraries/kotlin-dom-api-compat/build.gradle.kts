@@ -55,13 +55,18 @@ val emptyJavadocJar by tasks.creating(Jar::class) {
 
 publishing {
     publications {
-        create<MavenPublication>("maven") {
+        val mavenPublication = register<MavenPublication>("maven") {
             from(components["kotlin"])
             configureKotlinPomAttributes(project, "Kotlin DOM API compatibility library", packaging = "klib")
         }
         withType<MavenPublication> {
             artifact(emptyJavadocJar)
         }
+        configureSbom(
+            target = "Maven",
+            gradleConfigurations = setOf(),
+            publication = mavenPublication,
+        )
     }
 }
 
