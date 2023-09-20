@@ -34,7 +34,6 @@ playground {
     setupPlayground("../..")
     selectProjectsFromAndroidX({ name ->
         if (name.startsWith(":compose:compiler")) return true
-        if (isNeededForComposePlayground(name)) return true
         return false
     })
 }
