@@ -7,5 +7,5 @@
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 actual class <!ACTUAL_WITHOUT_EXPECT!>SomeClass<!> {
-    actual fun foo() {}
+    actual fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}
 }
