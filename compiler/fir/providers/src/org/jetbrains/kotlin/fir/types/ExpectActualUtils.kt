@@ -13,12 +13,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 fun createExpectActualTypeParameterSubstitutor(
-    expectedTypeParameters: List<FirTypeParameterSymbol>,
-    actualTypeParameters: List<FirTypeParameterSymbol>,
+    expectActualTypeParameters: List<Pair<FirTypeParameterSymbol, FirTypeParameterSymbol>>,
     useSiteSession: FirSession,
     parentSubstitutor: ConeSubstitutor? = null
 ): ConeSubstitutor {
-    val substitution = expectedTypeParameters.zip(actualTypeParameters).associate { (expectedParameterSymbol, actualParameterSymbol) ->
+    val substitution = expectActualTypeParameters.associate { (expectedParameterSymbol, actualParameterSymbol) ->
         expectedParameterSymbol to actualParameterSymbol.toLookupTag().constructType(emptyArray(), isNullable = false)
     }
     val substitutor = ConeSubstitutorByMap(

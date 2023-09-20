@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
-import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
-import org.jetbrains.kotlin.utils.addToStdlib.castAll
 
 class FirExpectActualMatchingContextImpl private constructor(
     private val actualSession: FirSession,
@@ -147,15 +145,12 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val PropertySymbolMarker.setter: FunctionSymbolMarker?
         get() = asSymbol().setterSymbol
 
-    @OptIn(UnsafeCastFunction::class)
     override fun createExpectActualTypeParameterSubstitutor(
-        expectTypeParameters: List<TypeParameterSymbolMarker>,
-        actualTypeParameters: List<TypeParameterSymbolMarker>,
+        expectActualTypeParameters: List<Pair<TypeParameterSymbolMarker, TypeParameterSymbolMarker>>,
         parentSubstitutor: TypeSubstitutorMarker?,
     ): TypeSubstitutorMarker {
         return createExpectActualTypeParameterSubstitutor(
-            expectTypeParameters.castAll<FirTypeParameterSymbol>(),
-            actualTypeParameters.castAll<FirTypeParameterSymbol>(),
+            expectActualTypeParameters.map { Pair(it.first as FirTypeParameterSymbol, it.second as FirTypeParameterSymbol) },
             actualSession,
             parentSubstitutor as ConeSubstitutor?
         )
