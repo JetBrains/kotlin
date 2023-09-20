@@ -22,14 +22,14 @@ fun test() {
     val platformJ = J.staticJ
 
     platformNN.foo()
-    platformN.foo()
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>.foo()
     platformJ.foo()
 
     with(platformNN) {
         foo()
     }
     with(platformN) {
-        foo()
+        <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>foo()<!>
     }
     with(platformJ) {
         foo()

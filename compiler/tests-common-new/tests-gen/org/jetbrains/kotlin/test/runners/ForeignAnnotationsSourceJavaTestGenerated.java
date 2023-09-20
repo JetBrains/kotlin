@@ -275,6 +275,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 }
 
                 @Test
+                @TestMetadata("expressionBodiedFunction.kt")
+                public void testExpressionBodiedFunction() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/expressionBodiedFunction.kt");
+                }
+
+                @Test
                 @TestMetadata("localInference.kt")
                 public void testLocalInference() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/localInference.kt");

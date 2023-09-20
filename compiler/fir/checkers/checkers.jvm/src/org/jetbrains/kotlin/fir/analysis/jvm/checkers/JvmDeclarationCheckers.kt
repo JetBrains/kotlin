@@ -38,12 +38,14 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirJvmFieldApplicabilityChecker,
             FirJvmSyntheticApplicabilityChecker,
+            FirPropertyJavaNullabilityWarningChecker,
         )
 
     override val functionCheckers: Set<FirFunctionChecker>
         get() = setOf(
             FirSynchronizedAnnotationChecker,
             FirOverloadsChecker,
+            FirFunctionJavaNullabilityWarningChecker,
         )
 
     override val typeParameterCheckers: Set<FirTypeParameterChecker>
@@ -54,5 +56,10 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
         get() = setOf(
             FirInlineBodySimpleFunctionChecker,
+        )
+
+    override val valueParameterCheckers: Set<FirValueParameterChecker>
+        get() = setOf(
+            FirValueParameterJavaNullabilityWarningChecker
         )
 }

@@ -3501,6 +3501,18 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val actualType: KtType
     }
 
+    interface ReceiverNullabilityMismatchBasedOnJavaAnnotations : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ReceiverNullabilityMismatchBasedOnJavaAnnotations::class
+        val actualType: KtType
+        val expectedType: KtType
+    }
+
+    interface NullabilityMismatchBasedOnJavaAnnotations : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = NullabilityMismatchBasedOnJavaAnnotations::class
+        val actualType: KtType
+        val expectedType: KtType
+    }
+
     interface UpperBoundCannotBeArray : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UpperBoundCannotBeArray::class
     }

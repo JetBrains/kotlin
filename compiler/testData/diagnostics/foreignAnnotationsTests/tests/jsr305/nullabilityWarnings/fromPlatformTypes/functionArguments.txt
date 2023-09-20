@@ -1,7 +1,9 @@
 package
 
 public fun bar(/*0*/ j: J?): kotlin.Unit
+context(J) public fun baz(): kotlin.Unit
 public fun foo(/*0*/ j: J): kotlin.Unit
+context(J?) public fun qux(): kotlin.Unit
 public fun test(): kotlin.Unit
 
 public open class J {

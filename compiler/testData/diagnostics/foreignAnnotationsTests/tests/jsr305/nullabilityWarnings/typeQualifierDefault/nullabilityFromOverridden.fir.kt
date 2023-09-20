@@ -126,25 +126,25 @@ public class C extends A implements AInt {
 
 // FILE: main.kt
 fun main(a: A, b: B, c: C) {
-    a.foo1(null).length
-    a.foo2(null).length
-    a.foo3(null).length
+    a.foo1(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>).length
+    a.foo2(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>).length
+    a.foo3(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>).length
     a.bar1(null)<!UNSAFE_CALL!>.<!>length
     a.bar2(null)<!UNSAFE_CALL!>.<!>length
     a.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>).length
 
-    b.foo1(null).length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.foo1(null)<!>.length
     b.foo1(null)?.length
     b.foo2(<!NULL_FOR_NONNULL_TYPE!>null<!>).length
-    b.foo3(null).length
+    b.foo3(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>).length
     b.bar1(null)<!UNSAFE_CALL!>.<!>length
     b.bar2(null)<!UNSAFE_CALL!>.<!>length
-    b.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>).length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!>.length
     b.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>)?.length
 
-    c.foo1(null).length
+    c.foo1(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>).length
     c.foo2(<!NULL_FOR_NONNULL_TYPE!>null<!>).length
-    c.foo3(null).length
+    c.foo3(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>).length
     c.bar1(null)<!UNSAFE_CALL!>.<!>length
     c.bar1(null)?.length
     c.bar2(null)<!UNSAFE_CALL!>.<!>length

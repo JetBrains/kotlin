@@ -34,14 +34,14 @@ public class A {
 // FILE: main.kt
 fun main(a: A) {
     a.foo("", null)?.length
-    a.foo("", null).length
-    a.foo(null, "").length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo("", null)<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "")<!>.length
 
     a.bar().length
     a.bar()!!.length
 
     a.field?.length
-    a.field.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field<!>.length
 
     a.foo2("", null)?.length
     a.foo2("", null).length

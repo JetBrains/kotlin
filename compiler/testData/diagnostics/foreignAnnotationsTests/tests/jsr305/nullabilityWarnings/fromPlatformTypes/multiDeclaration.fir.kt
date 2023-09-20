@@ -22,6 +22,6 @@ fun test() {
     val platformJ = J.staticJ
 
     val (a1, b1) = platformNN
-    val (a2, b2) = platformN
+    val (<!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a2<!>, <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b2<!>) = platformN
     val (a3, b3) = platformJ
 }

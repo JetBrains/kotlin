@@ -13,4 +13,5 @@ public interface J2 {
 }
 
 // FILE: main.kt
-fun baz(j2: J2): Any = j2.bar().foo() // Any..Any?
+// jspecify_nullness_mismatch
+fun baz(j2: J2): Any = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>j2.bar().foo()<!> // Any..Any?

@@ -1,1 +1,4 @@
+compiler/testData/cli/jvm/jsr305Usage.kt:2:11: warning: Java type mismatch: inferred type is 'kotlin/String', but 'kotlin/Nothing?' was expected.
+    a.foo(null)
+          ^
 OK

@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +ContextReceivers
 // JSR305_GLOBAL_REPORT: warn
 
 // FILE: J.java
@@ -19,7 +20,17 @@ fun test() {
     bar(J.staticNN)
     bar(J.staticN)
     bar(J.staticJ)
+
+    with(J.staticNN) { baz() }
+    with(J.staticN) { baz() }
+    with(J.staticJ) { baz() }
+
+    with(J.staticNN) { qux() }
+    with(J.staticN) { qux() }
+    with(J.staticJ) { qux() }
 }
 
 fun foo(j: J) {}
 fun bar(j: J?) {}
+context(J) fun baz() {}
+context(J?) fun qux() {}

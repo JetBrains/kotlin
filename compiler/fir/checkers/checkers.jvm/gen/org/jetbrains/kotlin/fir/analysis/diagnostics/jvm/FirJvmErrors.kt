@@ -44,6 +44,8 @@ object FirJvmErrors {
 
     // Types
     val JAVA_TYPE_MISMATCH by error2<KtExpression, ConeKotlinType, ConeKotlinType>()
+    val RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS by warning2<PsiElement, ConeKotlinType, ConeKotlinType>()
+    val NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS by warning2<PsiElement, ConeKotlinType, ConeKotlinType>()
 
     // Type parameters
     val UPPER_BOUND_CANNOT_BE_ARRAY by error0<PsiElement>()

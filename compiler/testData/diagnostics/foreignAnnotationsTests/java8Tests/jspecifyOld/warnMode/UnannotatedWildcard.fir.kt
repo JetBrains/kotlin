@@ -1,6 +1,6 @@
 // JSPECIFY_STATE: warn
 // FILE: J1.java
-import org.jspecify.annotations.*;
+import org.jspecify.nullness.*;
 
 @NullMarked
 public interface J1<T extends @Nullable Object> {
@@ -13,4 +13,4 @@ public interface J2 {
 }
 
 // FILE: main.kt
-fun baz(j2: J2): Any = j2.bar().foo() // Any..Any?
+fun baz(j2: J2): Any = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>j2.bar().foo()<!> // Any..Any?

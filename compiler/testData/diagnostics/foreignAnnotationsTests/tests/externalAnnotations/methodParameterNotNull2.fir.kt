@@ -19,7 +19,7 @@ fun test() {
     instance.<!NONE_APPLICABLE!>method<!>(i)
 
     val s: String? = null
-    instance.method(s)
+    instance.method(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>s<!>)
 
     val b: Boolean? = null
     instance.method(b)

@@ -45,7 +45,7 @@ fun main(a: A) {
 
     a.foo2("", null)?.length
     a.foo2("", null)<!UNSAFE_CALL!>.<!>length
-    a.foo2(null, "")<!UNSAFE_CALL!>.<!>length
+    a.foo2(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "")<!UNSAFE_CALL!>.<!>length
 
     a.bar2().length
     a.bar2()!!.length

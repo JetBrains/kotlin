@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // JSPECIFY_STATE: warn
 
 // FILE: Defaults.java
