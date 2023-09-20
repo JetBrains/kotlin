@@ -43,10 +43,12 @@ class FirExpectActualMatchingContextImpl private constructor(
     private val actualSession: FirSession,
     private val scopeSession: ScopeSession,
     private val allowedWritingMemberExpectForActualMapping: Boolean,
+    /**
+     * By default, K2 doesn't check return types because return types are not available during expect-actual matching.
+     * They are not available because [FirResolvePhase] is too low.
+     */
+    override val shouldCheckReturnTypesOfCallables: Boolean = false,
 ) : FirExpectActualMatchingContext, TypeSystemContext by actualSession.typeContext {
-    override val shouldCheckReturnTypesOfCallables: Boolean
-        get() = false
-
     override val shouldCheckAbsenceOfDefaultParamsInActual: Boolean
         get() = true
 
@@ -296,6 +298,7 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val TypeParameterSymbolMarker.isReified: Boolean
         get() = asSymbol().isReified
 
+    // note: copy-pasted to: org.jetbrains.kotlin.fir.types.ExpectActualUtilsKt.areCompatibleExpectActualTypes
     override fun areCompatibleExpectActualTypes(
         expectType: KotlinTypeMarker?,
         actualType: KotlinTypeMarker?,
@@ -497,7 +500,13 @@ class FirExpectActualMatchingContextImpl private constructor(
         override fun create(
             session: FirSession, scopeSession: ScopeSession,
             allowedWritingMemberExpectForActualMapping: Boolean,
+            shouldCheckReturnTypesOfCallables: Boolean,
         ): FirExpectActualMatchingContextImpl =
-            FirExpectActualMatchingContextImpl(session, scopeSession, allowedWritingMemberExpectForActualMapping)
+            FirExpectActualMatchingContextImpl(
+                session,
+                scopeSession,
+                allowedWritingMemberExpectForActualMapping,
+                shouldCheckReturnTypesOfCallables
+            )
     }
 }

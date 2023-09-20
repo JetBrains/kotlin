@@ -13,8 +13,8 @@ open class Base {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual open class Foo : Base() {
-    override lateinit var red1: String
-    override var red2: String = ""
+actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER!>class Foo<!> : Base() {
+    override <!LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION!>lateinit<!> var red1: String
+    override var <!LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION!>red2<!>: String = ""
     override lateinit var green: String
 }

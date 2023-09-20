@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
+/**
+ * [K2 counterpart checker][org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker]
+ */
 object ActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
