@@ -57,7 +57,6 @@ private class LLFirContractsTargetResolver(
             is FirSimpleFunction -> resolve(target, ContractStateKeepers.SIMPLE_FUNCTION)
             is FirConstructor -> resolve(target, ContractStateKeepers.CONSTRUCTOR)
             is FirProperty -> resolve(target, ContractStateKeepers.PROPERTY)
-            is FirPropertyAccessor -> resolve(target, ContractStateKeepers.PROPERTY_ACCESSOR)
             is FirRegularClass,
             is FirTypeAlias,
             is FirVariable,
@@ -105,7 +104,7 @@ private object ContractStateKeepers {
         add(BODY_OWNER, designation)
     }
 
-    val PROPERTY_ACCESSOR: StateKeeper<FirPropertyAccessor, FirDesignationWithFile> = stateKeeper { _, designation ->
+    private val PROPERTY_ACCESSOR: StateKeeper<FirPropertyAccessor, FirDesignationWithFile> = stateKeeper { _, designation ->
         add(CONTRACT_DESCRIPTION_OWNER, designation)
         add(BODY_OWNER, designation)
     }
