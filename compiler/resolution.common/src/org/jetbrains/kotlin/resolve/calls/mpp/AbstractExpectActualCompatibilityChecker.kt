@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.enumMapOf
@@ -315,7 +314,13 @@ object AbstractExpectActualCompatibilityChecker {
         }
 
         // We must prioritize to return STRONG incompatible over WEAK incompatible (because STRONG incompatibility allows to search for overloads)
-        return getCallablesStrongIncompatibility(expectDeclaration, actualDeclaration, parentSubstitutor)
+        return AbstractExpectActualCallablesMatcher.getCallablesMatchingIncompatibility(
+            expectDeclaration,
+            actualDeclaration,
+            parentSubstitutor,
+            expectContainingClass,
+            actualContainingClass
+        )
             ?: getCallablesWeakIncompatibility(
                 expectDeclaration,
                 actualDeclaration,
@@ -324,60 +329,6 @@ object AbstractExpectActualCompatibilityChecker {
                 actualContainingClass
             )
             ?: ExpectActualCompatibility.Compatible
-    }
-
-    context(ExpectActualMatchingContext<*>)
-    private fun getCallablesStrongIncompatibility(
-        expectDeclaration: CallableSymbolMarker,
-        actualDeclaration: CallableSymbolMarker,
-        parentSubstitutor: TypeSubstitutorMarker?,
-    ): Incompatible.ExpectActualMatchingIncompatible<*>? {
-        if (expectDeclaration is FunctionSymbolMarker != actualDeclaration is FunctionSymbolMarker) {
-            return Incompatible.CallableKind
-        }
-
-        val expectedReceiverType = expectDeclaration.extensionReceiverType
-        val actualReceiverType = actualDeclaration.extensionReceiverType
-        if ((expectedReceiverType != null) != (actualReceiverType != null)) {
-            return Incompatible.ParameterShape
-        }
-
-        val expectedValueParameters = expectDeclaration.valueParameters
-        val actualValueParameters = actualDeclaration.valueParameters
-        if (!valueParametersCountCompatible(expectDeclaration, actualDeclaration, expectedValueParameters, actualValueParameters)) {
-            return Incompatible.ParameterCount
-        }
-
-        val expectedTypeParameters = expectDeclaration.typeParameters
-        val actualTypeParameters = actualDeclaration.typeParameters
-        if (expectedTypeParameters.size != actualTypeParameters.size) {
-            return Incompatible.FunctionTypeParameterCount
-        }
-
-        val substitutor = createExpectActualTypeParameterSubstitutor(
-            (expectedTypeParameters zipIfSizesAreEqual actualTypeParameters)
-                ?: error("expect/actual type parameters sizes are checked earlier"),
-            parentSubstitutor
-        )
-
-        if (
-            !areCompatibleTypeLists(
-                expectedValueParameters.toTypeList(substitutor),
-                actualValueParameters.toTypeList(createEmptySubstitutor())
-            ) ||
-            !areCompatibleExpectActualTypes(
-                expectedReceiverType?.let { substitutor.safeSubstitute(it) },
-                actualReceiverType
-            )
-        ) {
-            return Incompatible.ParameterTypes
-        }
-
-        if (!areCompatibleTypeParameterUpperBounds(expectedTypeParameters, actualTypeParameters, substitutor)) {
-            return Incompatible.FunctionTypeParameterUpperBounds
-        }
-
-        return null
     }
 
     context(ExpectActualMatchingContext<*>)
@@ -480,35 +431,6 @@ object AbstractExpectActualCompatibilityChecker {
     }
 
     context(ExpectActualMatchingContext<*>)
-    private fun valueParametersCountCompatible(
-        expectDeclaration: CallableSymbolMarker,
-        actualDeclaration: CallableSymbolMarker,
-        expectValueParameters: List<ValueParameterSymbolMarker>,
-        actualValueParameters: List<ValueParameterSymbolMarker>,
-    ): Boolean {
-        if (expectValueParameters.size == actualValueParameters.size) return true
-
-        return if (expectDeclaration.isAnnotationConstructor() && actualDeclaration.isAnnotationConstructor()) {
-            expectValueParameters.isEmpty() && actualValueParameters.all { it.hasDefaultValue }
-        } else {
-            false
-        }
-    }
-
-    context(ExpectActualMatchingContext<*>)
-    private fun areCompatibleTypeLists(
-        expectedTypes: List<KotlinTypeMarker?>,
-        actualTypes: List<KotlinTypeMarker?>,
-    ): Boolean {
-        for (i in expectedTypes.indices) {
-            if (!areCompatibleExpectActualTypes(expectedTypes[i], actualTypes[i])) {
-                return false
-            }
-        }
-        return true
-    }
-
-    context(ExpectActualMatchingContext<*>)
     private fun areCompatibleClassKinds(
         expectClass: RegularClassSymbolMarker,
         actualClass: RegularClassSymbolMarker,
@@ -583,26 +505,6 @@ object AbstractExpectActualCompatibilityChecker {
     }
 
     context(ExpectActualMatchingContext<*>)
-    private fun areCompatibleTypeParameterUpperBounds(
-        expectTypeParameterSymbols: List<TypeParameterSymbolMarker>,
-        actualTypeParameterSymbols: List<TypeParameterSymbolMarker>,
-        substitutor: TypeSubstitutorMarker,
-    ): Boolean {
-        for (i in expectTypeParameterSymbols.indices) {
-            val expectBounds = expectTypeParameterSymbols[i].bounds
-            val actualBounds = actualTypeParameterSymbols[i].bounds
-            if (
-                expectBounds.size != actualBounds.size ||
-                !areCompatibleTypeLists(expectBounds.map { substitutor.safeSubstitute(it) }, actualBounds)
-            ) {
-                return false
-            }
-        }
-
-        return true
-    }
-
-    context(ExpectActualMatchingContext<*>)
     private fun getTypeParametersVarianceOrReifiedIncompatibility(
         expectTypeParameterSymbols: List<TypeParameterSymbolMarker>,
         actualTypeParameterSymbols: List<TypeParameterSymbolMarker>,
@@ -668,11 +570,6 @@ object AbstractExpectActualCompatibilityChecker {
     }
 
     // ---------------------------------------- Utils ----------------------------------------
-
-    context(ExpectActualMatchingContext<*>)
-    private fun List<ValueParameterSymbolMarker>.toTypeList(substitutor: TypeSubstitutorMarker): List<KotlinTypeMarker> {
-        return this.map { substitutor.safeSubstitute(it.returnType) }
-    }
 
     private inline fun <T, K> equalsBy(first: List<T>, second: List<T>, selector: (T) -> K): Boolean {
         for (i in first.indices) {
