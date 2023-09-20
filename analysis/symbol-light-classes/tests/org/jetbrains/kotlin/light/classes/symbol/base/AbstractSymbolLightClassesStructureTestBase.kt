@@ -12,7 +12,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
@@ -101,30 +100,40 @@ open class AbstractSymbolLightClassesStructureTestBase(
     }.toSet()
 
     private fun wrongInheritorStructure(line: String): Nothing = error("Can't parse '$line' line correctly")
+
     protected fun PrettyPrinter.handleFile(ktFile: KtFile) {
         val text = ktFile.text
         if (ktFile.isCompiled) {
-            ktFile.declarations.forEach { classOrObject ->
-                if (classOrObject is KtClassOrObject) {
-                    if (classOrObject is KtClass && classOrObject.isEnum()) {
-                        classOrObject.declarations.forEach { declaration ->
-                            if (declaration is KtEnumEntry) {
-                                handleClassDeclaration(declaration, text)
-                                appendLine()
-                            }
-                        }
-                    }
-
-                    handleClassDeclaration(classOrObject, text)
-                    appendLine()
-                }
-            }
+            // A compiled file for a class should only contain a single class declaration. `*Kt.class` files on the other hand may contain
+            // top-level callables and need to be skipped.
+            val classOrObject = ktFile.declarations.singleOrNull() as? KtClassOrObject ?: return
+            handleCompiledClassDeclaration(classOrObject, text)
         } else {
             ktFile.forEachDescendantOfType<KtClassOrObject> { classOrObject ->
                 handleClassDeclaration(classOrObject, text)
                 appendLine()
             }
         }
+    }
+
+    /**
+     * [handleCompiledClassDeclaration] uses a custom traversal instead of [forEachDescendantOfType] because trying to access the PSI of
+     * compiled code in this test results in exceptions. Hence, we have to traverse nested classes and enum entries manually.
+     */
+    private fun PrettyPrinter.handleCompiledClassDeclaration(classOrObject: KtClassOrObject, text: String) {
+        classOrObject.declarations.forEach { declaration ->
+            when (declaration) {
+                is KtEnumEntry -> {
+                    // We don't call `handleCompiledClassDeclaration` to avoid printing class declarations inside enum entry initializers.
+                    handleClassDeclaration(declaration, text)
+                    appendLine()
+                }
+                is KtClassOrObject -> handleCompiledClassDeclaration(declaration, text)
+            }
+        }
+
+        handleClassDeclaration(classOrObject, text)
+        appendLine()
     }
 
     private fun PrettyPrinter.handleClassDeclaration(declaration: KtClassOrObject, fileText: String) {
