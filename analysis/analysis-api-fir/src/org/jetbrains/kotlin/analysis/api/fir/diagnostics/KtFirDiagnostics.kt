@@ -3495,6 +3495,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JvmInlineWithoutValueClass::class
     }
 
+    interface WrongNullabilityForJavaOverride : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = WrongNullabilityForJavaOverride::class
+        val override: KtCallableSymbol
+        val base: KtCallableSymbol
+    }
+
     interface JavaTypeMismatch : KtFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = JavaTypeMismatch::class
         val expectedType: KtType

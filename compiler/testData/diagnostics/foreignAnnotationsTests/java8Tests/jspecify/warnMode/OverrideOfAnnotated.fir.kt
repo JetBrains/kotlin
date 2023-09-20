@@ -17,6 +17,8 @@ public class BaseClass {
     public @Nullable Foo mixed(Foo x) { return null; }
 
     public Foo explicitlyNullnessUnspecified(@NullnessUnspecified Foo x) { return null; }
+
+    public static Foo foo() { return null; }
 }
 
 
@@ -24,7 +26,11 @@ public class BaseClass {
 
 private val FOO = object : Foo {}
 
-class Correct : BaseClass() {
+open class IntermediateClass : BaseClass() {
+    open fun intermediateNotNull() = BaseClass.foo()
+}
+
+class Correct : IntermediateClass() {
     override fun everythingNotNullable(x: Foo): Foo {
         return FOO
     }
@@ -44,24 +50,32 @@ class Correct : BaseClass() {
     override fun explicitlyNullnessUnspecified(x: Foo): Foo {
         return FOO
     }
-}
 
-class WrongReturnTypes : BaseClass() {
-    override fun everythingNotNullable(x: Foo): Foo? {
-        return null
-    }
-
-    override fun explicitlyNullnessUnspecified(x: Foo): Foo? {
-        return null
+    override fun intermediateNotNull(): Foo {
+        return FOO
     }
 }
 
-class WrongParameter : BaseClass() {
-    override fun everythingNotNullable(x: Foo?): Foo {
+class WrongReturnTypes : IntermediateClass() {
+    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun everythingNotNullable(x: Foo): Foo? {
+        return null
+    }
+
+    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun explicitlyNullnessUnspecified(x: Foo): Foo? {
+        return null
+    }
+
+    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun intermediateNotNull(): Foo? {
+        return null
+    }
+}
+
+class WrongParameter : IntermediateClass() {
+    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun everythingNotNullable(x: Foo?): Foo {
         return FOO
     }
 
-    override fun everythingNullable(x: Foo): Foo? {
+    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun everythingNullable(x: Foo): Foo? {
         return null
     }
 
@@ -69,7 +83,7 @@ class WrongParameter : BaseClass() {
         return null
     }
 
-    override fun mixed(x: Foo?): Foo? {
+    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun mixed(x: Foo?): Foo? {
         return null
     }
 

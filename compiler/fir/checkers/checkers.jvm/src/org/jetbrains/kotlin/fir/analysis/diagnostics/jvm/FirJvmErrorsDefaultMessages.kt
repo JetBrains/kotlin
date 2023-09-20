@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.DELEGATION_BY_IN_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.DEPRECATED_JAVA_ANNOTATION
@@ -80,6 +81,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZ
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_ON_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUND_CANNOT_BE_ARRAY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE
 
 object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
@@ -97,6 +99,13 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type ''{0}''.",
             RENDER_TYPE,
             NOT_RENDERED
+        )
+
+        map.put(
+            WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
+            "Override ''{0}'' has incorrect nullability in its signature compared to the overridden declaration ''{1}''.",
+            SYMBOL,
+            SYMBOL,
         )
 
         map.put(UPPER_BOUND_CANNOT_BE_ARRAY, "Upper bound of type parameter cannot be an array.")

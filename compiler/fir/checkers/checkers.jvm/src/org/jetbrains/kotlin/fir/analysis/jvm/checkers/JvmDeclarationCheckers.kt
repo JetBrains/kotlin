@@ -23,7 +23,8 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
 
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
-            FirStrictfpApplicabilityChecker
+            FirStrictfpApplicabilityChecker,
+            FirOverrideJavaNullabilityWarningChecker,
         )
 
     override val regularClassCheckers: Set<FirRegularClassChecker>

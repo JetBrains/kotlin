@@ -4217,6 +4217,13 @@ internal class JvmInlineWithoutValueClassImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.JvmInlineWithoutValueClass
 
+internal class WrongNullabilityForJavaOverrideImpl(
+    override val override: KtCallableSymbol,
+    override val base: KtCallableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.WrongNullabilityForJavaOverride
+
 internal class JavaTypeMismatchImpl(
     override val expectedType: KtType,
     override val actualType: KtType,

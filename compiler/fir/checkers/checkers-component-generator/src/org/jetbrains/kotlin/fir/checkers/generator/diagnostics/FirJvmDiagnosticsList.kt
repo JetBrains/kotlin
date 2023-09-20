@@ -39,6 +39,11 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
 
         val VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION by error<PsiElement>()
         val JVM_INLINE_WITHOUT_VALUE_CLASS by error<PsiElement>()
+
+        val WRONG_NULLABILITY_FOR_JAVA_OVERRIDE by warning<PsiElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
+            parameter<FirCallableSymbol<*>>("override")
+            parameter<FirCallableSymbol<*>>("base")
+        }
     }
 
     val TYPES by object : DiagnosticGroup("Types") {

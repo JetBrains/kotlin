@@ -42,23 +42,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 
-object FirOverrideChecker : FirClassChecker() {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        val typeCheckerState = context.session.typeContext.newTypeCheckerState(
-            errorTypesEqualToAnything = false,
-            stubTypesEqualToAnything = false
-        )
-
-        val firTypeScope = declaration.unsubstitutedScope(context)
-
-        for (it in declaration.declarations) {
-            if (it is FirSimpleFunction || it is FirProperty) {
-                val callable = it as FirCallableDeclaration
-                checkMember(callable.symbol, declaration, reporter, typeCheckerState, firTypeScope, context)
-            }
-        }
-    }
-
+abstract class FirAbstractOverrideChecker : FirClassChecker() {
     private fun ConeKotlinType.substituteAllTypeParameters(
         overrideDeclaration: FirCallableSymbol<*>,
         baseDeclaration: FirCallableSymbol<*>,
@@ -82,6 +66,58 @@ object FirOverrideChecker : FirClassChecker() {
         }
 
         return substitutorByMap(map, context.session).substituteOrSelf(this)
+    }
+
+    // See [OverrideResolver#isReturnTypeOkForOverride]
+    protected fun FirCallableSymbol<*>.checkReturnType(
+        overriddenSymbols: List<FirCallableSymbol<*>>,
+        typeCheckerState: TypeCheckerState,
+        context: CheckerContext,
+    ): FirCallableSymbol<*>? {
+        val overridingReturnType = resolvedReturnTypeRef.coneType
+
+        // Don't report *_ON_OVERRIDE diagnostics according to an error return type. That should be reported separately.
+        if (overridingReturnType is ConeErrorType) {
+            return null
+        }
+
+        val bounds = overriddenSymbols.map { context.returnTypeCalculator.tryCalculateReturnType(it).coneType }
+
+        for (it in bounds.indices) {
+            val overriddenDeclaration = overriddenSymbols[it]
+
+            val overriddenReturnType = bounds[it].substituteAllTypeParameters(this, overriddenDeclaration, context)
+
+            val isReturnTypeOkForOverride =
+                if (overriddenDeclaration is FirPropertySymbol && overriddenDeclaration.isVar)
+                    AbstractTypeChecker.equalTypes(typeCheckerState, overridingReturnType, overriddenReturnType)
+                else
+                    AbstractTypeChecker.isSubtypeOf(typeCheckerState, overridingReturnType, overriddenReturnType)
+
+            if (!isReturnTypeOkForOverride) {
+                return overriddenDeclaration
+            }
+        }
+
+        return null
+    }
+}
+
+object FirOverrideChecker : FirAbstractOverrideChecker() {
+    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        val typeCheckerState = context.session.typeContext.newTypeCheckerState(
+            errorTypesEqualToAnything = false,
+            stubTypesEqualToAnything = false
+        )
+
+        val firTypeScope = declaration.unsubstitutedScope(context)
+
+        for (it in declaration.declarations) {
+            if (it is FirSimpleFunction || it is FirProperty) {
+                val callable = it as FirCallableDeclaration
+                checkMember(callable.symbol, declaration, reporter, typeCheckerState, firTypeScope, context)
+            }
+        }
     }
 
     private fun checkModality(
@@ -183,40 +219,6 @@ object FirOverrideChecker : FirClassChecker() {
             reporter.reportOn(source, FirErrors.OVERRIDE_DEPRECATION, overriddenSymbol, deprecationFromOverriddenSymbol, context)
             return
         }
-    }
-
-    // See [OverrideResolver#isReturnTypeOkForOverride]
-    private fun FirCallableSymbol<*>.checkReturnType(
-        overriddenSymbols: List<FirCallableSymbol<*>>,
-        typeCheckerState: TypeCheckerState,
-        context: CheckerContext,
-    ): FirCallableSymbol<*>? {
-        val overridingReturnType = resolvedReturnTypeRef.coneType
-
-        // Don't report *_ON_OVERRIDE diagnostics according to an error return type. That should be reported separately.
-        if (overridingReturnType is ConeErrorType) {
-            return null
-        }
-
-        val bounds = overriddenSymbols.map { context.returnTypeCalculator.tryCalculateReturnType(it).coneType }
-
-        for (it in bounds.indices) {
-            val overriddenDeclaration = overriddenSymbols[it]
-
-            val overriddenReturnType = bounds[it].substituteAllTypeParameters(this, overriddenDeclaration, context)
-
-            val isReturnTypeOkForOverride =
-                if (overriddenDeclaration is FirPropertySymbol && overriddenDeclaration.isVar)
-                    AbstractTypeChecker.equalTypes(typeCheckerState, overridingReturnType, overriddenReturnType)
-                else
-                    AbstractTypeChecker.isSubtypeOf(typeCheckerState, overridingReturnType, overriddenReturnType)
-
-            if (!isReturnTypeOkForOverride) {
-                return overriddenDeclaration
-            }
-        }
-
-        return null
     }
 
     @OptIn(SymbolInternals::class)
