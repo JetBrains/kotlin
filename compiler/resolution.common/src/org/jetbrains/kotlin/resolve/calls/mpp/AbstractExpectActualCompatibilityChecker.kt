@@ -87,7 +87,7 @@ object AbstractExpectActualCompatibilityChecker {
         actualClassLikeSymbol: ClassLikeSymbolMarker,
         parentSubstitutor: TypeSubstitutorMarker?,
         checkClassScopesCompatibility: Boolean,
-    ): ExpectActualCompatibility.Incompatible.WeakIncompatible<*>? {
+    ): ExpectActualCompatibility.Incompatible.ExpectActualCheckingIncompatible<*>? {
         // Can't check FQ names here because nested expected class may be implemented via actual typealias's expansion with the other FQ name
         require(expectClassSymbol.name == actualClassLikeSymbol.name) {
             "This function should be invoked only for declarations with the same name: $expectClassSymbol, $actualClassLikeSymbol"
@@ -199,7 +199,7 @@ object AbstractExpectActualCompatibilityChecker {
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassSymbol: RegularClassSymbolMarker,
         substitutor: TypeSubstitutorMarker,
-    ): Incompatible.WeakIncompatible<*>? {
+    ): Incompatible.ExpectActualCheckingIncompatible<*>? {
         val unfulfilled = arrayListOf<Pair<DeclarationSymbolMarker, Map<Incompatible<*>, List<DeclarationSymbolMarker?>>>>()
 
         val actualMembersByName = actualClassSymbol.collectAllMembers(isActualDeclaration = true).groupBy { it.name }
@@ -325,7 +325,7 @@ object AbstractExpectActualCompatibilityChecker {
         expectDeclaration: CallableSymbolMarker,
         actualDeclaration: CallableSymbolMarker,
         parentSubstitutor: TypeSubstitutorMarker?,
-    ): Incompatible.StrongIncompatible<*>? {
+    ): Incompatible.ExpectActualMatchingIncompatible<*>? {
         if (expectDeclaration is FunctionSymbolMarker != actualDeclaration is FunctionSymbolMarker) {
             return Incompatible.CallableKind
         }
@@ -386,7 +386,7 @@ object AbstractExpectActualCompatibilityChecker {
         actualDeclaration: CallableSymbolMarker,
         expectContainingClass: RegularClassSymbolMarker?,
         actualContainingClass: RegularClassSymbolMarker?,
-    ): Incompatible.WeakIncompatible<*>? {
+    ): Incompatible.ExpectActualCheckingIncompatible<*>? {
         val expectedTypeParameters = expectDeclaration.typeParameters
         val actualTypeParameters = actualDeclaration.typeParameters
         val expectedValueParameters = expectDeclaration.valueParameters
@@ -593,7 +593,7 @@ object AbstractExpectActualCompatibilityChecker {
     private fun getTypeParametersVarianceOrReifiedIncompatibility(
         expectTypeParameterSymbols: List<TypeParameterSymbolMarker>,
         actualTypeParameterSymbols: List<TypeParameterSymbolMarker>,
-    ): Incompatible.WeakIncompatible<*>? {
+    ): Incompatible.ExpectActualCheckingIncompatible<*>? {
         if (!equalsBy(expectTypeParameterSymbols, actualTypeParameterSymbols) { it.variance }) {
             return Incompatible.TypeParameterVariance
         }
@@ -614,7 +614,7 @@ object AbstractExpectActualCompatibilityChecker {
     private fun getFunctionsIncompatibility(
         expectFunction: CallableSymbolMarker,
         actualFunction: CallableSymbolMarker,
-    ): Incompatible.WeakIncompatible<*>? {
+    ): Incompatible.ExpectActualCheckingIncompatible<*>? {
         if (!equalBy(expectFunction, actualFunction) { f -> f.isSuspend }) {
             return Incompatible.FunctionModifiersDifferent
         }
@@ -634,7 +634,7 @@ object AbstractExpectActualCompatibilityChecker {
     private fun getPropertiesIncompatibility(
         expected: PropertySymbolMarker,
         actual: PropertySymbolMarker,
-    ): Incompatible.WeakIncompatible<*>? {
+    ): Incompatible.ExpectActualCheckingIncompatible<*>? {
         return when {
             !equalBy(expected, actual) { p -> p.isVar } -> Incompatible.PropertyKind
             !equalBy(expected, actual) { p -> p.isLateinit } -> Incompatible.PropertyLateinitModifier

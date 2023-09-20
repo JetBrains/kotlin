@@ -529,7 +529,7 @@ class ExpectedActualDeclarationChecker(
 
     companion object {
         fun Map<out ExpectActualCompatibility<MemberDescriptor>, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
-            this.keys.all { it is Incompatible.StrongIncompatible }
+            this.keys.all { it is Incompatible.ExpectActualMatchingIncompatible }
     }
 }
 
