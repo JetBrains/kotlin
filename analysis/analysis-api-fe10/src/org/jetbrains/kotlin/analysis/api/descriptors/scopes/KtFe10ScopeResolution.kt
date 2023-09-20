@@ -13,12 +13,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossiblyNamedSymbol
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -109,6 +104,9 @@ internal open class KtFe10ScopeNonStaticMember(
     constructors: Collection<ConstructorDescriptor>,
     analysisContext: Fe10AnalysisContext
 ) : KtFe10ScopeMember(scope, constructors, analysisContext) {
+    override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> =
+        super.getClassifierSymbols(nameFilter).filter { it is KtNamedClassOrObjectSymbol && it.isInner }
+
     override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
         super.getCallableSymbols(nameFilter).filter { symbol ->
             when (symbol) {

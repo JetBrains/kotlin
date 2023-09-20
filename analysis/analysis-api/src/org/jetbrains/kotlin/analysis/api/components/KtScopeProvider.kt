@@ -157,11 +157,12 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
         withValidityAssertion { analysisSession.scopeProvider.getCombinedMemberScope(this) }
 
     /**
-     * Returns a [KtScope] containing the *non-static* callables (functions, properties, and constructors) explicitly declared in the given
-     * [KtSymbolWithMembers].
+     * Returns a [KtScope] containing the *non-static* callables (functions, properties, and constructors) and inner classes explicitly
+     * declared in the given [KtSymbolWithMembers].
      *
-     * The declared member scope does not contain classifiers (including the companion object). To retrieve the classifiers declared in this
-     * [KtSymbolWithMembers], please use the *static* declared member scope provided by [getStaticDeclaredMemberScope].
+     * The declared member scope does not contain classifiers (including the companion object) except for inner classes. To retrieve the
+     * classifiers declared in this [KtSymbolWithMembers], please use the *static* declared member scope provided by
+     * [getStaticDeclaredMemberScope].
      *
      * @see getStaticDeclaredMemberScope
      */

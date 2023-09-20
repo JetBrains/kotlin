@@ -105,7 +105,7 @@ internal class KtFirScopeProvider(
     ): FirContainingNamesAwareScope {
         val combinedScope = getCombinedFirKotlinDeclaredMemberScope(classSymbol)
         return when (kind) {
-            DeclaredMemberScopeKind.NON_STATIC -> FirNonStaticCallablesOnlyScope(combinedScope)
+            DeclaredMemberScopeKind.NON_STATIC -> FirNonStaticMembersScope(combinedScope)
             DeclaredMemberScopeKind.STATIC -> FirStaticScope(combinedScope)
         }
     }
