@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.PACKAGE_MEMBER
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.SmartSet
 
@@ -30,7 +28,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
             is FirFile -> {
                 val inspector = FirDeclarationCollector<FirBasedSymbol<*>>(context)
                 checkFile(declaration, inspector, context)
-                reportConflicts(reporter, context, inspector.declarationConflictingSymbols)
+                reportConflicts(reporter, context, inspector.declarationConflictingSymbols, declaration)
             }
             is FirRegularClass -> {
                 if (declaration.source?.kind !is KtFakeSourceElementKind) {
@@ -38,7 +36,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
                 }
                 val inspector = FirDeclarationCollector<FirBasedSymbol<*>>(context)
                 inspector.collectClassMembers(declaration.symbol)
-                reportConflicts(reporter, context, inspector.declarationConflictingSymbols)
+                reportConflicts(reporter, context, inspector.declarationConflictingSymbols, declaration)
             }
             else -> {
                 if (declaration.source?.kind !is KtFakeSourceElementKind && declaration is FirTypeParameterRefsOwner) {
@@ -55,16 +53,24 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
         reporter: DiagnosticReporter,
         context: CheckerContext,
         declarationConflictingSymbols: Map<FirBasedSymbol<*>, SmartSet<FirBasedSymbol<*>>>,
+        container: FirDeclaration,
     ) {
         declarationConflictingSymbols.forEach { (conflictingDeclaration, symbols) ->
             val typeAliasForConstructorSource = (conflictingDeclaration as? FirConstructorSymbol)?.typeAliasForConstructor?.source
-            val source = typeAliasForConstructorSource ?: conflictingDeclaration.source
+            val origin = conflictingDeclaration.origin
+            val source = when {
+                conflictingDeclaration !is FirCallableSymbol<*> -> conflictingDeclaration.source
+                origin == FirDeclarationOrigin.Source -> conflictingDeclaration.source
+                origin == FirDeclarationOrigin.Library -> return@forEach
+                origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor -> typeAliasForConstructorSource
+                else -> container.source
+            }
             if (
                 symbols.isEmpty() ||
-                // For every implicit constructor there is a parent,
+                // For every primary constructor there is a parent,
                 // FirRegularClass declaration, and those clash too,
                 // resulting in REDECLARATION.
-                conflictingDeclaration.isImplicitConstructor && symbols.all { it.isImplicitConstructor }
+                conflictingDeclaration.isPrimaryConstructor && symbols.all { it.isPrimaryConstructor }
             ) return@forEach
 
             val factory =
@@ -83,7 +89,8 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private val FirBasedSymbol<*>.isImplicitConstructor get() = source?.kind is KtFakeSourceElementKind.ImplicitConstructor
+    private val FirBasedSymbol<*>.isPrimaryConstructor: Boolean
+        get() = this is FirConstructorSymbol && isPrimary || origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor
 
     private fun checkFile(file: FirFile, inspector: FirDeclarationCollector<FirBasedSymbol<*>>, context: CheckerContext) {
         val packageMemberScope: FirPackageMemberScope = context.sessionHolder.scopeSession.getOrBuild(file.packageFqName, PACKAGE_MEMBER) {

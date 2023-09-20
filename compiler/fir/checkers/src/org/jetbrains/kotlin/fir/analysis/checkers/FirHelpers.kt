@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -71,6 +72,12 @@ fun FirClassSymbol<*>.unsubstitutedScope(context: CheckerContext): FirTypeScope 
         context.sessionHolder.session,
         context.sessionHolder.scopeSession,
         withForcedTypeCalculator = false,
+        memberRequiredPhase = FirResolvePhase.STATUS,
+    )
+
+fun FirClassSymbol<*>.declaredMemberScope(context: CheckerContext): FirContainingNamesAwareScope =
+    this.declaredMemberScope(
+        context.sessionHolder.session,
         memberRequiredPhase = FirResolvePhase.STATUS,
     )
 
@@ -302,10 +309,15 @@ fun FirCallableDeclaration.isVisibleInClass(parentClass: FirClass): Boolean {
     return symbol.isVisibleInClass(parentClass.symbol)
 }
 
-fun FirCallableSymbol<*>.isVisibleInClass(parentClassSymbol: FirClassSymbol<*>): Boolean {
+fun FirBasedSymbol<*>.isVisibleInClass(parentClassSymbol: FirClassSymbol<*>): Boolean {
     val classPackage = parentClassSymbol.classId.packageFqName
+    val (visibility, packageName) = when (this) {
+        is FirCallableSymbol<*> -> visibility to callableId.packageName
+        is FirClassLikeSymbol<*> -> visibility to classId.packageFqName
+        else -> return true
+    }
     if (visibility == Visibilities.Private ||
-        !visibility.visibleFromPackage(classPackage, callableId.packageName)
+        !visibility.visibleFromPackage(classPackage, packageName)
     ) return false
     if (
         visibility == Visibilities.Internal &&
