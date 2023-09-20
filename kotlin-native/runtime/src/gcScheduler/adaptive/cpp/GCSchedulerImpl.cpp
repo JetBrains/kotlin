@@ -44,7 +44,10 @@ ALWAYS_INLINE void gcScheduler::GCScheduler::ThreadData::onAllocation(size_t byt
 }
 
 ALWAYS_INLINE void gcScheduler::GCScheduler::ThreadData::onStoppedForGC() noexcept {
-    runningBytes_ = 0;
+    if (runningBytes_ > 0) {
+        impl().scheduler().onAllocation(runningBytes_);
+        runningBytes_ = 0;
+    }
 }
 
 void gcScheduler::GCScheduler::schedule() noexcept {
