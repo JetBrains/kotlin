@@ -83,6 +83,12 @@ private val validateIrAfterLowering = makeCustomPhase(
     description = "Validate IR after lowering"
 )
 
+private val validateJvmIrAfterLowering = makeCustomPhase<JvmBackendContext>(
+    { _, module -> validateJvmIr(module) },
+    name = "ValidateJvmIrAfterLowering",
+    description = "Validate that IR after lowering is correctly structured by Kotlin JVM rules"
+)
+
 // TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase
 private val provisionalFunctionExpressionPhase = makeIrFilePhase<CommonBackendContext>(
     { ProvisionalFunctionExpressionLowering() },
@@ -112,7 +118,6 @@ internal val propertiesPhase = makeIrFilePhase(
     description = "Move fields and accessors for properties to their classes, " +
             "replace calls to default property accessors with field accesses, " +
             "remove unused accessors and create synthetic methods for property annotations",
-    stickyPostconditions = setOf(PropertiesLowering.Companion::checkNoProperties)
 )
 
 internal val IrClass.isGeneratedLambdaClass: Boolean
@@ -243,17 +248,6 @@ private val initializersCleanupPhase = makeIrFilePhase(
     },
     name = "InitializersCleanup",
     description = "Remove non-static anonymous initializers and non-constant non-static field init expressions",
-    stickyPostconditions = setOf(fun(irFile: IrFile) {
-        irFile.acceptVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
-                error("No anonymous initializers should remain at this stage")
-            }
-        })
-    }),
     prerequisite = setOf(initializersPhase)
 )
 
@@ -487,7 +481,8 @@ private fun buildJvmLoweringPhases(
                 buildLoweringsPhase(phases) then
                 generateMultifileFacadesPhase then
                 resolveInlineCallsPhase then
-                validateIrAfterLowering
+                validateIrAfterLowering then
+                validateJvmIrAfterLowering
     )
 }
 

@@ -43,20 +43,6 @@ class PropertiesLowering : DeclarationTransformer {
 
         return null
     }
-
-    companion object {
-        fun checkNoProperties(irFile: IrFile) {
-            irFile.acceptVoid(object : IrElementVisitorVoid {
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
-                }
-
-                override fun visitProperty(declaration: IrProperty) {
-                    error("No properties should remain at this stage")
-                }
-            })
-        }
-    }
 }
 
 class LocalDelegatedPropertiesLowering : IrElementTransformerVoid(), BodyLoweringPass {
