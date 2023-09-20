@@ -295,6 +295,20 @@ abstract class AbstractFirExpressionsResolveTransformerForAnnotations(transforme
         return arrayLiteral
     }
 
+    override fun transformAnonymousObjectExpression(
+        anonymousObjectExpression: FirAnonymousObjectExpression,
+        data: ResolutionMode,
+    ): FirStatement {
+        return anonymousObjectExpression
+    }
+
+    override fun transformAnonymousFunctionExpression(
+        anonymousFunctionExpression: FirAnonymousFunctionExpression,
+        data: ResolutionMode,
+    ): FirStatement {
+        return anonymousFunctionExpression
+    }
+
     override fun shouldComputeTypeOfGetClassCallWithNotQualifierInLhs(getClassCall: FirGetClassCall): Boolean {
         return false
     }

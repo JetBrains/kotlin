@@ -2194,6 +2194,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("lambdaParameter.kt")
+                public void testLambdaParameter() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/lambdaParameter.kt");
+                }
+
+                @Test
                 @TestMetadata("standaloneInExpression.kt")
                 public void testStandaloneInExpression() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/standaloneInExpression.kt");
