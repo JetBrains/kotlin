@@ -259,7 +259,8 @@ fun <T : ConeKotlinType> T.withNullability(
     preserveEnhancedNullability: Boolean = false,
 ): T {
     val theAttributes = attributes.butIf(!preserveEnhancedNullability) {
-        it.remove(CompilerConeAttributes.EnhancedNullability)
+        val withoutEnhanced = it.remove(CompilerConeAttributes.EnhancedNullability)
+        withoutEnhanced.transformTypesWith { t -> t.withNullability(nullability, typeContext) } ?: withoutEnhanced
     }
 
     if (this.nullability == nullability && this.attributes == theAttributes) {
