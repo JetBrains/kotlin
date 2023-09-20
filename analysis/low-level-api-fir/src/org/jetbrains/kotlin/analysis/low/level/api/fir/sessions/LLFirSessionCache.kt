@@ -35,6 +35,7 @@ class LLFirSessionCache(private val project: Project) {
 
     private val sourceCache: SessionStorage = CollectionFactory.createConcurrentSoftValueMap()
     private val binaryCache: SessionStorage = CollectionFactory.createConcurrentSoftValueMap()
+    private val codeFragmentSessionCache: SessionStorage = CollectionFactory.createConcurrentSoftValueMap()
 
     /**
      * Returns the existing session if found, or creates a new session and caches it.
@@ -47,7 +48,12 @@ class LLFirSessionCache(private val project: Project) {
             }
         }
 
-        return getCachedSession(module, sourceCache, ::createSession)
+        val targetCache = when (module) {
+            is KtCodeFragmentModule -> codeFragmentSessionCache
+            else -> sourceCache
+        }
+
+        return getCachedSession(module, targetCache, ::createSession)
     }
 
     /**
@@ -79,9 +85,10 @@ class LLFirSessionCache(private val project: Project) {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         val didSourceSessionExist = removeSessionFrom(module, sourceCache)
-        val didBinarySessionExist = if (module is KtBinaryModule) removeSessionFrom(module, binaryCache) else false
+        val didBinarySessionExist = module is KtBinaryModule && removeSessionFrom(module, binaryCache)
+        val didCodeFragmentSessionExist = module is KtCodeFragmentModule && removeSessionFrom(module, codeFragmentSessionCache)
 
-        return didSourceSessionExist || didBinarySessionExist
+        return didSourceSessionExist || didBinarySessionExist || didCodeFragmentSessionExist
     }
 
     private fun removeSessionFrom(module: KtModule, storage: SessionStorage): Boolean {
@@ -106,6 +113,12 @@ class LLFirSessionCache(private val project: Project) {
             // `binaryCache` can only contain library modules, so we only need to remove sessions from `sourceCache`.
             removeAllMatchingSessionsFrom(sourceCache) { it !is KtBinaryModule && it !is KtLibrarySourceModule }
         }
+
+        removeAllCodeFragmentSessions()
+    }
+
+    fun removeAllCodeFragmentSessions() {
+        removeAllSessionsFrom(codeFragmentSessionCache)
     }
 
     // Removing script sessions is only needed temporarily until KTIJ-25620 has been implemented.

@@ -15,6 +15,9 @@ import com.intellij.openapi.project.Project
  * should keep this limitation in mind and handle it separately. For example, a global modification event should be published for builtins
  * and SDK changes.
  *
+ * An empty set is also returned for [KtCodeFragmentModule]s, as no other module can depend on a code fragment.
+ * Additionally, [KtCodeFragmentModule] are not returned from [getDirectDependents] for their context modules.
+ *
  * Implementations of this provider should ensure that results are provided in reasonable time, for example by caching results, as its
  * functions may be called frequently.
  */
