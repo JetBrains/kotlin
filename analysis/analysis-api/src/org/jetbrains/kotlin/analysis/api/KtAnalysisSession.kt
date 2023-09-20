@@ -68,7 +68,8 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     KtSymbolProviderByJavaPsiMixIn,
     KtResolveExtensionInfoProviderMixIn,
     KtCompilerFacilityMixIn,
-    KtMetadataCalculatorMixIn {
+    KtMetadataCalculatorMixIn,
+    KtSubstitutorProviderMixIn {
 
     public abstract val useSiteModule: KtModule
 
@@ -194,6 +195,9 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     internal val typesCreator: KtTypeCreator
         get() = typesCreatorImpl
     protected abstract val typesCreatorImpl: KtTypeCreator
+
+    internal val substitutorProvider: KtSubstitutorProvider get() = substitutorProviderImpl
+    protected abstract val substitutorProviderImpl: KtSubstitutorProvider
 }
 
 public fun KtAnalysisSession.getModule(element: PsiElement): KtModule {

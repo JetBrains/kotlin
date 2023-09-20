@@ -34,6 +34,7 @@ internal val KtConstructorSymbol.firSymbol: FirConstructorSymbol get() = (this a
 internal val KtPropertyAccessorSymbol.firSymbol: FirPropertyAccessorSymbol get() = (this as KtFirSymbol<*>).firSymbol as FirPropertyAccessorSymbol
 internal val KtClassInitializerSymbol.firSymbol: FirAnonymousInitializerSymbol get() = (this as KtFirSymbol<*>).firSymbol as FirAnonymousInitializerSymbol
 internal val KtClassLikeSymbol.firSymbol: FirClassLikeSymbol<*> get() = (this as KtFirSymbol<*>).firSymbol as FirClassLikeSymbol<*>
+internal val KtClassOrObjectSymbol.firSymbol: FirClassSymbol<*> get() = (this as KtFirSymbol<*>).firSymbol as FirClassSymbol<*>
 
 
 fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirResolveSession): KtModule {

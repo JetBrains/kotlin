@@ -75,8 +75,10 @@ class KtFe10AnalysisSession(
     override val metadataCalculatorImpl: KtMetadataCalculator
         get() = throw UnsupportedOperationException()
 
-
     @Suppress("AnalysisApiMissingLifetimeCheck")
+    override val substitutorProviderImpl: KtSubstitutorProvider
+        get() = throw UnsupportedOperationException()
+
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession =
         KtFe10AnalysisSession(originalKtFile.project, elementToReanalyze, token)
 }

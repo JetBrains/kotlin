@@ -1,0 +1,3 @@
+Substitutor: <map substitutor: {S = kotlin/Int}>
+Substituted callables:
+  foo(): List<Int>

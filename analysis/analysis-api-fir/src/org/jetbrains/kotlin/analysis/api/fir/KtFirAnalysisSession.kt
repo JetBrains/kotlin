@@ -133,6 +133,8 @@ private constructor(
 
     override val metadataCalculatorImpl: KtMetadataCalculator = KtFirMetadataCalculator(this)
 
+    override val substitutorProviderImpl: KtSubstitutorProvider = KtFirSubstitutorProvider(this)
+
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
         check(mode == AnalysisSessionMode.REGULAR) {
