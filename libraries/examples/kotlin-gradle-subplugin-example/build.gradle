@@ -48,15 +48,18 @@ extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 //}
 
 def sourceSet = sourceSets.main
-def jarTask = tasks.named(sourceSet.jarTaskName, Jar)
+def jarTask = tasks.named(sourceSet.jarTaskName, Jar) {
+    archiveClassifier.set("unshaded")
+}
 def shadowJarTask = EmbeddableKt.embeddableCompilerDummyForDependenciesRewriting(
     project,
     "${EmbeddableKt.EMBEDDABLE_COMPILER_TASK_NAME}${sourceSet.jarTaskName.capitalize()}"
 ) {
+    def emptyClassifier = provider { "" }
     RepoArtifacts.setupPublicJar(
         it,
         jarTask.flatMap { it.archiveBaseName },
-        jarTask.flatMap { it.archiveClassifier }
+        jarTask.flatMap { emptyClassifier }
     )
     RepoArtifacts.addEmbeddedRuntime(it)
     it.from(sourceSet.output)
