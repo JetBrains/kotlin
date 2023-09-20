@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
@@ -45,7 +45,7 @@ internal fun collectActualCallablesMatchingToSpecificExpect(
             matchingActuals += actualSymbol
         }
     }
-    AbstractExpectActualChecker.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
+    AbstractExpectActualMatcher.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
         expectSymbol,
         actualSymbols,
         context,
@@ -113,7 +113,7 @@ internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(
 internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportIncompatibleExpectActual(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
-    incompatibility: ExpectActualCompatibility.Incompatible<*>
+    incompatibility: ExpectActualCompatibility.MismatchOrIncompatible<*>
 ) {
     val expectDeclaration = expectSymbol.owner as IrDeclaration
     val actualDeclaration = actualSymbol.owner as IrDeclaration

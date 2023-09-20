@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.createExpectActualTypeParameterSubstitutor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
 import org.jetbrains.kotlin.resolve.multiplatform.toMemberDiffKind
-import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -136,7 +136,7 @@ internal fun matchActualWithNonFinalExpect(
     if (actual.isFinal) return null
 
     val expect = declaration.symbol.expectForActual
-        ?.get(ExpectActualCompatibility.Compatible)
+        ?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully)
         ?.singleOrNull() as? FirRegularClassSymbol // if actual has more than one expects then it will be reported by another checker
         ?: return null
 
@@ -173,28 +173,39 @@ private fun calculateExpectActualScopeDiff(
         } else {
             potentialExpects
                 .map { expectMember ->
-                    AbstractExpectActualChecker.getCallablesCompatibility(
+                    val matchingCompatibility = AbstractExpectActualMatcher.getCallablesMatchingCompatibility(
                         expectMember,
                         actualMember,
                         expect,
                         actual,
-                        matchingContext
+                        matchingContext,
                     )
-                }
-                .takeIf { kinds -> kinds.all { it != ExpectActualCompatibility.Compatible } }
-                .orEmpty()
-                .map {
-                    when (it) {
-                        ExpectActualCompatibility.Compatible -> error("Compatible was filterd out by takeIf")
-                        is ExpectActualCompatibility.Incompatible -> it.toMemberDiffKind()
-                        // If toMemberDiffKind returns null then some Kotlin invariants described in toMemberDiffKind no longer hold.
-                        // We can't throw exception here because it would crash the compilation.
-                        // Those broken invariants just needs to be reported by other checkers.
-                        // But it's better to report some error (ExpectActualMemberDiff.Kind.NonPrivateCallableAdded in our case) to
-                        // make sure that we don't have missed compilation errors if the invariants change
-                            ?: ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+                    when (matchingCompatibility) {
+                        is ExpectActualMatchingCompatibility.Mismatch<*> -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+                        is ExpectActualMatchingCompatibility.MatchedSuccessfully -> {
+                            val checkerCompatibility = AbstractExpectActualChecker.getCallablesCompatibility(
+                                expectMember,
+                                actualMember,
+                                expect,
+                                actual,
+                                matchingContext,
+                            )
+                            when (checkerCompatibility) {
+                                is ExpectActualCheckingCompatibility.Compatible -> null // One compatible is found, It's enough to not report the diagnostic
+                                is ExpectActualCheckingCompatibility.Incompatible<*> -> checkerCompatibility.toMemberDiffKind()
+                                // If toMemberDiffKind returns null then some Kotlin invariants described in toMemberDiffKind no longer hold.
+                                // We can't throw exception here because it would crash the compilation.
+                                // Those broken invariants just needs to be reported by other checkers.
+                                // But it's better to report some error (ExpectActualMemberDiff.Kind.NonPrivateCallableAdded in our case) to
+                                // make sure that we don't have missed compilation errors if the invariants change
+                                    ?: ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+                            }
+                        }
                     }
                 }
+                .takeIf { kinds -> kinds.all { it != null } }
+                .orEmpty()
+                .filterNotNull()
         }
             .map { kind -> ExpectActualMemberDiff(kind, actualMember, expect) }
     }.toSet()

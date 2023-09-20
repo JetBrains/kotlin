@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.getRetention
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCom
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
@@ -424,13 +424,13 @@ class FirExpectActualMatchingContextImpl private constructor(
             expectSymbol.asSymbol(),
             actualSymbol.asSymbol(),
             containingExpectClassSymbol.asSymbol(),
-            ExpectActualCompatibility.Compatible
+            ExpectActualMatchingCompatibility.MatchedSuccessfully
         )
     }
 
     override fun onMismatchedMembersFromClassScope(
         expectSymbol: DeclarationSymbolMarker,
-        actualSymbolsByIncompatibility: Map<ExpectActualCompatibility.Incompatible<*>, List<DeclarationSymbolMarker>>,
+        actualSymbolsByIncompatibility: Map<ExpectActualMatchingCompatibility.Mismatch<*>, List<DeclarationSymbolMarker>>,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
         containingActualClassSymbol: RegularClassSymbolMarker?
     ) {
@@ -450,7 +450,7 @@ class FirExpectActualMatchingContextImpl private constructor(
 
     private fun FirRegularClassSymbol.addMemberExpectForActualMapping(
         expectMember: FirBasedSymbol<*>, actualMember: FirBasedSymbol<*>,
-        expectClassSymbol: FirRegularClassSymbol, compatibility: ExpectActualCompatibility<*>,
+        expectClassSymbol: FirRegularClassSymbol, compatibility: ExpectActualMatchingCompatibility<*>,
     ) {
         check(allowedWritingMemberExpectForActualMapping) { "Writing memberExpectForActual is not allowed in this context" }
         val fir = fir
@@ -485,7 +485,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         actualClass: RegularClassSymbolMarker,
         actualMember: DeclarationSymbolMarker,
         checkClassScopesCompatibility: Boolean,
-    ): Map<FirBasedSymbol<*>, ExpectActualCompatibility<*>> {
+    ): Map<FirBasedSymbol<*>, ExpectActualMatchingCompatibility<*>> {
         val mapping = actualClass.asSymbol().fir.memberExpectForActual
         return mapping?.get(actualMember to expectClass) ?: emptyMap()
     }

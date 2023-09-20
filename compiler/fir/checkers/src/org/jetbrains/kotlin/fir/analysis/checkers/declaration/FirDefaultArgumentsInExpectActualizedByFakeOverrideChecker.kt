@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
-import org.jetbrains.kotlin.resolve.multiplatform.compatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 internal object FirDefaultArgumentsInExpectActualizedByFakeOverrideChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -77,7 +77,8 @@ internal object FirDefaultArgumentsInExpectActualizedByFakeOverrideChecker : Fir
             expectSymbol, actualSymbol, actualMember,
             checkClassScopesCompatibility = false
         )
-        val expectMember: DeclarationSymbolMarker = potentialExpects.entries.singleOrNull { it.value.compatible }?.key
+        val expectMember: DeclarationSymbolMarker = potentialExpects.entries
+            .singleOrNull { it.value == ExpectActualMatchingCompatibility.MatchedSuccessfully }?.key
             ?: potentialExpects.keys.singleOrNull()
             ?: return null
         return expectMember as FirNamedFunctionSymbol

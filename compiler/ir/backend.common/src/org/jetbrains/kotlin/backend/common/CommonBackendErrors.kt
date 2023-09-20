@@ -30,7 +30,7 @@ object CommonBackendErrors {
     val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleDescriptor>()
     val MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED by error2<PsiElement, String, String>()
     val MANY_IMPL_MEMBER_NOT_IMPLEMENTED by error2<PsiElement, String, String>()
-    val INCOMPATIBLE_MATCHING by error3<PsiElement, String, String, ExpectActualCompatibility.Incompatible<*>>()
+    val INCOMPATIBLE_MATCHING by error3<PsiElement, String, String, ExpectActualCompatibility.MismatchOrIncompatible<*>>()
     val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>>()
     val EVALUATION_ERROR by error1<PsiElement, String>()
     val ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE by error1<PsiElement, IrValueParameter>()
@@ -89,7 +89,7 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
 }
 
 object BackendDiagnosticRenderers {
-    val INCOMPATIBILITY = Renderer<ExpectActualCompatibility.Incompatible<*>> {
+    val INCOMPATIBILITY = Renderer<ExpectActualCompatibility.MismatchOrIncompatible<*>> {
         it.reason ?: "<unknown>"
     }
     val SYMBOL_OWNER_DECLARATION_FQ_NAME = Renderer<IrSymbol> {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -168,7 +169,7 @@ private fun calculateExpectActualScopeDiff(
                         classTypeSubstitutor,
                         expect,
                         actual,
-                        matchingContext
+                        matchingContext,
                     )
                 }
                 .takeIf { kinds -> kinds.all { it != K1ExpectActualCompatibility.Compatible } }

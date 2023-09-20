@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -19,21 +18,22 @@ import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isTailRec
-import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatchChecker
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Compatible
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
-import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 @Suppress("DuplicatedCode")
 object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
@@ -119,18 +119,42 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         declaration: FirMemberDeclaration,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-        checkActual: Boolean = true
+        checkActual: Boolean = true,
     ) {
         val symbol = declaration.symbol
-        val compatibilityToMembersMap = symbol.expectForActual ?: return
+        val matchingCompatibilityToMembersMap = symbol.expectForActual ?: return
+        val expectedSingleCandidate =
+            matchingCompatibilityToMembersMap[ExpectActualMatchingCompatibility.MatchedSuccessfully]?.singleOrNull()
+        val expectedSingleCandidateCombinedCompatibility = when (expectedSingleCandidate != null) { // todo rename
+            true -> {
+                context.session.expectActualMatchingContextFactory.create(
+                    context.session, context.scopeSession,
+                    allowedWritingMemberExpectForActualMapping = true,
+                ).let { expectActualMatchingContext ->
+                    val actualContainingClass = context.containingDeclarations.lastOrNull()?.symbol as? FirRegularClassSymbol
+                    val expectContainingClass = actualContainingClass
+                        ?.expectForActual
+                        ?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully)
+                        ?.singleOrNull() as? FirRegularClassSymbol
+                    getCheckingCompatibility(
+                        symbol,
+                        expectedSingleCandidate,
+                        actualContainingClass,
+                        expectContainingClass,
+                        expectActualMatchingContext,
+                    )
+                }
+            }
+            false -> null
+        }
 
-        checkAmbiguousExpects(symbol, compatibilityToMembersMap, symbol, context, reporter)
+        checkAmbiguousExpects(symbol, matchingCompatibilityToMembersMap, symbol, context, reporter)
 
         val source = declaration.source
         if (!declaration.isActual) {
-            if (compatibilityToMembersMap.allStrongIncompatibilities()) return
+            if (matchingCompatibilityToMembersMap.allStrongIncompatibilities()) return
 
-            if (Compatible in compatibilityToMembersMap) {
+            if (ExpectActualMatchingCompatibility.MatchedSuccessfully in matchingCompatibilityToMembersMap) {
                 if (checkActual) {
                     reporter.reportOn(source, FirErrors.ACTUAL_MISSING, context)
                 }
@@ -138,9 +162,8 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
             }
         }
 
-        val singleIncompatibility = compatibilityToMembersMap.keys.singleOrNull()
         when {
-            singleIncompatibility is Incompatible.ClassScopes -> {
+            expectedSingleCandidateCombinedCompatibility is ExpectActualCheckingCompatibility.ClassScopes -> {
                 require(symbol is FirRegularClassSymbol || symbol is FirTypeAliasSymbol) {
                     "Incompatible.ClassScopes is only possible for a class or a typealias: $declaration"
                 }
@@ -150,7 +173,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 // This is needed only to reduce the number of errors. Incompatibility errors for those members will be reported
                 // later when this checker is called for them
                 fun hasSingleActualSuspect(
-                    expectedWithIncompatibility: Pair<FirBasedSymbol<*>, Map<Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>
+                    expectedWithIncompatibility: Pair<FirBasedSymbol<*>, Map<out ExpectActualCompatibility.MismatchOrIncompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>,
                 ): Boolean {
                     val (expectedMember, incompatibility) = expectedWithIncompatibility
                     val actualMember = incompatibility.values.singleOrNull()?.singleOrNull()
@@ -160,23 +183,36 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                             actualMember.fir.expectForActual?.values?.singleOrNull()?.singleOrNull() == expectedMember
                 }
 
-                val nonTrivialUnfulfilled = singleIncompatibility.unfulfilled.filterNot(::hasSingleActualSuspect)
+                val nonTrivialUnfulfilled = expectedSingleCandidateCombinedCompatibility.unfulfilled.filterNot(::hasSingleActualSuspect)
 
                 if (nonTrivialUnfulfilled.isNotEmpty()) {
                     reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, nonTrivialUnfulfilled, context)
                 }
             }
 
-            Compatible !in compatibilityToMembersMap -> {
+            ExpectActualMatchingCompatibility.MatchedSuccessfully !in matchingCompatibilityToMembersMap &&
+                    requireActualModifier(declaration.symbol, context.session) -> {
+                reporter.reportOn(
+                    source,
+                    FirErrors.ACTUAL_WITHOUT_EXPECT,
+                    symbol,
+                    matchingCompatibilityToMembersMap,
+                    context
+                )
+            }
+
+            expectedSingleCandidateCombinedCompatibility != null &&
+                    expectedSingleCandidateCombinedCompatibility != ExpectActualCheckingCompatibility.Compatible -> {
+                check(expectedSingleCandidate != null)
                 // A nicer diagnostic for functions with default params
-                if (declaration is FirFunction && compatibilityToMembersMap.keys.any { it is Incompatible.ActualFunctionWithDefaultParameters }) {
+                if (declaration is FirFunction && expectedSingleCandidateCombinedCompatibility == ExpectActualCheckingCompatibility.ActualFunctionWithDefaultParameters) {
                     reporter.reportOn(declaration.source, FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS, context)
-                } else if (requireActualModifier(declaration.symbol, context.session)) {
+                } else {
                     reporter.reportOn(
                         source,
                         FirErrors.ACTUAL_WITHOUT_EXPECT,
                         symbol,
-                        compatibilityToMembersMap,
+                        mapOf(expectedSingleCandidateCombinedCompatibility to listOf(expectedSingleCandidate)),
                         context
                     )
                 }
@@ -184,27 +220,49 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
 
             else -> {}
         }
-        // We want to report errors even if a candidate is incompatible, but it's single
-        val expectedSingleCandidate = symbol.getSingleExpectForActualOrNull()
         if (expectedSingleCandidate != null) {
             checkOptInAnnotation(declaration, expectedSingleCandidate, context, reporter)
             checkAnnotationsMatch(expectedSingleCandidate, symbol, context, reporter)
         }
     }
 
+    private fun getCheckingCompatibility(
+        actualSymbol: FirBasedSymbol<*>,
+        expectSymbol: FirBasedSymbol<*>,
+        actualContainingClass: FirRegularClassSymbol?,
+        expectContainingClass: FirRegularClassSymbol?,
+        context: FirExpectActualMatchingContext,
+    ): ExpectActualCompatibility<FirBasedSymbol<*>> =
+        when {
+            actualSymbol is FirCallableSymbol<*> && expectSymbol is FirCallableSymbol<*> -> {
+                AbstractExpectActualChecker.getCallablesCompatibility(
+                    expectSymbol,
+                    actualSymbol,
+                    expectContainingClass,
+                    actualContainingClass,
+                    context,
+                )
+            }
+            actualSymbol is FirClassLikeSymbol<*> && expectSymbol is RegularClassSymbolMarker -> {
+                AbstractExpectActualChecker.getClassifiersCompatibility(
+                    expectSymbol,
+                    actualSymbol,
+                    checkClassScopesCompatibility = true,
+                    context,
+                )
+            }
+            else -> error("These expect/actual shouldn't have been matched by FirExpectActualResolver")
+        }
+
     private fun checkAmbiguousExpects(
         actualDeclaration: FirBasedSymbol<*>,
-        compatibility: Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<FirBasedSymbol<*>>>,
+        compatibility: Map<ExpectActualMatchingCompatibility<FirBasedSymbol<*>>, List<FirBasedSymbol<*>>>,
         symbol: FirBasedSymbol<*>,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val filesWithAtLeastWeaklyCompatibleExpects = compatibility.asSequence()
-            .filter { (compatibility, _) ->
-                compatibility.isCompatibleOrWeaklyIncompatible
-            }
-            .map { (_, members) -> members }
-            .flatten()
+        val filesWithAtLeastWeaklyCompatibleExpects = compatibility[ExpectActualMatchingCompatibility.MatchedSuccessfully]
+            .orEmpty()
             .map { it.moduleData }
             .sortedBy { it.name.asString() }
             .toList()
@@ -246,8 +304,8 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         )
     }
 
-    fun Map<out ExpectActualCompatibility<*>, *>.allStrongIncompatibilities(): Boolean {
-        return keys.all { it is Incompatible.StrongIncompatible }
+    fun Map<out ExpectActualCompatibility<*>, *>.allStrongIncompatibilities(): Boolean { // todo drop
+        return keys.all { it is ExpectActualMatchingCompatibility.Mismatch }
     }
 
     // we don't require `actual` modifier on
