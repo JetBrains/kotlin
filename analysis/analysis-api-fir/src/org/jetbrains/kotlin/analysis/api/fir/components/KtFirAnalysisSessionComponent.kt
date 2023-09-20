@@ -116,10 +116,6 @@ internal interface KtFirAnalysisSessionComponent {
     }
 
     fun ConeSubstitutor.toKtSubstitutor(): KtSubstitutor {
-        return when (this) {
-            ConeSubstitutor.Empty -> KtSubstitutor.Empty(analysisSession.token)
-            is ConeSubstitutorByMap -> KtFirMapBackedSubstitutor(this, analysisSession.firSymbolBuilder)
-            else -> KtFirGenericSubstitutor(this, analysisSession.firSymbolBuilder)
-        }
+        return analysisSession.firSymbolBuilder.typeBuilder.buildSubstitutor(this)
     }
 }
