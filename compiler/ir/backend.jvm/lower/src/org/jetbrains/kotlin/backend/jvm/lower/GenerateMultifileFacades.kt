@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 
-internal val generateMultifileFacadesPhase = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
+internal val generateMultifileFacadesPhase = makeCustomPhase(
     name = "GenerateMultifileFacades",
     description = "Generate JvmMultifileClass facades, based on the information provided by FileClassLowering",
     prerequisite = setOf(fileClassPhase),

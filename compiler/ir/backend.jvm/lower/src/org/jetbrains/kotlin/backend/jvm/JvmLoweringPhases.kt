@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.shouldContainSuspendMarkers
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -26,8 +25,6 @@ import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.NameUtils
@@ -35,7 +32,7 @@ import org.jetbrains.kotlin.name.NameUtils
 private var patchParentPhases = 0
 
 @Suppress("unused")
-private fun makePatchParentsPhase(): SameTypeNamedCompilerPhase<CommonBackendContext, IrFile> {
+private fun makePatchParentsPhase(): SimpleNamedCompilerPhase<CommonBackendContext, IrFile, IrFile> {
     val number = patchParentPhases++
     return makeIrFilePhase(
         { PatchDeclarationParents() },
@@ -47,7 +44,7 @@ private fun makePatchParentsPhase(): SameTypeNamedCompilerPhase<CommonBackendCon
 private var checkParentPhases = 0
 
 @Suppress("unused")
-private fun makeCheckParentsPhase(): SameTypeNamedCompilerPhase<CommonBackendContext, IrFile> {
+private fun makeCheckParentsPhase(): SimpleNamedCompilerPhase<CommonBackendContext, IrFile, IrFile> {
     val number = checkParentPhases++
     return makeIrFilePhase(
         { CheckDeclarationParents() },
@@ -452,7 +449,7 @@ val jvmLoweringPhases = buildJvmLoweringPhases("IrLowering", listOf("PerformByIr
 
 private fun buildJvmLoweringPhases(
     name: String,
-    phases: List<Pair<String, List<SameTypeNamedCompilerPhase<JvmBackendContext, IrFile>>>>,
+    phases: List<Pair<String, List<SimpleNamedCompilerPhase<JvmBackendContext, IrFile, IrFile>>>>,
 ): SameTypeNamedCompilerPhase<JvmBackendContext, IrModuleFragment> {
     return SameTypeNamedCompilerPhase(
         name = name,
@@ -489,7 +486,7 @@ private fun buildJvmLoweringPhases(
 // Build a compiler phase from a list of lowering sequences: each subsequence is run
 // in parallel per file, and each parallel composition is run in sequence.
 private fun buildLoweringsPhase(
-    perModuleLowerings: List<Pair<String, List<SameTypeNamedCompilerPhase<JvmBackendContext, IrFile>>>>,
+    perModuleLowerings: List<Pair<String, List<SimpleNamedCompilerPhase<JvmBackendContext, IrFile, IrFile>>>>,
 ): CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment> =
     perModuleLowerings.map { (name, lowerings) -> performByIrFile(name, lower = lowerings) }
         .reduce<

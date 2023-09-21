@@ -47,12 +47,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.topologicalSort
 
-internal val scriptsToClassesPhase = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
+internal val scriptsToClassesPhase = makeCustomPhase<JvmBackendContext>(
+    op = { context, irModule -> ScriptsToClassesLowering(context, context.innerClassesSupport).lower(irModule) },
     name = "ScriptsToClasses",
     description = "Put script declarations into classes",
-    op = { context, input ->
-        ScriptsToClassesLowering(context, context.innerClassesSupport).lower(input)
-    }
 )
 
 
