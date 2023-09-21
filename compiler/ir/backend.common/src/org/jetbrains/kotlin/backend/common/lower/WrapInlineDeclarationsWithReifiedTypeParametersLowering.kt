@@ -50,7 +50,8 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                 if (!owner.isInlineFunWithReifiedParameter()) {
                     return expression
                 }
-                val typeSubstitutor = IrTypeSubstitutor(expression.typeSubstitutionMap.map { it.key to (it.value as IrTypeArgument) })
+                val typeSubstitutor =
+                    IrTypeSubstitutor(expression.typeSubstitutionMap.entries.associate { it.key to (it.value as IrTypeArgument) })
 
                 val function = irFactory.buildFun {
                     name = Name.identifier("${owner.name}${"$"}wrap")

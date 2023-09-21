@@ -217,15 +217,15 @@ class IrBodyDeserializer(
                 buildSimpleType()
             }
 
-            val typeParametersAndArguments = ArrayList<Pair<IrTypeParameterSymbol, IrTypeArgument>>(typeParameters.size)
+            val typeParametersToArguments = HashMap<IrTypeParameterSymbol, IrTypeArgument>(typeParameters.size)
             for (i in typeParameters.indices) {
                 val typeParameter = typeParameters[i]
                 val callTypeArgument = constructorCall.getTypeArgument(i) ?: error("No type argument for id $i")
                 val typeArgument = makeTypeProjection(callTypeArgument, typeParameter.variance)
-                typeParametersAndArguments.add(typeParameter.symbol to typeArgument)
+                typeParametersToArguments[typeParameter.symbol] = typeArgument
             }
 
-            val substitutor = IrTypeSubstitutor(typeParametersAndArguments)
+            val substitutor = IrTypeSubstitutor(typeParametersToArguments)
             return substitutor.substitute(rawType) as IrSimpleType
         }
     }
