@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
@@ -24,19 +27,14 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendArityStoreLo
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
-private fun DeclarationContainerLoweringPass.runOnFilesPostfix(files: Iterable<IrFile>) = files.forEach { runOnFilePostfix(it) }
-
-private fun ClassLoweringPass.runOnFilesPostfix(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { runOnFilePostfix(it) }
-
 private fun List<Lowering>.toCompilerPhase() =
     map {
         @Suppress("USELESS_CAST")
-        it.modulePhase as CompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>, Iterable<IrModuleFragment>>
+        it.modulePhase as CompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>
     }.reduce { acc, lowering -> acc.then(lowering) }
 
 private fun makeJsModulePhase(
@@ -44,7 +42,7 @@ private fun makeJsModulePhase(
     name: String,
     description: String,
     prerequisite: Set<AbstractNamedCompilerPhase<JsIrBackendContext, *, *>> = emptySet()
-): SameTypeNamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>> = makeCustomJsModulePhase(
+): SameTypeNamedCompilerPhase<JsIrBackendContext, IrModuleFragment> = makeCustomJsModulePhase(
     op = { context, modules -> lowering(context).lower(modules) },
     name = name,
     description = description,
@@ -56,40 +54,34 @@ private fun makeCustomJsModulePhase(
     description: String,
     name: String,
     prerequisite: Set<AbstractNamedCompilerPhase<JsIrBackendContext, *, *>> = emptySet()
-): SameTypeNamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>> = SameTypeNamedCompilerPhase(
+): SameTypeNamedCompilerPhase<JsIrBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
     name = name,
     description = description,
     prerequisite = prerequisite,
-    lower = object : SameTypeCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>> {
+    lower = object : SameTypeCompilerPhase<JsIrBackendContext, IrModuleFragment> {
         override fun invoke(
             phaseConfig: PhaseConfigurationService,
-            phaserState: PhaserState<Iterable<IrModuleFragment>>,
+            phaserState: PhaserState<IrModuleFragment>,
             context: JsIrBackendContext,
-            input: Iterable<IrModuleFragment>
-        ): Iterable<IrModuleFragment> {
-            input.forEach { module ->
-                op(context, module)
-            }
+            input: IrModuleFragment
+        ): IrModuleFragment {
+            op(context, input)
             return input
         }
     },
-    actions = setOf(defaultDumper.toMultiModuleAction(), validationAction.toMultiModuleAction()),
+    actions = setOf(defaultDumper, validationAction),
 )
 
 sealed class Lowering(val name: String) {
-    abstract val modulePhase: SameTypeNamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>
+    abstract val modulePhase: SameTypeNamedCompilerPhase<JsIrBackendContext, IrModuleFragment>
 }
 
 class DeclarationLowering(
     name: String,
     description: String,
     prerequisite: Set<AbstractNamedCompilerPhase<JsIrBackendContext, *, *>> = emptySet(),
-    private val factory: (JsIrBackendContext) -> DeclarationTransformer
+    factory: (JsIrBackendContext) -> DeclarationTransformer
 ) : Lowering(name) {
-    fun declarationTransformer(context: JsIrBackendContext): DeclarationTransformer {
-        return factory(context)
-    }
-
     override val modulePhase = makeJsModulePhase(factory, name, description, prerequisite)
 }
 
@@ -97,18 +89,14 @@ class BodyLowering(
     name: String,
     description: String,
     prerequisite: Set<AbstractNamedCompilerPhase<JsIrBackendContext, *, *>> = emptySet(),
-    private val factory: (JsIrBackendContext) -> BodyLoweringPass
+    factory: (JsIrBackendContext) -> BodyLoweringPass
 ) : Lowering(name) {
-    fun bodyLowering(context: JsIrBackendContext): BodyLoweringPass {
-        return factory(context)
-    }
-
     override val modulePhase = makeJsModulePhase(factory, name, description, prerequisite)
 }
 
 class ModuleLowering(
     name: String,
-    override val modulePhase: SameTypeNamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>
+    override val modulePhase: SameTypeNamedCompilerPhase<JsIrBackendContext, IrModuleFragment>
 ) : Lowering(name)
 
 private fun makeDeclarationTransformerPhase(
@@ -125,7 +113,7 @@ private fun makeBodyLoweringPhase(
     prerequisite: Set<Lowering> = emptySet()
 ) = BodyLowering(name, description, prerequisite.map { it.modulePhase }.toSet(), lowering)
 
-fun SameTypeNamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>.toModuleLowering() = ModuleLowering(this.name, this)
+fun SameTypeNamedCompilerPhase<JsIrBackendContext, IrModuleFragment>.toModuleLowering() = ModuleLowering(this.name, this)
 
 private val validateIrBeforeLowering = makeCustomJsModulePhase(
     { context, module -> validationCallback(context, module) },
@@ -981,7 +969,7 @@ val jsPhases = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = loweringList.toCompilerPhase(),
-    actions = setOf(defaultDumper.toMultiModuleAction(), validationAction.toMultiModuleAction()),
+    actions = setOf(defaultDumper, validationAction),
     nlevels = 1
 )
 
@@ -1045,6 +1033,6 @@ val jsOptimizationPhases = SameTypeNamedCompilerPhase(
     name = "IrModuleOptimizationLowering",
     description = "IR module optimization lowering",
     lower = optimizationLoweringList.toCompilerPhase(),
-    actions = setOf(defaultDumper.toMultiModuleAction(), validationAction.toMultiModuleAction()),
+    actions = setOf(defaultDumper, validationAction),
     nlevels = 1
 )

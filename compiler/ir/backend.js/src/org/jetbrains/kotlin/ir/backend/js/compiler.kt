@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
@@ -137,7 +137,14 @@ fun compileIr(
 
     (irFactory.stageController as? WholeWorldStageController)?.let {
         lowerPreservingTags(allModules, context, phaseConfig, it)
-    } ?: jsPhases.invokeToplevel(phaseConfig, context, allModules)
+    } ?: run {
+        val phaserState = PhaserState<IrModuleFragment>()
+        loweringList.forEachIndexed { _, lowering ->
+            allModules.forEach { module ->
+                lowering.modulePhase.invoke(phaseConfig, phaserState, context, module)
+            }
+        }
+    }
 
     return LoweredIr(context, moduleFragment, allModules, moduleToName)
 }

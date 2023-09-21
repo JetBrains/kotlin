@@ -76,11 +76,13 @@ fun lowerPreservingTags(
     // Lower all the things
     controller.currentStage = 0
 
-    val phaserState = PhaserState<Iterable<IrModuleFragment>>()
+    val phaserState = PhaserState<IrModuleFragment>()
 
     loweringList.forEachIndexed { i, lowering ->
         controller.currentStage = i + 1
-        lowering.modulePhase.invoke(phaseConfig, phaserState, context, modules)
+        modules.forEach { module ->
+            lowering.modulePhase.invoke(phaseConfig, phaserState, context, module)
+        }
     }
 
     controller.currentStage = loweringList.size + 1
