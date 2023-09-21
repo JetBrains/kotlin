@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: foo.kt
 
 package test
@@ -17,7 +18,7 @@ enum class EnumSample {
 // FILE: bar.kt
 
 import test.ClassAlias.*
-import test.ObjectAlias.*
+import test.<!CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON!>ObjectAlias<!>.*
 import test.EnumAlias.*
 import test.EnumAlias
 

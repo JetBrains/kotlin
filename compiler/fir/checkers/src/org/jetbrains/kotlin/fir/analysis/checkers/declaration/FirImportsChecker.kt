@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -41,7 +42,9 @@ object FirImportsChecker : FirFileChecker() {
         declaration.imports.forEach { import ->
             if (import is FirErrorImport) return@forEach
             if (import.isAllUnder) {
-                if (import !is FirResolvedImport) {
+                if (import is FirResolvedImport) {
+                    checkAllUnderFromObject(import, context, reporter)
+                } else {
                     checkAllUnderFromEnumEntry(import, context, reporter)
                 }
             } else {
@@ -61,6 +64,16 @@ object FirImportsChecker : FirFileChecker() {
         val classId = ClassId.topLevel(fqName.parent())
         val classSymbol = classId.resolveToClass(context) ?: return
         if (classSymbol.isEnumClass && classSymbol.collectEnumEntries().any { it.callableId.callableName == fqName.shortName() }) {
+            reporter.reportOn(import.source, FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON, classSymbol.classId.shortClassName, context)
+        }
+    }
+
+    private fun checkAllUnderFromObject(import: FirImport, context: CheckerContext, reporter: DiagnosticReporter) {
+        val fqName = import.importedFqName ?: return
+        if (fqName.isRoot) return
+        val classId = ClassId.topLevel(fqName)
+        val classSymbol = classId.resolveToClass(context) ?: return
+        if (classSymbol.classKind.isObject) {
             reporter.reportOn(import.source, FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON, classSymbol.classId.shortClassName, context)
         }
     }
