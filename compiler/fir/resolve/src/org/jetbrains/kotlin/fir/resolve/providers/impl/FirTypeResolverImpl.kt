@@ -286,9 +286,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
             if (currentDeclaration == null) {
                 // It's a package name
-                // TODO: report TYPE_ARGUMENTS_NOT_ALLOWED instead of WRONG_NUMBER_OF_TYPE_ARGUMENTS
                 if (qualifierPartArgsCount > 0) {
-                    return createWrongNumberOfTypeArgumentsError(0, qualifierPartIndex, symbol, typeRef)
+                    return ConeErrorType(ConeTypeArgumentsNotAllowedError(qualifierPart.typeArgumentList.source!!))
                 }
                 break
             }

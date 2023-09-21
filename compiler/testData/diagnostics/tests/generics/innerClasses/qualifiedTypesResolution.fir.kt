@@ -48,4 +48,4 @@ fun error4(): Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><A><!>.Nested<B>.Inner4<C> 
 fun error5(): Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><A><!>.Obj.Nested2<B>.Inner5<C> = null!!
 fun error6(): Outer.Obj<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><A><!>.Nested2<B>.Inner5<C> = null!!
 
-fun error7(): test<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>.Outer.Obj.Nested2<A>.Inner5<B> = null!!
+fun error7(): test<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.Outer.Obj.Nested2<A>.Inner5<B> = null!!
