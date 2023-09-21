@@ -44,9 +44,6 @@ class ContentsTest {
             annotation class A constructor() : Annotation
             annotation class B constructor() : Annotation
             class Foo constructor()
-        }
-
-        package <root> {
             @A @B fun a()
             fun Foo.e()
             fun f1(x: Foo)
@@ -108,12 +105,12 @@ class ContentsTest {
 
             class B constructor() {
 
-                object C {
-                    fun c()
-                }
-
                 companion object {
                     fun b()
+                }
+
+                object C {
+                    fun c()
                 }
 
             }
@@ -294,9 +291,6 @@ class ContentsTest {
         """
         package custom.pkg {
             typealias MyTransformer = (String) -> Int
-        }
-
-        package custom.pkg {
             val v1: Int = 1
             val v2: String = "hello"
             val v3: (String) -> Int
@@ -310,9 +304,6 @@ class ContentsTest {
         """
         package <root> {
             typealias MyTransformer = (String) -> Int
-        }
-
-        package <root> {
             val v1: Int = 1
             val v2: String = "hello"
             val v3: (String) -> Int
@@ -328,9 +319,6 @@ class ContentsTest {
             object Bar
             class Foo constructor()
             typealias MyTransformer = (String) -> Int
-        }
-
-        package custom.pkg {
             val v1: Int = 1
             val v2: String = "hello"
             val v3: (String) -> Int
@@ -346,9 +334,6 @@ class ContentsTest {
             object Bar
             class Foo constructor()
             typealias MyTransformer = (String) -> Int
-        }
-
-        package <root> {
             val v1: Int = 1
             val v2: String = "hello"
             val v3: (String) -> Int
