@@ -685,6 +685,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingT
                 }
 
                 @Test
+                @TestMetadata("interconnectedGenerics.kt")
+                public void testInterconnectedGenerics() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/interconnectedGenerics.kt");
+                }
+
+                @Test
                 @TestMetadata("kt47396.kt")
                 public void testKt47396() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt47396.kt");
