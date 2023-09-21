@@ -1239,9 +1239,8 @@ open class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
-    @Disabled("Disabled until kotlin-native fix from MR https://jetbrains.team/p/kt/reviews/12079/timeline is deployed and can be tested")
     @GradleTest
-    @DisplayName("K2: Check native stdlib is not shadowed by commonMain metadata")
+    @DisplayName("K2: Check native stdlib is not shadowed by commonMain stdlib metadata")
     fun testK2NativeStdlibConflict(gradleVersion: GradleVersion) {
         nativeProject("kt61430", gradleVersion, buildOptions = defaultBuildOptions.copyEnsuringK2()) {
             build("assemble")
