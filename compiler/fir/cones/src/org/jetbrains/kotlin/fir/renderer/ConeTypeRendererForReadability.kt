@@ -36,7 +36,7 @@ class ConeTypeRendererForReadability(
                         renderFlexibleTypeCompact(renderBound(lower.original), upperRendered)
                     } else null
                 }
-                ?: "ft<$lowerRendered, $upperRendered>"
+                ?: "($lowerRendered..$upperRendered)"
 
         builder.append(rendered)
     }
