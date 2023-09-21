@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCallablesMatcher
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -29,7 +31,7 @@ object ExpectedActualResolver {
                             // TODO: support non-source definitions (e.g. from Java)
                             actual.couldHaveASource
                 }.groupBy { actual ->
-                    AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
+                    AbstractExpectActualCallablesMatcher.getCallablesCompatibility(
                         expected,
                         actual,
                         parentSubstitutor = null,
@@ -40,16 +42,9 @@ object ExpectedActualResolver {
                 }
             }
             is ClassDescriptor -> {
-                context.findClassifiersFromModule(expected.classId, platformModule, moduleVisibilityFilter).filter { actual ->
-                    expected != actual && !actual.isExpect && actual.couldHaveASource
-                }.groupBy { actual ->
-                    AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
-                        expected,
-                        actual,
-                        checkClassScopesCompatibility = true,
-                        context
-                    )
-                }
+                context.findClassifiersFromModule(expected.classId, platformModule, moduleVisibilityFilter)
+                    .singleOrNull { actual -> expected != actual && !actual.isExpect && actual.couldHaveASource }
+                    ?.let { mapOf(Compatible to listOf(it)) }
             }
             else -> null
         }
@@ -71,7 +66,7 @@ object ExpectedActualResolver {
                     actual,
                     candidates.filterIsInstance<CallableMemberDescriptor>(),
                     actualClass,
-                    context
+                    context,
                 )
             }
             is ClassDescriptor -> {
@@ -79,7 +74,7 @@ object ExpectedActualResolver {
                     actual,
                     candidates.filterIsInstance<ClassifierDescriptorWithTypeParameters>(),
                     checkClassScopesCompatibility,
-                    context
+                    context,
                 )
             }
             else -> emptyMap()
@@ -99,8 +94,11 @@ object ExpectedActualResolver {
                     is ClassifierDescriptorWithTypeParameters -> {
                         // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
                         val expectedClass =
-                            findExpectedForActual(container, moduleFilter, shouldCheckAbsenceOfDefaultParamsInActual)?.values
-                                ?.firstOrNull()?.firstOrNull() as? ClassDescriptor
+                            findExpectedForActual(
+                                container,
+                                moduleFilter,
+                                shouldCheckAbsenceOfDefaultParamsInActual
+                            )?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
                         with(context) {
                             expectedClass?.getMembersForExpectClass(actual.name)?.filterIsInstance<CallableMemberDescriptor>().orEmpty()
                         }
@@ -113,7 +111,12 @@ object ExpectedActualResolver {
             }
             is ClassifierDescriptorWithTypeParameters -> {
                 val candidates = context.findClassifiersFromModule(actual.classId, actual.module, moduleFilter)
-                matchActualClassAgainstPotentialExpects(actual, candidates, checkClassScopesCompatibility = true, context)
+                matchActualClassAgainstPotentialExpects(
+                    actual,
+                    candidates,
+                    checkClassScopesCompatibility = true,
+                    context,
+                )
             }
             else -> null
         }
@@ -147,13 +150,13 @@ object ExpectedActualResolver {
                     }
                     else -> null
                 }
-            AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
+            AbstractExpectActualCallablesMatcher.getCallablesCompatibility(
                 expectDeclaration = declaration,
                 actualDeclaration = actual,
                 parentSubstitutor = substitutor,
                 expectContainingClass = expectedClass,
                 actualContainingClass = actualClass,
-                context
+                context,
             )
         }
     }
@@ -164,16 +167,9 @@ object ExpectedActualResolver {
         checkClassScopesCompatibility: Boolean,
         context: ClassicExpectActualMatchingContext,
     ): Map<ExpectActualCompatibility<MemberDescriptor>, List<ClassifierDescriptorWithTypeParameters>> {
-        return candidates.filter { declaration ->
-            actual != declaration && declaration is ClassDescriptor && declaration.isExpect
-        }.groupBy { expected ->
-            AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
-                expected as ClassDescriptor,
-                actual,
-                checkClassScopesCompatibility,
-                context
-            )
-        }
+        return candidates.singleOrNull { declaration -> actual != declaration && declaration is ClassDescriptor && declaration.isExpect }
+            ?.let { mapOf((Compatible as ExpectActualCompatibility<MemberDescriptor>) to listOf(it)) }
+            .orEmpty()
     }
 
     private fun CallableMemberDescriptor.findNamesakesFromModule(
