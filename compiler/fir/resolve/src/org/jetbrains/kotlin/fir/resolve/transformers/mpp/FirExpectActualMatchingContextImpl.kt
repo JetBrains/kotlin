@@ -149,8 +149,9 @@ class FirExpectActualMatchingContextImpl private constructor(
         expectActualTypeParameters: List<Pair<TypeParameterSymbolMarker, TypeParameterSymbolMarker>>,
         parentSubstitutor: TypeSubstitutorMarker?,
     ): TypeSubstitutorMarker {
+        @Suppress("UNCHECKED_CAST")
         return createExpectActualTypeParameterSubstitutor(
-            expectActualTypeParameters.map { Pair(it.first as FirTypeParameterSymbol, it.second as FirTypeParameterSymbol) },
+            expectActualTypeParameters as List<Pair<FirTypeParameterSymbol, FirTypeParameterSymbol>>,
             actualSession,
             parentSubstitutor as ConeSubstitutor?
         )
