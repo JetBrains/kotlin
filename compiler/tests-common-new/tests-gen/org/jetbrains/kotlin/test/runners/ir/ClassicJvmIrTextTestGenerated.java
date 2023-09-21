@@ -1044,6 +1044,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
             }
 
             @Test
+            @TestMetadata("expectIntersectionOverrideWithActualization.kt")
+            public void testExpectIntersectionOverrideWithActualization() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/multiplatform/expectIntersectionOverrideWithActualization.kt");
+            }
+
+            @Test
             @TestMetadata("expectMemberInNotExpectClass.kt")
             public void testExpectMemberInNotExpectClass() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/multiplatform/expectMemberInNotExpectClass.kt");
