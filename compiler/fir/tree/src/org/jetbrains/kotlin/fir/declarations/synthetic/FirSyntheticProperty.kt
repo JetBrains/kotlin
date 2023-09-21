@@ -85,7 +85,7 @@ class FirSyntheticProperty(
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 
     override val bodyResolveState: FirPropertyBodyResolveState
-        get() = FirPropertyBodyResolveState.EVERYTHING_RESOLVED
+        get() = FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
 
     override val contextReceivers: List<FirContextReceiver>
         get() = emptyList()

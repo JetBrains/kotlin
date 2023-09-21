@@ -323,6 +323,10 @@ internal object BodyStateKeepers {
 
     val FUNCTION: StateKeeper<FirFunction, FirDesignationWithFile> = stateKeeper { function, designation ->
         if (function.isCertainlyResolved) {
+            if (!isCallableWithSpecialBody(function)) {
+                entityList(function.valueParameters, VALUE_PARAMETER, designation)
+            }
+
             return@stateKeeper
         }
 
@@ -366,7 +370,7 @@ internal object BodyStateKeepers {
     }
 
     val PROPERTY: StateKeeper<FirProperty, FirDesignationWithFile> = stateKeeper { property, designation ->
-        if (property.bodyResolveState >= FirPropertyBodyResolveState.EVERYTHING_RESOLVED) {
+        if (property.bodyResolveState >= FirPropertyBodyResolveState.ALL_BODIES_RESOLVED) {
             return@stateKeeper
         }
 
@@ -431,14 +435,14 @@ private val FirScript.isCertainlyResolved: Boolean
         val dependentProperty = findResultProperty() ?: return false
 
         // This meant that we already resolve the entire script on implicit body phase
-        return dependentProperty.bodyResolveState == FirPropertyBodyResolveState.EVERYTHING_RESOLVED
+        return dependentProperty.bodyResolveState == FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
     }
 
 private val FirFunction.isCertainlyResolved: Boolean
     get() {
         if (this is FirPropertyAccessor) {
             val requiredState = when {
-                isSetter -> FirPropertyBodyResolveState.EVERYTHING_RESOLVED
+                isSetter -> FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
                 else -> FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED
             }
 
@@ -459,7 +463,7 @@ private val FirVariable.initializerIfUnresolved: FirExpression?
 
 private val FirVariable.delegateIfUnresolved: FirExpression?
     get() = when (this) {
-        is FirProperty -> if (bodyResolveState < FirPropertyBodyResolveState.EVERYTHING_RESOLVED) delegate else null
+        is FirProperty -> if (bodyResolveState < FirPropertyBodyResolveState.ALL_BODIES_RESOLVED) delegate else null
         else -> delegate
     }
 
@@ -470,7 +474,7 @@ private val FirProperty.getterIfUnresolved: FirPropertyAccessor?
     get() = if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED) getter else null
 
 private val FirProperty.setterIfUnresolved: FirPropertyAccessor?
-    get() = if (bodyResolveState < FirPropertyBodyResolveState.EVERYTHING_RESOLVED) setter else null
+    get() = if (bodyResolveState < FirPropertyBodyResolveState.ALL_BODIES_RESOLVED) setter else null
 
 private fun delegatedConstructorCallGuard(fir: FirDelegatedConstructorCall): FirDelegatedConstructorCall {
     if (fir is FirLazyDelegatedConstructorCall) {

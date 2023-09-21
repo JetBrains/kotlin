@@ -121,7 +121,7 @@ public class PropertyBuildingContext(
                 )
             }
             isLocal = false
-            bodyResolveState = FirPropertyBodyResolveState.EVERYTHING_RESOLVED
+            bodyResolveState = FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
         }
     }
 }

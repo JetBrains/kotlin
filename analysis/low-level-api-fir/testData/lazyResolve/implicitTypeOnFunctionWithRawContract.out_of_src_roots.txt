@@ -80,7 +80,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|
         [Contract description] <
-            <Unresolved name: returns>#().<Unresolved name: implies>#(R|<local>/bool|)
+            returns#().implies#(bool#)
         >
      {
         ^foo R|<local>/bool|
@@ -90,7 +90,7 @@ ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|
         [Contract description] <
-            <Unresolved name: returns>#().<Unresolved name: implies>#(R|<local>/bool|)
+            returns#().implies#(bool#)
         >
      {
         ^foo R|<local>/bool|

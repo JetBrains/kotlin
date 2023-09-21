@@ -590,7 +590,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val asString: R|kotlin/String| = R|<local>/asString|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=Kind] get(): R|kotlin/String|
 
-            @R|kotlin/Suppress|[Types](names = vararg(String(UNCHECKED_CAST))) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun valueOf([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] aConst: R|IrConst<*>|): R|T| {
+            @R|kotlin/Suppress|[Types](String(UNCHECKED_CAST)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun valueOf([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] aConst: R|IrConst<*>|): R|T| {
                 ^valueOf (R|<local>/aConst| as R|IrConst<T>|).R|SubstitutionOverride</IrConst.value: R|T|>|
             }
 

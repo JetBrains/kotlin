@@ -60,17 +60,17 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultVa
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValue.kt
-    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val myNumber: R|kotlin/Int| = Int(1)
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun topLevelFunction([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] firstParam: R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] secondParam: R|kotlin/String| = <strcat>(String(My str ), R|<local>/firstParam|.R|kotlin/Int.plus|(R|myPack/myNumber|).R|kotlin/Int.toString|())): R|kotlin/Int| {
+    public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun topLevelFunction([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] firstParam: R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] secondParam: R|kotlin/String| = <strcat>(String(My str ), firstParam#.plus#(myNumber#).toString#())): R|kotlin/Int| {
         ^topLevelFunction Int(42)
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValue.kt
-    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val myNumber: R|kotlin/Int| = Int(1)
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun topLevelFunction([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] firstParam: R|kotlin/Int|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] secondParam: R|kotlin/String| = <strcat>(String(My str ), R|<local>/firstParam|.R|kotlin/Int.plus|(R|myPack/myNumber|).R|kotlin/Int.toString|())): R|kotlin/Int| {
+    public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun topLevelFunction([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] firstParam: R|kotlin/Int|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] secondParam: R|kotlin/String| = <strcat>(String(My str ), firstParam#.plus#(myNumber#).toString#())): R|kotlin/Int| {
         ^topLevelFunction Int(42)
     }
 

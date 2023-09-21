@@ -154,16 +154,16 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnProperty.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnProperty.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    @R|kotlin/Deprecated|[Types](message = String(property)) @R|Anno|[Types](s = String(property)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var memberProperty: R|kotlin/Int| = Int(32)
+    @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](String(property)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var memberProperty: R|kotlin/Int| = Int(32)
         @R|kotlin/Deprecated|[Types](String(getter)) @R|Anno|[Types](String(getter)) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ field#
         }

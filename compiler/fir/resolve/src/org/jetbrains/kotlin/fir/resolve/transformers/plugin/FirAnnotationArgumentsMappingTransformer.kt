@@ -119,10 +119,6 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode
     ): FirSimpleFunction {
-        if (simpleFunction.bodyResolved) {
-            return simpleFunction
-        }
-
         doTransformTypeParameters(simpleFunction)
 
         context.withSimpleFunction(simpleFunction, session) {
