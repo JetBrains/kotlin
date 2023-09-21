@@ -1,4 +1,4 @@
-public final fun foo(f: R|@ExtensionFunctionType {@ExtensionFunctionType kotlin/coroutines/SuspendFunction1<test/Context, kotlin/Unit>=} suspend test/Context.() -> kotlin/Unit|): R|kotlin/Unit|
+public final fun foo(f: R|{@ExtensionFunctionType kotlin/coroutines/SuspendFunction1<test/Context, kotlin/Unit>=} suspend test/Context.() -> kotlin/Unit|): R|kotlin/Unit|
 
 public final class Context : R|kotlin/Any| {
     public constructor(): R|test/Context|
