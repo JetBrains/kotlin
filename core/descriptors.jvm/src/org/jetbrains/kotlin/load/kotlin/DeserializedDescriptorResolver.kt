@@ -112,7 +112,7 @@ class DeserializedDescriptorResolver {
     private val KotlinJvmBinaryClass.abiStability: DeserializedContainerAbiStability
         get() = when {
             components.configuration.allowUnstableDependencies -> DeserializedContainerAbiStability.STABLE
-            classHeader.isUnstableJvmIrBinary -> DeserializedContainerAbiStability.IR_UNSTABLE
+            classHeader.isUnstableJvmIrBinary -> DeserializedContainerAbiStability.UNSTABLE
             else -> DeserializedContainerAbiStability.STABLE
         }
 

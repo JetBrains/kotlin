@@ -32,5 +32,5 @@ enum class DeserializedContainerAbiStability {
     // 2) it is compiled with JVM IR >= 1.4.30 with the `-Xabi-stability=unstable` compiler option,
     // 3) it is compiled with FIR prior to 2.0.0,
     // and this compiler is _not_ configured to ignore that.
-    IR_UNSTABLE,
+    UNSTABLE,
 }
