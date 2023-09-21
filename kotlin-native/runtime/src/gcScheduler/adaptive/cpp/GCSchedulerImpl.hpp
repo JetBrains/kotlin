@@ -69,7 +69,7 @@ public:
     }
 
     void onAllocation(size_t bytes) noexcept {
-        auto total = allocatedBytes_.fetch_add(bytes, std::memory_order_relaxed) + bytes;
+        auto total = allocatedBytes_.fetch_add(bytes, std::memory_order_relaxed);
         total += lastAliveSetBytes_.load(std::memory_order_relaxed);
         setAllocatedBytes(total);
     }
