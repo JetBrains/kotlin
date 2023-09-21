@@ -7,7 +7,7 @@ expect fun foo2<!NO_ACTUAL_FOR_EXPECT{JVM}!>(x: Int)<!>
 
 expect class NoArgConstructor()
 
-expect fun foo3(): <!NO_ACTUAL_FOR_EXPECT{JVM}!>Int<!>
+expect fun foo3(): Int
 expect fun foo4<!NO_ACTUAL_FOR_EXPECT{JVM}!>()<!>: Int
 
 // MODULE: m2-jvm()()(m1-common)
