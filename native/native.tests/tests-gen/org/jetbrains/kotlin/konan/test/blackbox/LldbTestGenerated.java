@@ -122,4 +122,10 @@ public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
     public void testKt61131() throws Exception {
         runTest("native/native.tests/testData/lldb/kt61131.kt");
     }
+
+    @Test
+    @TestMetadata("stepThroughInlineArguments.kt")
+    public void testStepThroughInlineArguments() throws Exception {
+        runTest("native/native.tests/testData/lldb/stepThroughInlineArguments.kt");
+    }
 }
