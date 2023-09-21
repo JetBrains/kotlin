@@ -1,0 +1,9 @@
+Suppressed: org.jetbrains.kotlin.util.ReenteringLazyValueComputationException
+		at org.jetbrains.kotlin.types.DeferredType.lambda$static$0(DeferredType.java:35)
+		at org.jetbrains.kotlin.storage.LockBasedStorageManager$3.recursionDetected(LockBasedStorageManager.java:192)
+		at org.jetbrains.kotlin.storage.LockBasedStorageManager$LockBasedLazyValue.invoke(LockBasedStorageManager.java:393)
+		at org.jetbrains.kotlin.storage.LockBasedStorageManager$LockBasedNotNullLazyValue.invoke(LockBasedStorageManager.java:527)
+		at org.jetbrains.kotlin.types.DeferredType.getDelegate(DeferredType.java:108)
+		at org.jetbrains.kotlin.types.WrappedType.getAttributes(KotlinType.kt:135)
+		at org.jetbrains.kotlin.types.KotlinType.getAnnotations(KotlinType.kt:57)
+		at org.jetbrains.kotlin.types.checker.ClassicTypeSystemContext$DefaultImpls.hasAnnotation(ClassicTypeSystemContext.kt:753)

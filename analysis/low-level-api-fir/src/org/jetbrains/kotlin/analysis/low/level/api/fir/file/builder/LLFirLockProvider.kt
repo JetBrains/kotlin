@@ -55,6 +55,21 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     }
 
     /**
+     * A contract violation check to be sure that we won't request a violated phase later.
+     * This is useful to catch a contract violation for jumping phases because they may encounter infinite recursion.
+     *
+     * Example: we have cycle between phases 'implicit type (1) -> body (2) -> implicit type (3)` and
+     * we can get [StackOverflowError] because regular phases checks can't catch such case
+     * because will check only implicit type -> implicit type resolution due to
+     * sequent resolution requests
+     *
+     * @see org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirModuleLazyDeclarationResolver
+     */
+    fun checkContractViolations(toPhase: FirResolvePhase) {
+        checker.checkIfCanLazyResolveToPhase(toPhase, isJumpingPhase = true)
+    }
+
+    /**
      * Locks an a [FirElementWithResolveState] to resolve from `phase - 1` to [phase] and
      * then updates the [FirElementWithResolveState.resolveState] to a [phase].
      * Does nothing if [target] already has at least [phase] phase.

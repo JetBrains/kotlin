@@ -184,6 +184,11 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         var currentPhase = getMinResolvePhase(targets).coerceAtLeast(FirResolvePhase.IMPORTS)
         if (currentPhase >= toPhase) return
 
+        val lockProvider = moduleComponents.globalResolveComponents.lockProvider
+
+        // to catch a contract violation for jumping phases
+        lockProvider.checkContractViolations(toPhase)
+
         while (currentPhase < toPhase) {
             currentPhase = currentPhase.next
             checkCanceled()
@@ -193,7 +198,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                     phase = currentPhase,
                     target = target,
                     scopeSession = scopeSession,
-                    lockProvider = moduleComponents.globalResolveComponents.lockProvider,
+                    lockProvider = lockProvider,
                     towerDataContextCollector = towerDataContextCollector,
                 )
             }

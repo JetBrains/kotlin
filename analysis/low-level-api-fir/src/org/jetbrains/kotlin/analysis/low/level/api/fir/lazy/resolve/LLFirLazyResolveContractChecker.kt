@@ -23,7 +23,7 @@ internal class LLFirLazyResolveContractChecker {
         }
     }
 
-    private fun checkIfCanLazyResolveToPhase(requestedPhase: FirResolvePhase, isJumpingPhase: Boolean) {
+    internal fun checkIfCanLazyResolveToPhase(requestedPhase: FirResolvePhase, isJumpingPhase: Boolean) {
         val currentPhase = currentTransformerPhase.get() ?: return
 
         if (requestedPhase > currentPhase || !isJumpingPhase && requestedPhase == currentPhase) {

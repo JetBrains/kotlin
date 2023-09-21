@@ -22608,6 +22608,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("kotlinJavaCycle.kt")
+                public void testKotlinJavaCycle() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/kotlinJavaCycle.kt");
+                }
+
+                @Test
                 @TestMetadata("kt12248.kt")
                 public void testKt12248() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/kt12248.kt");
