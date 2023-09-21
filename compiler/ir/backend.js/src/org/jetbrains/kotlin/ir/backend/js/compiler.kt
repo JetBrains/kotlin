@@ -141,7 +141,7 @@ fun compileIr(
         val phaserState = PhaserState<IrModuleFragment>()
         loweringList.forEachIndexed { _, lowering ->
             allModules.forEach { module ->
-                lowering.modulePhase.invoke(phaseConfig, phaserState, context, module)
+                lowering.invoke(phaseConfig, phaserState, context, module)
             }
         }
     }

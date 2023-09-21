@@ -81,7 +81,7 @@ fun lowerPreservingTags(
     loweringList.forEachIndexed { i, lowering ->
         controller.currentStage = i + 1
         modules.forEach { module ->
-            lowering.modulePhase.invoke(phaseConfig, phaserState, context, module)
+            lowering.invoke(phaseConfig, phaserState, context, module)
         }
     }
 

@@ -30,7 +30,7 @@ fun optimizeProgramByIr(
     val phaserState = PhaserState<IrModuleFragment>()
     optimizationLoweringList.forEachIndexed { _, lowering ->
         modules.forEach { module ->
-            lowering.modulePhase.invoke(phaseConfig, phaserState, context, module)
+            lowering.invoke(phaseConfig, phaserState, context, module)
         }
     }
 }
