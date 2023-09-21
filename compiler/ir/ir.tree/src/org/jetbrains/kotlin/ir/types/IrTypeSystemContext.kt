@@ -597,13 +597,13 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
         return IrTypeSubstitutor(
-            map.map { (key, value) -> (key as IrTypeParameterSymbol) to (value as IrTypeArgument) },
+            map.entries.associate { (expect, actual) -> (expect as IrTypeParameterSymbol) to (actual as IrTypeArgument) },
             irBuiltIns
         )
     }
 
     override fun createEmptySubstitutor(): TypeSubstitutorMarker {
-        return IrTypeSubstitutor(emptyList(), irBuiltIns)
+        return IrTypeSubstitutor(emptyMap(), irBuiltIns)
     }
 
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {

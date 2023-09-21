@@ -52,7 +52,7 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                 }
                 val substitutionMap = expression.typeSubstitutionMap
                     .entries
-                    .map { (key, value) ->
+                    .associate { (key, value) ->
                         key to (value as IrTypeArgument)
                     }
                 val typeSubstitutor = IrTypeSubstitutor(substitutionMap, context.irBuiltIns)

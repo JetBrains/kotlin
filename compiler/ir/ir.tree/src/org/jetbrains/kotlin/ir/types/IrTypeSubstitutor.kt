@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -65,7 +66,7 @@ abstract class BaseIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : Abstr
 }
 
 class IrTypeSubstitutor(
-    typeParametersAndArguments: List<Pair<IrTypeParameterSymbol, IrTypeArgument>>,
+    private val substitution: Map<IrTypeParameterSymbol, IrTypeArgument>,
     irBuiltIns: IrBuiltIns,
     private val allowEmptySubstitution: Boolean = false
 ) : BaseIrTypeSubstitutor(irBuiltIns) {
@@ -75,7 +76,7 @@ class IrTypeSubstitutor(
         typeArguments: List<IrTypeArgument>,
         irBuiltIns: IrBuiltIns,
         allowEmptySubstitution: Boolean = false,
-    ) : this(typeParameters.zip(typeArguments), irBuiltIns, allowEmptySubstitution) {
+    ) : this(typeParameters.zip(typeArguments).toMap(), irBuiltIns, allowEmptySubstitution) {
         check(typeParameters.size == typeArguments.size) {
             "Unexpected number of type arguments: ${typeArguments.size}\n" +
                     "Type parameters are:\n" +
@@ -84,8 +85,6 @@ class IrTypeSubstitutor(
                     typeArguments.joinToString(separator = "\n") { it.render() }
         }
     }
-
-    private val substitution = typeParametersAndArguments.toMap()
 
     override fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument =
         substitution[typeParameter]
