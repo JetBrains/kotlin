@@ -44,11 +44,19 @@ object JsKlibOtherModuleExportsChecker : JsKlibExportedDeclarationsChecker {
         }
     }
 
-    override fun check(declarations: List<JsKlibExportingDeclaration>, reporter: KtDiagnosticReporterWithImplicitIrBasedContext) {
+    override fun check(
+        declarations: List<JsKlibExportingDeclaration>,
+        context: JsKlibDiagnosticContext,
+        reporter: KtDiagnosticReporterWithImplicitIrBasedContext
+    ) {
         val clashes = collectClashes(declarations)
         for ((declaration, clashedWith) in clashes) {
             if (declaration.declaration != null) {
-                reporter.at(declaration.declaration).report(JsKlibErrors.EXPORTING_JS_NAME_CLASH, declaration.exportingName, clashedWith)
+                reporter.at(declaration.declaration, context).report(
+                    JsKlibErrors.EXPORTING_JS_NAME_CLASH,
+                    declaration.exportingName,
+                    clashedWith
+                )
             }
         }
     }

@@ -42,14 +42,14 @@ internal abstract class IrConstExpressionTransformer(
 
     override fun visitClass(declaration: IrClass, data: Data): IrStatement {
         if (declaration.kind == ClassKind.ANNOTATION_CLASS) {
-            return super.visitClass(declaration, data.copy(inAnnotation = true))
+            return super.visitClass(declaration, data.copy(inConstantExpression = true))
         }
         return super.visitClass(declaration, data)
     }
 
     override fun visitCall(expression: IrCall, data: Data): IrElement {
         if (expression.canBeInterpreted()) {
-            return expression.interpret(failAsError = data.inAnnotation)
+            return expression.interpret(failAsError = data.inConstantExpression)
         }
         return super.visitCall(expression, data)
     }
@@ -68,7 +68,7 @@ internal abstract class IrConstExpressionTransformer(
 
     override fun visitGetField(expression: IrGetField, data: Data): IrExpression {
         if (expression.canBeInterpreted()) {
-            return expression.interpret(failAsError = data.inAnnotation)
+            return expression.interpret(failAsError = data.inConstantExpression)
         }
         return super.visitGetField(expression, data)
     }
@@ -78,7 +78,7 @@ internal abstract class IrConstExpressionTransformer(
             this.startOffset, this.endOffset, expression.type, listOf(this@wrapInStringConcat)
         )
 
-        fun IrExpression.wrapInToStringConcatAndInterpret(): IrExpression = wrapInStringConcat().interpret(failAsError = data.inAnnotation)
+        fun IrExpression.wrapInToStringConcatAndInterpret(): IrExpression = wrapInStringConcat().interpret(failAsError = data.inConstantExpression)
         fun IrExpression.getConstStringOrEmpty(): String = if (this is IrConst<*>) value.toString() else ""
 
         // If we have some complex expression in arguments (like some `IrComposite`) we will skip it,

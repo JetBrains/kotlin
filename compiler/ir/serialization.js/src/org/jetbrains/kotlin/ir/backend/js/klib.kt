@@ -656,7 +656,7 @@ fun serializeModuleIntoKlib(
 
     if (builtInsPlatform == BuiltInsPlatform.JS) {
         val cleanFilesIrData = cleanFiles.map { it.irData }
-        JsKlibCheckers.check(cleanFilesIrData, moduleFragment.files, moduleExportedNames, diagnosticReporter, configuration)
+        JsKlibCheckers.check(cleanFilesIrData, moduleFragment, moduleExportedNames, diagnosticReporter, configuration)
     }
 
     val serializedIr =

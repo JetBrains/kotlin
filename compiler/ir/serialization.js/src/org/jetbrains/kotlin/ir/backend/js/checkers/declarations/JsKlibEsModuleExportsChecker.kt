@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.ir.backend.js.checkers.declarations
 
 import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibExportingDeclaration
-import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibExportedDeclarationsChecker
-import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
+import org.jetbrains.kotlin.ir.backend.js.checkers.*
 
 object JsKlibEsModuleExportsChecker : JsKlibExportedDeclarationsChecker {
     override fun check(
         declarations: List<JsKlibExportingDeclaration>,
-        reporter: KtDiagnosticReporterWithImplicitIrBasedContext,
+        context: JsKlibDiagnosticContext,
+        reporter: KtDiagnosticReporterWithImplicitIrBasedContext
     ) {
         val allExportedNameClashes = declarations.groupBy { it.exportingName }.filterValues { it.size > 1 }
 
@@ -21,7 +20,11 @@ object JsKlibEsModuleExportsChecker : JsKlibExportedDeclarationsChecker {
             for ((index, exportedDeclaration) in exportedDeclarationClashes.withIndex()) {
                 val declaration = exportedDeclaration.declaration ?: continue
                 val clashedWith = exportedDeclarationClashes.filterIndexed { i, _ -> i != index }
-                reporter.at(declaration).report(JsKlibErrors.EXPORTING_JS_NAME_CLASH_ES, exportedDeclaration.exportingName, clashedWith)
+                reporter.at(declaration, context).report(
+                    JsKlibErrors.EXPORTING_JS_NAME_CLASH_ES,
+                    exportedDeclaration.exportingName,
+                    clashedWith
+                )
             }
         }
     }

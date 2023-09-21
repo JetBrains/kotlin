@@ -9,10 +9,15 @@ import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.checkers.declarations.JsKlibEsModuleExportsChecker
 import org.jetbrains.kotlin.ir.backend.js.checkers.declarations.JsKlibOtherModuleExportsChecker
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.backend.js.checkers.expressions.JsKlibJsCodeCallChecker
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.SerializedIrFile
 
 object JsKlibCheckers {
@@ -21,17 +26,51 @@ object JsKlibCheckers {
         JsKlibOtherModuleExportsChecker
     )
 
+    private val callCheckers = listOf(
+        JsKlibJsCodeCallChecker
+    )
+
     fun check(
         cleanFiles: List<SerializedIrFile>,
-        dirtyFiles: List<IrFile>,
+        dirtyModule: IrModuleFragment,
         exportedNames: Map<IrFile, Map<IrDeclarationWithName, String>>,
         diagnosticReporter: DiagnosticReporter,
         configuration: CompilerConfiguration
     ) {
-        val reporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
-        val exportedDeclarations = JsKlibExportingDeclaration.collectDeclarations(cleanFiles, dirtyFiles, exportedNames)
-        for (checker in exportedDeclarationsCheckers) {
-            checker.check(exportedDeclarations, reporter)
-        }
+        dirtyModule.acceptVoid(object : IrElementVisitorVoid {
+            private val reporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
+            private val diagnosticContext = JsKlibDiagnosticContext(configuration)
+
+            override fun visitElement(element: IrElement) {
+                if (element is IrDeclaration) {
+                    diagnosticContext.withDeclarationScope(element) {
+                        element.acceptChildrenVoid(this)
+                    }
+                } else {
+                    element.acceptChildrenVoid(this)
+                }
+            }
+
+            override fun visitModuleFragment(declaration: IrModuleFragment) {
+                val exportedDeclarations = JsKlibExportingDeclaration.collectDeclarations(cleanFiles, declaration.files, exportedNames)
+                for (checker in exportedDeclarationsCheckers) {
+                    checker.check(exportedDeclarations, this.diagnosticContext, reporter)
+                }
+                super.visitModuleFragment(declaration)
+            }
+
+            override fun visitFile(declaration: IrFile) {
+                diagnosticContext.withFileScope(declaration) {
+                    super.visitFile(declaration)
+                }
+            }
+
+            override fun visitCall(expression: IrCall) {
+                for (checker in callCheckers) {
+                    checker.check(expression, this.diagnosticContext, reporter)
+                }
+                super.visitCall(expression)
+            }
+        })
     }
 }
