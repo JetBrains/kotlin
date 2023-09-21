@@ -11,8 +11,10 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -68,7 +70,7 @@ constructor(
         val newArgs = mutableListOf<String>()
         newArgs.addAll(nodeArgs)
         if (inputFileProperty.isPresent) {
-            newArgs.add(inputFileProperty.asFile.get().canonicalPath)
+            newArgs.add(inputFileProperty.asFile.get().normalize().absolutePath)
         }
         args?.let { newArgs.addAll(it) }
         args = newArgs
@@ -106,11 +108,14 @@ constructor(
             ) {
                 it.nodeJs = nodeJs
                 it.executable = nodeJs.requireConfigured().nodeExecutable
-                it.workingDir = npmProject.dir
-                it.dependsOn(
-                    nodeJsTaskProviders.npmInstallTaskProvider,
-                    nodeJsTaskProviders.storeYarnLockTaskProvider,
-                )
+                if ((compilation.target as? KotlinJsIrTarget)?.wasmTargetType != KotlinWasmTargetType.WASI) {
+                    it.workingDir = npmProject.dir
+                    it.dependsOn(
+                        nodeJsTaskProviders.npmInstallTaskProvider,
+                        nodeJsTaskProviders.storeYarnLockTaskProvider,
+                    )
+                }
+                it.dependsOn(nodeJsTaskProviders.nodeJsSetupTaskProvider)
                 it.dependsOn(compilation.compileKotlinTaskProvider)
                 if (compilation.platformType == KotlinPlatformType.wasm) {
                     it.nodeArgs.addWasmExperimentalArguments()

@@ -44,6 +44,18 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Check wasi target run")
+    @GradleTest
+    fun wasiRun(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-wasi-test", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build(":wasmWasiNodeRun") {
+                assertOutputContains("Hello from Wasi")
+            }
+        }
+    }
+
     @DisplayName("Check wasi and js target")
     @GradleTest
     fun wasiAndJsTarget(gradleVersion: GradleVersion) {

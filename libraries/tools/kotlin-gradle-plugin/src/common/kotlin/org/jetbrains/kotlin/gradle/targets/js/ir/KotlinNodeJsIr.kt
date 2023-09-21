@@ -32,19 +32,20 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         project.tasks.withType<NodeJsExec>().named(runTaskName).configure(body)
     }
 
-    override fun configureRun(compilation: KotlinJsIrCompilation) {
-        if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
-            super.configureRun(compilation)
-        }
-    }
-
     override fun locateOrRegisterRunTask(binary: JsIrBinary, name: String) {
         if (project.locateTask<NodeJsExec>(name) != null) return
 
-        val runTaskHolder = NodeJsExec.create(binary.compilation, name) {
+        val compilation = binary.compilation
+        val runTaskHolder = NodeJsExec.create(compilation, name) {
             group = taskGroupName
-            dependsOn(binary.linkSyncTask)
-            inputFileProperty.fileProvider(
+            val inputFile = if ((compilation.target as KotlinJsIrTarget).wasmTargetType == KotlinWasmTargetType.WASI) {
+                dependsOn(binary.linkTask)
+                sourceMapStackTraces = false
+                binary.linkTask.flatMap { linkTask ->
+                    linkTask.outputFileProperty
+                }
+            } else {
+                dependsOn(binary.linkSyncTask)
                 binary.linkSyncTask.flatMap { linkSyncTask ->
                     binary.linkTask.flatMap { linkTask ->
                         linkTask.outputFileProperty.map { file ->
@@ -52,6 +53,9 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         }
                     }
                 }
+            }
+            inputFileProperty.fileProvider(
+                inputFile
             )
         }
         target.runTask.dependsOn(runTaskHolder)
