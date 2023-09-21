@@ -72,7 +72,5 @@ fun test() {
         true -> Assertions.assertThat(listOf("foo")).isNotEmpty
         else -> Assertions.assertThat("bar").isEqualTo("bar")
     }
-    // TODO: FIR
-    // {AbstractAssert<*, out Any!>! & EnumerableAssert<*, {Comparable<*> & java.io.Serializable!}>!} with unfolded flexible nullability
     <!DEBUG_INFO_EXPRESSION_TYPE("({AbstractAssert<*, out (Any..Any?)> & EnumerableAssert<*, out ({Comparable<*> & java.io.Serializable}..{Comparable<*>? & java.io.Serializable?})>}..{AbstractAssert<*, out (Any..Any?)>? & EnumerableAssert<*, out ({Comparable<*> & java.io.Serializable}..{Comparable<*>? & java.io.Serializable?})>?})")!>assertion<!>
 }
