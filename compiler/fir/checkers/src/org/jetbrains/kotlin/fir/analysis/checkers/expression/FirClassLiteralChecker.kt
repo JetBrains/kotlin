@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -117,7 +118,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
     private fun ConeKotlinType.isAllowedInClassLiteral(context: CheckerContext): Boolean =
         when (this) {
             is ConeClassLikeType -> {
-                if (isNonPrimitiveArray) {
+                if (isNonPrimitiveArray && !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitGenericArrayClassLiteral)) {
                     typeArguments.none { typeArgument ->
                         when (typeArgument) {
                             is ConeStarProjection -> true
