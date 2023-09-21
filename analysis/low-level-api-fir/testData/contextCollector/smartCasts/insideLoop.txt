@@ -26,7 +26,7 @@ Tower Data Context:
 Smart Casts:
     FirPropertySymbol lvar current: R|Node|
     Types:
-        kotlin/Any
+        kotlin.Any
 
 FILE: [ResolvedTo(IMPORTS)] insideLoop.kt
     public abstract [ResolvedTo(STATUS)] interface Node : R|kotlin/Any| {

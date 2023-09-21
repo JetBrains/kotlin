@@ -28,7 +28,7 @@ Tower Data Context:
 Smart Casts:
     FirValueParameterSymbol param: R|kotlin/String?|
     Types:
-        kotlin/Any
+        kotlin.Any
 
 FILE: [ResolvedTo(IMPORTS)] insideLetOnNullableReceiver.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/String?|): R|kotlin/String| {

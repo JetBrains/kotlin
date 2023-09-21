@@ -10,4 +10,4 @@
 
 /methodDeclaration.fir.kt:(870,875): error: 'val' cannot be reassigned.
 
-/methodDeclaration.fir.kt:(878,880): error: Assignment type mismatch: actual type is 'kotlin/Int', but '<local>/IntProperty' was expected.
+/methodDeclaration.fir.kt:(878,880): error: Assignment type mismatch: actual type is 'kotlin.Int', but '<local>.IntProperty' was expected.

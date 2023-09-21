@@ -41,5 +41,5 @@ Tower Data Context:
                 public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
                 public final val $$result: R|kotlin/Unit|
                     public get(): R|kotlin/Unit|
-                Type: kotlin/script/templates/standard/ScriptTemplateWithArgs
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
                 Label: <script>

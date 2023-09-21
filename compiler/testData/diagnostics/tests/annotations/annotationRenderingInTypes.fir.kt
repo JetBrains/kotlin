@@ -12,14 +12,14 @@ annotation class Ann
 fun <@Ann R : @Ann Any> f3(a: Array<@Ann R>): Array<@Ann R?> =  null!!
 
 fun test2(a: @Ann Array<in @Ann Int>) {
-    val r: Array<in Int?> = f3(<!ARGUMENT_TYPE_MISMATCH("kotlin/Array<@Ann() R>; @Ann() kotlin/Array<CapturedType(in @Ann() kotlin/Int)>")!>a<!>)
+    val r: Array<in Int?> = f3(<!ARGUMENT_TYPE_MISMATCH("kotlin.Array<@Ann() R>; @Ann() kotlin.Array<CapturedType(in @Ann() kotlin.Int)>")!>a<!>)
 }
 
 
 var test3: Int = 0
-    set(s: <!WRONG_SETTER_PARAMETER_TYPE("kotlin/Int; @Ann() kotlin/String")!>@Ann String<!>) {}
+    set(s: <!WRONG_SETTER_PARAMETER_TYPE("kotlin.Int; @Ann() kotlin.String")!>@Ann String<!>) {}
 
 
 fun f4(fn: (@Ann Int, @Ann Int) -> Unit) {}
 
-val test4 = f4 <!ARGUMENT_TYPE_MISMATCH("kotlin/Function2<@Ann() kotlin/Int, @Ann() kotlin/Int, kotlin/Unit>; kotlin/Function1<@Ann() kotlin/Int, kotlin/Unit>")!>{ single -> }<!>
+val test4 = f4 <!ARGUMENT_TYPE_MISMATCH("kotlin.Function2<@Ann() kotlin.Int, @Ann() kotlin.Int, kotlin.Unit>; kotlin.Function1<@Ann() kotlin.Int, kotlin.Unit>")!>{ single -> }<!>

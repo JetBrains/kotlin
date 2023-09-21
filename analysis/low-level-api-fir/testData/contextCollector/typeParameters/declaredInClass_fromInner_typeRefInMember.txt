@@ -24,13 +24,13 @@ Tower Data Context:
     Element 9
         Implicit receiver:
             FirRegularClassSymbol public final class Outer<MyParam> : R|kotlin/Any|
-                Type: test/Outer<MyParam>
+                Type: test.Outer<MyParam>
     Element 10
         Scope: FirMemberTypeParameterScope
     Element 11
         Implicit receiver:
             FirRegularClassSymbol public final inner class Inner<Outer(MyParam)> : R|kotlin/Any|
-                Type: test/Outer.Inner<MyParam>
+                Type: test.Outer.Inner<MyParam>
     Element 12
         Scope: FirLocalScope
             Properties:

@@ -50,7 +50,7 @@ Tower Data Context:
                     public? get(): <implicit>
 
                 public? final? class After_OtherClass : R|kotlin/Any|
-                Type: kotlin/script/templates/standard/ScriptTemplateWithArgs
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
                 Label: <script>
     Element 10
         Implicit receiver:

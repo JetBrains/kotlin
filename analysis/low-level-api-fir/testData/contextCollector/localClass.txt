@@ -22,7 +22,7 @@ Tower Data Context:
     Element 9
         Implicit receiver:
             FirRegularClassSymbol local final class Local : R|kotlin/Any|
-                Type: <local>/Local
+                Type: <local>.Local
     Element 10
         Scope: FirLocalScope
     Element 11

@@ -51,7 +51,7 @@ Tower Data Context:
                     public get(): R|kotlin/Int|
 
                 public final class After_OtherClass : R|kotlin/Any|
-                Type: kotlin/script/templates/standard/ScriptTemplateWithArgs
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
                 Label: <script>
 
 FILE: [ResolvedTo(IMPORTS)] topLevel.kts

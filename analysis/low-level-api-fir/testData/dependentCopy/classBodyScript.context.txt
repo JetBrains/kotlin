@@ -30,7 +30,7 @@ Tower Data Context:
                 lval args: R|kotlin/Array<kotlin/String>|
 
                 public? final? class A : R|kotlin/Any|
-                Type: kotlin/script/templates/standard/ScriptTemplateWithArgs
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
                 Label: <script>
     Element 10
         Implicit receiver:

@@ -24,7 +24,7 @@ Tower Data Context:
     Element 9
         Implicit receiver:
             FirRegularClassSymbol public final class Bar<B> : R|kotlin/Any|
-                Type: test/Foo.Bar<B>
+                Type: test.Foo.Bar<B>
     Element 10
         Scope: FirLocalScope
             Properties:

@@ -27,7 +27,7 @@ Smart Casts:
     FirValueParameterSymbol obj: R|kotlin/Any|
     Types:
         Foo
-        kotlin/Any
+        kotlin.Any
         Bar
 
 FILE: [ResolvedTo(IMPORTS)] argumentAsReceiver.kt

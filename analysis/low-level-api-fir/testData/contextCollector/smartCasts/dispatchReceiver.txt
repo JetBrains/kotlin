@@ -27,7 +27,7 @@ Smart Casts:
     FirRegularClassSymbol public open class Foo : R|kotlin/Any|
     Types:
         Bar
-        kotlin/Any
+        kotlin.Any
 
 FILE: [ResolvedTo(IMPORTS)] dispatchReceiver.kt
     public open [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {

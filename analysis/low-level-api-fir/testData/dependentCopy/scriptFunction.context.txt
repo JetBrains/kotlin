@@ -43,7 +43,7 @@ Tower Data Context:
                 public? final? fun foo(i: Int, action: ( (Int) -> Unit )): R|kotlin/Unit|
                 public final val $$result: <implicit>
                     public get(): <implicit>
-                Type: kotlin/script/templates/standard/ScriptTemplateWithArgs
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
                 Label: <script>
     Element 10
         Scope: FirLocalScope

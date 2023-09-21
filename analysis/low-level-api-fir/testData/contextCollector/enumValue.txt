@@ -16,7 +16,7 @@ Tower Data Context:
     Element 7
         Implicit receiver:
             FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
-                Type: kotlin/Enum.Companion
+                Type: kotlin.Enum.Companion
     Element 8
         Scope: FirNestedClassifierScopeWithSubstitution
             Classifiers:

@@ -40,5 +40,5 @@ Tower Data Context:
                 R|/foo|(R|/scriptFunction|(), <L> = foo@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline> )
                 public final val $$result: R|kotlin/Int|
                     public get(): R|kotlin/Int|
-                Type: kotlin/script/templates/standard/ScriptTemplateWithArgs
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
                 Label: <script>

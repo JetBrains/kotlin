@@ -20,7 +20,7 @@ Tower Data Context:
     Element 8
         Implicit receiver:
             FirRegularClassSymbol public final class Nested : R|kotlin/Any|
-                Type: test/Outer.Nested
+                Type: test.Outer.Nested
     Element 9
         Scope: FirLocalScope
             Properties:

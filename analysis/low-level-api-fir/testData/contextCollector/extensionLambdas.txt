@@ -22,7 +22,7 @@ Tower Data Context:
     Element 10
         Implicit receiver:
             FirAnonymousFunctionSymbol foo@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>
-                Type: kotlin/String
+                Type: kotlin.String
     Element 11
         Scope: FirLocalScope
     Element 12
@@ -30,7 +30,7 @@ Tower Data Context:
     Element 13
         Implicit receiver:
             FirAnonymousFunctionSymbol num@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>
-                Type: kotlin/Int
+                Type: kotlin.Int
     Element 14
         Scope: FirLocalScope
 

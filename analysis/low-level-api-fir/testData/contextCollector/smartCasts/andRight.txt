@@ -23,7 +23,7 @@ Smart Casts:
     FirValueParameterSymbol obj: R|kotlin/Any|
     Types:
         Foo
-        kotlin/Any
+        kotlin.Any
 
 FILE: [ResolvedTo(IMPORTS)] andRight.kt
     public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
