@@ -33,7 +33,7 @@ sealed class ExpectActualCompatibility<out D> {
         object ClassTypeParameterCount : ExpectActualCheckingIncompatible<Nothing>(FunctionTypeParameterCount.reason)
 
         object ParameterTypes : ExpectActualMatchingIncompatible<Nothing>("parameter types are different")
-        object ReturnType : ExpectActualMatchingIncompatible<Nothing>("return type is different")
+        object ReturnType : ExpectActualCheckingIncompatible<Nothing>("return type is different")
 
         object ParameterNames : ExpectActualCheckingIncompatible<Nothing>("parameter names are different")
         object TypeParameterNames : ExpectActualCheckingIncompatible<Nothing>("names of type parameters are different")
