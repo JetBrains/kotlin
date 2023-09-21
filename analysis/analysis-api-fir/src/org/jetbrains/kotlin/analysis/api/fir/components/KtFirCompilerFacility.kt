@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.psi.PsiErrorElement
+import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.components.KtCompilationResult
 import org.jetbrains.kotlin.analysis.api.components.KtCompilerFacility
@@ -37,14 +39,12 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticMarker
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
-import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.pipeline.applyIrGenerationExtensions
 import org.jetbrains.kotlin.fir.pipeline.signatureComposerForJvmFir2Ir
@@ -100,6 +100,12 @@ internal class KtFirCompilerFacility(
     ): KtCompilationResult {
         val classBuilderFactory = when (target) {
             is KtCompilerTarget.Jvm -> target.classBuilderFactory
+        }
+
+        val syntaxErrors = SyntaxErrorReportingVisitor().also(file::accept).diagnostics
+
+        if (syntaxErrors.isNotEmpty()) {
+            return KtCompilationResult.Failure(syntaxErrors)
         }
 
         val mainFirFile = getFullyResolvedFirFile(file)
@@ -684,5 +690,21 @@ private class DeclarationRegistrarVisitor(private val consumer: SymbolTable) : I
         val symbol = declaration.symbol as S
         val signature = symbol.signature ?: return
         registrar(signature, { symbol }, { declaration })
+    }
+}
+
+context(KtFirAnalysisSessionComponent)
+private class SyntaxErrorReportingVisitor : KtTreeVisitorVoid() {
+    private val collectedDiagnostics = mutableListOf<KtDiagnostic>()
+
+    val diagnostics: List<KtDiagnostic>
+        get() = Collections.unmodifiableList(collectedDiagnostics)
+
+    override fun visitErrorElement(element: PsiErrorElement) {
+        collectedDiagnostics += ConeSyntaxDiagnostic(element.errorDescription)
+            .toFirDiagnostics(analysisSession.useSiteSession, KtRealPsiSourceElement(element), callOrAssignmentSource = null)
+            .map { (it as KtPsiDiagnostic).asKtDiagnostic() }
+
+        super.visitErrorElement(element)
     }
 }

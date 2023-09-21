@@ -104,15 +104,19 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             val target = KtCompilerTarget.Jvm(ClassBuilderFactories.TEST)
             val allowedErrorFilter: (KtDiagnostic) -> Boolean = { it.factoryName in ALLOWED_ERRORS }
 
-            val actualText = when (val result = compile(ktTargetFile, compilerConfiguration, target, allowedErrorFilter)) {
+            val result = compile(ktTargetFile, compilerConfiguration, target, allowedErrorFilter)
+
+            val actualText = when (result) {
                 is KtCompilationResult.Failure -> result.errors.joinToString("\n") { dumpDiagnostic(it) }
                 is KtCompilationResult.Success -> dumpClassFiles(result.output)
             }
 
             testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
-        }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(irCollector.result, extension = ".ir.txt")
+            if (result is KtCompilationResult.Success) {
+                testServices.assertions.assertEqualsToTestDataFileSibling(irCollector.result, extension = ".ir.txt")
+            }
+        }
     }
 
     override fun configureTest(builder: TestConfigurationBuilder) {

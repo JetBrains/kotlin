@@ -133,6 +133,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
             runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/simple.kt");
         }
 
+        @Test
+        @TestMetadata("syntaxError.kt")
+        public void testSyntaxError() throws Exception {
+            runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/syntaxError.kt");
+        }
+
         @Nested
         @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing")
         @TestDataPath("$PROJECT_ROOT")
