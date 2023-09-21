@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.toMetadataVersion
+import java.util.jar.JarFile
 
 class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCustomBinariesTest() {
     override val languageVersion: LanguageVersion
@@ -53,5 +57,24 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
             "library", additionalOptions = listOf("-Xgenerate-strict-metadata-version", "-Xmetadata-version=$nextMetadataVersion")
         )
         compileKotlin("source.kt", tmpdir, listOf(library))
+    }
+
+    // If this test fails, then bootstrap compiler most likely should be advanced
+    fun testPreReleaseFlagIsConsistentBetweenBootstrapAndCurrentCompiler() {
+        val bootstrapCompiler = JarFile(PathUtil.kotlinPathsForCompiler.compilerPath)
+        val classFromBootstrapCompiler = bootstrapCompiler.getEntry(LanguageFeature::class.java.name.replace(".", "/") + ".class")
+        checkPreReleaseness(
+            bootstrapCompiler.getInputStream(classFromBootstrapCompiler).readBytes(),
+            KotlinCompilerVersion.isPreRelease()
+        )
+    }
+
+    fun testPreReleaseFlagIsConsistentBetweenStdlibAndCurrentCompiler() {
+        val stdlib = JarFile(PathUtil.kotlinPathsForCompiler.stdlibPath)
+        val classFromStdlib = stdlib.getEntry(KotlinVersion::class.java.name.replace(".", "/") + ".class")
+        checkPreReleaseness(
+            stdlib.getInputStream(classFromStdlib).readBytes(),
+            KotlinCompilerVersion.isPreRelease()
+        )
     }
 }

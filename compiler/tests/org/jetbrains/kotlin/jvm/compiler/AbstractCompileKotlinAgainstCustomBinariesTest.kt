@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.cli.transformMetadataInClassFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.toMetadataVersion
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -708,25 +706,6 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         assertEquals("Output:\n$output", ExitCode.COMPILATION_ERROR, exitCode)
     }
 
-    // If this test fails, then bootstrap compiler most likely should be advanced
-    fun testPreReleaseFlagIsConsistentBetweenBootstrapAndCurrentCompiler() {
-        val bootstrapCompiler = JarFile(PathUtil.kotlinPathsForCompiler.compilerPath)
-        val classFromBootstrapCompiler = bootstrapCompiler.getEntry(LanguageFeature::class.java.name.replace(".", "/") + ".class")
-        checkPreReleaseness(
-            bootstrapCompiler.getInputStream(classFromBootstrapCompiler).readBytes(),
-            KotlinCompilerVersion.isPreRelease()
-        )
-    }
-
-    fun testPreReleaseFlagIsConsistentBetweenStdlibAndCurrentCompiler() {
-        val stdlib = JarFile(PathUtil.kotlinPathsForCompiler.stdlibPath)
-        val classFromStdlib = stdlib.getEntry(KotlinVersion::class.java.name.replace(".", "/") + ".class")
-        checkPreReleaseness(
-            stdlib.getInputStream(classFromStdlib).readBytes(),
-            KotlinCompilerVersion.isPreRelease()
-        )
-    }
-
     fun testAnonymousObjectTypeMetadata() {
         val library = compileCommonLibrary(
             libraryName = "library",
@@ -786,7 +765,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         }
     }
 
-    private fun checkPreReleaseness(classFileBytes: ByteArray, shouldBePreRelease: Boolean) {
+    protected fun checkPreReleaseness(classFileBytes: ByteArray, shouldBePreRelease: Boolean) {
         // If there's no "xi" field in the Metadata annotation, it's value is assumed to be 0, i.e. _not_ pre-release
         var isPreRelease = false
 
