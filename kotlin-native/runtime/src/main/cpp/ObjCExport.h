@@ -113,6 +113,7 @@ id Kotlin_ObjCExport_convertUnitToRetained(ObjHeader* unitInstance);
 id Kotlin_ObjCExport_GetAssociatedObject(ObjHeader* obj);
 void Kotlin_ObjCExport_AbstractMethodCalled(id self, SEL selector);
 void Kotlin_ObjCExport_AbstractClassConstructorCalled(id self, const TypeInfo *clazz);
+void setAssociatedTypeInfo(Class clazz, const TypeInfo* typeInfo);
 OBJ_GETTER(Kotlin_ObjCExport_refFromObjC, id obj);
 RUNTIME_NOTHROW OBJ_GETTER(Kotlin_ObjCExport_AllocInstanceWithAssociatedObject,
                            const TypeInfo* typeInfo, id associatedObject);

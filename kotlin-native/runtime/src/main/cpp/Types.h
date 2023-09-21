@@ -60,7 +60,7 @@ extern const TypeInfo* theIntArrayTypeInfo;
 extern const TypeInfo* theLongArrayTypeInfo;
 extern const TypeInfo* theNativePtrArrayTypeInfo;
 extern const TypeInfo* theFloatArrayTypeInfo;
-extern const TypeInfo* theForeignObjCObjectTypeInfo;
+extern const TypeInfo* theSwiftValueTypeInfo;
 extern const TypeInfo* theFreezableAtomicReferenceTypeInfo;
 extern const TypeInfo* theObjCObjectWrapperTypeInfo;
 extern const TypeInfo* theOpaqueFunctionTypeInfo;

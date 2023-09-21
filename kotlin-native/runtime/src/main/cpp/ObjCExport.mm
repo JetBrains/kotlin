@@ -60,7 +60,7 @@ extern "C" const TypeInfo* Kotlin_ObjCExport_getAssociatedTypeInfo(Class clazz) 
   return (const TypeInfo*)[objc_getAssociatedObject(clazz, &associatedTypeInfoKey) pointerValue];
 }
 
-static void setAssociatedTypeInfo(Class clazz, const TypeInfo* typeInfo) {
+void setAssociatedTypeInfo(Class clazz, const TypeInfo* typeInfo) {
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
   // Note: [NSValue valueWithPointer:] uses autorelease (without possibility to eliminate this at the call site),
