@@ -599,6 +599,12 @@ private val propertyAccessorInlinerLoweringPhase = makeWasmModulePhase(
     description = "[Optimization] Inline property accessors"
 )
 
+private val invokeOnExportedFunctionExitLowering = makeWasmModulePhase(
+    ::InvokeOnExportedFunctionExitLowering,
+    name = "InvokeOnExportedFunctionExitLowering",
+    description = "This pass is needed to call exported function exit callback for WASI",
+)
+
 private val expressionBodyTransformer = makeWasmModulePhase(
     ::ExpressionBodyTransformer,
     name = "ExpressionBodyTransformer",
@@ -691,6 +697,8 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             addContinuationToNonLocalSuspendFunctionsLoweringPhase then
             addContinuationToFunctionCallsLoweringPhase then
             addMainFunctionCallsLowering then
+
+            invokeOnExportedFunctionExitLowering then
 
             unhandledExceptionLowering then
 
