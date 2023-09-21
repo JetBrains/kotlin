@@ -19,7 +19,7 @@ object FirThrowExpressionTypeChecker : FirThrowExpressionChecker() {
 
         if (!actualType.isSubtypeOf(expectedType, context.session)) {
             reporter.reportOn(
-                expression.exception.source,
+                expression.exception.source ?: expression.source,
                 FirErrors.TYPE_MISMATCH,
                 expectedType,
                 actualType,

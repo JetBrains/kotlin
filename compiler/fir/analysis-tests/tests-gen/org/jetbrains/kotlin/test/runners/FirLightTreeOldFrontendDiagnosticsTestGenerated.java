@@ -322,6 +322,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("EmptyThrow.kt")
+        public void testEmptyThrow() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/EmptyThrow.kt");
+        }
+
+        @Test
         @TestMetadata("EnumEntryAsType.kt")
         public void testEnumEntryAsType() throws Exception {
             runTest("compiler/testData/diagnostics/tests/EnumEntryAsType.kt");
