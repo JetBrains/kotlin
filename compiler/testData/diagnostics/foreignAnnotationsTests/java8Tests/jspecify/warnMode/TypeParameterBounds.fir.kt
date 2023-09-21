@@ -20,21 +20,26 @@ public class B<T> {
 public class Test {}
 
 // FILE: main.kt
-fun <T : Test> main(a1: A<Any?>, a2: A<Test>, b1: B<Any?>, b2: B<Test>, x: T): Unit {
+// jspecify_nullness_mismatch, jspecify_nullness_mismatch
+fun <T : Test> main(a1: A<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>Any?<!>>, a2: A<Test>, b1: B<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>Any?<!>>, b2: B<Test>, x: T): Unit {
     a1.foo(null)
-    a1.bar<T?>(null)
+    // jspecify_nullness_mismatch
+    a1.bar<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>T?<!>>(null)
     a1.bar<T>(x)
 
     a2.foo(null)
-    a2.bar<T?>(null)
+    // jspecify_nullness_mismatch
+    a2.bar<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>T?<!>>(null)
     a2.bar<T>(x)
 
     b1.foo(null)
-    b1.bar<T?>(null)
+    // jspecify_nullness_mismatch
+    b1.bar<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>T?<!>>(null)
     b1.bar<T>(x)
 
     // jspecify_nullness_mismatch
     b2.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    b2.bar<T?>(null)
+    // jspecify_nullness_mismatch
+    b2.bar<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>T?<!>>(null)
     b2.bar<T>(x)
 }

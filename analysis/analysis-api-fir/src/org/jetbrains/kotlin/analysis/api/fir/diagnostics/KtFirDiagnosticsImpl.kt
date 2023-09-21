@@ -4250,6 +4250,20 @@ internal class UpperBoundCannotBeArrayImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.UpperBoundCannotBeArray
 
+internal class UpperBoundViolatedBasedOnJavaAnnotationsImpl(
+    override val expectedUpperBound: KtType,
+    override val actualUpperBound: KtType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.UpperBoundViolatedBasedOnJavaAnnotations
+
+internal class UpperBoundViolatedInTypealiasExpansionBasedOnJavaAnnotationsImpl(
+    override val expectedUpperBound: KtType,
+    override val actualUpperBound: KtType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.UpperBoundViolatedInTypealiasExpansionBasedOnJavaAnnotations
+
 internal class StrictfpOnClassImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

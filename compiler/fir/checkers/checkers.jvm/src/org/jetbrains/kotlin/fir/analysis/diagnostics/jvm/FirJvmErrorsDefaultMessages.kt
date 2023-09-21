@@ -80,6 +80,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZ
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_ON_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_ON_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUND_CANNOT_BE_ARRAY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE
 
@@ -106,6 +108,19 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Override ''{0}'' has incorrect nullability in its signature compared to the overridden declaration ''{1}''.",
             SYMBOL,
             SYMBOL,
+        )
+
+        map.put(
+            UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS,
+            "Type argument is not within its bounds: should be subtype of ''{0}''.",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
+            UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS,
+            "Type argument is not within its bounds: should be subtype of ''{0}''.",
+            RENDER_TYPE,
+            RENDER_TYPE
         )
 
         map.put(UPPER_BOUND_CANNOT_BE_ARRAY, "Upper bound of type parameter cannot be an array.")

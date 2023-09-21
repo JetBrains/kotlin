@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -179,6 +181,7 @@ fun checkUpperBoundViolated(
 ) {
     val count = minOf(typeParameters.size, typeArguments.size)
     val typeSystemContext = context.session.typeContext
+    val additionalUpperBoundsProvider = context.session.platformUpperBoundsProvider
 
     for (index in 0 until count) {
         val argument = typeArguments[index]
@@ -204,6 +207,22 @@ fun checkUpperBoundViolated(
                         else -> FirErrors.UPPER_BOUND_VIOLATED
                     }
                     reporter.reportOn(argumentSource, factory, upperBound, argumentType.type, context)
+                } else {
+                    // Only check if the original check was successful to prevent duplicate diagnostics
+                    val additionalUpperBound = additionalUpperBoundsProvider?.getAdditionalUpperBound(upperBound)
+                    if (additionalUpperBound != null && !AbstractTypeChecker.isSubtypeOf(
+                            typeSystemContext,
+                            argumentType,
+                            additionalUpperBound,
+                            stubTypesEqualToAnything = true
+                        )
+                    ) {
+                        val factory = when {
+                            isReportExpansionError && argumentTypeRef == null -> additionalUpperBoundsProvider.diagnosticForTypeAlias
+                            else -> additionalUpperBoundsProvider.diagnostic
+                        }
+                        reporter.reportOn(argumentSource, factory, upperBound, argumentType.type, context)
+                    }
                 }
             }
 
@@ -262,3 +281,12 @@ fun ConeTypeProjection.withSource(source: FirTypeRefSource?): ConeTypeProjection
         }
     }
 }
+
+interface FirPlatformUpperBoundsProvider : FirSessionComponent {
+    val diagnostic: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType>
+    val diagnosticForTypeAlias: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType>
+
+    fun getAdditionalUpperBound(coneKotlinType: ConeKotlinType): ConeKotlinType?
+}
+
+val FirSession.platformUpperBoundsProvider: FirPlatformUpperBoundsProvider? by FirSession.nullableSessionComponentAccessor()

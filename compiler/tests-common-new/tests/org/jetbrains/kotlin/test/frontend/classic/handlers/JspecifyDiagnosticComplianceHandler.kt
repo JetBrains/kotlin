@@ -57,6 +57,7 @@ internal val diagnosticsToJspecifyMarks = mapOf(
 
         FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS to "jspecify_nullness_mismatch",
         FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS to "jspecify_nullness_mismatch",
+        FirJvmErrors.UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS to "jspecify_nullness_mismatch",
     ),
     ReportLevel.STRICT to mapOf(
         Errors.TYPE_MISMATCH to "jspecify_nullness_mismatch",

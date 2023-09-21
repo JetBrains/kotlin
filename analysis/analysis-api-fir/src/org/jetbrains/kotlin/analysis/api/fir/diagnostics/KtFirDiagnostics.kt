@@ -3523,6 +3523,18 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = UpperBoundCannotBeArray::class
     }
 
+    interface UpperBoundViolatedBasedOnJavaAnnotations : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = UpperBoundViolatedBasedOnJavaAnnotations::class
+        val expectedUpperBound: KtType
+        val actualUpperBound: KtType
+    }
+
+    interface UpperBoundViolatedInTypealiasExpansionBasedOnJavaAnnotations : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = UpperBoundViolatedInTypealiasExpansionBasedOnJavaAnnotations::class
+        val expectedUpperBound: KtType
+        val actualUpperBound: KtType
+    }
+
     interface StrictfpOnClass : KtFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = StrictfpOnClass::class
     }

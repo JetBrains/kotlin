@@ -50,6 +50,8 @@ object FirJvmErrors {
 
     // Type parameters
     val UPPER_BOUND_CANNOT_BE_ARRAY by error0<PsiElement>()
+    val UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS by warning2<PsiElement, ConeKotlinType, ConeKotlinType>()
+    val UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS by warning2<PsiElement, ConeKotlinType, ConeKotlinType>()
 
     // annotations
     val STRICTFP_ON_CLASS by error0<KtAnnotationEntry>()
