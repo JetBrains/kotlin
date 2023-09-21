@@ -333,7 +333,7 @@ kotlin {
                 optIn("kotlin.io.path.ExperimentalPathApi")
             }
             dependencies {
-                api(project(":kotlin-test:kotlin-test-junit"))
+                api(kotlinTest("junit"))
             }
             kotlin.srcDir("jvm/test")
             kotlin.srcDir("jdk7/test")
@@ -342,7 +342,7 @@ kotlin {
 
         val jvmLongRunningTest by getting {
             dependencies {
-                api(project(":kotlin-test:kotlin-test-junit"))
+                api(kotlinTest("junit"))
             }
             kotlin.srcDir("jvm/testLongRunning")
         }

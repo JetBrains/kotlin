@@ -302,7 +302,6 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":prepare:ide-plugin-dependencies:kotlin-backend-native-for-ide".takeIf { kotlinBuildProperties.isKotlinNativeEnabled },
     ":prepare:ide-plugin-dependencies:kotlin-compiler-tests-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-testdata-for-ide",
-    ":prepare:ide-plugin-dependencies:kotlin-stdlib-minimal-for-test-for-ide",
     ":prepare:ide-plugin-dependencies:low-level-api-fir-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-impl-base-for-ide",
@@ -320,6 +319,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":prepare:ide-plugin-dependencies:kotlin-compiler-common-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-fe10-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-fir-for-ide",
+
     ":prepare:kotlin-jps-plugin",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
@@ -328,15 +328,8 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":kotlin-scripting-compiler-impl",
     ":kotlin-android-extensions-runtime",
     ":plugins:parcelize:parcelize-runtime",
-    ":kotlin-stdlib-common",
-    ":kotlin-stdlib",
-    ":kotlin-test",
     ":kotlin-daemon",
     ":kotlin-compiler",
-    ":kotlin-annotations-jvm",
-    ":kotlin-stdlib-jdk7",
-    ":kotlin-stdlib-jdk8",
-    ":kotlin-reflect",
     ":kotlin-main-kts",
     ":kotlin-dom-api-compat"
 )

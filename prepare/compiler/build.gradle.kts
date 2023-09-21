@@ -108,10 +108,10 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-scripting-compiler-impl",
     ":kotlin-scripting-jvm",
     ":js:js.engines",
-    ":kotlin-test:kotlin-test-junit",
-    ":kotlin-test:kotlin-test-junit5",
-    ":kotlin-test:kotlin-test-jvm",
-    ":kotlin-test:kotlin-test-testng",
+//    ":kotlin-test:kotlin-test-junit",
+//    ":kotlin-test:kotlin-test-junit5",
+//    ":kotlin-test:kotlin-test-jvm",
+//    ":kotlin-test:kotlin-test-testng",
     ":libraries:tools:mutability-annotations-compat",
     ":plugins:android-extensions-compiler",
     ":plugins:jvm-abi-gen"
@@ -136,10 +136,10 @@ val distCompilerPluginProjectsCompat = listOf(
 val distSourcesProjects = listOfNotNull(
     ":kotlin-annotations-jvm",
     ":kotlin-script-runtime",
-    ":kotlin-test:kotlin-test-js".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
-    ":kotlin-test:kotlin-test-junit",
-    ":kotlin-test:kotlin-test-junit5",
-    ":kotlin-test:kotlin-test-testng"
+//    ":kotlin-test:kotlin-test-js".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
+//    ":kotlin-test:kotlin-test-junit",
+//    ":kotlin-test:kotlin-test-junit5",
+//    ":kotlin-test:kotlin-test-testng"
 )
 
 configurations.all {
@@ -169,7 +169,7 @@ dependencies {
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         libraries(kotlinStdlib(classifier = "distJsJar"))
         libraries(kotlinStdlib(classifier = "distJsKlib"))
-        libraries(project(":kotlin-test:kotlin-test-js", configuration = "distLibrary"))
+//        libraries(project(":kotlin-test:kotlin-test-js", configuration = "distLibrary"))
     }
 
     librariesStripVersion(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
@@ -209,12 +209,12 @@ dependencies {
         sources(project(":kotlin-stdlib", configuration = "distSources"))
         sources(project(":kotlin-stdlib", configuration = "distJsSourcesJar"))
         sources(project(":kotlin-reflect", configuration = "sources"))
-        sources(project(":kotlin-test", "combinedJvmSourcesJar"))
+//        sources(project(":kotlin-test", "combinedJvmSourcesJar"))
 
         distStdlibMinimalForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
 
-        distJSContents(project(":kotlin-stdlib", configuration = "distJsContent"))
-        distJSContents(project(":kotlin-test:kotlin-test-js", configuration = "distJs"))
+//        distJSContents(project(":kotlin-stdlib", configuration = "distJsContent"))
+//        distJSContents(project(":kotlin-test:kotlin-test-js", configuration = "distJs"))
 
         distCommonContents(project(":kotlin-stdlib", configuration = "commonMainMetadataElements"))
         distCommonContents(project(":kotlin-stdlib", configuration = "metadataSourcesElements"))

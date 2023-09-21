@@ -26,8 +26,8 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:fir:raw-fir:psi2fir"))
 
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
+    testCompileOnly(kotlinTest("jvm"))
+    testCompileOnly(kotlinTest("junit"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 

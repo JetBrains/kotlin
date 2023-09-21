@@ -52,7 +52,7 @@ dependencies {
     kotlinNativeEmbedded(project(":kotlin-native:endorsedLibraries:kotlinx.cli", "jvmRuntimeElements"))
     kotlinNativeEmbedded(project(":kotlin-compiler")) { isTransitive = false }
     testImplementation(libs.junit4)
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlinTest("junit"))
 }
 
 val compiler = embeddableCompiler("kotlin-native-compiler-embeddable") {

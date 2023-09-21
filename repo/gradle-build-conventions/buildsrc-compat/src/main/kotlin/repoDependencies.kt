@@ -53,12 +53,27 @@ fun Project.commonDependencyVersion(group: String, artifact: String): String =
 fun kotlinDep(artifactBaseName: String, version: String, classifier: String? = null): String =
     listOfNotNull("org.jetbrains.kotlin:kotlin-$artifactBaseName:$version", classifier).joinToString(":")
 
+@Suppress("UNUSED_PARAMETER", "UnusedReceiverParameter")
 @JvmOverloads
 fun Project.kotlinStdlib(suffix: String? = null, classifier: String? = null): Any {
-    return if (kotlinBuildProperties.useBootstrapStdlib)
-        kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), bootstrapKotlinVersion, classifier)
-    else
-        dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"), classifier)
+    return         kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), "1.9.10", classifier)
+
+//    return if (kotlinBuildProperties.useBootstrapStdlib)
+//        kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), bootstrapKotlinVersion, classifier)
+//    else
+//        dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"), classifier)
+}
+
+
+@Suppress("UNUSED_PARAMETER", "UnusedReceiverParameter")
+@JvmOverloads
+fun Project.kotlinTest(suffix: String? = null, classifier: String? = null): Any {
+    return         kotlinDep(listOfNotNull("test", if (suffix == "jvm") null else suffix).joinToString("-"), "1.9.10", classifier)
+
+//    return if (kotlinBuildProperties.useBootstrapStdlib)
+//        kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), bootstrapKotlinVersion, classifier)
+//    else
+//        dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"), classifier)
 }
 
 fun Project.kotlinBuiltins(): Any = kotlinBuiltins(forJvm = false)

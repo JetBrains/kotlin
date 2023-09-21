@@ -25,7 +25,7 @@ dependencies {
     api(project(":kotlin-gradle-plugin-idea"))
     embedded("com.google.protobuf:protobuf-java:3.21.9")
     embedded("com.google.protobuf:protobuf-kotlin:3.21.9")
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlinTest("junit"))
     testImplementation(kotlin("reflect"))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
 }

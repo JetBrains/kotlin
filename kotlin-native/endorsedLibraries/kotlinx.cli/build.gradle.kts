@@ -30,7 +30,7 @@ kotlin {
             // JVM-specific tests and their dependencies:
             compilations["test"].defaultSourceSet {
                 dependencies {
-                    implementation(project(":kotlin-test:kotlin-test-junit"))
+                    implementation(kotlinTest("junit"))
                 }
             }
 

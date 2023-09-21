@@ -126,7 +126,8 @@ tasks.check {
 }
 
 dependencies {
-    api(project(":kotlin-test:kotlin-test-js-ir"))
+    api(kotlinTest("js"))
+//    api(project(":kotlin-test:kotlin-test-js-ir"))
 }
 
 tasks.named("compileTestKotlinJs") {

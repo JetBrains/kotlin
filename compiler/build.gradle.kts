@@ -12,13 +12,13 @@ dependencies {
     testImplementation(intellijCore()) // Should come before compiler, because of "progarded" stuff needed for tests
 
     testApi(project(":kotlin-script-runtime"))
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
+    testApi(kotlinTest("jvm"))
     
     testApi(kotlinStdlib())
 
     testImplementation(libs.junit4)
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
+    testCompileOnly(kotlinTest("jvm"))
+    testCompileOnly(kotlinTest("junit"))
     testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:fir:raw-fir:psi2fir"))

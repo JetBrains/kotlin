@@ -17,7 +17,7 @@ extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 dependencies {
     compileOnly(kotlinStdlib())
 
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlinTest("junit"))
     testImplementation(libs.junit4)
 }
 
