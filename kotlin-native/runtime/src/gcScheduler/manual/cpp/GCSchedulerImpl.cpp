@@ -4,6 +4,7 @@
  */
 
 #include "GCSchedulerImpl.hpp"
+#include <cstdint>
 
 #include "CallsChecker.hpp"
 #include "GC.hpp"
@@ -27,6 +28,15 @@ void gcScheduler::GCScheduler::schedule() noexcept {
     mm::GlobalData::Instance().gc().Schedule();
 }
 
+void gcScheduler::GCScheduler::scheduleAndWaitResumed() noexcept {
+    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
+    CallsCheckerIgnoreGuard guard;
+    auto& gc = mm::GlobalData::Instance().gc();
+    auto epoch = gc.Schedule();
+    NativeOrUnregisteredThreadGuard stateGuard(/* reentrant = */ true);
+    gc.WaitResumed(epoch);
+}
+
 void gcScheduler::GCScheduler::scheduleAndWaitFinished() noexcept {
     RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     CallsCheckerIgnoreGuard guard;
@@ -45,6 +55,6 @@ void gcScheduler::GCScheduler::scheduleAndWaitFinalized() noexcept {
     gc.WaitFinalizers(epoch);
 }
 
-ALWAYS_INLINE void gcScheduler::GCScheduler::setAllocatedBytes(size_t bytes) noexcept {}
+ALWAYS_INLINE int64_t gcScheduler::GCScheduler::setAllocatedBytes(size_t bytes) noexcept { return 0; }
 ALWAYS_INLINE void gcScheduler::GCScheduler::onGCStart() noexcept {}
 ALWAYS_INLINE void gcScheduler::GCScheduler::onGCFinish(int64_t epoch, size_t aliveBytes) noexcept {}

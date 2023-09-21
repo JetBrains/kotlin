@@ -7,6 +7,7 @@
 
 #include "GCScheduler.hpp"
 
+#include <cstdint>
 #include <functional>
 
 #include "GCSchedulerConfig.hpp"
@@ -47,32 +48,31 @@ public:
         RuntimeLogInfo({kTagGC}, "Aggressive GC scheduler initialized");
     }
 
-    void setAllocatedBytes(size_t bytes) noexcept {
+    int64_t setAllocatedBytes(size_t bytes) noexcept {
         // Still checking allocations: with a long running loop all safepoints
         // might be "met", so that's the only trigger to not run out of memory.
         auto boundary = heapGrowthController_.boundaryForHeapSize(bytes);
         switch (boundary) {
             case HeapGrowthController::MemoryBoundary::kNone:
-                safePoint();
-                return;
+                return safePoint();
             case HeapGrowthController::MemoryBoundary::kTrigger:
                 RuntimeLogDebug({kTagGC}, "Scheduling GC by allocation");
-                scheduleGC_.scheduleNextEpochIfNotInProgress();
-                return;
+                return scheduleGC_.scheduleNextEpochIfNotInProgress();
             case HeapGrowthController::MemoryBoundary::kTarget:
                 RuntimeLogDebug({kTagGC}, "Scheduling GC by allocation");
                 auto epoch = scheduleGC_.scheduleNextEpochIfNotInProgress();
                 RuntimeLogWarning({kTagGC}, "Pausing the mutators");
                 mutatorAssists_.requestAssists(epoch);
-                return;
+                return epoch;
         }
     }
 
-    void safePoint() noexcept {
+    int64_t safePoint() noexcept {
         if (safePointTracker_.registerCurrentSafePoint(1)) {
             RuntimeLogDebug({kTagGC}, "Scheduling GC by safepoint");
-            schedule();
+            return schedule();
         }
+        return 0;
     }
 
     void onGCFinish(int64_t epoch, size_t aliveBytes) noexcept {

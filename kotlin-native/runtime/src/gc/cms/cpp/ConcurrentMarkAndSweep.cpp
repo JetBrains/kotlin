@@ -193,6 +193,7 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 #endif
 
     resumeTheWorld(gcHandle);
+    state_.resumed(epoch);
 
 #ifndef CUSTOM_ALLOCATOR
     alloc::SweepExtraObjects<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, *extraObjectFactoryIterable);

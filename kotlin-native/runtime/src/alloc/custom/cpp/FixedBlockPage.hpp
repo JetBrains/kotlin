@@ -32,6 +32,7 @@ struct alignas(8) FixedBlockCell {
 class alignas(8) FixedBlockPage {
 public:
     using GCSweepScope = gc::GCHandle::GCSweepScope;
+    static inline constexpr const size_t PageSize = 256 * 1024;
 
     static GCSweepScope currentGCSweepScope(gc::GCHandle& handle) noexcept { return handle.sweep(); }
 

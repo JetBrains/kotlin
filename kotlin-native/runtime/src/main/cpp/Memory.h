@@ -602,6 +602,9 @@ extern const bool kSupportsMultipleMutators;
 void StartFinalizerThreadIfNeeded() noexcept;
 bool FinalizersThreadIsRunning() noexcept;
 
+// May trigger GC and wait during STW
+bool TryGCBeforeMemoryAllocation(size_t extraBytes) noexcept;
+// May trigger GC, but does not wait
 void OnMemoryAllocation(size_t totalAllocatedBytes) noexcept;
 
 void initObjectPool() noexcept;

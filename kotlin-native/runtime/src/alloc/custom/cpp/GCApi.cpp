@@ -10,6 +10,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <limits>
+#include "GlobalData.hpp"
+#include "SafePoint.hpp"
+#include "ThreadRegistry.hpp"
 
 #ifndef KONAN_WINDOWS
 #include <sys/mman.h>
@@ -24,6 +27,7 @@
 #include "GCStatistics.hpp"
 #include "KAssert.h"
 #include "Memory.h"
+#include "ThreadData.hpp"
 
 namespace {
 

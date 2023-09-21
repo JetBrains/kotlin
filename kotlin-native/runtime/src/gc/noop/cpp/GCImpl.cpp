@@ -55,6 +55,8 @@ int64_t gc::GC::Schedule() noexcept {
     return 0;
 }
 
+void gc::GC::WaitResumed(int64_t epoch) noexcept {}
+
 void gc::GC::WaitFinished(int64_t epoch) noexcept {}
 
 void gc::GC::WaitFinalizers(int64_t epoch) noexcept {}

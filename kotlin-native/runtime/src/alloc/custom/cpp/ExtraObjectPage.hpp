@@ -36,6 +36,7 @@ using FinalizerQueue = AtomicStack<ExtraObjectCell>;
 class alignas(8) ExtraObjectPage {
 public:
     using GCSweepScope = gc::GCHandle::GCSweepExtraObjectsScope;
+    static inline constexpr const size_t PageSize = 64 * 1024;
 
     static GCSweepScope currentGCSweepScope(gc::GCHandle& handle) noexcept { return handle.sweepExtraObjects(); }
 

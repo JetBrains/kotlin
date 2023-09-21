@@ -12,7 +12,9 @@
 
 #include "AtomicStack.hpp"
 #include "ExtraObjectPage.hpp"
+#include "GCApi.hpp"
 #include "GCStatistics.hpp"
+#include "Memory.h"
 
 namespace kotlin::alloc {
 
@@ -46,28 +48,34 @@ public:
 
     T* GetPage(uint32_t cellCount, FinalizerQueue& finalizerQueue, std::atomic<std::size_t>& concurrentSweepersCount_) noexcept {
         T* page;
-        if ((page = ready_.Pop())) {
-            used_.Push(page);
-            return page;
-        }
-        {
-            auto handle = gc::GCHandle::currentEpoch();
-            ScopeGuard counterGuard(
-                    [&]() { ++concurrentSweepersCount_; },
-                    [&]() { --concurrentSweepersCount_; }
-            );
+        int limit = 1;
+        for (int iter = 0 ; iter < limit ; iter++) {
+            if ((page = ready_.Pop())) {
+                used_.Push(page);
+                return page;
+            }
+            {
+                auto handle = gc::GCHandle::currentEpoch();
+                ScopeGuard counterGuard(
+                        [&]() { ++concurrentSweepersCount_; },
+                        [&]() { --concurrentSweepersCount_; }
+                );
 
-            if ((page = unswept_.Pop())) {
-                // If there're unswept_ pages, the GC is in progress.
-                GCSweepScope sweepHandle = T::currentGCSweepScope(*handle);
-                if ((page = SweepSingle(sweepHandle, page, unswept_, used_, finalizerQueue))) {
-                    return page;
+                if ((page = unswept_.Pop())) {
+                    // If there're unswept_ pages, the GC is in progress.
+                    GCSweepScope sweepHandle = T::currentGCSweepScope(*handle);
+                    if ((page = SweepSingle(sweepHandle, page, unswept_, used_, finalizerQueue))) {
+                        return page;
+                    }
                 }
             }
-        }
-        if ((page = empty_.Pop())) {
-            used_.Push(page);
-            return page;
+            if ((page = empty_.Pop())) {
+                used_.Push(page);
+                return page;
+            }
+            if (!used_.isEmpty() && TryGCBeforeMemoryAllocation(T::PageSize)) {
+                limit = 2;
+            }
         }
         return NewPage(cellCount);
     }

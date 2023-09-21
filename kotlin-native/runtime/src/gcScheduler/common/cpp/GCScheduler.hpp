@@ -6,6 +6,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <functional>
 #include <utility>
@@ -47,10 +48,13 @@ public:
     GCSchedulerConfig& config() noexcept { return config_; }
 
     // Called by different mutator threads.
-    void setAllocatedBytes(size_t bytes) noexcept;
+    int64_t setAllocatedBytes(size_t bytes) noexcept;
 
     // Can be called by any thread.
     void schedule() noexcept;
+
+    // Can be called by any thread
+    void scheduleAndWaitResumed() noexcept;
 
     // Can be called by any thread.
     void scheduleAndWaitFinished() noexcept;

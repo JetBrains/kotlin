@@ -31,6 +31,7 @@ extern "C" const int32_t Kotlin_concurrentWeakSweep;
 extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
 extern "C" const int32_t Kotlin_freezingEnabled;
 extern "C" const int32_t Kotlin_freezingChecksEnabled;
+extern "C" const int32_t Kotlin_gcBeforeAlloc;
 
 class SourceInfo;
 
@@ -102,6 +103,10 @@ ALWAYS_INLINE inline bool gcMarkSingleThreaded() noexcept {
     return Kotlin_gcMarkSingleThreaded != 0;
 }
 
+
+ALWAYS_INLINE inline bool gcBeforeAlloc() noexcept {
+    return Kotlin_gcBeforeAlloc != 0;
+}
 
 WorkerExceptionHandling workerExceptionHandling() noexcept;
 DestroyRuntimeMode destroyRuntimeMode() noexcept;

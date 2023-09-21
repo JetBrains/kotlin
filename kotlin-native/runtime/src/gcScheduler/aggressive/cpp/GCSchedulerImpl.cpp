@@ -4,6 +4,7 @@
  */
 
 #include "GCSchedulerImpl.hpp"
+#include <cstdint>
 
 #include "GlobalData.hpp"
 #include "Memory.h"
@@ -39,6 +40,13 @@ void gcScheduler::GCScheduler::schedule() noexcept {
     impl().impl().schedule();
 }
 
+void gcScheduler::GCScheduler::scheduleAndWaitResumed() noexcept {
+    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
+    auto epoch = impl().impl().schedule();
+    NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
+    mm::GlobalData::Instance().gc().WaitResumed(epoch);
+}
+
 void gcScheduler::GCScheduler::scheduleAndWaitFinished() noexcept {
     RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     auto epoch = impl().impl().schedule();
@@ -53,8 +61,8 @@ void gcScheduler::GCScheduler::scheduleAndWaitFinalized() noexcept {
     mm::GlobalData::Instance().gc().WaitFinalizers(epoch);
 }
 
-ALWAYS_INLINE void gcScheduler::GCScheduler::setAllocatedBytes(size_t bytes) noexcept {
-    impl().impl().setAllocatedBytes(bytes);
+ALWAYS_INLINE int64_t gcScheduler::GCScheduler::setAllocatedBytes(size_t bytes) noexcept {
+    return impl().impl().setAllocatedBytes(bytes);
 }
 
 ALWAYS_INLINE void gcScheduler::GCScheduler::onGCStart() noexcept {}

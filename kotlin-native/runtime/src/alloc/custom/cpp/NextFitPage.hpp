@@ -20,6 +20,7 @@ namespace kotlin::alloc {
 class alignas(8) NextFitPage {
 public:
     using GCSweepScope = gc::GCHandle::GCSweepScope;
+    static inline constexpr const size_t PageSize = 256 * 1024;
 
     static GCSweepScope currentGCSweepScope(gc::GCHandle& handle) noexcept { return handle.sweep(); }
 

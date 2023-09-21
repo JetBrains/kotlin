@@ -4,6 +4,7 @@
  */
 
 #include "Memory.h"
+#include "GlobalData.hpp"
 #include "MemoryPrivate.hpp"
 
 #include "Allocator.hpp"
@@ -632,6 +633,19 @@ RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_RegularWeakReferenceImpl_get, ObjHea
 
 RUNTIME_NOTHROW extern "C" void DisposeRegularWeakReferenceImpl(ObjHeader* weakRef) {
     mm::disposeRegularWeakReferenceImpl(weakRef);
+}
+
+bool kotlin::TryGCBeforeMemoryAllocation(size_t extraBytes) noexcept {
+    if (!compiler::gcBeforeAlloc()) {
+        return false;
+    }
+    size_t totalAllocatedBytes = alloc::allocatedBytes() + extraBytes;
+    auto epoch = mm::GlobalData::Instance().gcScheduler().setAllocatedBytes(totalAllocatedBytes);
+    if (epoch == 0) {
+        return false;
+    }
+    mm::safePoint();
+    return true;
 }
 
 void kotlin::OnMemoryAllocation(size_t totalAllocatedBytes) noexcept {

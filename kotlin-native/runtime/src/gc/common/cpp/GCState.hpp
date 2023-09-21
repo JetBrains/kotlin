@@ -27,6 +27,7 @@ public:
         std::unique_lock lock(mutex_);
         shutdownFlag_ = true;
         startedEpoch.notify();
+        resumedEpoch.notify();
         finishedEpoch.notify();
         scheduledEpoch.notify();
         finalizedEpoch.notify();
@@ -34,9 +35,15 @@ public:
 
     void start(int64_t epoch) { startedEpoch.set(epoch); }
 
+    void resumed(int64_t epoch) { resumedEpoch.set(epoch); }
+
     void finish(int64_t epoch) { finishedEpoch.set(epoch); }
 
     void finalized(int64_t epoch) { finalizedEpoch.set(epoch); }
+
+    void waitEpochResumed(int64_t epoch) {
+        resumedEpoch.wait([this, epoch] { return *resumedEpoch >= epoch || shutdownFlag_; });
+    }
 
     void waitEpochFinished(int64_t epoch) {
         finishedEpoch.wait([this, epoch] { return *finishedEpoch >= epoch || shutdownFlag_; });
@@ -88,6 +95,7 @@ private:
     std::mutex mutex_;
     // Use a separate conditional variable for each counter to mitigate a winpthreads bug (see KT-50948 for details).
     ValueWithCondVar<int64_t> startedEpoch{0, mutex_};
+    ValueWithCondVar<int64_t> resumedEpoch{0, mutex_};
     ValueWithCondVar<int64_t> finishedEpoch{0, mutex_};
     ValueWithCondVar<int64_t> scheduledEpoch{0, mutex_};
     ValueWithCondVar<int64_t> finalizedEpoch{0, mutex_};

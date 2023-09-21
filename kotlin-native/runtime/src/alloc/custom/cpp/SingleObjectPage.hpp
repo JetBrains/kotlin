@@ -19,6 +19,7 @@ namespace kotlin::alloc {
 class alignas(8) SingleObjectPage {
 public:
     using GCSweepScope = gc::GCHandle::GCSweepScope;
+    static inline constexpr const size_t PageSize = 0; // Not used
 
     static GCSweepScope currentGCSweepScope(gc::GCHandle& handle) noexcept { return handle.sweep(); }
 

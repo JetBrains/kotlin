@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include "GCScheduler.hpp"
 
 #include "AppStateTracking.hpp"
@@ -67,21 +68,20 @@ public:
         timer_.restart(config_.regularGcInterval());
     }
 
-    void setAllocatedBytes(size_t bytes) noexcept {
+    int64_t setAllocatedBytes(size_t bytes) noexcept {
         auto boundary = heapGrowthController_.boundaryForHeapSize(bytes);
         switch (boundary) {
             case HeapGrowthController::MemoryBoundary::kNone:
-                return;
+                return 0;
             case HeapGrowthController::MemoryBoundary::kTrigger:
                 RuntimeLogDebug({kTagGC}, "Scheduling GC by allocation");
-                scheduleGC_.scheduleNextEpochIfNotInProgress();
-                return;
+                return scheduleGC_.scheduleNextEpochIfNotInProgress();
             case HeapGrowthController::MemoryBoundary::kTarget:
                 RuntimeLogDebug({kTagGC}, "Scheduling GC by allocation");
                 auto epoch = scheduleGC_.scheduleNextEpochIfNotInProgress();
                 RuntimeLogWarning({kTagGC}, "Pausing the mutators until epoch %" PRId64 " is done", epoch);
                 mutatorAssists_.requestAssists(epoch);
-                return;
+                return epoch;
         }
     }
 

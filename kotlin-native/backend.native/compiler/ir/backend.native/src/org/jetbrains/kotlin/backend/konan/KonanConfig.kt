@@ -209,6 +209,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.objcDisposeOnMain) ?: true
     }
 
+    val gcBeforeAlloc: Boolean by lazy {
+        configuration.get(BinaryOptions.gcBeforeAlloc) ?: false
+    }
+
     init {
         if (!platformManager.isEnabled(target)) {
             error("Target ${target.visibleName} is not available on the ${HostManager.hostName} host")
