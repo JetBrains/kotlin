@@ -1,0 +1,4 @@
+FILE: main.kt
+    public final fun foo(p: R|AAA<kotlin/String>|, s: R|kotlin/Int?|): R|kotlin/Unit| {
+        R|<local>/p|.R|SubstitutionOverride</AAA.process: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): /AAA.process>#|<<ERROR TYPE REF: Cannot infer argument for type parameter Q>>(R|<local>/s|)
+    }
