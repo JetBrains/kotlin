@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.getSingleExpectForActualOrNull
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
@@ -53,7 +54,13 @@ class ConeOverloadConflictResolver(
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminateAbstracts: Boolean,
-    ): Set<Candidate> = chooseMaximallySpecificCandidates(candidates, discriminateAbstracts, discriminateGenerics = true)
+    ): Set<Candidate> = chooseMaximallySpecificCandidates(
+        candidates,
+        discriminateAbstracts,
+        // We don't discriminate against generics for callable references because, other than in regular calls,
+        // there is no syntax for specifying generic type arguments.
+        discriminateGenerics = candidates.first().callInfo.callSite !is FirCallableReferenceAccess
+    )
 
     /**
      * Partial mirror of [org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver.chooseMaximallySpecificCandidates]
