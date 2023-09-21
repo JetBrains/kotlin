@@ -875,8 +875,6 @@ val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleF
     implicitlyExportedDeclarationsMarkingLowering,
     mainFunctionCallWrapperLowering,
     cleanupLoweringPhase,
-    // Currently broken due to static members lowering making single-open-class
-    // files non-recognizable as single-class files
     validateIrAfterLowering,
 )
 
