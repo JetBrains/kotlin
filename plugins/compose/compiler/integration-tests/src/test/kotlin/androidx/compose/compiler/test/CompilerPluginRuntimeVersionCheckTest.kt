@@ -26,6 +26,7 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -114,6 +115,7 @@ class CompilerPluginRuntimeVersionCheckTest {
         assertEquals(TaskOutcome.SUCCESS, result.task(":app:compileDebugKotlin")!!.outcome)
     }
 
+    @Ignore("301252210")
     @Test
     fun usingLatestRuntime() {
         setupAppBuildGradle("""implementation("androidx.compose.runtime:runtime:+")""")
