@@ -23,14 +23,14 @@ fun test() {
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Foo<String>.Bar.Baz<!>::class
 
     a<Foo<String>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Bar<!>>()
-    a<Foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>.Bar.Baz>()
+    a<Foo<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><String><!>.Bar.Baz>()
 
     a<Foo.Bar<Int>>()
-    a<Foo.Bar<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>.Baz>()
+    a<Foo.Bar<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><Int><!>.Baz>()
 }
 
 fun <T: Foo<String.<!UNRESOLVED_REFERENCE!>Bar<!>>> x() {}
 fun Foo<String>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Bar<!>.ext() {}
 
-fun ex1(a: Foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>.Bar<String>): Foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>.Bar<String> {
+fun ex1(a: Foo<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><String><!>.Bar<String>): Foo<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><String><!>.Bar<String> {
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

@@ -268,6 +268,10 @@ class ConeTypeArgumentsNotAllowedError(source: KtSourceElement) : ConeDiagnostic
     override val reason: String get() = "Type parameters cannot be parameterized with type arguments"
 }
 
+class ConeTypeArgumentsForOuterClassWhenNestedReferencedError(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
+    override val reason: String get() = "Type arguments for outer class are redundant when nested class is referenced"
+}
+
 class ConeNoTypeArgumentsOnRhsError(
     override val desiredCount: Int,
     override val symbol: FirClassLikeSymbol<*>

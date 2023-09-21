@@ -16,5 +16,5 @@ class Derived : Base<Int>() {
     val x2: Base<Int>.InnerCell = InnerCell(42)
 
     val test1: <!UNRESOLVED_REFERENCE!>CT<!> = Cell(42)
-    val test2: Base<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>.CT = Cell(42)
+    val test2: Base<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><Int><!>.CT = Cell(42)
 }

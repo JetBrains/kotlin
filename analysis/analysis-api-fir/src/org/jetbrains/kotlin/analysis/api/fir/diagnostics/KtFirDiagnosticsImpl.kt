@@ -1816,6 +1816,11 @@ internal class TypeArgumentsNotAllowedImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.TypeArgumentsNotAllowed
 
+internal class TypeArgumentsForOuterClassWhenNestedReferencedImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.TypeArgumentsForOuterClassWhenNestedReferenced
+
 internal class WrongNumberOfTypeArgumentsImpl(
     override val expectedCount: Int,
     override val classifier: KtClassLikeSymbol,

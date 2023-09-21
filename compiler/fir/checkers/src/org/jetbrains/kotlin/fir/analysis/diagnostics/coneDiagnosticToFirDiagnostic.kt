@@ -125,6 +125,8 @@ private fun ConeDiagnostic.toKtDiagnostic(
         FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(this.source, this.desiredCount, this.symbol)
     is ConeTypeArgumentsNotAllowedError ->
         FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(this.source)
+    is ConeTypeArgumentsForOuterClassWhenNestedReferencedError ->
+        FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED.createOn(this.source)
 
     is ConeOuterClassArgumentsRequired ->
         FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED.createOn(callOrAssignmentSource ?: source, this.symbol)

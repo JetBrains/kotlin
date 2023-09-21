@@ -11,14 +11,14 @@ class C<T> {
     typealias SSC = C<*>
 }
 
-fun test1(x: C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>.DA) = x
+fun test1(x: C<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><Int><!>.DA) = x
 fun test2(x: C.SDA) = x
-fun test3(x: C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>.TSDA) = x
-fun test4(x: C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>.TC) = x
+fun test3(x: C<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><Int><!>.TSDA) = x
+fun test4(x: C<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><Int><!>.TC) = x
 
-fun test5(x: C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*><!>.DA) = x
-fun test6(x: C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*><!>.TSDA) = x
-fun test7(x: C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*><!>.TC) = x
+fun test5(x: C<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><*><!>.DA) = x
+fun test6(x: C<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><*><!>.TSDA) = x
+fun test7(x: C<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><*><!>.TC) = x
 
 fun test8(x: C.SSDA) = x
 fun test9(x: C.SSC) = x

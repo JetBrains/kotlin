@@ -1513,6 +1513,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = TypeArgumentsNotAllowed::class
     }
 
+    interface TypeArgumentsForOuterClassWhenNestedReferenced : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = TypeArgumentsForOuterClassWhenNestedReferenced::class
+    }
+
     interface WrongNumberOfTypeArguments : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = WrongNumberOfTypeArguments::class
         val expectedCount: Int

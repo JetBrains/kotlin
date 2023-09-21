@@ -216,8 +216,9 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             qualifier.reversed().flatMap { it.typeArgumentList.typeArguments }.mapTo(mutableListOf()) { it.toConeTypeProjection() }
 
         if (symbol is FirClassLikeSymbol<*> && !isPossibleBareType(areBareTypesAllowed, allTypeArguments)) {
-            matchQualifierPartsAndClasses(symbol, qualifier, typeRef)?.let { return it }
-            allTypeArguments.addImplicitTypeArgumentsOrReturnError(symbol, topContainer, substitutor)?.let { return it }
+            matchQualifierPartsAndClasses(symbol, qualifier)?.let { return ConeErrorType(it) }
+            allTypeArguments.addImplicitTypeArgumentsOrReturnError(symbol, topContainer, substitutor)
+                ?.let { return ConeErrorType(it) }
         }
 
         val resultingArguments = allTypeArguments.toTypedArray()
@@ -271,23 +272,18 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
     private fun isPossibleBareType(areBareTypesAllowed: Boolean, allTypeArguments: List<ConeTypeProjection>): Boolean =
         areBareTypesAllowed && allTypeArguments.isEmpty()
 
-    private fun matchQualifierPartsAndClasses(
-        symbol: FirClassLikeSymbol<*>,
-        qualifier: List<FirQualifierPart>,
-        typeRef: FirUserTypeRef,
-    ): ConeErrorType? {
+    private fun matchQualifierPartsAndClasses(symbol: FirClassLikeSymbol<*>, qualifier: List<FirQualifierPart>): ConeDiagnostic? {
         var currentDeclaration: FirClassLikeDeclaration? = symbol.fir
         var areTypeArgumentsAllowed = true
-        val qualifierPartsCount = qualifier.size
 
-        for ((reversedIndex, qualifierPart) in qualifier.asReversed().withIndex()) {
-            val qualifierPartIndex = qualifierPartsCount - 1 - reversedIndex
-            val qualifierPartArgsCount = qualifierPart.typeArgumentList.typeArguments.size
+        for (qualifierPart in qualifier.asReversed()) {
+            val typeArgumentList = qualifierPart.typeArgumentList
+            val qualifierPartArgsCount = typeArgumentList.typeArguments.size
 
             if (currentDeclaration == null) {
                 // It's a package name
                 if (qualifierPartArgsCount > 0) {
-                    return ConeErrorType(ConeTypeArgumentsNotAllowedError(qualifierPart.typeArgumentList.source!!))
+                    return ConeTypeArgumentsNotAllowedError(typeArgumentList.source!!)
                 }
                 break
             }
@@ -295,21 +291,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             val desiredTypeParametersCount = currentDeclaration.typeParameters.count { it !is FirOuterClassTypeParameterRef }
             if (areTypeArgumentsAllowed) {
                 if (desiredTypeParametersCount != qualifierPartArgsCount) {
-                    return createWrongNumberOfTypeArgumentsError(
-                        desiredTypeParametersCount,
-                        qualifierPartIndex,
-                        currentDeclaration.symbol,
-                        typeRef
-                    )
+                    val source = if (qualifierPartArgsCount == 0) qualifierPart.source else typeArgumentList.source
+                    return ConeWrongNumberOfTypeArgumentsError(desiredTypeParametersCount, currentDeclaration.symbol, source!!)
                 }
             } else if (qualifierPartArgsCount > 0) {
-                // TODO: report TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED instead of WRONG_NUMBER_OF_TYPE_ARGUMENTS
-                return createWrongNumberOfTypeArgumentsError(
-                    0,
-                    qualifierPartIndex,
-                    currentDeclaration.symbol,
-                    typeRef
-                )
+                return ConeTypeArgumentsForOuterClassWhenNestedReferencedError(typeArgumentList.source!!)
             }
 
             // Inner class can't contain non-inner class
@@ -321,27 +307,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return null
     }
 
-    private fun createWrongNumberOfTypeArgumentsError(
-        desiredTypeParametersCount: Int,
-        qualifierPartIndex: Int,
-        symbol: FirClassLikeSymbol<*>,
-        userTypeRef: FirUserTypeRef,
-    ): ConeErrorType {
-        val qualifierPart = userTypeRef.qualifier[qualifierPartIndex]
-        val typeArgumentsList = qualifierPart.typeArgumentList
-        val source = if (typeArgumentsList.typeArguments.isEmpty()) {
-            qualifierPart.source
-        } else {
-            typeArgumentsList.source
-        }
-        return ConeErrorType(ConeWrongNumberOfTypeArgumentsError(desiredTypeParametersCount, symbol, source!!))
-    }
-
     private fun MutableList<ConeTypeProjection>.addImplicitTypeArgumentsOrReturnError(
         symbol: FirClassLikeSymbol<*>,
         topContainer: FirDeclaration?,
         substitutor: ConeSubstitutor?,
-    ): ConeErrorType? {
+    ): ConeDiagnostic? {
         // substitutor is used for checking if all implicit type arguments are defined in outer classes. Consider the following example:
         //
         // class A<T> {
@@ -364,16 +334,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             ) {
                 val substituted = substitutor?.substituteOrNull(typeParameter.symbol.defaultType)
                 if (substituted == null) {
-                    return ConeErrorType(
-                        ConeOuterClassArgumentsRequired(typeParameter.symbol.containingDeclarationSymbol as FirClassLikeSymbol<*>)
-                    )
+                    return ConeOuterClassArgumentsRequired(typeParameter.symbol.containingDeclarationSymbol as FirClassLikeSymbol<*>)
                 } else {
                     add(substituted)
                 }
             } else {
-                return ConeErrorType(
-                    ConeOuterClassArgumentsRequired(typeParameter.symbol.containingDeclarationSymbol as FirClassLikeSymbol<*>)
-                )
+                return ConeOuterClassArgumentsRequired(typeParameter.symbol.containingDeclarationSymbol as FirClassLikeSymbol<*>)
             }
         }
 
