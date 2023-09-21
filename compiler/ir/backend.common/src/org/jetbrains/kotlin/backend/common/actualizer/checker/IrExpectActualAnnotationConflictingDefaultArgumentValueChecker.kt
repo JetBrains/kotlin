@@ -36,15 +36,13 @@ internal object IrExpectActualAnnotationConflictingDefaultArgumentValueChecker :
                             ExpectActualCollectionArgumentsCompatibilityCheckStrategy.Default
                         )
                     ) {
-                        // TODO(Roman.Efremov): KT-62104 fix failing tests and unmute
-                        // reportError(expectClass, actualDefaultValue, actualParam)
+                        reportError(expectClass, actualDefaultValue, actualParam)
                     }
                 }
             }
         }
     }
 
-    @Suppress("unused")
     private fun IrExpectActualChecker.Context.reportError(
         expectAnnotationClass: IrClass,
         actualDefaultValue: IrExpression,
