@@ -9198,6 +9198,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("missingComponentN.kt")
+                public void testMissingComponentN() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/missingComponentN.kt");
+                }
+
+                @Test
                 @TestMetadata("RedeclarationInForLoop.kt")
                 public void testRedeclarationInForLoop() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/RedeclarationInForLoop.kt");
