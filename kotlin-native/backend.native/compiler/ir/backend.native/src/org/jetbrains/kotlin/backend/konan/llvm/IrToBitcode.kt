@@ -10,7 +10,8 @@ import llvm.*
 import org.jetbrains.kotlin.ir.util.inlineFunction
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
-import org.jetbrains.kotlin.backend.common.lower.inline.InlinerExpressionLocationHint
+import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_ARGUMENTS
+import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
@@ -1018,10 +1019,10 @@ internal class CodeGeneratorVisitor(
         }
     }
 
-    private fun generateStatement(statement: IrStatement) {
+    private fun generateStatement(statement: IrStatement, isInlinedArgument: Boolean = false) {
         when (statement) {
             is IrExpression -> evaluateExpression(statement)
-            is IrVariable -> generateVariable(statement)
+            is IrVariable -> generateVariable(statement, isInlinedArgument)
             else -> TODO(ir2string(statement))
         }
     }
@@ -1474,18 +1475,15 @@ internal class CodeGeneratorVisitor(
         else -> true
     }
 
-    private fun generateVariable(variable: IrVariable) {
-        context.log{"generateVariable               : ${ir2string(variable)}"}
-        val value = variable.initializer?.let {
-            val callSiteOrigin = (it as? IrBlock)?.origin as? InlinerExpressionLocationHint
-            val inlineAtFunctionSymbol = callSiteOrigin?.inlineAtSymbol as? IrFunctionSymbol
-            inlineAtFunctionSymbol?.run {
-                switchSymbolizationContextTo(inlineAtFunctionSymbol) {
-                    evaluateExpression(it)
-                }
-            } ?: evaluateExpression(it)
+    private fun generateVariable(variable: IrVariable, isInlinedArgument: Boolean) {
+        context.log { "generateVariable               : ${ir2string(variable)}" }
+        val value = variable.initializer?.let { initializer ->
+            (currentCodeContext.functionScope()?.takeIf { isInlinedArgument } as? FunctionScope)
+                    ?.declaration?.symbol?.let {
+                        switchSymbolizationContextTo(it) { evaluateExpression(initializer) }
+                    } ?: evaluateExpression(initializer)
         }
-        this.currentCodeContext.genDeclareVariable(variable, value)
+        currentCodeContext.genDeclareVariable(variable, value)
     }
 
     private fun CodeContext.genDeclareVariable(
@@ -2211,15 +2209,18 @@ internal class CodeGeneratorVisitor(
             VariableScope()
         }
 
+        val isInlinedArgument = value is IrComposite &&
+                (value.origin == INLINED_FUNCTION_ARGUMENTS || value.origin == INLINED_FUNCTION_DEFAULT_ARGUMENTS)
+
         using(scope) {
             value.statements.dropLast(1).forEach {
-                generateStatement(it)
+                generateStatement(it, isInlinedArgument)
             }
             value.statements.lastOrNull()?.let {
                 if (it is IrExpression) {
                     return evaluateExpression(it, resultSlot)
                 } else {
-                    generateStatement(it)
+                    generateStatement(it, isInlinedArgument)
                 }
             }
 
