@@ -249,6 +249,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
         }
 
         @Test
+        @TestMetadata("flexibleTypeRendering.kt")
+        public void testFlexibleTypeRendering() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/flexibleTypeRendering.kt");
+        }
+
+        @Test
         @TestMetadata("ft.kt")
         public void testFt() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/ft.kt");
