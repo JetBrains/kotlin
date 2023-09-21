@@ -105,7 +105,11 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             // See org.jetbrains.kotlin.backend.jvm.lower.InheritedDefaultMethodsOnClassesLoweringKt.isDefinitelyNotDefaultImplsMethod
             (irParent as? IrClass)?.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
                     function.isJavaOrEnhancement -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
-            else -> function.computeIrOrigin(predefinedOrigin, parentOrigin = (irParent as? IrDeclaration)?.origin)
+            else -> function.computeIrOrigin(
+                predefinedOrigin,
+                parentOrigin = (irParent as? IrDeclaration)?.origin,
+                fakeOverrideOwnerLookupTag
+            )
         }
         val parentIsExternal = irParent.isExternalParent()
         // We don't generate signatures for local classes
@@ -268,15 +272,18 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         isLocal: Boolean = false,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
     ): IrProperty = convertCatching(property) {
-        val origin =
-            when {
-                !predefinedOrigin.isExternal &&
-                        property.isStatic &&
-                        property.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES
-                -> IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
+        val origin = when {
+            !predefinedOrigin.isExternal &&
+                    property.isStatic &&
+                    property.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES
+            -> IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
 
-                else -> property.computeIrOrigin(predefinedOrigin, parentOrigin = (irParent as? IrDeclaration)?.origin)
-            }
+            else -> property.computeIrOrigin(
+                predefinedOrigin,
+                parentOrigin = (irParent as? IrDeclaration)?.origin,
+                fakeOverrideOwnerLookupTag
+            )
+        }
         // See similar comments in createIrFunction above
         val parentIsExternal = irParent.isExternalParent()
         val signature =

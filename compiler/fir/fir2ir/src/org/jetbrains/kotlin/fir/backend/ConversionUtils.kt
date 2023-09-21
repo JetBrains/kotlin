@@ -686,7 +686,8 @@ fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
 
 fun FirDeclaration?.computeIrOrigin(
     predefinedOrigin: IrDeclarationOrigin? = null,
-    parentOrigin: IrDeclarationOrigin? = null
+    parentOrigin: IrDeclarationOrigin? = null,
+    fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
 ): IrDeclarationOrigin {
     if (this == null) {
         return predefinedOrigin ?: parentOrigin ?: IrDeclarationOrigin.DEFINED
@@ -703,6 +704,7 @@ fun FirDeclaration?.computeIrOrigin(
         }
 
         this is FirCallableDeclaration -> when {
+            fakeOverrideOwnerLookupTag != null && fakeOverrideOwnerLookupTag != containingClassLookupTag() -> IrDeclarationOrigin.FAKE_OVERRIDE
             symbol.fir.isIntersectionOverride || symbol.fir.isSubstitutionOverride -> IrDeclarationOrigin.FAKE_OVERRIDE
             parentOrigin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB && symbol.isJavaOrEnhancement -> {
                 IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
