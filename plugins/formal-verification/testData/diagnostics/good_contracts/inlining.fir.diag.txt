@@ -32,8 +32,8 @@ method global$fun_call_invoke$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(
     local2$x := anonymous$5
     special$invoke_function_object(local$g)
     anonymous$4 := anonymous$6
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    goto inline_label$2$ret
+    label inline_label$2$ret
   }
   ret := anonymous$4
   goto label$ret
@@ -52,14 +52,14 @@ method global$fun_call_invoke_with_int$fun_take$fun_take$T_Int$return$T_Int$retu
 {
   var local1$z: Int
   var anonymous$1: Int
+  var anonymous$2: Int
   var anonymous$4: Int
   var anonymous$5: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
+  anonymous$2 := 1
   if (true) {
-    var anonymous$2: Int
     var local2$x: Int
     var anonymous$3: Int
-    anonymous$2 := 1
     local2$x := anonymous$2 + anonymous$2
     special$invoke_function_object(local$g)
     anonymous$1 := anonymous$3
@@ -74,8 +74,8 @@ method global$fun_call_invoke_with_int$fun_take$fun_take$T_Int$return$T_Int$retu
     local2$x := anonymous$4 + anonymous$4
     special$invoke_function_object(local$g)
     anonymous$5 := anonymous$6
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    goto inline_label$2$ret
+    label inline_label$2$ret
   }
   ret := anonymous$5
   goto label$ret
@@ -114,8 +114,8 @@ method global$fun_name_clashes$fun_take$fun_take$T_Int$return$T_Int$return$T_Int
     local2$x := local1$x + local1$x
     special$invoke_function_object(local$f)
     anonymous$4 := anonymous$5
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    goto inline_label$2$ret
+    label inline_label$2$ret
   }
   ret := anonymous$4
   goto label$ret
@@ -156,8 +156,8 @@ method global$fun_different_return_type$fun_take$fun_take$T_Int$return$T_Int$ret
     local2$x := anonymous$5
     special$invoke_function_object(local$f)
     anonymous$4 := anonymous$6
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    goto inline_label$2$ret
+    label inline_label$2$ret
   }
   ret := local1$x == anonymous$4
   goto label$ret

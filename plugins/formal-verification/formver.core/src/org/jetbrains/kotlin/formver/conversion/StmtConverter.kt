@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
-import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
-import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Label
-import org.jetbrains.kotlin.name.Name
 
 /**
  * Tracks the results of converting a block of statements.
@@ -29,7 +26,6 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
     private val whileIndex: Int = 0,
     override val whenSubject: VariableEmbedding? = null,
     private val scopeDepth: Int,
-    private val scopedNames: MutableMap<Name, Int> = mutableMapOf(),
 ) : StmtConversionContext<RTC>, SeqnBuildContext by seqnCtx, MethodConversionContext by methodCtx, ResultTrackingContext,
     WhileStackContext<RTC> {
     override val resultCtx: RTC
@@ -44,34 +40,15 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
 
     override fun newBlock(): StmtConverter<RTC> = copy(seqnCtx = SeqnBuilder())
     override fun withoutResult(): StmtConversionContext<NoopResultTracker> =
-        StmtConverter(this, this.seqnCtx, NoopResultTrackerFactory, whileIndex, whenSubject, scopeDepth, scopedNames)
+        StmtConverter(this, this.seqnCtx, NoopResultTrackerFactory, whileIndex, whenSubject, scopeDepth)
 
     override fun withResult(type: TypeEmbedding): StmtConverter<VarResultTrackingContext> {
         val newResultVar = newAnonVar(type)
         addDeclaration(newResultVar.toLocalVarDecl())
-        return StmtConverter(this, seqnCtx, VarResultTrackerFactory(newResultVar), whileIndex, whenSubject, scopeDepth, scopedNames)
+        return StmtConverter(this, seqnCtx, VarResultTrackerFactory(newResultVar), whileIndex, whenSubject, scopeDepth)
     }
 
-    override fun withInlineContext(
-        inlineSignature: FullNamedFunctionSignature,
-        returnVarName: MangledName,
-        substitutionParams: Map<Name, SubstitutionItem>,
-    ): StmtConversionContext<RTC> =
-        copy(
-            methodCtx = InlineMethodConverter(this, inlineSignature, returnVarName, substitutionParams, scopeDepth),
-            scopedNames = mutableMapOf()
-        )
-
-    override fun withLambdaContext(
-        inlineSignature: FullNamedFunctionSignature,
-        returnVarName: MangledName,
-        substitutionParams: Map<Name, SubstitutionItem>,
-        scopedNames: Map<Name, Int>
-    ): StmtConversionContext<RTC> =
-        copy(
-            methodCtx = InlineMethodConverter(this, inlineSignature, returnVarName, substitutionParams, scopeDepth),
-            scopedNames = scopedNames.toMutableMap()
-        )
+    override fun withMethodContext(newCtx: MethodConversionContext): StmtConversionContext<RTC> = copy(methodCtx = newCtx)
 
     // We can't implement these members using `by` due to Kotlin shenanigans.
     override val resultExp: ExpEmbedding
@@ -95,22 +72,15 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
         addStatement(ctx.breakLabel.toStmt())
     }
 
-    override fun withWhenSubject(subject: VariableEmbedding?, action: (StmtConversionContext<RTC>) -> Unit) {
+    override fun withWhenSubject(subject: VariableEmbedding?, action: StmtConversionContext<RTC>.() -> Unit) {
         val ctx = copy(whenSubject = subject)
         action(ctx)
     }
 
-    override fun inNewScope(action: (StmtConversionContext<RTC>) -> ExpEmbedding): ExpEmbedding {
-        val ctx = copy(scopeDepth = this.scopeDepth + 1, scopedNames = this.scopedNames.toMutableMap())
-        return action(ctx)
+    override fun inNewScope(action: StmtConversionContext<RTC>.() -> ExpEmbedding): ExpEmbedding {
+        val newScopeDepth = scopeDepth + 1
+        return methodCtx.withScope(newScopeDepth) {
+            action(copy(scopeDepth = newScopeDepth))
+        }
     }
-
-    override fun addScopedName(name: Name) {
-        scopedNames[name] = scopeDepth
-    }
-
-    override fun getScopeDepth(name: Name): Int =
-        scopedNames[name] ?: throw IllegalArgumentException("$name not found in scope $scopedNames")
-
-    override fun getScopedNames(): Map<Name, Int> = scopedNames
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -15,8 +16,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.formver.calleeSymbol
 import org.jetbrains.kotlin.formver.embeddings.*
-import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
-import org.jetbrains.kotlin.formver.viper.MangledName
+import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
+import org.jetbrains.kotlin.formver.viper.ast.Exp
+import org.jetbrains.kotlin.formver.viper.ast.Stmt
 import org.jetbrains.kotlin.name.Name
 
 interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConversionContext, SeqnBuildContext, ResultTrackingContext,
@@ -35,18 +37,7 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
     fun withoutResult(): StmtConversionContext<NoopResultTracker>
     fun withResult(type: TypeEmbedding): StmtConversionContext<VarResultTrackingContext>
 
-    fun withInlineContext(
-        inlineSignature: FullNamedFunctionSignature,
-        returnVarName: MangledName,
-        substitutionParams: Map<Name, SubstitutionItem>,
-    ): StmtConversionContext<RTC>
-
-    fun withLambdaContext(
-        inlineSignature: FullNamedFunctionSignature,
-        returnVarName: MangledName,
-        substitutionParams: Map<Name, SubstitutionItem>,
-        scopedNames: Map<Name, Int>,
-    ): StmtConversionContext<RTC>
+    fun withMethodContext(newCtx: MethodConversionContext): StmtConversionContext<RTC>
 
     fun withResult(type: TypeEmbedding, action: StmtConversionContext<VarResultTrackingContext>.() -> Unit): VariableEmbedding {
         val ctx = withResult(type)
@@ -54,26 +45,20 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
         return ctx.resultCtx.resultVar
     }
 
-    fun withWhenSubject(subject: VariableEmbedding?, action: (StmtConversionContext<RTC>) -> Unit)
-    fun inNewScope(action: (StmtConversionContext<RTC>) -> ExpEmbedding): ExpEmbedding
-    fun addScopedName(name: Name)
-    fun getScopeDepth(name: Name): Int
-    fun getScopedNames(): Map<Name, Int>
+    fun withWhenSubject(subject: VariableEmbedding?, action: StmtConversionContext<RTC>.() -> Unit)
+    fun inNewScope(action: StmtConversionContext<RTC>.() -> ExpEmbedding): ExpEmbedding
 }
 
 fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedPropertyAccess(symbol: FirPropertyAccessExpression): PropertyAccessEmbedding =
     when (val calleeSymbol = symbol.calleeSymbol) {
-        is FirValueParameterSymbol -> embedValueParameter(calleeSymbol)
+        is FirValueParameterSymbol -> embedParameter(calleeSymbol) as VariableEmbedding
         is FirPropertySymbol ->
             when (val receiverFir = symbol.dispatchReceiver) {
-                null -> embedLocalProperty(calleeSymbol, getScopeDepth(calleeSymbol.name))
+                null -> embedLocalProperty(calleeSymbol)
                 else -> ClassPropertyAccess(convert(receiverFir), embedGetter(calleeSymbol), embedSetter(calleeSymbol))
             }
         else -> throw Exception("Property access symbol $calleeSymbol has unsupported type.")
     }
-
-fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedProperty(symbol: FirPropertySymbol): VariableEmbedding =
-    embedLocalProperty(symbol, getScopeDepth(symbol.name))
 
 @OptIn(SymbolInternals::class)
 fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedGetter(symbol: FirPropertySymbol): GetterEmbedding? =
@@ -89,17 +74,37 @@ fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedSetter(symbol:
         else -> CustomSetter(embedFunction(setter.symbol))
     }
 
-fun StmtConversionContext<ResultTrackingContext>.getFunctionCallSubstitutionItems(
+fun StmtConversionContext<ResultTrackingContext>.getInlineFunctionCallArgs(
     args: List<ExpEmbedding>,
-): List<SubstitutionItem> = args.map { exp ->
+): List<ExpEmbedding> = args.map { exp ->
     when (exp) {
-        is VariableEmbedding -> SubstitutionName(exp.name)
-        is LambdaExp -> SubstitutionLambda(exp)
-        else -> {
-            val result = withResult(exp.type) {
-                resultCtx.resultVar.setValue(exp, this)
-            }
-            SubstitutionName(result.name)
+        is VariableEmbedding -> exp
+        is LambdaExp -> exp
+        else -> withResult(exp.type) {
+            resultCtx.resultVar.setValue(exp, this)
         }
     }
+}
+
+fun StmtConversionContext<ResultTrackingContext>.insertInlineFunctionCall(
+    calleeSignature: FunctionSignature,
+    paramNames: List<Name>,
+    args: List<ExpEmbedding>,
+    body: FirBlock,
+    parentCtx: MethodConversionContext? = null,
+): ExpEmbedding = withResult(calleeSignature.returnType) {
+    val callArgs = getInlineFunctionCallArgs(args)
+    val subs = paramNames.zip(callArgs).toMap()
+    val returnLabelName = ReturnLabelName(newWhileIndex())
+    val newMethodCtx = MethodConverter(
+        this, calleeSignature,
+        InlineParameterResolver(this.resultCtx.resultVar.name, returnLabelName, subs),
+        parentCtx
+    )
+    val inlineCtx = this.newBlock().withMethodContext(newMethodCtx)
+    inlineCtx.convert(body)
+    inlineCtx.addDeclaration(inlineCtx.returnLabel.toDecl())
+    inlineCtx.addStatement(inlineCtx.returnLabel.toStmt())
+    // NOTE: Putting the block inside the then branch of an if-true statement is a little hack to make Viper respect the scoping
+    addStatement(Stmt.If(Exp.BoolLit(true), inlineCtx.block, Stmt.Seqn(listOf(), listOf())))
 }

@@ -8,6 +8,8 @@ method global$fun_explicit_arg$fun_take$$return$T_Int() returns (ret: Int)
     anonymous$3 := 0
     if (true) {
       anonymous$2 := anonymous$3 + anonymous$3
+      goto inline_label$2$ret
+      label inline_label$2$ret
     }
     anonymous$1 := anonymous$2
     goto inline_label$1$ret
@@ -28,6 +30,8 @@ method global$fun_implicit_arg$fun_take$$return$T_Int() returns (ret: Int)
     anonymous$3 := 0
     if (true) {
       anonymous$2 := anonymous$3 * 2
+      goto inline_label$2$ret
+      label inline_label$2$ret
     }
     anonymous$1 := anonymous$2
     goto inline_label$1$ret
@@ -53,6 +57,8 @@ method global$fun_lambda_if$fun_take$$return$T_Int() returns (ret: Int)
       } else {
         anonymous$4 := anonymous$3 + 2}
       anonymous$2 := anonymous$4
+      goto inline_label$2$ret
+      label inline_label$2$ret
     }
     anonymous$1 := anonymous$2
     goto inline_label$1$ret
@@ -74,6 +80,8 @@ method global$fun_return_value_not_used$fun_take$$return$T_Unit()
     anonymous$3 := 0
     if (true) {
       anonymous$2 := anonymous$3
+      goto inline_label$2$ret
+      label inline_label$2$ret
     }
     anonymous$1 := anonymous$2
     goto inline_label$1$ret
@@ -98,6 +106,8 @@ method global$fun_shadowing$fun_take$$return$T_Int() returns (ret: Int)
       var local3$y: Int
       local3$y := 0
       anonymous$2 := anonymous$3 + local3$y
+      goto inline_label$2$ret
+      label inline_label$2$ret
     }
     anonymous$1 := anonymous$2
     goto inline_label$1$ret
@@ -120,6 +130,8 @@ method global$fun_foo$fun_take$$return$T_Int() returns (ret: Int)
     anonymous$3 := 0
     if (true) {
       anonymous$2 := anonymous$3 + 1
+      goto inline_label$2$ret
+      label inline_label$2$ret
     }
     anonymous$1 := anonymous$2
     goto inline_label$1$ret
@@ -146,6 +158,8 @@ method global$fun_nested$fun_take$$return$T_Int() returns (ret: Int)
       anonymous$4 := 0
       if (true) {
         anonymous$3 := anonymous$4 + 1
+        goto inline_label$3$ret
+        label inline_label$3$ret
       }
       anonymous$2 := anonymous$3
       goto inline_label$2$ret

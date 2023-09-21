@@ -15,8 +15,8 @@ method global$fun_quadruple$fun_take$T_Int$return$T_Int(local$x: Int)
     var local2$y: Int
     local2$y := local$x + local$x
     anonymous$2 := local2$y
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    goto inline_label$2$ret
+    label inline_label$2$ret
   }
   ret := anonymous$1 + anonymous$2
   goto label$ret
@@ -27,10 +27,11 @@ method global$fun_quadruple$fun_take$T_Int$return$T_Int(local$x: Int)
 method global$fun_use_branching$fun_take$$return$T_Int() returns (ret: Int)
 {
   var anonymous$1: Int
+  var anonymous$2: Bool
   var anonymous$3: Int
+  var anonymous$4: Bool
+  anonymous$2 := false
   if (true) {
-    var anonymous$2: Bool
-    anonymous$2 := false
     if (anonymous$2) {
       anonymous$1 := 1
       goto inline_label$1$ret
@@ -40,17 +41,16 @@ method global$fun_use_branching$fun_take$$return$T_Int() returns (ret: Int)
     }
     label inline_label$1$ret
   }
+  anonymous$4 := true
   if (true) {
-    var anonymous$4: Bool
-    anonymous$4 := true
     if (anonymous$4) {
       anonymous$3 := 1
-      goto inline_label$1$ret
+      goto inline_label$2$ret
     } else {
       anonymous$3 := 0
-      goto inline_label$1$ret
+      goto inline_label$2$ret
     }
-    label inline_label$1$ret
+    label inline_label$2$ret
   }
   ret := anonymous$1 + anonymous$3
   goto label$ret

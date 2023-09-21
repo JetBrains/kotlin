@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.calleeCallableSymbol
+import org.jetbrains.kotlin.formver.calleeSymbol
 import org.jetbrains.kotlin.formver.embeddings.*
-import org.jetbrains.kotlin.formver.embeddings.callables.InvokeFunctionObjectMethod
-import org.jetbrains.kotlin.formver.embeddings.callables.insertCall
+import org.jetbrains.kotlin.formver.embeddings.callables.*
 import org.jetbrains.kotlin.formver.functionCallArguments
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
@@ -55,8 +55,8 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
 
     override fun visitBlock(block: FirBlock, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
         // We ignore the accumulator: we just want to get the result of the last expression.
-        data.inNewScope { newScopeCtx ->
-            block.statements.fold<_, ExpEmbedding>(UnitLit) { _, it -> newScopeCtx.convert(it) }
+        data.inNewScope {
+            block.statements.fold<_, ExpEmbedding>(UnitLit) { _, it -> convert(it) }
         }
 
     override fun <T> visitLiteralExpression(
@@ -101,8 +101,8 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         } else {
             data.withoutResult()
         }
-        ctx.withWhenSubject(subj) { ctxWithSubj ->
-            convertWhenBranches(whenExpression.branches.iterator(), ctxWithSubj)
+        ctx.withWhenSubject(subj) {
+            convertWhenBranches(whenExpression.branches.iterator(), this)
         }
         return ctx.resultExp
     }
@@ -172,9 +172,17 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         implicitInvokeCall: FirImplicitInvokeCall,
         data: StmtConversionContext<ResultTrackingContext>,
     ): ExpEmbedding {
-        val retType = implicitInvokeCall.calleeCallableSymbol.resolvedReturnType
-        return when (val subItem = data.getLambdaOrNull(implicitInvokeCall.calleeReference.name)) {
-            null -> {
+        val receiverSymbol = implicitInvokeCall.dispatchReceiver?.calleeSymbol
+            ?: throw NotImplementedError("Implicit invoke calls only support a limited range of receivers at the moment.")
+        return when (val exp = data.embedLocalSymbol(receiverSymbol)) {
+            is LambdaExp -> {
+                // The lambda is already the receiver, so we do not need to convert it.
+                // TODO: do this more uniformly: convert the receiver, see it is a lambda, use insertCall on it.
+                val args = implicitInvokeCall.argumentList.arguments.map(data::convert)
+                exp.insertCall(args, data)
+            }
+            else -> {
+                val retType = implicitInvokeCall.calleeCallableSymbol.resolvedReturnType
                 val args = implicitInvokeCall.functionCallArguments.map(data::convert)
                 data.withResult(data.embedType(retType)) {
                     // NOTE: Since it is only relevant to update the number of times that a function object is called,
@@ -182,22 +190,16 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
                     data.addStatement(InvokeFunctionObjectMethod.toMethodCall(args.take(1).toViper(), listOf()))
                 }
             }
-            else -> {
-                // The lambda is already the receiver, so we do not need to convert it.
-                // TODO: do this more uniformly: convert the receiver, see it is a lambda, use insertCall on it.
-                val args = implicitInvokeCall.argumentList.arguments.map(data::convert)
-                subItem.lambda.insertCall(args, data)
-            }
         }
     }
 
     override fun visitProperty(property: FirProperty, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         val symbol = property.symbol
-        data.addScopedName(symbol.name)
+        data.registerLocalPropertyName(symbol.name)
         if (!symbol.isLocal) {
             throw Exception("StmtConversionVisitor should not encounter non-local properties.")
         }
-        val localVar = data.embedProperty(symbol)
+        val localVar = data.embedLocalProperty(symbol)
         data.addDeclaration(localVar.toLocalVarDecl())
         property.initializer?.let {
             val initializerExp = data.convert(it)
@@ -213,7 +215,11 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
             condCtx.convertAndCapture(whileLoop.condition)
             bodyCtx.convert(whileLoop.block)
             bodyCtx.convertAndCapture(whileLoop.condition)
-            data.addStatement(Stmt.While(condCtx.resultExp.toViper(), invariants = data.signature.postconditions, bodyCtx.block))
+            val postconditions = when (val sig = data.signature) {
+                is FullNamedFunctionSignature -> sig.postconditions
+                else -> listOf()
+            }
+            data.addStatement(Stmt.While(condCtx.resultExp.toViper(), invariants = postconditions, bodyCtx.block))
         }
         return UnitLit
     }
@@ -304,7 +310,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
     ): ExpEmbedding {
         // TODO: check whether there are other cases.
         val function = (lambdaArgumentExpression.expression as FirAnonymousFunctionExpression).anonymousFunction
-        return LambdaExp(data.embedFunctionSignature(function.symbol), function, data.getScopedNames())
+        return LambdaExp(data.embedFunctionSignature(function.symbol), function, data)
     }
 
     private fun handleUnimplementedElement(msg: String, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =

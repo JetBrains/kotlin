@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Method
 import org.jetbrains.kotlin.formver.viper.ast.Program
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 
 /**
@@ -178,12 +177,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
     private fun convertMethodWithBody(declaration: FirSimpleFunction, signature: FullNamedFunctionSignature): Method {
         val body = declaration.body?.let {
-            val methodCtx = object : MethodConversionContext, ProgramConversionContext by this {
-                override val signature: FullNamedFunctionSignature = signature
-                override val nameMangler = NameMangler()
-                override fun getLambdaOrNull(name: Name): SubstitutionLambda? = null
-            }
-
+            val methodCtx = MethodConverter(this, signature, RootParameterResolver(this))
             val stmtCtx = StmtConverter(methodCtx, SeqnBuilder(), NoopResultTrackerFactory, scopeDepth = 0)
             signature.formalArgs.forEach { arg ->
                 // Ideally we would want to assume these rather than inhale them to prevent inconsistencies with permissions.
