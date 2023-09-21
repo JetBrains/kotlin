@@ -567,6 +567,12 @@ private val propertyAccessorInlinerLoweringPhase = makeIrModulePhase(
     description = "[Optimization] Inline property accessors"
 )
 
+private val invokeOnExportedFunctionExitLowering = makeIrModulePhase(
+    ::InvokeOnExportedFunctionExitLowering,
+    name = "InvokeOnExportedFunctionExitLowering",
+    description = "This pass is needed to call exported function exit callback for WASI",
+)
+
 private val expressionBodyTransformer = makeIrModulePhase(
     ::ExpressionBodyTransformer,
     name = "ExpressionBodyTransformer",
@@ -672,6 +678,8 @@ val loweringList = listOf(
     addContinuationToNonLocalSuspendFunctionsLoweringPhase,
     addContinuationToFunctionCallsLoweringPhase,
     addMainFunctionCallsLowering,
+
+    invokeOnExportedFunctionExitLowering,
 
     unhandledExceptionLowering,
 

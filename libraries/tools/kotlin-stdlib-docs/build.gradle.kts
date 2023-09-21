@@ -74,6 +74,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 "kotlin.native.internal",
                 "kotlin.jvm.functions",
                 "kotlin.coroutines.jvm.internal",
+                "kotlin.wasm.internal",
         )
 
         val kotlinLanguageVersion = version

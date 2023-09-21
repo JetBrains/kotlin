@@ -26,6 +26,12 @@ public class K1WasmWasiCodegenBoxTestGenerated extends AbstractK1WasmWasiCodegen
     }
 
     @Test
+    @TestMetadata("onExportedFunctionExit.kt")
+    public void testOnExportedFunctionExit() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmWasi/onExportedFunctionExit.kt");
+    }
+
+    @Test
     @TestMetadata("simpleWasi.kt")
     public void testSimpleWasi() throws Exception {
         runTest("compiler/testData/codegen/boxWasmWasi/simpleWasi.kt");
