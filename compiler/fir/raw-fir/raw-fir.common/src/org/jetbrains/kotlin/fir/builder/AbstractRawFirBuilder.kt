@@ -514,8 +514,15 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                         }
                         ESCAPE_STRING_TEMPLATE_ENTRY -> {
                             sb.append(entry.unescapedValue)
-                            buildConstExpression(
-                                entry.toFirSourceElement(), ConstantValueKind.String, entry.unescapedValue, setType = false
+                            val characterWithDiagnostic = escapedStringToCharacter(entry.asText)
+                            buildConstOrErrorExpression(
+                                entry.toFirSourceElement(),
+                                ConstantValueKind.Char,
+                                characterWithDiagnostic.value,
+                                ConeSimpleDiagnostic(
+                                    "Incorrect character: ${entry.asText}",
+                                    characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
+                                )
                             )
                         }
                         SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
@@ -533,8 +540,9 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                 }
             }
             source = base?.toFirSourceElement()
-            // Fast-pass if there is no non-const string expressions
-            if (!hasExpressions) return buildConstExpression(source, ConstantValueKind.String, sb.toString(), setType = false)
+            // Fast-pass if there is no errors and non-const string expressions
+            if (!hasExpressions && !argumentList.arguments.any { it is FirErrorExpression })
+                return buildConstExpression(source, ConstantValueKind.String, sb.toString(), setType = false)
         }
     }
 
