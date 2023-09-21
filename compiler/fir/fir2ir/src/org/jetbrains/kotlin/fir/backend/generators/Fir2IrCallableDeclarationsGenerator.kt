@@ -741,7 +741,8 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                         valueParameter, index + contextReceiverParametersCount,
                         useStubForDefaultValueStub = function !is FirConstructor || containingClass?.name != Name.identifier("Enum"),
                         typeOrigin,
-                        skipDefaultParameter = isFakeOverride || origin == IrDeclarationOrigin.DELEGATED_MEMBER
+                        skipDefaultParameter = isFakeOverride || origin == IrDeclarationOrigin.DELEGATED_MEMBER,
+                        forcedDefaultValueConversion = containingClass?.isAnnotationClass == true
                     ).apply {
                         this.parent = parent
                     }
