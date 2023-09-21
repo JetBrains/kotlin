@@ -26,7 +26,7 @@ interface KotlinXStringDemoInterface {
     val value: String
 }
 
-expect fun StringDemoInterface.plusK(): <!NO_ACTUAL_FOR_EXPECT{JS}!>String<!>
+expect fun StringDemoInterface.plusK(): String
 
 // MODULE: js()()(common, intermediate)
 // TARGET_PLATFORM: JS
