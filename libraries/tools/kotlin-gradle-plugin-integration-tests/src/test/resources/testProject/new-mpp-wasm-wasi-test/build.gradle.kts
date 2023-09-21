@@ -34,6 +34,7 @@ kotlin {
 
     wasmWasi {
         nodejs {}
+        binaries.executable()
     }
 
     sourceSets {
