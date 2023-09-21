@@ -27,13 +27,13 @@ fun CallableId.embedScopeName(): NameScope =
         else -> ClassScope(packageName, id.embedName())
     }
 
-fun CallableId.embedScoped(f: CallableId.() -> KotlinName) = ScopedKotlinName(embedScopeName(), f())
-fun CallableId.embedScopedWithType(type: TypeEmbedding, f: CallableId.() -> KotlinName) = ScopedKotlinName(embedScopeName(), f(), type)
+fun CallableId.embedScoped(name: KotlinName) = ScopedKotlinName(embedScopeName(), name)
+fun CallableId.embedScopedWithType(type: TypeEmbedding, name: KotlinName) = ScopedKotlinName(embedScopeName(), name, type)
 
 fun ClassId.embedName(): ScopedKotlinName = ScopedKotlinName(GlobalScope(packageFqName), ClassKotlinName(shortClassName))
-fun CallableId.embedGetterName(): ScopedKotlinName = embedScoped { GetterKotlinName(callableName) }
-fun CallableId.embedSetterName(): ScopedKotlinName = embedScoped { SetterKotlinName(callableName) }
-fun CallableId.embedMemberPropertyName(): MangledName = embedScoped { MemberKotlinName(callableName) }
+fun CallableId.embedGetterName(): ScopedKotlinName = embedScoped(GetterKotlinName(callableName))
+fun CallableId.embedSetterName(): ScopedKotlinName = embedScoped(SetterKotlinName(callableName))
+fun CallableId.embedMemberPropertyName(): MangledName = embedScoped(MemberKotlinName(callableName))
 
 fun CallableId.embedPropertyName(scope: Int): MangledName = when {
     isLocal -> ScopedKotlinName(LocalScope(scope), SimpleKotlinName(callableName))
@@ -49,11 +49,11 @@ fun FirPropertyAccessorSymbol.embedName(): MangledName = when {
 }
 
 fun FirConstructorSymbol.embedName(ctx: ProgramConversionContext): MangledName =
-    callableId.embedScopedWithType(ctx.embedType(this)) { ConstructorKotlinName }
+    callableId.embedScopedWithType(ctx.embedType(this), ConstructorKotlinName)
 
 fun FirFunctionSymbol<*>.embedName(ctx: ProgramConversionContext): MangledName = when (this) {
     is FirPropertyAccessorSymbol -> embedName()
     is FirConstructorSymbol -> embedName(ctx)
-    else -> callableId.embedScopedWithType(ctx.embedType(this)) { FunctionKotlinName(callableId.callableName) }
+    else -> callableId.embedScopedWithType(ctx.embedType(this), FunctionKotlinName(callableId.callableName))
 }
 
