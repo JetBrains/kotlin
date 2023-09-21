@@ -10,10 +10,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendExtension
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
-import org.jetbrains.kotlin.config.JvmAbiStability
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.org.objectweb.asm.Type
 
 class FirJvmBackendExtension(
@@ -36,14 +34,5 @@ class FirJvmBackendExtension(
             parentSerializer,
             irActualizedResult
         )
-    }
-
-    override fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int =
-        Companion.generateMetadataExtraFlags(abiStability)
-
-    companion object {
-        fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int =
-            JvmAnnotationNames.METADATA_JVM_IR_FLAG or
-                    (if (abiStability != JvmAbiStability.UNSTABLE) JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG else 0)
     }
 }

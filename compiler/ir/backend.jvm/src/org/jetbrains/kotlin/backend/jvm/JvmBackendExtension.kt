@@ -18,8 +18,6 @@ interface JvmBackendExtension {
         context: JvmBackendContext, klass: IrClass, type: Type, bindings: JvmSerializationBindings, parentSerializer: MetadataSerializer?
     ): MetadataSerializer
 
-    fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int
-
     object Default : JvmBackendExtension {
         override fun createSerializer(
             context: JvmBackendContext,
@@ -31,7 +29,7 @@ interface JvmBackendExtension {
             return DescriptorMetadataSerializer(context, klass, type, bindings, parentSerializer)
         }
 
-        override fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int =
+        fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int =
             JvmAnnotationNames.METADATA_JVM_IR_FLAG or
                     (if (abiStability != JvmAbiStability.UNSTABLE) JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG else 0)
     }
