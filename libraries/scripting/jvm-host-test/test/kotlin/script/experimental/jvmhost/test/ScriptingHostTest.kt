@@ -246,9 +246,12 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
-    fun testSimpleScriptWithImplicitReceiver() {
-        val greeting = listOf("3")
-        val script = "println(length)"
+    fun testImplicitReceiverWithExtensionProperty() {
+        // emulates the appropriate gradle kotlin dsl test
+        val script = """
+            val String.implicitReceiver get() = this
+            require(implicitReceiver is String)
+            """.trimIndent()
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
                 implicitReceivers(String::class)
@@ -257,13 +260,9 @@ class ScriptingHostTest : TestCase() {
                 implicitReceivers("abc")
             }
         )
-        val output = captureOut {
-            val retVal = BasicJvmScriptingHost().eval(
-                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
-            ).valueOrThrow().returnValue
-            if (retVal is ResultValue.Error) throw retVal.error
-        }.lines()
-        Assert.assertEquals(greeting, output)
+        BasicJvmScriptingHost().eval(
+            script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
+        ).throwOnFailure()
     }
 
     fun testScriptWithImplicitReceiversWithSameShortName() {
