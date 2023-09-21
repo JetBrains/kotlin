@@ -7,211 +7,211 @@ method global$fun_capture_arg$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(
   ensures old(local$g.special$function_object_call_counter) <=
     local$g.special$function_object_call_counter
 {
-  var anonymous$1: Int
+  var anonymous$0: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   if (true) {
+    var anonymous$1: Int
     var anonymous$2: Int
-    var anonymous$3: Int
-    anonymous$3 := 0
+    anonymous$2 := 0
     if (true) {
-      var anonymous$4: Int
+      var anonymous$3: Int
       special$invoke_function_object(local$g)
-      anonymous$2 := anonymous$4
-      goto inline_label$2$ret
-      label inline_label$2$ret
+      anonymous$1 := anonymous$3
+      goto label$ret$2
+      label label$ret$2
     }
-    anonymous$1 := anonymous$2
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    anonymous$0 := anonymous$1
+    goto label$ret$1
+    label label$ret$1
   }
-  ret := anonymous$1
-  goto label$ret
-  label label$ret
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
 }
 
 /inlining_captured.kt:(207,218): info: Generated Viper text for capture_var:
 method global$fun_capture_var$fun_take$$return$T_Int() returns (ret: Int)
 {
   var local1$x: Int
-  var anonymous$1: Int
+  var anonymous$0: Int
   local1$x := 1
   if (true) {
+    var anonymous$1: Int
     var anonymous$2: Int
-    var anonymous$3: Int
-    anonymous$3 := 0
+    anonymous$2 := 0
     if (true) {
-      anonymous$2 := anonymous$3 + local1$x
-      goto inline_label$2$ret
-      label inline_label$2$ret
+      anonymous$1 := anonymous$2 + local1$x
+      goto label$ret$2
+      label label$ret$2
     }
-    anonymous$1 := anonymous$2
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    anonymous$0 := anonymous$1
+    goto label$ret$1
+    label label$ret$1
   }
-  ret := anonymous$1
-  goto label$ret
-  label label$ret
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
 }
 
 /inlining_captured.kt:(278,296): info: Generated Viper text for capture_and_shadow:
 method global$fun_capture_and_shadow$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
-  var anonymous$1: Int
+  var anonymous$0: Int
   if (true) {
+    var anonymous$1: Int
     var anonymous$2: Int
-    var anonymous$3: Int
-    anonymous$3 := 0
+    anonymous$2 := 0
     if (true) {
       var local3$y: Int
       var local3$x: Int
       local3$y := local$x
       local3$x := 1
-      anonymous$2 := anonymous$3 + local3$x + local3$y
-      goto inline_label$2$ret
-      label inline_label$2$ret
+      anonymous$1 := anonymous$2 + local3$x + local3$y
+      goto label$ret$2
+      label label$ret$2
     }
-    anonymous$1 := anonymous$2
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    anonymous$0 := anonymous$1
+    goto label$ret$1
+    label label$ret$1
   }
-  ret := anonymous$1
-  goto label$ret
-  label label$ret
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
 }
 
 /inlining_captured.kt:(499,516): info: Generated Viper text for capture_var_clash:
 method global$fun_capture_var_clash$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
-  var anonymous$1: Int
+  var anonymous$0: Int
   if (true) {
     var local2$x: Int
+    var anonymous$1: Int
     var anonymous$2: Int
-    var anonymous$3: Int
     local2$x := 1
-    anonymous$3 := 0
+    anonymous$2 := 0
     if (true) {
-      anonymous$2 := anonymous$3 * local$x
-      goto inline_label$2$ret
-      label inline_label$2$ret
+      anonymous$1 := anonymous$2 * local$x
+      goto label$ret$2
+      label label$ret$2
     }
-    anonymous$1 := anonymous$2 + local2$x
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    anonymous$0 := anonymous$1 + local2$x
+    goto label$ret$1
+    label label$ret$1
   }
-  ret := anonymous$1
-  goto label$ret
-  label label$ret
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
 }
 
 /inlining_captured.kt:(574,598): info: Generated Viper text for capture_and_shadow_clash:
 method global$fun_capture_and_shadow_clash$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
-  var anonymous$1: Int
+  var anonymous$0: Int
   if (true) {
     var local2$x: Int
+    var anonymous$1: Int
     var anonymous$2: Int
-    var anonymous$3: Int
     local2$x := 1
-    anonymous$3 := 0
+    anonymous$2 := 0
     if (true) {
       var local3$y: Int
       var local3$x: Int
       local3$y := local$x
       local3$x := 2
-      anonymous$2 := local3$x + local3$y + anonymous$3
-      goto inline_label$2$ret
-      label inline_label$2$ret
+      anonymous$1 := local3$x + local3$y + anonymous$2
+      goto label$ret$2
+      label label$ret$2
     }
-    anonymous$1 := anonymous$2 + local2$x
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    anonymous$0 := anonymous$1 + local2$x
+    goto label$ret$1
+    label label$ret$1
   }
-  ret := anonymous$1
-  goto label$ret
-  label label$ret
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
 }
 
 /inlining_captured.kt:(708,731): info: Generated Viper text for nested_lambda_shadowing:
 method global$fun_nested_lambda_shadowing$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
-  var anonymous$1: Int
+  var anonymous$0: Int
   if (true) {
     var local2$x: Int
+    var anonymous$1: Int
     var anonymous$2: Int
-    var anonymous$3: Int
     local2$x := 1
-    anonymous$3 := 0
+    anonymous$2 := 0
     if (true) {
-      var anonymous$4: Int
+      var anonymous$3: Int
       var local3$y: Int
       var local3$x: Int
       if (true) {
         var local4$x: Int
+        var anonymous$4: Int
         var anonymous$5: Int
-        var anonymous$6: Int
         local4$x := 1
-        anonymous$6 := 0
+        anonymous$5 := 0
         if (true) {
           var local5$x: Int
           local5$x := 3
-          anonymous$5 := local5$x + anonymous$6
-          goto inline_label$4$ret
-          label inline_label$4$ret
+          anonymous$4 := local5$x + anonymous$5
+          goto label$ret$4
+          label label$ret$4
         }
-        anonymous$4 := anonymous$5 + local4$x
-        goto inline_label$3$ret
-        label inline_label$3$ret
+        anonymous$3 := anonymous$4 + local4$x
+        goto label$ret$3
+        label label$ret$3
       }
       local3$y := local$x
       local3$x := 4
-      anonymous$2 := local3$x + local3$y + anonymous$3
-      goto inline_label$2$ret
-      label inline_label$2$ret
+      anonymous$1 := local3$x + local3$y + anonymous$2
+      goto label$ret$2
+      label label$ret$2
     }
-    anonymous$1 := anonymous$2 + local2$x
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    anonymous$0 := anonymous$1 + local2$x
+    goto label$ret$1
+    label label$ret$1
   }
-  ret := anonymous$1
-  goto label$ret
-  label label$ret
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
 }
 
 /inlining_captured.kt:(1006,1024): info: Generated Viper text for call_double_invoke:
 method global$fun_call_double_invoke$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
-  var anonymous$1: Int
+  var anonymous$0: Int
   if (true) {
+    var anonymous$1: Int
     var anonymous$2: Int
     var anonymous$3: Int
     var anonymous$4: Int
-    var anonymous$5: Int
-    anonymous$3 := 0
+    anonymous$2 := 0
     if (true) {
       var local3$x: Int
-      local3$x := anonymous$3
-      anonymous$2 := local3$x
-      goto inline_label$2$ret
-      label inline_label$2$ret
+      local3$x := anonymous$2
+      anonymous$1 := local3$x
+      goto label$ret$2
+      label label$ret$2
     }
-    anonymous$5 := 1
+    anonymous$4 := 1
     if (true) {
       var local3$x: Int
-      local3$x := anonymous$5
-      anonymous$4 := local3$x
-      goto inline_label$3$ret
-      label inline_label$3$ret
+      local3$x := anonymous$4
+      anonymous$3 := local3$x
+      goto label$ret$3
+      label label$ret$3
     }
-    anonymous$1 := anonymous$4
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    anonymous$0 := anonymous$3
+    goto label$ret$1
+    label label$ret$1
   }
-  ret := anonymous$1
-  goto label$ret
-  label label$ret
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
 }

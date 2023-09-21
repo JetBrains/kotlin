@@ -5,8 +5,8 @@ method global$fun_returns_true$fun_take$$return$T_Boolean()
   ensures ret == true
 {
   ret := true
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /returns_booleans.kt:(268,281): info: Generated Viper text for returns_false:
@@ -16,8 +16,8 @@ method global$fun_returns_false$fun_take$$return$T_Boolean()
   ensures ret == false
 {
   ret := false
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /returns_booleans.kt:(418,435): info: Generated Viper text for conditional_basic:
@@ -27,8 +27,8 @@ method global$fun_conditional_basic$fun_take$T_Boolean$return$T_Boolean(local$b:
   ensures ret == false ==> local$b
 {
   ret := true
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /returns_booleans.kt:(612,636): info: Generated Viper text for binary_logic_expressions:
@@ -39,8 +39,8 @@ method global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T
   ensures ret == true ==> (true || local$a) && (local$b || true)
 {
   ret := true
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /returns_booleans.kt:(855,866): info: Generated Viper text for logical_not:
@@ -50,8 +50,8 @@ method global$fun_logical_not$fun_take$T_Boolean$return$T_Boolean(local$b: Bool)
   ensures ret == false ==> local$b || !local$b
 {
   ret := false
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /returns_booleans.kt:(1052,1075): info: Generated Viper text for call_fun_with_contracts:
@@ -60,13 +60,13 @@ method global$fun_call_fun_with_contracts$fun_take$T_Boolean$return$T_Boolean(lo
   ensures ret == true
 {
   var local1$a: Bool
-  var anonymous$1: Bool
-  anonymous$1 := global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$b,
+  var anonymous$0: Bool
+  anonymous$0 := global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$b,
     local$b)
-  local1$a := anonymous$1
+  local1$a := anonymous$0
   ret := local1$a
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 method global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$a: Bool,
@@ -81,7 +81,7 @@ method global$fun_isNullOrEmpty$fun_take$NT_class_pkg$kotlin$collections$global$
   returns (ret: Bool)
   ensures ret == false ==> this != (dom$Nullable$null(): dom$Nullable[Ref])
 {
-  var anonymous$1: Bool
+  var anonymous$0: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$special$Nullable(dom$Type$pkg$kotlin$collections$global$class_Collection()))
   if (this == (dom$Nullable$null(): dom$Nullable[Ref]) &&
   (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
@@ -91,16 +91,16 @@ method global$fun_isNullOrEmpty$fun_take$NT_class_pkg$kotlin$collections$global$
   (dom$Nullable$null(): dom$Nullable[dom$Unit]) &&
   (dom$Casting$cast(this, dom$Type$pkg$kotlin$collections$global$class_Collection()): Ref) ==
   (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$pkg$kotlin$collections$global$class_Collection()): Ref)) {
-    anonymous$1 := true
+    anonymous$0 := true
   } else {
-    var anonymous$2: Bool
-    anonymous$2 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Collection$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean((dom$Casting$cast(this,
+    var anonymous$1: Bool
+    anonymous$1 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Collection$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean((dom$Casting$cast(this,
       dom$Type$pkg$kotlin$collections$global$class_Collection()): Ref))
-    anonymous$1 := anonymous$2
+    anonymous$0 := anonymous$1
   }
-  ret := anonymous$1
-  goto label$ret
-  label label$ret
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
 }
 
 method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Collection$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean(this: Ref)

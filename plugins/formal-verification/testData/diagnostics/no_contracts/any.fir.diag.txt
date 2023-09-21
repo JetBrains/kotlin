@@ -5,8 +5,8 @@ method global$fun_any_argument_return$fun_take$T_Any$return$T_Any(local$x: dom$A
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Any())
   ret := local$x
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /any.kt:(59,67): info: Generated Viper text for any_cast:
@@ -15,6 +15,6 @@ method global$fun_any_cast$fun_take$T_Int$return$T_Any(local$x: Int)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$Any())
 {
   ret := (dom$Casting$cast(local$x, dom$Type$Any()): dom$Any)
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }

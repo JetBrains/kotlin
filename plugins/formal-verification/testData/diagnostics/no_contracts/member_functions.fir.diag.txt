@@ -4,14 +4,14 @@ field class_scope_global$class_Foo$member_x: Int
 method class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
   returns (ret: Int)
 {
-  var anonymous$1: Int
+  var anonymous$0: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$global$class_Foo())
   inhale acc(this.class_scope_global$class_Foo$member_x, write)
-  anonymous$1 := this.class_scope_global$class_Foo$member_x
+  anonymous$0 := this.class_scope_global$class_Foo$member_x
   exhale acc(this.class_scope_global$class_Foo$member_x, write)
-  ret := anonymous$1
-  goto label$ret
-  label label$ret
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
 }
 
 /member_functions.kt:(84,99): info: Generated Viper text for call_member_fun:
@@ -20,10 +20,10 @@ field class_scope_global$class_Foo$member_x: Int
 method class_scope_global$class_Foo$fun_call_member_fun$fun_take$T_class_global$class_Foo$return$T_Unit(this: Ref)
   returns (ret: dom$Unit)
 {
-  var anonymous$1: Int
+  var anonymous$0: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$global$class_Foo())
-  anonymous$1 := class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this)
-  label label$ret
+  anonymous$0 := class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this)
+  label label$ret$0
 }
 
 method class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
@@ -37,11 +37,11 @@ method class_scope_global$class_Foo$fun_sibling_call$fun_take$T_class_global$cla
   local$other: Ref)
   returns (ret: dom$Unit)
 {
-  var anonymous$1: Int
+  var anonymous$0: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$global$class_Foo())
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$other): dom$Type), dom$Type$global$class_Foo())
-  anonymous$1 := class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(local$other)
-  label label$ret
+  anonymous$0 := class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(local$other)
+  label label$ret$0
 }
 
 method class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
@@ -55,12 +55,12 @@ method global$fun_outer_member_fun_call$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
   var local1$f: Ref
-  var anonymous$1: Ref
-  var anonymous$2: Int
-  anonymous$1 := class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(3)
-  local1$f := anonymous$1
-  anonymous$2 := class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(local1$f)
-  label label$ret
+  var anonymous$0: Ref
+  var anonymous$1: Int
+  anonymous$0 := class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(3)
+  local1$f := anonymous$0
+  anonymous$1 := class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(local1$f)
+  label label$ret$0
 }
 
 method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)

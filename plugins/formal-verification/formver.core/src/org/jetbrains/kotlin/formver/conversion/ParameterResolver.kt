@@ -24,12 +24,14 @@ interface ParameterResolver {
     val resolvedReturnLabelName: ReturnLabelName
 }
 
-class RootParameterResolver(val ctx: ProgramConversionContext) : ParameterResolver {
+class RootParameterResolver(
+    val ctx: ProgramConversionContext,
+    override val resolvedReturnLabelName: ReturnLabelName,
+) : ParameterResolver {
     override fun tryEmbedParameter(symbol: FirValueParameterSymbol): ExpEmbedding =
         VariableEmbedding(symbol.embedName(), ctx.embedType(symbol.resolvedReturnType))
 
     override val resolvedReturnVarName: MangledName = ReturnVariableName
-    override val resolvedReturnLabelName: ReturnLabelName = ReturnLabelName(null)
 }
 
 class InlineParameterResolver(

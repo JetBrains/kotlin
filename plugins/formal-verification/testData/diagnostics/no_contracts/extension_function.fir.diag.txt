@@ -3,17 +3,17 @@ method global$fun_inc$fun_take$T_Int$return$T_Int(this: Int)
   returns (ret: Int)
 {
   ret := this + 1
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /extension_function.kt:(35,56): info: Generated Viper text for extension_method_call:
 method global$fun_extension_method_call$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var anonymous$1: Int
-  anonymous$1 := pkg$kotlin$class_scope_pkg$kotlin$global$class_Int$fun_inc$fun_take$T_Int$return$T_Int(3)
-  label label$ret
+  var anonymous$0: Int
+  anonymous$0 := pkg$kotlin$class_scope_pkg$kotlin$global$class_Int$fun_inc$fun_take$T_Int$return$T_Int(3)
+  label label$ret$0
 }
 
 method pkg$kotlin$class_scope_pkg$kotlin$global$class_Int$fun_inc$fun_take$T_Int$return$T_Int(this: Int)

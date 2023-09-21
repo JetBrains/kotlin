@@ -95,7 +95,7 @@ fun StmtConversionContext<ResultTrackingContext>.insertInlineFunctionCall(
 ): ExpEmbedding = withResult(calleeSignature.returnType) {
     val callArgs = getInlineFunctionCallArgs(args)
     val subs = paramNames.zip(callArgs).toMap()
-    val returnLabelName = ReturnLabelName(newWhileIndex())
+    val returnLabelName = returnLabelNameProducer.getFresh()
     val newMethodCtx = MethodConverter(
         this, calleeSignature,
         InlineParameterResolver(this.resultCtx.resultVar.name, returnLabelName, subs),

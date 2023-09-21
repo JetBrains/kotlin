@@ -7,10 +7,10 @@ method global$fun_invalid_calls_in_place$fun_take$fun_take$$return$T_Unit$return
     local$f.special$function_object_call_counter
   ensures true
 {
-  var anonymous$1: dom$Unit
+  var anonymous$0: dom$Unit
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  anonymous$1 := global$fun_escape$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f)
-  label label$ret
+  anonymous$0 := global$fun_escape$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f)
+  label label$ret$0
 }
 
 method global$fun_escape$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f: Ref)

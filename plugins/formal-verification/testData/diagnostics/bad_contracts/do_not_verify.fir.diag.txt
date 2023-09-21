@@ -4,6 +4,6 @@ method global$fun_bad_returns$fun_take$$return$T_Boolean()
   ensures ret == true
 {
   ret := false
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }

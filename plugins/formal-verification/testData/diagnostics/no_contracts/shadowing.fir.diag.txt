@@ -17,7 +17,7 @@ method global$fun_shadow_local$fun_take$$return$T_Unit()
     local1$foo := local2$x
   }
   local1$foo := local1$x
-  label label$ret
+  label label$ret$0
 }
 
 /shadowing.kt:(214,226): info: Generated Viper text for shadow_param:
@@ -29,7 +29,7 @@ method global$fun_shadow_param$fun_take$T_Int$return$T_Unit(local$x: Int)
   local1$foo := local$x
   local1$x := 0
   local1$foo := local1$x
-  label label$ret
+  label label$ret$0
 }
 
 /shadowing.kt:(305,318): info: Generated Viper text for shadow_nested:
@@ -43,22 +43,22 @@ method global$fun_shadow_nested$fun_take$T_Int$return$T_Unit(local$x: Int)
   local1$foo := local1$x
   if (true) {
     var local2$x: Int
-    var anonymous$1: Bool
+    var anonymous$0: Bool
     local1$foo := local1$x
     local2$x := 1
     local1$foo := local2$x
-    label label$continue$1
-    anonymous$1 := true
-    while (anonymous$1) {
+    label label$continue$0
+    anonymous$0 := true
+    while (anonymous$0) {
       var local3$x: Int
       local1$foo := local2$x
       local3$x := 2
       local1$foo := local3$x
-      anonymous$1 := true
+      anonymous$0 := true
     }
-    label label$break$1
+    label label$break$0
     local1$foo := local2$x
   }
   local1$foo := local1$x
-  label label$ret
+  label label$ret$0
 }

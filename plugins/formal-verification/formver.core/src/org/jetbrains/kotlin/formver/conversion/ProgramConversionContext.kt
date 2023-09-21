@@ -22,14 +22,16 @@ interface ProgramConversionContext {
     val config: PluginConfiguration
     val errorCollector: ErrorCollector
 
+    val anonNameProducer: FreshEntityProducer<AnonymousName>
+    val whileIndexProducer: FreshEntityProducer<Int>
+    val returnLabelNameProducer: FreshEntityProducer<ReturnLabelName>
+
     fun embedFunction(symbol: FirFunctionSymbol<*>): FunctionEmbedding
     fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature
     fun embedType(type: ConeKotlinType): TypeEmbedding
     fun embedType(symbol: FirFunctionSymbol<*>): TypeEmbedding
     fun embedType(exp: FirExpression): TypeEmbedding = embedType(exp.resolvedType)
     fun getField(field: FirPropertySymbol): FieldEmbedding?
-    fun newAnonName(): AnonymousName
-    fun newWhileIndex(): Int
 }
 
-fun ProgramConversionContext.newAnonVar(type: TypeEmbedding): VariableEmbedding = VariableEmbedding(newAnonName(), type)
+fun ProgramConversionContext.freshAnonVar(type: TypeEmbedding): VariableEmbedding = VariableEmbedding(anonNameProducer.getFresh(), type)

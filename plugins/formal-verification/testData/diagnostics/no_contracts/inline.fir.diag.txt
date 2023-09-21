@@ -2,57 +2,57 @@
 method global$fun_quadruple$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
+  var anonymous$0: Int
   var anonymous$1: Int
-  var anonymous$2: Int
+  if (true) {
+    var local2$y: Int
+    local2$y := local$x + local$x
+    anonymous$0 := local2$y
+    goto label$ret$1
+    label label$ret$1
+  }
   if (true) {
     var local2$y: Int
     local2$y := local$x + local$x
     anonymous$1 := local2$y
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    goto label$ret$2
+    label label$ret$2
   }
-  if (true) {
-    var local2$y: Int
-    local2$y := local$x + local$x
-    anonymous$2 := local2$y
-    goto inline_label$2$ret
-    label inline_label$2$ret
-  }
-  ret := anonymous$1 + anonymous$2
-  goto label$ret
-  label label$ret
+  ret := anonymous$0 + anonymous$1
+  goto label$ret$0
+  label label$ret$0
 }
 
 /inline.kt:(450,463): info: Generated Viper text for use_branching:
 method global$fun_use_branching$fun_take$$return$T_Int() returns (ret: Int)
 {
-  var anonymous$1: Int
-  var anonymous$2: Bool
-  var anonymous$3: Int
-  var anonymous$4: Bool
-  anonymous$2 := false
+  var anonymous$0: Int
+  var anonymous$1: Bool
+  var anonymous$2: Int
+  var anonymous$3: Bool
+  anonymous$1 := false
   if (true) {
-    if (anonymous$2) {
-      anonymous$1 := 1
-      goto inline_label$1$ret
+    if (anonymous$1) {
+      anonymous$0 := 1
+      goto label$ret$1
     } else {
-      anonymous$1 := 0
-      goto inline_label$1$ret
+      anonymous$0 := 0
+      goto label$ret$1
     }
-    label inline_label$1$ret
+    label label$ret$1
   }
-  anonymous$4 := true
+  anonymous$3 := true
   if (true) {
-    if (anonymous$4) {
-      anonymous$3 := 1
-      goto inline_label$2$ret
+    if (anonymous$3) {
+      anonymous$2 := 1
+      goto label$ret$2
     } else {
-      anonymous$3 := 0
-      goto inline_label$2$ret
+      anonymous$2 := 0
+      goto label$ret$2
     }
-    label inline_label$2$ret
+    label label$ret$2
   }
-  ret := anonymous$1 + anonymous$3
-  goto label$ret
-  label label$ret
+  ret := anonymous$0 + anonymous$2
+  goto label$ret$0
+  label label$ret$0
 }

@@ -7,15 +7,15 @@ method global$fun_testCustomSetter$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
   var local1$f: Ref
-  var anonymous$1: Ref
-  var anonymous$2: dom$Unit
-  anonymous$1 := class_scope_global$class_AlwaysPlusOne$constructor$fun_take$$return$T_class_global$class_AlwaysPlusOne()
-  local1$f := anonymous$1
+  var anonymous$0: Ref
+  var anonymous$1: dom$Unit
+  anonymous$0 := class_scope_global$class_AlwaysPlusOne$constructor$fun_take$$return$T_class_global$class_AlwaysPlusOne()
+  local1$f := anonymous$0
   inhale acc(local1$f.class_scope_global$class_AlwaysPlusOne$member_b, write)
   local1$f.class_scope_global$class_AlwaysPlusOne$member_b := 1
   exhale acc(local1$f.class_scope_global$class_AlwaysPlusOne$member_b, write)
-  anonymous$2 := pkg$special$global$setter_accessor(local1$f, 1)
-  label label$ret
+  anonymous$1 := pkg$special$global$setter_accessor(local1$f, 1)
+  label label$ret$0
 }
 
 method class_scope_global$class_AlwaysPlusOne$constructor$fun_take$$return$T_class_global$class_AlwaysPlusOne()
@@ -37,18 +37,18 @@ method global$fun_testSetter$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
   var local1$person: Ref
-  var anonymous$1: Ref
-  var anonymous$2: Int
-  anonymous$1 := class_scope_global$class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Person(19)
-  local1$person := anonymous$1
+  var anonymous$0: Ref
+  var anonymous$1: Int
+  anonymous$0 := class_scope_global$class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Person(19)
+  local1$person := anonymous$0
   inhale acc(local1$person.class_scope_global$class_Person$member_age, write)
-  anonymous$2 := local1$person.class_scope_global$class_Person$member_age
+  anonymous$1 := local1$person.class_scope_global$class_Person$member_age
   exhale acc(local1$person.class_scope_global$class_Person$member_age, write)
   inhale acc(local1$person.class_scope_global$class_Person$member_age, write)
-  local1$person.class_scope_global$class_Person$member_age := anonymous$2 +
+  local1$person.class_scope_global$class_Person$member_age := anonymous$1 +
     1
   exhale acc(local1$person.class_scope_global$class_Person$member_age, write)
-  label label$ret
+  label label$ret$0
 }
 
 method class_scope_global$class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Person(local$age: Int)
@@ -65,20 +65,20 @@ method global$fun_testSetterCascade$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
   var local1$f: Ref
+  var anonymous$0: Ref
   var anonymous$1: Ref
   var anonymous$2: Ref
-  var anonymous$3: Ref
-  anonymous$1 := class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(10)
-  anonymous$2 := class_scope_global$class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(anonymous$1)
-  local1$f := anonymous$2
+  anonymous$0 := class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(10)
+  anonymous$1 := class_scope_global$class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(anonymous$0)
+  local1$f := anonymous$1
   inhale acc(local1$f.class_scope_global$class_Foo$member_b, write)
-  anonymous$3 := local1$f.class_scope_global$class_Foo$member_b
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$3): dom$Type), dom$Type$global$class_Bar())
+  anonymous$2 := local1$f.class_scope_global$class_Foo$member_b
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$2): dom$Type), dom$Type$global$class_Bar())
   exhale acc(local1$f.class_scope_global$class_Foo$member_b, write)
-  inhale acc(anonymous$3.class_scope_global$class_Bar$member_a, write)
-  anonymous$3.class_scope_global$class_Bar$member_a := 42
-  exhale acc(anonymous$3.class_scope_global$class_Bar$member_a, write)
-  label label$ret
+  inhale acc(anonymous$2.class_scope_global$class_Bar$member_a, write)
+  anonymous$2.class_scope_global$class_Bar$member_a := 42
+  exhale acc(anonymous$2.class_scope_global$class_Bar$member_a, write)
+  label label$ret$0
 }
 
 method class_scope_global$class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(local$b: Ref)
@@ -98,12 +98,12 @@ method global$fun_testSetterNoBackingField$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
   var local1$baz: Ref
-  var anonymous$1: Ref
-  var anonymous$2: dom$Unit
-  anonymous$1 := class_scope_global$class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
-  local1$baz := anonymous$1
-  anonymous$2 := pkg$special$global$setter_accessor(local1$baz, 42)
-  label label$ret
+  var anonymous$0: Ref
+  var anonymous$1: dom$Unit
+  anonymous$0 := class_scope_global$class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
+  local1$baz := anonymous$0
+  anonymous$1 := pkg$special$global$setter_accessor(local1$baz, 42)
+  label label$ret$0
 }
 
 method class_scope_global$class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
@@ -124,19 +124,18 @@ field class_scope_global$class_Bar$member_a: Int
 method global$fun_testSetterLambda$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var anonymous$1: Ref
-  var anonymous$2: dom$Unit
-  anonymous$1 := class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(0)
+  var anonymous$0: Ref
+  var anonymous$1: dom$Unit
+  anonymous$0 := class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(0)
   if (true) {
-    inhale acc(anonymous$1.class_scope_global$class_Bar$member_a, write)
-    anonymous$1.class_scope_global$class_Bar$member_a := 42
-    exhale acc(anonymous$1.class_scope_global$class_Bar$member_a, write)
-    label inline_label$1$ret
+    inhale acc(anonymous$0.class_scope_global$class_Bar$member_a, write)
+    anonymous$0.class_scope_global$class_Bar$member_a := 42
+    exhale acc(anonymous$0.class_scope_global$class_Bar$member_a, write)
+    label label$ret$1
   }
-  label label$ret
+  label label$ret$0
 }
 
 method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
-

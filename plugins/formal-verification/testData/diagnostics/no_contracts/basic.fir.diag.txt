@@ -2,22 +2,22 @@
 method global$fun_return_unit$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  label label$ret
+  label label$ret$0
 }
 
 /basic.kt:(25,35): info: Generated Viper text for return_int:
 method global$fun_return_int$fun_take$$return$T_Int() returns (ret: Int)
 {
   ret := 0
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /basic.kt:(60,80): info: Generated Viper text for take_int_return_unit:
 method global$fun_take_int_return_unit$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 {
-  label label$ret
+  label label$ret$0
 }
 
 /basic.kt:(126,145): info: Generated Viper text for take_int_return_int:
@@ -25,8 +25,8 @@ method global$fun_take_int_return_int$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 {
   ret := local$x
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /basic.kt:(176,200): info: Generated Viper text for take_int_return_int_expr:
@@ -34,8 +34,8 @@ method global$fun_take_int_return_int_expr$fun_take$T_Int$return$T_Int(local$x: 
   returns (ret: Int)
 {
   ret := local$x
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /basic.kt:(222,242): info: Generated Viper text for with_int_declaration:
@@ -45,8 +45,8 @@ method global$fun_with_int_declaration$fun_take$$return$T_Int()
   var local1$x: Int
   local1$x := 0
   ret := local1$x
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /basic.kt:(285,299): info: Generated Viper text for int_assignment:
@@ -56,5 +56,5 @@ method global$fun_int_assignment$fun_take$$return$T_Unit()
   var local1$x: Int
   local1$x := 0
   local1$x := 1
-  label label$ret
+  label label$ret$0
 }

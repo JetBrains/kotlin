@@ -4,7 +4,7 @@ method global$fun_addition$fun_take$T_Int$return$T_Unit(local$x: Int)
 {
   var local1$y: Int
   local1$y := local$x + local$x
-  label label$ret
+  label label$ret$0
 }
 
 /arithmetic.kt:(47,58): info: Generated Viper text for subtraction:
@@ -13,7 +13,7 @@ method global$fun_subtraction$fun_take$T_Int$return$T_Unit(local$x: Int)
 {
   var local1$y: Int
   local1$y := local$x - local$x
-  label label$ret
+  label label$ret$0
 }
 
 /arithmetic.kt:(93,107): info: Generated Viper text for multiplication:
@@ -22,7 +22,7 @@ method global$fun_multiplication$fun_take$T_Int$return$T_Unit(local$x: Int)
 {
   var local1$y: Int
   local1$y := local$x * local$x
-  label label$ret
+  label label$ret$0
 }
 
 /arithmetic.kt:(142,150): info: Generated Viper text for division:
@@ -32,5 +32,5 @@ method global$fun_division$fun_take$T_Int$return$T_Unit(local$x: Int)
   var local1$y: Int
   inhale local$x != 0
   local1$y := local$x / local$x
-  label label$ret
+  label label$ret$0
 }

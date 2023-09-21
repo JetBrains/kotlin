@@ -9,35 +9,35 @@ method global$fun_call_invoke$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(
     old(local$g.special$function_object_call_counter)
 {
   var local1$z: Int
-  var anonymous$1: Int
-  var anonymous$4: Int
+  var anonymous$0: Int
+  var anonymous$3: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   if (true) {
     var local2$x: Int
+    var anonymous$1: Int
     var anonymous$2: Int
-    var anonymous$3: Int
     special$invoke_function_object(local$g)
-    local2$x := anonymous$2
+    local2$x := anonymous$1
     special$invoke_function_object(local$g)
-    anonymous$1 := anonymous$3
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    anonymous$0 := anonymous$2
+    goto label$ret$1
+    label label$ret$1
   }
-  local1$z := anonymous$1
+  local1$z := anonymous$0
   if (true) {
     var local2$x: Int
+    var anonymous$4: Int
     var anonymous$5: Int
-    var anonymous$6: Int
     special$invoke_function_object(local$g)
-    local2$x := anonymous$5
+    local2$x := anonymous$4
     special$invoke_function_object(local$g)
-    anonymous$4 := anonymous$6
-    goto inline_label$2$ret
-    label inline_label$2$ret
+    anonymous$3 := anonymous$5
+    goto label$ret$2
+    label label$ret$2
   }
-  ret := anonymous$4
-  goto label$ret
-  label label$ret
+  ret := anonymous$3
+  goto label$ret$0
+  label label$ret$0
 }
 
 /inlining.kt:(725,745): info: Generated Viper text for call_invoke_with_int:
@@ -51,35 +51,35 @@ method global$fun_call_invoke_with_int$fun_take$fun_take$T_Int$return$T_Int$retu
     old(local$g.special$function_object_call_counter)
 {
   var local1$z: Int
+  var anonymous$0: Int
   var anonymous$1: Int
-  var anonymous$2: Int
+  var anonymous$3: Int
   var anonymous$4: Int
-  var anonymous$5: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
-  anonymous$2 := 1
+  anonymous$1 := 1
   if (true) {
     var local2$x: Int
-    var anonymous$3: Int
-    local2$x := anonymous$2 + anonymous$2
+    var anonymous$2: Int
+    local2$x := anonymous$1 + anonymous$1
     special$invoke_function_object(local$g)
-    anonymous$1 := anonymous$3
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    anonymous$0 := anonymous$2
+    goto label$ret$1
+    label label$ret$1
   }
-  local1$z := anonymous$1
+  local1$z := anonymous$0
   special$invoke_function_object(local$g)
   if (true) {
     var local2$x: Int
-    var anonymous$6: Int
-    local2$x := anonymous$4 + anonymous$4
+    var anonymous$5: Int
+    local2$x := anonymous$3 + anonymous$3
     special$invoke_function_object(local$g)
-    anonymous$5 := anonymous$6
-    goto inline_label$2$ret
-    label inline_label$2$ret
+    anonymous$4 := anonymous$5
+    goto label$ret$2
+    label label$ret$2
   }
-  ret := anonymous$5
-  goto label$ret
-  label label$ret
+  ret := anonymous$4
+  goto label$ret$0
+  label label$ret$0
 }
 
 /inlining.kt:(1005,1017): info: Generated Viper text for name_clashes:
@@ -93,33 +93,33 @@ method global$fun_name_clashes$fun_take$fun_take$T_Int$return$T_Int$return$T_Int
     old(local$f.special$function_object_call_counter)
 {
   var local1$x: Int
-  var anonymous$1: Int
-  var anonymous$4: Int
+  var anonymous$0: Int
+  var anonymous$3: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   if (true) {
     var local2$x: Int
+    var anonymous$1: Int
     var anonymous$2: Int
-    var anonymous$3: Int
     special$invoke_function_object(local$f)
-    local2$x := anonymous$2
+    local2$x := anonymous$1
     special$invoke_function_object(local$f)
-    anonymous$1 := anonymous$3
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    anonymous$0 := anonymous$2
+    goto label$ret$1
+    label label$ret$1
   }
-  local1$x := anonymous$1
+  local1$x := anonymous$0
   if (true) {
     var local2$x: Int
-    var anonymous$5: Int
+    var anonymous$4: Int
     local2$x := local1$x + local1$x
     special$invoke_function_object(local$f)
-    anonymous$4 := anonymous$5
-    goto inline_label$2$ret
-    label inline_label$2$ret
+    anonymous$3 := anonymous$4
+    goto label$ret$2
+    label label$ret$2
   }
-  ret := anonymous$4
-  goto label$ret
-  label label$ret
+  ret := anonymous$3
+  goto label$ret$0
+  label label$ret$0
 }
 
 /inlining.kt:(1262,1283): info: Generated Viper text for different_return_type:
@@ -133,33 +133,33 @@ method global$fun_different_return_type$fun_take$fun_take$T_Int$return$T_Int$ret
     old(local$f.special$function_object_call_counter)
 {
   var local1$x: Int
-  var anonymous$1: Int
-  var anonymous$4: Int
+  var anonymous$0: Int
+  var anonymous$3: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   if (true) {
     var local2$x: Int
+    var anonymous$1: Int
     var anonymous$2: Int
-    var anonymous$3: Int
     special$invoke_function_object(local$f)
-    local2$x := anonymous$2
+    local2$x := anonymous$1
     special$invoke_function_object(local$f)
-    anonymous$1 := anonymous$3
-    goto inline_label$1$ret
-    label inline_label$1$ret
+    anonymous$0 := anonymous$2
+    goto label$ret$1
+    label label$ret$1
   }
-  local1$x := anonymous$1
+  local1$x := anonymous$0
   if (true) {
     var local2$x: Int
+    var anonymous$4: Int
     var anonymous$5: Int
-    var anonymous$6: Int
     special$invoke_function_object(local$f)
-    local2$x := anonymous$5
+    local2$x := anonymous$4
     special$invoke_function_object(local$f)
-    anonymous$4 := anonymous$6
-    goto inline_label$2$ret
-    label inline_label$2$ret
+    anonymous$3 := anonymous$5
+    goto label$ret$2
+    label label$ret$2
   }
-  ret := local1$x == anonymous$4
-  goto label$ret
-  label label$ret
+  ret := local1$x == anonymous$3
+  goto label$ret$0
+  label label$ret$0
 }

@@ -4,8 +4,8 @@ method global$fun_is_non_nullable$fun_take$NT_Int$return$T_Boolean(local$x: dom$
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ret := dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int())
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /is_operator.kt:(67,82): info: Generated Viper text for not_is_nullable:
@@ -14,8 +14,8 @@ method global$fun_not_is_nullable$fun_take$NT_Int$return$T_Boolean(local$x: dom$
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ret := !dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Nothing())
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /is_operator.kt:(135,145): info: Generated Viper text for smart_cast:
@@ -25,10 +25,10 @@ method global$fun_smart_cast$fun_take$NT_Any$return$T_Int(local$x: dom$Nullable[
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
   if (dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int())) {
     ret := (dom$Casting$cast(local$x, dom$Type$Int()): Int)
-    goto label$ret
+    goto label$ret$0
   } else {
     ret := -1
-    goto label$ret
+    goto label$ret$0
   }
-  label label$ret
+  label label$ret$0
 }

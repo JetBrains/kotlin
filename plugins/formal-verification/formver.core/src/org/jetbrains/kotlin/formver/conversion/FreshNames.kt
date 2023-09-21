@@ -36,21 +36,10 @@ data class SpecialName(val name: String) : MangledName {
         get() = "special\$$name"
 }
 
-data class ReturnLabelName(val scopeDepth: Int? = null) : MangledName {
-    override val mangled: String
-        get() = if (scopeDepth == null) {
-            "label\$ret"
-        } else {
-            "inline_label\$$scopeDepth\$ret"
-        }
+abstract class NumberedLabelName(kind: String, n: Int) : MangledName {
+    override val mangled = "label\$$kind\$$n"
 }
 
-data class BreakLabelName(val n: Int) : MangledName {
-    override val mangled: String
-        get() = "label\$break\$$n"
-}
-
-data class ContinueLabelName(val n: Int) : MangledName {
-    override val mangled: String
-        get() = "label\$continue\$$n"
-}
+data class ReturnLabelName(val scopeDepth: Int) : NumberedLabelName("ret", scopeDepth)
+data class BreakLabelName(val n: Int) : NumberedLabelName("break", n)
+data class ContinueLabelName(val n: Int) : NumberedLabelName("continue", n)

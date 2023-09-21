@@ -8,8 +8,8 @@ method global$fun_isString$fun_take$NT_Any$return$T_Boolean(local$x: dom$Nullabl
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
   ret := dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg$kotlin$global$class_String())
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /is_type_contract.kt:(322,330): info: Generated Viper text for isString:
@@ -22,8 +22,8 @@ method global$fun_isString$fun_take$T_Any$return$T_Boolean(this: dom$Any)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$Any())
   ret := dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$kotlin$global$class_String())
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /is_type_contract.kt:(491,508): info: Generated Viper text for subtypeTransitive:
@@ -32,7 +32,7 @@ method global$fun_subtypeTransitive$fun_take$T_Unit$return$T_Unit(local$x: dom$U
   ensures true ==>
     dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
 {
-  label label$ret
+  label label$ret$0
 }
 
 /is_type_contract.kt:(686,707): info: Generated Viper text for constructorReturnType:
@@ -42,11 +42,11 @@ method global$fun_constructorReturnType$fun_take$$return$T_Boolean()
   returns (ret: Bool)
   ensures ret == true
 {
-  var anonymous$1: Ref
-  anonymous$1 := class_scope_global$class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
-  ret := dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$1): dom$Type), dom$Type$global$class_Foo())
-  goto label$ret
-  label label$ret
+  var anonymous$0: Ref
+  anonymous$0 := class_scope_global$class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
+  ret := dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Foo())
+  goto label$ret$0
+  label label$ret$0
 }
 
 method class_scope_global$class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
@@ -63,7 +63,7 @@ method global$fun_subtypeSuperType$fun_take$T_class_global$class_Bar$return$T_Un
     dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$global$class_Foo())
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$global$class_Bar())
-  label label$ret
+  label label$ret$0
 }
 
 /is_type_contract.kt:(965,976): info: Generated Viper text for typeOfField:
@@ -73,18 +73,18 @@ method global$fun_typeOfField$fun_take$T_class_global$class_Foo$return$T_Boolean
   returns (ret: Bool)
   ensures ret == true
 {
-  var anonymous$1: Ref
+  var anonymous$0: Ref
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$global$class_Foo())
   inhale acc(local$foo.class_scope_global$class_Foo$member_bar, write)
-  anonymous$1 := local$foo.class_scope_global$class_Foo$member_bar
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$1): dom$Type), dom$Type$global$class_Bar())
+  anonymous$0 := local$foo.class_scope_global$class_Foo$member_bar
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Bar())
   exhale acc(local$foo.class_scope_global$class_Foo$member_bar, write)
-  if (dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$1): dom$Type), dom$Type$global$class_Bar())) {
+  if (dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Bar())) {
     ret := true
-    goto label$ret
+    goto label$ret$0
   } else {
     ret := false
-    goto label$ret
+    goto label$ret$0
   }
-  label label$ret
+  label label$ret$0
 }

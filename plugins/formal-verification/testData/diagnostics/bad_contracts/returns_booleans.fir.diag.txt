@@ -4,8 +4,8 @@ method global$fun_incorrectly_returns_false$fun_take$$return$T_Boolean()
   ensures ret == true
 {
   ret := false
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /returns_booleans.kt:(121,146): warning: Viper verification error: Postcondition of global$fun_incorrectly_returns_false$fun_take$$return$T_Boolean might not hold. Assertion ret == true might not hold. (<no position>)

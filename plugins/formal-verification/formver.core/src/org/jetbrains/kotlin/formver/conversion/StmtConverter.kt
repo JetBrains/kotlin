@@ -43,7 +43,7 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
         StmtConverter(this, this.seqnCtx, NoopResultTrackerFactory, whileIndex, whenSubject, scopeDepth)
 
     override fun withResult(type: TypeEmbedding): StmtConverter<VarResultTrackingContext> {
-        val newResultVar = newAnonVar(type)
+        val newResultVar = freshAnonVar(type)
         addDeclaration(newResultVar.toLocalVarDecl())
         return StmtConverter(this, seqnCtx, VarResultTrackerFactory(newResultVar), whileIndex, whenSubject, scopeDepth)
     }
@@ -63,7 +63,7 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
         get() = Label(ContinueLabelName(whileIndex), listOf())
 
     override fun inNewWhileBlock(action: (StmtConversionContext<RTC>) -> Unit) {
-        val freshIndex = newWhileIndex()
+        val freshIndex = whileIndexProducer.getFresh()
         val ctx = copy(whileIndex = freshIndex)
         addDeclaration(ctx.continueLabel.toDecl())
         addStatement(ctx.continueLabel.toStmt())

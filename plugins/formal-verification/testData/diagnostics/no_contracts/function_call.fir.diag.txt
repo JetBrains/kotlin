@@ -2,11 +2,11 @@
 method global$fun_function_call$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
+  var anonymous$0: Int
   var anonymous$1: Int
-  var anonymous$2: Int
+  anonymous$0 := global$fun_f$fun_take$T_Int$return$T_Int(0)
   anonymous$1 := global$fun_f$fun_take$T_Int$return$T_Int(0)
-  anonymous$2 := global$fun_f$fun_take$T_Int$return$T_Int(0)
-  label label$ret
+  label label$ret$0
 }
 
 method global$fun_f$fun_take$T_Int$return$T_Int(local$x: Int)
@@ -17,13 +17,13 @@ method global$fun_f$fun_take$T_Int$return$T_Int(local$x: Int)
 method global$fun_function_call_nested$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
+  var anonymous$0: Int
   var anonymous$1: Int
   var anonymous$2: Int
-  var anonymous$3: Int
-  anonymous$1 := global$fun_f$fun_take$T_Int$return$T_Int(0)
+  anonymous$0 := global$fun_f$fun_take$T_Int$return$T_Int(0)
+  anonymous$1 := global$fun_f$fun_take$T_Int$return$T_Int(anonymous$0)
   anonymous$2 := global$fun_f$fun_take$T_Int$return$T_Int(anonymous$1)
-  anonymous$3 := global$fun_f$fun_take$T_Int$return$T_Int(anonymous$2)
-  label label$ret
+  label label$ret$0
 }
 
 method global$fun_f$fun_take$T_Int$return$T_Int(local$x: Int)

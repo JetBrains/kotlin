@@ -2,28 +2,28 @@
 method global$fun_test_return$fun_take$$return$T_Int() returns (ret: Int)
 {
   ret := 0
-  goto label$ret
+  goto label$ret$0
   ret := 1
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /return_break_continue.kt:(58,74): info: Generated Viper text for return_from_loop:
 method global$fun_return_from_loop$fun_take$$return$T_Int()
   returns (ret: Int)
 {
-  var anonymous$1: Bool
-  label label$continue$1
-  anonymous$1 := true
-  while (anonymous$1) {
+  var anonymous$0: Bool
+  label label$continue$0
+  anonymous$0 := true
+  while (anonymous$0) {
     ret := 0
-    goto label$ret
-    anonymous$1 := true
+    goto label$ret$0
+    anonymous$0 := true
   }
-  label label$break$1
+  label label$break$0
   ret := 1
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /return_break_continue.kt:(146,157): info: Generated Viper text for while_break:
@@ -31,19 +31,19 @@ method global$fun_while_break$fun_take$T_Boolean$return$T_Int(local$b: Bool)
   returns (ret: Int)
 {
   var local1$i: Int
-  var anonymous$1: Bool
+  var anonymous$0: Bool
   local1$i := 0
-  label label$continue$1
-  anonymous$1 := local$b
-  while (anonymous$1) {
+  label label$continue$0
+  anonymous$0 := local$b
+  while (anonymous$0) {
     local1$i := 1
-    goto label$break$1
-    anonymous$1 := local$b
+    goto label$break$0
+    anonymous$0 := local$b
   }
-  label label$break$1
+  label label$break$0
   ret := local1$i
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /return_break_continue.kt:(261,275): info: Generated Viper text for while_continue:
@@ -51,47 +51,47 @@ method global$fun_while_continue$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
   var local1$b: Bool
-  var anonymous$1: Bool
+  var anonymous$0: Bool
   local1$b := true
-  label label$continue$1
-  anonymous$1 := local1$b
-  while (anonymous$1) {
+  label label$continue$0
+  anonymous$0 := local1$b
+  while (anonymous$0) {
     local1$b := false
-    goto label$continue$1
-    anonymous$1 := local1$b
+    goto label$continue$0
+    anonymous$0 := local1$b
   }
-  label label$break$1
-  label label$ret
+  label label$break$0
+  label label$ret$0
 }
 
 /return_break_continue.kt:(361,373): info: Generated Viper text for while_nested:
 method global$fun_while_nested$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
   returns (ret: dom$Unit)
 {
-  var anonymous$1: Bool
-  label label$continue$1
-  anonymous$1 := local$b
-  while (anonymous$1) {
+  var anonymous$0: Bool
+  label label$continue$0
+  anonymous$0 := local$b
+  while (anonymous$0) {
+    var anonymous$1: Bool
     var anonymous$2: Bool
-    var anonymous$3: Bool
+    label label$continue$1
+    anonymous$1 := local$b
+    while (anonymous$1) {
+      goto label$break$1
+      anonymous$1 := local$b
+    }
+    label label$break$1
+    goto label$continue$0
     label label$continue$2
     anonymous$2 := local$b
     while (anonymous$2) {
-      goto label$break$2
+      goto label$continue$2
       anonymous$2 := local$b
     }
     label label$break$2
-    goto label$continue$1
-    label label$continue$3
-    anonymous$3 := local$b
-    while (anonymous$3) {
-      goto label$continue$3
-      anonymous$3 := local$b
-    }
-    label label$break$3
-    goto label$break$1
-    anonymous$1 := local$b
+    goto label$break$0
+    anonymous$0 := local$b
   }
-  label label$break$1
-  label label$ret
+  label label$break$0
+  label label$ret$0
 }

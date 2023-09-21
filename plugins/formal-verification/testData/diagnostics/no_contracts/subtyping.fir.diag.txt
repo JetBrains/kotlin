@@ -12,12 +12,12 @@ method global$fun_smart_cast$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[
   (dom$Casting$cast(local$x, dom$Type$Int()): Int) ==
   (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$Int()): Int)) {
     ret := 0
-    goto label$ret
+    goto label$ret$0
   } else {
     ret := (dom$Casting$cast(local$x, dom$Type$Int()): Int)
-    goto label$ret
+    goto label$ret$0
   }
-  label label$ret
+  label label$ret$0
 }
 
 /subtyping.kt:(112,128): info: Generated Viper text for return_subtyping:
@@ -26,8 +26,8 @@ method global$fun_return_subtyping$fun_take$$return$NT_Int()
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
   ret := (dom$Casting$cast(0, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
-  goto label$ret
-  label label$ret
+  goto label$ret$0
+  label label$ret$0
 }
 
 /subtyping.kt:(159,179): info: Generated Viper text for assignment_subtyping:
@@ -37,7 +37,7 @@ method global$fun_assignment_subtyping$fun_take$$return$T_Unit()
   var local1$x: dom$Nullable[Bool]
   local1$x := (dom$Casting$cast(false, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
   local1$x := (dom$Casting$cast(true, dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool])
-  label label$ret
+  label label$ret$0
 }
 
 /subtyping.kt:(232,250): info: Generated Viper text for nullable_parameter:
@@ -45,17 +45,17 @@ method global$fun_nullable_parameter$fun_take$NT_Boolean$return$T_Unit(local$b: 
   returns (ret: dom$Unit)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$b): dom$Type), dom$Type$special$Nullable(dom$Type$Boolean()))
-  label label$ret
+  label label$ret$0
 }
 
 /subtyping.kt:(272,300): info: Generated Viper text for function_parameter_subtyping:
 method global$fun_function_parameter_subtyping$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var anonymous$1: dom$Unit
-  anonymous$1 := global$fun_nullable_parameter$fun_take$NT_Boolean$return$T_Unit((dom$Casting$cast(false,
+  var anonymous$0: dom$Unit
+  anonymous$0 := global$fun_nullable_parameter$fun_take$NT_Boolean$return$T_Unit((dom$Casting$cast(false,
     dom$Type$special$Nullable(dom$Type$Boolean())): dom$Nullable[Bool]))
-  label label$ret
+  label label$ret$0
 }
 
 method global$fun_nullable_parameter$fun_take$NT_Boolean$return$T_Unit(local$b: dom$Nullable[Bool])

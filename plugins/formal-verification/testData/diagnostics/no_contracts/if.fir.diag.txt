@@ -3,12 +3,12 @@ method global$fun_simple_if$fun_take$$return$T_Int() returns (ret: Int)
 {
   if (true) {
     ret := 0
-    goto label$ret
+    goto label$ret$0
   } else {
     ret := 1
-    goto label$ret
+    goto label$ret$0
   }
-  label label$ret
+  label label$ret$0
 }
 
 /if.kt:(98,113): info: Generated Viper text for if_on_parameter:
@@ -17,12 +17,12 @@ method global$fun_if_on_parameter$fun_take$T_Boolean$return$T_Int(local$b: Bool)
 {
   if (local$b) {
     ret := 0
-    goto label$ret
+    goto label$ret$0
   } else {
     ret := 1
-    goto label$ret
+    goto label$ret$0
   }
-  label label$ret
+  label label$ret$0
 }
 
 /if.kt:(205,221): info: Generated Viper text for if_as_expression:
@@ -30,20 +30,20 @@ method global$fun_if_as_expression$fun_take$$return$T_Boolean()
   returns (ret: Bool)
 {
   var local1$b: Bool
-  var anonymous$1: Bool
+  var anonymous$0: Bool
   local1$b := false
   if (local1$b) {
-    var anonymous$2: Int
-    anonymous$2 := global$fun_simple_if$fun_take$$return$T_Int()
-    anonymous$1 := false
+    var anonymous$1: Int
+    anonymous$1 := global$fun_simple_if$fun_take$$return$T_Int()
+    anonymous$0 := false
   } else {
-    var anonymous$3: Int
-    anonymous$3 := global$fun_if_on_parameter$fun_take$T_Boolean$return$T_Int(local1$b)
-    anonymous$1 := true
+    var anonymous$2: Int
+    anonymous$2 := global$fun_if_on_parameter$fun_take$T_Boolean$return$T_Int(local1$b)
+    anonymous$0 := true
   }
-  ret := anonymous$1
-  goto label$ret
-  label label$ret
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
 }
 
 method global$fun_simple_if$fun_take$$return$T_Int() returns (ret: Int)

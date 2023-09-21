@@ -38,6 +38,10 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     private val classes: MutableMap<MangledName, ClassTypeEmbedding> = mutableMapOf()
     private val fields: MutableMap<MangledName, FieldEmbedding> = mutableMapOf()
 
+    override val anonNameProducer = FreshEntityProducer { AnonymousName(it) }
+    override val whileIndexProducer = FreshEntityProducer { it }
+    override val returnLabelNameProducer = FreshEntityProducer { ReturnLabelName(it) }
+
     val program: Program
         get() = Program(
             domains = listOf(UnitDomain, NullableDomain, CastingDomain, TypeOfDomain, TypeDomain(classes.values.toList()), AnyDomain),
@@ -115,12 +119,6 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
     override fun getField(field: FirPropertySymbol): FieldEmbedding? = fields[field.callableId.embedMemberPropertyName()]
 
-    private var nextAnonVarNumber = 0
-    override fun newAnonName(): AnonymousName = AnonymousName(++nextAnonVarNumber)
-
-    private var nextWhileIndex = 0
-    override fun newWhileIndex() = ++nextWhileIndex
-
     override fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature {
         val retType = symbol.resolvedReturnTypeRef.type
         val receiverType = symbol.receiverType
@@ -177,7 +175,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
     private fun convertMethodWithBody(declaration: FirSimpleFunction, signature: FullNamedFunctionSignature): Method {
         val body = declaration.body?.let {
-            val methodCtx = MethodConverter(this, signature, RootParameterResolver(this))
+            val methodCtx = MethodConverter(this, signature, RootParameterResolver(this, returnLabelNameProducer.getFresh()))
             val stmtCtx = StmtConverter(methodCtx, SeqnBuilder(), NoopResultTrackerFactory, scopeDepth = 0)
             signature.formalArgs.forEach { arg ->
                 // Ideally we would want to assume these rather than inhale them to prevent inconsistencies with permissions.
