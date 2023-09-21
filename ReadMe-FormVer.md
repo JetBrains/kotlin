@@ -55,22 +55,10 @@ dist/kotlinc/bin/kotlinc -language-version 2.0 -Xplugin=dist/kotlinc/lib/formver
 The plugin accepts a number of command line options which can be passed via `-P plugin:org.jetbrains.kotlin.formver:OPTION=SETTING`:
 - Option `log_level`: permitted values `only_warnings`, `full_viper_dump`.
 
-## Viper dependency
+## Z3 dependency
 
-To build the plugin, two main Viper dependencies are needed: 
-[silver](https://github.com/viperproject/silver) (the API for
-generation the intermediate representation) and 
-[silicon](https://github.com/viperproject/silicon) (the symbolic engine for
-performing the verification of Viper code).
-
-
-
-Therefore, to install the dependencies, be sure to have installed locally:
-* The Java Development Kit
-* [Maven](https://maven.apache.org/index.html)
-* [SBT](https://www.scala-sbt.org/)
-* [Z3](https://github.com/Z3Prover/z3) v4.8.7: the best way of installing Z3 with all the necessary would be to
-download it from its _Releases page_ [here](https://github.com/Z3Prover/z3/releases/tag/z3-4.8.7).
+The plugin relies on the SMT solver Z3 which needs to be installed manually.
+To do so download v4.8.7 from the _Releases page_ [here](https://github.com/Z3Prover/z3/releases/tag/z3-4.8.7).
 
 Viper gives two ways of interfacing with Z3: text-based (using the `z3` binary)
 or via the API (using a `.jar`).
@@ -91,11 +79,24 @@ You need to (additionally) set `Z3_EXE` in `~/.xprofile` and/or
 `~/.bash_profile` depending on your shell, window manager, display
 manager, operating system, etc.
 
-Now, we can clone `silicon` from its GitHub repository and install it in our local Maven repository. 
-The compilation process, through the command `sbt assembly`, will create a new fat-JAR file containing `Silicon + Silver` and other Scala dependencies.
-Open a new terminal emulator and type
-the following commands:
+## Viper dependency
 
+We provide a bundled library of Silicon with all its dependencies (including Viper) at [our Maven Space Repository](https://jetbrains.team/p/kotlin-formver/packages/maven/maven/viper/silicon_2.13?v=1.2-SNAPSHOT&tab=overview).
+No need to install anything for the usage of the plugin.
+
+# Publishing Silicon
+
+Since Silicon and its dependencies are not centrally published we provide them in [our Maven Space Repository](https://jetbrains.team/p/kotlin-formver/packages/maven/maven).
+To use the plugin nothing is required except import the library from there.
+
+However, if you want to publish a new version of the Silicon library here is some useful information about that:
+
+As prerequisites, you will need:
+* The Java Development Kit
+* [Maven](https://maven.apache.org/index.html)
+* [SBT](https://www.scala-sbt.org/)
+
+After that clone and build Silicon:
 ```bash
 # The recursive cloning pulls `silver` as well. 
 git clone --recursive https://github.com/viperproject/silicon.git
@@ -105,29 +106,26 @@ sbt compile
 # This command build the fat-JAR file containing all the dependencies
 # required by Silver (Silicon, Scala Library, ...)
 sbt assembly
-# We can now publish the built JAR file into our local Maven repository
-mvn install:install-file \
-  -Dfile=$(pwd)/target/scala-2.13/silicon.jar \
-  -DgroupId=viper -DartifactId=silicon -Dversion=1.1-SNAPSHOT \
-  -Dpackaging=jar
+```
+To publish the Silicon jar to our Space repo we first need to modify the `built.sbt` script of silicon.
+For that refer to the [patch file](resources/patches/silicon-publish-maven.patch) that include all necessary changes.
+
+In addition, you need to generate an access token for write access to the repository.
+For that you need to create a credential file at `~/.sbt/space-maven.credentials`.
+For detailed information of how to do so see the instructions on the [repository site](https://jetbrains.team/p/kotlin-formver/packages/maven/maven)
+under `Connect -> Publish` with tool `sbt` selected.
+With the drop-down menu you can create a write-access token.
+
+After completing these steps you will be able to publish the Silicon artifact with
+```bash
+sbt publish
 ```
 
-If everything went well, you should see the following new directory in the local Maven repository: 
-`~/.m2/repository/viper/silicon/1.1-SNAPSHOT/silicon-1.1-SNAPSHOT.jar`.
+Additional Info:
+* If you get a 401 response code while publishing, set the Space repository to private access.
+  Due to a bug it is currently not possible to publish to public repos.
+* If you want to experiment locally you can install Silicon into the local maven repo with `sbt publishM2`
 
-### Common Errors
-
-If you synchronize the Gradle file, and you get an error of non-resolved dependency, create a `~/.m2/settings.xml`
-and paste onto it the following content:
-
-```xml
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
-  <localRepository>${user.home}/.m2/repository</localRepository>
-  <offline>false</offline>
-</settings>
-```
 
 ## Debugging builds
 

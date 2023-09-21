@@ -1,0 +1,65 @@
+From bb27d934bf7727ec44dd84c2ec72087bf1e4c3e8 Mon Sep 17 00:00:00 2001
+From: Nils Cremer <nils.crmr@gmail.com>
+Date: Tue, 19 Sep 2023 12:48:36 +0200
+Subject: [PATCH] publish fat jar
+
+---
+ build.sbt | 31 ++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
+
+diff --git a/build.sbt b/build.sbt
+index 8ba98c80..4077c80d 100644
+--- a/build.sbt
++++ b/build.sbt
+@@ -1,3 +1,5 @@
++import scala.xml.{Elem, NodeSeq}
++import scala.xml.transform.{RewriteRule, RuleTransformer}
+ // This Source Code Form is subject to the terms of the Mozilla Public
+ // License, v. 2.0. If a copy of the MPL was not distributed with this
+ // file, You can obtain one at http://mozilla.org/MPL/2.0/.
+@@ -9,6 +11,9 @@ lazy val silver = project in file("silver")
+ 
+ lazy val common = (project in file("common"))
+   .dependsOn(silver)
++  .settings(
++    publish / skip := true,
++  )
+ 
+ // Silicon specific project settings
+ lazy val silicon = (project in file("."))
+@@ -66,7 +71,31 @@ lazy val silicon = (project in file("."))
+     // Assembly settings
+     assembly / assemblyJarName := "silicon.jar",
+     assembly / mainClass := Some("viper.silicon.SiliconRunner"),
+-    assembly / test := {})
++    assembly / test := {},
++
++    publishTo := Some("space-maven" at "https://packages.jetbrains.team/maven/p/kotlin-formver/maven"),
++    credentials += Credentials(Path.userHome / ".sbt" / "space-maven.credentials"),
++    publishMavenStyle := true,
++
++    // Add shaded jar (with all dependencies included) as artifact and remove default jar artifact
++    assembly / artifact := (assembly / artifact).value,
++    addArtifact(assembly / artifact, assembly),
++
++    // Remove default build artifact
++    Compile / publishArtifact := false,
++
++    // Remove dependencies from POM as they are already included in the shaded jar
++    pomPostProcess := {
++      new RuleTransformer(
++        new RewriteRule {
++          override def transform(n: xml.Node): Seq[xml.Node] = n match {
++            case e: Elem if e.label == "dependency" => NodeSeq.Empty
++            case n => n
++          }
++        }
++      )
++    }
++  )
+   .enablePlugins(BuildInfoPlugin)
+   .disablePlugins(plugins.JUnitXmlReportPlugin)
+   .settings(
+-- 
+2.34.1
+
