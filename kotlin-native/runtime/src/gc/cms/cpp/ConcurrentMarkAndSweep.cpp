@@ -5,14 +5,11 @@
 
 #include "ConcurrentMarkAndSweep.hpp"
 
-#include <cinttypes>
 #include <optional>
 
 #include "AllocatorImpl.hpp"
 #include "CallsChecker.hpp"
 #include "CompilerConstants.hpp"
-#include "GlobalData.hpp"
-#include "GCImpl.hpp"
 #include "Logging.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "Memory.h"
@@ -209,7 +206,7 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     }
     finalizerQueue.TransferAllFrom(allocator_.impl().heap().ExtractFinalizerQueue());
 #endif
-    scheduler.onGCFinish(epoch, alloc::allocatedBytes());
+    scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();
