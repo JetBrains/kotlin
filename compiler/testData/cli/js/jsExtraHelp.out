@@ -108,7 +108,7 @@ where advanced options include:
   -Xlegacy-smart-cast-after-try Allow var smart casts despite assignment in try block
   -Xlist-phases              List backend phases
   -Xmetadata-version         Change metadata version of the generated binary files
-  -Xmulti-platform           Enable experimental language support for multi-platform projects
+  -Xmulti-platform           Enable language support for multi-platform projects
   -Xnew-inference            Enable new experimental generic type inference algorithm
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining
