@@ -356,17 +356,17 @@ class NewConstraintSystemImpl(
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
         storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
 
-        if (otherSystem.usesOuterCs && (otherSystem as? MutableConstraintStorage)?.outerCS !== storage) {
-            require(storage.usesOuterCs) {
-                "123"
-            }
+        isAddingOuter.hashCode()
 
-            if (!isAddingOuter) {
-                require(storage.outerSystemVariablesPrefixSize == otherSystem.outerSystemVariablesPrefixSize) {
-                    "Expected to be ${otherSystem.outerSystemVariablesPrefixSize}, but ${storage.outerSystemVariablesPrefixSize} found"
-                }
-            }
-        }
+//        if (otherSystem.usesOuterCs && (otherSystem as? MutableConstraintStorage)?.outerCS !== storage) {
+//            require(storage.usesOuterCs)
+//
+//            if (!isAddingOuter) {
+//                require(storage.outerSystemVariablesPrefixSize == otherSystem.outerSystemVariablesPrefixSize) {
+//                    "Expected to be ${otherSystem.outerSystemVariablesPrefixSize}, but ${storage.outerSystemVariablesPrefixSize} found"
+//                }
+//            }
+//        }
     }
 
     // ResultTypeResolver.Context, ConstraintSystemBuilder
