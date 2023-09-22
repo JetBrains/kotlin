@@ -63,7 +63,7 @@ internal val Project.multiplatformExtensionOrNull: KotlinMultiplatformExtension?
 internal val Project.multiplatformExtension: KotlinMultiplatformExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
-abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTopLevelExtensionConfig {
+abstract class KotlinTopLevelExtension(override val project: Project) : KotlinTopLevelExtensionConfig, HasProject {
 
     override lateinit var coreLibrariesVersion: String
 

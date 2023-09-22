@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
-import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 
 @KotlinTargetsDsl
 interface KotlinTargetsContainer {
@@ -18,7 +18,7 @@ interface KotlinTargetsContainer {
 
 @OptIn(InternalKotlinGradlePluginApi::class)
 @DeprecatedTargetPresetApi
-interface KotlinTargetsContainerWithPresets : KotlinTargetsContainer {
+interface KotlinTargetsContainerWithPresets : KotlinTargetsContainer, HasProject {
     @Deprecated(
         PRESETS_API_IS_DEPRECATED_MESSAGE,
         level = DeprecationLevel.WARNING,
