@@ -34,6 +34,13 @@ class VariableFixationFinder(
          */
         val outerSystemVariablesPrefixSize: Int
 
+        val outerTypeVariables: Set<TypeConstructorMarker>?
+            get() =
+                when {
+                    outerSystemVariablesPrefixSize > 0 -> allTypeVariables.keys.take(outerSystemVariablesPrefixSize).toSet()
+                    else -> null
+                }
+
         /**
          * If not null, that property means that we should assume temporary
          * `allTypeVariables.keys.minus(typeVariablesThatAreNotCountedAsProperTypes)` as proper types when fixating some variables.
