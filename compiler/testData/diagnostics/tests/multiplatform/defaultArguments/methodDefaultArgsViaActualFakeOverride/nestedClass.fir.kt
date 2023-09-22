@@ -13,5 +13,5 @@ open class Base {
 }
 
 actual class Foo {
-    actual class Bar : Base()
+    actual class Bar : <!DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE!>Base()<!>
 }

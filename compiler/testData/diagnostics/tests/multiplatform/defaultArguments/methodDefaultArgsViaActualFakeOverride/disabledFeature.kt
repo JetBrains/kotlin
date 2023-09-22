@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// LANGUAGE: -ProhibitDefaultDefaultArgumentsInExpectActualizedByFakeOverride
 // MODULE: m1-common
 // FILE: common.kt
 expect class Foo {

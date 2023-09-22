@@ -2548,6 +2548,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val members: List<KtCallableSymbol>
     }
 
+    interface DefaultArgumentsInExpectActualizedByFakeOverride : KtFirDiagnostic<KtClass> {
+        override val diagnosticClass get() = DefaultArgumentsInExpectActualizedByFakeOverride::class
+        val expectClassSymbol: KtClassLikeSymbol
+        val members: List<KtFunctionLikeSymbol>
+    }
+
     interface ExpectedFunctionSourceWithDefaultArgumentsNotFound : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ExpectedFunctionSourceWithDefaultArgumentsNotFound::class
     }

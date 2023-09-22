@@ -1231,6 +1231,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirClassSymbol<*>>("expectClassSymbol")
             parameter<Collection<FirCallableSymbol<*>>>("members")
         }
+        val DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE by error<KtClass>(PositioningStrategy.SUPERTYPES_LIST) {
+            parameter<FirRegularClassSymbol>("expectClassSymbol")
+            parameter<Collection<FirNamedFunctionSymbol>>("members")
+        }
         val EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND by error<PsiElement>()
 
         val NO_ACTUAL_FOR_EXPECT by error<KtNamedDeclaration>(PositioningStrategy.INCOMPATIBLE_DECLARATION) {

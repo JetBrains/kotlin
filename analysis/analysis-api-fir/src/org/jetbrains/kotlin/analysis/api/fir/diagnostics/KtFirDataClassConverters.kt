@@ -3628,6 +3628,16 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE) { firDiagnostic ->
+        DefaultArgumentsInExpectActualizedByFakeOverrideImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firDiagnostic.b.map { firNamedFunctionSymbol ->
+                firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firNamedFunctionSymbol)
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND) { firDiagnostic ->
         ExpectedFunctionSourceWithDefaultArgumentsNotFoundImpl(
             firDiagnostic as KtPsiDiagnostic,

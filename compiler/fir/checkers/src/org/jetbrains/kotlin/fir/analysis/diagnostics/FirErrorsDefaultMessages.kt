@@ -163,6 +163,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_WITHOU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_OBJECT_CUSTOM_EQUALS_OR_HASH_CODE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DECLARATION_CANT_BE_INLINED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DECLARATION_CANT_BE_INLINED_DEPRECATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEFINITELY_NON_NULLABLE_AS_REIFIED
@@ -1965,6 +1966,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS,
             "Default argument values inside expect declaration ''{0}'' are not allowed if it is actualized via typealias. " +
+                    "Possible fix is to remove default argument values in members:{1}",
+            DECLARATION_NAME,
+            SYMBOLS_ON_NEWLINE_WITH_INDENT,
+        )
+        map.put(
+            DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE,
+            "Default argument values inside expect declaration ''{0}'' are not allowed for methods actualized via fake override. " +
                     "Possible fix is to remove default argument values in members:{1}",
             DECLARATION_NAME,
             SYMBOLS_ON_NEWLINE_WITH_INDENT,

@@ -650,6 +650,7 @@ object FirErrors {
     val ACTUAL_TYPE_ALIAS_TO_NOTHING by error0<KtTypeAlias>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS by error0<KtFunction>(SourceElementPositioningStrategies.PARAMETERS_WITH_DEFAULT_VALUE)
     val DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS by error2<KtTypeAlias, FirClassSymbol<*>, Collection<FirCallableSymbol<*>>>()
+    val DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE by error2<KtClass, FirRegularClassSymbol, Collection<FirNamedFunctionSymbol>>(SourceElementPositioningStrategies.SUPERTYPES_LIST)
     val EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND by error0<PsiElement>()
     val NO_ACTUAL_FOR_EXPECT by error3<KtNamedDeclaration, FirBasedSymbol<*>, FirModuleData, Map<ExpectActualCompatibility<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>(SourceElementPositioningStrategies.INCOMPATIBLE_DECLARATION)
     val ACTUAL_WITHOUT_EXPECT by error2<KtNamedDeclaration, FirBasedSymbol<*>, Map<ExpectActualCompatibility<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>(SourceElementPositioningStrategies.DECLARATION_NAME_ONLY)

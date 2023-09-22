@@ -24137,6 +24137,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                     }
 
                     @Test
+                    @TestMetadata("disabledFeature.kt")
+                    public void testDisabledFeature() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride/disabledFeature.kt");
+                    }
+
+                    @Test
                     @TestMetadata("intersectionOverride.kt")
                     public void testIntersectionOverride() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride/intersectionOverride.kt");

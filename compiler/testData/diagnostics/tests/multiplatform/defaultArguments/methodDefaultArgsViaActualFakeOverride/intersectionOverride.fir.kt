@@ -15,4 +15,4 @@ interface Base2 {
 }
 
 @Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER")
-actual interface Foo : Base1, Base2
+actual interface Foo : <!DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE!>Base1, Base2<!>

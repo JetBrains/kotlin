@@ -3069,6 +3069,13 @@ internal class DefaultArgumentsInExpectWithActualTypealiasImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtTypeAlias>(firDiagnostic, token), KtFirDiagnostic.DefaultArgumentsInExpectWithActualTypealias
 
+internal class DefaultArgumentsInExpectActualizedByFakeOverrideImpl(
+    override val expectClassSymbol: KtClassLikeSymbol,
+    override val members: List<KtFunctionLikeSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtClass>(firDiagnostic, token), KtFirDiagnostic.DefaultArgumentsInExpectActualizedByFakeOverride
+
 internal class ExpectedFunctionSourceWithDefaultArgumentsNotFoundImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
