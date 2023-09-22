@@ -37,6 +37,8 @@ data class CallInfo(
 
     val candidateForCommonInvokeReceiver: Candidate? = null,
 
+    val isDelegateExpression: Boolean = false,
+
     // Four properties for callable references only
     val expectedType: ConeKotlinType? = null,
     val outerCSBuilder: ConstraintSystemBuilder? = null,

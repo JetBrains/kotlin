@@ -335,7 +335,7 @@ class FirSyntheticCallGenerator(
         callKind: CallKind = CallKind.SyntheticSelect,
         context: ResolutionContext,
     ): FirNamedReferenceWithCandidate {
-        val callInfo = generateCallInfo(callSite, name, argumentList, callKind)
+        val callInfo = generateCallInfo(callSite, name, argumentList, callKind, context)
         val candidate = generateCandidate(callInfo, function, context)
         val applicability = components.resolutionStageRunner.processCandidate(candidate, context)
         val source = callSite.source?.fakeElement(KtFakeSourceElementKind.SyntheticCall)
@@ -367,6 +367,7 @@ class FirSyntheticCallGenerator(
         name: Name,
         argumentList: FirArgumentList,
         callKind: CallKind,
+        context: ResolutionContext,
     ) = CallInfo(
         callSite = callSite,
         callKind = callKind,
@@ -378,7 +379,8 @@ class FirSyntheticCallGenerator(
         typeArguments = emptyList(),
         session = session,
         containingFile = components.file,
-        containingDeclarations = components.containingDeclarations
+        containingDeclarations = components.containingDeclarations,
+        isDelegateExpression = context.bodyResolveContext.isDelegateExpression(callSite),
     )
 
     private fun generateSyntheticSelectTypeParameter(

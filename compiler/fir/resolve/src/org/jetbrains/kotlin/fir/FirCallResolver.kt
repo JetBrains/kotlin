@@ -177,7 +177,8 @@ class FirCallResolver(
             session,
             components.file,
             containingDeclarations,
-            origin = origin
+            origin = origin,
+            isDelegateExpression = components.context.isDelegateExpression(callSite)
         )
         towerResolver.reset()
         val result = towerResolver.runResolver(info, resolutionContext, collector)
@@ -699,6 +700,7 @@ class FirCallResolver(
             components.file,
             transformer.components.containingDeclarations,
             candidateForCommonInvokeReceiver = null,
+            isDelegateExpression = false,
             // Additional things for callable reference resolve
             expectedType,
             outerConstraintSystemBuilder,

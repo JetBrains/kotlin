@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
@@ -14,15 +15,16 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
-import org.jetbrains.kotlin.fir.resolve.inference.*
+import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession2
+import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -119,6 +121,20 @@ class BodyResolveContext(
     val anonymousFunctionsAnalyzedInDependentContext: MutableSet<FirFunctionSymbol<*>> = mutableSetOf()
 
     var containingClassDeclarations: ArrayDeque<FirRegularClass> = ArrayDeque()
+
+    var resolvingDelegateExpression: FirExpression? = null
+
+    fun <T> withDelegateExpression(delegateExpression: FirExpression, f: () -> T): T {
+        val old = resolvingDelegateExpression
+        resolvingDelegateExpression = delegateExpression
+        return try {
+            f()
+        } finally {
+            resolvingDelegateExpression = old
+        }
+    }
+
+    fun isDelegateExpression(callSite: FirElement): Boolean = callSite == resolvingDelegateExpression
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withTowerDataContexts(newContexts: FirRegularTowerDataContexts, f: () -> T): T {
@@ -329,11 +345,11 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <R> withInferenceSession(inferenceSession: FirInferenceSession, block: () -> R): R {
+    inline fun <R, S : FirInferenceSession> withInferenceSession(inferenceSession: S, block: S.() -> R): R {
         val oldSession = this.inferenceSession
         this.inferenceSession = inferenceSession
         return try {
-            block()
+            inferenceSession.block()
         } finally {
             this.inferenceSession = oldSession
         }
@@ -346,10 +362,10 @@ class BodyResolveContext(
             if (inferenceSession != null) {
                 if (inferenceSession is FirBuilderInferenceSession2) {
                     withOuterConstraintStorage(inferenceSession.outerSystem.currentStorage()) {
-                        withInferenceSession(inferenceSession, f)
+                        withInferenceSession(inferenceSession) { f() }
                     }
                 } else {
-                    withInferenceSession(inferenceSession, f)
+                    withInferenceSession(inferenceSession) { f() }
                 }
             } else {
                 f()
@@ -874,21 +890,6 @@ class BodyResolveContext(
         return withTowerDataCleanup {
             getPrimaryConstructorPureParametersScope()?.let { addLocalScope(it) }
             f()
-        }
-    }
-
-    inline fun <T> forPropertyDelegateAccessors(
-        resolutionContext: ResolutionContext,
-        callCompleter: FirCallCompleter,
-        f: FirDelegatedPropertyInferenceSession.() -> T
-    ) {
-        val inferenceSession = FirDelegatedPropertyInferenceSession(
-            resolutionContext,
-            callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
-        )
-
-        withInferenceSession(inferenceSession) {
-            inferenceSession.f()
         }
     }
 
