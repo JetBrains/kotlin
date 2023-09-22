@@ -1717,6 +1717,102 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("cycleAnnotationOnFunction.kt")
+            public void testCycleAnnotationOnFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnFunctionInsideLocalClass.kt")
+            public void testCycleAnnotationOnFunctionInsideLocalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnFunctionInsideLocalClass.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnFunctionParameterType.kt")
+            public void testCycleAnnotationOnFunctionParameterType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnFunctionParameterType.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnFunctionParameterTypeInsideLocalClass.kt")
+            public void testCycleAnnotationOnFunctionParameterTypeInsideLocalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnFunctionParameterTypeInsideLocalClass.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnProperty.kt")
+            public void testCycleAnnotationOnProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnPropertyField.kt")
+            public void testCycleAnnotationOnPropertyField() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnPropertyField.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnPropertyFieldInsideLocalClass.kt")
+            public void testCycleAnnotationOnPropertyFieldInsideLocalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnPropertyFieldInsideLocalClass.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnPropertyInsideLocalClass.kt")
+            public void testCycleAnnotationOnPropertyInsideLocalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnPropertyInsideLocalClass.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnReceiverParameterFunction.kt")
+            public void testCycleAnnotationOnReceiverParameterFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnReceiverParameterFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnReceiverParameterFunctionInsideLocalClass.kt")
+            public void testCycleAnnotationOnReceiverParameterFunctionInsideLocalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnReceiverParameterFunctionInsideLocalClass.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnReceiverParameterProperty.kt")
+            public void testCycleAnnotationOnReceiverParameterProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnReceiverParameterProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnReceiverParameterPropertyInsideLocalClass.kt")
+            public void testCycleAnnotationOnReceiverParameterPropertyInsideLocalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnReceiverParameterPropertyInsideLocalClass.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnTypeParameterFunction.kt")
+            public void testCycleAnnotationOnTypeParameterFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnTypeParameterFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnTypeParameterFunctionInsideLocalClass.kt")
+            public void testCycleAnnotationOnTypeParameterFunctionInsideLocalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnTypeParameterFunctionInsideLocalClass.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnTypeParameterProperty.kt")
+            public void testCycleAnnotationOnTypeParameterProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnTypeParameterProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleAnnotationOnTypeParameterPropertyInsideLocalClass.kt")
+            public void testCycleAnnotationOnTypeParameterPropertyInsideLocalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnTypeParameterPropertyInsideLocalClass.kt");
+            }
+
+            @Test
             @TestMetadata("cycleInParameters_after.kt")
             public void testCycleInParameters_after() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/cycleInParameters_after.kt");
