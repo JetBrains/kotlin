@@ -239,6 +239,28 @@ inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(
     })
 }
 
+inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfTypeInPreorder(noinline action: (T) -> Unit) {
+    forEachDescendantOfTypeInPreorder({ true }, action)
+}
+
+inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfTypeInPreorder(
+    crossinline canGoInside: (PsiElement) -> Boolean,
+    noinline action: (T) -> Unit,
+) {
+    checkDecompiledText()
+    this.accept(object : PsiRecursiveElementVisitor() {
+        override fun visitElement(element: PsiElement) {
+            if (element is T) {
+                action(element)
+            }
+
+            if (canGoInside(element)) {
+                super.visitElement(element)
+            }
+        }
+    })
+}
+
 inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(noinline predicate: (T) -> Boolean = { true }): Boolean {
     return findDescendantOfType(predicate) != null
 }
