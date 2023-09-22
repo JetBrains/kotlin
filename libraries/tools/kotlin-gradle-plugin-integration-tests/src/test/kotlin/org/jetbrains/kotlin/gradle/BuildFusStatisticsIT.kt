@@ -58,9 +58,9 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
                     )
                 }
                 
-                import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatistics
-                class TestFusTask extends DefaultTask implements org.jetbrains.kotlin.gradle.fus.UsesGradleBuildFusStatisticsService {
-                  private Property<GradleBuildFusStatistics> fusStatisticsBuildService = project.objects.property(GradleBuildFusStatistics.class)
+                import org.jetbrains.kotlin.gradle.fus.services.GradleBuildFusStatisticsService
+                class TestFusTask extends DefaultTask implements org.jetbrains.kotlin.gradle.fus.services.UsesGradleBuildFusStatisticsService {
+                  private Property<GradleBuildFusStatisticsService> fusStatisticsBuildService = project.objects.property(GradleBuildFusStatisticsService.class)
 
                   org.gradle.api.provider.Property getFusStatisticsBuildService(){
                     return fusStatisticsBuildService

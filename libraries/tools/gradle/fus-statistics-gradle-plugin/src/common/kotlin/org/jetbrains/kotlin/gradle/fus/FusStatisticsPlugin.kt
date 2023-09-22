@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.fus
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.ProviderFactory
+import org.jetbrains.kotlin.gradle.fus.services.InternalGradleBuildFusStatisticsService
 import javax.inject.Inject
 
 /*
@@ -14,6 +15,6 @@ class FusStatisticsPlugin @Inject constructor(
     private val providerFactory: ProviderFactory
 ) : Plugin<Project> {
     override fun apply(project: Project) {
-        GradleBuildFusStatisticsService.registerIfAbsent(project).get()
+        InternalGradleBuildFusStatisticsService.registerIfAbsent(project).get()
     }
 }
