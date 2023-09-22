@@ -43689,6 +43689,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/when/noElseNoMatch.kt");
         }
 
+        @TestMetadata("nothingTyped.kt")
+        public void testNothingTyped() throws Exception {
+            runTest("compiler/testData/codegen/box/when/nothingTyped.kt");
+        }
+
         @TestMetadata("nullableWhen.kt")
         public void testNullableWhen() throws Exception {
             runTest("compiler/testData/codegen/box/when/nullableWhen.kt");

@@ -37472,6 +37472,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         }
 
         @Test
+        @TestMetadata("nothingTyped.kt")
+        public void testNothingTyped() throws Exception {
+            runTest("compiler/testData/codegen/box/when/nothingTyped.kt");
+        }
+
+        @Test
         @TestMetadata("nullableWhen.kt")
         public void testNullableWhen() throws Exception {
             runTest("compiler/testData/codegen/box/when/nullableWhen.kt");

@@ -329,7 +329,10 @@ private fun BodyGenerator.genTableIntSwitch(
         body.buildBlock(resultType)
     }
 
-    resultType?.let { generateDefaultInitializerForType(it, body) } //stub value
+    if (resultType != null && resultType !is WasmUnreachableType) {
+        generateDefaultInitializerForType(resultType, body) //stub value
+    }
+
     body.buildGetLocal(selectorLocal, location)
     if (shift != 0) {
         body.buildConstI32(shift, location)
@@ -344,7 +347,7 @@ private fun BodyGenerator.genTableIntSwitch(
     body.buildEnd()
 
     for (expression in branches) {
-        if (resultType != null) {
+        if (resultType != null && resultType !is WasmUnreachableType) {
             body.buildDrop(location)
         }
         generateWithExpectedType(expression.expression, expectedType)
@@ -354,7 +357,7 @@ private fun BodyGenerator.genTableIntSwitch(
     }
 
     if (elseExpression != null) {
-        if (resultType != null) {
+        if (resultType != null && resultType !is WasmUnreachableType) {
             body.buildDrop(location)
         }
         generateWithExpectedType(elseExpression, expectedType)
