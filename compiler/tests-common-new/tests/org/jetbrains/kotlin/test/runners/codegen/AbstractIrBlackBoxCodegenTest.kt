@@ -40,6 +40,5 @@ open class AbstractIrBlackBoxCodegenWithIrInlinerTest : AbstractIrBlackBoxCodege
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useIrInliner()
-        builder.useInlineScopesNumbers()
     }
 }

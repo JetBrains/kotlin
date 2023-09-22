@@ -17,12 +17,28 @@ suspend fun ApplicationCall.test(authenticationService: AuthenticationService) {
     respond(authenticationService.execute(receiveJSON()))
 }
 
+// JVM_IR_TEMPLATES_WITH_INLINE_SCOPES
+// 5 ISTORE 3
+// 1 ISTORE 2
+// 0 ILOAD 3
+// 0 ILOAD 2
+// 1 \$i\$f\$receiveJSON I .* 2
+// 2 \$i\$f\$respond I .* 3
+
+// JVM_TEMPLATES_WITH_INLINE_SCOPES
+// 2 ISTORE 3
+// 1 ISTORE 2
+// 0 ILOAD 3
+// 0 ILOAD 2
+// 1 \$i\$f\$receiveJSON I .* 2
+// 2 \$i\$f\$respond I .* 3
+
 // JVM_TEMPLATES
 // $i$f$respond x1, $i$f$receiveJSON x2: before and after suspension point
 // 3 ISTORE 5
 // 0 ILOAD 5
-// 2 \$i\$f\$receiveJSON\\1 I .* 5
-// 1 \$i\$f\$respond\\2 I .* 5
+// 2 \$i\$f\$receiveJSON I .* 5
+// 1 \$i\$f\$respond I .* 5
 
 // JVM_IR_TEMPLATES
 // 5 ISTORE 3
@@ -30,4 +46,4 @@ suspend fun ApplicationCall.test(authenticationService: AuthenticationService) {
 // 0 ILOAD 3
 // 0 ILOAD 2
 // 1 \$i\$f\$receiveJSON I .* 2
-// 2 \$i\$f\$respond I .* 3
+// 3 \$i\$f\$respond I .* 3

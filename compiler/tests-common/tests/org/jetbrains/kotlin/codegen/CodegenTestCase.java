@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
@@ -54,7 +53,6 @@ import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtilsKt.*;
-import static org.jetbrains.kotlin.config.JVMConfigurationKeys.ENABLE_INLINE_SCOPES_NUMBERS;
 import static org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar;
 
 public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.TestFile> {
@@ -421,8 +419,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
                 ArraysKt.filterNotNull(new File[] {javaSourceDir}),
                 files
         );
-
-        configuration.put(ENABLE_INLINE_SCOPES_NUMBERS, true);
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES

@@ -186,6 +186,112 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             testClass<AbstractJvmIrInterpreterAfterPsi2IrTest> {
                 model("ir/interpreter", excludeDirs = listOf("helpers"))
             }
+
+            // ------------- Inline scopes tests duplication -------------
+
+            testClass<AbstractBlackBoxCodegenTestWithInlineScopes> {
+                model("codegen/box")
+            }
+
+            testClass<AbstractIrBlackBoxCodegenTestWithInlineScopes> {
+                model("codegen/box")
+            }
+
+            testClass<AbstractIrBlackBoxCodegenWithIrInlinerTestWithInlineScopes> {
+                model("codegen/box")
+            }
+
+            testClass<AbstractSteppingTestWithInlineScopes> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractIrSteppingWithBytecodeInlinerTestWithInlineScopes> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractIrSteppingWithIrInlinerTestWithInlineScopes> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractLocalVariableTestWithInlineScopes> {
+                model("debug/localVariables")
+            }
+
+            testClass<AbstractIrLocalVariableBytecodeInlinerTestWithInlineScopes> {
+                model("debug/localVariables")
+            }
+
+            testClass<AbstractIrLocalVariableIrInlinerTestWithInlineScopes> {
+                model("debug/localVariables")
+            }
+
+            testClass<AbstractBlackBoxCodegenTestWithInlineScopes>("BlackBoxModernJdkCodegenTestGeneratedWithInlineScopes") {
+                model("codegen/boxModernJdk")
+            }
+
+            testClass<AbstractIrBlackBoxCodegenTestWithInlineScopes>("IrBlackBoxModernJdkCodegenTestGeneratedWithInlineScopes") {
+                model("codegen/boxModernJdk")
+            }
+
+            testClass<AbstractJvmIrAgainstOldBoxTestWithInlineScopes> {
+                model("codegen/box/compileKotlinAgainstKotlin")
+            }
+
+            testClass<AbstractJvmOldAgainstIrBoxTestWithInlineScopes> {
+                model("codegen/box/compileKotlinAgainstKotlin")
+            }
+
+            testClass<AbstractBytecodeTextTestWithInlineScopes> {
+                model("codegen/bytecodeText")
+            }
+
+            testClass<AbstractIrBytecodeTextTestWithInlineScopes> {
+                model("codegen/bytecodeText")
+            }
+
+            testClass<AbstractBlackBoxInlineCodegenTestWithInlineScopes> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractIrBlackBoxInlineCodegenWithBytecodeInlinerTestWithInlineScopes> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractIrBlackBoxInlineCodegenWithIrInlinerTestWithInlineScopes> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractCompileKotlinAgainstInlineKotlinTestWithInlineScopes> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractIrCompileKotlinAgainstInlineKotlinTestWithInlineScopes> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractIrSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopes> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractJvmIrAgainstOldBoxInlineTestWithInlineScopes> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractJvmOldAgainstIrBoxInlineTestWithInlineScopes> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractBytecodeListingTestWithInlineScopes> {
+                model("codegen/bytecodeListing")
+            }
+
+            testClass<AbstractIrBytecodeListingTestWithInlineScopes> {
+                model("codegen/bytecodeListing")
+            }
+
+            testClass<AbstractIrAsmLikeInstructionListingTestWithInlineScopes> {
+                model("codegen/asmLike")
+            }
         }
 
         // ---------------------------------------------- FIR tests ----------------------------------------------

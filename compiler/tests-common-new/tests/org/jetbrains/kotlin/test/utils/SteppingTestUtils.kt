@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.utils
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.isInlineScopesBackend
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
@@ -102,9 +103,12 @@ fun checkSteppingTestResult(
                 ?: setOf(frontendKind)
             continue
         }
-        if ((currentBackends.contains(TargetBackend.ANY) || currentBackends.contains(targetBackend)) &&
-            currentFrontends.contains(frontendKind)
-        ) {
+
+        val containsBackend =
+            currentBackends.contains(TargetBackend.ANY) ||
+                    currentBackends.contains(targetBackend) ||
+                    shouldIncludeAsInlineScopesCompatibleBackend(targetBackend, currentBackends, lines)
+        if (containsBackend && currentFrontends.contains(frontendKind)) {
             if (actualLineNumbersIterator.hasNext()) {
                 actual.add(actualLineNumbersIterator.next())
             }
@@ -163,3 +167,15 @@ fun formatAsSteppingTestExpectation(
         visibleVars.joinTo(this)
     }
 }.trim()
+
+private fun shouldIncludeAsInlineScopesCompatibleBackend(
+    targetBackend: TargetBackend,
+    currentBackends: Set<TargetBackend>,
+    lines: List<String>
+): Boolean =
+    targetBackend.isInlineScopesBackend() &&
+            currentBackends.contains(targetBackend.compatibleWith) &&
+            lines.all {
+                !it.contains(TargetBackend.JVM_WITH_INLINE_SCOPES.name) &&
+                        !it.contains(TargetBackend.JVM_IR_WITH_INLINE_SCOPES.name)
+            }

@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CHECK_ASM_LIKE_INSTRUCTIONS
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CURIOUS_ABOUT
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.FIR_DIFFERENCE
+import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.INLINE_SCOPES_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.IR_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.LOCAL_VARIABLE_TABLE
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.RENDER_ANNOTATIONS
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -38,6 +40,7 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
     companion object {
         const val DUMP_EXTENSION = "asm.txt"
         const val IR_DUMP_EXTENSION = "asm.ir.txt"
+        const val INLINE_SCOPES_DUMP_EXTENSION = "asm.scopes.txt"
         const val FIR_DUMP_EXTENSION = "asm.fir.txt"
         const val LINE_SEPARATOR = "\n"
 
@@ -388,13 +391,20 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
 
         val irDifference = IR_DIFFERENCE in testServices.moduleStructure.allDirectives
         val firDifference = FIR_DIFFERENCE in testServices.moduleStructure.allDirectives
+        val inlineScopesDifference = INLINE_SCOPES_DIFFERENCE in testServices.moduleStructure.allDirectives
 
         val firstModule = testServices.moduleStructure.modules.first()
 
+        val inlineScopesNumbersEnabled = firstModule.directives.contains(ENABLE_INLINE_SCOPES_NUMBERS)
         val extension = when {
-            firDifference && firstModule.frontendKind == FrontendKinds.FIR -> FIR_DUMP_EXTENSION
-            irDifference && firstModule.targetBackend?.isIR == true -> IR_DUMP_EXTENSION
-            else -> DUMP_EXTENSION
+            inlineScopesNumbersEnabled && inlineScopesDifference && firstModule.targetBackend?.isIR == true ->
+                INLINE_SCOPES_DUMP_EXTENSION
+            firDifference && firstModule.frontendKind == FrontendKinds.FIR ->
+                FIR_DUMP_EXTENSION
+            irDifference && firstModule.targetBackend?.isIR == true ->
+                IR_DUMP_EXTENSION
+            else ->
+                DUMP_EXTENSION
         }
 
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()

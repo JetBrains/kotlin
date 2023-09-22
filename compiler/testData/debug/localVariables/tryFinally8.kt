@@ -35,7 +35,7 @@ fun box() {
     val localX = x
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR_WITH_INLINE_SCOPES JVM_WITH_INLINE_SCOPES
 // test.kt:34 box:
 // test.kt:20 compute:
 // test.kt:21 compute:
@@ -48,6 +48,24 @@ fun box() {
 // test.kt:12 compute: y:int=42:int, i:int=0:int, $i$f$f\1:int=0:int
 // test.kt:13 compute: y:int=42:int, i:int=0:int, $i$f$f\1:int=0:int, e\1:java.lang.Exception=java.lang.RuntimeException
 // test.kt:24 compute: y:int=42:int, i:int=0:int, $i$f$f\1:int=0:int, e\1:java.lang.Exception=java.lang.RuntimeException, $i$a$-f-TestKt$compute$1\2\0:int=0:int
+// test.kt:28 compute:
+// test.kt:34 box:
+// test.kt:35 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
+// test.kt:36 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String
+
+// EXPECTATIONS JVM JVM_IR
+// test.kt:34 box:
+// test.kt:20 compute:
+// test.kt:21 compute:
+// test.kt:22 compute: y:int=42:int
+// test.kt:23 compute: y:int=42:int, i:int=0:int
+// test.kt:7 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int
+// test.kt:8 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int
+// test.kt:9 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, z$iv:int=32:int
+// test.kt:10 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, z$iv:int=32:int, j$iv:int=0:int
+// test.kt:12 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int
+// test.kt:13 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, e$iv:java.lang.Exception=java.lang.RuntimeException
+// test.kt:24 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, e$iv:java.lang.Exception=java.lang.RuntimeException, $i$a$-f-TestKt$compute$1:int=0:int
 // test.kt:28 compute:
 // test.kt:34 box:
 // test.kt:35 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String

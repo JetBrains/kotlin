@@ -47,7 +47,6 @@ open class AbstractIrLocalVariableIrInlinerTest : AbstractIrLocalVariableTest() 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useIrInliner()
-        builder.useInlineScopesNumbers()
     }
 }
 

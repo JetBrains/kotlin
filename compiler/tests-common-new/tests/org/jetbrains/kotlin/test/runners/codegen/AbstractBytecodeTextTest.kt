@@ -44,8 +44,6 @@ abstract class AbstractBytecodeTextTestBase<R : ResultingArtifact.FrontendOutput
             +WITH_REFLECT
         }
 
-        useInlineScopesNumbers()
-
         commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
 
         commonHandlersForCodegenTest()
@@ -58,8 +56,10 @@ abstract class AbstractBytecodeTextTestBase<R : ResultingArtifact.FrontendOutput
     }
 }
 
-open class AbstractBytecodeTextTest : AbstractBytecodeTextTestBase<ClassicFrontendOutputArtifact, ClassicBackendInput>(
-    targetBackend = TargetBackend.JVM,
+open class AbstractBytecodeTextTest(
+    targetBackend: TargetBackend = TargetBackend.JVM
+) : AbstractBytecodeTextTestBase<ClassicFrontendOutputArtifact, ClassicBackendInput>(
+    targetBackend = targetBackend,
     targetFrontend = FrontendKinds.ClassicFrontend
 ) {
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
@@ -72,8 +72,10 @@ open class AbstractBytecodeTextTest : AbstractBytecodeTextTestBase<ClassicFronte
         get() = ::ClassicJvmBackendFacade
 }
 
-open class AbstractIrBytecodeTextTest : AbstractBytecodeTextTestBase<ClassicFrontendOutputArtifact, IrBackendInput>(
-    targetBackend = TargetBackend.JVM_IR,
+open class AbstractIrBytecodeTextTest(
+    targetBackend: TargetBackend = TargetBackend.JVM_IR
+) : AbstractBytecodeTextTestBase<ClassicFrontendOutputArtifact, IrBackendInput>(
+    targetBackend = targetBackend,
     targetFrontend = FrontendKinds.ClassicFrontend
 ) {
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
