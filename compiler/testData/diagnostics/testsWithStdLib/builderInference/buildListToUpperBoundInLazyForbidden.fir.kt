@@ -55,7 +55,7 @@ internal class TowerDataElementsForName4() {
                 buildList {
                     for (i in lastIndex downTo 0) {
                         add("")
-                        this@l1.add("")
+                        this<!UNRESOLVED_LABEL!>@l1<!>.add("")
                     }
                 }
             }
