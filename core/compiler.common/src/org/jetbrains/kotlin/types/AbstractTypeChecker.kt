@@ -374,8 +374,20 @@ object AbstractTypeChecker {
         if (areEqualTypeConstructors(subType.typeConstructor(), superConstructor) && superConstructor.parametersCount() == 0) return true
         if (superType.typeConstructor().isAnyConstructor()) return true
 
-        val supertypesWithSameConstructor = findCorrespondingSupertypes(state, subType, superConstructor)
-            .map { state.prepareType(it).asSimpleType() ?: it }
+        val supertypesWithSameConstructor = with(findCorrespondingSupertypes(state, subType, superConstructor)) {
+            // Note: in K1, we can have partially computed types here, like SomeType<NON COMPUTED YET>
+            // (see e.g. interClassesRecursion.kt from diagnostic tests)
+            // In this case we don't want to affect lazy computation in normal case (size <= 1), that's why we don't create a set
+            // (adding to a hash set requires hash-code calculation for each set element)
+
+            if (size > 1 && (state.typeSystemContext as? TypeSystemInferenceExtensionContext)?.isK2 == true) {
+                // Here we want to filter out equivalent types to avoid unnecessary forking
+                mapTo(mutableSetOf()) { state.prepareType(it).asSimpleType() ?: it }
+            } else {
+                // TODO: drop this branch together with K1 code
+                map { state.prepareType(it).asSimpleType() ?: it }
+            }
+        }
         when (supertypesWithSameConstructor.size) {
             0 -> return hasNothingSupertype(state, subType) // todo Nothing & Array<Number> <: Array<String>
             1 -> return state.isSubtypeForSameConstructor(supertypesWithSameConstructor.first().asArgumentList(), superType)
