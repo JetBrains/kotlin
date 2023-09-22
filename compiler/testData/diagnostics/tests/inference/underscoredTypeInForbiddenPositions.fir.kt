@@ -12,23 +12,34 @@ class Bar2<K : <!UNRESOLVED_REFERENCE!>_<!>>
 class Bar3<K> where K : <!UNRESOLVED_REFERENCE!>_<!>
 class Bar4<<!UNDERSCORE_IS_RESERVED!>_<!>>
 
-typealias A1<<!UNDERSCORE_IS_RESERVED!>_<!>> = <!TYPEALIAS_SHOULD_EXPAND_TO_CLASS!>_<!>
+typealias A1<<!UNDERSCORE_IS_RESERVED!>_<!>> = <!TYPEALIAS_SHOULD_EXPAND_TO_CLASS, UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>
+typealias A11<<!UNDERSCORE_IS_RESERVED!>_<!>> = Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>>
+typealias A12<<!UNDERSCORE_IS_RESERVED!>_<!>> = Foo<Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>>>
 typealias A2<T> = Foo<<!UNRESOLVED_REFERENCE!>_<!>>
 typealias A3<T> = (<!UNRESOLVED_REFERENCE!>_<!>) -> T
 typealias A4<T> = (T) -> () -> <!UNRESOLVED_REFERENCE!>_<!>
 typealias A5<T> = (T) -> (((<!UNRESOLVED_REFERENCE!>_<!>))) -> T
 
-fun foo1(x: <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>) {}
-fun foo2(x: Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>>) {}
+fun foo1(x: <!UNRESOLVED_REFERENCE!>_<!>) {}
+fun foo2(x: Foo<<!UNRESOLVED_REFERENCE!>_<!>>) {}
+fun foo21(x: Foo<Foo<<!UNRESOLVED_REFERENCE!>_<!>>>) {}
 fun foo3(): <!UNRESOLVED_REFERENCE!>_<!> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
-fun foo5(): Foo<<!UNRESOLVED_REFERENCE!>_<!>> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
-fun <K, <!UNDERSCORE_IS_RESERVED!>_<!>> foo6(): Foo<_> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
-fun <K : _, <!UNDERSCORE_IS_RESERVED!>_<!>> foo7(): Foo<_> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun foo4(): Foo<<!UNRESOLVED_REFERENCE!>_<!>> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun foo5(): Foo<Foo<<!UNRESOLVED_REFERENCE!>_<!>>> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun <K, <!UNDERSCORE_IS_RESERVED!>_<!>> foo6(): Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun <K : <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>, <!UNDERSCORE_IS_RESERVED!>_<!>> foo7(): <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun <K : Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>>, <!UNDERSCORE_IS_RESERVED!>_<!>> foo8(): Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun <K : Foo<Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>>>, <!UNDERSCORE_IS_RESERVED!>_<!>> foo9(): Foo<Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>>> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+fun <!UNRESOLVED_REFERENCE!>_<!>.foo10() {}
+fun Foo<<!UNRESOLVED_REFERENCE!>_<!>>.foo11() {}
+fun Foo<Foo<<!UNRESOLVED_REFERENCE!>_<!>>>.foo12() {}
 
 class AA1 : <!UNRESOLVED_REFERENCE!>_<!>
 class AA2 : <!FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>Foo<<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>_<!>><!>
 
-fun <`_`> bar(): Foo<_> = TODO()
+fun <`_`> bar(): Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>> = TODO()
+fun <`_`> bar1(): Foo<Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>>> = TODO()
 
 fun test() {
     val x1 = foo<Int, (<!UNRESOLVED_REFERENCE!>_<!>) -> Unit> { { it } }
@@ -42,8 +53,8 @@ fun test() {
     val z32: Pair<<!UNRESOLVED_REFERENCE!>_<!>, Float> = 1 to 1f
     val z34: Pair<((<!UNRESOLVED_REFERENCE!>_<!>)), Float> = 1 to 1f
 
-    val x8: (Float) -> Int = { x: <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!> -> 10 }
-    val x9: (Foo<Float>) -> Int = { x: Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>> -> 10 }
+    val x8: (Float) -> Int = { x: <!UNRESOLVED_REFERENCE!>_<!> -> 10 }
+    val x9: (Foo<Float>) -> Int = { x: Foo<<!UNRESOLVED_REFERENCE!>_<!>> -> 10 }
 
     val x10 = object : <!UNRESOLVED_REFERENCE!>_<!> {}
     val x11 = object : <!FINAL_SUPERTYPE!>Foo<<!UNRESOLVED_REFERENCE!>_<!>><!>() {}
@@ -56,7 +67,7 @@ fun test() {
 
     val x12: Foo<@<!UNRESOLVED_REFERENCE!>_<!> Int>? = null
     val x13: Foo<@<!UNRESOLVED_REFERENCE!>_<!>() Int>? = null
-    val x14: Foo<@Anno(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>) Int>? = null
+    val x14: Foo<@Anno(<!UNRESOLVED_REFERENCE!>_<!>) Int>? = null
 
     val x15: <!UNRESOLVED_REFERENCE!>_<!><<!UNRESOLVED_REFERENCE!>_<!>>? = null
 }

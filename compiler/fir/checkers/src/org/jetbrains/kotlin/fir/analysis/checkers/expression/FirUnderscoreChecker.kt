@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.isUnderscore
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnderscoreUsageWithoutBackticks
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
@@ -35,6 +36,8 @@ object FirUnderscoreChecker : FirBasicExpressionChecker() {
     }
 
     private fun diagnosticsCheckNeeded(expression: FirResolvable): Boolean {
+        if (expression.calleeReference is FirErrorNamedReference)
+            return false
         return when (expression) {
             is FirImplicitInvokeCall -> expression.calleeReference.name.asString().isUnderscore
             is FirCall -> expression.calleeReference.toResolvedSymbol<FirFunctionSymbol<*>>()?.callableId?.callableName?.asString()?.isUnderscore == true

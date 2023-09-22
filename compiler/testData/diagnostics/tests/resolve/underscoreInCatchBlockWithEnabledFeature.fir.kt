@@ -29,7 +29,7 @@ fun foo() {
         }
     } catch (_: Exception) {
         <!UNRESOLVED_REFERENCE!>`_`<!>.stackTrace
-        val y1 = <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>
+        val y1 = <!UNRESOLVED_REFERENCE!>_<!>
         val y2 = (<!UNRESOLVED_REFERENCE!>`_`<!>)
     }
     try {
