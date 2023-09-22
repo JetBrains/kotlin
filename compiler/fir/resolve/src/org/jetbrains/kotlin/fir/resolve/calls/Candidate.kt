@@ -116,6 +116,7 @@ class Candidate(
     val postponedAccesses = mutableListOf<FirExpression>()
     val pclaLambdas = mutableListOf<FirAnonymousFunction>()
     val updateDeclarations = mutableListOf<() -> Unit>()
+    val callbacks = mutableListOf<(ConeSubstitutor) -> Unit>()
 
     var currentApplicability = CandidateApplicability.RESOLVED
         private set
