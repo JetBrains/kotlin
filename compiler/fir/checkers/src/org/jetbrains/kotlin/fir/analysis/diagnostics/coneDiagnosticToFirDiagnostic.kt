@@ -465,7 +465,7 @@ private fun ConstraintSystemError.toDiagnostic(
             }
 
             FirErrors.NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.createOn(
-                source,
+                candidate.sourceOfCallToSymbolWith(this.typeVariable as ConeTypeVariable) ?: source,
                 typeVariableName,
             )
         }
@@ -479,7 +479,7 @@ private fun ConstraintSystemError.toDiagnostic(
 
         is InferredEmptyIntersection -> {
             val typeVariable = typeVariable as ConeTypeVariable
-            val narrowedSource = findInferredEmptyIntersectionNarrowedSource(typeVariable, candidate)
+            val narrowedSource = candidate.sourceOfCallToSymbolWith(typeVariable)
 
             @Suppress("UNCHECKED_CAST")
             reportInferredIntoEmptyIntersection(
@@ -503,15 +503,14 @@ private fun ConstraintSystemError.toDiagnostic(
     }
 }
 
-private fun findInferredEmptyIntersectionNarrowedSource(
+private fun AbstractCandidate.sourceOfCallToSymbolWith(
     typeVariable: ConeTypeVariable,
-    candidate: AbstractCandidate,
 ): KtSourceElement? {
     if (typeVariable !is ConeTypeParameterBasedTypeVariable) return null
 
     var narrowedSource: KtSourceElement? = null
 
-    candidate.callInfo.callSite.accept(object : FirVisitorVoid() {
+    callInfo.callSite.accept(object : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
             if (narrowedSource != null) return
 
@@ -537,7 +536,7 @@ private fun reportInferredIntoEmptyIntersection(
     causingTypes: Collection<ConeKotlinType>,
     kind: EmptyIntersectionTypeKind,
     isError: Boolean
-): KtDiagnostic? {
+): KtDiagnostic {
     val typeVariableText =
         (typeVariable.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.name?.asString()
             ?: typeVariable.toString()

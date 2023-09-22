@@ -262,8 +262,8 @@ class Main<L>(x: L?, y: L) {
     val x471 = foo47(y)
 
     fun <R> takeLambda(block: () -> R): R = materialize()
-    val x480 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeLambda<!> { foo48 { <!ARGUMENT_TYPE_MISMATCH!>x<!> } }
-    val x481 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeLambda<!> { foo48 { <!ARGUMENT_TYPE_MISMATCH!>y<!> } }
+    val x480 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeLambda<!> { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo48<!> { <!ARGUMENT_TYPE_MISMATCH!>x<!> } }
+    val x481 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeLambda<!> { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo48<!> { <!ARGUMENT_TYPE_MISMATCH!>y<!> } }
     val x482 = takeLambda { foo48 { null } }
 }
 

@@ -44,7 +44,7 @@ fun poll13(flag: Boolean) {
 }
 
 fun poll14(flag: Boolean) {
-    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (flag) { ::bar4 } else { ::foo4 }<!>
+    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (flag) { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!> } else { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> }<!>
     inv<!NO_VALUE_FOR_PARAMETER!>()<!>
 }
 
@@ -59,7 +59,7 @@ fun poll16(flag: Boolean) {
 }
 
 fun poll17(flag: Boolean) {
-    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (flag) { foo7() } else { ::Foo7 }<!>
+    val inv = if (flag) { foo7() } else { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> }
     inv
 }
 
@@ -79,7 +79,7 @@ fun poll22(flag: Boolean) {
 }
 
 fun poll23(flag: Boolean) {
-    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>when (flag) { true -> ::bar4 else -> ::foo4 }<!>
+    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>when (flag) { true -> ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!> else -> ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> }<!>
     inv<!NO_VALUE_FOR_PARAMETER!>()<!>
 }
 
@@ -94,7 +94,7 @@ fun poll25(flag: Boolean) {
 }
 
 fun poll26(flag: Boolean) {
-    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>when (flag) { true -> ::Foo7 false -> foo7() else -> ::Foo7 }<!>
+    val inv = when (flag) { true -> ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> false -> foo7() else -> ::Foo7 }
     inv
 }
 
@@ -114,7 +114,7 @@ fun poll32(flag: Boolean) {
 }
 
 fun poll33(flag: Boolean) {
-    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>when (flag) { true -> ::bar4 false -> ::foo4 }<!>
+    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>when (flag) { true -> ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!> false -> ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> }<!>
     inv<!NO_VALUE_FOR_PARAMETER!>()<!>
 }
 
@@ -129,7 +129,7 @@ fun poll35(flag: Boolean) {
 }
 
 fun poll36(flag: Boolean) {
-    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>when (flag) { true -> ::Foo7 false -> foo7() }<!>
+    val inv = when (flag) { true -> ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> false -> foo7() }
     inv
 }
 
@@ -149,7 +149,7 @@ fun poll42() {
 }
 
 fun poll43() {
-    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>try { ::bar4 } finally { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> }<!>
+    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>try { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!> } finally { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> }<!>
     inv<!NO_VALUE_FOR_PARAMETER!>()<!>
 }
 
@@ -184,7 +184,7 @@ fun poll52() {
 }
 
 fun poll53() {
-    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>try { ::bar4 } catch (e: Exception) { ::foo4 } finally { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> }<!>
+    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>try { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!> } catch (e: Exception) { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> } finally { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!> }<!>
     inv<!NO_VALUE_FOR_PARAMETER!>()<!>
 }
 
@@ -199,7 +199,7 @@ fun poll55() {
 }
 
 fun poll56() {
-    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>try { ::Foo7 } catch (e: Exception) { foo7() } finally { foo7() }<!>
+    val inv = try { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> } catch (e: Exception) { foo7() } finally { foo7() }
     inv
 }
 
@@ -254,7 +254,7 @@ fun poll72() {
 }
 
 fun poll73() {
-    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::bar4<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!><!>
+    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!><!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!><!>
     inv
 }
 
@@ -269,7 +269,7 @@ fun poll75() {
 }
 
 fun poll76() {
-    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!><!>
+    val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!><!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!><!>
     inv
 }
 
@@ -289,7 +289,7 @@ fun poll82() {
 }
 
 fun poll83() {
-    val inv = ::bar4 <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>in<!> <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>setOf<!>(::foo4)
+    val inv = ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!> in <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>setOf<!>(::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!>)
     inv
 }
 
@@ -304,16 +304,16 @@ fun poll85() {
 }
 
 fun poll86() {
-    val inv = ::Foo7 <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>in<!> <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>setOf<!>(::Foo7)
+    val inv = ::Foo7 in <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>setOf<!>(::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!>)
     inv
 }
 
 fun poll87() {
-    val inv = ::Foo7 <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>in<!> setOf(foo7())
+    val inv = ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>in<!> setOf(foo7())
     inv
 }
 
 fun poll88() {
-    val inv = foo7() in <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>setOf<!>(::Foo7)
+    val inv = foo7() in <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>setOf<!>(::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!>)
     inv
 }

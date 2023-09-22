@@ -28,11 +28,11 @@ internal class TowerDataElementsForName2() {
 }
 
 internal class TowerDataElementsForName3() {
-    val reversedFilteredLocalScopes by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>lazy<!>(LazyThreadSafetyMode.NONE) {
+    val reversedFilteredLocalScopes by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>lazy<!>(LazyThreadSafetyMode.NONE) {
         @OptIn(ExperimentalStdlibApi::class)
-        buildList l1@ {
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>buildList<!> l1@ {
             for (i in lastIndex downTo 0) {
-                val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
+                val reversedFilteredLocalScopes by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>lazy(LazyThreadSafetyMode.NONE) {
                     @OptIn(ExperimentalStdlibApi::class)
                     buildList {
                         for (i in lastIndex downTo 0) {
@@ -40,7 +40,7 @@ internal class TowerDataElementsForName3() {
                             this@l1.add("")
                         }
                     }
-                }
+                }<!>
             }
         }
     }<!>
