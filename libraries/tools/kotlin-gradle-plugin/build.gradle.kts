@@ -39,6 +39,7 @@ kotlin {
 apiValidation {
     publicMarkers.add("org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi")
     publicMarkers.add("org.jetbrains.kotlin.gradle.dsl.AdhocBinaryCompatibilityValidated")
+    publicMarkers.add("org.jetbrains.kotlin.gradle.KotlinGradlePluginDsl")
     nonPublicMarkers.add("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
     additionalSourceSets.add("common")
 }
