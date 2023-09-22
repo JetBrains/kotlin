@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -46,15 +47,15 @@ internal class FirNonStaticMembersScope(
     override fun getClassifierNames(): Set<Name> = delegate.getClassifierNames()
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        processInnerClassesByName(name, processor)
+        delegate.processInnerClassesByName(name, processor)
     }
+}
 
-    private fun processInnerClassesByName(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        delegate.processClassifiersByNameWithSubstitution(name) { classifier, substitutor ->
-            val firDeclaration = classifier.fir
-            if (firDeclaration is FirMemberDeclaration && firDeclaration.isInner) {
-                processor(classifier, substitutor)
-            }
+internal fun FirScope.processInnerClassesByName(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+    processClassifiersByNameWithSubstitution(name) { classifier, substitutor ->
+        val firDeclaration = classifier.fir
+        if (firDeclaration is FirMemberDeclaration && firDeclaration.isInner) {
+            processor(classifier, substitutor)
         }
     }
 }

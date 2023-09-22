@@ -115,8 +115,8 @@ internal class KtFirScopeProvider(
         val scopeSession = getScopeSession()
 
         val firScope = when (kind) {
-            // `FirNoClassifiersScope` is a workaround for non-static member scopes containing classifiers (see KT-61900).
-            DeclaredMemberScopeKind.NON_STATIC -> FirNoClassifiersScope(
+            // `FirExcludingNonInnerClassesScope` is a workaround for non-static member scopes containing static classes (see KT-61900).
+            DeclaredMemberScopeKind.NON_STATIC -> FirExcludingNonInnerClassesScope(
                 JavaScopeProvider.getUseSiteMemberScope(
                     firJavaClass,
                     useSiteSession,
