@@ -119,7 +119,9 @@ class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(
             var stubTypeFound = false
             type.contains {
                 when (it) {
-                    is ConeTypeVariableType -> typeVariableFound = true
+                    is ConeTypeVariableType -> {
+                        typeVariableFound = true
+                    }
                     is ConeStubType -> stubTypeFound = true
                     else -> {}
                 }
