@@ -250,6 +250,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("operation", operationType)
             +field("conversionTypeRef", typeRef).withTransform()
             +booleanField("argFromStubType", withReplace = true)
+            +booleanField("usedAsExpression")
             needTransformOtherChildren()
         }
 

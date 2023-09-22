@@ -26,6 +26,7 @@ abstract class FirTypeOperatorCall : FirExpression(), FirCall {
     abstract val operation: FirOperation
     abstract val conversionTypeRef: FirTypeRef
     abstract val argFromStubType: Boolean
+    abstract val usedAsExpression: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeOperatorCall(this, data)
 

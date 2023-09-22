@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.builder
 
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirExpressionRef
@@ -16,12 +17,17 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
+import org.jetbrains.kotlin.fir.expressions.builder.buildEqualityOperatorCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildTypeOperatorCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildWhenSubjectExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.toKtPsiSourceElement
 
 internal fun KtWhenCondition.toFirWhenCondition(
     whenRefWithSubject: FirExpressionRef<FirWhenExpression>,
@@ -58,6 +64,7 @@ internal fun KtWhenCondition.toFirWhenCondition(
                 operation = if (isNegated) FirOperation.NOT_IS else FirOperation.IS
                 conversionTypeRef = typeReference.toFirOrErrorTypeRef()
                 argumentList = buildUnaryArgumentList(firSubjectExpression)
+                usedAsExpression = true
             }
         }
         else -> {

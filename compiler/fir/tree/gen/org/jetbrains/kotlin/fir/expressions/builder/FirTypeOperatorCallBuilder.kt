@@ -38,6 +38,7 @@ class FirTypeOperatorCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var operation: FirOperation
     lateinit var conversionTypeRef: FirTypeRef
+    var usedAsExpression: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
     override fun build(): FirTypeOperatorCall {
         return FirTypeOperatorCallImpl(
@@ -47,6 +48,7 @@ class FirTypeOperatorCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder
             argumentList,
             operation,
             conversionTypeRef,
+            usedAsExpression,
         )
     }
 

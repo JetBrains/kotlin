@@ -33,6 +33,7 @@ internal class FirTypeOperatorCallImpl(
     override var argumentList: FirArgumentList,
     override val operation: FirOperation,
     override var conversionTypeRef: FirTypeRef,
+    override val usedAsExpression: Boolean,
 ) : FirTypeOperatorCall() {
     override var argFromStubType: Boolean = false
 

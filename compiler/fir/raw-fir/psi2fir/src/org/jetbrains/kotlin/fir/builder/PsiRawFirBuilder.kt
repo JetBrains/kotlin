@@ -2747,6 +2747,7 @@ open class PsiRawFirBuilder(
                 operation = expression.operationReference.getReferencedNameElementType().toFirOperation()
                 conversionTypeRef = expression.right.toFirOrErrorType()
                 argumentList = buildUnaryArgumentList(expression.left.toFirExpression("No left operand"))
+                usedAsExpression = expression.usedAsExpression
             }
         }
 
@@ -2756,6 +2757,7 @@ open class PsiRawFirBuilder(
                 operation = if (expression.isNegated) FirOperation.NOT_IS else FirOperation.IS
                 conversionTypeRef = expression.typeReference.toFirOrErrorType()
                 argumentList = buildUnaryArgumentList(expression.leftHandSide.toFirExpression("No left operand"))
+                usedAsExpression = expression.usedAsExpression
             }
         }
 

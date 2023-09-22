@@ -387,6 +387,7 @@ class LightTreeRawFirExpressionBuilder(
             argumentList = buildUnaryArgumentList(
                 leftArgAsFir ?: buildErrorExpression(null, ConeSyntaxDiagnostic("No left operand"))
             )
+            usedAsExpression = binaryExpression.usedAsExpression
         }
     }
 
@@ -970,6 +971,7 @@ class LightTreeRawFirExpressionBuilder(
             operation = firOperation
             conversionTypeRef = firType ?: buildErrorTypeRef { diagnostic = ConeSyntaxDiagnostic("Incomplete code") }
             argumentList = buildUnaryArgumentList(subjectExpression)
+            usedAsExpression = whenCondition.usedAsExpression
         }
 
         return createWhenConditionConvertedResults(hasSubject, result, whenCondition)
