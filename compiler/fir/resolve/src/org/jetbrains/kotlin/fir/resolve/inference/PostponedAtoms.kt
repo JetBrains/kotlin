@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpected
 import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 //  --------------------------- Variables ---------------------------
@@ -48,6 +49,8 @@ class ResolvedLambdaAtom(
     typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,
     val coerceFirstParameterToExtensionReceiver: Boolean
 ) : PostponedResolvedAtom() {
+
+    override val outerTypeVariables: Set<TypeConstructorMarker>? = candidateOfOuterCall?.system?.outerTypeVariables
 
     var typeVariableForLambdaReturnType = typeVariableForLambdaReturnType
         private set
