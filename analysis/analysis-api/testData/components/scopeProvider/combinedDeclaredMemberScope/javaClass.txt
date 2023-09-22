@@ -1,5 +1,36 @@
 KtFunctionSymbol:
   annotationsList: []
+  callableIdIfNonLocal: /JavaClass.bar
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: false
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: true
+  isSuspend: false
+  modality: OPEN
+  name: bar
+  origin: JAVA
+  receiverParameter: null
+  returnType: KtFlexibleType:
+    annotationsList: []
+    type: kotlin/String!
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: /JavaClass.hello
   contextReceivers: []
   contractEffects: []
@@ -31,60 +62,6 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: JavaClass
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
-KtConstructorSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: JavaClass
-  contextReceivers: []
-  hasStableParameterNames: false
-  isActual: false
-  isExpect: false
-  isExtension: false
-  isPrimary: true
-  origin: JAVA
-  receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
-    type: JavaClass
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /JavaClass.bar
-  contextReceivers: []
-  contractEffects: []
-  hasStableParameterNames: false
-  isActual: false
-  isBuiltinFunctionInvoke: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: true
-  isSuspend: false
-  modality: OPEN
-  name: bar
-  origin: JAVA
-  receiverParameter: null
-  returnType: KtFlexibleType:
-    annotationsList: []
-    type: kotlin/String!
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: []
-  visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -136,4 +113,27 @@ KtNamedClassOrObjectSymbol:
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
+  deprecationStatus: null
+
+KtConstructorSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  containingClassIdIfNonLocal: JavaClass
+  contextReceivers: []
+  hasStableParameterNames: false
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isPrimary: true
+  origin: JAVA
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: JavaClass
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

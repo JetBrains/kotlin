@@ -87,7 +87,22 @@ internal class KtFirScopeProvider(
     override fun getStaticDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope =
         getDeclaredMemberScope(classSymbol, DeclaredMemberScopeKind.STATIC)
 
-    private enum class DeclaredMemberScopeKind { NON_STATIC, STATIC }
+    override fun getCombinedDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope =
+        getDeclaredMemberScope(classSymbol, DeclaredMemberScopeKind.COMBINED)
+
+    private enum class DeclaredMemberScopeKind {
+        NON_STATIC,
+
+        STATIC,
+
+        /**
+         * A scope containing both non-static and static members. A smart combined scope (as opposed to a naive combination of [KtScope]s
+         * with [getCompositeScope]) avoids duplicate inner classes, as they are contained in non-static and static scopes.
+         *
+         * A proper combined declared member scope kind also makes it easier to cache combined scopes directly (if needed).
+         */
+        COMBINED,
+    }
 
     private fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers, kind: DeclaredMemberScopeKind): KtScope {
         val firDeclaration = classSymbol.firSymbol.fir
@@ -107,45 +122,8 @@ internal class KtFirScopeProvider(
         return when (kind) {
             DeclaredMemberScopeKind.NON_STATIC -> FirNonStaticMembersScope(combinedScope)
             DeclaredMemberScopeKind.STATIC -> FirStaticScope(combinedScope)
+            DeclaredMemberScopeKind.COMBINED -> combinedScope
         }
-    }
-
-    private fun getFirJavaDeclaredMemberScope(firJavaClass: FirJavaClass, kind: DeclaredMemberScopeKind): FirContainingNamesAwareScope? {
-        val useSiteSession = analysisSession.useSiteSession
-        val scopeSession = getScopeSession()
-
-        val firScope = when (kind) {
-            // `FirExcludingNonInnerClassesScope` is a workaround for non-static member scopes containing static classes (see KT-61900).
-            DeclaredMemberScopeKind.NON_STATIC -> FirExcludingNonInnerClassesScope(
-                JavaScopeProvider.getUseSiteMemberScope(
-                    firJavaClass,
-                    useSiteSession,
-                    scopeSession,
-                    memberRequiredPhase = FirResolvePhase.TYPES,
-                )
-            )
-            DeclaredMemberScopeKind.STATIC -> JavaScopeProvider.getStaticScope(firJavaClass, useSiteSession, scopeSession) ?: return null
-        }
-
-        val cacheKey = when (kind) {
-            DeclaredMemberScopeKind.NON_STATIC -> JAVA_ENHANCEMENT_FOR_DECLARED_MEMBERS
-            DeclaredMemberScopeKind.STATIC -> JAVA_ENHANCEMENT_FOR_STATIC_DECLARED_MEMBERS
-        }
-
-        return scopeSession.getOrBuild(firJavaClass.symbol, cacheKey) {
-            FirJavaDeclaredMembersOnlyScope(firScope, firJavaClass)
-        }
-    }
-
-    override fun getCombinedDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
-        val firDeclaration = classSymbol.firSymbol.fir
-        if (firDeclaration is FirJavaClass) {
-            // Java enhancement scopes as provided by `JavaScopeProvider` are either use-site or static scopes, so we need to compose them
-            // to get the combined scope. A base declared member scope with Java enhancement doesn't exist, unfortunately.
-            return KtCompositeScope.create(listOf(getDeclaredMemberScope(classSymbol), getStaticDeclaredMemberScope(classSymbol)), token)
-        }
-
-        return KtFirDelegatingNamesAwareScope(getCombinedFirKotlinDeclaredMemberScope(classSymbol), builder)
     }
 
     /**
@@ -157,6 +135,50 @@ internal class KtFirScopeProvider(
         return when (symbolWithMembers) {
             is KtFirScriptSymbol -> FirScriptDeclarationsScope(useSiteSession, symbolWithMembers.firSymbol.fir)
             else -> useSiteSession.declaredMemberScope(symbolWithMembers.getFirForScope(), memberRequiredPhase = null)
+        }
+    }
+
+    private fun getFirJavaDeclaredMemberScope(
+        firJavaClass: FirJavaClass,
+        kind: DeclaredMemberScopeKind,
+    ): FirContainingNamesAwareScope? {
+        val useSiteSession = analysisSession.useSiteSession
+        val scopeSession = getScopeSession()
+
+        fun getBaseUseSiteScope() = JavaScopeProvider.getUseSiteMemberScope(
+            firJavaClass,
+            useSiteSession,
+            scopeSession,
+            memberRequiredPhase = FirResolvePhase.TYPES,
+        )
+
+        fun getStaticScope() = JavaScopeProvider.getStaticScope(firJavaClass, useSiteSession, scopeSession)
+
+        val firScope = when (kind) {
+            // `FirExcludingNonInnerClassesScope` is a workaround for non-static member scopes containing static classes (see KT-61900).
+            DeclaredMemberScopeKind.NON_STATIC -> FirExcludingNonInnerClassesScope(getBaseUseSiteScope())
+
+            DeclaredMemberScopeKind.STATIC -> getStaticScope() ?: return null
+
+            // Java enhancement scopes as provided by `JavaScopeProvider` are either use-site or static scopes, so we need to compose them
+            // to get the combined scope. A base declared member scope with Java enhancement doesn't exist, unfortunately.
+            DeclaredMemberScopeKind.COMBINED -> {
+                // The static scope contains inner classes, so we need to exclude them from the non-static scope to avoid duplicates.
+                val nonStaticScope = FirNoClassifiersScope(getBaseUseSiteScope())
+                getStaticScope()
+                    ?.let { staticScope -> FirNameAwareCompositeScope(listOf(nonStaticScope, staticScope)) }
+                    ?: nonStaticScope
+            }
+        }
+
+        val cacheKey = when (kind) {
+            DeclaredMemberScopeKind.NON_STATIC -> JAVA_ENHANCEMENT_FOR_DECLARED_MEMBERS
+            DeclaredMemberScopeKind.STATIC -> JAVA_ENHANCEMENT_FOR_STATIC_DECLARED_MEMBERS
+            DeclaredMemberScopeKind.COMBINED -> JAVA_ENHANCEMENT_FOR_ALL_DECLARED_MEMBERS
+        }
+
+        return scopeSession.getOrBuild(firJavaClass.symbol, cacheKey) {
+            FirJavaDeclaredMembersOnlyScope(firScope, firJavaClass)
         }
     }
 
@@ -354,3 +376,5 @@ private class FirTypeScopeWithSyntheticProperties(
 private val JAVA_ENHANCEMENT_FOR_DECLARED_MEMBERS = scopeSessionKey<FirRegularClassSymbol, FirContainingNamesAwareScope>()
 
 private val JAVA_ENHANCEMENT_FOR_STATIC_DECLARED_MEMBERS = scopeSessionKey<FirRegularClassSymbol, FirContainingNamesAwareScope>()
+
+private val JAVA_ENHANCEMENT_FOR_ALL_DECLARED_MEMBERS = scopeSessionKey<FirRegularClassSymbol, FirContainingNamesAwareScope>()

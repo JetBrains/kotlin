@@ -1,5 +1,29 @@
 KtJavaFieldSymbol:
   annotationsList: []
+  callableIdIfNonLocal: /JavaClass.field2
+  contextReceivers: []
+  isExtension: false
+  isStatic: false
+  isVal: false
+  modality: OPEN
+  name: field2
+  origin: JAVA
+  receiverParameter: null
+  returnType: KtFlexibleType:
+    annotationsList: []
+    type: kotlin/String!
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: JavaClass
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtJavaFieldSymbol:
+  annotationsList: []
   callableIdIfNonLocal: /JavaClass.field
   contextReceivers: []
   isExtension: false
@@ -13,30 +37,6 @@ KtJavaFieldSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
-    type: JavaClass
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
-KtJavaFieldSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /JavaClass.field2
-  contextReceivers: []
-  isExtension: false
-  isStatic: false
-  isVal: false
-  modality: OPEN
-  name: field2
-  origin: JAVA
-  receiverParameter: null
-  returnType: KtFlexibleType:
-    annotationsList: []
-    type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
