@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.java.source.JavaElementSource
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
+import org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProviderCliImpl
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
@@ -141,15 +142,26 @@ object StandaloneProjectFactory {
     ) {
         val applicationArea = applicationEnvironment.application.extensionArea
 
-        if (applicationArea.hasExtensionPoint(ClassTypePointerFactory.EP_NAME)) return
-        KotlinCoreEnvironment.underApplicationLock {
-            if (applicationArea.hasExtensionPoint(ClassTypePointerFactory.EP_NAME)) return@underApplicationLock
-            CoreApplicationEnvironment.registerApplicationExtensionPoint(
-                ClassTypePointerFactory.EP_NAME,
-                ClassTypePointerFactory::class.java
-            )
-            applicationArea.getExtensionPoint(ClassTypePointerFactory.EP_NAME)
-                .registerExtension(PsiClassReferenceTypePointerFactory(), applicationDisposable)
+        if (!applicationArea.hasExtensionPoint(AdditionalKDocResolutionProvider.EP_NAME)) {
+            KotlinCoreEnvironment.underApplicationLock {
+                if (applicationArea.hasExtensionPoint(AdditionalKDocResolutionProvider.EP_NAME)) return@underApplicationLock
+                CoreApplicationEnvironment.registerApplicationExtensionPoint(
+                    AdditionalKDocResolutionProvider.EP_NAME,
+                    AdditionalKDocResolutionProvider::class.java
+                )
+            }
+        }
+
+        if (!applicationArea.hasExtensionPoint(ClassTypePointerFactory.EP_NAME)) {
+            KotlinCoreEnvironment.underApplicationLock {
+                if (applicationArea.hasExtensionPoint(ClassTypePointerFactory.EP_NAME)) return@underApplicationLock
+                CoreApplicationEnvironment.registerApplicationExtensionPoint(
+                    ClassTypePointerFactory.EP_NAME,
+                    ClassTypePointerFactory::class.java
+                )
+                applicationArea.getExtensionPoint(ClassTypePointerFactory.EP_NAME)
+                    .registerExtension(PsiClassReferenceTypePointerFactory(), applicationDisposable)
+            }
         }
     }
 

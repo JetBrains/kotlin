@@ -10,12 +10,13 @@ import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KtScopeKind
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import kotlin.reflect.KClass
@@ -82,6 +83,7 @@ internal object KDocReferenceResolver {
         getExtensionReceiverSymbolByThisQualifier(fqName, contextElement).ifNotEmpty { return this }
         (getSymbolsFromScopes(fqName, contextElement) + listOfNotNull(getPackageSymbolIfPackageExists(fqName))).ifNotEmpty { return this }
         getNonImportedSymbolsByFullyQualifiedName(fqName).ifNotEmpty { return this }
+        AdditionalKDocResolutionProvider.resolveKdocFqName(fqName, contextElement).ifNotEmpty { return this }
         return emptyList()
     }
 
