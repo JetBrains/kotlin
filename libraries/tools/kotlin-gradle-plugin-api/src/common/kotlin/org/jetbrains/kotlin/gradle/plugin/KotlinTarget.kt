@@ -18,11 +18,12 @@ import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
-interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
+interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras, HasCompilerOptions {
     val targetName: String
     val disambiguationClassifier: String? get() = targetName
 
@@ -66,7 +67,7 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     override fun getName(): String = targetName
 
     @ExperimentalKotlinGradlePluginApi
-    val compilerOptions: KotlinCommonCompilerOptions
+    override val compilerOptions: KotlinCommonCompilerOptions
 }
 
 interface KotlinTargetWithTests<E : KotlinExecution.ExecutionSource, T : KotlinTargetTestRun<E>> : KotlinTarget {

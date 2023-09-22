@@ -41,7 +41,7 @@ internal class KotlinCompilationImpl constructor(
         val compilationTaskNames: KotlinCompilationTaskNamesContainer,
         val processResourcesTaskName: String?,
         val output: KotlinCompilationOutput,
-        val compilerOptions: HasCompilerOptions<*>,
+        val compilerOptions: HasCompilerOptionsAdapter<*>,
         val kotlinOptions: KotlinCommonOptions,
         val compilationAssociator: KotlinCompilationAssociator,
         val compilationFriendPathsResolver: KotlinCompilationFriendPathsResolver,
@@ -170,7 +170,7 @@ internal class KotlinCompilationImpl constructor(
     override val kotlinOptions: KotlinCommonOptions
         get() = params.kotlinOptions
 
-    override val compilerOptions: HasCompilerOptions<*>
+    override val compilerOptions: HasCompilerOptionsAdapter<*>
         get() = params.compilerOptions
 
     //endregion

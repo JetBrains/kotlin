@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 
 @DeprecatedTargetPresetApi
 class KotlinJvmWithJavaTargetPreset(
-    private val project: Project
+    private val project: Project,
 ) : InternalKotlinTargetPreset<KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>> {
 
     override fun getName(): String = PRESET_NAME
@@ -38,11 +38,11 @@ class KotlinJvmWithJavaTargetPreset(
             KotlinPlatformType.jvm,
             name,
             {
-                object : HasCompilerOptions<KotlinJvmCompilerOptions> {
-                    override val options: KotlinJvmCompilerOptions = project.objects
+                HasCompilerOptionsAdapter.JvmAdapter(
+                    project.objects
                         .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
                         .configureExperimentalTryK2(project)
-                }
+                )
             },
             { compilerOptions: KotlinJvmCompilerOptions ->
                 object : KotlinJvmOptions {

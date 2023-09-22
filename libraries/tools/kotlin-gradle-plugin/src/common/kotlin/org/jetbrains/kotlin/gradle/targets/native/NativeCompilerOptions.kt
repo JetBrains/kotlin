@@ -11,9 +11,12 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 
-class NativeCompilerOptions(project: Project) : HasCompilerOptions<KotlinNativeCompilerOptions> {
-
-    override val options: KotlinNativeCompilerOptions = project.objects
-        .newInstance(KotlinNativeCompilerOptionsDefault::class.java)
-        .configureExperimentalTryK2(project)
+@Deprecated("This type is not in use anymore")
+class NativeCompilerOptions(override val options: KotlinNativeCompilerOptions) : HasCompilerOptions<KotlinNativeCompilerOptions>,
+    KotlinNativeCompilerOptions by options {
+    constructor(project: Project) : this(
+        project.objects
+            .newInstance(KotlinNativeCompilerOptionsDefault::class.java)
+            .configureExperimentalTryK2(project)
+    )
 }

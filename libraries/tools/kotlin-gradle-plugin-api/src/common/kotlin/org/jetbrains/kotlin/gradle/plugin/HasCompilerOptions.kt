@@ -6,15 +6,22 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
+import org.jetbrains.kotlin.gradle.dsl.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 
-interface HasCompilerOptions<out CO : KotlinCommonCompilerOptions> {
+@Deprecated("Use 'org.jetbrains.kotlin.gradle.dsl.HasCompilerOptions' instead")
+interface HasCompilerOptions<out CO : KotlinCommonCompilerOptions> : HasCompilerOptions, KotlinCommonCompilerOptions {
     val options: CO
+    override val compilerOptions: CO get() = options
 
-    fun configure(configuration: CO.() -> Unit) {
-        configuration(options)
-    }
+    operator fun invoke(configuration: CO.() -> Unit) = configuration(options)
 
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("Replace with compilerOptions { }")
+    fun configure(configuration: CO.() -> Unit) = invoke(configuration)
+
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("Replace with compilerOptions { }")
     fun configure(configuration: Action<@UnsafeVariance CO>) {
         configuration.execute(options)
     }

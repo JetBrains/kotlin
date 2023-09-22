@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptionsAdapter
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPreConfigure
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationDependencyConfigurationsFactory
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.filesProvider
 
 class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> internal constructor(
     override val target: KotlinWithJavaTarget<KotlinOptionsType, CO>,
-    val compilerOptionsFactory: () -> HasCompilerOptions<CO>,
+    val compilerOptionsFactory: () -> HasCompilerOptionsAdapter<CO>,
     val kotlinOptionsFactory: (CO) -> KotlinOptionsType
 ) : KotlinCompilationFactory<KotlinWithJavaCompilation<KotlinOptionsType, CO>> {
 

@@ -55,12 +55,11 @@ internal open class KotlinJvmPlugin(
             KotlinPlatformType.jvm,
             targetName,
             {
-                object : HasCompilerOptions<KotlinJvmCompilerOptions> {
-                    override val options: KotlinJvmCompilerOptions =
-                        project.objects
-                            .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-                            .configureExperimentalTryK2(project)
-                }
+                HasCompilerOptionsAdapter.JvmAdapter(
+                    project.objects
+                        .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+                        .configureExperimentalTryK2(project)
+                )
             },
             { compilerOptions: KotlinJvmCompilerOptions ->
                 object : KotlinJvmOptions {

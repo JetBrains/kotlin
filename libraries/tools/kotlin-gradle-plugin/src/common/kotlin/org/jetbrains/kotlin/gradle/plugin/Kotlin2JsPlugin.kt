@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
     level = DeprecationLevel.ERROR
 )
 internal open class Kotlin2JsPlugin(
-    registry: ToolingModelBuilderRegistry
+    registry: ToolingModelBuilderRegistry,
 ) : AbstractKotlinPlugin(KotlinTasksProvider(), registry) {
 
     companion object {
@@ -26,7 +26,7 @@ internal open class Kotlin2JsPlugin(
 
     override fun buildSourceSetProcessor(
         project: Project,
-        compilation: KotlinCompilation<*>
+        compilation: KotlinCompilation<*>,
     ): KotlinSourceSetProcessor<*> =
         Kotlin2JsSourceSetProcessor(tasksProvider, KotlinCompilationInfo(compilation))
 
@@ -38,11 +38,11 @@ internal open class Kotlin2JsPlugin(
             KotlinPlatformType.js,
             targetName,
             {
-                object : HasCompilerOptions<KotlinJsCompilerOptions> {
-                    override val options: KotlinJsCompilerOptions = project.objects
+                HasCompilerOptionsAdapter.JsAdapter(
+                    project.objects
                         .newInstance(KotlinJsCompilerOptionsDefault::class.java)
                         .configureExperimentalTryK2(project)
-                }
+                )
             },
             { compilerOptions: KotlinJsCompilerOptions ->
                 object : KotlinJsOptions {

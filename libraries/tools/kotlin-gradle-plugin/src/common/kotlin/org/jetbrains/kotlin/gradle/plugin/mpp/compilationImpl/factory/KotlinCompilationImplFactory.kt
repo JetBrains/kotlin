@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptionsAdapter
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
@@ -69,7 +69,7 @@ internal class KotlinCompilationImplFactory(
     }
 
     fun interface KotlinCompilerOptionsFactory {
-        data class Options(val compilerOptions: HasCompilerOptions<*>, val kotlinOptions: KotlinCommonOptions)
+        data class Options(val compilerOptions: HasCompilerOptionsAdapter<*>, val kotlinOptions: KotlinCommonOptions)
 
         fun create(target: KotlinTarget, compilationName: String): Options
     }

@@ -15,16 +15,20 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.KotlinGradlePluginDsl
+import org.jetbrains.kotlin.gradle.dsl.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompileDeprecated
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
+@KotlinGradlePluginDsl
 interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
     HasProject,
     HasMutableExtras,
     HasAttributes,
-    HasKotlinDependencies {
+    HasKotlinDependencies,
+    HasCompilerOptions {
 
     val target: KotlinTarget
 
@@ -56,7 +60,8 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
 
     val compileKotlinTaskName: String
 
-    val compilerOptions: HasCompilerOptions<*>
+    @Suppress("DEPRECATION")
+    override val compilerOptions: org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions<*>
 
     @Deprecated(
         message = "Accessing task instance directly is deprecated",

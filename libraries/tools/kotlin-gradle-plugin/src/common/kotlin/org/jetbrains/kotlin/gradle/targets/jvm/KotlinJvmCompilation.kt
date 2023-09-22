@@ -32,11 +32,11 @@ open class KotlinJvmCompilation @Inject internal constructor(
 
     final override val target: KotlinJvmTarget = compilation.target as KotlinJvmTarget
 
-    override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions> =
-        compilation.compilerOptions.castCompilerOptionsType()
+    override val compilerOptions: HasCompilerOptionsAdapter.JvmAdapter =
+        compilation.compilerOptions as HasCompilerOptionsAdapter.JvmAdapter
 
     fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
-        compilerOptions.configure(configure)
+        compilerOptions.apply(configure)
     }
 
     fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {

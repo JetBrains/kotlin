@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 
 internal open class KotlinCommonPlugin(
-    registry: ToolingModelBuilderRegistry
+    registry: ToolingModelBuilderRegistry,
 ) : AbstractKotlinPlugin(KotlinTasksProvider(), registry) {
 
     companion object {
@@ -22,7 +22,7 @@ internal open class KotlinCommonPlugin(
 
     override fun buildSourceSetProcessor(
         project: Project,
-        compilation: KotlinCompilation<*>
+        compilation: KotlinCompilation<*>,
     ): KotlinSourceSetProcessor<*> =
         KotlinCommonSourceSetProcessor(KotlinCompilationInfo(compilation), tasksProvider)
 
@@ -34,11 +34,11 @@ internal open class KotlinCommonPlugin(
             KotlinPlatformType.common,
             targetName,
             {
-                object : HasCompilerOptions<KotlinMultiplatformCommonCompilerOptions> {
-                    override val options: KotlinMultiplatformCommonCompilerOptions = project.objects
+                HasCompilerOptionsAdapter.CommonAdapter(
+                    project.objects
                         .newInstance(KotlinMultiplatformCommonCompilerOptionsDefault::class.java)
                         .configureExperimentalTryK2(project)
-                }
+                )
             },
             { compilerOptions: KotlinMultiplatformCommonCompilerOptions ->
                 object : KotlinMultiplatformCommonOptions {

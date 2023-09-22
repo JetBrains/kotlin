@@ -9,10 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.internal.syncCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
@@ -28,7 +25,7 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
-@KotlinGradlePluginDsl
+@AdhocBinaryCompatibilityValidated
 abstract class KotlinMultiplatformExtension
 @InternalKotlinGradlePluginApi constructor(project: Project) :
     KotlinProjectExtension(project),
@@ -37,6 +34,7 @@ abstract class KotlinMultiplatformExtension
     KotlinTargetContainerWithWasmPresetFunctions,
     KotlinTargetContainerWithNativeShortcuts,
     KotlinHierarchyDsl,
+    HasCompilerOptions,
     KotlinMultiplatformSourceSetConventions by KotlinMultiplatformSourceSetConventionsImpl {
     @Deprecated(
         PRESETS_API_IS_DEPRECATED_MESSAGE,
@@ -244,7 +242,7 @@ abstract class KotlinMultiplatformExtension
     }
 
     @ExperimentalKotlinGradlePluginApi
-    val compilerOptions: KotlinCommonCompilerOptions = project.objects
+    final override val compilerOptions: KotlinCommonCompilerOptions = project.objects
         .newInstance<KotlinCommonCompilerOptionsDefault>()
         .configureExperimentalTryK2(project)
         .also {
@@ -263,7 +261,7 @@ abstract class KotlinMultiplatformExtension
 }
 
 @DeprecatedTargetPresetApi
-@KotlinGradlePluginDsl
+@AdhocBinaryCompatibilityValidated
 interface TargetsFromPresetExtension : NamedDomainObjectCollection<KotlinTarget> {
 
     @Deprecated(

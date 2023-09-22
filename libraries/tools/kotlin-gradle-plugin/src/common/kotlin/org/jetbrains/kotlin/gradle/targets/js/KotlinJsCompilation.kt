@@ -27,12 +27,11 @@ open class KotlinJsCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(compilation) {
 
-    @Suppress("UNCHECKED_CAST")
-    final override val compilerOptions: HasCompilerOptions<KotlinJsCompilerOptions>
-        get() = compilation.compilerOptions as HasCompilerOptions<KotlinJsCompilerOptions>
+    final override val compilerOptions: HasCompilerOptionsAdapter.JsAdapter
+        get() = compilation.compilerOptions as HasCompilerOptionsAdapter.JsAdapter
 
     fun compilerOptions(configure: KotlinJsCompilerOptions.() -> Unit) {
-        compilerOptions.configure(configure)
+        compilerOptions.apply(configure)
     }
 
     fun compilerOptions(configure: Action<KotlinJsCompilerOptions>) {
