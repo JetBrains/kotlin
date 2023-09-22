@@ -162,7 +162,7 @@ internal fun KotlinTopLevelExtension.explicitApiModeAsCompilerArg(): String? {
     return cliOption?.let { "-Xexplicit-api=$it" }
 }
 
-@KotlinGradlePluginDsl
+@AdhocBinaryCompatibilityValidated
 open class KotlinProjectExtension @Inject constructor(project: Project) : KotlinTopLevelExtension(project), KotlinSourceSetContainer {
     override var sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
         @Suppress("UNCHECKED_CAST")
