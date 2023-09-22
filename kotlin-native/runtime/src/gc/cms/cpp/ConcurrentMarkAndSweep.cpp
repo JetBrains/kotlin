@@ -5,7 +5,6 @@
 
 #include "ConcurrentMarkAndSweep.hpp"
 
-#include <cinttypes>
 #include <optional>
 
 #include "CallsChecker.hpp"
@@ -283,7 +282,7 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     }
     finalizerQueue.TransferAllFrom(heap_.ExtractFinalizerQueue());
 #endif
-    scheduler.onGCFinish(epoch, allocatedBytes());
+    scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();

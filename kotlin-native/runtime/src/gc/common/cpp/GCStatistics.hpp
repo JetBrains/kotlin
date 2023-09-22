@@ -8,7 +8,6 @@
 #include <cstdint>
 #include <pthread.h>
 
-#include "Common.h"
 #include "Logging.hpp"
 #include "Porting.h"
 #include "Utils.hpp"
@@ -29,6 +28,7 @@ class GCHandle;
 struct SweepStats {
     uint64_t sweptCount = 0;
     uint64_t keptCount = 0;
+    size_t keptSizeBytes = 0;
 };
 
 struct MarkStats {
@@ -53,7 +53,10 @@ public:
         ~GCSweepScope();
 
         void addSweptObject() noexcept { stats_.sweptCount += 1; }
-        void addKeptObject() noexcept { stats_.keptCount += 1; }
+        void addKeptObject(size_t sizeBytes) noexcept {
+            stats_.keptCount += 1;
+            stats_.keptSizeBytes += sizeBytes;
+        }
         // Custom allocator only. To be finalized objects are kept alive.
         void addMarkedObject() noexcept { markedCount_ += 1; }
     };
@@ -67,7 +70,10 @@ public:
         ~GCSweepExtraObjectsScope();
 
         void addSweptObject() noexcept { stats_.sweptCount += 1; }
-        void addKeptObject() noexcept { stats_.keptCount += 1; }
+        void addKeptObject(size_t sizeBytes) noexcept {
+            stats_.keptCount += 1;
+            stats_.keptSizeBytes += sizeBytes;
+        }
     };
 
     class GCGlobalRootSetScope : GCStageScopeUsTimer, Pinned {
@@ -146,6 +152,7 @@ public:
     GCProcessWeaksScope processWeaks() noexcept { return GCProcessWeaksScope(*this); }
 
     MarkStats getMarked();
+    size_t getKeptSizeBytes() noexcept;
 };
 
 class GCHandle::GCMarkScope : GCStageScopeUsTimer {

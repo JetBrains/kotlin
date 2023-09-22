@@ -15,10 +15,10 @@
 #endif
 
 #include "CompilerConstants.hpp"
+#include "CustomAllocator.hpp"
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
-#include "FinalizerHooks.hpp"
 #include "GC.hpp"
 #include "GCStatistics.hpp"
 #include "KAssert.h"
@@ -34,12 +34,13 @@ std::atomic<size_t> allocatedBytesCounter;
 namespace kotlin::alloc {
 
 bool SweepObject(uint8_t* heapObjHeader, FinalizerQueue& finalizerQueue, gc::GCHandle::GCSweepScope& gcHandle) noexcept {
+    auto* objHeader = reinterpret_cast<ObjHeader*>(heapObjHeader + gcDataSize);
+    auto size = CustomAllocator::GetAllocatedHeapSize(objHeader);
     if (gc::GC::SweepObject(heapObjHeader)) {
         CustomAllocDebug("SweepObject(%p): still alive", heapObjHeader);
-        gcHandle.addKeptObject();
+        gcHandle.addKeptObject(size);
         return true;
     }
-    auto* objHeader = reinterpret_cast<ObjHeader*>(heapObjHeader + gcDataSize);
     auto* extraObject = mm::ExtraObjectData::Get(objHeader);
     if (extraObject) {
         if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE)) {
@@ -49,11 +50,13 @@ bool SweepObject(uint8_t* heapObjHeader, FinalizerQueue& finalizerQueue, gc::GCH
             CustomAllocDebug("SweepObject: fromExtraObject(%p) = %p", extraObject, ExtraObjectCell::fromExtraObject(extraObject));
             finalizerQueue.Push(ExtraObjectCell::fromExtraObject(extraObject));
             gcHandle.addMarkedObject();
+            gcHandle.addKeptObject(size);
             return true;
         }
         if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
             CustomAllocDebug("SweepObject(%p): already waiting to be finalized", heapObjHeader);
             gcHandle.addMarkedObject();
+            gcHandle.addKeptObject(size);
             return true;
         }
         extraObject->UnlinkFromBaseObject();
