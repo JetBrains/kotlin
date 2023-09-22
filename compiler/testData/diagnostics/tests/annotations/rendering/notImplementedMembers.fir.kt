@@ -23,8 +23,8 @@ abstract class D {
     abstract val d: @An Int
 }
 
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED("Class E; d")!>class E<!> : D(), A
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class F; a")!>class F<!> : A
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED("Class 'E'; d")!>class E<!> : D(), A
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class 'F'; a")!>class F<!> : A
 
 @An
 interface G {
@@ -44,5 +44,5 @@ interface GI : G {
     override fun a(@An arg: @An Int) {}
 }
 
-<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED("Class AG1; a")!>class AG1<!>(val a: A, val g: G) : A by a, G by g
-<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED("Class AG2; a")!>class AG2<!>() : AI, GI
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED("Class 'AG1'; a")!>class AG1<!>(val a: A, val g: G) : A by a, G by g
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED("Class 'AG2'; a")!>class AG2<!>() : AI, GI

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OPTI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_COLLECTION_OF_TYPES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_ENUM_ENTRY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.REQUIRE_KOTLIN_VERSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
@@ -1600,19 +1601,19 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             ABSTRACT_MEMBER_NOT_IMPLEMENTED,
-            "''{0}'' is not abstract and does not implement abstract member ''{1}''.",
+            "{0} is not abstract and does not implement abstract member ''{1}''.",
             RENDER_CLASS_OR_OBJECT,
             DECLARATION_NAME
         )
         map.put(
             ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY,
-            "''{0}'' does not implement abstract members: {1}.",
-            SYMBOL,
+            "{0} does not implement abstract members: {1}.",
+            RENDER_ENUM_ENTRY,
             SYMBOLS,
         )
         map.put(
             ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED,
-            "''{0}'' is not abstract and does not implement abstract base class member ''{1}''.",
+            "{0} is not abstract and does not implement abstract base class member ''{1}''.",
             RENDER_CLASS_OR_OBJECT,
             DECLARATION_NAME
         )
@@ -1625,13 +1626,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has an anonymous type. Please specify the type explicitly.", NOT_RENDERED)
         map.put(
             MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
-            "''{0}'' must override ''{1}'' because it inherits multiple implementations for it.",
+            "{0} must override ''{1}'' because it inherits multiple implementations for it.",
             RENDER_CLASS_OR_OBJECT,
             DECLARATION_NAME
         )
         map.put(
             MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED,
-            "''{0}'' must override ''{1}'' because it inherits multiple interface methods for it.",
+            "{0} must override ''{1}'' because it inherits multiple interface methods for it.",
             RENDER_CLASS_OR_OBJECT,
             DECLARATION_NAME
         )
@@ -1663,7 +1664,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             VAR_IMPLEMENTED_BY_INHERITED_VAL,
-            "''{0}'' overrides ''var'' property ''{1}'' with inherited ''val'' property ''{2}''.",
+            "{0} overrides ''var'' property ''{1}'' with inherited ''val'' property ''{2}''.",
             RENDER_CLASS_OR_OBJECT,
             DECLARATION_NAME,
             FQ_NAMES_IN_TYPES

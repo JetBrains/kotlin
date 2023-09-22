@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.kt:11:1: error: 'Class C' is not abstract and does not implement abstract member 'foo'.
+compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.kt:11:1: error: class 'C' is not abstract and does not implement abstract member 'foo'.
 class C : I1, I2
 ^
 compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.kt:11:1: error: 'C' inherits conflicting members: foo, foo.

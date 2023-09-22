@@ -109,7 +109,15 @@ object FirDiagnosticRenderers {
             ClassKind.INTERFACE -> "Interface"
             else -> "Class"
         }
-        "$classOrObject $name"
+        "$classOrObject '$name'"
+    }
+
+    val RENDER_ENUM_ENTRY = Renderer { enumEntry: FirEnumEntrySymbol ->
+        var name = enumEntry.callableId.callableName.asString()
+        enumEntry.callableId.classId?.let {
+            name = "${it.shortClassName.asString()}.$name"
+        }
+        "Enum entry '$name'"
     }
 
     val RENDER_CLASS_OR_OBJECT_NAME = Renderer { firClassLike: FirClassLikeSymbol<*> ->
