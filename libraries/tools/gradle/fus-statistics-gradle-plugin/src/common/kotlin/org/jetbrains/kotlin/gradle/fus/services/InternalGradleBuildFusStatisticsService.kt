@@ -13,7 +13,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
-import org.gradle.kotlin.dsl.withType
 import java.io.File
 import java.util.UUID
 
@@ -84,7 +83,7 @@ internal abstract class InternalGradleBuildFusStatisticsService : GradleBuildFus
         }
 
         private fun configureTasks(project: Project, serviceProvider: Provider<InternalGradleBuildFusStatisticsService>) {
-            project.tasks.withType<UsesGradleBuildFusStatisticsService>().configureEach { task ->
+            project.tasks.withType(UsesGradleBuildFusStatisticsService::class.java).configureEach { task ->
                 task.fusStatisticsBuildService.value(serviceProvider).disallowChanges()
                 task.usesService(serviceProvider)
             }
