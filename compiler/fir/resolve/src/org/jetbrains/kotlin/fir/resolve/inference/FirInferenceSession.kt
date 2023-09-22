@@ -16,7 +16,21 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 
 abstract class FirInferenceSession {
     companion object {
-        val DEFAULT: FirInferenceSession = object : FirStubInferenceSession() {}
+        val DEFAULT: FirInferenceSession = object : FirInferenceSession() {
+            override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = true
+
+            override fun <T> processPartiallyResolvedCall(
+                call: T,
+                resolutionMode: ResolutionMode,
+                completionMode: ConstraintSystemCompletionMode,
+            ) where T : FirResolvable, T : FirStatement {
+                // Do nothing
+            }
+
+            override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
+                // Do nothing
+            }
+        }
     }
 
     open fun handleQualifiedAccess(qualifiedAccessExpression: FirExpression, data: ResolutionMode) {}
@@ -39,16 +53,4 @@ abstract class FirInferenceSession {
     open fun <R> onCandidatesResolution(call: FirFunctionCall, candidatesResolutionCallback: () -> R) = candidatesResolutionCallback()
 
     open fun outerCSForCandidate(candidate: Candidate): ConstraintStorage? = null
-}
-
-abstract class FirStubInferenceSession : FirInferenceSession() {
-    override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = true
-
-    override fun <T> processPartiallyResolvedCall(
-        call: T,
-        resolutionMode: ResolutionMode,
-        completionMode: ConstraintSystemCompletionMode
-    ) where T : FirResolvable, T : FirStatement {}
-    override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
-
 }
