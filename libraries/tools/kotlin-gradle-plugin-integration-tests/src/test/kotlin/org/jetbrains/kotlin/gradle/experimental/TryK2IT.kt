@@ -87,8 +87,8 @@ class TryK2IT : KGPBaseTest() {
                 assertOutputContains(
                     """
                     |##### 'kotlin.experimental.tryK2' results #####
-                    |:lib:compileKotlin: 2.0 language version
                     |:app:compileKotlin: 2.0 language version
+                    |:lib:compileKotlin: 2.0 language version
                     |##### 100% (2/2) tasks have been compiled with Kotlin 2.0 #####
                     """.trimMargin().normalizeLineEndings()
                 )
@@ -112,13 +112,13 @@ class TryK2IT : KGPBaseTest() {
                     """
                     |##### 'kotlin.experimental.tryK2' results #####
                     |:compileCommonMainKotlinMetadata: 2.0 language version
-                    |:compileNativeMainKotlinMetadata: 2.0 language version
                     |:compileKotlinLinuxX64: 2.0 language version${
                         if (HostManager.hostIsMac)
                             "\n|:compileKotlinMacosArm64: 2.0 language version\n|:compileKotlinMacosX64: 2.0 language version"
                         else ""
                     }
                     |:compileKotlinMingwX64: 2.0 language version
+                    |:compileNativeMainKotlinMetadata: 2.0 language version
                     |##### 100% ${if (HostManager.hostIsMac) "(6/6)" else "(4/4)"} tasks have been compiled with Kotlin 2.0 #####
                     """.trimMargin().normalizeLineEndings()
                 )
@@ -148,8 +148,8 @@ class TryK2IT : KGPBaseTest() {
                 assertOutputContains(
                     """
                     |##### 'kotlin.experimental.tryK2' results #####
-                    |:lib:compileKotlin: 2.0 language version
                     |:app:compileKotlin: 2.0 language version
+                    |:lib:compileKotlin: 2.0 language version
                     |##### 100% (2/2) tasks have been compiled with Kotlin 2.0 #####
                     """.trimMargin().normalizeLineEndings()
                 )
@@ -294,8 +294,8 @@ class TryK2IT : KGPBaseTest() {
                     |##### 'kotlin.experimental.tryK2' results #####
                     |:compileKotlinJs: 2.0 language version
                     |:compileProductionExecutableKotlinJs: 2.0 language version
-                    |:compileTestKotlinJs: 2.0 language version
                     |:compileTestDevelopmentExecutableKotlinJs: 2.0 language version
+                    |:compileTestKotlinJs: 2.0 language version
                     |##### 100% (4/4) tasks have been compiled with Kotlin 2.0 #####
                     """.trimMargin().normalizeLineEndings()
                 )
