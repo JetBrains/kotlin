@@ -174,6 +174,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirTopLevelTypeAliasChecker,
             FirActualTypeAliasChecker,
             FirActualTypealiasToSpecialAnnotationChecker,
+            FirDefaultArgumentsInExpectWithActualTypealiasChecker,
             FirTypeAliasExpandsToArrayOfNothingsChecker,
         )
 
