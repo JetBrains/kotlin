@@ -188,7 +188,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
             else -> {}
         }
         // We want to report errors even if a candidate is incompatible, but it's single
-        val expectedSingleCandidate = compatibilityToMembersMap[Compatible]?.singleOrNull()
+        val expectedSingleCandidate = symbol.getSingleCompatibleExpectForActualOrNull()
             ?: symbol.getSingleExpectForActualOrNull()
         if (expectedSingleCandidate != null) {
             checkIfExpectHasDefaultArgumentsAndActualizedWithTypealias(
