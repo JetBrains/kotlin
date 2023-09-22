@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionType
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForFunction
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
@@ -304,86 +303,76 @@ open class FirDeclarationsResolveTransformer(
         delegate: FirExpression,
         shouldResolveEverything: Boolean,
     ) {
-        val isImplicitTypedProperty = property.returnTypeRef is FirImplicitTypeRef
+        require(delegate is FirWrappedDelegateExpression)
+        dataFlowAnalyzer.enterDelegateExpression()
 
-        context.forPropertyDelegateAccessors(resolutionContext, callCompleter) {
-            dataFlowAnalyzer.enterDelegateExpression()
-            // Resolve delegate expression, after that, delegate will contain either expr.provideDelegate or expr
+        // First, resolve delegate expression in dependent context, and add potentially partially resolved call to inference session
+        // (that is why we use ContextDependent.Delegate instead of plain ContextDependent)
+        val delegateExpression =
+            // Resolve delegate expression; after that, delegate will contain either expr.provideDelegate or expr
             if (property.isLocal) {
-                property.transformDelegate(transformer, ResolutionMode.ContextDependent.Delegate)
+                transformDelegateExpression(delegate)
             } else {
                 context.forPropertyInitializer {
-                    property.transformDelegate(transformer, ResolutionMode.ContextDependent.Delegate)
+                    transformDelegateExpression(delegate)
                 }
             }
+
+        context.withInferenceSession(
+            FirDelegatedPropertyInferenceSession(
+                resolutionContext,
+                callCompleter,
+                delegateExpression,
+            )
+        ) {
+            property.replaceDelegate(delegate.computeResultingDelegateFieldInitializer(delegateExpression))
 
             // We don't use inference from setValue calls (i.e. don't resolve setters until the delegate inference is completed),
             // when property doesn't have explicit type.
             // It's necessary because we need to supply the property type as the 3rd argument for `setValue` and there might be uninferred
             // variables from `getValue`.
             // The same logic was used at K1 (see org.jetbrains.kotlin.resolve.DelegatedPropertyResolver.inferDelegateTypeFromGetSetValueMethods)
+            val isImplicitTypedProperty = property.returnTypeRef is FirImplicitTypeRef
             property.transformAccessors(
                 if (isImplicitTypedProperty) SetterResolutionMode.SKIP else SetterResolutionMode.FULLY_RESOLVE,
                 shouldResolveEverything,
             )
 
-            val completedCalls = completeCandidates()
-
-            val finalSubstitutor = createFinalSubstitutor()
-
-            finalSubstitutor.substituteOrNull(property.returnTypeRef.coneType)?.let { substitutedType ->
-                property.replaceReturnTypeRef(property.returnTypeRef.withReplacedConeType(substitutedType))
-            }
-            property.getter?.transformTypeWithPropertyType(property.returnTypeRef, forceUpdateForNonImplicitTypes = true)
-            property.setter?.transformTypeWithPropertyType(property.returnTypeRef, forceUpdateForNonImplicitTypes = true)
-            property.replaceReturnTypeRef(
-                property.returnTypeRef.approximateDeclarationType(
-                    session,
-                    property.visibilityForApproximation(),
-                    property.isLocal
+            completeSessionOrPostponeIfNonRoot { finalSubstitutor ->
+                finalSubstitutor.substituteOrNull(property.returnTypeRef.coneType)?.let { substitutedType ->
+                    property.replaceReturnTypeRef(property.returnTypeRef.withReplacedConeType(substitutedType))
+                }
+                property.getter?.transformTypeWithPropertyType(property.returnTypeRef, forceUpdateForNonImplicitTypes = true)
+                property.setter?.transformTypeWithPropertyType(property.returnTypeRef, forceUpdateForNonImplicitTypes = true)
+                property.replaceReturnTypeRef(
+                    property.returnTypeRef.approximateDeclarationType(
+                        session,
+                        property.visibilityForApproximation(),
+                        property.isLocal
+                    )
                 )
-            )
 
-            val callCompletionResultsWriter = callCompleter.createCompletionResultsWriter(
-                finalSubstitutor,
-                mode = FirCallCompletionResultsWriterTransformer.Mode.DelegatedPropertyCompletion
-            )
-            completedCalls.forEach {
-                it.transformSingle(callCompletionResultsWriter, null)
+                // `isImplicitTypedProperty` means we haven't run setter resolution yet (see its second usage)
+                if (isImplicitTypedProperty) {
+                    property.resolveSetter(mayResolveSetterBody = true, shouldResolveEverything = shouldResolveEverything)
+                }
+
+                dataFlowAnalyzer.exitDelegateExpression(delegate)
             }
         }
-
-        // `isImplicitTypedProperty` means we haven't run setter resolution yet (see its second usage)
-        if (isImplicitTypedProperty) {
-            property.resolveSetter(mayResolveSetterBody = true, shouldResolveEverything = shouldResolveEverything)
-        }
-
-        dataFlowAnalyzer.exitDelegateExpression(delegate)
     }
 
-    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: ResolutionMode): FirPropertyAccessor {
-        return propertyAccessor.also {
-            transformProperty(it.propertySymbol.fir, data)
-        }
-    }
-
-    override fun transformWrappedDelegateExpression(
-        wrappedDelegateExpression: FirWrappedDelegateExpression,
-        data: ResolutionMode,
-    ): FirStatement {
-        // First, resolve delegate expression in dependent context, and add potentially partially resolved call to inference session
-        // (that is why we use ResolutionMode.ContextDependent.Delegate instead of plain ContextDependent)
-        val delegateExpression = wrappedDelegateExpression.expression.transformSingle(transformer, ResolutionMode.ContextDependent.Delegate)
-            .transformSingle(components.integerLiteralAndOperatorApproximationTransformer, null)
-
-        val provideDelegateCall = wrappedDelegateExpression.delegateProvider as FirFunctionCall
-        provideDelegateCall.replaceExplicitReceiver(delegateExpression)
+    private fun FirWrappedDelegateExpression.computeResultingDelegateFieldInitializer(
+        resolvedDelegateExpression: FirExpression,
+    ): FirExpression {
+        val provideDelegateCall = delegateProvider as FirFunctionCall
+        provideDelegateCall.replaceExplicitReceiver(resolvedDelegateExpression)
 
         // Resolve call for provideDelegate, without completion
         // TODO: this generates some nodes in the control flow graph which we don't want if we
         //  end up not selecting this option, KT-59684
         transformer.expressionsTransformer?.transformFunctionCallInternal(
-            provideDelegateCall, ResolutionMode.ContextDependent, provideDelegate = true
+            provideDelegateCall, ResolutionMode.ReceiverResolution, provideDelegate = true
         )
 
         // If we got successful candidate for provideDelegate, let's select it
@@ -410,9 +399,35 @@ open class FirDeclarationsResolveTransformer(
             return provideDelegateCall
         }
 
+        return resolvedDelegateExpression
+    }
+
+    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: ResolutionMode): FirPropertyAccessor {
+        return propertyAccessor.also {
+            transformProperty(it.propertySymbol.fir, data)
+        }
+    }
+
+    override fun transformWrappedDelegateExpression(
+        wrappedDelegateExpression: FirWrappedDelegateExpression,
+        data: ResolutionMode,
+    ): FirStatement {
+        // First, resolve delegate expression in dependent context, and add potentially partially resolved call to inference session
+        // (that is why we use ResolutionMode.ContextDependent.Delegate instead of plain ContextDependent)
+        val delegateExpression = transformDelegateExpression(wrappedDelegateExpression)
+
+        val provideDelegateCall = wrappedDelegateExpression.delegateProvider as FirFunctionCall
+        provideDelegateCall.replaceExplicitReceiver(delegateExpression)
+
         // Select delegate expression otherwise
         return delegateExpression
     }
+
+    private fun transformDelegateExpression(delegate: FirWrappedDelegateExpression): FirExpression =
+        components.context.withDelegateExpression(delegate.expression) {
+            delegate.expression.transformSingle(transformer, ResolutionMode.ContextDependent.Delegate)
+                .transformSingle(components.integerLiteralAndOperatorApproximationTransformer, null)
+        }
 
     /**
      * For supporting the case when `provideDelegate` has a signature with type variable as a return type, like

@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionResultOverridesOtherToPreserveCompatibility
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubTypeTransformer
@@ -192,6 +189,10 @@ class FirCallCompletionResultsWriterTransformer(
 
         for (declarationToUpdate in subCandidate.updateDeclarations) {
             declarationToUpdate()
+        }
+
+        for (callback in subCandidate.callbacks) {
+            callback(finalSubstitutor)
         }
 
         // TODO: Be aware of exponent
@@ -936,6 +937,7 @@ class FirCallCompletionResultsWriterTransformer(
     // TODO: report warning with a checker and return true here only in case of errors, KT-59676
     private fun FirNamedReferenceWithCandidate.hasAdditionalResolutionErrors(): Boolean =
         candidate.system.errors.any { it is InferredEmptyIntersection }
+                || candidate.diagnostics.any { it is InferenceError && it.constraintError is InferredEmptyIntersection }
 
     private fun FirNamedReferenceWithCandidate.toResolvedReference(): FirNamedReference {
         val errorDiagnostic = when {
