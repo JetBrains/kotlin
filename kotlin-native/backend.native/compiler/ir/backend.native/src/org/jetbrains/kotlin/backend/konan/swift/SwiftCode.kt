@@ -42,6 +42,8 @@ sealed interface SwiftCode {
         ) = Declaration.Verbatim(this, attributes, visibility)
 
         val Number.literal get() = Expression.NumericLiteral(this)
+
+        val List<String>.type: Type.Nominal? get() = this.lastOrNull()?.let { name -> this.dropLast(1).type?.let { Type.Nested(it, name) } ?: name.type }
     }
 
     interface ListBuilder<Element : SwiftCode> : Builder {
@@ -56,12 +58,14 @@ sealed interface SwiftCode {
         override fun build(): List<Element> = elements.toList()
     }
 
-    abstract class Block<out Element : SwiftCode>(val elements: List<Element> = emptyList()) : SwiftCode {
+    abstract class Block<Element : SwiftCode>(val elements: List<Element> = emptyList()) : SwiftCode, (ListBuilder<Element>) -> Unit {
         constructor(block: ListBuilder<Element>.() -> Unit) : this(ListBuilderImpl<Element>().apply(block).build())
 
         override fun render(): String = elements.joinToString(separator = "\n") { it.render() }
 
         fun renderAsBlock() = render().prependIndent(DEFAULT_INDENT).let { "{\n$it\n}" }
+
+        override fun invoke(builder: ListBuilder<Element>) = builder.run { elements.forEach { +it } }
     }
 
     class CodeBlock(body: ListBuilder<Statement>.() -> Unit) : Block<Statement>(body)
@@ -130,22 +134,17 @@ sealed interface SwiftCode {
             }
         }
 
-        data class Function(
-                val name: String,
-                val parameters: List<Parameter> = emptyList(),
-                val returnType: Type? = null,
-                val genericTypes: List<GenericParameter> = emptyList(),
-                val genericTypeConstraints: List<GenericConstraint> = emptyList(),
-                val isMutating: Boolean = false,
-                val isStatic: Boolean = false,
-                val isFinal: Boolean = false,
-                val isOverride: Boolean = false,
-                val isAsync: Boolean = false,
-                val isThrowing: Boolean = false,
-                override val attributes: List<Attribute> = emptyList(),
-                override val visibility: Visibility = Visibility.INTERNAL,
-                val code: CodeBlock?,
-        ) : Declaration {
+        sealed interface Function : Declaration {
+            val keyword: String
+            val name: String? get() = null
+            val parameters: List<Parameter> get() = emptyList()
+            val returnType: Type? get() = null
+            val genericTypes: List<GenericParameter> get() = emptyList()
+            val genericTypeConstraints: List<GenericConstraint> get() = emptyList()
+            val modifiers: List<String> get() = emptyList()
+            val flavors: List<String> get() = emptyList()
+            val code: CodeBlock?
+
             data class Parameter(
                     val argumentName: String?,
                     val parameterName: String? = null,
@@ -164,20 +163,105 @@ sealed interface SwiftCode {
             override fun render(): String = listOfNotNull(
                     attributes.render(),
                     visibility.renderAsPrefix(),
-                    "mutating ".takeIf { isMutating },
-                    "static ".takeIf { isStatic },
-                    "final ".takeIf { isFinal },
-                    "override ".takeIf { isOverride },
-                    "func ",
-                    name.escapeIdentifierIfNeeded(),
+                    modifiers.takeIf { it.isNotEmpty() }?.joinToString(separator = " ", postfix = " "),
+                    keyword,
+                    name?.let { " " + it.escapeIdentifierIfNeeded() },
                     genericTypes.render(),
                     parameters.render(),
-                    " async".takeIf { isAsync },
-                    " throws".takeIf { isThrowing },
+                    flavors.takeIf { it.isNotEmpty() }?.joinToString(separator = " ", prefix = " "),
                     returnType?.render()?.let { " -> $it" },
-                    genericTypeConstraints.takeIf { it.isNotEmpty() }?.render()?.let { " $it"},
+                    genericTypeConstraints.takeIf { it.isNotEmpty() }?.render()?.let { " $it" },
                     code?.renderAsBlock()?.let { " $it" }
             ).joinToString(separator = "")
+        }
+
+        data class FreestandingFunction(
+                override val name: String,
+                override val parameters: List<Function.Parameter> = emptyList(),
+                override val returnType: Type? = null,
+                override val genericTypes: List<GenericParameter> = emptyList(),
+                override val genericTypeConstraints: List<GenericConstraint> = emptyList(),
+                val isAsync: Boolean = false,
+                val isThrowing: Boolean = false,
+                override val attributes: List<Attribute> = emptyList(),
+                override val visibility: Visibility = Visibility.INTERNAL,
+                override val code: CodeBlock?,
+        ) : Function {
+            override val keyword = "func"
+
+            override val flavors
+                get() = listOfNotNull(
+                        "async".takeIf { isAsync },
+                        "throws".takeIf { isThrowing },
+                )
+        }
+
+        data class Method(
+                override val name: String,
+                override val parameters: List<Function.Parameter> = emptyList(),
+                override val returnType: Type? = null,
+                override val genericTypes: List<GenericParameter> = emptyList(),
+                override val genericTypeConstraints: List<GenericConstraint> = emptyList(),
+                val isMutating: Boolean = false,
+                val isStatic: Boolean = false,
+                val isFinal: Boolean = false,
+                val isOverride: Boolean = false,
+                val isAsync: Boolean = false,
+                val isThrowing: Boolean = false,
+                override val attributes: List<Attribute> = emptyList(),
+                override val visibility: Visibility = Visibility.INTERNAL,
+                override val code: CodeBlock?,
+        ) : Function {
+            override val keyword = "func"
+
+            override val modifiers
+                get() = listOfNotNull(
+                        "static".takeIf { isStatic },
+                        "mutating".takeIf { isMutating },
+                        "final".takeIf { isFinal },
+                        "override".takeIf { isOverride },
+                )
+
+            override val flavors
+                get() = listOfNotNull(
+                        "async".takeIf { isAsync },
+                        "throws".takeIf { isThrowing },
+                )
+        }
+
+        data class Init(
+                override val parameters: List<Function.Parameter> = emptyList(),
+                override val genericTypes: List<GenericParameter> = emptyList(),
+                override val genericTypeConstraints: List<GenericConstraint> = emptyList(),
+                val isMutating: Boolean = false,
+                val isFinal: Boolean = false,
+                val isOverride: Boolean = false,
+                val isRequired: Boolean = false,
+                val isConvenience: Boolean = false,
+                val isOptional: Boolean = false,
+                val isAsync: Boolean = false,
+                val isThrowing: Boolean = false,
+                override val attributes: List<Attribute> = emptyList(),
+                override val visibility: Visibility = Visibility.INTERNAL,
+                override val code: CodeBlock?,
+        ) : Function {
+            override val keyword: String
+                get() = if (isOptional) "init?" else "init"
+
+            override val modifiers
+                get() = listOfNotNull(
+                        "mutating".takeIf { isMutating },
+                        "final".takeIf { isFinal },
+                        "required".takeIf { isRequired },
+                        "convenience".takeIf { isConvenience },
+                        "override".takeIf { isOverride },
+                )
+
+            override val flavors
+                get() = listOfNotNull(
+                        "async".takeIf { isAsync },
+                        "throws".takeIf { isThrowing },
+                )
         }
 
         sealed interface Variable : Declaration {
@@ -835,6 +919,30 @@ fun SwiftCode.Builder.function(
         genericTypes: List<SwiftCode.GenericParameter> = emptyList(),
         parameters: List<SwiftCode.Declaration.Function.Parameter> = emptyList(),
         returnType: SwiftCode.Type? = null,
+        isAsync: Boolean = false,
+        isThrowing: Boolean = false,
+        attributes: List<SwiftCode.Attribute> = emptyList(),
+        visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
+        genericTypeConstraints: List<SwiftCode.GenericConstraint> = emptyList(),
+        body: (SwiftCode.ListBuilder<SwiftCode.Statement>.() -> Unit)? = null
+) = SwiftCode.Declaration.FreestandingFunction(
+        name,
+        parameters,
+        returnType,
+        genericTypes,
+        genericTypeConstraints,
+        isAsync,
+        isThrowing,
+        attributes,
+        visibility,
+        body?.let { SwiftCode.CodeBlock(it) }
+)
+
+fun SwiftCode.Builder.method(
+        name: String,
+        genericTypes: List<SwiftCode.GenericParameter> = emptyList(),
+        parameters: List<SwiftCode.Declaration.Function.Parameter> = emptyList(),
+        returnType: SwiftCode.Type? = null,
         isMutating: Boolean = false,
         isStatic: Boolean = false,
         isFinal: Boolean = false,
@@ -845,24 +953,55 @@ fun SwiftCode.Builder.function(
         visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
         genericTypeConstraints: List<SwiftCode.GenericConstraint> = emptyList(),
         body: (SwiftCode.ListBuilder<SwiftCode.Statement>.() -> Unit)? = null
-): SwiftCode.Declaration.Function {
-    return SwiftCode.Declaration.Function(
-            name,
-            parameters,
-            returnType,
-            genericTypes,
-            genericTypeConstraints,
-            isMutating,
-            isStatic,
-            isFinal,
-            isOverride,
-            isAsync,
-            isThrowing,
-            attributes,
-            visibility,
-            body?.let { SwiftCode.CodeBlock(it) }
-    )
-}
+) = SwiftCode.Declaration.Method(
+        name,
+        parameters,
+        returnType,
+        genericTypes,
+        genericTypeConstraints,
+        isMutating,
+        isStatic,
+        isFinal,
+        isOverride,
+        isAsync,
+        isThrowing,
+        attributes,
+        visibility,
+        body?.let { SwiftCode.CodeBlock(it) }
+)
+
+fun SwiftCode.Builder.init(
+        genericTypes: List<SwiftCode.GenericParameter> = emptyList(),
+        parameters: List<SwiftCode.Declaration.Function.Parameter> = emptyList(),
+        isMutating: Boolean = false,
+        isFinal: Boolean = false,
+        isOverride: Boolean = false,
+        isRequired: Boolean = false,
+        isConvenience: Boolean = false,
+        isOptional: Boolean = false,
+        isAsync: Boolean = false,
+        isThrowing: Boolean = false,
+        attributes: List<SwiftCode.Attribute> = emptyList(),
+        visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
+        genericTypeConstraints: List<SwiftCode.GenericConstraint> = emptyList(),
+        body: (SwiftCode.ListBuilder<SwiftCode.Statement>.() -> Unit)? = null
+) = SwiftCode.Declaration.Init(
+        parameters,
+        genericTypes,
+        genericTypeConstraints,
+        isMutating,
+        isFinal,
+        isOverride,
+        isRequired,
+        isConvenience,
+        isOptional,
+        isAsync,
+        isThrowing,
+        attributes,
+        visibility,
+        body?.let { SwiftCode.CodeBlock(it) }
+)
+
 
 fun SwiftCode.Builder.parameter(
         argumentName: String? = null,
