@@ -7,16 +7,26 @@ package org.jetbrains.kotlin.analysis.api.fir.scopes
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-internal class FirDeclaredMembersOnlyScope(
+internal class FirJavaDeclaredMembersOnlyScope(
     private val delegate: FirContainingNamesAwareScope,
-    private val owner: FirClass,
+    private val owner: FirJavaClass,
 ) : FirCallableFilteringScope(delegate) {
+    init {
+        // The `isDeclared` check is based on class IDs. Local classes don't have proper class IDs, but because this scope is used to
+        // represent Java classes viewed from Kotlin code, we shouldn't be able to encounter any local Java classes.
+        require(!owner.isLocal) {
+            "Unexpected local Java class in ${FirJavaDeclaredMembersOnlyScope::class.simpleName}."
+        }
+    }
+
     private fun FirCallableDeclaration.isDeclared(): Boolean =
         symbol.callableId.classId == owner.classId
                 && origin !is FirDeclarationOrigin.SubstitutionOverride
