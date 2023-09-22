@@ -1,4 +1,3 @@
-// TODO: test fails, fix in subsequent commits
 // MODULE: m1-common
 // FILE: common.kt
 <!INCOMPATIBLE_MATCHING{JVM}!>expect class DefaultArgsInNestedClass {
