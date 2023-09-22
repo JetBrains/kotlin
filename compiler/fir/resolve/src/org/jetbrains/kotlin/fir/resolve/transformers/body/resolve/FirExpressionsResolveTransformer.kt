@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
-import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentInvocationKinds
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
@@ -426,6 +425,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             functionCall.transformAnnotations(transformer, data)
             functionCall.replaceLambdaArgumentInvocationKinds(session)
             functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
+            val resolvingAugmentedAssignment = data == ResolutionMode.ContextDependent.AugmentedAssignmentCallOption
             val withTransformedArguments = if (!resolvingAugmentedAssignment) {
                 dataFlowAnalyzer.enterCallArguments(functionCall, functionCall.arguments)
                 // In provideDelegate mode the explicitReceiver is already resolved
@@ -607,17 +607,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         // x.plusAssign(y)
         val assignOperatorCall = generator.createAssignOperatorCall()
-        val resolvedAssignCall = resolveCandidateForAssignmentOperatorCall {
-            assignOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
-        }
+        val resolvedAssignCall = assignOperatorCall.resolveCandidateForAssignmentOperatorCall()
         val assignCallReference = resolvedAssignCall.calleeReference as? FirNamedReferenceWithCandidate
         val assignIsSuccessful = assignCallReference?.isError == false
 
         // x = x + y
         val simpleOperatorCall = generator.createSimpleOperatorCall()
-        val resolvedOperatorCall = resolveCandidateForAssignmentOperatorCall {
-            simpleOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
-        }
+        val resolvedOperatorCall = simpleOperatorCall.resolveCandidateForAssignmentOperatorCall()
         val operatorCallReference = resolvedOperatorCall.calleeReference as? FirNamedReferenceWithCandidate
         val operatorIsSuccessful = operatorCallReference?.isError == false
 
@@ -830,22 +826,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return equalityOperatorCall
     }
 
-    private var resolvingAugmentedAssignment: Boolean = false
-
-    private inline fun <T> resolveCandidateForAssignmentOperatorCall(block: () -> T): T {
-        assert(!resolvingAugmentedAssignment)
-        resolvingAugmentedAssignment = true
-        return try {
-            context.withInferenceSession(InferenceSessionForAssignmentOperatorCall) {
-                block()
-            }
-        } finally {
-            resolvingAugmentedAssignment = false
-        }
-    }
-
-    private object InferenceSessionForAssignmentOperatorCall : FirStubInferenceSession() {
-        override fun <T> shouldRunCompletion(call: T): Boolean where T : FirStatement, T : FirResolvable = false
+    private fun FirFunctionCall.resolveCandidateForAssignmentOperatorCall(): FirFunctionCall {
+        return transformFunctionCallInternal(
+            this,
+            ResolutionMode.ContextDependent.AugmentedAssignmentCallOption,
+            provideDelegate = false
+        ) as FirFunctionCall
     }
 
     private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression, operation: FirOperation): FirTypeRef {
@@ -1427,9 +1413,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         // a.get(b).plusAssign(c)
         val assignOperatorCall = generator.createAssignOperatorCall()
-        val resolvedAssignCall = resolveCandidateForAssignmentOperatorCall {
-            assignOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
-        }
+        val resolvedAssignCall = assignOperatorCall.resolveCandidateForAssignmentOperatorCall()
         val assignCallReference = resolvedAssignCall.calleeReference as? FirNamedReferenceWithCandidate
         val assignIsSuccessful = assignCallReference?.isError == false
 
@@ -1611,9 +1595,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         )
 
         val operatorCall = generator.createSimpleOperatorCall()
-        val resolvedOperatorCall = resolveCandidateForAssignmentOperatorCall {
-            operatorCall.transformSingle(this, ResolutionMode.ContextDependent)
-        }
+        val resolvedOperatorCall = operatorCall.resolveCandidateForAssignmentOperatorCall()
 
         val setCall = GeneratorOfPlusAssignCalls.createFunctionCall(
             OperatorNameConventions.SET,
@@ -1624,9 +1606,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             *indicesQualifiedAccess.toTypedArray(), // indices
             resolvedOperatorCall // a.get(b).plus(c)
         )
-        val resolvedSetCall = resolveCandidateForAssignmentOperatorCall {
-            setCall.transformSingle(this, ResolutionMode.ContextDependent)
-        }
+        val resolvedSetCall = setCall.resolveCandidateForAssignmentOperatorCall()
 
         return AugmentedArraySetAsGetSetCallDesugaringInfo(
             augmentedArraySetCall,
