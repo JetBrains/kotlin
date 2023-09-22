@@ -468,8 +468,10 @@ private class ElementsToShortenCollector(
 
     private fun processTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
         val typeElement = resolvedTypeRef.correspondingTypePsi ?: return
-        if (typeElement.referenceExpression?.textRange?.intersects(selection) != true) return
         if (typeElement.qualifier == null) return
+
+        val typeReferenceTextRange = typeElement.referenceExpression?.textRange
+        if (typeReferenceTextRange?.intersects(selection) != true) return
 
         val classifierId = resolvedTypeRef.type.lowerBoundIfFlexible().candidateClassId ?: return
 
@@ -535,12 +537,15 @@ private class ElementsToShortenCollector(
 
         val wholeClassQualifier = resolvedQualifier.classId ?: return
         val qualifierPsi = resolvedQualifier.psi ?: return
-        if (!qualifierPsi.textRange.intersects(selection)) return
+
         val wholeQualifierElement = when (qualifierPsi) {
             is KtDotQualifiedExpression -> qualifierPsi
             is KtNameReferenceExpression -> qualifierPsi.getDotQualifiedExpressionForSelector() ?: return
             else -> return
         }
+
+        val typeReferenceTextRange = wholeQualifierElement.selectorExpression?.textRange
+        if (typeReferenceTextRange?.intersects(selection) != true) return
 
         findTypeQualifierToShorten(wholeClassQualifier, wholeQualifierElement)?.let(::addElementToShorten)
     }
@@ -1028,9 +1033,11 @@ private class ElementsToShortenCollector(
         if (!canBePossibleToDropReceiver(firPropertyAccess)) return
 
         val propertyReferenceExpression = firPropertyAccess.correspondingNameReference ?: return
-        if (!propertyReferenceExpression.textRange.intersects(selection)) return
-
         val qualifiedProperty = propertyReferenceExpression.getQualifiedElement() as? KtDotQualifiedExpression ?: return
+
+        val propertyReferenceTextRange = propertyReferenceExpression.textRange
+        if (!propertyReferenceTextRange.intersects(selection)) return
+
         val propertySymbol = firPropertyAccess.referencedSymbol ?: return
 
         val option = callableShortenOption(propertySymbol)
@@ -1075,8 +1082,7 @@ private class ElementsToShortenCollector(
         val callExpression = qualifiedCallExpression.selectorExpression as? KtCallExpression ?: return
 
         val calleeTextRange = callExpression.calleeExpression?.textRange
-        val qualifierTextRange = qualifiedCallExpression.receiverExpression.textRange
-        if (calleeTextRange?.intersects(selection) != true && !qualifierTextRange.intersects(selection)) return
+        if (calleeTextRange?.intersects(selection) != true) return
 
         val calleeReference = functionCall.calleeReference
         val calledSymbol = findUnambiguousReferencedCallableId(calleeReference) ?: return

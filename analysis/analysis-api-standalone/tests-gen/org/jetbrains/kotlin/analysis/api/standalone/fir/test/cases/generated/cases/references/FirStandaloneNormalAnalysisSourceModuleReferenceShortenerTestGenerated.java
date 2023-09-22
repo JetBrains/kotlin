@@ -341,6 +341,54 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("partiallySelectedQualifiedCall1.kt")
+    public void testPartiallySelectedQualifiedCall1() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/partiallySelectedQualifiedCall1.kt");
+    }
+
+    @Test
+    @TestMetadata("partiallySelectedQualifiedCall2.kt")
+    public void testPartiallySelectedQualifiedCall2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/partiallySelectedQualifiedCall2.kt");
+    }
+
+    @Test
+    @TestMetadata("partiallySelectedQualifiedCall3.kt")
+    public void testPartiallySelectedQualifiedCall3() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/partiallySelectedQualifiedCall3.kt");
+    }
+
+    @Test
+    @TestMetadata("partiallySelectedQualifiedCall4.kt")
+    public void testPartiallySelectedQualifiedCall4() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/partiallySelectedQualifiedCall4.kt");
+    }
+
+    @Test
+    @TestMetadata("partiallySelectedType1.kt")
+    public void testPartiallySelectedType1() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/partiallySelectedType1.kt");
+    }
+
+    @Test
+    @TestMetadata("partiallySelectedType2.kt")
+    public void testPartiallySelectedType2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/partiallySelectedType2.kt");
+    }
+
+    @Test
+    @TestMetadata("partiallySelectedTypeQualifier1.kt")
+    public void testPartiallySelectedTypeQualifier1() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/partiallySelectedTypeQualifier1.kt");
+    }
+
+    @Test
+    @TestMetadata("partiallySelectedTypeQualifier2.kt")
+    public void testPartiallySelectedTypeQualifier2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/partiallySelectedTypeQualifier2.kt");
+    }
+
+    @Test
     @TestMetadata("qualifierOfUnresolvedReference.kt")
     public void testQualifierOfUnresolvedReference() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/qualifierOfUnresolvedReference.kt");
