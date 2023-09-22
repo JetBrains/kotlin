@@ -5,17 +5,11 @@
 
 #include "SameThreadMarkAndSweep.hpp"
 
-#include <cinttypes>
-
-#include "CompilerConstants.hpp"
-#include "GlobalData.hpp"
-#include "GCImpl.hpp"
 #include "GCStatistics.hpp"
 #include "Logging.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "Memory.h"
 #include "RootSet.hpp"
-#include "Runtime.h"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 #include "ThreadSuspension.hpp"
@@ -102,7 +96,7 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     finalizerQueue.TransferAllFrom(allocator_.impl().heap().ExtractFinalizerQueue());
 #endif
 
-    scheduler.onGCFinish(epoch, alloc::allocatedBytes());
+    scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
 
     resumeTheWorld(gcHandle);
 
