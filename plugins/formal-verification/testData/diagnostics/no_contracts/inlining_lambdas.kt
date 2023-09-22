@@ -36,13 +36,23 @@ fun <!VIPER_TEXT!>shadowing<!>(): Int {
     }
 }
 
+@NeverConvert
 @Suppress("NOTHING_TO_INLINE")
-inline fun <!VIPER_TEXT!>foo<!>(): Int {
+inline fun nested_helper(): Int {
     val x = 2
     return invoke { x -> x + 1 }
 }
 
 fun <!VIPER_TEXT!>nested<!>(): Int {
     val x = 2
-    return foo()
+    return nested_helper()
+}
+
+@NeverConvert
+inline fun passthrough_helper(f: (Int) -> Int) {
+    invoke(f)
+}
+
+fun <!VIPER_TEXT!>lambda_passthrough<!>() {
+    passthrough_helper { it + 1 }
 }

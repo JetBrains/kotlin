@@ -12,3 +12,13 @@ interface PropertyAccessEmbedding {
     fun getValue(ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding
     fun setValue(value: ExpEmbedding, ctx: StmtConversionContext<ResultTrackingContext>)
 }
+
+fun ExpEmbedding.asPropertyAccess() = when (this) {
+    is PropertyAccessEmbedding -> this
+    else -> object : PropertyAccessEmbedding {
+        override fun getValue(ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding = this@asPropertyAccess
+        override fun setValue(value: ExpEmbedding, ctx: StmtConversionContext<ResultTrackingContext>) {
+            throw IllegalStateException("Property does not have a settable value")
+        }
+    }
+}

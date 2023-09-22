@@ -67,7 +67,7 @@ fun StmtConversionContext<ResultTrackingContext>.declareLocal(
 
 fun StmtConversionContext<ResultTrackingContext>.embedPropertyAccess(symbol: FirPropertyAccessExpression): PropertyAccessEmbedding =
     when (val calleeSymbol = symbol.calleeSymbol) {
-        is FirValueParameterSymbol -> embedParameter(calleeSymbol) as VariableEmbedding
+        is FirValueParameterSymbol -> embedParameter(calleeSymbol).asPropertyAccess()
         is FirPropertySymbol ->
             when (val receiverFir = symbol.dispatchReceiver) {
                 null -> embedLocalProperty(calleeSymbol)
