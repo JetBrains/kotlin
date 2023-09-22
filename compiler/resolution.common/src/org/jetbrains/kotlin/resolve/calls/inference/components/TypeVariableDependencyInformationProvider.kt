@@ -21,10 +21,7 @@ class TypeVariableDependencyInformationProvider(
 ) {
 
     private val outerTypeVariables: Set<TypeConstructorMarker>? =
-        if (typeSystemContext.outerSystemVariablesPrefixSize > 0)
-            typeSystemContext.allTypeVariables.keys.take(typeSystemContext.outerSystemVariablesPrefixSize).toSet()
-        else
-            null
+        typeSystemContext.outerTypeVariables
 
     /*
      * Not oriented edges
