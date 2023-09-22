@@ -14,17 +14,19 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 sealed class ResolutionMode(
     val forceFullCompletion: Boolean,
     val skipCompletion: Boolean = false,
+    val isReceiverOrTopLevel: Boolean = forceFullCompletion,
 ) {
     sealed class ContextDependent(
         skipCompletion: Boolean = false,
-    ) : ResolutionMode(forceFullCompletion = false, skipCompletion) {
-        companion object Default : ContextDependent() {
+        isReceiverOrTopLevel: Boolean,
+    ) : ResolutionMode(forceFullCompletion = false, skipCompletion, isReceiverOrTopLevel) {
+        companion object Default : ContextDependent(isReceiverOrTopLevel = false) {
             override fun toString(): String = "ContextDependent"
         }
 
-        data object Delegate : ContextDependent()
+        data object Delegate : ContextDependent(isReceiverOrTopLevel = true)
 
-        data object AugmentedAssignmentCallOption : ContextDependent(skipCompletion = true)
+        data object AugmentedAssignmentCallOption : ContextDependent(isReceiverOrTopLevel = false, skipCompletion = true)
     }
 
     abstract class ContextIndependent : ResolutionMode(forceFullCompletion = true) {
