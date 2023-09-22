@@ -215,7 +215,12 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         postponedArguments: List<PostponedResolvedAtom>,
         analyze: (PostponedResolvedAtom) -> Unit,
     ): Boolean {
-        if (completionMode != ConstraintSystemCompletionMode.FULL && completionMode != ConstraintSystemCompletionMode.ONLY_LAMBDAS) return false
+        val modes = setOf(
+            ConstraintSystemCompletionMode.FULL,
+            ConstraintSystemCompletionMode.ONLY_LAMBDAS,
+            ConstraintSystemCompletionMode.PARTIAL_BI
+        )
+        if (completionMode !in modes) return false
 
         // If we use the builder inference anyway (if the annotation is presented), then we are already analysed builder inference lambdas
         if (!languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)) return false
