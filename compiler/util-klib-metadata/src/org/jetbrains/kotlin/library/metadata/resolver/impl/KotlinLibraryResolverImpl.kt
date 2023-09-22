@@ -101,15 +101,14 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
      * 3. Creates resulting [KotlinLibraryResolveResult] object.
      */
     override fun List<KotlinLibrary>.resolveDependencies(): KotlinLibraryResolveResult {
-
         val rootLibraries = this.map { KotlinResolvedLibraryImpl(it) }
 
         // As far as the list of root libraries is known from the very beginning, the result can be
         // constructed from the very beginning as well.
         val result = KotlinLibraryResolverResultImpl(rootLibraries)
 
-        val cache = mutableMapOf<File, KotlinResolvedLibrary>()
-        cache.putAll(rootLibraries.map { it.library.libraryFile.canonicalFile to it })
+        val cache = mutableMapOf<Any, KotlinResolvedLibrary>()
+        cache.putAll(rootLibraries.map { it.library.libraryFile.fileKey to it })
 
         var newDependencies = rootLibraries
         do {
@@ -119,12 +118,12 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
                         .filterNot { searchPathResolver.isProvidedByDefault(it) }
                         .mapNotNull { searchPathResolver.resolve(it)?.let(::KotlinResolvedLibraryImpl) }
                         .map { resolved ->
-                            val canonicalFile = resolved.library.libraryFile.canonicalFile
-                            if (canonicalFile in cache) {
-                                library.addDependency(cache[canonicalFile]!!)
+                            val fileKey = resolved.library.libraryFile.fileKey
+                            if (fileKey in cache) {
+                                library.addDependency(cache[fileKey]!!)
                                 null
                             } else {
-                                cache.put(canonicalFile, resolved)
+                                cache.put(fileKey, resolved)
                                 library.addDependency(resolved)
                                 resolved
                             }
@@ -133,7 +132,6 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
                         .toList()
             }.flatten()
         } while (newDependencies.isNotEmpty())
-
         return result
     }
 }
