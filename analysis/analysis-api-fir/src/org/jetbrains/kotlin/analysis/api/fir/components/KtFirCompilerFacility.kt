@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirMo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
+import org.jetbrains.kotlin.analysis.project.structure.KtCodeFragmentModule
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.*
@@ -139,8 +141,8 @@ internal class KtFirCompilerFacility(
         }
 
         // Files in the code fragment context module are compiled together with the code fragment itself.
-        val targetModule = mainFirFile.llFirModuleData.ktModule
-        val (targetFiles, dependencyFiles) = filesToCompile.partition { firResolveSession.getModule(it) == targetModule }
+        val targetModules = computeTargetModules(mainFirFile.llFirModuleData.ktModule)
+        val (targetFiles, dependencyFiles) = filesToCompile.partition { firResolveSession.getModule(it) in targetModules }
         require(targetFiles.isNotEmpty())
 
         val jvmIrDeserializer = JvmIrDeserializerImpl()
@@ -241,6 +243,13 @@ internal class KtFirCompilerFacility(
             return KtCompilationResult.Success(outputFiles, capturedValues)
         } finally {
             generationState.destroy()
+        }
+    }
+
+    private fun computeTargetModules(module: KtModule): List<KtModule> {
+        return when (module) {
+            is KtCodeFragmentModule -> listOf(module.contextModule, module)
+            else -> listOf(module)
         }
     }
 
