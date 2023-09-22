@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfTypeInPreorder
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -109,7 +109,7 @@ open class AbstractSymbolLightClassesStructureTestBase(
             val classOrObject = ktFile.declarations.singleOrNull() as? KtClassOrObject ?: return
             handleCompiledClassDeclaration(classOrObject, text)
         } else {
-            ktFile.forEachDescendantOfType<KtClassOrObject> { classOrObject ->
+            ktFile.forEachDescendantOfTypeInPreorder<KtClassOrObject> { classOrObject ->
                 handleClassDeclaration(classOrObject, text)
                 appendLine()
             }
@@ -121,6 +121,9 @@ open class AbstractSymbolLightClassesStructureTestBase(
      * compiled code in this test results in exceptions. Hence, we have to traverse nested classes and enum entries manually.
      */
     private fun PrettyPrinter.handleCompiledClassDeclaration(classOrObject: KtClassOrObject, text: String) {
+        handleClassDeclaration(classOrObject, text)
+        appendLine()
+
         classOrObject.declarations.forEach { declaration ->
             when (declaration) {
                 is KtEnumEntry -> {
@@ -131,9 +134,6 @@ open class AbstractSymbolLightClassesStructureTestBase(
                 is KtClassOrObject -> handleCompiledClassDeclaration(declaration, text)
             }
         }
-
-        handleClassDeclaration(classOrObject, text)
-        appendLine()
     }
 
     private fun PrettyPrinter.handleClassDeclaration(declaration: KtClassOrObject, fileText: String) {

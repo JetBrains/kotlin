@@ -16,18 +16,6 @@ BaseInterface.class:
       ]
 
 EnumClassWithInterface.class:
-  KtEnumEntry:
-    line: 7
-    name: NewFirstEntry
-    qualifier: one.two.EnumClassWithInterface.NewFirstEntry
-    light: null
-
-  KtEnumEntry:
-    line: 9
-    name: NewSecondEntryWithBody
-    qualifier: one.two.EnumClassWithInterface.NewSecondEntryWithBody
-    light: null
-
   KtClass:
     line: 6
     name: EnumClassWithInterface
@@ -48,19 +36,19 @@ EnumClassWithInterface.class:
         KtLightClassForDecompiledDeclaration: BaseInterface (one.two.BaseInterface)
       ]
 
-EnumEntries.class:
   KtEnumEntry:
     line: 7
-    name: FirstEntry
-    qualifier: one.two.EnumEntries.FirstEntry
+    name: NewFirstEntry
+    qualifier: one.two.EnumClassWithInterface.NewFirstEntry
     light: null
 
   KtEnumEntry:
     line: 9
-    name: SecondEntryWithBody
-    qualifier: one.two.EnumEntries.SecondEntryWithBody
+    name: NewSecondEntryWithBody
+    qualifier: one.two.EnumClassWithInterface.NewSecondEntryWithBody
     light: null
 
+EnumEntries.class:
   KtClass:
     line: 6
     name: EnumEntries
@@ -76,4 +64,16 @@ EnumEntries.class:
       supers: [
         ClsClassImpl: Enum (java.lang.Enum)
       ]
+
+  KtEnumEntry:
+    line: 7
+    name: FirstEntry
+    qualifier: one.two.EnumEntries.FirstEntry
+    light: null
+
+  KtEnumEntry:
+    line: 9
+    name: SecondEntryWithBody
+    qualifier: one.two.EnumEntries.SecondEntryWithBody
+    light: null
 

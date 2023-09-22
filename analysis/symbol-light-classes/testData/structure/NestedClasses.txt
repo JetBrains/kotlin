@@ -1,4 +1,36 @@
 KtClass:
+  line: 1
+  name: A
+  qualifier: A
+  light: SymbolLightClassForClassOrObject
+    name: A
+    qualifier: A
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtClass:
+  line: 2
+  name: NestedInA
+  qualifier: A.NestedInA
+  light: SymbolLightClassForClassOrObject
+    name: NestedInA
+    qualifier: A.NestedInA
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtClass:
   line: 3
   name: NestedInNestedInA
   qualifier: A.NestedInA.NestedInNestedInA
@@ -31,12 +63,12 @@ KtClass:
     ]
 
 KtClass:
-  line: 2
-  name: NestedInA
-  qualifier: A.NestedInA
+  line: 8
+  name: InnerInA
+  qualifier: A.InnerInA
   light: SymbolLightClassForClassOrObject
-    name: NestedInA
-    qualifier: A.NestedInA
+    name: InnerInA
+    qualifier: A.InnerInA
     superTypes: [
       PsiType:Object
     ]
@@ -63,35 +95,19 @@ KtClass:
     ]
 
 KtClass:
-  line: 8
-  name: InnerInA
-  qualifier: A.InnerInA
+  line: 13
+  name: B
+  qualifier: B
   light: SymbolLightClassForClassOrObject
-    name: InnerInA
-    qualifier: A.InnerInA
+    name: B
+    qualifier: B
     superTypes: [
-      PsiType:Object
+      PsiType:A
     ]
-    superClass: ClsClassImpl: Object (java.lang.Object)
+    superClass: SymbolLightClassForClassOrObject: A (A)
     interfaces: []
     supers: [
-      ClsClassImpl: Object (java.lang.Object)
-    ]
-
-KtClass:
-  line: 1
-  name: A
-  qualifier: A
-  light: SymbolLightClassForClassOrObject
-    name: A
-    qualifier: A
-    superTypes: [
-      PsiType:Object
-    ]
-    superClass: ClsClassImpl: Object (java.lang.Object)
-    interfaces: []
-    supers: [
-      ClsClassImpl: Object (java.lang.Object)
+      SymbolLightClassForClassOrObject: A (A)
     ]
 
 KtClass:
@@ -126,18 +142,3 @@ KtClass:
       ClsClassImpl: Object (java.lang.Object)
     ]
 
-KtClass:
-  line: 13
-  name: B
-  qualifier: B
-  light: SymbolLightClassForClassOrObject
-    name: B
-    qualifier: B
-    superTypes: [
-      PsiType:A
-    ]
-    superClass: SymbolLightClassForClassOrObject: A (A)
-    interfaces: []
-    supers: [
-      SymbolLightClassForClassOrObject: A (A)
-    ]
