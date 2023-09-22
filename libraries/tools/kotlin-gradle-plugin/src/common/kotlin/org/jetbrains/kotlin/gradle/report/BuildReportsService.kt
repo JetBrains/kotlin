@@ -280,7 +280,7 @@ class BuildReportsService {
             }
             val taskWithK2Percent = (tasksCountWithKotlin2 * 100) / tasksData.count()
             val statsData = tasksData.map { it.path to it.kotlinLanguageVersion?.version }
-            statsData.forEach { record ->
+            statsData.sortedBy { it.first }.forEach { record ->
                 log.warn("${record.first}: ${record.second} language version")
             }
             log.warn(
