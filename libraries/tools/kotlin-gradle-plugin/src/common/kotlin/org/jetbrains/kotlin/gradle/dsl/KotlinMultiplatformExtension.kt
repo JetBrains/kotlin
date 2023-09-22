@@ -9,20 +9,24 @@ import org.gradle.api.Action
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
+import org.jetbrains.kotlin.build.kotlinMultiplatformProjectModel
+import org.jetbrains.kotlin.build.targets.GradleTargetCreationContext
+import org.jetbrains.kotlin.build.targets.TargetType
+import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.internal.syncCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.android.internal.internal
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
@@ -346,10 +350,26 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
         }
 
         existingTarget == null -> {
-            val newTarget = targetPreset.createTargetInternal(targetName)
-            targets.add(newTarget)
-            configure(newTarget)
-            return newTarget
+            val targetType = when (targetPreset) {
+                is AbstractKotlinNativeTargetPreset<*> -> TargetType.Native(targetPreset.konanTarget)
+                is KotlinWasmTargetPreset -> TargetType.WASM(targetPreset.targetType)
+                is KotlinOnlyTargetPreset<*,*> -> when(targetPreset.platformType) {
+                    KotlinPlatformType.common -> error("Unexpected platform common")
+                    KotlinPlatformType.jvm -> TargetType.JVM
+                    KotlinPlatformType.js -> TargetType.JS
+                    KotlinPlatformType.androidJvm -> TargetType.AndroidJvm
+                    KotlinPlatformType.native -> error("Unexpected KotlinPlatformType.native in $targetPreset that doesn't implement AbstractKotlinNativeTargetPreset")
+                    KotlinPlatformType.wasm -> error("Unexpected KotlinPlatformType.wasm in $targetPreset that doesn't implement KotlinWasmTargetPreset")
+                }
+                else -> error("Unexpected Target Preset $targetPreset")
+            }
+
+            val targetsHandler = project.kotlinMultiplatformProjectModel.targetsHandler
+            targetsHandler.createTarget(targetName, targetType, GradleTargetCreationContext(targetPreset))
+            val createdTarget = targets.findByName(targetName) ?: error("expected target $targetName was not found")
+
+            @Suppress("UNCHECKED_CAST")
+            return (createdTarget as T).apply(configure)
         }
 
         else -> {

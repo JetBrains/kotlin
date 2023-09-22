@@ -8,7 +8,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.build.kotlinMultiplatformProjectModel
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.explicitApiModeAsCompilerArg
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript
@@ -42,8 +46,8 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         checkGradleCompatibility("the Kotlin Multiplatform plugin")
         runDeprecationDiagnostics(project)
-
         project.plugins.apply(JavaBasePlugin::class.java)
+        val model = project.kotlinMultiplatformProjectModel
 
         val kotlinMultiplatformExtension = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
 
@@ -52,11 +56,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         configureSourceSets(project)
         setupTargetsBuildStatsReport(project)
 
-        // set up metadata publishing
-        kotlinMultiplatformExtension.targetFromPresetInternal(
-            KotlinMetadataTargetPreset(project),
-            METADATA_TARGET_NAME
-        )
+        model.apply()
         project.registerKotlinArtifactsExtension()
 
         configurePublishingWithMavenPublish(project)
