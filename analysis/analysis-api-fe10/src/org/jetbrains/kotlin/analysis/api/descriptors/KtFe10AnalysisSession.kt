@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KtAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KtRendererProviderImpl
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProviderByJavaPsi
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -76,8 +75,8 @@ class KtFe10AnalysisSession(
     override val metadataCalculatorImpl: KtMetadataCalculator
         get() = throw UnsupportedOperationException()
 
+
+    @Suppress("AnalysisApiMissingLifetimeCheck")
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession =
-        withValidityAssertion {
-            KtFe10AnalysisSession(originalKtFile.project, elementToReanalyze, token)
-        }
+        KtFe10AnalysisSession(originalKtFile.project, elementToReanalyze, token)
 }
