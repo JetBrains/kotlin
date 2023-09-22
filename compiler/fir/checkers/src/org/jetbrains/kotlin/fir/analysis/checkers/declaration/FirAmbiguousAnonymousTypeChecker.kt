@@ -40,13 +40,16 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker() {
          * 2. `val x = ...`
          * 3. `val x get() = ...`
          */
-        val type = when (declaration) {
-            is FirProperty -> declaration.initializer?.resolvedType ?: declaration.getter?.body?.singleExpressionType
-            is FirFunction -> declaration.body?.singleExpressionType
+        val (type, source) = when (declaration) {
+            is FirProperty -> {
+                declaration.initializer?.resolvedType?.let { it to declaration.source }
+                    ?: (declaration.getter?.body?.singleExpressionType to declaration.getter?.source)
+            }
+            is FirFunction -> declaration.body?.singleExpressionType to declaration.source
             else -> error("Should not be there")
-        } ?: return
+        }
 
-        checkTypeAndArguments(type, context, reporter, declaration.source)
+        type?.let { checkTypeAndArguments(it, context, reporter, source) }
     }
 
     private fun checkTypeAndArguments(

@@ -38,8 +38,8 @@ class Foo(val myTrait: MyTrait) {
 
     <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public val publicProperty<!> = object : MyClass(), MyTrait {}
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>val propertyWithGetter<!>
-    get() = object: MyClass(), MyTrait {}
+    val propertyWithGetter
+    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>get()<!> = object: MyClass(), MyTrait {}
 
     private val privateDelegateProperty by lazy { object : MyClass(), MyTrait {} }
     val publicDelegatePropertyWithSingleSuperType by lazy {
