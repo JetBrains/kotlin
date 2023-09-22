@@ -29,6 +29,12 @@ public class FirPsiOldFrontendNativeDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("arrays_after.kt")
+    public void testArrays_after() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/arrays_after.kt");
+    }
+
+    @Test
     @TestMetadata("cloneableInNative.kt")
     public void testCloneableInNative() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/cloneableInNative.kt");
