@@ -14,50 +14,21 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isPropertyAccessor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-/**
- * Generate a Swift API file for the given Kotlin IR module.
- *
- * A temporary solution to kick-start the work on Swift Export.
- * A proper solution is likely to be FIR-based and will be added later
- * as it requires a bit more work.
- *
- */
-class IrBasedSwiftGenerator : IrElementVisitorVoid {
+internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVisitor.Result> {
     companion object {
-        private val initRuntimeIfNeeded = CCode.build { function(void, "initRuntimeIfNeeded") }
-
-        private val switchThreadStateToNative = CCode.build { function(void, "switchThreadStateToNative") }
-
-        private val switchThreadStateToRunnable = CCode.build { function(void, "switchThreadStateToRunnable") }
-
-        private val bridgeFromKotlin = SwiftCode.build {
-            val T = "T".type
-            function(
-                    "bridgeFromKotlin",
-                    parameters = listOf(parameter(parameterName = "obj", type = "UnsafeMutableRawPointer".type)),
-                    genericTypes = listOf(T.name.genericParameter(constraint = "AnyObject".type)),
-                    returnType = T,
-            )
-        }
-
-        private val bridgeToKotlin = SwiftCode.build {
-            val T = "T".type
-            function(
-                    "bridgeToKotlin",
-                    parameters = listOf(parameter(parameterName = "obj", type = T), parameter(argumentName = "slot", type = "UnsafeMutableRawPointer".type)),
-                    genericTypes = listOf(T.name.genericParameter(constraint = "AnyObject".type)),
-                    returnType = "UnsafeMutableRawPointer".type,
-            )
-        }
+        private const val BRIDGE_FROM_KOTLIN = "bridgeFromKotlin"
+        private const val BRIDGE_TO_KOTLIN = "bridgeToKotlin"
+        private const val INIT_RUNTIME_IF_NEEDED = "initRuntimeIfNeeded"
+        private const val SWITCH_THREAD_STATE_TO_NATIVE = "switchThreadStateToNative"
+        private const val SWITCH_THREAD_STATE_TO_RUNNABLE = "switchThreadStateToRunnable"
 
         private val kotlinAnySwiftType = SwiftCode.build { "kotlin.Object".type }
     }
@@ -74,11 +45,24 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
 
         data class Object(override val swiftType: SwiftCode.Type, override val cType: CCode.Type) : Bridge {
             override fun from(expr: SwiftCode.Expression, delegate: BridgeCodeGenDelegate) = SwiftCode.build {
-                bridgeFromKotlin.name.identifier.call(expr)
+                BRIDGE_FROM_KOTLIN.identifier.call(expr)
             }
 
             override fun into(expr: SwiftCode.Expression, delegate: BridgeCodeGenDelegate) = SwiftCode.build {
-                bridgeToKotlin.name.identifier.call(expr, "slot" of delegate.getNextSlot())
+                BRIDGE_TO_KOTLIN.identifier.call(expr, "slot" of delegate.getNextSlot())
+            }
+        }
+
+        data object Self : Bridge {
+            override val swiftType get() = SwiftCode.build { "Self".type }
+            override val cType: CCode.Type get() = CCode.build { void.pointer }
+
+            override fun from(expr: SwiftCode.Expression, delegate: BridgeCodeGenDelegate) = SwiftCode.build {
+                BRIDGE_FROM_KOTLIN.identifier.call(expr)
+            }
+
+            override fun into(expr: SwiftCode.Expression, delegate: BridgeCodeGenDelegate) = SwiftCode.build {
+                BRIDGE_TO_KOTLIN.identifier.call(expr, "slot" of delegate.getNextSlot())
             }
         }
 
@@ -96,9 +80,10 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
                 val cName: String
                 val swiftName: String
 
-                val property = declaration.propertyIfAccessor.takeIf { declaration.isPropertyAccessor }
                 when {
-                    property != null -> {
+                    declaration.isPropertyAccessor -> {
+                        val property = declaration.propertyIfAccessor
+                        checkNotNull(property)
                         swiftName = property.getNameWithAssert().identifier
                         path = property.parent.kotlinFqName.pathSegments().map { it.identifier } + listOf(swiftName)
                         val pathString = path.joinToString(separator = "_")
@@ -107,6 +92,12 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
                             declaration.isSetter -> cName = "__kn_set_$pathString"
                             else -> error("A property accessor is expected to either be a setter or getter")
                         }
+                    }
+                    declaration is IrConstructor -> {
+                        swiftName = "init"
+                        path = declaration.kotlinFqName.pathSegments().dropLast(1).map { it.identifier } + listOf("init")
+                        val pathString = path.joinToString(separator = "_")
+                        cName = "__kn_$pathString"
                     }
                     else -> {
                         swiftName = declaration.name.identifier
@@ -118,135 +109,155 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
 
                 return Names(swiftName, cName, path, symbolName)
             }
+
+            operator fun invoke(declaration: IrClass): Names {
+                val swiftName = declaration.name.identifier
+                val path = declaration.kotlinFqName.pathSegments().map { it.identifier }
+                val pathString = path.joinToString(separator = "_")
+                val cName =  "__kn_class_$pathString"
+                return Names(swiftName, cName, path, "")
+            }
         }
     }
 
-    private data class Namespace<T>(
+    data class Namespace<T>(
             val name: String,
+            val kind: Kind = Kind.PACKAGE,
             val elements: MutableList<T> = mutableListOf(),
             val children: MutableMap<String, Namespace<T>> = mutableMapOf(),
     ) {
-        fun <R> reduce(transform: (List<String>, List<T>, List<R>) -> R): R {
-            fun reduceFrom(node: Namespace<T>, rootPath: List<String> = emptyList(), transform: (List<String>, List<T>, List<R>) -> R): R =
-                    transform(rootPath + node.name, node.elements, node.children.map { reduceFrom(it.value, rootPath + node.name, transform) })
+        enum class Kind {
+            PACKAGE,
+            TYPE,
+        }
+
+        fun <R> reduce(transform: (List<String>, Kind, List<T>, List<R>) -> R): R {
+            fun reduceFrom(node: Namespace<T>, rootPath: List<String> = emptyList(), transform: (List<String>, Kind, List<T>, List<R>) -> R): R =
+                    transform(rootPath + node.name, node.kind, node.elements, node.children.map { reduceFrom(it.value, rootPath + node.name, transform) })
             return reduceFrom(this, emptyList(), transform)
         }
 
-        fun insert(path: List<String>, value: T) {
+        fun makePath(path: List<String>): Namespace<T> {
             if (path.isEmpty()) {
-                elements.add(value)
-                return
+                return this
             }
 
             val key = path.first()
             val next = children.getOrPut(key) { Namespace<T>(key) }
-            next.insert(path.drop(1), value)
+            return next.makePath(path.drop(1))
+        }
+
+        fun insertElement(path: List<String>, value: T): Namespace<T> {
+            return makePath(path).also { it.elements.add(value) }
+        }
+
+        fun insertNamespace(path: List<String>, namespace: Namespace<T>): Namespace<T> {
+            return makePath(path).also { it.children.put(namespace.name, namespace) }
+        }
+
+        fun merge(other: Namespace<T>) {
+            check(name == other.name)
+            check(kind == other.kind)
+
+            elements.addAll(other.elements)
+            other.children.forEach { children.merge(it.key, it.value) { l, r -> l.merge(r); l } }
         }
     }
 
-    private val swiftImports = mutableListOf<SwiftCode.Import>(SwiftCode.Import.Module("Foundation"))
-    private val swiftDeclarations = Namespace("", elements = mutableListOf<SwiftCode.Declaration>())
+    data class Result(
+            val swiftImports: MutableList<SwiftCode.Import> = mutableListOf(SwiftCode.Import.Module("Foundation")),
+            val swiftDeclarations: Namespace<SwiftCode.Declaration> = Namespace(""),
+            // FIXME: we shouldn't manually generate c headers for our existing code, but here we are.
+            val cImports: MutableList<CCode> = mutableListOf<CCode>(),
+            val cDeclarations: MutableList<CCode> = mutableListOf<CCode>(),
+    )
 
-    // FIXME: we shouldn't manually generate c headers for our existing code, but here we are.
-    private val cImports = CCode.build {
-        mutableListOf<CCode>(
-                include("stdint.h"),
-        )
+    override fun visitElement(element: IrElement, data: Result) {
+        element.acceptChildren(this, data)
     }
-    private val cDeclarations = mutableListOf<CCode>()
 
-    fun buildSwiftShimFile() = SwiftCode.File {
-        fun SwiftCode.Declaration.patchStatic() = when (this) {
-            is SwiftCode.Declaration.Function -> this.copy(isStatic = true)
-            is SwiftCode.Declaration.Variable -> when (this) {
-                is SwiftCode.Declaration.StoredVariable -> this.copy(isStatic = true)
-                is SwiftCode.Declaration.ComputedVariable -> this.copy(isStatic = true)
-                is SwiftCode.Declaration.Constant -> this.copy(isStatic = true)
+    override fun visitClass(declaration: IrClass, data: Result) {
+        if (!isSupported(declaration)) {
+            return
+        }
+
+        val names = Names(declaration)
+        val path = names.path.dropLast(1)
+
+        val namespace = Namespace<SwiftCode.Declaration>(names.swift, Namespace.Kind.TYPE)
+        data.swiftDeclarations.insertNamespace(path, namespace)
+
+        super.visitClass(declaration, data)
+
+        val declarations = namespace.elements.partition {
+            it is SwiftCode.Declaration.Method || it is SwiftCode.Declaration.Init || it is SwiftCode.Declaration.Variable
+        }
+
+        namespace.elements.clear()
+        namespace.elements.addAll(declarations.second)
+
+        val cls = SwiftCode.build {
+            `class`(
+                    names.swift,
+                    inheritedTypes = listOfNotNull(declaration.superClass?.let { Names(it).path.type } ?: kotlinAnySwiftType)
+            ) {
+                declarations.first.forEach { +it }
             }
-            else -> this
         }
 
-        data class Declarations(val inline: List<SwiftCode.Declaration>, val outline: List<SwiftCode.Declaration>)
-
-        swiftImports.forEach { +it }
-
-        swiftDeclarations.reduce<Declarations> { path, elements, children ->
-            val namePath = path.dropWhile { it.isEmpty() }.takeIf { it.isNotEmpty() }
-            if (namePath != null) {
-                val name = namePath.fold<String, SwiftCode.Type.Nominal?>(null) { ac, el -> ac?.nested(el) ?: el.type }!!
-
-                val inline = listOf(enum(namePath.last(), visibility = public) {
-                    children.forEach { it.inline.forEach { +it.patchStatic() } }
-                })
-
-                val outline = children.flatMap { it.outline } + elements.map {
-                    extension(name, visibility = public) {
-                        +it.patchStatic()
-                    }
-                }
-
-                Declarations(inline, outline)
-
-            } else {
-                Declarations(
-                        inline = children.flatMap { it.inline },
-                        outline = children.flatMap { it.outline } + elements
-                )
-            }
-        }.let {
-            it.inline.forEach { +it }
-            it.outline.forEach { +it }
-        }
+        data.swiftDeclarations.insertElement(path, cls)
     }
 
-    fun buildSwiftBridgingHeader() = CCode.build {
-        CCode.File(cImports + pragma("clang assume_nonnull begin") + cDeclarations + pragma("clang assume_nonnull end"))
+    private fun isSupported(declaration: IrClass): Boolean {
+        return declaration.visibility.isPublicAPI
+                && !declaration.isFun
+                && !declaration.isValue
+                && !declaration.isCompanion
+                && !declaration.isExpect
     }
 
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
-    override fun visitProperty(declaration: IrProperty) {
+    override fun visitProperty(declaration: IrProperty, data: Result) {
         val propertyNames: Names
         val bridge = bridgeFor(declaration.getter!!.returnType) ?: return
 
         val getter = declaration.getter!!.let {
             val names = Names(it)
             propertyNames = names
-            generateCFunction(it, names)?.also(cDeclarations::add) ?: return
+            generateCFunction(it, names)?.also(data.cDeclarations::add) ?: return
             val swift = generateSwiftFunction(it, names) ?: return
+            val code = swift.code
 
             check(swift.parameters.isEmpty())
             check(swift.genericTypes.isEmpty())
             check(swift.genericTypeConstraints.isEmpty())
-            checkNotNull(swift.code)
+            checkNotNull(code)
 
             SwiftCode.build {
-                get(swift.code)
+                get(code)
             }
         }
         val setter = declaration.setter?.let {
             val names = Names(it)
-            generateCFunction(it, names)?.also(cDeclarations::add) ?: return
+            generateCFunction(it, names)?.also(data.cDeclarations::add) ?: return
             val swift = generateSwiftFunction(it, names) ?: return
+            val code = swift.code
 
             check(swift.parameters.size == 1)
             check(swift.genericTypes.isEmpty())
             check(swift.genericTypeConstraints.isEmpty())
-            checkNotNull(swift.code)
+            checkNotNull(code)
 
             SwiftCode.build {
-                set(null, swift.code)
+                set(null, code)
             }
         }
 
-        swiftDeclarations.insert(propertyNames.path.dropLast(1), SwiftCode.build {
+        data.swiftDeclarations.insertElement(propertyNames.path.dropLast(1), SwiftCode.build {
             `var`(propertyNames.swift, type = bridge.swiftType, get = getter, set = setter)
         })
     }
 
-    override fun visitFunction(declaration: IrFunction) {
+    override fun visitFunction(declaration: IrFunction, data: Result) {
         if (!isSupported(declaration)) {
             return
         }
@@ -254,20 +265,20 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
         val names = Names(declaration)
 
         val cFunction = generateCFunction(declaration, names) ?: return
-        cDeclarations.add(cFunction)
+        data.cDeclarations.add(cFunction)
 
         val swiftFunction = generateSwiftFunction(declaration, names) ?: return
-        swiftDeclarations.insert(names.path.dropLast(1), swiftFunction)
+        data.swiftDeclarations.insertElement(names.path.dropLast(1), swiftFunction)
     }
 
     private fun isSupported(declaration: IrFunction): Boolean {
         // No Kotlin-exclusive stuff
         return declaration.visibility.isPublicAPI
                 && declaration.extensionReceiverParameter == null
-                && declaration.dispatchReceiverParameter == null
                 && declaration.contextReceiverParametersCount == 0
                 && !declaration.isExpect
                 && !declaration.isInline
+                && !declaration.isFakeOverride
     }
 
     private fun mapTypeToC(declaration: IrType): CCode.Type? = CCode.build {
@@ -330,7 +341,7 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
             }
             declaration.computeBinaryType() is BinaryType.Reference -> {
                 // FIXME: generate particular types
-                val type = kotlinAnySwiftType.let { if (declaration.isNullable()) it.optional else it }
+                val type = IrBasedSwiftVisitor.kotlinAnySwiftType.let { if (declaration.isNullable()) it.optional else it }
                 return Bridge.Object(type, cType)
             }
             else -> return null
@@ -349,19 +360,9 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
     }
 
     private fun generateSwiftFunction(declaration: IrFunction, names: Names = Names(declaration)): SwiftCode.Declaration.Function? = SwiftCode.build {
-        fun parameterName(name: Name): String = name.identifierOrNullIfSpecial ?: "newValue".takeIf { declaration.isSetter } ?: "_"
-
-        val returnTypeBridge = bridgeFor(declaration.returnType) ?: return null
-        val parameterBridges = declaration.explicitParameters.map { parameterName(it.name) to (bridgeFor(it.type) ?: return null) }
-
-        function(
-                names.swift,
-                parameters = parameterBridges.map { parameter(it.first, type = it.second.swiftType) },
-                returnType = returnTypeBridge.swiftType,
-                visibility = public
-        ) {
-            +initRuntimeIfNeeded.name!!.identifier.call()
-            +switchThreadStateToRunnable.name!!.identifier.call()
+        fun SwiftCode.ListBuilder<SwiftCode.Statement>.generateFunctionBody(parameterBridges: List<Pair<String, Bridge>>, returnTypeBridge: Bridge) {
+            +INIT_RUNTIME_IF_NEEDED.identifier.call()
+            +SWITCH_THREAD_STATE_TO_RUNNABLE.identifier.call()
 
             val call = let {
                 val bridgeDelegate = object : BridgeCodeGenDelegate {
@@ -391,9 +392,153 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
                     type = returnTypeBridge.swiftType,
                     value = call
             )
-            +switchThreadStateToNative.name!!.identifier.call()
+            +SWITCH_THREAD_STATE_TO_NATIVE.identifier.call()
             +`return`(result.name.identifier)
         }
+
+        fun parameterName(name: Name): String = name.identifierOrNullIfSpecial ?: "newValue".takeIf { declaration.isSetter } ?: "_"
+
+        val returnTypeBridge = bridgeFor(declaration.returnType) ?: return null
+        val bridges = declaration.explicitParameters.map { parameterName(it.name) to (bridgeFor(it.type) ?: return null) }
+        val parameterBridges: List<Pair<String, IrBasedSwiftVisitor.Bridge>>
+        val argumentBridges: List<Pair<String, IrBasedSwiftVisitor.Bridge>>
+
+        if (declaration.dispatchReceiverParameter != null) {
+            parameterBridges = bridges.drop(1)
+            argumentBridges = listOf("self" to Bridge.Self) + parameterBridges
+        } else {
+            parameterBridges = bridges
+            argumentBridges = bridges
+        }
+
+        when {
+            declaration is IrConstructor -> init(
+                    parameters = parameterBridges.map { parameter(it.first, type = it.second.swiftType) },
+                    isOverride = parameterBridges.isEmpty(),
+                    visibility = public
+            ) {
+                // FIXME: properly create an instance when the runtime support for that arrives
+                +"fatalError".identifier.call()
+            }
+
+            declaration.dispatchReceiverParameter != null -> method(
+                    names.swift,
+                    parameters = parameterBridges.map { parameter(it.first, type = it.second.swiftType) },
+                    returnType = returnTypeBridge.swiftType,
+                    visibility = public
+            ) {
+                generateFunctionBody(argumentBridges, returnTypeBridge)
+            }
+
+            else -> function(
+                    names.swift,
+                    parameters = parameterBridges.map { parameter(it.first, type = it.second.swiftType) },
+                    returnType = returnTypeBridge.swiftType,
+                    visibility = public
+            ) {
+                generateFunctionBody(argumentBridges, returnTypeBridge)
+            }
+        }
+    }
+}
+
+/**
+ * Generate a Swift API file for the given Kotlin IR module.
+ *
+ * A temporary solution to kick-start the work on Swift Export.
+ * A proper solution is likely to be FIR-based and will be added later
+ * as it requires a bit more work.
+ *
+ */
+class IrBasedSwiftGenerator : IrElementVisitorVoid {
+    private val result = IrBasedSwiftVisitor.Result(
+            swiftImports = mutableListOf(
+                    SwiftCode.Import.Module("Foundation")
+            ),
+            cImports = mutableListOf(
+                    CCode.Include("stdint.h")
+            )
+    )
+
+    override fun visitElement(element: IrElement) {
+        IrBasedSwiftVisitor().visitElement(element, result)
+    }
+
+    fun buildSwiftShimFile() = SwiftCode.File {
+        fun SwiftCode.Declaration.patchStatic() = when (this) {
+            is SwiftCode.Declaration.Method -> this
+            is SwiftCode.Declaration.FreestandingFunction -> method(
+                    name = name,
+                    genericTypes = genericTypes,
+                    parameters = parameters,
+                    returnType = returnType,
+                    isStatic = true,
+                    isAsync = isAsync,
+                    isThrowing = isThrowing,
+                    attributes = attributes,
+                    visibility = visibility,
+                    genericTypeConstraints = genericTypeConstraints,
+                    body = code,
+            )
+            is SwiftCode.Declaration.Variable -> when (this) {
+                is SwiftCode.Declaration.StoredVariable -> this.copy(isStatic = true)
+                is SwiftCode.Declaration.ComputedVariable -> this.copy(isStatic = true)
+                is SwiftCode.Declaration.Constant -> this.copy(isStatic = true)
+            }
+            else -> this
+        }
+
+        data class Declarations(val inline: List<SwiftCode.Declaration>, val outline: List<SwiftCode.Declaration>)
+
+        result.swiftImports.forEach { +it }
+
+        result.swiftDeclarations.reduce<Declarations> { path, kind, elements, children ->
+            val namePath = path.dropWhile { it.isEmpty() }.takeIf { it.isNotEmpty() }
+            if (namePath != null) {
+                val name = namePath.type!!
+
+                val inline = mutableListOf<SwiftCode.Declaration>()
+                val outline = mutableListOf<SwiftCode.Declaration>()
+
+                when (kind) {
+                    IrBasedSwiftVisitor.Namespace.Kind.TYPE -> {
+                        outline.add(extension(name) {
+                            children.forEach { it.inline.forEach { +it.patchStatic() } }
+                        })
+                    }
+                    IrBasedSwiftVisitor.Namespace.Kind.PACKAGE -> {
+                        inline.add(enum(namePath.last(), visibility = public) {
+                            children.forEach { it.inline.forEach { +it.patchStatic() } }
+                        })
+                    }
+                }
+
+                for (child in children) {
+                    outline.addAll(child.outline)
+                }
+
+                for (element in elements) {
+                    outline.add(extension(name, visibility = public) {
+                        +element.patchStatic()
+                    })
+                }
+
+                Declarations(inline, outline)
+
+            } else {
+                Declarations(
+                        inline = children.flatMap { it.inline },
+                        outline = children.flatMap { it.outline } + elements
+                )
+            }
+        }.let {
+            it.inline.forEach { +it }
+            it.outline.forEach { +it }
+        }
+    }
+
+    fun buildSwiftBridgingHeader() = CCode.build {
+        CCode.File(result.cImports + pragma("clang assume_nonnull begin") + result.cDeclarations + pragma("clang assume_nonnull end"))
     }
 }
 

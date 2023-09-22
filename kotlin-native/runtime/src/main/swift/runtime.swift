@@ -12,6 +12,21 @@ func bridgeToKotlin<T: AnyObject>(_ obj: T, slot: UnsafeMutableRawPointer) -> Un
     return swiftObjectToRef(ptr, slot)
 }
 
+@inline(__always)
+func bridgeFromKotlin<T: AnyObject>(_ obj: UnsafeMutableRawPointer?) -> T? {
+    guard let obj else { return nil }
+    let ptr = refToSwiftObject(obj)
+    return Unmanaged<T>.fromOpaque(ptr).takeUnretainedValue()
+}
+
+@inline(__always)
+func bridgeToKotlin<T: AnyObject>(_ obj: T?, slot: UnsafeMutableRawPointer) -> UnsafeMutableRawPointer? {
+    guard let obj else { return nil }
+    let ptr = Unmanaged<T>.passUnretained(obj).toOpaque()
+    return swiftObjectToRef(ptr, slot)
+}
+
+
 func withUnsafeTemporaryBufferAllocation<H, E, R>(
     ofHeader: H.Type = H.self,
     element: E.Type = E.self,
