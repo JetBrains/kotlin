@@ -262,7 +262,7 @@ fun shouldCheckForExactType(expression: FirTypeOperatorCall, context: CheckerCon
         //   e.g.,
         //   val c1 get() = 1 as Number
         //   val c2: Number get() = 1 <!USELESS_CAST!>as Number<!>
-        FirOperation.AS, FirOperation.SAFE_AS -> true
+        FirOperation.AS, FirOperation.SAFE_AS -> expression.usedAsExpression
         else -> throw AssertionError("Should not be here: ${expression.operation}")
     }
 }

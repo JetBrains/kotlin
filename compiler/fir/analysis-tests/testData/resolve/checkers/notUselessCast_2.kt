@@ -12,7 +12,7 @@ class Wrapper<T>(val wrapped: T) {
 
 fun test_1(): Wrapper<Foo?> {
     return Wrapper(Bar("bar"))
-        .map { it.toFoo() as Foo? }
+        .map { it.toFoo() <!USELESS_CAST!>as Foo?<!> }
         .swapWrappedValue { Wrapper(null) }
 }
 

@@ -62,7 +62,7 @@ fun <K> case_10(x: Nothing) = x as Iterable<K>
 
 // TESTCASE NUMBER: 11
 fun case_11() {
-    return as Nothing?
+    return <!USELESS_CAST!>as Nothing?<!>
 }
 
 // TESTCASE NUMBER: 12
@@ -74,13 +74,13 @@ fun case_13() = null as Float?
 // TESTCASE NUMBER: 14
 inline fun <reified T, K> case_14() {
     while (true) {
-        break as Map<T, K>
+        break <!USELESS_CAST!>as Map<T, K><!>
     }
 }
 
 // TESTCASE NUMBER: 15
 inline fun <reified T> case_15() {
     while (true) {
-        continue as T
+        continue <!USELESS_CAST!>as T<!>
     }
 }

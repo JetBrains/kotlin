@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // See also KT-7804 (Wrong type inference of kotlin.Any? was for 'a' without explicit type)
 fun <T> foo(a: T) = a
 

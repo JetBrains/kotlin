@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Foo.java
 
 import org.jetbrains.annotations.NotNull;

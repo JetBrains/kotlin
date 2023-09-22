@@ -10,7 +10,7 @@ fun test_1() {
     val cards = lines.windowed(6)
         .map { card ->
             card.map { line: String ->
-                line.map { UNMARKED as Square }
+                line.map { UNMARKED <!USELESS_CAST!>as Square<!> }
                     .toMutableList()
             }
         }

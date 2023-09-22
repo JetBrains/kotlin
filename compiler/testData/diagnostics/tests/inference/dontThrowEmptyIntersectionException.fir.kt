@@ -15,8 +15,8 @@ public interface I<K> {}
 // FILE: main.kt
 fun main(z: I<String>) {
     z <!UNCHECKED_CAST!>as Test<Test2<Int, *>><!>
-    z <!UNCHECKED_CAST!>as Test<Test2<Int, <!UNRESOLVED_REFERENCE!>Foo<!>>><!>
-    z as Test<<!UNRESOLVED_REFERENCE!>Foo<!>>
+    z <!UNCHECKED_CAST, USELESS_CAST!>as Test<Test2<Int, <!UNRESOLVED_REFERENCE!>Foo<!>>><!>
+    z <!USELESS_CAST!>as Test<<!UNRESOLVED_REFERENCE!>Foo<!>><!>
     z as <!UNRESOLVED_REFERENCE!>Any2<!>
     println(z)
 }

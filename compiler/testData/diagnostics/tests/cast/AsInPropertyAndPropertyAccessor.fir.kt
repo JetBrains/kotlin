@@ -12,6 +12,6 @@ val c2: Number get() = 1 as Number
 
 val d: Number
     get() {
-        1 as Number
+        1 <!USELESS_CAST!>as Number<!>
         return 1 as Number
     }

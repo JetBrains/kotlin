@@ -10,7 +10,7 @@ fun test_0(d: Derived) {
 }
 
 fun test_1() {
-    val list = listOf<Any>().map { Derived() as Base }.toMutableList() // should be no USELESS_CAST
+    val list = listOf<Any>().map { Derived() <!USELESS_CAST!>as Base<!> }.toMutableList() // should be no USELESS_CAST
     list.add(Base())
 }
 
