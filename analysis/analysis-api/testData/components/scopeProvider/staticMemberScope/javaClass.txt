@@ -104,7 +104,7 @@ KtJavaFieldSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: JavaClass.NestedClass
+  classIdIfNonLocal: JavaClass.InnerClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -116,6 +116,35 @@ KtNamedClassOrObjectSymbol:
   isInline: false
   isInner: true
   modality: OPEN
+  name: InnerClass
+  origin: JAVA
+  superTypes: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
+  ]
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: JavaClass.NestedClass
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: OPEN
   name: NestedClass
   origin: JAVA
   superTypes: [
@@ -126,7 +155,7 @@ KtNamedClassOrObjectSymbol:
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: PackageVisibility
+  visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

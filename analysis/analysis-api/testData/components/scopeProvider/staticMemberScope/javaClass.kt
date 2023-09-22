@@ -16,8 +16,9 @@ public interface SuperInterface {
 public abstract class SuperClass implements SuperInterface {
     // NestedSuperClass will not be included in JavaClass's static member scope, because Kotlin does not propagate static nested classes
     // defined in super-classes to sub-classes, unlike Java. So `JavaClass.SuperClass` is valid in Java, but an error in Kotlin.
-    class NestedSuperClass {
-    }
+    public static class NestedSuperClass { }
+
+    public class InnerSuperClass { }
 
     @Override
     public int getActualRandomNumber() {
@@ -35,8 +36,9 @@ public abstract class SuperClass implements SuperInterface {
 
 // FILE: JavaClass.java
 public class JavaClass extends SuperClass {
-    class NestedClass {
-    }
+    public static class NestedClass { }
+
+    public class InnerClass { }
 
     public static int foo = 1;
 

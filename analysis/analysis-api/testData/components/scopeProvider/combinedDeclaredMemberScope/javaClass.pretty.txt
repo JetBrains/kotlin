@@ -4,6 +4,8 @@ open fun hello()
 
 open var foo: kotlin.Int
 
+open inner class InnerClass
+
 open class NestedClass
 
 constructor()

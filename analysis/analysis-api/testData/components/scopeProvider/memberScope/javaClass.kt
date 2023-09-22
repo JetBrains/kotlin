@@ -14,6 +14,8 @@ public interface SuperInterface {
 public abstract class SuperClass implements SuperInterface {
     public static class NestedSuperClass { }
 
+    public class InnerSuperClass { }
+
     @Override
     public int getActualRandomNumber() {
         return getRandomNumber();
@@ -29,6 +31,8 @@ public abstract class SuperClass implements SuperInterface {
 // FILE: JavaClass.java
 public class JavaClass extends SuperClass {
     public static class NestedClass { }
+
+    public class InnerClass { }
 
     public static int foo = 1;
 

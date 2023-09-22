@@ -6,4 +6,6 @@ open fun superBar(): kotlin.String!
 
 open var foo: kotlin.Int
 
-open inner class NestedClass
+open inner class InnerClass
+
+open class NestedClass

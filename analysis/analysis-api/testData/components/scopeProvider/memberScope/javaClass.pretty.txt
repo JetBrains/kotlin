@@ -11,6 +11,10 @@ open fun toString(): kotlin.String
 
 open class NestedClass
 
+open inner class InnerClass
+
 open class NestedSuperClass
+
+open inner class InnerSuperClass
 
 constructor()
