@@ -142,11 +142,6 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         whenSubjectExpression: FirWhenSubjectExpression,
         data: ResolutionMode
     ): FirStatement {
-        val parentWhen = whenSubjectExpression.whenRef.value
-        val subjectType = parentWhen.subject?.resolvedType ?: parentWhen.subjectVariable?.returnTypeRef?.coneTypeOrNull
-        if (subjectType != null) {
-            whenSubjectExpression.resultType = subjectType
-        }
         dataFlowAnalyzer.exitWhenSubjectExpression(whenSubjectExpression)
         return components.transformWhenSubjectExpressionUsingSmartcastInfo(whenSubjectExpression)
     }
