@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 interface PostponedResolvedAtomMarker {
     val inputTypes: Collection<KotlinTypeMarker>
     val outputType: KotlinTypeMarker?
     val expectedType: KotlinTypeMarker?
     val analyzed: Boolean
+
+    val outerTypeVariables: Set<TypeConstructorMarker>? get() = null
 }
 
 interface PostponedAtomWithRevisableExpectedType : PostponedResolvedAtomMarker {

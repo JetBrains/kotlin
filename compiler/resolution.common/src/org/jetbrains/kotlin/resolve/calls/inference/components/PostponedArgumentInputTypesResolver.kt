@@ -541,12 +541,14 @@ class PostponedArgumentInputTypesResolver(
         val expectedType = argument.run { (this as? PostponedAtomWithRevisableExpectedType)?.revisedExpectedType ?: expectedType }
 
         if (expectedType != null && expectedType.isFunctionOrKFunctionWithAnySuspendability()) {
+            val outerVariables = argument.outerTypeVariables
             val wasFixedSomeVariable = c.fixNextReadyVariableForParameterType(
                 expectedType,
                 postponedArguments,
                 topLevelType,
                 dependencyProvider,
                 resolvedAtomProvider,
+                outerVariables,
             )
 
             if (wasFixedSomeVariable)
@@ -562,9 +564,11 @@ class PostponedArgumentInputTypesResolver(
         topLevelType: KotlinTypeMarker,
         dependencyProvider: TypeVariableDependencyInformationProvider,
         resolvedAtomByTypeVariableProvider: ResolvedAtomProvider,
+        outerVariables: Set<TypeConstructorMarker>?,
     ): Boolean = with(resolutionTypeSystemContext) {
         val relatedVariables = type.extractArgumentsForFunctionTypeOrSubtype()
             .flatMap { getAllDeeplyRelatedTypeVariables(it, dependencyProvider) }
+            .filter { outerVariables == null || it !in outerVariables }
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
             this@fixNextReadyVariableForParameterType,
             relatedVariables,
