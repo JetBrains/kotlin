@@ -1,0 +1,36 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] secondLevelFunction.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-secondLevelFunction.kts>
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int| = Int(0)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+        when () {
+            Boolean(true) ->  {
+                local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/LocalClass| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
+                        ^foo this@R|<local>/LocalClass|.R|<local>/boo|
+                    }
+
+                    private final [ResolvedTo(BODY_RESOLVE)] val boo: R|kotlin/Int| = Int(9)
+                        private [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+                }
+
+                [ResolvedTo(BODY_RESOLVE)] lval prop: R|kotlin/Int| = R|<local>/LocalClass.LocalClass|().R|<local>/foo|()
+                local final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] y: R|kotlin/Int|): R|kotlin/Int| {
+                    ^foo R|<local>/y|.R|kotlin/Int.plus|(Int(20))
+                }
+
+                R|/x| = R|/foo|(R|<local>/prop|)
+            }
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val rv: R|kotlin/Int| = R|/x|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

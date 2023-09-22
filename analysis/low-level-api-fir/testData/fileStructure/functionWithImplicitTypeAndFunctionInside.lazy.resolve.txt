@@ -1,0 +1,35 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitTypeAndFunctionInside.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|)) @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] number: R|kotlin/Int|): R|myPack/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val number: R|kotlin/Int| = R|<local>/number|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+    }
+    @R|myPack/Anno|[Types](number = R|myPack/functionProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val functionProperty: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    @R|myPack/Anno|[Types](number = R|myPack/parameterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val parameterProperty: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    @R|myPack/Anno|[Types](number = R|myPack/defaultValueProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val defaultValueProperty: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    @R|myPack/Anno|[Types](number = R|myPack/receiverProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val receiverProperty: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    @R|myPack/Anno|[Types](number = R|myPack/receiverTypeProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val receiverTypeProperty: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    @R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val typeParameterProperty: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    @R|myPack/Anno|[Types](number = R|myPack/valueParameterTypeProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val valueParameterTypeProperty: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    @R|myPack/Anno|[Types](number = R|myPack/expressionProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val expressionProperty: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] fun topLevelFun(): R|kotlin/Unit| {
+        ^topLevelFun R|kotlin/run|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            @R|myPack/Anno|[Types](number = R|myPack/functionProperty|) local final [ResolvedTo(BODY_RESOLVE)] fun <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty|) [ResolvedTo(BODY_RESOLVE)] T> @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty|) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty|)  kotlin/Int|.function([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = R|myPack/parameterProperty|) param: R|@R|myPack/Anno|(number = R|myPack/valueParameterTypeProperty|)  kotlin/Int| = R|myPack/defaultValueProperty|): R|kotlin/String| {
+                ^function @R|myPack/Anno|[Types](number = R|myPack/expressionProperty|) String(str)
+            }
+
+        }
+        )
+    }

@@ -151,6 +151,24 @@ public class SourceFileStructureTestGenerated extends AbstractSourceFileStructur
     }
 
     @Test
+    @TestMetadata("functionWithImplicitTypeAndFunctionInside.kt")
+    public void testFunctionWithImplicitTypeAndFunctionInside() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/functionWithImplicitTypeAndFunctionInside.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithImplicitTypeAndFunctionInsideLocalClass.kt")
+    public void testFunctionWithImplicitTypeAndFunctionInsideLocalClass() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/functionWithImplicitTypeAndFunctionInsideLocalClass.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithImplicitTypeAndPropertyInside.kt")
+    public void testFunctionWithImplicitTypeAndPropertyInside() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/functionWithImplicitTypeAndPropertyInside.kt");
+    }
+
+    @Test
     @TestMetadata("functionalType.kt")
     public void testFunctionalType() throws Exception {
         runTest("analysis/low-level-api-fir/testData/fileStructure/functionalType.kt");
@@ -292,6 +310,18 @@ public class SourceFileStructureTestGenerated extends AbstractSourceFileStructur
     @TestMetadata("propertyWithGetterAndSetter.kt")
     public void testPropertyWithGetterAndSetter() throws Exception {
         runTest("analysis/low-level-api-fir/testData/fileStructure/propertyWithGetterAndSetter.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyWithImplicitTypeAndAnnotationsInsideLocalClass.kt")
+    public void testPropertyWithImplicitTypeAndAnnotationsInsideLocalClass() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/propertyWithImplicitTypeAndAnnotationsInsideLocalClass.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyWithImplicitTypeAndFieldAnnotationsInsideLocalClass.kt")
+    public void testPropertyWithImplicitTypeAndFieldAnnotationsInsideLocalClass() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/propertyWithImplicitTypeAndFieldAnnotationsInsideLocalClass.kt");
     }
 
     @Test

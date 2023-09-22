@@ -1,0 +1,58 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeAndAnnotationsInsideLocalClassScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-propertyWithImplicitTypeAndAnnotationsInsideLocalClassScript.kts>
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] number: R|kotlin/Int|): R|myPack/Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val number: R|kotlin/Int| = R|<local>/number|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
+
+        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val propertyProperty: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val getterProperty: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        @R|myPack/Anno|[Types](number = R|myPack/setterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val setterProperty: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val setterParameterProperty: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        @R|myPack/Anno|[Types](number = R|myPack/receiverProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val receiverProperty: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        @R|myPack/Anno|[Types](number = R|myPack/receiverTypeProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val receiverTypeProperty: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        @R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val typeParameterProperty: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun topLevelFun(): R|kotlin/Unit| {
+            local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] fun first(): R|kotlin/String| {
+                    ^first (this@R|<local>/LocalClass|, Int(42)).R|<local>/variableToResolve|<R|kotlin/Int|>
+                }
+
+                @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) public final [ResolvedTo(BODY_RESOLVE)] var <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty|) [ResolvedTo(BODY_RESOLVE)] T> @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty|) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty|)  T|.variableToResolve: R|kotlin/String|
+                    @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+                        ^ String(str)
+                    }
+                    @R|myPack/Anno|[Types](number = R|myPack/setterProperty|) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty|) value: R|kotlin/String|): R|kotlin/Unit| {
+                        ^ Q|kotlin/Unit|
+                    }
+
+            }
+
+        }
+

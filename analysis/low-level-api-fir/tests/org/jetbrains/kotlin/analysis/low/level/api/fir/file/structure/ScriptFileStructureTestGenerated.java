@@ -67,6 +67,24 @@ public class ScriptFileStructureTestGenerated extends AbstractScriptFileStructur
     }
 
     @Test
+    @TestMetadata("functionWithImplicitTypeAndFunctionInsideLocalClassScript.kts")
+    public void testFunctionWithImplicitTypeAndFunctionInsideLocalClassScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/functionWithImplicitTypeAndFunctionInsideLocalClassScript.kts");
+    }
+
+    @Test
+    @TestMetadata("functionWithImplicitTypeAndFunctionInsideScript.kts")
+    public void testFunctionWithImplicitTypeAndFunctionInsideScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/functionWithImplicitTypeAndFunctionInsideScript.kts");
+    }
+
+    @Test
+    @TestMetadata("functionWithImplicitTypeAndPropertyInsideScript.kts")
+    public void testFunctionWithImplicitTypeAndPropertyInsideScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/functionWithImplicitTypeAndPropertyInsideScript.kts");
+    }
+
+    @Test
     @TestMetadata("initBlockScript.kts")
     public void testInitBlockScript() throws Exception {
         runTest("analysis/low-level-api-fir/testData/fileStructure/initBlockScript.kts");
@@ -109,9 +127,33 @@ public class ScriptFileStructureTestGenerated extends AbstractScriptFileStructur
     }
 
     @Test
+    @TestMetadata("propertyWithImplicitTypeAndAnnotationsInsideLocalClassScript.kts")
+    public void testPropertyWithImplicitTypeAndAnnotationsInsideLocalClassScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/propertyWithImplicitTypeAndAnnotationsInsideLocalClassScript.kts");
+    }
+
+    @Test
+    @TestMetadata("propertyWithImplicitTypeAndFieldAnnotationsInsideLocalClassScript.kts")
+    public void testPropertyWithImplicitTypeAndFieldAnnotationsInsideLocalClassScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/propertyWithImplicitTypeAndFieldAnnotationsInsideLocalClassScript.kts");
+    }
+
+    @Test
     @TestMetadata("script.kts")
     public void testScript() throws Exception {
         runTest("analysis/low-level-api-fir/testData/fileStructure/script.kts");
+    }
+
+    @Test
+    @TestMetadata("secondLevelFunction.kts")
+    public void testSecondLevelFunction() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/secondLevelFunction.kts");
+    }
+
+    @Test
+    @TestMetadata("secondLevelFunction2.kts")
+    public void testSecondLevelFunction2() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/secondLevelFunction2.kts");
     }
 
     @Test

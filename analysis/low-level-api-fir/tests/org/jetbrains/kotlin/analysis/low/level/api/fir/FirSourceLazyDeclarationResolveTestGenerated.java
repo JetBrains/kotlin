@@ -271,6 +271,18 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("functionWithImplicitTypeAndAnnotations.kt")
+    public void testFunctionWithImplicitTypeAndAnnotations() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithImplicitTypeAndAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithImplicitTypeAndStringTemplateAsDefaultValue.kt")
+    public void testFunctionWithImplicitTypeAndStringTemplateAsDefaultValue() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithImplicitTypeAndStringTemplateAsDefaultValue.kt");
+    }
+
+    @Test
     @TestMetadata("functionWithParameter.kt")
     public void testFunctionWithParameter() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithParameter.kt");
@@ -424,6 +436,18 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     @TestMetadata("propertyWithGetterAndSetter.kt")
     public void testPropertyWithGetterAndSetter() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithGetterAndSetter.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyWithImplicitTypeAndAnnotations.kt")
+    public void testPropertyWithImplicitTypeAndAnnotations() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithImplicitTypeAndAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyWithImplicitTypeAndFieldAnnotations.kt")
+    public void testPropertyWithImplicitTypeAndFieldAnnotations() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithImplicitTypeAndFieldAnnotations.kt");
     }
 
     @Test
