@@ -59,13 +59,13 @@ class FirBuilderInferenceSession2(
         resolutionMode: ResolutionMode,
         completionMode: ConstraintSystemCompletionMode
     ) where T : FirResolvable, T : FirStatement {
-        if (completionMode == ConstraintSystemCompletionMode.PARTIAL) return
+        if (completionMode == ConstraintSystemCompletionMode.PARTIAL && !resolutionMode.isReceiverOrTopLevel) return
 
         if (call is FirExpression) {
             call.updateReturnTypeWithCurrentSubstitutor(resolutionMode)
         }
 
-        if (!resolutionMode.forceFullCompletion) return
+        if (!resolutionMode.isReceiverOrTopLevel) return
 
         val candidate = call.candidate() ?: return
         if (!candidate.isNotTrivial()) return
@@ -74,6 +74,16 @@ class FirBuilderInferenceSession2(
 
         (resolutionMode as? ResolutionMode.ContextIndependent.ForDeclaration)?.declaration?.let(outerCandidate.updateDeclarations::add)
         outerSystem.addOtherSystem(candidate.system.currentStorage(), isAddingOuter = false)
+    }
+
+    fun integrateChildSession(
+        childCalls: Collection<FirStatement>,
+        childStorage: ConstraintStorage,
+        afterCompletion: (ConeSubstitutor) -> Unit,
+    ) {
+        outerCandidate.postponedCalls += childCalls
+        outerSystem.addOtherSystem(childStorage)
+        outerCandidate.callbacks += afterCompletion
     }
 
     private fun FirExpression.updateReturnTypeWithCurrentSubstitutor(
@@ -155,6 +165,7 @@ class FirBuilderInferenceSession2(
         if (dispatchReceiver?.resolvedType?.containsNotFixedTypeVariables() == true) return true
         if (givenExtensionReceiverOptions.any { it.resolvedType.containsNotFixedTypeVariables() }) return true
         if (callInfo.arguments.any { it in qualifiedAccessesToProcess }) return true
+        if (callInfo.isDelegateExpression) return true
 
         return false
     }
