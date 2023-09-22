@@ -32,10 +32,10 @@ method global$fun_test$fun_take$$return$T_Unit() returns (ret: dom$Unit)
 {
   var anonymous$0: Ref
   var anonymous$1: Int
-  var local1$y: Int
   var anonymous$2: Ref
   var anonymous$3: Int
   var anonymous$4: Int
+  var local1$y: Int
   anonymous$0 := global$fun_get_foo$fun_take$$return$T_class_global$class_Foo()
   anonymous$1 := global$fun_side_effect$fun_take$$return$T_Int()
   inhale acc(anonymous$0.class_scope_global$class_Foo$member_x, write)
@@ -56,3 +56,4 @@ method global$fun_get_foo$fun_take$$return$T_class_global$class_Foo()
 
 
 method global$fun_side_effect$fun_take$$return$T_Int() returns (ret: Int)
+

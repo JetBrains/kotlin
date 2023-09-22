@@ -97,8 +97,8 @@ method class_scope_global$class_Bar$constructor$fun_take$$return$T_class_global$
 method global$fun_testClassFunctionOverloading$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$b: Ref
   var anonymous$0: Ref
+  var local1$b: Ref
   var anonymous$1: Ref
   var anonymous$2: dom$Unit
   var anonymous$3: Ref

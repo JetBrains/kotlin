@@ -59,8 +59,8 @@ method global$fun_call_fun_with_contracts$fun_take$T_Boolean$return$T_Boolean(lo
   returns (ret: Bool)
   ensures ret == true
 {
-  var local1$a: Bool
   var anonymous$0: Bool
+  var local1$a: Bool
   anonymous$0 := global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$b,
     local$b)
   local1$a := anonymous$0

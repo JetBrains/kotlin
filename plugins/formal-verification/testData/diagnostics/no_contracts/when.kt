@@ -78,3 +78,24 @@ fun <!VIPER_TEXT!>when_is<!>(x: Foo): Boolean = when(x) {
     is Bar -> true
     else -> false
 }
+
+fun <!VIPER_TEXT!>when_subject_val<!>(): Int =
+    when (val x = 0) {
+        1 -> 1
+        else -> x
+    }
+
+fun <!VIPER_TEXT!>when_subject_val_nested<!>() {
+    when (val x = 1) {
+        0 -> 0
+        when (val y = 1) {
+            1 -> 1
+            else -> when (val z = 1) {
+                y -> 2
+                x+1 -> 3
+                else -> 4
+            }
+        } -> 5
+        else -> 6
+    }
+}

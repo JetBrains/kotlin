@@ -18,12 +18,12 @@ field class_scope_global$class_Box$member_t: dom$Nullable[dom$Any]
 
 method global$fun_createBox$fun_take$$return$T_Int() returns (ret: Int)
 {
-  var local1$boolBox: Ref
   var anonymous$0: Ref
-  var local1$b: Bool
+  var local1$boolBox: Ref
   var anonymous$1: dom$Nullable[dom$Any]
-  var local1$intBox: Ref
+  var local1$b: Bool
   var anonymous$2: Ref
+  var local1$intBox: Ref
   var anonymous$3: dom$Nullable[dom$Any]
   anonymous$0 := class_scope_global$class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box((dom$Casting$cast(true,
     dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]))
@@ -56,8 +56,8 @@ field class_scope_global$class_Box$member_t: dom$Nullable[dom$Any]
 method global$fun_setGenericField$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$box: Ref
   var anonymous$0: Ref
+  var local1$box: Ref
   anonymous$0 := class_scope_global$class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box((dom$Casting$cast(3,
     dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]))
   local1$box := anonymous$0
@@ -87,8 +87,8 @@ method global$fun_genericFun$fun_take$NT_Any$return$NT_Any(local$t: dom$Nullable
 method global$fun_callGenericFunc$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$x: Int
   var anonymous$0: dom$Nullable[dom$Any]
+  var local1$x: Int
   anonymous$0 := global$fun_genericFun$fun_take$NT_Any$return$NT_Any((dom$Casting$cast(3,
     dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]))
   local1$x := (dom$Casting$cast(anonymous$0, dom$Type$Int()): Int)
@@ -98,3 +98,4 @@ method global$fun_callGenericFunc$fun_take$$return$T_Unit()
 method global$fun_genericFun$fun_take$NT_Any$return$NT_Any(local$t: dom$Nullable[dom$Any])
   returns (ret: dom$Nullable[dom$Any])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+

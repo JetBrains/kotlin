@@ -4,10 +4,10 @@ field class_scope_global$class_IntWrapper$member_n: Int
 method global$fun_testGetter$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$wrapper: Ref
   var anonymous$0: Ref
-  var local1$succ: Int
+  var local1$wrapper: Ref
   var anonymous$1: Int
+  var local1$succ: Int
   anonymous$0 := class_scope_global$class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(42)
   local1$wrapper := anonymous$0
   anonymous$1 := pkg$special$global$getter_accessor(local1$wrapper)
@@ -33,16 +33,16 @@ field class_scope_global$class_Bar$member_f: Ref
 method global$fun_testCascadeGetter$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$foo: Ref
   var anonymous$0: Ref
-  var local1$bar: Ref
+  var local1$foo: Ref
   var anonymous$1: Ref
-  var local1$bfa: Int
+  var local1$bar: Ref
   var anonymous$2: Ref
   var anonymous$3: Int
-  var local1$bfb: Int
+  var local1$bfa: Int
   var anonymous$4: Ref
   var anonymous$5: Int
+  var local1$bfb: Int
   anonymous$0 := class_scope_global$class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
     20)
   local1$foo := anonymous$0
@@ -86,12 +86,12 @@ field class_scope_global$class_IntWrapperContainer$member_i: Ref
 method global$fun_testCascadeCustomGetters$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$wrapper: Ref
   var anonymous$0: Ref
   var anonymous$1: Ref
-  var local1$succ: Int
+  var local1$wrapper: Ref
   var anonymous$2: Ref
   var anonymous$3: Int
+  var local1$succ: Int
   anonymous$0 := class_scope_global$class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(42)
   anonymous$1 := class_scope_global$class_IntWrapperContainer$constructor$fun_take$T_class_global$class_IntWrapper$return$T_class_global$class_IntWrapperContainer(anonymous$0)
   local1$wrapper := anonymous$1

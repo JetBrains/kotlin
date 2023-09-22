@@ -8,13 +8,13 @@ method global$fun_call_invoke$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(
   ensures local$g.special$function_object_call_counter >
     old(local$g.special$function_object_call_counter)
 {
-  var local1$z: Int
   var anonymous$0: Int
+  var local1$z: Int
   var anonymous$3: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   if (true) {
-    var local2$x: Int
     var anonymous$1: Int
+    var local2$x: Int
     var anonymous$2: Int
     special$invoke_function_object(local$g)
     local2$x := anonymous$1
@@ -25,8 +25,8 @@ method global$fun_call_invoke$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(
   }
   local1$z := anonymous$0
   if (true) {
-    var local2$x: Int
     var anonymous$4: Int
+    var local2$x: Int
     var anonymous$5: Int
     special$invoke_function_object(local$g)
     local2$x := anonymous$4
@@ -50,9 +50,9 @@ method global$fun_call_invoke_with_int$fun_take$fun_take$T_Int$return$T_Int$retu
   ensures local$g.special$function_object_call_counter >
     old(local$g.special$function_object_call_counter)
 {
-  var local1$z: Int
   var anonymous$0: Int
   var anonymous$1: Int
+  var local1$z: Int
   var anonymous$3: Int
   var anonymous$4: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
@@ -92,13 +92,13 @@ method global$fun_name_clashes$fun_take$fun_take$T_Int$return$T_Int$return$T_Int
   ensures local$f.special$function_object_call_counter >
     old(local$f.special$function_object_call_counter)
 {
-  var local1$x: Int
   var anonymous$0: Int
+  var local1$x: Int
   var anonymous$3: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   if (true) {
-    var local2$x: Int
     var anonymous$1: Int
+    var local2$x: Int
     var anonymous$2: Int
     special$invoke_function_object(local$f)
     local2$x := anonymous$1
@@ -132,13 +132,13 @@ method global$fun_different_return_type$fun_take$fun_take$T_Int$return$T_Int$ret
   ensures local$f.special$function_object_call_counter >
     old(local$f.special$function_object_call_counter)
 {
-  var local1$x: Int
   var anonymous$0: Int
+  var local1$x: Int
   var anonymous$3: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   if (true) {
-    var local2$x: Int
     var anonymous$1: Int
+    var local2$x: Int
     var anonymous$2: Int
     special$invoke_function_object(local$f)
     local2$x := anonymous$1
@@ -149,8 +149,8 @@ method global$fun_different_return_type$fun_take$fun_take$T_Int$return$T_Int$ret
   }
   local1$x := anonymous$0
   if (true) {
-    var local2$x: Int
     var anonymous$4: Int
+    var local2$x: Int
     var anonymous$5: Int
     special$invoke_function_object(local$f)
     local2$x := anonymous$4

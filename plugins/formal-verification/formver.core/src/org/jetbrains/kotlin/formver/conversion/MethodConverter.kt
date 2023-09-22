@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
@@ -38,9 +37,9 @@ class MethodConverter(
         return result
     }
 
-    override fun resolveLocalPropertyName(symbol: FirPropertySymbol): MangledName =
-        propertyResolver.tryResolveLocalPropertyName(symbol.name) ?: parent?.resolveLocalPropertyName(symbol)
-        ?: throw IllegalArgumentException("Property $symbol not found in scope.")
+    override fun resolveLocalPropertyName(name: Name): MangledName =
+        propertyResolver.tryResolveLocalPropertyName(name) ?: parent?.resolveLocalPropertyName(name)
+        ?: throw IllegalArgumentException("Property $name not found in scope.")
 
     override fun registerLocalPropertyName(name: Name) {
         propertyResolver.registerLocalPropertyName(name)

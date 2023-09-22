@@ -6,8 +6,8 @@ field class_scope_global$class_AlwaysPlusOne$member_num: Int
 method global$fun_testCustomSetter$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$f: Ref
   var anonymous$0: Ref
+  var local1$f: Ref
   var anonymous$1: dom$Unit
   anonymous$0 := class_scope_global$class_AlwaysPlusOne$constructor$fun_take$$return$T_class_global$class_AlwaysPlusOne()
   local1$f := anonymous$0
@@ -36,8 +36,8 @@ field class_scope_global$class_Person$member_age: Int
 method global$fun_testSetter$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$person: Ref
   var anonymous$0: Ref
+  var local1$person: Ref
   var anonymous$1: Int
   anonymous$0 := class_scope_global$class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Person(19)
   local1$person := anonymous$0
@@ -64,9 +64,9 @@ field class_scope_global$class_Foo$member_b: Ref
 method global$fun_testSetterCascade$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$f: Ref
   var anonymous$0: Ref
   var anonymous$1: Ref
+  var local1$f: Ref
   var anonymous$2: Ref
   anonymous$0 := class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(10)
   anonymous$1 := class_scope_global$class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(anonymous$0)
@@ -97,8 +97,8 @@ field class_scope_global$class_Baz$member__a: Int
 method global$fun_testSetterNoBackingField$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$baz: Ref
   var anonymous$0: Ref
+  var local1$baz: Ref
   var anonymous$1: dom$Unit
   anonymous$0 := class_scope_global$class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
   local1$baz := anonymous$0

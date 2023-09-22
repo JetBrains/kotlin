@@ -275,8 +275,8 @@ method special$invoke_function_object(anonymous$0: Ref)
 
 method global$fun_f$fun_take$$return$T_Unit() returns (ret: dom$Unit)
 {
-  var local1$foo: Ref
   var anonymous$0: Ref
+  var local1$foo: Ref
   anonymous$0 := class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(0)
   local1$foo := anonymous$0
   label label$ret$0
@@ -285,3 +285,4 @@ method global$fun_f$fun_take$$return$T_Unit() returns (ret: dom$Unit)
 method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+

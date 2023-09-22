@@ -27,11 +27,7 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
     val whenSubject: VariableEmbedding?
 
     fun convert(stmt: FirStatement): ExpEmbedding
-    fun convertAndStore(exp: FirExpression): VariableEmbedding
-
-    fun convertAndCapture(exp: FirExpression) {
-        resultCtx.capture(convert(exp))
-    }
+    fun store(exp: ExpEmbedding): VariableEmbedding
 
     fun newBlock(): StmtConversionContext<RTC>
     fun withoutResult(): StmtConversionContext<NoopResultTracker>
@@ -49,7 +45,24 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
     fun inNewScope(action: StmtConversionContext<RTC>.() -> ExpEmbedding): ExpEmbedding
 }
 
-fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedPropertyAccess(symbol: FirPropertyAccessExpression): PropertyAccessEmbedding =
+fun StmtConversionContext<ResultTrackingContext>.convertAndStore(exp: FirExpression): VariableEmbedding = store(convert(exp))
+fun StmtConversionContext<ResultTrackingContext>.convertAndCapture(exp: FirExpression) {
+    resultCtx.capture(convert(exp))
+}
+
+fun StmtConversionContext<ResultTrackingContext>.declareLocal(
+    name: Name,
+    type: TypeEmbedding,
+    initializer: ExpEmbedding?,
+): VariableEmbedding {
+    registerLocalPropertyName(name)
+    val varEmb = VariableEmbedding(resolveLocalPropertyName(name), type)
+    addDeclaration(varEmb.toLocalVarDecl())
+    initializer?.let { varEmb.setValue(it, this) }
+    return varEmb
+}
+
+fun StmtConversionContext<ResultTrackingContext>.embedPropertyAccess(symbol: FirPropertyAccessExpression): PropertyAccessEmbedding =
     when (val calleeSymbol = symbol.calleeSymbol) {
         is FirValueParameterSymbol -> embedParameter(calleeSymbol) as VariableEmbedding
         is FirPropertySymbol ->

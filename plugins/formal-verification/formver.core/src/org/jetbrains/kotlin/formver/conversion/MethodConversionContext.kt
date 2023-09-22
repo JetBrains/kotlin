@@ -21,14 +21,14 @@ interface MethodConversionContext : ProgramConversionContext {
     val resolvedReturnLabelName: ReturnLabelName
 
     fun embedParameter(symbol: FirValueParameterSymbol): ExpEmbedding
-    fun resolveLocalPropertyName(symbol: FirPropertySymbol): MangledName
+    fun resolveLocalPropertyName(name: Name): MangledName
     fun registerLocalPropertyName(name: Name)
 
     fun <R> withScope(scopeDepth: Int, action: () -> R): R
 }
 
 fun MethodConversionContext.embedLocalProperty(symbol: FirPropertySymbol): VariableEmbedding =
-    VariableEmbedding(resolveLocalPropertyName(symbol), embedType(symbol.resolvedReturnType))
+    VariableEmbedding(resolveLocalPropertyName(symbol.name), embedType(symbol.resolvedReturnType))
 
 fun MethodConversionContext.embedLocalSymbol(symbol: FirBasedSymbol<*>): ExpEmbedding =
     when (symbol) {

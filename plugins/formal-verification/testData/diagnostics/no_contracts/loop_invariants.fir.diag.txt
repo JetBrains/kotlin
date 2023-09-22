@@ -83,8 +83,8 @@ method global$fun_conditional_function_assignment$fun_take$T_Boolean$fun_take$$r
   ensures old(local$h.special$function_object_call_counter) <=
     local$h.special$function_object_call_counter
 {
-  var local1$g: Ref
   var anonymous$0: Ref
+  var local1$g: Ref
   var anonymous$1: Bool
   var anonymous$2: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())

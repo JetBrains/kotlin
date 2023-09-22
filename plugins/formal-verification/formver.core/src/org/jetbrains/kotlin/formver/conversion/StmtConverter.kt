@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
@@ -32,10 +31,10 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
         get() = resultCtxFactory.build(this)
 
     override fun convert(stmt: FirStatement): ExpEmbedding = stmt.accept(StmtConversionVisitorExceptionWrapper, this)
-    override fun convertAndStore(exp: FirExpression): VariableEmbedding =
-        when (val convertedExp = convert(exp)) {
-            is VariableEmbedding -> convertedExp
-            else -> withResult(embedType(exp)) { capture(convertedExp) }
+    override fun store(exp: ExpEmbedding): VariableEmbedding =
+        when (exp) {
+            is VariableEmbedding -> exp
+            else -> withResult(exp.type) { capture(exp) }
         }
 
     override fun newBlock(): StmtConverter<RTC> = copy(seqnCtx = SeqnBuilder())

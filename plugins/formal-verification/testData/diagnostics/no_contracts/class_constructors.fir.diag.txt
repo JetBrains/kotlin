@@ -4,18 +4,18 @@ field class_scope_global$class_Foo$member_a: Int
 method global$fun_onlySecondConstructors$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$f1: Ref
   var anonymous$0: Ref
-  var local1$shouldBeOne: Int
+  var local1$f1: Ref
   var anonymous$1: Int
-  var local1$f2: Ref
+  var local1$shouldBeOne: Int
   var anonymous$2: Ref
-  var local1$shouldBeAnswer: Int
+  var local1$f2: Ref
   var anonymous$3: Int
-  var local1$f3: Ref
+  var local1$shouldBeAnswer: Int
   var anonymous$4: Ref
-  var local1$test: Int
+  var local1$f3: Ref
   var anonymous$5: Int
+  var local1$test: Int
   anonymous$0 := class_scope_global$class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(true)
   local1$f1 := anonymous$0
   inhale acc(local1$f1.class_scope_global$class_Foo$member_a, write)
@@ -60,14 +60,14 @@ field class_scope_global$class_Bar$member_a: Int
 method global$fun_primaryAndSecondConstructor$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$b1: Ref
   var anonymous$0: Ref
-  var local1$shouldBeZero: Int
+  var local1$b1: Ref
   var anonymous$1: Int
-  var local1$b2: Ref
+  var local1$shouldBeZero: Int
   var anonymous$2: Ref
-  var local1$shouldBeAnswer: Int
+  var local1$b2: Ref
   var anonymous$3: Int
+  var local1$shouldBeAnswer: Int
   anonymous$0 := class_scope_global$class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(false)
   local1$b1 := anonymous$0
   inhale acc(local1$b1.class_scope_global$class_Bar$member_a, write)

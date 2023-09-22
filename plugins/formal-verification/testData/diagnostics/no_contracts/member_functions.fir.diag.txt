@@ -54,8 +54,8 @@ field class_scope_global$class_Foo$member_x: Int
 method global$fun_outer_member_fun_call$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$f: Ref
   var anonymous$0: Ref
+  var local1$f: Ref
   var anonymous$1: Int
   anonymous$0 := class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(3)
   local1$f := anonymous$0

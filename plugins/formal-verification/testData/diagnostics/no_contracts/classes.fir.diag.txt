@@ -6,12 +6,12 @@ field class_scope_global$class_Foo$member_b: Int
 method global$fun_createFoo$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$f: Ref
   var anonymous$0: Ref
-  var local1$fa: Int
+  var local1$f: Ref
   var anonymous$1: Int
-  var local1$fb: Int
+  var local1$fa: Int
   var anonymous$2: Int
+  var local1$fb: Int
   anonymous$0 := class_scope_global$class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
     20)
   local1$f := anonymous$0
@@ -38,8 +38,8 @@ field class_scope_global$class_Bar$member_a: dom$Nullable[Ref]
 method global$fun_createBar$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$b: Ref
   var anonymous$0: Ref
+  var local1$b: Ref
   anonymous$0 := class_scope_global$class_Bar$constructor$fun_take$NT_class_global$class_Bar$return$T_class_global$class_Bar((dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
     dom$Type$special$Nullable(dom$Type$global$class_Bar())): dom$Nullable[Ref]))
   local1$b := anonymous$0

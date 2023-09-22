@@ -94,7 +94,13 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
-        val subj = whenExpression.subject?.let { data.convertAndStore(it) }
+        val subj: VariableEmbedding? = whenExpression.subject?.let {
+            val subjExp = data.convert(it)
+            when (val firSubjVar = whenExpression.subjectVariable) {
+                null -> data.store(subjExp)
+                else -> data.declareLocal(firSubjVar.name, subjExp.type, subjExp)
+            }
+        }
         val type = data.embedType(whenExpression)
         val ctx = if (type != NothingTypeEmbedding && type != UnitTypeEmbedding) {
             data.withResult(type)
@@ -195,16 +201,10 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
 
     override fun visitProperty(property: FirProperty, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         val symbol = property.symbol
-        data.registerLocalPropertyName(symbol.name)
         if (!symbol.isLocal) {
             throw Exception("StmtConversionVisitor should not encounter non-local properties.")
         }
-        val localVar = data.embedLocalProperty(symbol)
-        data.addDeclaration(localVar.toLocalVarDecl())
-        property.initializer?.let {
-            val initializerExp = data.convert(it)
-            localVar.setValue(initializerExp, data)
-        }
+        data.declareLocal(symbol.name, data.embedType(symbol.resolvedReturnType), property.initializer?.let { data.convert(it) })
         return UnitLit
     }
 
