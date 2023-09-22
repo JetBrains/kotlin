@@ -310,6 +310,13 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
     }
 }
 
+
+fun FirBasedSymbol<*>.isDeprecationLevelHidden(languageVersionSettings: LanguageVersionSettings): Boolean =
+    when (this) {
+        is FirCallableSymbol<*> -> getDeprecation(languageVersionSettings)?.all?.deprecationLevel == DeprecationLevelValue.HIDDEN
+        else -> false
+    }
+
 private object IsHiddenEverywhereBesideSuperCalls : FirDeclarationDataKey()
 
 var FirCallableDeclaration.isHiddenEverywhereBesideSuperCalls: Boolean? by FirDeclarationDataRegistry.data(

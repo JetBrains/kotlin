@@ -219,7 +219,7 @@ private fun <D : FirBasedSymbol<*>> FirDeclarationCollector<D>.collect(
 
         val conflicts = SmartSet.create<FirBasedSymbol<*>>()
         for (otherDeclaration in it) {
-            if (otherDeclaration != declaration && !isOverloadable(declaration, otherDeclaration, session)) {
+            if (otherDeclaration != declaration && !areNonConflictingCallables(declaration, otherDeclaration, session)) {
                 conflicts.add(otherDeclaration)
                 declarationConflictingSymbols.getOrPut(otherDeclaration) { SmartSet.create() }.add(declaration)
             }
@@ -390,7 +390,7 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
         conflicting is FirMemberDeclaration &&
         !session.visibilityChecker.isVisible(conflicting, session, containingFile, emptyList(), dispatchReceiver = null)
     ) return
-    if (isOverloadable(declaration, conflictingSymbol, session)) return
+    if (areNonConflictingCallables(declaration, conflictingSymbol, session)) return
 
     declarationConflictingSymbols.getOrPut(declaration) { SmartSet.create() }.add(conflictingSymbol)
 }
@@ -417,7 +417,7 @@ private fun areCompatibleMainFunctions(
         && declaration1.representsMainFunctionAllowingConflictingOverloads(session)
         && declaration2.representsMainFunctionAllowingConflictingOverloads(session)
 
-private fun isOverloadable(
+private fun areNonConflictingCallables(
     declaration: FirBasedSymbol<*>,
     conflicting: FirBasedSymbol<*>,
     session: FirSession,
@@ -427,6 +427,12 @@ private fun isOverloadable(
     val declarationIsLowPriority = hasLowPriorityAnnotation(declaration.annotations)
     val conflictingIsLowPriority = hasLowPriorityAnnotation(conflicting.annotations)
     if (declarationIsLowPriority != conflictingIsLowPriority) return true
+
+    val declarationIsHidden = declaration.isDeprecationLevelHidden(session.languageVersionSettings)
+    if (declarationIsHidden) return true
+
+    val conflictingIsHidden = conflicting.isDeprecationLevelHidden(session.languageVersionSettings)
+    if (conflictingIsHidden) return true
 
     return declaration is FirCallableSymbol<*> &&
             conflicting is FirCallableSymbol<*> &&
