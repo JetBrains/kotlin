@@ -1089,6 +1089,64 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         public void testNestedClassMethodsViaActualTypealias() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/nestedClassMethodsViaActualTypealias.kt");
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride")
+        @TestDataPath("$PROJECT_ROOT")
+        public class MethodDefaultArgsViaActualFakeOverride {
+            @Test
+            public void testAllFilesPresentInMethodDefaultArgsViaActualFakeOverride() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("constructor.kt")
+            public void testConstructor() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride/constructor.kt");
+            }
+
+            @Test
+            @TestMetadata("delegation.kt")
+            public void testDelegation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride/delegation.kt");
+            }
+
+            @Test
+            @TestMetadata("intersectionOverride.kt")
+            public void testIntersectionOverride() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride/intersectionOverride.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedClass.kt")
+            public void testNestedClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride/nestedClass.kt");
+            }
+
+            @Test
+            @TestMetadata("realOverride.kt")
+            public void testRealOverride() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride/realOverride.kt");
+            }
+
+            @Test
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride/simple.kt");
+            }
+
+            @Test
+            @TestMetadata("simpleIncompatible.kt")
+            public void testSimpleIncompatible() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride/simpleIncompatible.kt");
+            }
+
+            @Test
+            @TestMetadata("substitutionOverride.kt")
+            public void testSubstitutionOverride() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride/substitutionOverride.kt");
+            }
+        }
     }
 
     @Nested
